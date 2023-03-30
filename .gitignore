@@ -1,0 +1,12 @@
+.DS_Store
+.vscode
+
+# npm
+node_modules
+npm-debug.log
+
+# my
+/dist
+.features-gen
+test-results
+/playwright-bdd-*.tgz

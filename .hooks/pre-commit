@@ -1,0 +1,8 @@
+#!/bin/sh
+
+# Exit on any error
+set -euo pipefail
+
+npx lint-staged
+# dont run test on every commit
+# npm test

@@ -1,0 +1,60 @@
+{
+  "name": "playwright-bdd",
+  "description": "BDD Testing with Playwright",
+  "version": "1.0.0",
+  "bin": {
+    "bddgen": "./dist/gen/cli.js"
+  },
+  "main": "./dist/index.js",
+  "engines": {
+    "node": ">=14"
+  },
+  "files": [
+    "dist",
+    "src",
+    "README.md"
+  ],
+  "scripts": {
+    "prepare": "git config core.hooksPath .hooks",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build:examples": "./scripts/build-examples.sh",
+    "examples": "./scripts/run-examples.sh"
+  },
+  "lint-staged": {
+    "**/*.ts": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
+    ]
+  },
+  "devDependencies": {
+    "@cucumber/cucumber": "^9.1.0",
+    "@eslint/js": "^8.36.0",
+    "@playwright/test": "^1.32.1",
+    "@types/node": "^18.15.0",
+    "@types/yargs": "^17.0.24",
+    "@typescript-eslint/eslint-plugin": "^5.54.1",
+    "@typescript-eslint/parser": "^5.54.1",
+    "eslint": "^8.36.0",
+    "globals": "^13.20.0",
+    "lint-staged": "^13.2.0",
+    "markdown-toc": "^1.2.0",
+    "np": "^7.7.0",
+    "prettier": "^2.8.7",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2",
+    "vitest": "^0.29.8"
+  },
+  "peerDependencies": {
+    "@cucumber/cucumber": "^9"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/vitalets/playwright-bdd.git"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "playwright-bdd": "file:playwright-bdd-1.0.0.tgz"
+  }
+}
