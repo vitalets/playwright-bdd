@@ -1,7 +1,7 @@
 /**
  * Copied from original load_sources, but returns full Pickles.
  */
-import('./gherkin');
+/// <reference path="./gherkin.d.ts" />
 
 import {
   IRunEnvironment,

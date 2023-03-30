@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "test": "vitest run",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "build:examples": "./scripts/build-examples.sh",
+    "examples:build": "./scripts/build-examples.sh",
     "examples": "./scripts/run-examples.sh"
   },
   "lint-staged": {

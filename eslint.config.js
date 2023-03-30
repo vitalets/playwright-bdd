@@ -46,6 +46,7 @@ module.exports = [
         { anonymous: 'always', named: 'never', asyncArrow: 'always' },
       ],
       '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/triple-slash-reference': 0,
       'no-undef': 0,
     },
   },
