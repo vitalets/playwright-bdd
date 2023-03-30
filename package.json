@@ -54,8 +54,12 @@
     "type": "git",
     "url": "git://github.com/vitalets/playwright-bdd.git"
   },
-  "license": "MIT",
-  "dependencies": {
-    "playwright-bdd": "file:playwright-bdd-1.0.0.tgz"
-  }
+  "keywords": [
+    "playwright",
+    "cucumber",
+    "gherkin",
+    "bdd",
+    "testing"
+  ],
+  "license": "MIT"
 }

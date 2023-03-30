@@ -10,3 +10,6 @@ npm-debug.log
 .features-gen
 test-results
 /playwright-bdd-*.tgz
+
+# fake package.json as npm install after npm pack updates it
+/examples/package*.json
