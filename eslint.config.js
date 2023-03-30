@@ -5,7 +5,7 @@ const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = [
   {
-    ignores: ['examples', 'dist', '*.config.js'],
+    ignores: ['examples', 'dist', '*.config.js', 'test/**/*.js'],
   },
   js.configs.recommended,
   {

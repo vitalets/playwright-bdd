@@ -4,5 +4,4 @@
 set -euo pipefail
 
 npx lint-staged
-# dont run test on every commit
-# npm test
+npm test

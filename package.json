@@ -17,7 +17,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .hooks",
     "lint": "eslint .",
-    "test": "vitest run",
+    "test": "playwright test",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "examples:build": "./scripts/build-examples.sh",
     "examples": "./scripts/run-examples.sh",
@@ -44,8 +44,7 @@
     "np": "^7.7.0",
     "prettier": "^2.8.7",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.2",
-    "vitest": "^0.29.8"
+    "typescript": "^5.0.2"
   },
   "peerDependencies": {
     "@cucumber/cucumber": "^9"
