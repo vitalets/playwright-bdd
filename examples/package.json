@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "playwright-bdd": "file:./playwright-bdd.tgz"
+  }
+}

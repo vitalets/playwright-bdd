@@ -4,10 +4,10 @@
 set -euo pipefail
 
 # pack playwright-bdd for usage in examples
-find . -name 'playwright-bdd-*.tgz' -exec rm -f {} \;
+
 npm run build
 npm pack
+find . -name 'playwright-bdd-*.tgz' -exec mv -f {} examples/playwright-bdd.tgz \;
 pushd examples
-find .. -name 'playwright-bdd-*.tgz' -exec npm install {} \;
+npm install
 popd
-find . -name 'playwright-bdd-*.tgz' -exec rm -f {} \;
