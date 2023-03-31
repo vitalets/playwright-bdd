@@ -35,10 +35,10 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
   ```gherkin
   Feature: Playwright site
 
-  Scenario: Check title
-      Given I open url "https://playwright.dev"
-      When I click link "Get started"
-      Then I see in title "Playwright"
+      Scenario: Check title
+          Given I open url "https://playwright.dev"
+          When I click link "Get started"
+          Then I see in title "Playwright"
   ```
 
   Generated test:
