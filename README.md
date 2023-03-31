@@ -58,7 +58,7 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 </details>
 
 #### Phase 2: Run generated tests with Playwright runner
-Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` creates isolated Cucumber World and passes it to step definitions. This allows to use Playwright objects (e.g. [`page`](https://playwright.dev/docs/api/class-page)) in Cucumber steps:
+Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` creates Playwright-powered Cucumber World and passes it to step definitions. This allows to use Playwright objects (e.g. [`page`](https://playwright.dev/docs/api/class-page)) in Cucumber steps:
 
 <details>
 <summary>Example of step definition</summary>
