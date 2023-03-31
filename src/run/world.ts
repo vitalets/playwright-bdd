@@ -16,7 +16,7 @@ export type WorldOptions = {
 
 // todo: inherit from cucumber's World?
 export class World {
-  constructor(private options: WorldOptions) {}
+  constructor(protected options: WorldOptions) {}
 
   get page() {
     return this.options.page;
