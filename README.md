@@ -27,30 +27,30 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 <details>
 <summary>Example of generated test</summary>
 
-    From
-    ```gherkin
-    Feature: Playwright site
+  Gherkin feature
+  ```gherkin
+  Feature: Playwright site
 
-    Scenario: Check title
-        Given I open url "https://playwright.dev"
-        When I click link "Get started"
-        Then I see in title "Playwright"
-    ```
+  Scenario: Check title
+      Given I open url "https://playwright.dev"
+      When I click link "Get started"
+      Then I see in title "Playwright"
+  ```
 
-    To
-    ```js
-    import { test } from 'playwright-bdd';
+  Generated test
+  ```js
+  import { test } from 'playwright-bdd';
 
-    test.describe('Playwright site', () => {
+  test.describe('Playwright site', () => {
 
-      test('Check title', async ({ Given, When, Then }) => {
-        await Given('I open url "https://playwright.dev"');
-        await When('I click link "Get started"');
-        await Then('I see in title "Playwright"');
-      });
+    test('Check title', async ({ Given, When, Then }) => {
+      await Given('I open url "https://playwright.dev"');
+      await When('I click link "Get started"');
+      await Then('I see in title "Playwright"');
+    });
 
-    });    
-    ```
+  });    
+  ```
 </details>
 
 #### Phase 2: Run generated tests with Playwright runner
@@ -59,26 +59,26 @@ Playwright runner grabs generated tests from `.features-gen` and executes them a
 <details>
 <summary>Example of step definition</summary>
 
-    ```ts
-    import { expect } from '@playwright/test';
-    import { Given, When, Then } from '@cucumber/cucumber';
-    import { World } from 'playwright-bdd';
+  ```ts
+  import { expect } from '@playwright/test';
+  import { Given, When, Then } from '@cucumber/cucumber';
+  import { World } from 'playwright-bdd';
 
-    Given('I open url {string}', async function (this: World, url: string) {
-      await this.page.goto(url);
-    });
+  Given('I open url {string}', async function (this: World, url: string) {
+    await this.page.goto(url);
+  });
 
-    When('I click link {string}', async function (this: World, name: string) {
-      await this.page.getByRole('link', { name }).click();
-    });
+  When('I click link {string}', async function (this: World, name: string) {
+    await this.page.getByRole('link', { name }).click();
+  });
 
-    Then('I see in title {string}', async function (this: World, keyword: string) {
-      await expect(this.page).toHaveTitle(new RegExp(keyword));
-    });  
-    ```
+  Then('I see in title {string}', async function (this: World, keyword: string) {
+    await expect(this.page).toHaveTitle(new RegExp(keyword));
+  });  
+  ```
 </details>
 
-Finally the command to run BDD tests:
+**Finally the command to run BDD tests (phase 1 + phase 2):**
 ```
 npx bddgen && npx playwright test
 ```
