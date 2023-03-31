@@ -1,7 +1,10 @@
 import { loadConfiguration, loadSupport } from '@cucumber/cucumber/api';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { PickleStep } from '@cucumber/messages';
-import { ITestCaseHookParameter } from '@cucumber/cucumber';
+import {
+  ITestCaseHookParameter,
+  World as CucumberWorld,
+} from '@cucumber/cucumber';
 import { World } from './world';
 
 let supportCodeLibraryPromise: Promise<ISupportCodeLibrary>;
@@ -14,6 +17,17 @@ export async function getSupportCodeLibrary() {
     });
   }
   return supportCodeLibraryPromise;
+}
+
+export function getWorldConstructor(support: ISupportCodeLibrary) {
+  // setWorldConstructor was not called
+  if (support.World === CucumberWorld) {
+    return World;
+  }
+  if (!Object.prototype.isPrototypeOf.call(World, support.World)) {
+    throw new Error(`You should inherit CustomWorld from playwright-bdd World`);
+  }
+  return support.World as typeof World;
 }
 
 export async function invokeStep(world: World, stepText: string) {

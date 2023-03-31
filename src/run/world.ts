@@ -4,9 +4,10 @@ import {
   BrowserContext,
   Page,
 } from '@playwright/test';
+import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
-export type WorldOptions = {
+export type WorldOptions = IWorldOptions & {
   page: Page;
   context: BrowserContext;
   browser: Browser;
@@ -14,9 +15,10 @@ export type WorldOptions = {
   request: APIRequestContext;
 };
 
-// todo: inherit from cucumber's World?
-export class World {
-  constructor(protected options: WorldOptions) {}
+export class World extends CucumberWorld {
+  constructor(protected options: WorldOptions) {
+    super(options);
+  }
 
   get page() {
     return this.options.page;
