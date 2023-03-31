@@ -8,11 +8,15 @@ It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD
 <!-- toc -->
 
 - [How it works](#how-it-works)
+    + [Phase 1: Generate Playwright tests from Gherkin features](#phase-1-generate-playwright-tests-from-gherkin-features)
+    + [Phase 2: Run generated tests with Playwright runner](#phase-2-run-generated-tests-with-playwright-runner)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
 - [Debugging](#debugging)
-- [VS Code Extensions](#vs-code-extensions)
+- [VS Code Integration](#vs-code-integration)
+- [Current limitations](#current-limitations)
+- [Feedback](#feedback)
 - [License](#license)
 
 <!-- tocstop -->
@@ -27,7 +31,8 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 <details>
 <summary>Example of generated test</summary>
 
-  Gherkin feature
+
+  Gherkin feature:
   ```gherkin
   Feature: Playwright site
 
@@ -37,7 +42,7 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
       Then I see in title "Playwright"
   ```
 
-  Generated test
+  Generated test:
   ```js
   import { test } from 'playwright-bdd';
 
@@ -116,7 +121,7 @@ npx playwright install
            Then I see in title "Playwright"
    ```
 
-2. Write step definitions in JavaScript and store them in `features/steps/*.{ts,js}` files:
+2. Write step definitions in TypeScript/JavaScript and store them in `features/steps/*.{ts,js}` files:
 
    ```ts
    import { expect } from '@playwright/test';
@@ -145,7 +150,7 @@ npx playwright install
    module.exports = {
      default: {
        require: ['features/steps/**'],
-       // uncomment if using typescript
+       // uncomment if using TypeScript
        // requireModule: ['ts-node/register'],
      },
    };
@@ -156,7 +161,7 @@ npx playwright install
    ```js
    export default {
      import: ['features/steps/**'],
-     // uncomment if using typescript
+     // uncomment if using TypeScript
      // requireModule: ['ts-node/register'],
    };
    ```
@@ -191,7 +196,7 @@ npx playwright install
 
 ## Examples
 
-Please checkout these examples depending on ESM/CJS and TypeScript usage:
+Please checkout these examples depending on your project setup (ESM/CJS and TS/JS):
 
 - [ESM + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/esm-ts)
 - [CJS + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/cjs-ts)
@@ -200,16 +205,26 @@ Please checkout these examples depending on ESM/CJS and TypeScript usage:
 
 ## Debugging
 
-You can debug tests with `--debug` flag:
+You can debug tests as usual with `--debug` flag:
 
 ```
 npx bddgen && npx playwright test --debug
 ```
 
-## VS Code Extensions
+## VS Code Integration
 
-Both [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) and [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) should work as usual.
+* [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works as usual. You can run/debug tests in `.features-gen` directory
+<img width="70%" src="https://user-images.githubusercontent.com/1473072/229162634-8a801f6e-8a79-407b-889b-7769f957896a.png">
+
+* [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual 
+<img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
+
+## Current limitations
+* Cucumber hooks do not run (use Playwright hooks instead?)
+* Cucumber World parameters not passed
+
+## Feedback
+Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
 
 ## License
-
 MIT
