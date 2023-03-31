@@ -31,7 +31,7 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 <details>
 <summary>Example of generated test</summary>
 
-  Gherkin feature:
+  From
   ```gherkin
   Feature: Playwright site
 
@@ -41,7 +41,7 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
           Then I see in title "Playwright"
   ```
 
-  Generated test:
+  To
   ```js
   import { test } from 'playwright-bdd';
 
@@ -165,7 +165,7 @@ npx playwright install
    };
    ```
 
-4. Create [Playwright config file](https://playwright.dev/docs/test-configuration) file `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
+4. Create [Playwright config file](https://playwright.dev/docs/test-configuration) `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
 
    ```ts
    import { defineConfig, devices } from '@playwright/test';
