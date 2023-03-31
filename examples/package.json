@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "playwright-bdd": "file:./playwright-bdd.tgz"
+    "playwright-bdd": "file:playwright-bdd.tgz"
   }
 }

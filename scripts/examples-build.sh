@@ -9,5 +9,5 @@ npm run build
 npm pack
 find . -name 'playwright-bdd-*.tgz' -exec mv -f {} examples/playwright-bdd.tgz \;
 pushd examples
-npm install
+npm install playwright-bdd.tgz
 popd
