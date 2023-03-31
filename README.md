@@ -8,14 +8,12 @@ It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD
 <!-- toc -->
 
 - [How it works](#how-it-works)
-    + [Phase 1: Generate Playwright tests from Gherkin features](#phase-1-generate-playwright-tests-from-gherkin-features)
-    + [Phase 2: Run generated tests with Playwright runner](#phase-2-run-generated-tests-with-playwright-runner)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
 - [Debugging](#debugging)
 - [VS Code Integration](#vs-code-integration)
-- [Current limitations](#current-limitations)
+- [Limitations](#limitations)
 - [Feedback](#feedback)
 - [License](#license)
 
@@ -219,12 +217,17 @@ npx bddgen && npx playwright test --debug
 * [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual 
 <img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
 
-## Current limitations
+## Limitations
+
+Currently there are some limitations:
+
 * Cucumber hooks do not run (use Playwright hooks instead?)
 * Cucumber World parameters not passed
 
 ## Feedback
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
+
+Also see original issue https://github.com/microsoft/playwright/issues/11975 in Playwright repo. 
 
 ## License
 MIT
