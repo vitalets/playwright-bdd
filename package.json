@@ -1,7 +1,7 @@
 {
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "bin": {
     "bddgen": "./dist/gen/cli.js"
   },
