@@ -47,7 +47,8 @@
     "typescript": "^5.0.2"
   },
   "peerDependencies": {
-    "@cucumber/cucumber": "^9"
+    "@playwright/test": "*",
+    "@cucumber/cucumber": "*"
   },
   "repository": {
     "type": "git",
@@ -58,7 +59,8 @@
     "cucumber",
     "gherkin",
     "bdd",
-    "testing"
+    "testing",
+    "e2e"
   ],
   "license": "MIT"
 }
