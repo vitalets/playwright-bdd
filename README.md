@@ -3,7 +3,7 @@
 This package is a thin layer betwwen [Playwright](https://playwright.dev/) and [Cucumber-js](https://github.com/cucumber/cucumber-js).
 It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD tests via Playwright test runner.
 
-> Inspired by top commented issue in Playwright repo https://github.com/microsoft/playwright/issues/11975
+> Inspired by issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
 ## Contents
 
@@ -30,7 +30,6 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 
 <details>
 <summary>Example of generated test</summary>
-
 
   Gherkin feature:
   ```gherkin
@@ -59,7 +58,7 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 </details>
 
 #### Phase 2: Run generated tests with Playwright runner
-Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` creates isolated Cucumber World and pass it to Cucumber step definitions. This allows to use Playwright objects (e.g. `page`) in steps.
+Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` creates isolated Cucumber World and passes it to Cucumber step definitions. This allows to use Playwright objects (e.g. [`page`](https://playwright.dev/docs/api/class-page)) in steps.
 
 <details>
 <summary>Example of step definition</summary>
@@ -110,7 +109,7 @@ npx playwright install
 
 ## Usage
 
-1. Write human-readable BDD tests in [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) and store them in `features/*.feature` files:
+1. Create [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) tests in `features/*.feature` files:
 
    ```gherkin
    Feature: Playwright site
@@ -121,7 +120,7 @@ npx playwright install
            Then I see in title "Playwright"
    ```
 
-2. Write step definitions in TypeScript/JavaScript and store them in `features/steps/*.{ts,js}` files:
+2. Create step definitions in `features/steps/*.{ts,js}` files. Use `World` from `playwright-bdd`:
 
    ```ts
    import { expect } from '@playwright/test';
@@ -144,7 +143,7 @@ npx playwright install
    );
    ```
 
-3. Create Cucumber [configuration](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) file `cucumber.cjs`:
+3. Create [Cucumber config file](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) `cucumber.cjs`:
 
    ```js
    module.exports = {
@@ -166,7 +165,7 @@ npx playwright install
    };
    ```
 
-4. Create Playwright [configuration](https://playwright.dev/docs/test-configuration) file `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
+4. Create [Playwright config file](https://playwright.dev/docs/test-configuration) file `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
 
    ```ts
    import { defineConfig, devices } from '@playwright/test';
@@ -213,10 +212,10 @@ npx bddgen && npx playwright test --debug
 
 ## VS Code Integration
 
-* [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works as usual. You can run/debug tests in `.features-gen` directory
+* [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works as usual. You can run/debug tests in `.features-gen` directory:
 <img width="70%" src="https://user-images.githubusercontent.com/1473072/229162634-8a801f6e-8a79-407b-889b-7769f957896a.png">
 
-* [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual 
+* [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
 <img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
 
 ## Limitations
