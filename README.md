@@ -3,6 +3,8 @@
 This package is a thin layer betwwen [Playwright](https://playwright.dev/) and [Cucumber-js](https://github.com/cucumber/cucumber-js).
 It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD tests via Playwright test runner.
 
+> Inspired by top commented issue in Playwright repo https://github.com/microsoft/playwright/issues/11975
+
 ## Contents
 
 <!-- toc -->
@@ -225,9 +227,7 @@ Currently there are some limitations:
 * Cucumber World parameters not passed
 
 ## Feedback
-Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
-
-Also see original issue https://github.com/microsoft/playwright/issues/11975 in Playwright repo. 
+Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues). 
 
 ## License
 MIT
