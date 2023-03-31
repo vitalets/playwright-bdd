@@ -82,7 +82,7 @@ Playwright runner grabs generated tests from `.features-gen` and executes them a
   ```
 </details>
 
-**Finally the command to run BDD tests (phase 1 + phase 2):**
+**Run BDD tests in one command:**
 ```
 npx bddgen && npx playwright test
 ```
