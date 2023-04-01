@@ -3,6 +3,7 @@ import {
   Browser,
   BrowserContext,
   Page,
+  TestInfo,
 } from '@playwright/test';
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 
@@ -16,7 +17,7 @@ export type WorldOptions = IWorldOptions & {
 };
 
 export class World extends CucumberWorld {
-  constructor(protected options: WorldOptions) {
+  constructor(protected options: WorldOptions, public testInfo: TestInfo) {
     super(options);
   }
 
