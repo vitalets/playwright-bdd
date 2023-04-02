@@ -1,6 +1,7 @@
 module.exports = {
   default: {
-    require: [process.env.CUCUMBER_REQUIRE],
+    // dynamically change config from tests
+    ...JSON.parse(process.env.CUCUMBER_CONFIG),
     requireModule: ['ts-node/register'],
   },
 };

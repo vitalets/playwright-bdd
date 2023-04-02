@@ -1,4 +1,8 @@
-import { loadConfiguration, loadSupport } from '@cucumber/cucumber/api';
+import {
+  IRunConfiguration,
+  loadConfiguration,
+  loadSupport,
+} from '@cucumber/cucumber/api';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { PickleStep } from '@cucumber/messages';
 import {
@@ -7,27 +11,31 @@ import {
 } from '@cucumber/cucumber';
 import { World } from './world';
 
-let supportCodeLibraryPromise: Promise<ISupportCodeLibrary>;
-export async function getSupportCodeLibrary() {
-  if (!supportCodeLibraryPromise) {
-    supportCodeLibraryPromise = loadConfiguration(undefined, {
-      debug: false,
-    }).then(({ runConfiguration }) => {
-      return loadSupport(runConfiguration);
-    });
+export type LoadedCucumber = {
+  runConfiguration: IRunConfiguration;
+  supportCodeLibrary: ISupportCodeLibrary;
+};
+
+let loadedCucumber: LoadedCucumber;
+
+export async function loadCucumber() {
+  if (!loadedCucumber) {
+    const { runConfiguration } = await loadConfiguration();
+    const supportCodeLibrary = await loadSupport(runConfiguration);
+    loadedCucumber = { runConfiguration, supportCodeLibrary };
   }
-  return supportCodeLibraryPromise;
+  return loadedCucumber;
 }
 
-export function getWorldConstructor(support: ISupportCodeLibrary) {
+export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   // setWorldConstructor was not called
-  if (support.World === CucumberWorld) {
+  if (supportCodeLibrary.World === CucumberWorld) {
     return World;
   }
-  if (!Object.prototype.isPrototypeOf.call(World, support.World)) {
-    throw new Error(`You should inherit CustomWorld from playwright-bdd World`);
+  if (!Object.prototype.isPrototypeOf.call(World, supportCodeLibrary.World)) {
+    throw new Error(`CustomWorld should inherit from playwright-bdd World`);
   }
-  return support.World as typeof World;
+  return supportCodeLibrary.World as typeof World;
 }
 
 export async function invokeStep(world: World, stepText: string) {
@@ -37,12 +45,12 @@ export async function invokeStep(world: World, stepText: string) {
     step: { text: stepText } as PickleStep,
     world,
   });
-  await stepDefinition.code.apply(world, parameters);
+  return stepDefinition.code.apply(world, parameters);
 }
 
 async function findStepDefinition(stepText: string) {
-  const support = await getSupportCodeLibrary();
-  const stepDefinitions = support.stepDefinitions.filter((step) => {
+  const { supportCodeLibrary } = await loadCucumber();
+  const stepDefinitions = supportCodeLibrary.stepDefinitions.filter((step) => {
     return step.matchesStepName(stepText);
   });
   if (!stepDefinitions.length) throw new Error(`Unknown step: ${stepText}`);

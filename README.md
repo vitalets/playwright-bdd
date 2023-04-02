@@ -222,8 +222,7 @@ npx bddgen && npx playwright test --debug
 
 Currently there are some limitations:
 
-* Cucumber hooks do not run (use Playwright hooks instead?)
-* Cucumber World parameters not passed
+* [Cucumber hooks](https://cucumber.io/docs/cucumber/api/?lang=javascript#hooks) do not run (use Playwright hooks instead?)
 
 ## Feedback
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues). 

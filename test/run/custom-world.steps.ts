@@ -1,10 +1,13 @@
-import { expect } from '@playwright/test';
 import { setWorldConstructor, Then } from '@cucumber/cucumber';
 import { World } from '../../src';
 
-export class CustomWorld extends World {
+export type WorldParameters = {
+  foo: string;
+};
+
+export class CustomWorld extends World<WorldParameters> {
   myBrowserName: string;
-  constructor(...args: ConstructorParameters<typeof World>) {
+  constructor(...args: ConstructorParameters<typeof World<WorldParameters>>) {
     super(...args);
     this.myBrowserName = args[0].browserName;
   }
@@ -13,15 +16,8 @@ export class CustomWorld extends World {
 setWorldConstructor(CustomWorld);
 
 Then(
-  'Custom World contains fixtures and testInfo',
-  async function (this: CustomWorld) {
-    expect(this.page).toBeDefined();
-    expect(this.context).toBeDefined();
-    expect(this.browser).toBeDefined();
-    expect(this.browserName).toEqual('chromium');
-    expect(this.request).toBeDefined();
-    expect(this.testInfo).toBeDefined();
-    // custom prop
-    expect(this.myBrowserName).toEqual('chromium');
+  'Get world and args {string} and {int}',
+  async function (this: CustomWorld, arg1: string, arg2: number) {
+    return { world: this, arg1, arg2 };
   }
 );

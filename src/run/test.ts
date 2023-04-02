@@ -1,9 +1,5 @@
 import { test as base } from '@playwright/test';
-import {
-  getSupportCodeLibrary,
-  getWorldConstructor,
-  invokeStep,
-} from './support';
+import { loadCucumber, getWorldConstructor, invokeStep } from './support';
 
 export const test = base.extend({
   world: async (
@@ -11,8 +7,8 @@ export const test = base.extend({
     use,
     testInfo
   ) => {
-    const support = await getSupportCodeLibrary();
-    const World = getWorldConstructor(support);
+    const { runConfiguration, supportCodeLibrary } = await loadCucumber();
+    const World = getWorldConstructor(supportCodeLibrary);
     const world = new World(
       {
         page,
@@ -20,9 +16,7 @@ export const test = base.extend({
         browser,
         browserName,
         request,
-        // cucumber props
-        // See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L96
-        parameters: {},
+        parameters: runConfiguration.runtime.worldParameters || {},
         log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
         attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
       },

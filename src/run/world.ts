@@ -8,16 +8,20 @@ import {
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
-export type WorldOptions = IWorldOptions & {
-  page: Page;
-  context: BrowserContext;
-  browser: Browser;
-  browserName: string;
-  request: APIRequestContext;
-};
+export type WorldOptions<ParametersType = any> =
+  IWorldOptions<ParametersType> & {
+    page: Page;
+    context: BrowserContext;
+    browser: Browser;
+    browserName: string;
+    request: APIRequestContext;
+  };
 
-export class World extends CucumberWorld {
-  constructor(protected options: WorldOptions, public testInfo: TestInfo) {
+export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
+  constructor(
+    protected options: WorldOptions<ParametersType>,
+    public testInfo: TestInfo
+  ) {
     super(options);
   }
 
