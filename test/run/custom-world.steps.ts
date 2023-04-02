@@ -1,5 +1,5 @@
 import { setWorldConstructor, Then } from '@cucumber/cucumber';
-import { World } from '../../src';
+import { World, WorldOptions } from '../../src';
 
 export type WorldParameters = {
   foo: string;
@@ -7,9 +7,14 @@ export type WorldParameters = {
 
 export class CustomWorld extends World<WorldParameters> {
   myBrowserName: string;
-  constructor(...args: ConstructorParameters<typeof World<WorldParameters>>) {
-    super(...args);
-    this.myBrowserName = args[0].browserName;
+  propFromInit = '';
+  constructor(options: WorldOptions<WorldParameters>) {
+    super(options);
+    this.myBrowserName = options.browserName;
+  }
+
+  async init() {
+    this.propFromInit = 'valueFromInit';
   }
 }
 

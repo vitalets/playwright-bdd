@@ -4,4 +4,4 @@
 set -euo pipefail
 
 npm run lint
-npm test
+npm test -- --forbid-only

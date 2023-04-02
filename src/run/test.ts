@@ -9,20 +9,20 @@ export const test = base.extend({
   ) => {
     const { runConfiguration, supportCodeLibrary } = await loadCucumber();
     const World = getWorldConstructor(supportCodeLibrary);
-    const world = new World(
-      {
-        page,
-        context,
-        browser,
-        browserName,
-        request,
-        parameters: runConfiguration.runtime.worldParameters || {},
-        log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-        attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
-      },
-      testInfo
-    );
+    const world = new World({
+      page,
+      context,
+      browser,
+      browserName,
+      request,
+      testInfo,
+      parameters: runConfiguration.runtime.worldParameters || {},
+      log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+      attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+    });
+    await world.init();
     await use(world);
+    await world.destroy();
   },
 
   Given: async ({ world }, use) => {

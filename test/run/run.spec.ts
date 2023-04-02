@@ -40,4 +40,5 @@ test('Custom world contains fixtures, args and parameters', async ({
   expect(arg2).toEqual(42);
   expect(world.parameters.myParam).toEqual('myValue');
   expect(world.myBrowserName).toEqual('chromium');
+  expect(world.propFromInit).toEqual('valueFromInit');
 });

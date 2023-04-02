@@ -12,6 +12,8 @@ It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD
 - [How it works](#how-it-works)
 - [Installation](#installation)
 - [Usage](#usage)
+- [World](#world)
+- [Custom World](#custom-world)
 - [Examples](#examples)
 - [Debugging](#debugging)
 - [VS Code Integration](#vs-code-integration)
@@ -109,7 +111,7 @@ npx playwright install
 
 ## Usage
 
-1. Create [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) tests in `features/*.feature` files:
+1. Create feature descriptions in `features/*.feature` files:
 
    ```gherkin
    Feature: Playwright site
@@ -176,7 +178,7 @@ npx playwright install
    });
    ```
 
-5. Run tests:
+5. Run command to generate and execute tests:
 
    ```
    npx bddgen && npx playwright test
@@ -192,6 +194,52 @@ npx playwright install
 
    npx playwright show-report
    ```
+
+## World
+Playwright-bdd extends [Cucumber World](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md) with Playwright [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) and [testInfo](https://playwright.dev/docs/test-advanced#testinfo-object). Just use `this.page` or `this.testInfo` in step definitions:
+
+```js
+import { Given, When, Then } from '@cucumber/cucumber';
+
+Given('I open url {string}', async function (url) {
+  await this.page.goto(url);
+});
+```
+
+In TypeScript you should import `World` from `playwright-bdd` for propper typing:
+```ts
+import { Given, When, Then } from '@cucumber/cucumber';
+import { World } from 'playwright-bdd';
+
+Given('I open url {string}', async function (this: World, url: string) {
+  await this.page.goto(url);
+});
+```
+
+Check out [all available props of World](https://github.com/vitalets/playwright-bdd/blob/main/src/run/world.ts). 
+
+## Custom World
+To use Custom World you should inherit it from playwright-bdd `World` and pass to Cucumber's `setWorldConstructor`:
+
+```ts
+import { setWorldConstructor } from '@cucumber/cucumber';
+import { World, WorldOptions } from 'playwright-bdd';
+
+export class CustomWorld extends World {
+  myBaseUrl: string;
+  constructor(options: WorldOptions) {
+    super(options);
+    this.myBaseUrl = 'https://playwright.dev';
+  }
+
+  async init() {
+    await this.page.goto(this.myBaseUrl);
+  }
+}
+
+setWorldConstructor(CustomWorld);
+```
+> Perform asynchronous setup and teardown before each test with `init()` / `detroy()` methods.
 
 ## Examples
 
@@ -222,7 +270,7 @@ npx bddgen && npx playwright test --debug
 
 Currently there are some limitations:
 
-* [Cucumber hooks](https://cucumber.io/docs/cucumber/api/?lang=javascript#hooks) do not run (use Playwright hooks instead?)
+* [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. (use Playwright hooks instead?)
 
 ## Feedback
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues). 

@@ -8,6 +8,7 @@ import {
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type WorldOptions<ParametersType = any> =
   IWorldOptions<ParametersType> & {
     page: Page;
@@ -15,13 +16,12 @@ export type WorldOptions<ParametersType = any> =
     browser: Browser;
     browserName: string;
     request: APIRequestContext;
+    testInfo: TestInfo;
   };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
-  constructor(
-    protected options: WorldOptions<ParametersType>,
-    public testInfo: TestInfo
-  ) {
+  constructor(protected options: WorldOptions<ParametersType>) {
     super(options);
   }
 
@@ -43,5 +43,17 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
 
   get request() {
     return this.options.request;
+  }
+
+  get testInfo() {
+    return this.options.testInfo;
+  }
+
+  async init() {
+    // async setup before each test
+  }
+
+  async destroy() {
+    // async teardown after each test
   }
 }

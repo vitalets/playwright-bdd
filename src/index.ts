@@ -1,2 +1,2 @@
-export { test } from './run/test';
-export { World } from './run/world';
+export * from './run/test';
+export * from './run/world';
