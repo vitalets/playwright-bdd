@@ -239,7 +239,7 @@ export class CustomWorld extends World {
 
 setWorldConstructor(CustomWorld);
 ```
-> Perform asynchronous setup and teardown before each test with `init()` / `detroy()` methods.
+> Perform asynchronous setup and teardown before each test with `init()` / `destroy()` methods.
 
 ## Examples
 
