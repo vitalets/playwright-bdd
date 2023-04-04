@@ -29,7 +29,7 @@ It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD
 There are 2 phases:
 
 #### Phase 1: Generate Playwright tests from Gherkin features
-CLI command `bddgen` reads features using Cucumber config and generates Playwright tests in `.features-gen` directory
+CLI command `bddgen` reads feature files from Cucumber config and generates Playwright tests in `.features-gen` directory
 
 <details>
 <summary>Example of generated test</summary>
@@ -61,7 +61,7 @@ CLI command `bddgen` reads features using Cucumber config and generates Playwrig
 </details>
 
 #### Phase 2: Run generated tests with Playwright runner
-Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` creates Playwright-powered Cucumber World and passes it to step definitions. This allows to use Playwright objects (e.g. `page`) in Cucumber steps:
+Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` provides Cucumber World with injected Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
 
 <details>
 <summary>Example of step definition</summary>
