@@ -18,6 +18,7 @@ It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD
 - [Debugging](#debugging)
 - [VS Code Integration](#vs-code-integration)
 - [Limitations](#limitations)
+- [Changelog](#changelog)
 - [Feedback](#feedback)
 - [License](#license)
 
@@ -270,7 +271,17 @@ npx bddgen && npx playwright test --debug
 
 Currently there are some limitations:
 
+* Cucumber tags not supported yet (wip)
+* Cucumber `RULE` not supported yet (wip)
 * [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. (use Playwright hooks instead?)
+
+## Changelog
+
+#### 1.3.0
+* Print parsing errors to the console while generating [#2](https://github.com/vitalets/playwright-bdd/issues/2)
+
+#### 1.2.0
+* Initial public release
 
 ## Feedback
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues). 
