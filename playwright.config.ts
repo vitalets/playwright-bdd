@@ -8,12 +8,12 @@ export default defineConfig({
     {
       name: 'gen',
       testDir: 'test/gen',
-      testMatch: 'gen.spec.ts',
+      testMatch: '*.spec.ts',
     },
     {
       name: 'run',
       testDir: 'test/run',
-      testMatch: 'run.spec.ts',
+      testMatch: '*.spec.ts',
     },
   ],
 });

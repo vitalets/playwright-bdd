@@ -41,9 +41,18 @@ async function loadPickles(
   environment?: IRunEnvironment
 ) {
   const { runConfiguration } = await loadConfiguration(options, environment);
-  const { filteredPickles } = await loadSources(
+  const { filteredPickles, parseErrors } = await loadSources(
     runConfiguration.sources,
     environment
   );
+  if (parseErrors.length) {
+    parseErrors.forEach((parseError) => {
+      // eslint-disable-next-line no-console
+      console.error(
+        `Parse error in "${parseError.source.uri}" ${parseError.message}`
+      );
+    });
+    process.exit(1);
+  }
   return filteredPickles;
 }
