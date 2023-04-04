@@ -19,7 +19,7 @@
     "lint": "eslint .",
     "test": "playwright test",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "examples:build": "./scripts/examples-build.sh",
+    "examples:b": "./scripts/examples-build.sh",
     "examples": "./scripts/examples.sh",
     "toc": "markdown-toc README.md -i --maxdepth 3",
     "release": "./scripts/release.sh"

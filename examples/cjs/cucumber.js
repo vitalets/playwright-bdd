@@ -1,5 +1,6 @@
 module.exports = {
   default: {
-    require: ['features/steps/**'],
+    require: ['features/steps/**/*.js'],
+    publishQuiet: true,
   },
 };

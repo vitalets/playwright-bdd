@@ -1,3 +1,4 @@
 export default {
-  import: ['features/steps/**'],
+  import: ['features/steps/**/*.js'],
+  publishQuiet: true,
 };

@@ -1,4 +1,5 @@
 export default {
+  import: ['features/steps/**/*.ts'],
   requireModule: ['ts-node/register'],
-  import: ['features/steps/**'],
+  publishQuiet: true,
 };
