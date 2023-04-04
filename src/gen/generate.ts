@@ -23,9 +23,9 @@ export class PWFile {
   private addHeader() {
     this.lines.push(
       `/** Generated from: ${this.suite.uri} */`,
-      `import { test } from 'playwright-bdd';`,
+      `import { test } from "playwright-bdd";`,
       '',
-      `test.describe('${encodeQuotes(this.suite.name)}', () => {`,
+      `test.describe(${JSON.stringify(this.suite.name)}, () => {`,
       ''
     );
   }
@@ -38,7 +38,7 @@ export class PWFile {
     const steps = test.steps.map((step) => this.getStepCode(step)).map(indent);
     this.lines.push(
       ...[
-        `test('${encodeQuotes(test.name)}', async ({ Given, When, Then }) => {`, // prettier-ignore
+        `test(${JSON.stringify(test.name)}, async ({ Given, When, Then }) => {`, // prettier-ignore
         ...steps,
         `});`,
         '',
@@ -51,14 +51,17 @@ export class PWFile {
   }
 
   private getStepCode(step: PWStep) {
-    const text = encodeQuotes(step.text);
+    const args = [step.text, step.argument]
+      .filter(Boolean)
+      .map((arg) => JSON.stringify(arg))
+      .join(', ');
     switch (step.type) {
       case PickleStepType.CONTEXT:
-        return `await Given('${text}');`;
+        return `await Given(${args});`;
       case PickleStepType.ACTION:
-        return `await When('${text}');`;
+        return `await When(${args});`;
       case PickleStepType.OUTCOME:
-        return `await Then('${text}');`;
+        return `await Then(${args});`;
       default:
         throw new Error(`Unknown step type: ${step.type}`);
     }
@@ -67,8 +70,4 @@ export class PWFile {
 
 function indent(value: string) {
   return value ? `${'  '}${value}` : value;
-}
-
-function encodeQuotes(value: string) {
-  return value.replaceAll(`'`, `\\'`);
 }

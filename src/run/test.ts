@@ -26,14 +26,14 @@ export const test = base.extend({
   },
 
   Given: async ({ world }, use) => {
-    await use((stepText: string) => invokeStep(world, stepText));
+    await use(invokeStep.bind(null, world));
   },
 
   When: async ({ world }, use) => {
-    await use((stepText: string) => invokeStep(world, stepText));
+    await use(invokeStep.bind(null, world));
   },
 
   Then: async ({ world }, use) => {
-    await use((stepText: string) => invokeStep(world, stepText));
+    await use(invokeStep.bind(null, world));
   },
 });

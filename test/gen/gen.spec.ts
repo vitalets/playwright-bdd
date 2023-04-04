@@ -6,6 +6,8 @@ import { generateTestFiles } from '../../src/gen';
 test('scenario', createTest());
 test('scenario-outline', createTest());
 test('background', createTest());
+test('doc-string', createTest());
+test('data-table', createTest());
 
 function createTest() {
   // eslint-disable-next-line

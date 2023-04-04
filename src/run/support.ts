@@ -38,11 +38,15 @@ export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   return supportCodeLibrary.World as typeof World;
 }
 
-export async function invokeStep(world: World, stepText: string) {
-  const stepDefinition = await findStepDefinition(stepText);
+export async function invokeStep(
+  world: World,
+  text: string,
+  argument?: unknown
+) {
+  const stepDefinition = await findStepDefinition(text);
   const { parameters } = await stepDefinition.getInvocationParameters({
     hookParameter: {} as ITestCaseHookParameter,
-    step: { text: stepText } as PickleStep,
+    step: { text, argument } as PickleStep,
     world,
   });
   return stepDefinition.code.apply(world, parameters);

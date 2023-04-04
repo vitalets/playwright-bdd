@@ -1,4 +1,4 @@
-import { Then } from '@cucumber/cucumber';
+import { DataTable, Then } from '@cucumber/cucumber';
 import { World } from '../../src';
 
 Then(
@@ -7,3 +7,11 @@ Then(
     return { world: this, arg1, arg2 };
   }
 );
+
+Then('Get doc string', async function (this: World, text: string) {
+  return text;
+});
+
+Then('Get data table', async function (this: World, table: DataTable) {
+  return table;
+});

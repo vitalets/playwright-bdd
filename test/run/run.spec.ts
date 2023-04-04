@@ -1,3 +1,4 @@
+import { DataTable } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 import { test } from '../../src';
 
@@ -41,4 +42,46 @@ test('Custom world contains fixtures, args and parameters', async ({
   expect(world.parameters.myParam).toEqual('myValue');
   expect(world.myBrowserName).toEqual('chromium');
   expect(world.propFromInit).toEqual('valueFromInit');
+});
+
+test('doc string', async ({ Then }) => {
+  const text = await Then('Get doc string', {
+    docString: { content: 'Some Title' },
+  });
+  expect(text).toEqual('Some Title');
+});
+
+test('data table', async ({ Then }) => {
+  const dataTable = {
+    dataTable: {
+      rows: [
+        {
+          cells: [{ value: 'name' }, { value: 'email' }, { value: 'twitter' }],
+        },
+        {
+          cells: [
+            { value: 'Aslak' },
+            { value: 'aslak@cucumber.io' },
+            { value: '@aslak_hellesoy' },
+          ],
+        },
+        {
+          cells: [
+            { value: 'Julien' },
+            { value: 'julien@cucumber.io' },
+            { value: '@jbpros' },
+          ],
+        },
+      ],
+    },
+  };
+  const table: DataTable = await Then('Get data table', dataTable);
+  expect(table.hashes()).toEqual([
+    { name: 'Aslak', email: 'aslak@cucumber.io', twitter: '@aslak_hellesoy' },
+    { name: 'Julien', email: 'julien@cucumber.io', twitter: '@jbpros' },
+  ]);
+  expect(table.rows()).toEqual([
+    ['Aslak', 'aslak@cucumber.io', '@aslak_hellesoy'],
+    ['Julien', 'julien@cucumber.io', '@jbpros'],
+  ]);
 });

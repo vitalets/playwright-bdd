@@ -1,7 +1,13 @@
 /**
  * Transform Gherkin pickles into playwright suites
  */
-import { Pickle, PickleStepType, GherkinDocument } from '@cucumber/messages';
+import {
+  Pickle,
+  PickleStep,
+  PickleStepType,
+  PickleStepArgument,
+  GherkinDocument,
+} from '@cucumber/messages';
 import { PickleWithDocument } from '@cucumber/cucumber/lib/api/gherkin';
 
 export type PWSuite = {
@@ -16,8 +22,9 @@ export type PWTest = {
 };
 
 export type PWStep = {
-  type?: PickleStepType;
   text: string;
+  type?: PickleStepType;
+  argument?: PickleStepArgument;
 };
 
 export class Transformer {
@@ -28,7 +35,8 @@ export class Transformer {
   run() {
     for (const { pickle, gherkinDocument } of this.pickles) {
       const suite = this.getSuite(gherkinDocument);
-      this.addTest(suite, pickle);
+      const test = this.getTest(suite, pickle);
+      suite.tests.set(test.name, test);
     }
     return Array.from(this.suites.values());
   }
@@ -49,10 +57,14 @@ export class Transformer {
     return suite;
   }
 
-  private addTest(suite: PWSuite, pickle: Pickle) {
+  private getTest(suite: PWSuite, pickle: Pickle) {
     const name = this.getTestName(suite, pickle.name);
-    const steps = pickle.steps.map(({ type, text }) => ({ type, text }));
-    suite.tests.set(name, { name, steps });
+    const steps = pickle.steps.map((step) => this.getStep(step));
+    return { name, steps };
+  }
+
+  private getStep({ type, text, argument }: PickleStep) {
+    return { type, text, argument };
   }
 
   /**

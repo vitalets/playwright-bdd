@@ -15,10 +15,5 @@ export default defineConfig({
       testDir: 'test/run',
       testMatch: 'run.spec.ts',
     },
-    {
-      name: 'run-custom-world',
-      testDir: 'test/run-custom-world',
-      testMatch: 'index.spec.ts',
-    },
   ],
 });
