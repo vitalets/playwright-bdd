@@ -148,25 +148,29 @@ npx playwright install
 
 3. Create [Cucumber config file](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) `cucumber.cjs`:
 
-   ```js
-   module.exports = {
-     default: {
-       require: ['features/steps/**'],
-       // uncomment if using TypeScript
-       // requireModule: ['ts-node/register'],
-     },
-   };
-   ```
+    ```js
+    module.exports = {
+      default: {
+        paths: [ 'features/**/*.feature' ],       
+        require: [ 'features/steps/**/*.{ts,js}' ],
+        // uncomment if using TypeScript
+        // requireModule: ['ts-node/register'],
+        publishQuiet: true,
+      },
+    };
+    ```
 
-   Or in ESM format `cucumber.mjs`:
+    Or in ESM format `cucumber.mjs`:
 
-   ```js
-   export default {
-     import: ['features/steps/**'],
-     // uncomment if using TypeScript
-     // requireModule: ['ts-node/register'],
-   };
-   ```
+    ```js
+    export default {
+      paths: [ 'features/**/*.feature' ], 
+      import: [ 'features/steps/**/*.{ts,js}' ],
+      // uncomment if using TypeScript
+      // requireModule: ['ts-node/register'],
+      publishQuiet: true,
+    };
+    ```
 
 4. Create [Playwright config file](https://playwright.dev/docs/test-configuration) `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
 
