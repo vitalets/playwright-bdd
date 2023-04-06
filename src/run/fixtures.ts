@@ -1,5 +1,6 @@
 import { test as base } from '@playwright/test';
-import { loadCucumber, getWorldConstructor, invokeStep } from './support';
+import { loadCucumber, getWorldConstructor } from './support';
+import { invokeStep } from './invoke';
 
 export const test = base.extend({
   world: async (
