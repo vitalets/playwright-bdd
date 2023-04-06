@@ -9,5 +9,6 @@ npm-debug.log
 /dist
 .features-gen
 test-results
+playwright-report
 /examples/playwright-bdd*.tgz
 /examples/package-lock.json
