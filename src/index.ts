@@ -1,2 +1,2 @@
-export * from './run/test';
+export * from './run/fixtures';
 export * from './run/world';
