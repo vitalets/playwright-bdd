@@ -7,10 +7,11 @@ import {
   IRunEnvironment,
   loadConfiguration,
 } from '@cucumber/cucumber/api';
+import { PickleWithDocument } from '@cucumber/cucumber/lib/api/gherkin';
+import { GherkinDocument, Pickle, ParseError } from '@cucumber/messages';
 import { loadSources } from './load_sources';
 import { PWFile } from './generate';
 import { saveFiles } from './save';
-import { Transformer } from './transform';
 
 export type GenOptions = {
   outputDir?: string;
@@ -27,32 +28,56 @@ export async function generateTestFiles(inputOptions?: GenOptions) {
   const { outputDir, cwd, cucumberConfig } = Object.assign(
     {},
     defaults,
-    inputOptions
+    inputOptions,
   );
-  const pickles = await loadPickles({ file: cucumberConfig }, { cwd });
-  const suites = new Transformer(pickles).run();
-  const files = suites.map((suite) => new PWFile(suite).run());
+  const features = await loadFeatures({ file: cucumberConfig }, { cwd });
+  const files = buildFiles(features);
   const paths = saveFiles(files, path.join(cwd, outputDir));
   return paths;
 }
 
-async function loadPickles(
+async function loadFeatures(
   options?: ILoadConfigurationOptions,
-  environment?: IRunEnvironment
+  environment?: IRunEnvironment,
 ) {
   const { runConfiguration } = await loadConfiguration(options, environment);
   const { filteredPickles, parseErrors } = await loadSources(
     runConfiguration.sources,
-    environment
+    environment,
   );
+  handleParseErrors(parseErrors);
+  return groupByDocument(filteredPickles);
+}
+
+function buildFiles(features: Map<GherkinDocument, Pickle[]>) {
+  const files: PWFile[] = [];
+  features.forEach((pickles, doc) =>
+    files.push(new PWFile(doc, pickles).build()),
+  );
+  return files;
+}
+
+function groupByDocument(filteredPickles: PickleWithDocument[]) {
+  const features = new Map<GherkinDocument, Pickle[]>();
+  filteredPickles.forEach(({ pickle, gherkinDocument }) => {
+    let pickles = features.get(gherkinDocument);
+    if (!pickles) {
+      pickles = [];
+      features.set(gherkinDocument, pickles);
+    }
+    pickles.push(pickle);
+  });
+  return features;
+}
+
+function handleParseErrors(parseErrors: ParseError[]) {
   if (parseErrors.length) {
     parseErrors.forEach((parseError) => {
       // eslint-disable-next-line no-console
       console.error(
-        `Parse error in "${parseError.source.uri}" ${parseError.message}`
+        `Parse error in "${parseError.source.uri}" ${parseError.message}`,
       );
     });
     process.exit(1);
   }
-  return filteredPickles;
 }

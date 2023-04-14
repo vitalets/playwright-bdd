@@ -17,7 +17,8 @@
   "scripts": {
     "prepare": "git config core.hooksPath .hooks",
     "lint": "eslint .",
-    "test": "playwright test",
+    "gen": "ts-node src/gen/cli -o test/.features-gen && ln -sfn ../src ./node_modules/playwright-bdd",
+    "test": "npm run gen && npx playwright test",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "examples:b": "./scripts/examples-build.sh",
     "examples": "./scripts/examples.sh",

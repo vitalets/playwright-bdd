@@ -50,4 +50,10 @@ module.exports = [
       'no-undef': 0,
     },
   },
+  {
+    files: ['test/**/*.ts'],
+    rules: {
+      'max-params': 0,
+    },
+  },
 ];

@@ -6,7 +6,7 @@ export const test = base.extend({
   world: async (
     { page, context, browser, browserName, request },
     use,
-    testInfo
+    testInfo,
   ) => {
     const { runConfiguration, supportCodeLibrary } = await loadCucumber();
     const World = getWorldConstructor(supportCodeLibrary);
@@ -25,16 +25,10 @@ export const test = base.extend({
     await use(world);
     await world.destroy();
   },
-
-  Given: async ({ world }, use) => {
-    await use(invokeStep.bind(null, world));
-  },
-
-  When: async ({ world }, use) => {
-    await use(invokeStep.bind(null, world));
-  },
-
-  Then: async ({ world }, use) => {
-    await use(invokeStep.bind(null, world));
-  },
+  invokeStep: ({ world }, use) => use(invokeStep.bind(null, world)),
+  Given: ({ invokeStep }, use) => use(invokeStep),
+  When: ({ invokeStep }, use) => use(invokeStep),
+  Then: ({ invokeStep }, use) => use(invokeStep),
+  And: ({ invokeStep }, use) => use(invokeStep),
+  But: ({ invokeStep }, use) => use(invokeStep),
 });
