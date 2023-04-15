@@ -3,8 +3,7 @@
 [![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
 ![npm](https://img.shields.io/npm/v/playwright-bdd)
 
-This package is a thin layer between [Playwright](https://playwright.dev/) and [Cucumber-js](https://github.com/cucumber/cucumber-js).
-It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD tests via Playwright test runner.
+This package allows to run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwright](https://playwright.dev/) test runner.
 
 > Inspired by issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
