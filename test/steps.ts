@@ -15,9 +15,13 @@ Then('Check {int}', async function () {
 });
 
 Given(
-  'Set world param {string} = {string}',
-  async function (this: World, key: string, value: string) {
-    this.parameters[key] = value;
+  'Set world prop {string} = {string}',
+  async function (
+    this: World & Record<string, string>,
+    key: string,
+    value: string,
+  ) {
+    this[key] = value;
   },
 );
 
@@ -56,9 +60,13 @@ Then(
 );
 
 Then(
-  'World param {string} to equal {string}',
-  async function (this: World, key: string, value: string) {
-    expect(String(this.parameters[key])).toEqual(value);
+  'World prop {string} to equal {string}',
+  async function (
+    this: World & Record<string, string>,
+    key: string,
+    value: string,
+  ) {
+    expect(String(this[key])).toEqual(value);
   },
 );
 
