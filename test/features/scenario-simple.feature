@@ -1,4 +1,4 @@
-Feature: simple scenario
+Feature: scenario-simple
 
     Scenario: Scenario one
         Given State 1

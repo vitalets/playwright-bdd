@@ -1,4 +1,4 @@
-Feature: Playwright site
+Feature: background
 
     Background:
         Given Set world param "foo" = "bar"

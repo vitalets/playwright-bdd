@@ -1,4 +1,4 @@
-Feature: scenario with and/but/star
+Feature: scenario-and-but-star
 
     Scenario: Scenario with and/but
         Given State 1
