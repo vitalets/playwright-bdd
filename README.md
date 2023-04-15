@@ -1,4 +1,6 @@
 # playwright-bdd
+[![lint](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml)
+[![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
 ![npm](https://img.shields.io/npm/v/playwright-bdd)
 
 This package is a thin layer between [Playwright](https://playwright.dev/) and [Cucumber-js](https://github.com/cucumber/cucumber-js).
