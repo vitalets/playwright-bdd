@@ -281,6 +281,10 @@ Currently there are some limitations:
 
 ## Changelog
 
+#### 2.0.0
+* Support "Rule" keyword [#7](https://github.com/vitalets/playwright-bdd/issues/7)
+* Generate test files close to Gherkin document structure [#10](https://github.com/vitalets/playwright-bdd/issues/10)
+
 #### 1.3.0
 * Print parsing errors to the console while generating [#2](https://github.com/vitalets/playwright-bdd/issues/2)
 
