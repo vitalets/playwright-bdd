@@ -6,7 +6,7 @@ import { loadCucumber } from './support';
 export async function invokeStep(
   world: World,
   text: string,
-  argument?: unknown
+  argument?: unknown,
 ) {
   const stepDefinition = await findStepDefinition(text);
   const { parameters } = await stepDefinition.getInvocationParameters({
@@ -28,7 +28,7 @@ async function findStepDefinition(stepText: string) {
       [
         `Several steps found for text: ${stepText}`,
         ...stepDefinitions.map((s) => `- ${s.pattern}`),
-      ].join('\n')
+      ].join('\n'),
     );
   // todo: check stepDefinition.keyword with PickleStepType
   return stepDefinitions[0];

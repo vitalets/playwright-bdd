@@ -23,7 +23,7 @@ import { ILogger } from '@cucumber/cucumber/lib/logger';
  */
 export async function loadSources(
   coordinates: ISourcesCoordinates,
-  environment: IRunEnvironment = {}
+  environment: IRunEnvironment = {},
 ) {
   const { cwd, stderr, debug } = mergeEnvironment(environment);
   const logger: ILogger = new ConsoleLogger(stderr, debug);
@@ -31,7 +31,7 @@ export async function loadSources(
   const { unexpandedFeaturePaths, featurePaths } = await resolvePaths(
     logger,
     cwd,
-    coordinates
+    coordinates,
   );
   if (featurePaths.length === 0) {
     return {

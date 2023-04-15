@@ -14,5 +14,5 @@ Then(
   'I see in title {string}',
   async function (this: CustomWorld, keyword: string) {
     await expect(this.page).toHaveTitle(new RegExp(keyword));
-  }
+  },
 );

@@ -17,6 +17,8 @@
   "scripts": {
     "prepare": "git config core.hooksPath .hooks",
     "lint": "eslint .",
+    "prettier": "prettier --check --ignore-unknown .",
+    "prettier:w": "prettier --write --ignore-unknown .",
     "gen": "ts-node src/gen/cli -o test/.features-gen && ln -sfn ../src ./node_modules/playwright-bdd",
     "test": "npm run gen && npx playwright test",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
