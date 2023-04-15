@@ -1,4 +1,5 @@
 # playwright-bdd
+![npm](https://img.shields.io/npm/v/playwright-bdd)
 
 This package is a thin layer between [Playwright](https://playwright.dev/) and [Cucumber-js](https://github.com/cucumber/cucumber-js).
 It allows to run [Gherkin](https://docs.cucumber.io/docs/gherkin/reference/) BDD tests via Playwright test runner.
