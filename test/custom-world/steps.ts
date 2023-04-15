@@ -20,9 +20,6 @@ export class CustomWorld extends World<WorldParameters> {
 
 setWorldConstructor(CustomWorld);
 
-Then(
-  'Get world and args {string} and {int}',
-  async function (this: CustomWorld, arg1: string, arg2: number) {
-    return { world: this, arg1, arg2 };
-  },
-);
+Then('Get world', function (this: CustomWorld) {
+  return this;
+});
