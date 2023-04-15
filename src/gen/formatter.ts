@@ -15,8 +15,10 @@ export function fileHeader(uri?: string) {
 export function suite(title: string, children: string[]) {
   return [
     `test.describe(${JSON.stringify(title)}, () => {`,
+    '',
     ...children.map(indent),
     `});`,
+    '',
   ];
 }
 
@@ -26,6 +28,7 @@ export function beforeEach(keywords: Set<string>, children: string[]) {
     `test.beforeEach(async ({ ${fixtures} }) => {`,
     ...children.map(indent),
     `});`,
+    '',
   ];
 }
 
@@ -35,6 +38,7 @@ export function test(title: string, keywords: Set<string>, children: string[]) {
     `test(${JSON.stringify(title)}, async ({ ${fixtures} }) => {`,
     ...children.map(indent),
     `});`,
+    '',
   ];
 }
 
