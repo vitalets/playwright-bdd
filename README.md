@@ -277,8 +277,7 @@ npx bddgen && npx playwright test --debug
 
 Currently there are some limitations:
 
-* Cucumber tags not supported yet (wip)
-* Cucumber `RULE` not supported yet (wip)
+* Cucumber tags not supported yet (wip, [#8](https://github.com/vitalets/playwright-bdd/issues/8))
 * [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. (use Playwright hooks instead?)
 
 ## Changelog
