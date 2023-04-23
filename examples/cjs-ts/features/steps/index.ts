@@ -10,9 +10,6 @@ When('I click link {string}', async function (this: CustomWorld, name: string) {
   await this.page.getByRole('link', { name }).click();
 });
 
-Then(
-  'I see in title {string}',
-  async function (this: CustomWorld, keyword: string) {
-    await expect(this.page).toHaveTitle(new RegExp(keyword));
-  },
-);
+Then('I see in title {string}', async function (this: CustomWorld, keyword: string) {
+  await expect(this.page).toHaveTitle(new RegExp(keyword));
+});

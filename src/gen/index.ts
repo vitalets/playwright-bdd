@@ -2,11 +2,7 @@
  * Generate playwright tests from Gherkin documents.
  */
 import path from 'node:path';
-import {
-  ILoadConfigurationOptions,
-  IRunEnvironment,
-  loadConfiguration,
-} from '@cucumber/cucumber/api';
+import { ILoadConfigurationOptions, IRunEnvironment, loadConfiguration } from '@cucumber/cucumber/api';
 import { PickleWithDocument } from '@cucumber/cucumber/lib/api/gherkin';
 import { GherkinDocument, Pickle, ParseError } from '@cucumber/messages';
 import { loadSources } from './load_sources';
@@ -25,35 +21,23 @@ const defaults: Required<Pick<GenOptions, 'outputDir' | 'cwd'>> = {
 };
 
 export async function generateTestFiles(inputOptions?: GenOptions) {
-  const { outputDir, cwd, cucumberConfig } = Object.assign(
-    {},
-    defaults,
-    inputOptions,
-  );
+  const { outputDir, cwd, cucumberConfig } = Object.assign({}, defaults, inputOptions);
   const features = await loadFeatures({ file: cucumberConfig }, { cwd });
   const files = buildFiles(features);
   const paths = saveFiles(files, path.join(cwd, outputDir));
   return paths;
 }
 
-async function loadFeatures(
-  options?: ILoadConfigurationOptions,
-  environment?: IRunEnvironment,
-) {
+async function loadFeatures(options?: ILoadConfigurationOptions, environment?: IRunEnvironment) {
   const { runConfiguration } = await loadConfiguration(options, environment);
-  const { filteredPickles, parseErrors } = await loadSources(
-    runConfiguration.sources,
-    environment,
-  );
+  const { filteredPickles, parseErrors } = await loadSources(runConfiguration.sources, environment);
   handleParseErrors(parseErrors);
   return groupByDocument(filteredPickles);
 }
 
 function buildFiles(features: Map<GherkinDocument, Pickle[]>) {
   const files: PWFile[] = [];
-  features.forEach((pickles, doc) =>
-    files.push(new PWFile(doc, pickles).build()),
-  );
+  features.forEach((pickles, doc) => files.push(new PWFile(doc, pickles).build()));
   return files;
 }
 
@@ -74,9 +58,7 @@ function handleParseErrors(parseErrors: ParseError[]) {
   if (parseErrors.length) {
     parseErrors.forEach((parseError) => {
       // eslint-disable-next-line no-console
-      console.error(
-        `Parse error in "${parseError.source.uri}" ${parseError.message}`,
-      );
+      console.error(`Parse error in "${parseError.source.uri}" ${parseError.message}`);
     });
     process.exit(1);
   }

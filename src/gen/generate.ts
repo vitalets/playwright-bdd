@@ -25,10 +25,7 @@ export class PWFile {
   }
 
   build() {
-    this.lines = [
-      ...formatter.fileHeader(this.doc.uri),
-      ...this.getRootSuite(),
-    ];
+    this.lines = [...formatter.fileHeader(this.doc.uri), ...this.getRootSuite()];
     return this;
   }
 
@@ -52,9 +49,7 @@ export class PWFile {
   }
 
   private getScenarioLines(scenario: Scenario) {
-    return isOutline(scenario)
-      ? this.getOutlineSuite(scenario)
-      : this.getTest(scenario);
+    return isOutline(scenario) ? this.getOutlineSuite(scenario) : this.getTest(scenario);
   }
 
   private getBeforeEach(bg: Background) {
@@ -81,10 +76,7 @@ export class PWFile {
     return formatter.test(scenario.name, keywords, lines);
   }
 
-  private getSteps(
-    scenario: Scenario | Background,
-    outlineExampleRowId?: string,
-  ) {
+  private getSteps(scenario: Scenario | Background, outlineExampleRowId?: string) {
     const keywords = new Set<string>();
     const lines = scenario.steps.map((step) => {
       const pickleStep = this.getPickleStep(step, outlineExampleRowId);
@@ -106,8 +98,7 @@ export class PWFile {
     for (const pickle of this.pickles) {
       const pickleStep = pickle.steps.find(({ astNodeIds }) => {
         const hasStepId = astNodeIds.includes(step.id);
-        const hasRowId =
-          !outlineExampleRowId || astNodeIds.includes(outlineExampleRowId);
+        const hasRowId = !outlineExampleRowId || astNodeIds.includes(outlineExampleRowId);
         return hasStepId && hasRowId;
       });
       if (pickleStep) return pickleStep;

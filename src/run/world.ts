@@ -1,23 +1,16 @@
-import {
-  APIRequestContext,
-  Browser,
-  BrowserContext,
-  Page,
-  TestInfo,
-} from '@playwright/test';
+import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WorldOptions<ParametersType = any> =
-  IWorldOptions<ParametersType> & {
-    page: Page;
-    context: BrowserContext;
-    browser: Browser;
-    browserName: string;
-    request: APIRequestContext;
-    testInfo: TestInfo;
-  };
+export type WorldOptions<ParametersType = any> = IWorldOptions<ParametersType> & {
+  page: Page;
+  context: BrowserContext;
+  browser: Browser;
+  browserName: string;
+  request: APIRequestContext;
+  testInfo: TestInfo;
+};
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class World<ParametersType = any> extends CucumberWorld<ParametersType> {

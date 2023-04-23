@@ -5,14 +5,7 @@
  * from external module "../node_modules/@cucumber/cucumber/lib/api/gherkin"
  * but cannot be named
  */
-import {
-  Envelope,
-  GherkinDocument,
-  IdGenerator,
-  Location,
-  ParseError,
-  Pickle,
-} from '@cucumber/messages';
+import { Envelope, GherkinDocument, IdGenerator, Location, ParseError, Pickle } from '@cucumber/messages';
 import { ISourcesCoordinates } from '@cucumber/cucumber/lib/api/types';
 import { ILogger } from '@cucumber/cucumber/lib/logger';
 

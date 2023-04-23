@@ -1,8 +1,4 @@
-import {
-  IRunConfiguration,
-  loadConfiguration,
-  loadSupport,
-} from '@cucumber/cucumber/api';
+import { IRunConfiguration, loadConfiguration, loadSupport } from '@cucumber/cucumber/api';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { World as CucumberWorld } from '@cucumber/cucumber';
 import { World } from './world';

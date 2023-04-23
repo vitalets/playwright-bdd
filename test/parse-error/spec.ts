@@ -17,10 +17,6 @@ test('parse-error', async () => {
   sinon.stub(process, 'exit').callsFake((code) => {
     throw new Error(`Process exited with status code ${code}`);
   });
-  await expect(generateTestFiles()).rejects.toThrow(
-    'Process exited with status code 1',
-  );
-  expect(consoleStub.firstCall.args[0]).toContain(
-    'Parse error in "test/parse-error/sample.feature" (1:1)',
-  );
+  await expect(generateTestFiles()).rejects.toThrow('Process exited with status code 1');
+  expect(consoleStub.firstCall.args[0]).toContain('Parse error in "test/parse-error/sample.feature" (1:1)');
 });

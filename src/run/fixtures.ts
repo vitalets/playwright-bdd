@@ -3,11 +3,7 @@ import { loadCucumber, getWorldConstructor } from './support';
 import { invokeStep } from './invoke';
 
 export const test = base.extend({
-  world: async (
-    { page, context, browser, browserName, request },
-    use,
-    testInfo,
-  ) => {
+  world: async ({ page, context, browser, browserName, request }, use, testInfo) => {
     const { runConfiguration, supportCodeLibrary } = await loadCucumber();
     const World = getWorldConstructor(supportCodeLibrary);
     const world = new World({
