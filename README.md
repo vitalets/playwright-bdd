@@ -279,6 +279,9 @@ Currently there are some limitations:
 
 ## Changelog
 
+#### upcoming
+* Support Gherkin languages [#13](https://github.com/vitalets/playwright-bdd/issues/13)
+
 #### 2.0.0
 * Support "Rule" keyword [#7](https://github.com/vitalets/playwright-bdd/issues/7)
 * Generate test files close to Gherkin document structure [#10](https://github.com/vitalets/playwright-bdd/issues/10)

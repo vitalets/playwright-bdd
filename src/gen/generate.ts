@@ -14,9 +14,11 @@ import {
   Rule,
 } from '@cucumber/messages';
 import * as formatter from './formatter';
+import { KeywordsMap, getKeywordsMap } from './i18n';
 
 export class PWFile {
   private lines: string[] = [];
+  private keywordsMap?: KeywordsMap;
 
   constructor(public doc: GherkinDocument, private pickles: Pickle[]) {}
 
@@ -24,9 +26,20 @@ export class PWFile {
     return this.lines.join('\n');
   }
 
+  get language() {
+    return this.doc.feature?.language || 'en';
+  }
+
   build() {
+    this.loadI18nKeywords();
     this.lines = [...formatter.fileHeader(this.doc.uri), ...this.getRootSuite()];
     return this;
+  }
+
+  private loadI18nKeywords() {
+    if (this.language !== 'en') {
+      this.keywordsMap = getKeywordsMap(this.language);
+    }
   }
 
   private getRootSuite() {
@@ -88,8 +101,7 @@ export class PWFile {
   }
 
   private getStep(step: Step, { text, argument }: PickleStep) {
-    let keyword = step.keyword.trim();
-    if (keyword === '*') keyword = 'And';
+    const keyword = this.getKeyword(step);
     const line = formatter.step(keyword, text, argument);
     return { keyword, line };
   }
@@ -105,6 +117,15 @@ export class PWFile {
     }
 
     throw new Error(`Pickle step not found for step: ${step.text}`);
+  }
+
+  private getKeyword(step: Step) {
+    const origKeyword = step.keyword.trim();
+    if (origKeyword === '*') return 'And';
+    if (!this.keywordsMap) return origKeyword;
+    const enKeyword = this.keywordsMap.get(origKeyword);
+    if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
+    return enKeyword;
   }
 }
 
