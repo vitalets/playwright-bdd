@@ -140,12 +140,9 @@ npx playwright install
      await this.page.getByRole('link', { name }).click();
    });
 
-   Then(
-     'I see in title {string}',
-     async function (this: World, keyword: string) {
-       await expect(this.page).toHaveTitle(new RegExp(keyword));
-     }
-   );
+   Then('I see in title {string}', async function (this: World, keyword: string) {
+     await expect(this.page).toHaveTitle(new RegExp(keyword));
+   });
    ```
 
 3. Create [Cucumber config file](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) `cucumber.cjs`:
@@ -250,7 +247,7 @@ setWorldConstructor(CustomWorld);
 
 ## Examples
 
-Please checkout these examples depending on your project setup (ESM/CJS and TS/JS):
+There several working examples depending on your project setup (ESM/CJS and TS/JS):
 
 - [ESM + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/esm-ts)
 - [CJS + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/cjs-ts)
