@@ -279,7 +279,7 @@ Currently there are some limitations:
 
 ## Changelog
 
-#### upcoming
+#### 2.1.0
 * Support Gherkin languages [#13](https://github.com/vitalets/playwright-bdd/issues/13)
 
 #### 2.0.0
