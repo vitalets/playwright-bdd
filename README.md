@@ -32,7 +32,7 @@ Both Playwright and Cucumber have their own test runners. You can use Cucumber r
 
 * Automatic browser initialization and cleanup
 * Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) instead of `before / after` hooks
-* Parallelize tests with [sharding]((https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after))
+* Parallelize tests with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
 * [...lot more](https://playwright.dev/docs/library#key-differences)
 
 ## How it works
