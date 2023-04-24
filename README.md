@@ -90,8 +90,8 @@ Playwright runner takes generated test files and runs them as usual. For each te
     await this.page.getByRole('link', { name }).click();
   });
 
-  Then('I see in title {string}', async function (this: World, keyword: string) {
-    await expect(this.page).toHaveTitle(new RegExp(keyword));
+  Then('I see in title {string}', async function (this: World, text: string) {
+    await expect(this.page).toHaveTitle(new RegExp(text));
   });  
   ```
 </details>
