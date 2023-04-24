@@ -11,6 +11,7 @@ This package allows to run [CucumberJS](https://github.com/cucumber/cucumber-js)
 
 <!-- toc -->
 
+- [Why Playwright runner](#why-playwright-runner)
 - [How it works](#how-it-works)
 - [Installation](#installation)
 - [Usage](#usage)
@@ -26,12 +27,20 @@ This package allows to run [CucumberJS](https://github.com/cucumber/cucumber-js)
 
 <!-- tocstop -->
 
+## Why Playwright runner
+Both Playwright and Cucumber have their own test runners. You can use Cucumber runner with Playwright [included as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc). Alternative way (provided by this package) is to convert BDD scenarios into Playwright tests and run them using Playwright runner. It gives the following benefits:
+
+* Automatic browser initialization and cleanup
+* Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) instead of `before / after` hooks
+* Parallelize tests with [sharding]((https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after))
+* [...lot more](https://playwright.dev/docs/library#key-differences)
+
 ## How it works
 
 There are 2 phases:
 
-#### Phase 1: Generate Playwright tests from Gherkin features
-CLI command `bddgen` reads feature files from Cucumber config and generates Playwright tests in `.features-gen` directory
+#### Phase 1: Generate Playwright tests from feature files
+CLI command `bddgen` reads Cucumber config and converts features into Playwright test files in `.features-gen` directory
 
 <details>
 <summary>Example of generated test</summary>
@@ -62,8 +71,8 @@ CLI command `bddgen` reads feature files from Cucumber config and generates Play
   ```
 </details>
 
-#### Phase 2: Run generated tests with Playwright runner
-Playwright runner grabs generated tests from `.features-gen` and executes them as usual. For each test `playwright-bdd` provides Cucumber World with injected Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
+#### Phase 2: Run generated test files with Playwright runner
+Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` creates isolated Cucumber World with injected Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
 
 <details>
 <summary>Example of step definition</summary>
@@ -280,7 +289,7 @@ Currently there are some limitations:
 ## Changelog
 
 #### 2.1.0
-* Support Gherkin languages [#13](https://github.com/vitalets/playwright-bdd/issues/13)
+* Support Gherkin i18n [#13](https://github.com/vitalets/playwright-bdd/issues/13)
 
 #### 2.0.0
 * Support "Rule" keyword [#7](https://github.com/vitalets/playwright-bdd/issues/7)
