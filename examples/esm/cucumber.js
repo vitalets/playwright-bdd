@@ -1,5 +1,5 @@
 export default {
   paths: ['features/**/*.feature'],
-  import: ['features/steps/**/*.{ts,js}'],
+  import: ['steps/**/*.{ts,js}'],
   publishQuiet: true,
 };
