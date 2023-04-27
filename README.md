@@ -152,11 +152,11 @@ npx playwright install
 2. Create [Playwright config file](https://playwright.dev/docs/test-configuration) `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
 
    ```ts
-   import { defineConfig, devices } from '@playwright/test';
+   import { defineConfig } from '@playwright/test';
 
    export default defineConfig({
      testDir: '.features-gen', // <- generated BDD tests
-     projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+     projects: [{ name: 'e2e' }],
    });
    ```
 
