@@ -123,38 +123,7 @@ npx playwright install
 
 ## Usage
 
-1. Create feature descriptions in `features/*.feature` files:
-
-   ```gherkin
-   Feature: Playwright site
-
-       Scenario: Check title
-           Given I open url "https://playwright.dev"
-           When I click link "Get started"
-           Then I see in title "Playwright"
-   ```
-
-2. Create step definitions in `features/steps/*.{ts,js}` files. Use `World` from `playwright-bdd`:
-
-   ```ts
-   import { expect } from '@playwright/test';
-   import { Given, When, Then } from '@cucumber/cucumber';
-   import { World } from 'playwright-bdd';
-
-   Given('I open url {string}', async function (this: World, url: string) {
-     await this.page.goto(url);
-   });
-
-   When('I click link {string}', async function (this: World, name: string) {
-     await this.page.getByRole('link', { name }).click();
-   });
-
-   Then('I see in title {string}', async function (this: World, keyword: string) {
-     await expect(this.page).toHaveTitle(new RegExp(keyword));
-   });
-   ```
-
-3. Create [Cucumber config file](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) `cucumber.cjs`:
+1. Create [Cucumber config file](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) `cucumber.cjs`:
 
     ```js
     module.exports = {
@@ -180,7 +149,7 @@ npx playwright install
     };
     ```
 
-4. Create [Playwright config file](https://playwright.dev/docs/test-configuration) `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
+2. Create [Playwright config file](https://playwright.dev/docs/test-configuration) `playwright.config.ts`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
 
    ```ts
    import { defineConfig, devices } from '@playwright/test';
@@ -188,6 +157,37 @@ npx playwright install
    export default defineConfig({
      testDir: '.features-gen', // <- generated BDD tests
      projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+   });
+   ```
+
+3. Create feature descriptions in `features/*.feature` files:
+
+   ```gherkin
+   Feature: Playwright site
+
+       Scenario: Check title
+           Given I open url "https://playwright.dev"
+           When I click link "Get started"
+           Then I see in title "Playwright"
+   ```
+
+4. Create step definitions in `features/steps/*.{ts,js}` files. Use `World` from `playwright-bdd`:
+
+   ```ts
+   import { expect } from '@playwright/test';
+   import { Given, When, Then } from '@cucumber/cucumber';
+   import { World } from 'playwright-bdd';
+
+   Given('I open url {string}', async function (this: World, url: string) {
+     await this.page.goto(url);
+   });
+
+   When('I click link {string}', async function (this: World, name: string) {
+     await this.page.getByRole('link', { name }).click();
+   });
+
+   Then('I see in title {string}', async function (this: World, keyword: string) {
+     await expect(this.page).toHaveTitle(new RegExp(keyword));
    });
    ```
 
