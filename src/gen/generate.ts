@@ -98,6 +98,7 @@ export class PWFile {
     const keywords = new Set<string>();
     const lines = scenario.steps.map((step) => {
       const pickleStep = this.getPickleStep(step, outlineExampleRowId);
+      // todo: findStepDefinition, get fixtures by step definition
       const { keyword, line } = this.getStep(step, pickleStep);
       keywords.add(keyword);
       return line;
