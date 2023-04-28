@@ -48,7 +48,7 @@ export function test(tags: string[], title: string, keywords: Set<string>, child
 }
 
 export function step(keyword: string, text: string, argument?: PickleStepArgument) {
-  const args = [text, argument]
+  const args = [text, argument, fixtures]
     .filter(Boolean)
     .map((arg) => JSON.stringify(arg))
     .join(', ');

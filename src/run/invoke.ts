@@ -3,14 +3,17 @@ import { ITestCaseHookParameter } from '@cucumber/cucumber';
 import { World } from './world';
 import { loadCucumber } from './support';
 
-export async function invokeStep(world: World, text: string, argument?: unknown) {
+export async function invokeStep(world: World, text: string, argument?: unknown, customFixtures?: unknown) {
   const stepDefinition = await findStepDefinition(text);
   const { parameters } = await stepDefinition.getInvocationParameters({
     hookParameter: {} as ITestCaseHookParameter,
     step: { text, argument } as PickleStep,
     world,
   });
-  return stepDefinition.code.apply(world, parameters);
+  world.customFixtures = customFixtures;
+  const res = await stepDefinition.code.apply(world, parameters);
+  delete world.customFixtures;
+  return res;
 }
 
 async function findStepDefinition(stepText: string) {
