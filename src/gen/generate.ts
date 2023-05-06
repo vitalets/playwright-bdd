@@ -130,5 +130,5 @@ export class PWFile {
 }
 
 function isOutline(scenario: Scenario) {
-  return scenario.keyword === 'Scenario Outline';
+  return scenario.keyword === 'Scenario Outline' || scenario.keyword === 'Scenario Template';
 }
