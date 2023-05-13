@@ -18,6 +18,7 @@ This package allows to run [CucumberJS](https://github.com/cucumber/cucumber-js)
 - [World](#world)
 - [Custom World](#custom-world)
 - [Examples](#examples)
+- [Watch mode](#watch-mode)
 - [Debugging](#debugging)
 - [VS Code Integration](#vs-code-integration)
 - [Limitations](#limitations)
@@ -262,6 +263,12 @@ There several working examples depending on your project setup (ESM/CJS and TS/J
 - [CJS + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/cjs-ts)
 - [ESM](https://github.com/vitalets/playwright-bdd/tree/main/examples/esm)
 - [CJS](https://github.com/vitalets/playwright-bdd/tree/main/examples/cjs)
+
+## Watch mode
+To watch `.feature` files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
+```
+npx nodemon --watch features --ext feature --exec 'npx bddgen'
+```
 
 ## Debugging
 
