@@ -1,3 +1,5 @@
+import path from 'node:path';
+import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { Given, When, Then, DataTable } from '@cucumber/cucumber';
 import { World } from '../src';
@@ -51,6 +53,16 @@ Then('World prop {string} to be defined', async function (this: World, key: keyo
   expect(this[key]).toBeDefined();
 });
 
-Then('Doubled {int} to equal {int}', async function (this: World, arg: number, doubled: number) {
+Then('Doubled {int} equals {int}', async function (this: World, arg: number, doubled: number) {
   expect(arg * 2).toEqual(doubled);
+});
+
+Then('Uppercase {string} equals {string}', async function (this: World, s1: string, s2: string) {
+  expect(s1.toUpperCase()).toEqual(s2);
+});
+
+Then('File {string} contains {string}', async function (this: World, fileName: string, substring: string) {
+  const filePath = path.join('test', '.features-gen', 'test', 'features', fileName);
+  const content = fs.readFileSync(filePath, 'utf8');
+  expect(content).toContain(substring);
 });
