@@ -288,6 +288,9 @@ Currently there are some limitations:
 
 ## Changelog
 
+#### dev
+* Support "Scenario Template" keyword [#20](https://github.com/vitalets/playwright-bdd/issues/20)
+
 #### 2.1.0
 * Support Gherkin i18n [#13](https://github.com/vitalets/playwright-bdd/issues/13)
 
