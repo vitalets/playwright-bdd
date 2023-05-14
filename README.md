@@ -42,8 +42,8 @@ Both Playwright and Cucumber have their own test runners. You can use Cucumber r
 
 There are 2 phases:
 
-#### Phase 1: Generate Playwright tests from feature files
-CLI command `bddgen` reads Cucumber config and converts features into Playwright test files in `.features-gen` directory
+#### Phase 1: Generate Playwright tests from BDD feature files
+CLI command `bddgen` reads Cucumber config and converts features into Playwright test files:
 
 <details>
 <summary>Example of generated test</summary>
@@ -75,7 +75,7 @@ CLI command `bddgen` reads Cucumber config and converts features into Playwright
 </details>
 
 #### Phase 2: Run generated test files with Playwright runner
-Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` creates isolated Cucumber World with injected Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
+Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` creates isolated Cucumber World with Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
 
 <details>
 <summary>Example of step definition</summary>
@@ -99,7 +99,7 @@ Playwright runner takes generated test files and runs them as usual. For each te
   ```
 </details>
 
-**Run BDD tests in one command:**
+**Run BDD tests in single command:**
 ```
 npx bddgen && npx playwright test
 ```
