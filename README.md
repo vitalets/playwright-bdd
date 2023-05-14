@@ -269,7 +269,7 @@ There several working examples depending on your project setup (ESM/CJS and TS/J
 ## Watch mode
 To watch `.feature` files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
 ```
-npx nodemon --watch features --ext feature --exec 'npx bddgen'
+npx nodemon --watch ./features --ext feature --exec 'npx bddgen'
 ```
 
 ## Run single scenario
