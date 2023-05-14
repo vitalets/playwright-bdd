@@ -13,10 +13,10 @@ export function fileHeader(uri?: string) {
   ];
 }
 
-export function suite(title: string, children: string[]) {
+export function suite(tags: string[], title: string, children: string[]) {
   // prettier-ignore
   return [
-    `test.describe(${JSON.stringify(title)}, () => {`,
+    `test.describe${getMark(tags)}(${JSON.stringify(title)}, () => {`,
     '',
     ...children.map(indent),
     `});`,
@@ -35,11 +35,12 @@ export function beforeEach(keywords: Set<string>, children: string[]) {
   ];
 }
 
-export function test(title: string, keywords: Set<string>, children: string[]) {
+// eslint-disable-next-line max-params
+export function test(tags: string[], title: string, keywords: Set<string>, children: string[]) {
   const fixtures = [...keywords].join(', ');
   // prettier-ignore
   return [
-    `test(${JSON.stringify(title)}, async ({ ${fixtures} }) => {`,
+    `test${getMark(tags)}(${JSON.stringify(title)}, async ({ ${fixtures} }) => {`,
     ...children.map(indent),
     `});`,
     '',
@@ -52,6 +53,13 @@ export function step(keyword: string, text: string, argument?: PickleStepArgumen
     .map((arg) => JSON.stringify(arg))
     .join(', ');
   return `await ${keyword}(${args});`;
+}
+
+function getMark(tags: string[] = []) {
+  if (tags.includes('@only')) return '.only';
+  if (tags.includes('@skip')) return '.skip';
+  if (tags.includes('@fixme')) return '.fixme';
+  return '';
 }
 
 function indent(value: string) {

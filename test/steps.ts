@@ -61,8 +61,8 @@ Then('Uppercase {string} equals {string}', async function (this: World, s1: stri
   expect(s1.toUpperCase()).toEqual(s2);
 });
 
-Then('File {string} contains {string}', async function (this: World, fileName: string, substring: string) {
+Then('File {string} contains', async function (this: World, fileName: string, table: DataTable) {
   const filePath = path.join('test', '.features-gen', 'test', 'features', fileName);
   const content = fs.readFileSync(filePath, 'utf8');
-  expect(content).toContain(substring);
+  table.rows().forEach((row) => expect(content).toContain(row[0]));
 });

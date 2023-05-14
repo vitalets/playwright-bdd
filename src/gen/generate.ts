@@ -12,6 +12,7 @@ import {
   Pickle,
   Feature,
   Rule,
+  Examples,
 } from '@cucumber/messages';
 import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
@@ -47,10 +48,11 @@ export class PWFile {
     return this.getSuite(this.doc.feature);
   }
 
-  private getSuite({ name, children }: Feature | Rule) {
+  private getSuite(feature: Feature | Rule) {
+    const tags = getTagNames(feature);
     const lines: string[] = [];
-    children.forEach((child) => lines.push(...this.getSuiteChild(child)));
-    return formatter.suite(name, lines);
+    feature.children.forEach((child) => lines.push(...this.getSuiteChild(child)));
+    return formatter.suite(tags, feature.name, lines);
   }
 
   private getSuiteChild(child: FeatureChild | RuleChild) {
@@ -72,21 +74,24 @@ export class PWFile {
 
   private getOutlineSuite(scenario: Scenario) {
     const suiteLines: string[] = [];
+    const suiteTags = getTagNames(scenario);
     let exampleIndex = 0;
     scenario.examples.forEach((example) => {
+      const tags = getTagNames(example);
       example.tableBody.forEach((exampleRow) => {
         const title = `Example #${++exampleIndex}`;
         const { keywords, lines } = this.getSteps(scenario, exampleRow.id);
-        const testLines = formatter.test(title, keywords, lines);
+        const testLines = formatter.test(tags, title, keywords, lines);
         suiteLines.push(...testLines);
       });
     });
-    return formatter.suite(scenario.name, suiteLines);
+    return formatter.suite(suiteTags, scenario.name, suiteLines);
   }
 
   private getTest(scenario: Scenario) {
+    const tags = getTagNames(scenario);
     const { keywords, lines } = this.getSteps(scenario);
-    return formatter.test(scenario.name, keywords, lines);
+    return formatter.test(tags, scenario.name, keywords, lines);
   }
 
   private getSteps(scenario: Scenario | Background, outlineExampleRowId?: string) {
@@ -127,6 +132,10 @@ export class PWFile {
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
   }
+}
+
+function getTagNames(item: Feature | Rule | Scenario | Examples) {
+  return item.tags.map((tag) => tag.name);
 }
 
 function isOutline(scenario: Scenario) {

@@ -10,8 +10,11 @@ import { PWFile } from './generate';
 import { saveFiles } from './save';
 
 export type GenOptions = {
+  /** Dir to save generated files */
   outputDir?: string;
+  /** Path to cucumber config file */
   cucumberConfig?: string;
+  /** Working dir */
   cwd?: string;
 };
 

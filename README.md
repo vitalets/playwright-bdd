@@ -19,6 +19,8 @@ This package allows to run [CucumberJS](https://github.com/cucumber/cucumber-js)
 - [Custom World](#custom-world)
 - [Examples](#examples)
 - [Watch mode](#watch-mode)
+- [Run single scenario](#run-single-scenario)
+- [Skip scenario](#skip-scenario)
 - [Debugging](#debugging)
 - [VS Code Integration](#vs-code-integration)
 - [Limitations](#limitations)
@@ -270,6 +272,26 @@ To watch `.feature` files and automatically re-generate tests you can use [nodem
 npx nodemon --watch features --ext feature --exec 'npx bddgen'
 ```
 
+## Run single scenario
+Use `@only` tag to run single feature / scenario:
+```gherkin
+@only
+Feature: Playwright site
+
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+```
+
+## Skip scenario
+Use `@skip` (or `@fixme`) tag to skip particular feature / scenario:
+```gherkin
+@skip
+Feature: Playwright site
+
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+```
+
 ## Debugging
 
 You can debug tests as usual with `--debug` flag:
@@ -296,6 +318,7 @@ Currently there are some limitations:
 ## Changelog
 
 #### dev
+* Run only one scenario / skip scenario [#14](https://github.com/vitalets/playwright-bdd/issues/14)
 * Support "Scenario Template" keyword [#20](https://github.com/vitalets/playwright-bdd/issues/20)
 
 #### 2.1.0
