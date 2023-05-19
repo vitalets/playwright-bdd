@@ -1,5 +1,5 @@
-import { setWorldConstructor, Then } from '@cucumber/cucumber';
-import { World, WorldOptions } from '../../src';
+import { setWorldConstructor } from '@cucumber/cucumber';
+import { World, WorldOptions } from '../../../src';
 
 export type WorldParameters = {
   foo: string;
@@ -19,7 +19,3 @@ export class CustomWorld extends World<WorldParameters> {
 }
 
 setWorldConstructor(CustomWorld);
-
-Then('Get world', function (this: CustomWorld) {
-  return this;
-});

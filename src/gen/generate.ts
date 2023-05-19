@@ -16,12 +16,29 @@ import {
 } from '@cucumber/messages';
 import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
+import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
+import { findStepDefinition } from '../cucumber/steps';
+import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import { stepFixtureNames, customFixtures } from '../pwstyle';
 
 export class PWFile {
+  static customFixturesDefinitionArg?: string = undefined;
+
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
 
-  constructor(public doc: GherkinDocument, private pickles: Pickle[]) {}
+  static getCustomFixturesDefinitionArg() {
+    if (PWFile.customFixturesDefinitionArg === undefined) {
+      PWFile.customFixturesDefinitionArg = formatter.buildCustomFixturesDefinitionArg(customFixtures);
+    }
+    return PWFile.customFixturesDefinitionArg;
+  }
+
+  constructor(
+    public doc: GherkinDocument,
+    private pickles: Pickle[],
+    private supportCodeLibrary: ISupportCodeLibrary,
+  ) {}
 
   get content() {
     return this.lines.join('\n');
@@ -33,7 +50,10 @@ export class PWFile {
 
   build() {
     this.loadI18nKeywords();
-    this.lines = [...formatter.fileHeader(this.doc.uri), ...this.getRootSuite()];
+    this.lines = [
+      ...formatter.fileHeader(this.doc.uri, PWFile.getCustomFixturesDefinitionArg()), // prettier-ignore
+      ...this.getRootSuite(),
+    ];
     return this;
   }
 
@@ -68,8 +88,8 @@ export class PWFile {
   }
 
   private getBeforeEach(bg: Background) {
-    const { keywords, lines } = this.getSteps(bg);
-    return formatter.beforeEach(keywords, lines);
+    const { fixtures, lines } = this.getSteps(bg);
+    return formatter.beforeEach(fixtures, lines);
   }
 
   private getOutlineSuite(scenario: Scenario) {
@@ -80,8 +100,8 @@ export class PWFile {
       const tags = getTagNames(example);
       example.tableBody.forEach((exampleRow) => {
         const title = `Example #${++exampleIndex}`;
-        const { keywords, lines } = this.getSteps(scenario, exampleRow.id);
-        const testLines = formatter.test(tags, title, keywords, lines);
+        const { fixtures, lines } = this.getSteps(scenario, exampleRow.id);
+        const testLines = formatter.test(tags, title, fixtures, lines);
         suiteLines.push(...testLines);
       });
     });
@@ -90,26 +110,28 @@ export class PWFile {
 
   private getTest(scenario: Scenario) {
     const tags = getTagNames(scenario);
-    const { keywords, lines } = this.getSteps(scenario);
-    return formatter.test(tags, scenario.name, keywords, lines);
+    const { fixtures, lines } = this.getSteps(scenario);
+    return formatter.test(tags, scenario.name, fixtures, lines);
   }
 
   private getSteps(scenario: Scenario | Background, outlineExampleRowId?: string) {
-    const keywords = new Set<string>();
+    const fixtures = new Set<string>();
     const lines = scenario.steps.map((step) => {
       const pickleStep = this.getPickleStep(step, outlineExampleRowId);
-      // todo: findStepDefinition, get fixtures by step definition
-      const { keyword, line } = this.getStep(step, pickleStep);
-      keywords.add(keyword);
+      const stepDefinition = findStepDefinition(this.supportCodeLibrary, pickleStep.text);
+      const { keyword, fixtures: stepFixtures, line } = this.getStep(step, pickleStep, stepDefinition);
+      fixtures.add(keyword);
+      stepFixtures.forEach((fixture) => fixtures.add(fixture));
       return line;
     });
-    return { keywords, lines };
+    return { fixtures, lines };
   }
 
-  private getStep(step: Step, { text, argument }: PickleStep) {
+  private getStep(step: Step, { text, argument }: PickleStep, { code }: StepDefinition) {
     const keyword = this.getKeyword(step);
-    const line = formatter.step(keyword, text, argument);
-    return { keyword, line };
+    const fixtures = stepFixtureNames.get(code) || [];
+    const line = formatter.step(keyword, text, argument, fixtures);
+    return { keyword, fixtures, line };
   }
 
   private getPickleStep(step: Step, outlineExampleRowId?: string) {

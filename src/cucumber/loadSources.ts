@@ -38,6 +38,7 @@ export async function loadSources(coordinates: ISourcesCoordinates, environment:
     featurePaths,
     coordinates,
   });
+
   return {
     filteredPickles,
     parseErrors,

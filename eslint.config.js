@@ -5,7 +5,7 @@ const tsPlugin = require('@typescript-eslint/eslint-plugin');
 
 module.exports = [
   {
-    ignores: ['examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/*.js'],
+    ignores: ['.features-gen', 'examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/*.js'],
   },
   js.configs.recommended,
   {
@@ -44,6 +44,8 @@ module.exports = [
     files: ['test/**/*.ts'],
     rules: {
       'max-params': 0,
+      'no-empty-pattern': 0,
+      '@typescript-eslint/no-empty-function': 0,
     },
   },
 ];
