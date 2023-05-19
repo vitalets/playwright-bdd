@@ -62,7 +62,7 @@ Then('Uppercase {string} equals {string}', async function (this: World, s1: stri
 });
 
 Then('File {string} contains', async function (this: World, fileName: string, table: DataTable) {
-  const filePath = path.join('test', '.features-gen', 'test', 'features', fileName);
+  const filePath = path.join('.features-gen', 'test', 'features', fileName);
   const content = fs.readFileSync(filePath, 'utf8');
   table.rows().forEach((row) => expect(content).toContain(row[0]));
 });

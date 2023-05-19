@@ -1,5 +1,6 @@
 import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
+import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -10,11 +11,15 @@ export type WorldOptions<ParametersType = any> = IWorldOptions<ParametersType> &
   browserName: string;
   request: APIRequestContext;
   testInfo: TestInfo;
+  supportCodeLibrary: ISupportCodeLibrary;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
-  constructor(protected options: WorldOptions<ParametersType>) {
+  // todo: hide with Symbol
+  customFixtures: unknown;
+
+  constructor(public options: WorldOptions<ParametersType>) {
     super(options);
   }
 
@@ -49,4 +54,15 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
   async destroy() {
     // async teardown after each test
   }
+}
+
+export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
+  // setWorldConstructor was not called
+  if (supportCodeLibrary.World === CucumberWorld) {
+    return World;
+  }
+  if (!Object.prototype.isPrototypeOf.call(World, supportCodeLibrary.World)) {
+    throw new Error(`CustomWorld should inherit from playwright-bdd World`);
+  }
+  return supportCodeLibrary.World as typeof World;
 }
