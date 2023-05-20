@@ -13,4 +13,4 @@ jobs:
           node-version: 16
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm test:all
+      - run: npm run test:all
