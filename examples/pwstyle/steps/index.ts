@@ -5,7 +5,7 @@ Given('I open url {string}', async ({ page }, url: string) => {
 });
 
 When('I click link {string}', async ({ myPage }, name: string) => {
-  await myPage.clickLink(name);
+  await myPage.openLink(name);
 });
 
 Then('I see in title {string}', async ({ myPage }, text: string) => {
