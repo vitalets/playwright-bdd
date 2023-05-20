@@ -50,62 +50,50 @@ Both Playwright and Cucumber have their own test runners. You can use Cucumber r
 
 **Phase 1: Generate Playwright test files from BDD feature files**
 
-CLI command `bddgen` reads Cucumber config and converts features into Playwright test files:
+CLI command `bddgen` reads Cucumber config and converts feature files into Playwright test files:
 
-<details>
-<summary>Example of generated test file</summary>
+From
+```gherkin
+Feature: Playwright site
 
-  From
-  ```gherkin
-  Feature: Playwright site
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+        When I click link "Get started"
+        Then I see in title "Playwright"
+```
 
-      Scenario: Check title
-          Given I open url "https://playwright.dev"
-          When I click link "Get started"
-          Then I see in title "Playwright"
-  ```
+To
+```js
+import { test } from 'playwright-bdd';
 
-  To
-  ```js
-  import { test } from 'playwright-bdd';
+test.describe('Playwright site', () => {
 
-  test.describe('Playwright site', () => {
+  test('Check title', async ({ Given, When, Then }) => {
+    await Given('I open url "https://playwright.dev"');
+    await When('I click link "Get started"');
+    await Then('I see in title "Playwright"');
+  });
 
-    test('Check title', async ({ Given, When, Then }) => {
-      await Given('I open url "https://playwright.dev"');
-      await When('I click link "Get started"');
-      await Then('I see in title "Playwright"');
-    });
-
-  });    
-  ```
-</details>
+});    
+```
 
 **Phase 2: Run generated test files with Playwright runner**
 
-Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` creates isolated Cucumber World with Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
+Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` provides Playwright API (`page`, `browser`, etc):
 
-<details>
-<summary>Example of step definition</summary>
+```js
+Given('I open url {string}', async function (url) {
+  await this.page.goto(url);
+});
 
-  ```ts
-  import { expect } from '@playwright/test';
-  import { Given, When, Then } from '@cucumber/cucumber';
-  import { World } from 'playwright-bdd';
+When('I click link {string}', async function (name) {
+  await this.page.getByRole('link', { name }).click();
+});
 
-  Given('I open url {string}', async function (this: World, url: string) {
-    await this.page.goto(url);
-  });
-
-  When('I click link {string}', async function (this: World, name: string) {
-    await this.page.getByRole('link', { name }).click();
-  });
-
-  Then('I see in title {string}', async function (this: World, text: string) {
-    await expect(this.page).toHaveTitle(new RegExp(text));
-  });  
-  ```
-</details>
+Then('I see in title {string}', async function (text) {
+  await expect(this.page).toHaveTitle(new RegExp(text));
+});  
+```
 
 **Run BDD tests in single command:**
 ```
@@ -134,7 +122,7 @@ npx playwright install
 
 ## Get started
 
-1. Create Cucumber config file `cucumber.cjs` in project root:
+1. Create Cucumber config `cucumber.cjs` in project root:
 
     ```js
     module.exports = {
@@ -148,7 +136,7 @@ npx playwright install
     };
     ```
 
-2. Create Playwright config file `playwright.config.js`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
+2. Create Playwright config `playwright.config.js`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
 
    ```js
    import { defineConfig } from '@playwright/test';
@@ -296,9 +284,9 @@ You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtu
 
 Playwright-style highlights:
 
-* use `Given`, `When`, `Then` from `createBDD()` call
+* use `Given`, `When`, `Then` from `createBDD()` call (see example below)
 * pass custom fixtures to `createBDD()` similar to [test.extend](https://playwright.dev/docs/test-fixtures#creating-a-fixture)
-* use arrows for step functions
+* use arrow functions for step definitions
 * don't use `World` and `before/after` hooks in favor of fixtures
 
 Example:
@@ -368,10 +356,10 @@ Cucumber-style step definitions are compatible with CucumberJS. Use it if you ar
 Cucumber-style highlights:
 
 * use `Given`, `When`, `Then` from `@cucumber/cucumber` package
-* [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrows) 
+* [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrows!) 
 * use `World` from `playwright-bdd` to access Playwright API 
 
-Example:
+Example (typescript):
 
 ```ts
 import { Given, When, Then } from '@cucumber/cucumber';
@@ -435,7 +423,7 @@ export class CustomWorld extends World {
 
 setWorldConstructor(CustomWorld);
 ```
-> Consider asynchronous setup and teardown before each test with `init()` / `destroy()` methods.
+> Consider asynchronous setup and teardown of World instance with `init()` / `destroy()` methods.
 
 ## Examples
 
