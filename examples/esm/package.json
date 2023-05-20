@@ -1,3 +1,6 @@
 {
-  "type": "module"
+  "type": "module",
+  "scripts": {
+    "test": "npx bddgen && npx playwright test"
+  }
 }
