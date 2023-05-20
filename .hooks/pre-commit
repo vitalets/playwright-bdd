@@ -4,5 +4,4 @@
 set -euo pipefail
 
 npx lint-staged
-# npm test -- --forbid-only
-npm run test:all
+FORBID_ONLY=1 npm test
