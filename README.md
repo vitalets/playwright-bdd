@@ -82,16 +82,16 @@ test.describe('Playwright site', () => {
 Playwright runner takes generated test files and runs them as usual. Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
 
 ```js
-Given('I open url {string}', async function (url) {
-  await this.page.goto(url);
+Given('I open url {string}', async ({ page }, url) => {
+  await page.goto(url);
 });
 
-When('I click link {string}', async function (name) {
-  await this.page.getByRole('link', { name }).click();
+When('I click link {string}', async ({ page }, name) => {
+  await page.getByRole('link', { name }).click();
 });
 
-Then('I see in title {string}', async function (text) {
-  await expect(this.page).toHaveTitle(new RegExp(text));
+Then('I see in title {string}', async ({ page }, text) => {
+  await expect(page).toHaveTitle(new RegExp(text));
 });  
 ```
 
@@ -177,7 +177,7 @@ npx playwright install
      await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
-   > There is alternative Cucumber-style syntax for step definitions, see (Writing steps)[#writing-steps] section.
+   > There is alternative Cucumber-style syntax for step definitions, see [Writing steps](#writing-steps) section.
 
 5. Run command to generate and execute tests:
 
@@ -321,14 +321,13 @@ When('I click link {string}', async ({ myPage }, name: string) => {
   await myPage.openLink(name);
 });
 ```
-See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/pwstyle).
+See [full example of Playwright-style](examples/pwstyle).
 
 #### Worker-scoped fixtures
 Worker-scopd fixtures can be defined the same way as in regular playwright tests:
 
 ```ts
 import { createBDD } from 'playwright-bdd';
-import { Page } from '@playwright/test';
 
 // worker-scoped fixture
 class Account {
