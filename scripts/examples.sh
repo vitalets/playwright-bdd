@@ -4,6 +4,7 @@
 set -eo pipefail
 
 if [ -z "$1" ]; then
+    ./scripts/examples.sh pwstyle
     ./scripts/examples.sh cjs-ts
     ./scripts/examples.sh esm-ts
     ./scripts/examples.sh cjs
@@ -12,6 +13,5 @@ if [ -z "$1" ]; then
 fi
 
 pushd examples/$1
-npx ts-node ../../src/gen/cli
-npx playwright test
+npx bddgen && npx playwright test
 popd
