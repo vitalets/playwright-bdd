@@ -49,6 +49,7 @@ Both Playwright and Cucumber have their own test runners. You can use Cucumber r
 ## How it works
 
 **Phase 1: Generate Playwright test files from BDD feature files**
+
 CLI command `bddgen` reads Cucumber config and converts features into Playwright test files:
 
 <details>
@@ -81,6 +82,7 @@ CLI command `bddgen` reads Cucumber config and converts features into Playwright
 </details>
 
 **Phase 2: Run generated test files with Playwright runner**
+
 Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` creates isolated Cucumber World with Playwright fixtures (`page`, `browser`, etc). It allows to write step definitions using Playwright API:
 
 <details>
