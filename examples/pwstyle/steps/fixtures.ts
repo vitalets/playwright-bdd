@@ -5,7 +5,7 @@ import { createBDD } from 'playwright-bdd';
 class MyPage {
   constructor(public page: Page) {}
 
-  async clickLink(name: string) {
+  async openLink(name: string) {
     await this.page.getByRole('link', { name }).click();
   }
 
