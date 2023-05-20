@@ -165,15 +165,15 @@ npx playwright install
 
    const { Given, When, Then } = createBDD();
 
-   Given('I open url {string}', async ({ page }, url: string) {
+   Given('I open url {string}', async ({ page }, url: string) => {
      await page.goto(url);
    });
 
-   When('I click link {string}', async ({ page }, name: string) {
+   When('I click link {string}', async ({ page }, name: string) => {
      await page.getByRole('link', { name }).click();
    });
 
-   Then('I see in title {string}', async ({ page }, keyword: string) {
+   Then('I see in title {string}', async ({ page }, keyword: string) => {
      await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
