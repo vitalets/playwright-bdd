@@ -13,5 +13,5 @@ if [ -z "$1" ]; then
 fi
 
 pushd examples/$1
-npx bddgen && npx playwright test
+npm test
 popd
