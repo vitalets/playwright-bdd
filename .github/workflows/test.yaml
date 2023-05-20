@@ -13,4 +13,4 @@ jobs:
           node-version: 16
       - run: npm ci
       - run: npx playwright install --with-deps chromium
-      - run: npm run test:all
+      - run: FORBID_ONLY=1 npm test
