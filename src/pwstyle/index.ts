@@ -9,6 +9,7 @@ import { DefineStepPattern, IDefineStep } from '@cucumber/cucumber/lib/support_c
 import { World } from '../run/world';
 import { fixtureParameterNames } from './fixtureParameterNames';
 import { FixturesArg, FixturesDefinition, KeyValue } from './types';
+import { TestInfo } from '@playwright/test';
 
 export const customFixtures: FixturesDefinition = {};
 export const stepFixtureNames = new Map<Function, string[]>();
@@ -22,11 +23,13 @@ export function createBDD<T extends KeyValue, W extends KeyValue = {}>(fixtures:
 }
 
 function defineStep<T extends KeyValue, W extends KeyValue = {}>(CucumberStepFn: IDefineStep) {
-  type StepFunction = (fixtures: FixturesArg<T, W>, ...args: any[]) => unknown;
+  type StepFunctionFixturesArg = FixturesArg<T, W> & { testInfo: TestInfo };
+  type StepFunction = (fixtures: StepFunctionFixturesArg, ...args: any[]) => unknown;
   return (pattern: DefineStepPattern, fn: StepFunction) => {
-    const fixtureNames = fixtureParameterNames(fn);
+    const fixtureNames = fixtureParameterNames(fn).filter((name) => name !== 'testInfo');
     const cucumberFn = function (this: World, ...args: any[]) {
-      return fn.call(this, (this.customFixtures as FixturesArg<T, W>) || {}, ...args);
+      const fixturesArg = Object.assign({}, this.customFixtures, { testInfo: this.testInfo });
+      return fn.call(this, fixturesArg as StepFunctionFixturesArg, ...args);
     };
     stepFixtureNames.set(cucumberFn, fixtureNames);
     return CucumberStepFn(pattern, cucumberFn);

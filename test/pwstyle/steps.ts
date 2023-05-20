@@ -44,3 +44,7 @@ Then(
     expect(arg).toEqual('bar');
   },
 );
+
+Then('testInfo is available as a fixture', async ({ testInfo }) => {
+  expect(testInfo.title).toEqual('Check fixtures');
+});
