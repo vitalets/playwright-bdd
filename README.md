@@ -39,16 +39,16 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 <!-- tocstop -->
 
 ## Why Playwright runner
-Both Playwright and Cucumber have their own test runners. You can use Cucumber runner with Playwright [included as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc). Alternative way (provided by this package) is to convert BDD scenarios into Playwright tests and run them using Playwright runner. It gives the following benefits:
+Both Playwright and Cucumber have their own test runners. You can use Cucumber runner with [Playwright included as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc). Alternative way (provided by this package) is to convert BDD scenarios into Playwright tests and run them using Playwright runner. It gives the following benefits:
 
 * Automatic browser initialization and cleanup
 * Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) instead of `before / after` hooks
 * Parallelize tests with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
-* [...lot more](https://playwright.dev/docs/library#key-differences)
+* [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## How it works
 
-**Phase 1: Generate Playwright test files from BDD feature files**
+**Phase 1: Generate Playwright test files from feature files**
 
 CLI command `bddgen` reads Cucumber config and converts feature files into Playwright test files:
 
@@ -79,7 +79,7 @@ test.describe('Playwright site', () => {
 
 **Phase 2: Run generated test files with Playwright runner**
 
-Playwright runner takes generated test files and runs them as usual. For each test `playwright-bdd` provides Playwright API (`page`, `browser`, etc):
+Playwright runner takes generated test files and runs them as usual. Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
 
 ```js
 Given('I open url {string}', async function (url) {
@@ -158,25 +158,26 @@ npx playwright install
            Then I see in title "Playwright"
    ```
 
-4. Write step definitions in `features/steps/*.{ts,js}` files. Use `World` from `playwright-bdd`:
-
+4. Write step definitions in `features/steps/*.{ts,js}` files:
    ```ts
+   import { createBDD } from 'playwright-bdd';
    import { expect } from '@playwright/test';
-   
-   import { World } from 'playwright-bdd';
 
-   Given('I open url {string}', async function (this: World, url: string) {
-     await this.page.goto(url);
+   const { Given, When, Then } = createBDD();
+
+   Given('I open url {string}', async ({ page }, url: string) {
+     await page.goto(url);
    });
 
-   When('I click link {string}', async function (this: World, name: string) {
-     await this.page.getByRole('link', { name }).click();
+   When('I click link {string}', async ({ page }, name: string) {
+     await page.getByRole('link', { name }).click();
    });
 
-   Then('I see in title {string}', async function (this: World, keyword: string) {
-     await expect(this.page).toHaveTitle(new RegExp(keyword));
+   Then('I see in title {string}', async ({ page }, keyword: string) {
+     await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
+   > There is alternative Cucumber-style syntax for step definitions, see (Writing steps)[#writing-steps] section.
 
 5. Run command to generate and execute tests:
 
