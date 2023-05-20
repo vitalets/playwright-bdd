@@ -14,7 +14,7 @@ import { TestInfo } from '@playwright/test';
 export const customFixtures: FixturesDefinition = {};
 export const stepFixtureNames = new Map<Function, string[]>();
 
-export function createBDD<T extends KeyValue, W extends KeyValue = {}>(fixtures: FixturesDefinition<T, W>) {
+export function createBDD<T extends KeyValue, W extends KeyValue = {}>(fixtures?: FixturesDefinition<T, W>) {
   Object.assign(customFixtures, fixtures);
   const Given = defineStep<T, W>(CucumberGiven);
   const When = defineStep<T, W>(CucumberWhen);
