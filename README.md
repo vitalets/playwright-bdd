@@ -321,6 +321,31 @@ When('I click link {string}', async ({ myPage }, name: string) => {
   await myPage.openLink(name);
 });
 ```
+
+**TIP:** move `createBDD()` into separate `fixtures.ts` file and export `{ Given, When, Then }` for usage in steps.
+
+`fixtures.ts`:
+```ts
+import { createBDD } from 'playwright-bdd';
+
+const { Given, When, Then } = createBDD<{ myPage: MyPage }>({
+  myPage: async ({ page }, use) => {
+    await use(new MyPage(page));
+  }
+});
+
+export { Given, When, Then };
+```
+
+`steps.ts`:
+```ts
+import { Given, When, Then } from './fixtures';
+
+Given('I open url {string}', async ({ page }, url: string) => { ... });
+When('I click link {string}', async ({ myPage }, name: string) => { ... });
+Then('I see in title {string}', async ({ myPage }, text: string) => { ... });
+```
+
 See [full example of Playwright-style](examples/pwstyle).
 
 #### Worker-scoped fixtures
