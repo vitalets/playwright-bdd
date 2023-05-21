@@ -19,7 +19,7 @@ When('action {int}', ({}, n: number) => {
   expect(typeof n).toEqual('number');
 });
 
-When('async action {int}', async ({}, n: number) => {
+When(/^async action (\d+)$/, async ({}, n: number) => {
   expect(typeof n).toEqual('number');
 });
 

@@ -12,8 +12,8 @@ When('Action {int}', async function () {
   // noop
 });
 
-Then('Check {int}', async function () {
-  // noop
+Then(/^Check (\d+)$/, async function (n: number) {
+  expect(typeof n).toEqual('number');
 });
 
 Given(

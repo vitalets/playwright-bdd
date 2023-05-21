@@ -4,7 +4,7 @@ Given('I open url {string}', async ({ page }, url: string) => {
   await page.goto(url);
 });
 
-When('I click link {string}', async ({ myPage }, name: string) => {
+When(/^I click link "(.+)"$/, async ({ myPage }, name: string) => {
   await myPage.openLink(name);
 });
 
