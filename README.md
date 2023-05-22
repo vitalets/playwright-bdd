@@ -24,6 +24,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 - [Writing steps](#writing-steps)
   * [Playwright-style](#playwright-style)
     + [Worker-scoped fixtures](#worker-scoped-fixtures)
+    + [Accessing `testInfo`](#accessing-testinfo)
   * [Cucumber-style](#cucumber-style)
     + [World](#world)
     + [Custom World](#custom-world)
@@ -372,6 +373,16 @@ const { Given, When, Then } = createBDD<{}, { account: Account }>({
 // use fixtures in steps
 Given('I am a user', async ({ account }) => {
   // ...
+});
+```
+
+#### Accessing `testInfo`
+To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc.. use it as a fixture:
+
+```ts
+Given('I do something', async ({ testInfo }) => { 
+  console.log(testInfo.title); // I do something
+  testInfo.skip();
 });
 ```
 
