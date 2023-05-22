@@ -25,8 +25,9 @@ When(/^async action (\d+)$/, async ({}, n: number) => {
 
 Then(
   'result with fixtures and arg equals to {string} - arrow fn',
-  async ({ page, todoPage, account, option }, arg: string) => {
+  async ({ page, browserName, todoPage, account, option }, arg: string) => {
     expect(page).toBeDefined();
+    expect(browserName).toEqual('chromium');
     expect(todoPage.prop).toEqual('123');
     expect(account.username).toEqual('user');
     expect(option).toEqual('foo');
@@ -36,8 +37,9 @@ Then(
 
 Then(
   'result with fixtures and arg equals to {string} - function',
-  async function ({ page, todoPage, account, option }, arg: string) {
+  async function ({ page, browserName, todoPage, account, option }, arg: string) {
     expect(page).toBeDefined();
+    expect(browserName).toEqual('chromium');
     expect(todoPage.prop).toEqual('123');
     expect(account.username).toEqual('user');
     expect(option).toEqual('foo');
