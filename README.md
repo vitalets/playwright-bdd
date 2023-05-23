@@ -317,7 +317,7 @@ Currently there are some limitations:
 
 ## Changelog
 
-#### dev
+#### 2.2.0
 * Run only one scenario / skip scenario [#14](https://github.com/vitalets/playwright-bdd/issues/14)
 * Support "Scenario Template" keyword [#20](https://github.com/vitalets/playwright-bdd/issues/20)
 
