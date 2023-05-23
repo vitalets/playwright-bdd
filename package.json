@@ -1,7 +1,7 @@
 {
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright and Cucumber-js",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "bin": {
     "bddgen": "./dist/gen/cli.js"
   },
