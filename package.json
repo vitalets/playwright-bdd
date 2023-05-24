@@ -66,5 +66,8 @@
     "testing",
     "e2e"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "allure-playwright": "^2.3.0"
+  }
 }

@@ -3,6 +3,7 @@ import { World as CucumberWorld, IWorldOptions, ITestCaseHookParameter } from '@
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
+import { getLocationByStacktrace } from './getLocationByStacktrace';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -36,9 +37,14 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
       step: { text, argument } as PickleStep,
       world: this,
     });
+    // get location of step call in generated test file
+    const location = getLocationByStacktrace(2);
     // attach custom fixtures to world - the only way to pass them to cucumber step fn
     this.customFixtures = customFixtures;
-    const res = await stepDefinition.code.apply(this, parameters);
+    // @ts-expect-error _runAsStep is private
+    const res = await world.testInfo._runAsStep({ category: 'test.step', title: text, location }, () =>
+      stepDefinition.code.apply(this, parameters),
+    );
     delete this.customFixtures;
     return res;
   }
