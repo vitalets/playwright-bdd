@@ -19,7 +19,7 @@ class Account {
   constructor(public username: string, public password: string) {}
 }
 
-const { Given, When, Then } = createBDD<{ myPage: MyPage }, { account: Account }>({
+export const { Given, When, Then } = createBDD<{ myPage: MyPage }, { account: Account }>({
   myPage: async ({ page }, use) => {
     await use(new MyPage(page));
   },
@@ -30,5 +30,3 @@ const { Given, When, Then } = createBDD<{ myPage: MyPage }, { account: Account }
     { scope: 'worker' },
   ],
 });
-
-export { Given, When, Then };

@@ -329,13 +329,11 @@ When('I click link {string}', async ({ myPage }, name: string) => {
 ```ts
 import { createBDD } from 'playwright-bdd';
 
-const { Given, When, Then } = createBDD<{ myPage: MyPage }>({
+export const { Given, When, Then } = createBDD<{ myPage: MyPage }>({
   myPage: async ({ page }, use) => {
     await use(new MyPage(page));
   }
 });
-
-export { Given, When, Then };
 ```
 
 `steps.ts`:
