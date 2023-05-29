@@ -2,7 +2,7 @@ import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@pla
 import { World as CucumberWorld, IWorldOptions, ITestCaseHookParameter } from '@cucumber/cucumber';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { PickleStep } from '@cucumber/messages';
-import { findStepDefinition } from '../cucumber/steps';
+import { findStepDefinition } from '../cucumber/loadSteps';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

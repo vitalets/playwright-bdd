@@ -19,9 +19,9 @@ import path from 'node:path';
 import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { findStepDefinition } from '../cucumber/steps';
+import { findStepDefinition } from '../cucumber/loadSteps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { stepFixtureNames } from '../pwstyle';
+import { stepFixtureNames } from '../run/createBDD';
 
 export type TestFileOptions = {
   doc: GherkinDocument;

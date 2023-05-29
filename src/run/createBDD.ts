@@ -6,15 +6,15 @@
 
 import { Given as CucumberGiven, When as CucumberWhen, Then as CucumberThen } from '@cucumber/cucumber';
 import { DefineStepPattern, IDefineStep } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { World } from '../run/world';
+import { World } from './world';
 import { fixtureParameterNames } from './fixtureParameterNames';
 import { FixturesArg, KeyValue } from './types';
 import { TestInfo, TestType } from '@playwright/test';
 
 export const stepFixtureNames = new Map<Function, string[]>();
 
-export function createBDD<T extends KeyValue, W extends KeyValue = {}>(_?: TestType<T, W>) {
-  // todo: check that test imported from playwright-bdd?
+export function createBDD<T extends KeyValue = {}, W extends KeyValue = {}>(_test?: TestType<T, W>) {
+  // todo: check that test was imported from playwright-bdd not from @playwright/test?
   const Given = defineStep<T, W>(CucumberGiven);
   const When = defineStep<T, W>(CucumberWhen);
   const Then = defineStep<T, W>(CucumberThen);

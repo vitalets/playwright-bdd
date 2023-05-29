@@ -1,6 +1,6 @@
 import { test as base } from '@playwright/test';
-import { loadConfig } from '../cucumber/config';
-import { loadSteps } from '../cucumber/steps';
+import { loadConfig } from '../cucumber/loadConfig';
+import { loadSteps } from '../cucumber/loadSteps';
 import { World, getWorldConstructor } from './world';
 
 type BDDFixtures = {
