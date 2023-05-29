@@ -6,13 +6,17 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { fixtureParameterNames } from '../pwstyle/fixtureParameterNames';
 import { FixturesDefinition } from '../pwstyle/types';
 
-export function fileHeader(uri?: string, customFixturesRegistrationArg = '') {
+export type ImportTestFrom = {
+  file: string;
+  varName?: string;
+};
+
+export function fileHeader(uri: string, { file, varName }: ImportTestFrom) {
+  const importVar = !varName || varName === 'test' ? 'test' : `${varName} as test`;
   // prettier-ignore
   return [
     `/** Generated from: ${uri} */`,
-    `import { createTest, useFixture } from "playwright-bdd";`,
-    '',
-    `const test = createTest(${customFixturesRegistrationArg});`,
+    `import { ${importVar} } from "${file}";`,
     '',
   ];
 }

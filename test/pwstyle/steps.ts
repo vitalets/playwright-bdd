@@ -1,5 +1,8 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then } from './fixtures';
+import { createBDD } from '../../src';
+import { test } from './fixtures';
+
+const { Given, When, Then } = createBDD(test);
 
 Given('state with fixtures - arrow fn', async ({ page, account }) => {
   expect(page).toBeDefined();

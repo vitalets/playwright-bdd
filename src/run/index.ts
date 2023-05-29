@@ -3,7 +3,7 @@ import { loadConfig } from '../cucumber/config';
 import { loadSteps } from '../cucumber/steps';
 import { customFixtures } from '../pwstyle';
 import { FixturesDefinition, KeyValue } from '../pwstyle/types';
-import { test as base } from './defaultFixtures';
+import { test as base } from './baseTest';
 
 let test: TestType<KeyValue, KeyValue>;
 

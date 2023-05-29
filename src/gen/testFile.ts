@@ -14,47 +14,59 @@ import {
   Rule,
   Examples,
 } from '@cucumber/messages';
+import fs from 'node:fs';
+import path from 'node:path';
 import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/steps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { stepFixtureNames, customFixtures } from '../pwstyle';
+import { stepFixtureNames } from '../pwstyle';
 
-export class PWFile {
-  static customFixturesDefinitionArg?: string = undefined;
+export type TestFileOptions = {
+  doc: GherkinDocument;
+  pickles: Pickle[];
+  supportCodeLibrary: ISupportCodeLibrary;
+  outputDir: string;
+  importTestFrom: formatter.ImportTestFrom;
+};
 
+export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
 
-  static getCustomFixturesDefinitionArg() {
-    if (PWFile.customFixturesDefinitionArg === undefined) {
-      PWFile.customFixturesDefinitionArg = formatter.buildCustomFixturesDefinitionArg(customFixtures);
-    }
-    return PWFile.customFixturesDefinitionArg;
-  }
-
-  constructor(
-    public doc: GherkinDocument,
-    private pickles: Pickle[],
-    private supportCodeLibrary: ISupportCodeLibrary,
-  ) {}
+  constructor(private options: TestFileOptions) {}
 
   get content() {
     return this.lines.join('\n');
   }
 
   get language() {
-    return this.doc.feature?.language || 'en';
+    return this.options.doc.feature?.language || 'en';
+  }
+
+  get outputPath() {
+    return path.join(this.options.outputDir, `${this.options.doc.uri}.spec.js`);
   }
 
   build() {
     this.loadI18nKeywords();
     this.lines = [
-      ...formatter.fileHeader(this.doc.uri, PWFile.getCustomFixturesDefinitionArg()), // prettier-ignore
+      ...this.getFileHeader(), // prettier-ignore
       ...this.getRootSuite(),
     ];
     return this;
+  }
+
+  save() {
+    const dir = path.dirname(this.outputPath);
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+    fs.writeFileSync(this.outputPath, this.content);
+  }
+
+  private getFileHeader() {
+    const importTestFrom = this.getRelativeImportTestFrom();
+    return formatter.fileHeader(this.options.doc.uri || '', importTestFrom);
   }
 
   private loadI18nKeywords() {
@@ -63,9 +75,23 @@ export class PWFile {
     }
   }
 
+  private getRelativeImportTestFrom() {
+    let {
+      importTestFrom: { file, varName },
+    } = this.options;
+    if (path.isAbsolute(file)) {
+      const dir = path.dirname(this.outputPath);
+      file = path.relative(dir, file);
+    }
+    return {
+      file,
+      varName,
+    };
+  }
+
   private getRootSuite() {
-    if (!this.doc.feature) throw new Error(`Document without feature.`);
-    return this.getSuite(this.doc.feature);
+    if (!this.options.doc.feature) throw new Error(`Document without feature.`);
+    return this.getSuite(this.options.doc.feature);
   }
 
   private getSuite(feature: Feature | Rule) {
@@ -118,7 +144,7 @@ export class PWFile {
     const fixtures = new Set<string>();
     const lines = scenario.steps.map((step) => {
       const pickleStep = this.getPickleStep(step, outlineExampleRowId);
-      const stepDefinition = findStepDefinition(this.supportCodeLibrary, pickleStep.text);
+      const stepDefinition = findStepDefinition(this.options.supportCodeLibrary, pickleStep.text);
       const { keyword, fixtures: stepFixtures, line } = this.getStep(step, pickleStep, stepDefinition);
       fixtures.add(keyword);
       stepFixtures.forEach((fixture) => fixtures.add(fixture));
@@ -135,7 +161,7 @@ export class PWFile {
   }
 
   private getPickleStep(step: Step, outlineExampleRowId?: string) {
-    for (const pickle of this.pickles) {
+    for (const pickle of this.options.pickles) {
       const pickleStep = pickle.steps.find(({ astNodeIds }) => {
         const hasStepId = astNodeIds.includes(step.id);
         const hasRowId = !outlineExampleRowId || astNodeIds.includes(outlineExampleRowId);

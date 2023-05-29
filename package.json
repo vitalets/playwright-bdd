@@ -21,7 +21,7 @@
     "prettier:w": "prettier --write --ignore-unknown .",
     "link-pwbdd": "ln -sfn ../src ./node_modules/playwright-bdd",
     "gen:cstyle": "node -r ts-node/register src/gen/cli",
-    "gen:pwstyle": "pushd test/pwstyle && node -r ts-node/register ../../src/gen/cli && popd",
+    "gen:pwstyle": "pushd test/pwstyle && node -r ts-node/register ../../src/gen/cli -t fixtures && popd",
     "gen:cw": "pushd test/custom-world && node -r ts-node/register ../../src/gen/cli && popd",
     "test:cstyle": "npm run link-pwbdd && npm run gen:cstyle && npx playwright test",
     "test:pwstyle": "npm run link-pwbdd && npm run gen:pwstyle && pushd test/pwstyle && npx playwright test && popd",

@@ -1,47 +1,50 @@
 /**
- * Generate playwright tests from Gherkin documents.
+ * Generate playwright test files from Gherkin documents.
  */
-import path from 'node:path';
+import fs from 'node:fs';
 import { GherkinDocument, Pickle } from '@cucumber/messages';
-import { PWFile } from './generate';
-import { saveFiles } from './save';
+import { TestFile } from './testFile';
 import { loadConfig } from '../cucumber/config';
 import { loadFeatures } from '../cucumber/features';
 import { loadSteps } from '../cucumber/steps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-
-export type GenOptions = {
-  /** Dir to save generated files */
-  outputDir?: string;
-  /** Path to cucumber config file */
-  cucumberConfig?: string;
-  /** Working dir */
-  cwd?: string;
-};
-
-const defaults: Required<Pick<GenOptions, 'outputDir' | 'cwd'>> = {
-  outputDir: '.features-gen',
-  cwd: process.cwd(),
-};
+import { GenOptions, ResolvedOptions, getOptions } from './options';
 
 export async function generateTestFiles(inputOptions?: GenOptions) {
-  const { outputDir, cwd, cucumberConfig } = Object.assign({}, defaults, inputOptions);
-  const environment = { cwd };
-  const { runConfiguration } = await loadConfig({ file: cucumberConfig }, environment);
+  const options = getOptions(inputOptions);
+  const { runConfiguration } = await loadConfig({ file: options.cucumberConfig });
   const [features, supportCodeLibrary] = await Promise.all([
-    loadFeatures(runConfiguration, environment),
-    loadSteps(runConfiguration, environment),
+    loadFeatures(runConfiguration),
+    loadSteps(runConfiguration),
   ]);
-  const files = buildFiles(features, supportCodeLibrary);
-  const paths = saveFiles(files, path.join(cwd, outputDir));
+  const files = buildFiles(features, supportCodeLibrary, options);
+  const paths = saveFiles(files, options);
   return paths;
 }
 
-function buildFiles(features: Map<GherkinDocument, Pickle[]>, supportCodeLibrary: ISupportCodeLibrary) {
-  const files: PWFile[] = [];
+function buildFiles(
+  features: Map<GherkinDocument, Pickle[]>,
+  supportCodeLibrary: ISupportCodeLibrary,
+  { outputDir, importTestFrom }: ResolvedOptions,
+) {
+  const files: TestFile[] = [];
   features.forEach((pickles, doc) => {
-    const file = new PWFile(doc, pickles, supportCodeLibrary).build();
+    const file = new TestFile({ doc, pickles, supportCodeLibrary, outputDir, importTestFrom }).build();
     files.push(file);
   });
   return files;
+}
+
+function saveFiles(files: TestFile[], { outputDir }: ResolvedOptions) {
+  clearDir(outputDir);
+  return files.map((file) => {
+    file.save();
+    return file.outputPath;
+  });
+}
+
+function clearDir(dir: string) {
+  if (fs.existsSync(dir)) {
+    fs.rmSync(dir, { recursive: true });
+  }
 }

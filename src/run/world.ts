@@ -1,6 +1,8 @@
 import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
-import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
+import { World as CucumberWorld, IWorldOptions, ITestCaseHookParameter } from '@cucumber/cucumber';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
+import { PickleStep } from '@cucumber/messages';
+import { findStepDefinition } from '../cucumber/steps';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -16,11 +18,25 @@ export type WorldOptions<ParametersType = any> = IWorldOptions<ParametersType> &
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
-  // todo: hide with Symbol
   customFixtures: unknown;
 
   constructor(public options: WorldOptions<ParametersType>) {
     super(options);
+    this.invokeStep = this.invokeStep.bind(this);
+  }
+
+  async invokeStep(text: string, argument?: unknown, customFixtures?: unknown) {
+    const stepDefinition = findStepDefinition(this.options.supportCodeLibrary, text);
+    const { parameters } = await stepDefinition.getInvocationParameters({
+      hookParameter: {} as ITestCaseHookParameter,
+      step: { text, argument } as PickleStep,
+      world: this,
+    });
+    // attach custom fixtures to world - only way to pass them to cucumber step fn
+    this.customFixtures = customFixtures;
+    const res = await stepDefinition.code.apply(this, parameters);
+    delete this.customFixtures;
+    return res;
   }
 
   get page() {

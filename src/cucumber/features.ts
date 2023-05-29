@@ -3,9 +3,7 @@ import { GherkinDocument, Pickle, ParseError } from '@cucumber/messages';
 import { PickleWithDocument } from '@cucumber/cucumber/lib/api/gherkin';
 import { loadSources } from './loadSources';
 
-// todo: remove environment arg
-
-export async function loadFeatures(runConfiguration: IRunConfiguration, environment: IRunEnvironment) {
+export async function loadFeatures(runConfiguration: IRunConfiguration, environment?: IRunEnvironment) {
   const { filteredPickles, parseErrors } = await loadSources(runConfiguration.sources, environment);
   handleParseErrors(parseErrors);
   return groupByDocument(filteredPickles);

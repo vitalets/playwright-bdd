@@ -1,10 +1,18 @@
 import { test as base } from '@playwright/test';
-import { invokeStep } from './invokeStep';
 import { loadConfig } from '../cucumber/config';
 import { loadSteps } from '../cucumber/steps';
-import { getWorldConstructor } from './world';
+import { World, getWorldConstructor } from './world';
 
-export const test = base.extend({
+export type BDDFixtures = {
+  cucumberWorld: World;
+  Given: World['invokeStep'];
+  When: World['invokeStep'];
+  Then: World['invokeStep'];
+  And: World['invokeStep'];
+  But: World['invokeStep'];
+};
+
+export const test = base.extend<BDDFixtures>({
   cucumberWorld: async ({ page, context, browser, browserName, request }, use, testInfo) => {
     const { runConfiguration } = await loadConfig();
     const supportCodeLibrary = await loadSteps(runConfiguration);
@@ -25,10 +33,9 @@ export const test = base.extend({
     await use(world);
     await world.destroy();
   },
-  invokeStep: ({ cucumberWorld }, use) => use(invokeStep.bind(null, cucumberWorld)),
-  Given: ({ invokeStep }, use) => use(invokeStep),
-  When: ({ invokeStep }, use) => use(invokeStep),
-  Then: ({ invokeStep }, use) => use(invokeStep),
-  And: ({ invokeStep }, use) => use(invokeStep),
-  But: ({ invokeStep }, use) => use(invokeStep),
+  Given: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
+  When: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
+  Then: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
+  And: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
+  But: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
 });
