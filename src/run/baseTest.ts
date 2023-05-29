@@ -3,7 +3,7 @@ import { loadConfig } from '../cucumber/config';
 import { loadSteps } from '../cucumber/steps';
 import { World, getWorldConstructor } from './world';
 
-export type BDDFixtures = {
+type BDDFixtures = {
   cucumberWorld: World;
   Given: World['invokeStep'];
   When: World['invokeStep'];

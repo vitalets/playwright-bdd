@@ -3,8 +3,6 @@
  */
 
 import { PickleStepArgument } from '@cucumber/messages';
-import { fixtureParameterNames } from '../pwstyle/fixtureParameterNames';
-import { FixturesDefinition } from '../pwstyle/types';
 
 export type ImportTestFrom = {
   file: string;
@@ -62,27 +60,6 @@ export function step(keyword: string, text: string, argument?: PickleStepArgumen
   const textArg = JSON.stringify(text);
   const args = [textArg, argumentArg, fixtures].filter((arg) => arg !== '').join(', ');
   return `await ${keyword}(${args});`;
-}
-
-export function buildCustomFixturesDefinitionArg(fixtures: FixturesDefinition) {
-  const lines: string[] = [];
-  const fixtureNames = Object.keys(fixtures) as (keyof FixturesDefinition)[];
-  fixtureNames.forEach((fixtureName) => {
-    const value = fixtures[fixtureName];
-    const isTuple = Array.isArray(value);
-    // @ts-expect-error shorter than making whole checks for value[1]
-    const isOption = isTuple && Boolean(value[1]?.option);
-    if (isOption) {
-      lines.push(`${fixtureName}: ${JSON.stringify(value)}`);
-      return;
-    }
-    const fn = isTuple ? value[0] : value;
-    const deps = fixtureParameterNames(fn).join(', ');
-    const newFn = `({ ${deps} }, ...args) => useFixture("${fixtureName}", { ${deps} }, ...args)`;
-    const newValue = isTuple ? `[ ${newFn}, ${JSON.stringify(value[1])}]` : newFn;
-    lines.push(`${fixtureName}: ${newValue}`);
-  });
-  return lines.length ? `{ ${lines.join(', ')} }` : '';
 }
 
 function getMark(tags: string[] = []) {

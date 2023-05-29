@@ -32,7 +32,7 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
       step: { text, argument } as PickleStep,
       world: this,
     });
-    // attach custom fixtures to world - only way to pass them to cucumber step fn
+    // attach custom fixtures to world - the only way to pass them to cucumber step fn
     this.customFixtures = customFixtures;
     const res = await stepDefinition.code.apply(this, parameters);
     delete this.customFixtures;
