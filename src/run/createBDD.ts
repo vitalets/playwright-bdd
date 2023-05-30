@@ -7,8 +7,8 @@
 import { Given as CucumberGiven, When as CucumberWhen, Then as CucumberThen } from '@cucumber/cucumber';
 import { DefineStepPattern, IDefineStep } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { World } from './world';
-import { fixtureParameterNames } from './fixtureParameterNames';
-import { FixturesArg, KeyValue } from './types';
+import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
+import { FixturesArg, KeyValue } from '../playwright/types';
 import { TestInfo, TestType } from '@playwright/test';
 
 export const stepFixtureNames = new Map<Function, string[]>();
