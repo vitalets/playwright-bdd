@@ -1,6 +1,6 @@
 {
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS='--loader ts-node/esm' npx bddgen && npx playwright test"
+    "test": "NODE_OPTIONS='--no-warnings --loader ts-node/esm' npx bddgen && npx playwright test"
   }
 }
