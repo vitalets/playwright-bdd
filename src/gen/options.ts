@@ -6,8 +6,6 @@ export type GenOptions = {
   outputDir?: string;
   /** Path to file for importing test instance */
   importTestFrom?: string | ImportTestFrom;
-  /** Path to cucumber config file */
-  cucumberConfig?: string;
 };
 
 export type ResolvedOptions = ReturnType<typeof getOptions>;

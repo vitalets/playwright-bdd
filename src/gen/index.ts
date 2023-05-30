@@ -12,7 +12,7 @@ import { GenOptions, ResolvedOptions, getOptions } from './options';
 
 export async function generateTestFiles(inputOptions?: GenOptions) {
   const options = getOptions(inputOptions);
-  const { runConfiguration } = await loadConfig({ file: options.cucumberConfig });
+  const { runConfiguration } = await loadConfig();
   const [features, supportCodeLibrary] = await Promise.all([
     loadFeatures(runConfiguration),
     loadSteps(runConfiguration),
