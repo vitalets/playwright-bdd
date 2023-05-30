@@ -6,7 +6,7 @@
 import url from 'url';
 import { sourceMapSupport } from '@playwright/test/lib/utilsBundle';
 
-export function getLocationByStacktrace(level: number) {
+export function getLocationByStacktrace({ level }: { level: number }) {
   const oldPrepareStackTrace = Error.prepareStackTrace;
   Error.prepareStackTrace = (error, stackFrames) => {
     const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(stackFrames[level]);
