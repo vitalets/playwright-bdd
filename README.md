@@ -287,92 +287,72 @@ You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtu
 Playwright-style highlights:
 
 * use `Given`, `When`, `Then` from `createBDD()` call (see example below)
-* pass custom fixtures to `createBDD()` similar to [test.extend](https://playwright.dev/docs/test-fixtures#creating-a-fixture)
 * use arrow functions for step definitions
-* don't use `World` and `before/after` hooks in favor of fixtures
+* don't use `World` and `before/after` hooks (use fixtures instead)
 
 Example:
 
 ```ts
 import { createBDD } from 'playwright-bdd';
-import { Page } from '@playwright/test';
 
-// test-scoped fixture
-class MyPage {
-  constructor(public page: Page) {}
+const { Given, When, Then } = createBDD();
 
-  async openLink(name: string) {
-    await this.page.getByRole('link', { name }).click();
-  }
-}
-
-// pass custom fixtures to createBDD() similar to test.extend()
-const { Given, When, Then } = createBDD<{ myPage: MyPage }>({
-  myPage: async ({ page }, use) => {
-    await use(new MyPage(page));
-  }
-});
-
-// use fixtures in steps
 Given('I open url {string}', async ({ page }, url: string) => {
   await page.goto(url);
 });
 
-When('I click link {string}', async ({ myPage }, name: string) => {
-  await myPage.openLink(name);
+When('I click link {string}', async ({ page }, name: string) => {
+  await page.getByRole('link', { name }).click();
 });
 ```
 
-**TIP:** move `createBDD()` into separate `fixtures.ts` file and export `{ Given, When, Then }` for usage in steps.
+#### Custom fixtures
+To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions you need the following:
 
-`fixtures.ts`:
-```ts
-import { createBDD } from 'playwright-bdd';
+1. define custom fixtures and create `test` instance with `test.extend()`. For example, `fixtures.ts`:
+    ```ts
+    // Note: import base test from playwright-bdd, not from @playwright/test
+    import { test as base } from 'playwright-bdd';
 
-export const { Given, When, Then } = createBDD<{ myPage: MyPage }>({
-  myPage: async ({ page }, use) => {
-    await use(new MyPage(page));
-  }
-});
-```
+    // custom fixture
+    class MyPage {
+      constructor(public page: Page) {}
 
-`steps.ts`:
-```ts
-import { Given, When, Then } from './fixtures';
+      async openLink(name: string) {
+        await this.page.getByRole('link', { name }).click();
+      }
+    }
 
-Given('I open url {string}', async ({ page }, url: string) => { ... });
-When('I click link {string}', async ({ myPage }, name: string) => { ... });
-Then('I see in title {string}', async ({ myPage }, text: string) => { ... });
-```
+    // export custom test function
+    export const test = test.extend<{ myPage: MyPage }>({
+      myPage: async ({ page }, use) => {
+        await use(new MyPage(page));
+      }
+    });
+    ```
+2. pass custom `test` function to `createBDD()` as argument. For example, `steps.ts`:
+    ```ts
+    import { createBDD } from 'playwright-bdd';
+    import { test } from './fixtures';
+
+    const { Given, When, Then } = createBDD(test);
+
+    Given('I open url {string}', async ({ myPage }, url: string) => { ... });
+    When('I click link {string}', async ({ myPage }, name: string) => { ... });
+    Then('I see in title {string}', async ({ myPage }, text: string) => { ... });
+    ```
+
+3. provide custom `test` function to generated test files. For that run `npx bddgen` with `--import-test-from` flag pointing to file with custom `test`: 
+    ```
+    npx bddgen --import-test-from ./fixtures
+    ```
+    Effect in generated files:
+    ```diff
+    -import { test } from "playwright-bdd";  
+    +import { test } from "./fixtures";  
+    ```
 
 See [full example of Playwright-style](examples/pwstyle).
-
-#### Worker-scoped fixtures
-Worker-scopd fixtures can be defined the same way as in regular playwright tests:
-
-```ts
-import { createBDD } from 'playwright-bdd';
-
-// worker-scoped fixture
-class Account {
-  constructor(public username: string, public password: string) {}
-}
-
-// pass custom fixtures to createBDD() similar to test.extend()
-const { Given, When, Then } = createBDD<{}, { account: Account }>({
-  account: [
-    async ({}, use) => {
-      await use(new Account('user', '123'));
-    },
-    { scope: 'worker' },
-  ],
-});
-
-// use fixtures in steps
-Given('I am a user', async ({ account }) => {
-  // ...
-});
-```
 
 #### Accessing `testInfo`
 To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc.. use it as a fixture:
