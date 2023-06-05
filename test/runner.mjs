@@ -8,7 +8,10 @@ import { execSync } from 'node:child_process';
 
 test.only = (title, fn) => test(title, { only: true }, fn);
 
+// link node_modules/playwright-bdd to dist
+// as generated files import { test } from "playwright-bdd"
 execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
+
 // must build project before tests as we run exec('bddgen') without ts-node
 execSync('npm run build', { stdio: 'inherit' });
 
@@ -25,6 +28,7 @@ test('default-world', (t) => execPlaywrightTest(t.name));
 test('custom-world', (t) => execPlaywrightTest(t.name));
 test('custom-fixtures', (t) => execPlaywrightTest(t.name));
 test('no-fixtures', (t) => execPlaywrightTest(t.name));
+test('cucumber-config-file', (t) => execPlaywrightTest(t.name));
 
 test('parse-error', (t) => {
   execPlaywrightTestWithError(t.name, /Parse error in "sample\.feature" \(1:1\)/);
