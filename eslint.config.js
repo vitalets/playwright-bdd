@@ -9,6 +9,12 @@ module.exports = [
   },
   js.configs.recommended,
   {
+    files: ['**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
     files: ['**/*.ts'],
     languageOptions: {
       parser: tsParser,
@@ -34,7 +40,10 @@ module.exports = [
       'max-lines': ['error', { max: 200, skipComments: true, skipBlankLines: true }],
       semi: ['error', 'always'],
       'no-multiple-empty-lines': ['error', { max: 1 }],
-      'space-before-function-paren': ['error', { anonymous: 'always', named: 'never', asyncArrow: 'always' }],
+      'space-before-function-paren': [
+        'error',
+        { anonymous: 'always', named: 'never', asyncArrow: 'always' },
+      ],
       '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/triple-slash-reference': 0,
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],

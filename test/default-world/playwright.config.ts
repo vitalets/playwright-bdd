@@ -3,7 +3,7 @@ import { generateBDDTests } from '../../dist';
 
 const testDir = generateBDDTests({
   paths: ['*.feature'],
-  require: ['steps/*.ts'],
+  require: ['steps.ts'],
   requireModule: ['ts-node/register'],
   worldParameters: { myParam: 'myValue' },
 });

@@ -1,3 +1,4 @@
+export { generateBDDTests } from './inPlaywrightConfig';
 export { createBDD } from './run/createBDD';
-export * from './run/baseTest';
-export * from './run/world';
+export { test } from './run/baseTest';
+export { World, WorldOptions } from './run/world';

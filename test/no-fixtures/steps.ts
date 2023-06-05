@@ -23,17 +23,23 @@ When(/^async action (\d+)$/, async ({}, n: number) => {
   expect(typeof n).toEqual('number');
 });
 
-Then('result with fixtures and arg equals to {string} - arrow fn', async ({ page, browserName }, arg: string) => {
-  expect(page).toBeDefined();
-  expect(browserName).toEqual('chromium');
-  expect(arg).toEqual('bar');
-});
+Then(
+  'result with fixtures and arg equals to {string} - arrow fn',
+  async ({ page, browserName }, arg: string) => {
+    expect(page).toBeDefined();
+    expect(browserName).toEqual('chromium');
+    expect(arg).toEqual('bar');
+  },
+);
 
-Then('result with fixtures and arg equals to {string} - function', async function ({ page, browserName }, arg: string) {
-  expect(page).toBeDefined();
-  expect(browserName).toEqual('chromium');
-  expect(arg).toEqual('bar');
-});
+Then(
+  'result with fixtures and arg equals to {string} - function',
+  async function ({ page, browserName }, arg: string) {
+    expect(page).toBeDefined();
+    expect(browserName).toEqual('chromium');
+    expect(arg).toEqual('bar');
+  },
+);
 
 Then('testInfo is available as a fixture', async ({ testInfo }) => {
   expect(testInfo.title).toEqual('Check fixtures');

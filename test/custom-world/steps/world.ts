@@ -1,5 +1,5 @@
 import { setWorldConstructor } from '@cucumber/cucumber';
-import { World, WorldOptions } from '../../../src';
+import { World, WorldOptions } from '../../../dist';
 
 export type WorldParameters = {
   foo: string;

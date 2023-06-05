@@ -21,7 +21,7 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { stepFixtureNames } from '../run/createBDD';
+import { getFixtureNames } from '../run/createBDD';
 
 export type TestFileOptions = {
   doc: GherkinDocument;
@@ -145,7 +145,11 @@ export class TestFile {
     const lines = scenario.steps.map((step) => {
       const pickleStep = this.getPickleStep(step, outlineExampleRowId);
       const stepDefinition = findStepDefinition(this.options.supportCodeLibrary, pickleStep.text);
-      const { keyword, fixtures: stepFixtures, line } = this.getStep(step, pickleStep, stepDefinition);
+      const {
+        keyword,
+        fixtures: stepFixtures,
+        line,
+      } = this.getStep(step, pickleStep, stepDefinition);
       fixtures.add(keyword);
       stepFixtures.forEach((fixture) => fixtures.add(fixture));
       return line;
@@ -155,7 +159,7 @@ export class TestFile {
 
   private getStep(step: Step, { text, argument }: PickleStep, { code }: StepDefinition) {
     const keyword = this.getKeyword(step);
-    const fixtures = stepFixtureNames.get(code) || [];
+    const fixtures = getFixtureNames(code);
     const line = formatter.step(keyword, text, argument, fixtures);
     return { keyword, fixtures, line };
   }

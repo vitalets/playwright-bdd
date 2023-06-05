@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from '../src';
+import { World } from '../../dist';
 
 Given('Состояние {int}', async function () {
   // noop

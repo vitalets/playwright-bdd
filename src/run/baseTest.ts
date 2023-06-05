@@ -2,6 +2,7 @@ import { test as base } from '@playwright/test';
 import { loadConfig } from '../cucumber/loadConfig';
 import { loadSteps } from '../cucumber/loadSteps';
 import { World, getWorldConstructor } from './world';
+import { getConfig, extractCucumberConfig } from '../config';
 
 type BDDFixtures = {
   cucumberWorld: World;
@@ -14,7 +15,8 @@ type BDDFixtures = {
 
 export const test = base.extend<BDDFixtures>({
   cucumberWorld: async ({ page, context, browser, browserName, request }, use, testInfo) => {
-    const { runConfiguration } = await loadConfig();
+    const config = getConfig({ outputDir: testInfo.project.testDir });
+    const { runConfiguration } = await loadConfig({ provided: extractCucumberConfig(config) });
     const supportCodeLibrary = await loadSteps(runConfiguration);
     const World = getWorldConstructor(supportCodeLibrary);
     const world = new World({
