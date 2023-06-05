@@ -34,11 +34,15 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(CucumberStepFn:
   type StepFunction = (fixtures: StepFunctionFixturesArg, ...args: any[]) => unknown;
   return (pattern: DefineStepPattern, fn: StepFunction) => {
     const cucumberFn = function (this: World, ...args: any[]) {
+      // testInfo is treated like a special fixture
       const fixturesArg = Object.assign({}, this.customFixtures, { testInfo: this.testInfo });
       return fn.call(this, fixturesArg as StepFunctionFixturesArg, ...args);
     };
     // testInfo is treated like a special fixture
-    cucumberFn.fixtureNames = fixtureParameterNames(fn).filter((name) => name !== 'testInfo');
+    // cucumberFn.fixtureNames = fixtureParameterNames(fn).filter((name) => name !== 'testInfo');
+
+    // store original fn inside wrappedFn to be able to extract fixture names
+    cucumberFn.fn = fn;
 
     try {
       CucumberStepFn(pattern, cucumberFn);
@@ -59,6 +63,6 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(CucumberStepFn:
 }
 
 export function getFixtureNames(cucumberFn: Function) {
-  // @ts-expect-error get fixtureNames stored in fn
-  return (cucumberFn.fixtureNames as string[]) || [];
+  // @ts-expect-error fn is sotred in cucumberFn
+  return fixtureParameterNames(cucumberFn.fn).filter((name) => name !== 'testInfo');
 }

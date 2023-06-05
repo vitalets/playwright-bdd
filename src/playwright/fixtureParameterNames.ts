@@ -22,7 +22,12 @@ function innerFixtureParameterNames(fn: Function): string[] {
   if (!trimmedParams) return [];
   const [firstParam] = splitByComma(trimmedParams);
   if (firstParam[0] !== '{' || firstParam[firstParam.length - 1] !== '}') {
-    throw new Error('First argument must use the object destructuring pattern: ' + firstParam + ' ' + fn.toString());
+    throw new Error(
+      'First argument must use the object destructuring pattern: ' +
+        firstParam +
+        ' ' +
+        fn.toString(),
+    );
   }
   const props = splitByComma(firstParam.substring(1, firstParam.length - 1)).map((prop) => {
     const colon = prop.indexOf(':');
