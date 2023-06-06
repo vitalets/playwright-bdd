@@ -45,6 +45,13 @@ test('error-import-test-not-from-bdd', (t) => {
   );
 });
 
+test('error-missing-import-test-from', (t) => {
+  execPlaywrightTestWithError(
+    t.name,
+    /When using custom "test" function in createBDD\(\) you should/,
+  );
+});
+
 test('undefined-step', (t) => {
   execPlaywrightTestWithError(t.name, /Unknown step: I open url "https:\/\/playwright\.dev"/);
 });

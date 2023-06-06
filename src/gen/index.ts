@@ -10,7 +10,7 @@ import { loadFeatures } from '../cucumber/loadFeatures';
 import { loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { BDDInputConfig, getConfig, extractCucumberConfig, BDDConfig } from '../config';
-import { log } from '../utils';
+import { exitWithMessage, log } from '../utils';
 
 export async function generateBDDFilesImpl(inputConfig?: BDDInputConfig) {
   const config = getConfig(inputConfig);
@@ -20,6 +20,7 @@ export async function generateBDDFilesImpl(inputConfig?: BDDInputConfig) {
     loadSteps(runConfiguration),
   ]);
   const files = buildFiles(features, supportCodeLibrary, config);
+  assertConfigForCustomTest(files, config);
   const paths = saveFiles(files, config);
   if (config.verbose) log(`Generated files: ${paths.length}`);
   return paths;
@@ -56,5 +57,15 @@ function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
 function clearDir(dir: string) {
   if (fs.existsSync(dir)) {
     fs.rmSync(dir, { recursive: true });
+  }
+}
+
+function assertConfigForCustomTest(files: TestFile[], config: BDDConfig) {
+  const hasCustomTest = files.some((file) => file.customTest);
+  if (hasCustomTest && !config.importTestFrom) {
+    exitWithMessage(
+      `When using custom "test" function in createBDD() you should ` +
+        `set "importTestFrom" config option that points to file exporting custom test.`,
+    );
   }
 }

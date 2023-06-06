@@ -22,6 +22,8 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { findStepDefinition } from '../cucumber/loadSteps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { CucumberStepFunction, getFixtureNames } from '../run/createBDD';
+import { TestTypeCommon } from '../playwright/types';
+import { isParentChildTest } from '../playwright/testTypeImpl';
 
 export type TestFileOptions = {
   doc: GherkinDocument;
@@ -34,6 +36,7 @@ export type TestFileOptions = {
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
+  public customTest?: TestTypeCommon;
 
   constructor(private options: TestFileOptions) {}
 
@@ -161,9 +164,11 @@ export class TestFile {
     return { fixtures, lines };
   }
 
-  private getStep(step: Step, { text, argument }: PickleStep, { code }: StepDefinition) {
+  private getStep(step: Step, { text, argument }: PickleStep, stepDefinition: StepDefinition) {
     const keyword = this.getKeyword(step);
-    const fixtures = getFixtureNames(code as CucumberStepFunction);
+    const code = stepDefinition.code as CucumberStepFunction;
+    const fixtures = getFixtureNames(code);
+    this.updateCustomTest(code);
     const line = formatter.step(keyword, text, argument, fixtures);
     return { keyword, fixtures, line };
   }
@@ -188,6 +193,14 @@ export class TestFile {
     const enKeyword = this.keywordsMap.get(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
+  }
+
+  private updateCustomTest({ customTest }: CucumberStepFunction) {
+    if (!customTest || customTest === this.customTest) return;
+    if (!this.customTest || isParentChildTest(this.customTest, customTest)) {
+      this.customTest = customTest;
+    }
+    // todo: customTests are mix of different fixtures -> error?
   }
 }
 

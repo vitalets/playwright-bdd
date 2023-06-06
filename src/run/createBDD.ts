@@ -25,6 +25,7 @@ import { isParentChildTest } from '../playwright/testTypeImpl';
 export function createBDD<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
+  customTest = excludeBaseTest(customTest);
   assertCustomTestExtendsBdd(customTest);
   const Given = defineStep<T, W>(CucumberGiven, customTest);
   const When = defineStep<T, W>(CucumberWhen, customTest);
@@ -41,12 +42,12 @@ type StepFunction<T extends KeyValue, W extends KeyValue> = (
 ) => unknown;
 export type CucumberStepFunction = TestStepFunction<World> & {
   fn?: Function;
-  test?: TestTypeCommon;
+  customTest?: TestTypeCommon;
 };
 
 function defineStep<T extends KeyValue, W extends KeyValue = {}>(
   CucumberStepFn: IDefineStep,
-  test?: TestType<T, W>,
+  customTest?: TestType<T, W>,
 ) {
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
     const cucumberFn: CucumberStepFunction = function (...args: any[]) {
@@ -58,7 +59,7 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
     // store original fn and test instance in wrapping fn
     // to be able to extract fixture names and test info
     cucumberFn.fn = fn;
-    cucumberFn.test = test;
+    cucumberFn.customTest = customTest;
 
     try {
       CucumberStepFn(pattern, cucumberFn);
@@ -84,11 +85,13 @@ export function getFixtureNames(cucumberFn: CucumberStepFunction) {
 }
 
 function assertCustomTestExtendsBdd(customTest?: TestTypeCommon) {
-  if (
-    customTest &&
-    customTest !== (baseTest as TestTypeCommon) &&
-    !isParentChildTest(baseTest, customTest)
-  ) {
+  if (customTest && !isParentChildTest(baseTest, customTest)) {
     exitWithMessage(`createBDD() should use test extended from "playwright-bdd"`);
   }
+}
+
+function excludeBaseTest<T extends KeyValue = {}, W extends KeyValue = {}>(
+  customTest?: TestType<T, W>,
+) {
+  return customTest === (baseTest as TestTypeCommon) ? undefined : customTest;
 }
