@@ -13,7 +13,7 @@ program
   .option('-o, --output <dir>', `Output dir (default: "${defaults.outputDir}")`)
   .option(
     '-t, --import-test-from <file>',
-    `Path to file for importing test instance (default: "${defaults.importTestFrom}")`,
+    `Path to file for importing test instance (default: "playwright-bdd")`,
   )
   .option('--verbose', `Verbose mode (default: false)`)
   .action(async ({ output, importTestFrom, verbose }) => {

@@ -19,9 +19,8 @@ type OwnConfig = {
 
 export const defaults = {
   outputDir: '.features-gen',
-  importTestFrom: 'playwright-bdd',
   publishQuiet: true,
-} satisfies Required<Pick<BDDInputConfig, 'outputDir' | 'importTestFrom' | 'publishQuiet'>>;
+} satisfies Required<Pick<BDDInputConfig, 'outputDir' | 'publishQuiet'>>;
 
 export type BDDInputConfig = OwnConfig & CucumberConfig;
 export type BDDConfig = ReturnType<typeof getConfig>;
@@ -45,12 +44,8 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
   return cucumberConfig;
 }
 
-function resolveImportTestFrom(importTestFrom: string | ImportTestFrom): ImportTestFrom {
-  if (importTestFrom === defaults.importTestFrom) {
-    return {
-      file: importTestFrom,
-    };
-  } else {
+function resolveImportTestFrom(importTestFrom?: string | ImportTestFrom) {
+  if (importTestFrom) {
     const { file, varName } =
       typeof importTestFrom === 'string'
         ? ({ file: importTestFrom } as ImportTestFrom)

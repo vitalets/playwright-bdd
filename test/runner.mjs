@@ -26,7 +26,7 @@ test('bdd-syntax (cucumber style)', () => {
 test('i18n', (t) => execPlaywrightTest(t.name));
 test('default-world', (t) => execPlaywrightTest(t.name));
 test('custom-world', (t) => execPlaywrightTest(t.name));
-test('custom-fixtures', (t) => execPlaywrightTest(t.name));
+test.only('custom-fixtures', (t) => execPlaywrightTest(t.name));
 test('no-fixtures', (t) => execPlaywrightTest(t.name));
 test('cucumber-config-file', (t) => execPlaywrightTest(t.name));
 

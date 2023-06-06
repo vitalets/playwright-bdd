@@ -50,6 +50,26 @@ Then(
   },
 );
 
-Then('testInfo is available as a fixture', async ({ testInfo }) => {
-  expect(testInfo.title).toEqual('Check fixtures');
+Then(
+  'testInfo is available as a fixture and its title equals to {string}',
+  async ({ testInfo }, title: string) => {
+    expect(testInfo).toBeDefined();
+    expect(testInfo.title).toEqual(title);
+  },
+);
+
+When('update todoPage prop to {string}', async ({ todoPage }, prop: string) => {
+  todoPage.prop = prop;
+});
+
+Then('todoPage prop equals to {string}', async ({ todoPage }, prop: string) => {
+  expect(todoPage.prop).toEqual(prop);
+});
+
+When('update account username to {string}', async ({ account }, name: string) => {
+  account.username = name;
+});
+
+Then('account username equals to {string}', async ({ account }, name: string) => {
+  expect(account.username).toEqual(name);
 });

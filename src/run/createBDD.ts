@@ -12,37 +12,54 @@ import {
 import {
   DefineStepPattern,
   IDefineStep,
+  TestStepFunction,
 } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { World } from './world';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
-import { FixturesArg, KeyValue } from '../playwright/types';
+import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
 import { TestInfo, TestType } from '@playwright/test';
 import { exitWithMessage } from '../utils';
 
 export function createBDD<T extends KeyValue = {}, W extends KeyValue = {}>(
-  _test?: TestType<T, W>,
+  customTest?: TestType<T, W>,
 ) {
+  // // @ts-ignore
+  // console.log(_test![testTypeSymbol].fixtures);
+  // process.exit(1);
   // todo: check that test was imported from playwright-bdd not from @playwright/test?
-  const Given = defineStep<T, W>(CucumberGiven);
-  const When = defineStep<T, W>(CucumberWhen);
-  const Then = defineStep<T, W>(CucumberThen);
+  const Given = defineStep<T, W>(CucumberGiven, customTest);
+  const When = defineStep<T, W>(CucumberWhen, customTest);
+  const Then = defineStep<T, W>(CucumberThen, customTest);
   return { Given, When, Then };
 }
 
-function defineStep<T extends KeyValue, W extends KeyValue = {}>(CucumberStepFn: IDefineStep) {
-  type StepFunctionFixturesArg = FixturesArg<T, W> & { testInfo: TestInfo };
-  type StepFunction = (fixtures: StepFunctionFixturesArg, ...args: any[]) => unknown;
-  return (pattern: DefineStepPattern, fn: StepFunction) => {
-    const cucumberFn = function (this: World, ...args: any[]) {
+type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> & {
+  testInfo: TestInfo;
+};
+type StepFunction<T extends KeyValue, W extends KeyValue> = (
+  fixtures: StepFunctionFixturesArg<T, W>,
+  ...args: any[]
+) => unknown;
+export type CucumberStepFunction = TestStepFunction<World> & {
+  fn?: Function;
+  test?: TestTypeCommon;
+};
+
+function defineStep<T extends KeyValue, W extends KeyValue = {}>(
+  CucumberStepFn: IDefineStep,
+  test?: TestType<T, W>,
+) {
+  return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
+    const cucumberFn: CucumberStepFunction = function (...args: any[]) {
       // testInfo is treated like a special fixture
       const fixturesArg = Object.assign({}, this.customFixtures, { testInfo: this.testInfo });
-      return fn.call(this, fixturesArg as StepFunctionFixturesArg, ...args);
+      return fn.call(this, fixturesArg as StepFunctionFixturesArg<T, W>, ...args);
     };
-    // testInfo is treated like a special fixture
-    // cucumberFn.fixtureNames = fixtureParameterNames(fn).filter((name) => name !== 'testInfo');
 
-    // store original fn inside wrappedFn to be able to extract fixture names
+    // store original fn and test instance in wrapping fn
+    // to be able to extract fixture names and test info
     cucumberFn.fn = fn;
+    cucumberFn.test = test;
 
     try {
       CucumberStepFn(pattern, cucumberFn);
@@ -62,7 +79,7 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(CucumberStepFn:
   };
 }
 
-export function getFixtureNames(cucumberFn: Function) {
-  // @ts-expect-error fn is sotred in cucumberFn
+export function getFixtureNames(cucumberFn: CucumberStepFunction) {
+  // testInfo is treated like a special fixture
   return fixtureParameterNames(cucumberFn.fn).filter((name) => name !== 'testInfo');
 }

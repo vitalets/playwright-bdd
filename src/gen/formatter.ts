@@ -9,12 +9,14 @@ export type ImportTestFrom = {
   varName?: string;
 };
 
-export function fileHeader(uri: string, { file, varName }: ImportTestFrom) {
-  const importVar = !varName || varName === 'test' ? 'test' : `${varName} as test`;
+export function fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
+  const file = importTestFrom?.file || 'playwright-bdd';
+  let varName = importTestFrom?.varName || 'test';
+  if (varName !== 'test') varName = `${varName} as test`;
   // prettier-ignore
   return [
     `/** Generated from: ${uri} */`,
-    `import { ${importVar} } from "${file}";`,
+    `import { ${varName} } from "${file}";`,
     '',
   ];
 }
@@ -54,7 +56,12 @@ export function test(tags: string[], title: string, fixtures: Set<string>, child
 }
 
 // eslint-disable-next-line max-params
-export function step(keyword: string, text: string, argument?: PickleStepArgument, fixtureNames: string[] = []) {
+export function step(
+  keyword: string,
+  text: string,
+  argument?: PickleStepArgument,
+  fixtureNames: string[] = [],
+) {
   const fixtures = fixtureNames.length ? `{ ${fixtureNames.join(', ')} }` : '';
   const argumentArg = argument ? JSON.stringify(argument) : fixtures ? 'null' : '';
   const textArg = JSON.stringify(text);

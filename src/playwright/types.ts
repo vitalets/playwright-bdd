@@ -9,6 +9,7 @@ import {
   PlaywrightTestOptions,
   PlaywrightWorkerArgs,
   PlaywrightWorkerOptions,
+  TestType,
 } from '@playwright/test';
 
 export type KeyValue = { [key: string]: any };
@@ -19,3 +20,5 @@ export type FixturesArg<T extends KeyValue = {}, W extends KeyValue = {}> = T &
   PlaywrightTestOptions &
   PlaywrightWorkerArgs &
   PlaywrightWorkerOptions;
+
+export type TestTypeCommon = TestType<KeyValue, KeyValue>;

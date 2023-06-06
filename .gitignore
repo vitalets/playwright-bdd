@@ -12,3 +12,4 @@ test-results
 playwright-report
 /examples/playwright-bdd*.tgz
 /examples/package-lock.json
+/todo.txt

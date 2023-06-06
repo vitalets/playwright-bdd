@@ -21,19 +21,22 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { getFixtureNames } from '../run/createBDD';
+import { CucumberStepFunction, getFixtureNames } from '../run/createBDD';
+import { test as baseTest } from '../run/baseTest';
+import { TestTypeCommon } from '../playwright/types';
 
 export type TestFileOptions = {
   doc: GherkinDocument;
   pickles: Pickle[];
   supportCodeLibrary: ISupportCodeLibrary;
   outputDir: string;
-  importTestFrom: formatter.ImportTestFrom;
+  importTestFrom?: formatter.ImportTestFrom;
 };
 
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
+  private test?: TestTypeCommon;
 
   constructor(private options: TestFileOptions) {}
 
@@ -76,9 +79,9 @@ export class TestFile {
   }
 
   private getRelativeImportTestFrom() {
-    let {
-      importTestFrom: { file, varName },
-    } = this.options;
+    const { importTestFrom } = this.options;
+    if (!importTestFrom) return;
+    let { file, varName } = importTestFrom;
     if (path.isAbsolute(file)) {
       const dir = path.dirname(this.outputPath);
       file = path.relative(dir, file);
@@ -157,9 +160,11 @@ export class TestFile {
     return { fixtures, lines };
   }
 
-  private getStep(step: Step, { text, argument }: PickleStep, { code }: StepDefinition) {
+  private getStep(step: Step, { text, argument }: PickleStep, stepDefinition: StepDefinition) {
     const keyword = this.getKeyword(step);
+    const code = stepDefinition.code as CucumberStepFunction;
     const fixtures = getFixtureNames(code);
+    this.updateTestInstance(code);
     const line = formatter.step(keyword, text, argument, fixtures);
     return { keyword, fixtures, line };
   }
@@ -184,6 +189,21 @@ export class TestFile {
     const enKeyword = this.keywordsMap.get(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
+  }
+
+  private updateTestInstance({ test }: CucumberStepFunction) {
+    if (!test || test === baseTest) return;
+    if (!this.test) {
+      this.test = test;
+      return;
+    }
+    // todo: check test inheritance
+    // get test instance, compare with this.test
+    // if current extends previous -> set this.test = current
+    // if current === this.test -> do nothing
+    // if previous extends current -> do nothing
+    // if current and previous have different fixtures -> throw error (rare case)
+    // finally we end up with test instance requred for this file
   }
 }
 
