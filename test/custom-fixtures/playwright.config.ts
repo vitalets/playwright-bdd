@@ -3,7 +3,6 @@ import { generateBDDTests } from '../../dist';
 
 const testDir = generateBDDTests({
   importTestFrom: 'fixtures.ts',
-  // verbose: true,
   paths: ['*.feature'],
   require: ['steps.ts'],
   requireModule: ['ts-node/register'],

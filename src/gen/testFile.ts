@@ -22,8 +22,6 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { findStepDefinition } from '../cucumber/loadSteps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { CucumberStepFunction, getFixtureNames } from '../run/createBDD';
-import { test as baseTest } from '../run/baseTest';
-import { TestTypeCommon } from '../playwright/types';
 
 export type TestFileOptions = {
   doc: GherkinDocument;
@@ -36,9 +34,14 @@ export type TestFileOptions = {
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
-  private test?: TestTypeCommon;
 
   constructor(private options: TestFileOptions) {}
+
+  get sourceFile() {
+    const { uri } = this.options.doc;
+    if (!uri) throw new Error(`Document without uri`);
+    return uri;
+  }
 
   get content() {
     return this.lines.join('\n');
@@ -69,7 +72,7 @@ export class TestFile {
 
   private getFileHeader() {
     const importTestFrom = this.getRelativeImportTestFrom();
-    return formatter.fileHeader(this.options.doc.uri || '', importTestFrom);
+    return formatter.fileHeader(this.sourceFile, importTestFrom);
   }
 
   private loadI18nKeywords() {
@@ -81,20 +84,18 @@ export class TestFile {
   private getRelativeImportTestFrom() {
     const { importTestFrom } = this.options;
     if (!importTestFrom) return;
-    let { file, varName } = importTestFrom;
-    if (path.isAbsolute(file)) {
-      const dir = path.dirname(this.outputPath);
-      file = path.relative(dir, file);
-    }
+    const { file, varName } = importTestFrom;
+    const dir = path.dirname(this.outputPath);
     return {
-      file,
+      file: path.relative(dir, file),
       varName,
     };
   }
 
   private getRootSuite() {
-    if (!this.options.doc.feature) throw new Error(`Document without feature.`);
-    return this.getSuite(this.options.doc.feature);
+    const { feature } = this.options.doc;
+    if (!feature) throw new Error(`Document without feature.`);
+    return this.getSuite(feature);
   }
 
   private getSuite(feature: Feature | Rule) {
@@ -160,11 +161,9 @@ export class TestFile {
     return { fixtures, lines };
   }
 
-  private getStep(step: Step, { text, argument }: PickleStep, stepDefinition: StepDefinition) {
+  private getStep(step: Step, { text, argument }: PickleStep, { code }: StepDefinition) {
     const keyword = this.getKeyword(step);
-    const code = stepDefinition.code as CucumberStepFunction;
-    const fixtures = getFixtureNames(code);
-    this.updateTestInstance(code);
+    const fixtures = getFixtureNames(code as CucumberStepFunction);
     const line = formatter.step(keyword, text, argument, fixtures);
     return { keyword, fixtures, line };
   }
@@ -189,21 +188,6 @@ export class TestFile {
     const enKeyword = this.keywordsMap.get(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
-  }
-
-  private updateTestInstance({ test }: CucumberStepFunction) {
-    if (!test || test === baseTest) return;
-    if (!this.test) {
-      this.test = test;
-      return;
-    }
-    // todo: check test inheritance
-    // get test instance, compare with this.test
-    // if current extends previous -> set this.test = current
-    // if current === this.test -> do nothing
-    // if previous extends current -> do nothing
-    // if current and previous have different fixtures -> throw error (rare case)
-    // finally we end up with test instance requred for this file
   }
 }
 

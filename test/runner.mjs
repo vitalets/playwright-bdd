@@ -34,7 +34,7 @@ test('parse-error', (t) => {
   execPlaywrightTestWithError(t.name, /Parse error in "sample\.feature" \(1:1\)/);
 });
 
-test('import-test-from-steps', (t) => {
+test('error-import-test-from-steps', (t) => {
   execPlaywrightTestWithError(t.name, /Option "importTestFrom" should point to separate file/);
 });
 
