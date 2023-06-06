@@ -26,7 +26,7 @@ test('bdd-syntax (cucumber style)', () => {
 test('i18n', (t) => execPlaywrightTest(t.name));
 test('default-world', (t) => execPlaywrightTest(t.name));
 test('custom-world', (t) => execPlaywrightTest(t.name));
-test.only('custom-fixtures', (t) => execPlaywrightTest(t.name));
+test('custom-fixtures', (t) => execPlaywrightTest(t.name));
 test('no-fixtures', (t) => execPlaywrightTest(t.name));
 test('cucumber-config-file', (t) => execPlaywrightTest(t.name));
 
@@ -36,6 +36,13 @@ test('parse-error', (t) => {
 
 test('error-import-test-from-steps', (t) => {
   execPlaywrightTestWithError(t.name, /Option "importTestFrom" should point to separate file/);
+});
+
+test('error-import-test-not-from-bdd', (t) => {
+  execPlaywrightTestWithError(
+    t.name,
+    /createBDD\(\) should use test extended from "playwright-bdd"/,
+  );
 });
 
 test('undefined-step', (t) => {

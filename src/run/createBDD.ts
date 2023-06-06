@@ -19,14 +19,13 @@ import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
 import { TestInfo, TestType } from '@playwright/test';
 import { exitWithMessage } from '../utils';
+import { test as baseTest } from './baseTest';
+import { isParentChildTest } from '../playwright/testTypeImpl';
 
 export function createBDD<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
-  // // @ts-ignore
-  // console.log(_test![testTypeSymbol].fixtures);
-  // process.exit(1);
-  // todo: check that test was imported from playwright-bdd not from @playwright/test?
+  assertCustomTestExtendsBdd(customTest);
   const Given = defineStep<T, W>(CucumberGiven, customTest);
   const When = defineStep<T, W>(CucumberWhen, customTest);
   const Then = defineStep<T, W>(CucumberThen, customTest);
@@ -82,4 +81,14 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
 export function getFixtureNames(cucumberFn: CucumberStepFunction) {
   // testInfo is treated like a special fixture
   return fixtureParameterNames(cucumberFn.fn).filter((name) => name !== 'testInfo');
+}
+
+function assertCustomTestExtendsBdd(customTest?: TestTypeCommon) {
+  if (
+    customTest &&
+    customTest !== (baseTest as TestTypeCommon) &&
+    !isParentChildTest(baseTest, customTest)
+  ) {
+    exitWithMessage(`createBDD() should use test extended from "playwright-bdd"`);
+  }
 }
