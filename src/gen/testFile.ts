@@ -36,6 +36,7 @@ export type TestFileOptions = {
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
+  private _outputPath?: string;
   public customTest?: TestTypeCommon;
 
   constructor(private options: TestFileOptions) {}
@@ -55,7 +56,21 @@ export class TestFile {
   }
 
   get outputPath() {
-    return path.join(this.options.outputDir, `${this.options.doc.uri}.spec.js`);
+    if (!this._outputPath) {
+      const relativeSourceFile = path.isAbsolute(this.sourceFile)
+        ? path.relative(process.cwd(), this.sourceFile)
+        : this.sourceFile;
+
+      // replace ".." -> "_" to keep all generated files in outputDir
+      const finalPath = relativeSourceFile
+        .split(path.sep)
+        .map((part) => (part === '..' ? '_' : part))
+        .join(path.sep);
+
+      this._outputPath = path.join(this.options.outputDir, `${finalPath}.spec.js`);
+    }
+
+    return this._outputPath;
   }
 
   build() {

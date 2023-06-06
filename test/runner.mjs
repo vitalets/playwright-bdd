@@ -2,6 +2,7 @@
  * Use js (not ts) to keep clear run via node insteadof ts-node.
  * node scripts/test
  */
+import path from 'node:path';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
@@ -16,13 +17,7 @@ execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
 execSync('npm run build', { stdio: 'inherit' });
 
 test('bdd-syntax', (t) => execPlaywrightTest(t.name));
-// todo: run from separate dir
-test('bdd-syntax (cucumber style)', () => {
-  execPlaywrightTest('bdd-syntax', {
-    stdio: 'inherit',
-    env: { ...process.env, CUCUMBER_STYLE: '1' },
-  });
-});
+test('bdd-syntax-cucumber-style', (t) => execPlaywrightTest(t.name));
 test('i18n', (t) => execPlaywrightTest(t.name));
 test('default-world', (t) => execPlaywrightTest(t.name));
 test('custom-world', (t) => execPlaywrightTest(t.name));
@@ -58,7 +53,7 @@ test('undefined-step', (t) => {
 
 function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
   execSync('npx playwright test', {
-    cwd: `test/${dir}`,
+    cwd: path.join(`test`, dir),
     ...opts,
   });
 }

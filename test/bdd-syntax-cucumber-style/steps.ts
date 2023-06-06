@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { Given, When, Then, DataTable } from '@cucumber/cucumber';
-import { World } from '../../../dist';
+import { World } from '../../dist';
 
 Given('State {int}', async function () {
   // noop
@@ -54,7 +54,7 @@ Then('Uppercase {string} equals {string}', async function (this: World, s1: stri
 });
 
 Then('File {string} contains', async function (this: World, fileName: string, table: DataTable) {
-  const filePath = path.join('.features-gen', 'features', fileName);
+  const filePath = path.join(path.dirname(this.testInfo.file), fileName);
   const content = fs.readFileSync(filePath, 'utf8');
   table.rows().forEach((row) => expect(content).toContain(row[0]));
 });
