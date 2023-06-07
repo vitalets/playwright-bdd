@@ -8,7 +8,13 @@ export async function loadSteps(
   runConfiguration: IRunConfiguration,
   environment: IRunEnvironment = {},
 ) {
-  return supportCodeLibrary || (supportCodeLibrary = loadSupport(runConfiguration, environment));
+  if (!supportCodeLibrary) {
+    supportCodeLibrary = loadSupport(runConfiguration, environment).then((lib) => {
+      assertStepsLoaded(lib);
+      return lib;
+    });
+  }
+  return supportCodeLibrary;
 }
 
 export function findStepDefinition(
@@ -31,4 +37,18 @@ export function findStepDefinition(
     );
   // todo: check stepDefinition.keyword with PickleStepType
   return matchedSteps[0];
+}
+
+function assertStepsLoaded(lib: ISupportCodeLibrary) {
+  if (lib.stepDefinitions.length === 0) {
+    const { requirePaths, importPaths } = lib.originalCoordinates;
+    const total = requirePaths.length + importPaths.length;
+    exitWithMessage(
+      [
+        `No step definitions loaded. Scanned files (${total}):`,
+        ...requirePaths,
+        ...importPaths,
+      ].join('\n'),
+    );
+  }
 }

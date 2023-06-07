@@ -55,7 +55,14 @@ test('error-missing-import-test-from', (t) => {
 });
 
 test('undefined-step', (t) => {
-  execPlaywrightTestWithError(t.name, /Unknown step: I open url "https:\/\/playwright\.dev"/);
+  execPlaywrightTestWithError(
+    t.name,
+    /Undefined step: I open url "https:\/\/playwright\.dev" \(sample\.feature\)/,
+  );
+});
+
+test('no-steps', (t) => {
+  execPlaywrightTestWithError(t.name, /No step definitions loaded. Scanned files \(1\)/);
 });
 
 function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
