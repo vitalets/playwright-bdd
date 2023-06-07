@@ -7,6 +7,7 @@
  *
  * outputDir used as a unique key.
  */
+import path from 'node:path';
 import { BDDInputConfig } from '.';
 import { exitWithMessage } from '../utils';
 
@@ -18,7 +19,7 @@ export function registerInputConfig(outputDir: string, inputConfig?: BDDInputCon
   if (inputConfigs[outputDir]) {
     exitWithMessage(
       `When using several calls of generateBDDTests() in Playwright config`,
-      `they should have different "outputDir" option.`,
+      `please manually provide different "outputDir" option.`,
     );
   }
   inputConfigs[outputDir] = inputConfig || {};
@@ -32,8 +33,12 @@ export function getInputConfig(outputDir?: string) {
   if (keys.length === 0) return;
   // For single config just return what we have
   if (keys.length === 1) return inputConfigs[keys[0]];
+  outputDir = path.resolve(outputDir);
   if (!inputConfigs[outputDir]) {
-    throw new Error(`Config not found for outputDir: "${outputDir}"`);
+    throw new Error(
+      `Config not found for outputDir: "${outputDir}". ` +
+        `Available keys: ${Object.keys(inputConfigs).join(', ')}`,
+    );
   }
   return inputConfigs[outputDir];
 }

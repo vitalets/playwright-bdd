@@ -24,6 +24,11 @@ test('custom-world', (t) => execPlaywrightTest(t.name));
 test('custom-fixtures', (t) => execPlaywrightTest(t.name));
 test('no-fixtures', (t) => execPlaywrightTest(t.name));
 test('cucumber-config-file', (t) => execPlaywrightTest(t.name));
+test('several-projects', (t) => execPlaywrightTest(t.name));
+
+test('several-projects-no-outputdir', (t) => {
+  execPlaywrightTestWithError(t.name, /please manually provide different "outputDir" option/);
+});
 
 test('parse-error', (t) => {
   execPlaywrightTestWithError(t.name, /Parse error in "sample\.feature" \(1:1\)/);
