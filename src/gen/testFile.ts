@@ -61,10 +61,10 @@ export class TestFile {
         ? path.relative(process.cwd(), this.sourceFile)
         : this.sourceFile;
 
-      // replace ".." -> "_" to keep all generated files in outputDir
+      // remove ".." to keep all generated files in outputDir
       const finalPath = relativeSourceFile
         .split(path.sep)
-        .map((part) => (part === '..' ? '_' : part))
+        .filter((part) => part !== '..')
         .join(path.sep);
 
       this._outputPath = path.join(this.options.outputDir, `${finalPath}.spec.js`);
