@@ -166,7 +166,11 @@ export class TestFile {
     const fixtures = new Set<string>();
     const lines = scenario.steps.map((step) => {
       const pickleStep = this.getPickleStep(step, outlineExampleRowId);
-      const stepDefinition = findStepDefinition(this.options.supportCodeLibrary, pickleStep.text);
+      const stepDefinition = findStepDefinition(
+        this.options.supportCodeLibrary,
+        pickleStep.text,
+        this.sourceFile,
+      );
       const {
         keyword,
         fixtures: stepFixtures,

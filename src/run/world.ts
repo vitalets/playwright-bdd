@@ -26,7 +26,11 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
   }
 
   async invokeStep(text: string, argument?: unknown, customFixtures?: unknown) {
-    const stepDefinition = findStepDefinition(this.options.supportCodeLibrary, text);
+    const stepDefinition = findStepDefinition(
+      this.options.supportCodeLibrary,
+      text,
+      this.testInfo.file,
+    );
     const { parameters } = await stepDefinition.getInvocationParameters({
       hookParameter: {} as ITestCaseHookParameter,
       step: { text, argument } as PickleStep,

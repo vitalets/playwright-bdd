@@ -23,7 +23,12 @@ export function generateBDDTests(inputConfig?: BDDInputConfig) {
 
 function execBddgenSync(outputDir: string) {
   const cliEntry = path.resolve(__dirname, 'gen', 'cli');
-  execSync(`node "${cliEntry}" -o "${outputDir}"`, { stdio: 'inherit' });
+  try {
+    execSync(`node "${cliEntry}" -o "${outputDir}"`, { stdio: 'inherit' });
+  } catch (e) {
+    // error already outputed to stdio, just exit
+    process.exit(1);
+  }
 }
 
 function isMainProcess() {

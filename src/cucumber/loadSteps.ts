@@ -11,15 +11,21 @@ export async function loadSteps(
   return supportCodeLibrary || (supportCodeLibrary = loadSupport(runConfiguration, environment));
 }
 
-export function findStepDefinition({ stepDefinitions }: ISupportCodeLibrary, stepText: string) {
+export function findStepDefinition(
+  { stepDefinitions }: ISupportCodeLibrary,
+  stepText: string,
+  file: string,
+) {
   const matchedSteps = stepDefinitions.filter((step) => {
     return step.matchesStepName(stepText);
   });
-  if (!matchedSteps.length) exitWithMessage(`Unknown step: ${stepText}`);
+  if (matchedSteps.length === 0) {
+    exitWithMessage(`Undefined step: ${stepText} (${file})`);
+  }
   if (matchedSteps.length > 1)
     exitWithMessage(
       [
-        `Several steps found for text: ${stepText}`,
+        `Several step definitions found for text: ${stepText} (${file})`,
         ...matchedSteps.map((s) => `- ${s.pattern}`),
       ].join('\n'),
     );
