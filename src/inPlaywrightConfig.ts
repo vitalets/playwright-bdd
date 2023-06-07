@@ -14,7 +14,9 @@ export function generateBDDTests(inputConfig?: BDDInputConfig) {
   // generate only in main process, skip in workers
   if (isMainProcess()) {
     registerInputConfig(outputDir, inputConfig);
-    if (!skip) execBddgenSync(outputDir);
+    if (!skip && !isRunFromVsCodeExtension()) {
+      execBddgenSync(outputDir);
+    }
   }
 
   return outputDir;
@@ -27,4 +29,11 @@ function execBddgenSync(outputDir: string) {
 
 function isMainProcess() {
   return !process.env.TEST_WORKER_INDEX;
+}
+
+/**
+ * VS Code extension scans and executes all playwright configs.
+ */
+function isRunFromVsCodeExtension() {
+  return (process.env.PW_TEST_REPORTER || '').includes('.vscode');
 }
