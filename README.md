@@ -47,60 +47,6 @@ Both Playwright and Cucumber have their own test runners. You can use Cucumber r
 * Parallelize tests with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
-## How it works
-
-**Phase 1: Generate Playwright test files from feature files**
-
-CLI command `bddgen` reads Cucumber config and converts feature files into Playwright test files:
-
-From
-```gherkin
-Feature: Playwright site
-
-    Scenario: Check title
-        Given I open url "https://playwright.dev"
-        When I click link "Get started"
-        Then I see in title "Playwright"
-```
-
-To
-```js
-import { test } from 'playwright-bdd';
-
-test.describe('Playwright site', () => {
-
-  test('Check title', async ({ Given, When, Then }) => {
-    await Given('I open url "https://playwright.dev"');
-    await When('I click link "Get started"');
-    await Then('I see in title "Playwright"');
-  });
-
-});    
-```
-
-**Phase 2: Run generated test files with Playwright runner**
-
-Playwright runner takes generated test files and runs them as usual. Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
-
-```js
-Given('I open url {string}', async ({ page }, url) => {
-  await page.goto(url);
-});
-
-When('I click link {string}', async ({ page }, name) => {
-  await page.getByRole('link', { name }).click();
-});
-
-Then('I see in title {string}', async ({ page }, text) => {
-  await expect(page).toHaveTitle(new RegExp(text));
-});  
-```
-
-**Run BDD tests in single command:**
-```
-npx bddgen && npx playwright test
-```
-
 ## Installation
 
 Install from npm:
@@ -123,32 +69,23 @@ npx playwright install
 
 ## Get started
 
-1. Create Cucumber config `cucumber.cjs` in project root:
-
-    ```js
-    module.exports = {
-      default: {
-        paths: [ 'features/**/*.feature' ],       
-        require: [ 'features/steps/**/*.{ts,js}' ],
-        // uncomment if using TypeScript
-        // requireModule: ['ts-node/register'],
-        publishQuiet: true,
-      },
-    };
-    ```
-
-2. Create Playwright config `playwright.config.js`. Set `testDir` pointing to `.features-gen` directory. That directory does not exist yet but will be created during tests generation:
-
-   ```js
+1. Create the following Playwright config `playwright.config.ts` in project root:
+   ```ts
    import { defineConfig } from '@playwright/test';
+   import { generateBDDTests } from 'playwright-bdd';
+
+   const testDir = generateBDDTests({
+     paths: ['sample.feature'],
+     require: ['steps.ts'],
+     requireModule: ['ts-node/register'],
+   });
 
    export default defineConfig({
-     testDir: '.features-gen', // <- generated BDD tests
-     projects: [{ name: 'e2e' }],
+     testDir,
    });
    ```
 
-3. Describe features in `features/*.feature` files:
+2. Describe feature in `sample.feature`:
 
    ```gherkin
    Feature: Playwright site
@@ -159,10 +96,10 @@ npx playwright install
            Then I see in title "Playwright"
    ```
 
-4. Write step definitions in `features/steps/*.{ts,js}` files:
+3. Write step definitions in `steps.ts`:
    ```ts
-   import { createBDD } from 'playwright-bdd';
    import { expect } from '@playwright/test';
+   import { createBDD } from 'playwright-bdd';
 
    const { Given, When, Then } = createBDD();
 
@@ -180,10 +117,10 @@ npx playwright install
    ```
    > There is alternative Cucumber-style syntax for step definitions, see [Writing steps](#writing-steps) section.
 
-5. Run command to generate and execute tests:
+4. Run tests:
 
    ```
-   npx bddgen && npx playwright test
+   npx playwright test
    ```
 
    Output:
@@ -469,6 +406,60 @@ npx bddgen && npx playwright test --debug
 
 * [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
+
+## How it works
+
+**Phase 1: Generate Playwright test files from feature files**
+
+CLI command `bddgen` reads Cucumber config and converts feature files into Playwright test files:
+
+From
+```gherkin
+Feature: Playwright site
+
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+        When I click link "Get started"
+        Then I see in title "Playwright"
+```
+
+To
+```js
+import { test } from 'playwright-bdd';
+
+test.describe('Playwright site', () => {
+
+  test('Check title', async ({ Given, When, Then }) => {
+    await Given('I open url "https://playwright.dev"');
+    await When('I click link "Get started"');
+    await Then('I see in title "Playwright"');
+  });
+
+});    
+```
+
+**Phase 2: Run generated test files with Playwright runner**
+
+Playwright runner takes generated test files and runs them as usual. Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
+
+```js
+Given('I open url {string}', async ({ page }, url) => {
+  await page.goto(url);
+});
+
+When('I click link {string}', async ({ page }, name) => {
+  await page.getByRole('link', { name }).click();
+});
+
+Then('I see in title {string}', async ({ page }, text) => {
+  await expect(page).toHaveTitle(new RegExp(text));
+});  
+```
+
+**Run BDD tests in single command:**
+```
+npx bddgen && npx playwright test
+```
 
 ## Limitations
 

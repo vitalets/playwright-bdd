@@ -4,7 +4,7 @@
 set -eo pipefail
 
 if [ -z "$1" ]; then
-    ./scripts/examples.sh pwstyle
+    ./scripts/examples.sh playwright-style
     ./scripts/examples.sh cjs-ts
     ./scripts/examples.sh esm-ts
     ./scripts/examples.sh cjs
@@ -13,5 +13,5 @@ if [ -z "$1" ]; then
 fi
 
 pushd examples/$1
-npm test
+npx playwright test
 popd
