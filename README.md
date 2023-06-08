@@ -55,7 +55,8 @@ Install from npm:
 npm i -D playwright-bdd
 ```
 
-This package uses `@playwright/test` and `@cucumber/cucumber` as peer dependencies, so you may need to install them as well:
+This package uses `@playwright/test` and `@cucumber/cucumber` as peer dependencies, 
+so you may need to install them as well:
 
 ```
 npm i -D @playwright/test @cucumber/cucumber
@@ -69,15 +70,16 @@ npx playwright install
 
 ## Get started
 
-1. Create the following Playwright config `playwright.config.ts` in project root:
-   ```ts
+1. Create the following Playwright config `playwright.config.js` in project root:
+   ```js
    import { defineConfig } from '@playwright/test';
    import { generateBDDTests } from 'playwright-bdd';
 
    const testDir = generateBDDTests({
      paths: ['sample.feature'],
-     require: ['steps.ts'],
-     requireModule: ['ts-node/register'],
+     require: ['steps.js'],
+     // uncomment and install 'ts-node' if using TypeScript
+     // requireModule: ['ts-node/register'],
    });
 
    export default defineConfig({
@@ -96,26 +98,26 @@ npx playwright install
            Then I see in title "Playwright"
    ```
 
-3. Write step definitions in `steps.ts`:
+3. Implement steps in `steps.js`:
    ```ts
    import { expect } from '@playwright/test';
    import { createBDD } from 'playwright-bdd';
 
    const { Given, When, Then } = createBDD();
 
-   Given('I open url {string}', async ({ page }, url: string) => {
+   Given('I open url {string}', async ({ page }, url) => {
      await page.goto(url);
    });
 
-   When('I click link {string}', async ({ page }, name: string) => {
+   When('I click link {string}', async ({ page }, name) => {
      await page.getByRole('link', { name }).click();
    });
 
-   Then('I see in title {string}', async ({ page }, keyword: string) => {
+   Then('I see in title {string}', async ({ page }, keyword) => {
      await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
-   > There is alternative Cucumber-style syntax for step definitions, see [Writing steps](#writing-steps) section.
+   > There is alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps) section.
 
 4. Run tests:
 
@@ -134,52 +136,53 @@ npx playwright install
    npx playwright show-report
    ```
 
+5. (Optional) Check out `.features-gen` directory to see how generated tests look like.
+
 ## Configuration
-`playwright-bdd` does not have own config, it just uses Cucumber and Playwright config files. 
+Configuration is passed to `generateBDDTests()` inside Playwright config.
+Options are the same as in [CucumberJS config](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options)
+plus a few special.
 
-### Cucumber
-Create [Cucumber config file](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md) to let `playwright-bdd` know how to load your features and step definitions.
+Most important Cucumber options:
 
-Example of `cucumber.cjs`:
-```js
-module.exports = {
-  default: {
-    paths: [ 'features/**/*.feature' ],       
-    require: [ 'features/steps/**/*.{ts,js}' ],
-    // uncomment if using TypeScript
-    // requireModule: ['ts-node/register'],
-    publishQuiet: true,
-  },
-};
-```
+| Name             | Type       | Description   
+|------------------|------------|------------------------
+| `paths`          | `string[]` | Paths to feature files. Default: `features/**/*.{feature,feature.md}`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features)     
+| `require`        | `string[]` | Paths to step definitions in **CommonJS**. Default: `features/**/*.(js)` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code)            
+| `import`         | `string[]` | Paths to step definitions in **ESM**. Default: `features/**/*.(js)`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/esm.md)                                       
+| `requireModule`  | `string[]` | Names of transpilation modules to load. Default: `[]`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/transpiling.md)                                             
 
-Or in ESM format `cucumber.mjs`:
+Own `playwright-bdd` options:
+| Name              | Type       | Description
+|-------------------|------------|------------------------
+| `outputDir`       | `string`   | Directory to output generated test files. Default: `.features-gen` 
+| `importTestFrom`  | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
+| `skip`            | `boolean`  | Skip test files generation. Default: `false`
+| `verbose`         | `boolean`  | Verbose output. Default: `false`
 
-```js
-export default {
-  paths: [ 'features/**/*.feature' ], 
-  import: [ 'features/steps/**/*.{ts,js}' ],
-  // uncomment if using TypeScript
-  // requireModule: ['ts-node/register'],
-  publishQuiet: true,
-};
-```
-
-### Playwright
-Create [Playwright config file](https://playwright.dev/docs/test-configuration) for running generated tests. Set `testDir` pointing to output directory of `bddgen` command (default is `.features-gen`).
-
-Example of `playwright.config.ts`:
+Example usage:
 ```ts
 import { defineConfig } from '@playwright/test';
+import { generateBDDTests } from 'playwright-bdd';
+
+const testDir = generateBDDTests({
+  importTestFrom: 'fixtures.ts',
+  paths: ['feature/*.feature'],
+  require: ['steps/**/*.ts'],
+  requireModule: ['ts-node/register'],
+});
 
 export default defineConfig({
-  testDir: '.features-gen', // <- generated BDD tests
-  projects: [{ name: 'e2e' }],
+  testDir,
 });
 ```
 
+> It is possible to use separate `cucumber.js` config file, 
+but it's more convenient to keep configuration in single place
+
 ## Writing features
-Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). All keywords are supported.
+Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 
+All keywords are supported.
 
 Example:
 
@@ -214,12 +217,13 @@ Feature: Playwright site
 
 ## Writing steps
 There are two ways of writing step definitions:
-1. Playwright-style
-2. Cucumber-style
+1. **Playwright-style** - recommended for new projects or adding BDD to existing Playwright projects
+2. **Cucumber-style** - recommended for migrating existing CucumberJS projects to Playwright runner
 
 ### Playwright-style
 Playwright-style allows you to write step definitions like a regular playwright tests.
-You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) (both test-scoped and worker-scoped). Recommended for setting up playwright-bdd from scratch.
+You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures),
+both test-scoped and worker-scoped. 
 
 Playwright-style highlights:
 
@@ -246,7 +250,7 @@ When('I click link {string}', async ({ page }, name: string) => {
 #### Custom fixtures
 To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions you need the following:
 
-1. define custom fixtures and create `test` instance with `test.extend()`. For example, `fixtures.ts`:
+1. Define custom fixtures and create `test` instance with `test.extend()`. For example, `fixtures.ts`:
     ```ts
     // Note: import base test from playwright-bdd, not from @playwright/test
     import { test as base } from 'playwright-bdd';
@@ -267,7 +271,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. pass custom `test` function to `createBDD()` as argument. For example, `steps.ts`:
+2. Pass custom `test` function to `createBDD()` as argument. For example, `steps.ts`:
     ```ts
     import { createBDD } from 'playwright-bdd';
     import { test } from './fixtures';
@@ -279,17 +283,23 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
     Then('I see in title {string}', async ({ myPage }, text: string) => { ... });
     ```
 
-3. provide custom `test` function to generated test files. For that run `npx bddgen` with `--import-test-from` flag pointing to file with custom `test`: 
-    ```
-    npx bddgen --import-test-from ./fixtures
+3. Set config option `importTestFrom` pointing to file exporting custom `test` function. 
+   For example: 
+    ```diff
+    const testDir = generateBDDTests({
+      +importTestFrom: 'fixtures.ts',
+      paths: ['feature/*.feature'],
+      require: ['steps/**/*.ts'],
+      requireModule: ['ts-node/register'],
+    });
     ```
     Effect in generated files:
     ```diff
     -import { test } from "playwright-bdd";  
-    +import { test } from "./fixtures";  
+    +import { test } from "./fixtures.ts";  
     ```
 
-See [full example of Playwright-style](examples/pwstyle).
+See [full example of Playwright-style](examples/playwright-style).
 
 #### Accessing `testInfo`
 To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc.. use it as a fixture:
@@ -302,9 +312,7 @@ Given('I do something', async ({ testInfo }) => {
 ```
 
 ### Cucumber-style
-Cucumber-style step definitions are compatible with CucumberJS. Use it if you are migrating from CucumberJS runner and have a lot of existing tests.
-
-Cucumber-style highlights:
+Cucumber-style step definitions are compatible with CucumberJS:
 
 * use `Given`, `When`, `Then` from `@cucumber/cucumber` package
 * [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrows!) 
@@ -376,27 +384,12 @@ setWorldConstructor(CustomWorld);
 ```
 > Consider asynchronous setup and teardown of World instance with `init()` / `destroy()` methods.
 
-## Examples
-
-There several working examples depending on your project setup (ESM/CJS and TS/JS):
-
-- [ESM + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/esm-ts)
-- [CJS + TypeScript](https://github.com/vitalets/playwright-bdd/tree/main/examples/cjs-ts)
-- [ESM](https://github.com/vitalets/playwright-bdd/tree/main/examples/esm)
-- [CJS](https://github.com/vitalets/playwright-bdd/tree/main/examples/cjs)
+See [full example of Cucumber-style](examples/cucumber-style).
 
 ## Watch mode
 To watch `.feature` files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
 ```
 npx nodemon --watch ./features --ext feature --exec 'npx bddgen'
-```
-
-## Debugging
-
-You can debug tests as usual with `--debug` flag:
-
-```
-npx bddgen && npx playwright test --debug
 ```
 
 ## VS Code Integration
@@ -409,9 +402,7 @@ npx bddgen && npx playwright test --debug
 
 ## How it works
 
-**Phase 1: Generate Playwright test files from feature files**
-
-CLI command `bddgen` reads Cucumber config and converts feature files into Playwright test files:
+**Phase 1: Generate Playwright test files from BDD feature files**
 
 From
 ```gherkin
@@ -438,9 +429,10 @@ test.describe('Playwright site', () => {
 });    
 ```
 
-**Phase 2: Run generated test files with Playwright runner**
+**Phase 2: Run test files with Playwright runner**
 
-Playwright runner takes generated test files and runs them as usual. Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
+Playwright runner takes generated test files and runs them as usual. 
+Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
 
 ```js
 Given('I open url {string}', async ({ page }, url) => {
@@ -456,23 +448,19 @@ Then('I see in title {string}', async ({ page }, text) => {
 });  
 ```
 
-**Run BDD tests in single command:**
-```
-npx bddgen && npx playwright test
-```
-
 ## Limitations
 
 Currently there are some limitations:
 
 * Cucumber tags not supported yet (wip, [#8](https://github.com/vitalets/playwright-bdd/issues/8))
-* [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. (use Playwright fixtures instead?)
+* [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. Consider using Playwright fixtures instead.
 
 ## Changelog
 Please check out [CHANGELOG.md](CHANGELOG.md).
 
 ## Feedback
-Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues). 
+Per communication from Playwright team feedback is important for implementing BDD in Playwright core.
+Feel free to share your suggestions in [issues](https://github.com/vitalets/playwright-bdd/issues). 
 
 ## License
 MIT
