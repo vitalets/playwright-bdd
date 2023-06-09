@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
-import { generateBDDTests } from '../../dist';
+import { defineBddConfig } from '../../dist';
 
-const testDir = generateBDDTests({
+const testDir = defineBddConfig({
   paths: ['../bdd-syntax/features'],
   require: ['steps.ts'],
   requireModule: ['ts-node/register'],

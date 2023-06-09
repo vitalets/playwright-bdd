@@ -66,7 +66,8 @@ test('no-steps', (t) => {
 });
 
 function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
-  execSync('npx playwright test', {
+  const loader = dir === 'esm-ts' ? '--loader ts-node/esm' : '';
+  execSync(`node ${loader} ../../dist/gen/cli && npx playwright test`, {
     cwd: path.join(`test`, dir),
     ...opts,
   });

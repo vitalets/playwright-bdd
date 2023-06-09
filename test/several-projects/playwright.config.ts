@@ -1,25 +1,25 @@
 import { defineConfig } from '@playwright/test';
-import { generateBDDTests } from '../../dist';
+import { defineBddConfig } from '../../dist';
 
 export default defineConfig({
   projects: [
     {
       name: 'project one',
-      testDir: generateBDDTests({
+      testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        importTestFrom: 'fixtures.ts',
+        importTestFrom: 'one/fixtures.ts',
         paths: ['one/*.feature'],
-        require: ['steps.ts'],
+        require: ['one/steps.ts'],
         requireModule: ['ts-node/register'],
       }),
     },
     {
       name: 'project two',
-      testDir: generateBDDTests({
+      testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        importTestFrom: 'fixtures.ts',
+        importTestFrom: 'two/fixtures.ts',
         paths: ['two/*.feature'],
-        require: ['steps.ts'],
+        require: ['two/steps.ts'],
         requireModule: ['ts-node/register'],
       }),
     },

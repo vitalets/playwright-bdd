@@ -1,27 +1,30 @@
 #!/usr/bin/env node
 
 import { Command } from 'commander';
-import { generateBDDFilesImpl } from '.';
-import { BDDInputConfig, defaults } from '../config';
+import { generateTestFiles } from '.';
+import { exitWithMessage } from '../utils';
+import { loadConfig as loadPlaywrightConfig } from '../playwright/loadConfig';
+import { getEnvConfigs } from '../config/env';
 
 const program = new Command();
 
 program
   .name('bddgen')
   .description('Generate Playwright tests from Gherkin documents')
-  // don't use .option default value as defaults applied later in config module
-  .option('-o, --output <dir>', `Output dir (default: "${defaults.outputDir}")`)
-  .option(
-    '-t, --import-test-from <file>',
-    `Path to file for importing test instance (default: "playwright-bdd")`,
-  )
-  .option('--verbose', `Verbose mode (default: false)`)
-  .action(async ({ output, importTestFrom, verbose }) => {
-    const inputConfig: BDDInputConfig = {};
-    if (output) inputConfig.outputDir = output;
-    if (importTestFrom) inputConfig.importTestFrom = importTestFrom;
-    if (verbose) inputConfig.verbose = verbose;
-    await generateBDDFilesImpl(inputConfig);
+  .option('-c, --config <file>', `Path to Playwright configuration file`)
+  .action(async (opts) => {
+    await loadPlaywrightConfig(opts.config);
+    const configs = Object.values(getEnvConfigs());
+    assertConfigsExist(configs);
+    for (const config of configs) {
+      await generateTestFiles(config);
+    }
   });
 
 program.parse();
+
+function assertConfigsExist(configs: unknown[]) {
+  if (configs.length === 0) {
+    exitWithMessage(`No BDD configs found. Did you use defineBddConfig() in playwright.config.ts?`);
+  }
+}

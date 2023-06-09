@@ -448,6 +448,9 @@ Then('I see in title {string}', async ({ page }, text) => {
 });  
 ```
 
+## FAQ
+#### Is it possible to run BDD Playwright tests in signle command? 
+
 ## Limitations
 
 Currently there are some limitations:

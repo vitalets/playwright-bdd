@@ -1,7 +1,22 @@
-import { ILoadConfigurationOptions, IRunEnvironment, loadConfiguration } from '@cucumber/cucumber/api';
+import {
+  ILoadConfigurationOptions,
+  IResolvedConfiguration,
+  IRunEnvironment,
+  loadConfiguration,
+} from '@cucumber/cucumber/api';
 
-let config: ReturnType<typeof loadConfiguration>;
+const cache = new Map<string, Promise<IResolvedConfiguration>>();
 
-export async function loadConfig(options?: ILoadConfigurationOptions, environment?: IRunEnvironment) {
-  return config || (config = loadConfiguration(options, environment));
+export async function loadConfig(
+  options?: ILoadConfigurationOptions,
+  environment?: IRunEnvironment,
+) {
+  const cacheKey = JSON.stringify(options);
+  let config = cache.get(cacheKey);
+  if (!config) {
+    config = loadConfiguration(options, environment);
+    cache.set(cacheKey, config);
+  }
+
+  return config;
 }

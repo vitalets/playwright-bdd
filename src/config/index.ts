@@ -1,7 +1,10 @@
+/**
+ * BDD Config.
+ */
 import path from 'node:path';
 import { ImportTestFrom } from '../gen/formatter';
 import { IConfiguration } from '@cucumber/cucumber/api';
-import { getInputConfig } from './input';
+import { saveConfigToEnv } from './env';
 
 // todo: pick only relevant fields from cucumber config
 type CucumberConfig = Partial<IConfiguration>;
@@ -25,10 +28,20 @@ export const defaults = {
 export type BDDInputConfig = OwnConfig & CucumberConfig;
 export type BDDConfig = ReturnType<typeof getConfig>;
 
-export function getConfig(inputConfig?: BDDInputConfig) {
-  // try to pull input config from env var
-  const inputConfigFromEnv = getInputConfig(inputConfig?.outputDir);
-  const config = Object.assign({}, defaults, inputConfigFromEnv, inputConfig);
+export function defineBddConfig(inputConfig?: BDDInputConfig) {
+  const config = getConfig(inputConfig);
+
+  // In main process store config in env to be accessible by workers
+  const isMainProcess = !process.env.TEST_WORKER_INDEX;
+  if (isMainProcess) {
+    saveConfigToEnv(config);
+  }
+
+  return config.outputDir;
+}
+
+function getConfig(inputConfig?: BDDInputConfig) {
+  const config = Object.assign({}, defaults, inputConfig);
   return {
     ...config,
     // important to resolve outputDir as it is used as unique key for input configs

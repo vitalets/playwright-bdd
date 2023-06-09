@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
-import { generateBDDTests } from '../../dist/index.js';
+import { defineBddConfig } from '../../dist/index.js';
 
-const testDir = generateBDDTests({
+const testDir = defineBddConfig({
   importTestFrom: 'fixtures',
   paths: ['*.feature'],
   import: ['steps.js'], // <- note import instead of require

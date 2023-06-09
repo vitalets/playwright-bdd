@@ -2,19 +2,24 @@ import { IRunConfiguration, IRunEnvironment, loadSupport } from '@cucumber/cucum
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { exitWithMessage } from '../utils';
 
-let supportCodeLibrary: Promise<ISupportCodeLibrary>;
+const cache = new Map<string, Promise<ISupportCodeLibrary>>();
 
 export async function loadSteps(
   runConfiguration: IRunConfiguration,
   environment: IRunEnvironment = {},
 ) {
-  if (!supportCodeLibrary) {
-    supportCodeLibrary = loadSupport(runConfiguration, environment).then((lib) => {
+  const cacheKey = JSON.stringify(runConfiguration);
+  let lib = cache.get(cacheKey);
+
+  if (!lib) {
+    lib = loadSupport(runConfiguration, environment).then((lib) => {
       assertStepsLoaded(lib);
       return lib;
     });
+    cache.set(cacheKey, lib);
   }
-  return supportCodeLibrary;
+
+  return lib;
 }
 
 export function findStepDefinition(

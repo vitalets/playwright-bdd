@@ -1,11 +1,12 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { defineConfig } from '@playwright/test';
-import { generateBDDTests } from '../../dist/index.js';
+// @ts-ignore
+import { defineBddConfig } from 'playwright-bdd';
 
-const testDir = generateBDDTests({
+const testDir = defineBddConfig({
   importTestFrom: 'fixtures',
   paths: ['*.feature'],
   import: ['steps.ts'], // <- note import instead of require
-  requireModule: ['ts-node/register'],
 });
 
 export default defineConfig({
