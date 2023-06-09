@@ -4,6 +4,9 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationByStacktrace } from '../playwright/getLocationByStacktrace';
+import { CucumberStepFunction } from './createBdd';
+import { test as baseTest } from './baseTest';
+import { getTestImpl } from '../playwright/testTypeImpl';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -41,10 +44,9 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
     const location = getLocationByStacktrace({ level: 2 });
     // attach custom fixtures to world - the only way to pass them to cucumber step fn
     this.customFixtures = customFixtures;
-    // @ts-expect-error _runAsStep is private
-    const res = await this.testInfo._runAsStep({ category: 'test.step', title: text, location }, () =>
-      stepDefinition.code.apply(this, parameters),
-    );
+    const code = stepDefinition.code as CucumberStepFunction;
+    const test = code.customTest || baseTest;
+    const res = await getTestImpl(test)._step(location, text, () => code.apply(this, parameters));
     delete this.customFixtures;
     return res;
   }

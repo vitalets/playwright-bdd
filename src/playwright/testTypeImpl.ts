@@ -18,8 +18,12 @@ const testTypeSymbol = getSymbolByName(test, 'testType');
  * Returns test fixtures using Symbol.
  */
 export function getTestFixtures(test: TestTypeCommon) {
-  // @ts-expect-error testTypeSymbol is hidden prop
-  return test[testTypeSymbol].fixtures as FixturesWithLocation[];
+  return getTestImpl(test).fixtures as FixturesWithLocation[];
+}
+
+export function getTestImpl(test: TestTypeCommon) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return test[testTypeSymbol] as any;
 }
 
 /**

@@ -52,7 +52,10 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
     const cucumberFn: CucumberStepFunction = function (...args: any[]) {
       // testInfo is treated like a special fixture
-      const fixturesArg = Object.assign({}, this.customFixtures, { testInfo: this.testInfo });
+      // $test is treated as a special fixture
+      const fixturesArg = Object.assign({}, this.customFixtures, {
+        testInfo: this.testInfo,
+      });
       return fn.call(this, fixturesArg as StepFunctionFixturesArg<T, W>, ...args);
     };
 

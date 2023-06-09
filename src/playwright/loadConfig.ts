@@ -6,13 +6,16 @@
 import path from 'node:path';
 
 export async function loadConfig(cliConfig?: string) {
-  const m = path.dirname(require.resolve('@playwright/test'));
-  const configLoaderPath = path.join(m, 'lib', 'common', 'configLoader.js');
-  const { ConfigLoader, resolveConfigFile } = await import(configLoaderPath);
-
+  const { ConfigLoader, resolveConfigFile } = await importConfigLoader();
   const configFileOrDirectory = cliConfig ? path.resolve(process.cwd(), cliConfig) : process.cwd();
   const resolvedConfigFile = resolveConfigFile(configFileOrDirectory);
   const configLoader = new ConfigLoader();
 
   return configLoader.loadConfigFile(resolvedConfigFile, true);
+}
+
+function importConfigLoader() {
+  const playwrightRoot = path.dirname(require.resolve('@playwright/test'));
+  const configLoaderPath = path.join(playwrightRoot, 'lib', 'common', 'configLoader.js');
+  return import(configLoaderPath);
 }
