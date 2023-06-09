@@ -73,9 +73,9 @@ npx playwright install
 1. Create the following Playwright config `playwright.config.js` in project root:
    ```js
    import { defineConfig } from '@playwright/test';
-   import { generateBDDTests } from 'playwright-bdd';
+   import { defineBddConfig } from 'playwright-bdd';
 
-   const testDir = generateBDDTests({
+   const testDir = defineBddConfig({
      paths: ['sample.feature'],
      require: ['steps.js'],
      // uncomment and install 'ts-node' if using TypeScript
@@ -139,7 +139,7 @@ npx playwright install
 5. (Optional) Check out `.features-gen` directory to see how generated tests look like.
 
 ## Configuration
-Configuration is passed to `generateBDDTests()` inside Playwright config.
+Configuration is passed to `defineBddConfig()` inside Playwright config.
 Options are the same as in [CucumberJS config](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options)
 plus a few special.
 
@@ -163,9 +163,9 @@ Own `playwright-bdd` options:
 Example usage:
 ```ts
 import { defineConfig } from '@playwright/test';
-import { generateBDDTests } from 'playwright-bdd';
+import { defineBddConfig } from 'playwright-bdd';
 
-const testDir = generateBDDTests({
+const testDir = defineBddConfig({
   importTestFrom: 'fixtures.ts',
   paths: ['feature/*.feature'],
   require: ['steps/**/*.ts'],
@@ -286,7 +286,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 3. Set config option `importTestFrom` pointing to file exporting custom `test` function. 
    For example: 
     ```diff
-    const testDir = generateBDDTests({
+    const testDir = defineBddConfig({
       +importTestFrom: 'fixtures.ts',
       paths: ['feature/*.feature'],
       require: ['steps/**/*.ts'],
