@@ -12,26 +12,24 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 <!-- toc -->
 
 - [Why Playwright runner](#why-playwright-runner)
-- [How it works](#how-it-works)
 - [Installation](#installation)
 - [Get started](#get-started)
 - [Configuration](#configuration)
-  * [Cucumber](#cucumber)
-  * [Playwright](#playwright)
 - [Writing features](#writing-features)
     + [Run single feature](#run-single-feature)
     + [Skip feature](#skip-feature)
 - [Writing steps](#writing-steps)
   * [Playwright-style](#playwright-style)
-    + [Worker-scoped fixtures](#worker-scoped-fixtures)
+    + [Custom fixtures](#custom-fixtures)
     + [Accessing `testInfo`](#accessing-testinfo)
   * [Cucumber-style](#cucumber-style)
     + [World](#world)
     + [Custom World](#custom-world)
-- [Examples](#examples)
 - [Watch mode](#watch-mode)
-- [Debugging](#debugging)
 - [VS Code Integration](#vs-code-integration)
+- [How it works](#how-it-works)
+- [FAQ](#faq)
+    + [Is it possible to run BDD tests in signle command?](#is-it-possible-to-run-bdd-tests-in-signle-command)
 - [Limitations](#limitations)
 - [Changelog](#changelog)
 - [Feedback](#feedback)
@@ -122,7 +120,7 @@ npx playwright install
 4. Run tests:
 
    ```
-   npx playwright test
+   npx bddgen && npx playwright test
    ```
 
    Output:
@@ -136,31 +134,31 @@ npx playwright install
    npx playwright show-report
    ```
 
-5. (Optional) Check out `.features-gen` directory to see how generated tests look like.
+5. (Optional) Check out `.features-gen` directory to see how generated tests look like ;)
 
 ## Configuration
-Configuration is passed to `defineBddConfig()` inside Playwright config.
-Options are the same as in [CucumberJS config](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options)
-plus a few special.
+Configuration is passed to `defineBddConfig()` inside Playwright config file.
+Most options are from CucumberJS and there are a few special.
 
-Most important Cucumber options:
+Typical Cucumber options:
 
 | Name             | Type       | Description   
 |------------------|------------|------------------------
 | `paths`          | `string[]` | Paths to feature files. Default: `features/**/*.{feature,feature.md}`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features)     
 | `require`        | `string[]` | Paths to step definitions in **CommonJS**. Default: `features/**/*.(js)` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code)            
 | `import`         | `string[]` | Paths to step definitions in **ESM**. Default: `features/**/*.(js)`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/esm.md)                                       
-| `requireModule`  | `string[]` | Names of transpilation modules to load. Default: `[]`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/transpiling.md)                                             
+| `requireModule`  | `string[]` | Names of transpilation modules to load. Default: `[]`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/transpiling.md)
+
+See more options in [CucumberJS docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options).
 
 Own `playwright-bdd` options:
 | Name              | Type       | Description
 |-------------------|------------|------------------------
 | `outputDir`       | `string`   | Directory to output generated test files. Default: `.features-gen` 
 | `importTestFrom`  | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
-| `skip`            | `boolean`  | Skip test files generation. Default: `false`
 | `verbose`         | `boolean`  | Verbose output. Default: `false`
 
-Example usage:
+Example configuration:
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
@@ -177,8 +175,11 @@ export default defineConfig({
 });
 ```
 
+Return value is path where test files will be generated.
+It is convenient to use it as `testDir` option for Playwright.
+
 > It is possible to use separate `cucumber.js` config file, 
-but it's more convenient to keep configuration in single place
+but it's more convenient to keep configuration embeded in Plawright config
 
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 
@@ -250,9 +251,9 @@ When('I click link {string}', async ({ page }, name: string) => {
 #### Custom fixtures
 To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions you need the following:
 
-1. Define custom fixtures and create `test` instance with `test.extend()`. For example, `fixtures.ts`:
+1. Define custom fixtures with `test.extend()` and export `test` instance. For example, `fixtures.ts`:
     ```ts
-    // Note: import base test from playwright-bdd, not from @playwright/test
+    // Note: import base from playwright-bdd, not from @playwright/test!
     import { test as base } from 'playwright-bdd';
 
     // custom fixture
@@ -387,9 +388,9 @@ setWorldConstructor(CustomWorld);
 See [full example of Cucumber-style](examples/cucumber-style).
 
 ## Watch mode
-To watch `.feature` files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
+To watch `.feature` / steps files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
 ```
-npx nodemon --watch ./features --ext feature --exec 'npx bddgen'
+npx nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'
 ```
 
 ## VS Code Integration
@@ -449,7 +450,17 @@ Then('I see in title {string}', async ({ page }, text) => {
 ```
 
 ## FAQ
-#### Is it possible to run BDD Playwright tests in signle command? 
+
+#### Is it possible to run BDD tests in signle command? 
+This approach was initially implemented: generation of test files occured directly in `playwright.config.ts` before test execution. It allows to run tests with `npx playwright test` instead of having separate step as `npx bddgen && npx playwright test`. But later several issues appeared:
+
+1. Playwright config is executed many times from a lot of places (workers, VS Code extension, UI mode, etc). And logic to detectd when we should run test generation and when not becomes complex and messy
+
+2. Implementation of watch mode also questionable. It is impossible to just use `nodemon` with `playwright.config.ts`
+
+3. `--ui` mode leads to circullar dependency: generation of test files triggers test run that in turn re-imports config triggering test generation
+
+Fow now decoupling `bddgen` from `playwright test` looks a good option.
 
 ## Limitations
 
@@ -463,7 +474,7 @@ Please check out [CHANGELOG.md](CHANGELOG.md).
 
 ## Feedback
 Per communication from Playwright team feedback is important for implementing BDD in Playwright core.
-Feel free to share your suggestions in [issues](https://github.com/vitalets/playwright-bdd/issues). 
+Feel free to share your experience/suggestions in [issues](https://github.com/vitalets/playwright-bdd/issues). 
 
 ## License
 MIT
