@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
-import { createBDD } from '../../dist';
+import { createBdd } from '../../dist';
 
-const { Given } = createBDD();
+const { Given } = createBdd();
 
 Given('some state', async ({ page }) => {
   expect(page).toBeDefined();

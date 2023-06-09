@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { createBDD } from '../../dist';
+import { createBdd } from '../../dist';
 import { test } from './fixtures';
 
-const { Given, When, Then } = createBDD(test);
+const { Given, When, Then } = createBdd(test);
 
 Given('state with fixtures - arrow fn', async ({ page, account }) => {
   expect(page).toBeDefined();

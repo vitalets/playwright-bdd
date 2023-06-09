@@ -63,7 +63,7 @@ function assertConfigForCustomTest(files: TestFile[], config: BDDConfig) {
   const hasCustomTest = files.some((file) => file.customTest);
   if (hasCustomTest && !config.importTestFrom) {
     exitWithMessage(
-      `When using custom "test" function in createBDD() you should ` +
+      `When using custom "test" function in createBdd() you should ` +
         `set "importTestFrom" config option that points to file exporting custom test.`,
     );
   }

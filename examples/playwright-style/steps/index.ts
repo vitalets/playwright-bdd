@@ -1,7 +1,7 @@
-import { createBDD } from 'playwright-bdd';
+import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
-const { Given, When, Then } = createBDD(test);
+const { Given, When, Then } = createBdd(test);
 
 Given('I open url {string}', async ({ page }, url: string) => {
   await page.goto(url);

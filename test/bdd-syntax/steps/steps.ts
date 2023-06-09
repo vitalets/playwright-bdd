@@ -2,10 +2,10 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { DataTable } from '@cucumber/cucumber';
-import { createBDD } from '../../../dist';
+import { createBdd } from '../../../dist';
 import { test } from './fixtures';
 
-const { Given, When, Then } = createBDD(test);
+const { Given, When, Then } = createBdd(test);
 
 Given('State {int}', async () => {
   // noop

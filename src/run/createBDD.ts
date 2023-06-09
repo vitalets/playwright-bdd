@@ -22,7 +22,7 @@ import { exitWithMessage } from '../utils';
 import { test as baseTest } from './baseTest';
 import { isParentChildTest } from '../playwright/testTypeImpl';
 
-export function createBDD<T extends KeyValue = {}, W extends KeyValue = {}>(
+export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
   customTest = excludeBaseTest(customTest);
@@ -86,7 +86,7 @@ export function getFixtureNames(cucumberFn: CucumberStepFunction) {
 
 function assertCustomTestExtendsBdd(customTest?: TestTypeCommon) {
   if (customTest && !isParentChildTest(baseTest, customTest)) {
-    exitWithMessage(`createBDD() should use test extended from "playwright-bdd"`);
+    exitWithMessage(`createBdd() should use test extended from "playwright-bdd"`);
   }
 }
 

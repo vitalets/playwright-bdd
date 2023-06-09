@@ -43,14 +43,14 @@ test('error-import-test-from-steps', (t) => {
 test('error-import-test-not-from-bdd', (t) => {
   execPlaywrightTestWithError(
     t.name,
-    /createBDD\(\) should use test extended from "playwright-bdd"/,
+    /createBdd\(\) should use test extended from "playwright-bdd"/,
   );
 });
 
 test('error-missing-import-test-from', (t) => {
   execPlaywrightTestWithError(
     t.name,
-    /When using custom "test" function in createBDD\(\) you should/,
+    /When using custom "test" function in createBdd\(\) you should/,
   );
 });
 

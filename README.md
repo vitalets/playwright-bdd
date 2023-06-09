@@ -101,9 +101,9 @@ npx playwright install
 3. Implement steps in `steps.js`:
    ```ts
    import { expect } from '@playwright/test';
-   import { createBDD } from 'playwright-bdd';
+   import { createBdd } from 'playwright-bdd';
 
-   const { Given, When, Then } = createBDD();
+   const { Given, When, Then } = createBdd();
 
    Given('I open url {string}', async ({ page }, url) => {
      await page.goto(url);
@@ -227,16 +227,16 @@ both test-scoped and worker-scoped.
 
 Playwright-style highlights:
 
-* use `Given`, `When`, `Then` from `createBDD()` call (see example below)
+* use `Given`, `When`, `Then` from `createBdd()` call (see example below)
 * use arrow functions for step definitions
 * don't use `World` and `before/after` hooks (use fixtures instead)
 
 Example:
 
 ```ts
-import { createBDD } from 'playwright-bdd';
+import { createBdd } from 'playwright-bdd';
 
-const { Given, When, Then } = createBDD();
+const { Given, When, Then } = createBdd();
 
 Given('I open url {string}', async ({ page }, url: string) => {
   await page.goto(url);
@@ -271,12 +271,12 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. Pass custom `test` function to `createBDD()` as argument. For example, `steps.ts`:
+2. Pass custom `test` function to `createBdd()` as argument. For example, `steps.ts`:
     ```ts
-    import { createBDD } from 'playwright-bdd';
+    import { createBdd } from 'playwright-bdd';
     import { test } from './fixtures';
 
-    const { Given, When, Then } = createBDD(test);
+    const { Given, When, Then } = createBdd(test);
 
     Given('I open url {string}', async ({ myPage }, url: string) => { ... });
     When('I click link {string}', async ({ myPage }, name: string) => { ... });

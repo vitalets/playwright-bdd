@@ -1,8 +1,8 @@
 import { expect } from '@playwright/test';
-import { createBDD } from '../../../dist';
+import { createBdd } from '../../../dist';
 import { test } from './fixtures';
 
-const { Given } = createBDD(test);
+const { Given } = createBdd(test);
 
 Given('Another state {int}', async ({ page, option, secondOption }) => {
   expect(page).toBeDefined();

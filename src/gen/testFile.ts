@@ -21,7 +21,7 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { CucumberStepFunction, getFixtureNames } from '../run/createBDD';
+import { CucumberStepFunction, getFixtureNames } from '../run/createBdd';
 import { TestTypeCommon } from '../playwright/types';
 import { isParentChildTest } from '../playwright/testTypeImpl';
 
