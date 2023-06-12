@@ -408,7 +408,7 @@ Defines BDD config inside Playwright config file.
 **Params**
   * `config` *object* - bdd [configuration](#configuration)
 
-**Returns**: *string* directory where test files will be generated
+**Returns**: *string* - directory where test files will be generated
 
 ##### `createBdd(test?)`
 Creates `Given`, `When`, `Then` functions for defining steps.
@@ -416,28 +416,28 @@ Creates `Given`, `When`, `Then` functions for defining steps.
 **Params**
   * `test` *object* - custom test instance
 
-**Returns**: *object* `{ Given, When, Then }`
+**Returns**: *object* - `{ Given, When, Then }`
 
 ##### `Given(fixtures, ...args)`
 Defines `Given` step implementation.
 
 **Params**
   * `fixtures` *object* - Playwright fixtures
-  * `...args` *array<any>* - arguments captured from step pattern
+  * `...args` *array* - arguments captured from step pattern
 
 ##### `When(fixtures, ...args)`
 Defines `When` step implementation.
 
 **Params**
   * `fixtures` *object* - Playwright fixtures
-  * `...args` *array<any>* - arguments captured from step pattern
+  * `...args` *array* - arguments captured from step pattern
 
 ##### `Then(fixtures, ...args)`
 Defines `Then` step implementation.
 
 **Params**
   * `fixtures` *object* - Playwright fixtures
-  * `...args` *array<any>* - arguments captured from step pattern
+  * `...args` *array* - arguments captured from step pattern
 
 ## VS Code Integration
 
