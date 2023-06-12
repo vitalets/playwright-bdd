@@ -33,6 +33,9 @@
       "prettier --write --ignore-unknown"
     ]
   },
+  "dependencies": {
+    "fast-glob": "^3.2.12"
+  },
   "devDependencies": {
     "@cucumber/cucumber": "^9.1.2",
     "@eslint/js": "^8.42.0",
@@ -66,8 +69,5 @@
     "testing",
     "e2e"
   ],
-  "license": "MIT",
-  "dependencies": {
-    "allure-playwright": "^2.3.0"
-  }
+  "license": "MIT"
 }

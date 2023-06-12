@@ -1,9 +1,10 @@
 /**
  * Generate playwright test files from Gherkin documents.
  */
-import fs from 'node:fs';
+import fs from 'node:fs/promises';
 import path from 'node:path';
 import { GherkinDocument, Pickle } from '@cucumber/messages';
+import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { loadConfig } from '../cucumber/loadConfig';
 import { loadFeatures } from '../cucumber/loadFeatures';
@@ -20,7 +21,7 @@ export async function generateTestFiles(config: BDDConfig) {
   ]);
   const files = buildFiles(features, supportCodeLibrary, config);
   assertConfigForCustomTest(files, config);
-  const paths = saveFiles(files, config);
+  const paths = await saveFiles(files, config);
   if (config.verbose) log(`Generated files: ${paths.length}`);
   return paths;
 }
@@ -44,8 +45,8 @@ function buildFiles(
   return files;
 }
 
-function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
-  clearDir(outputDir);
+async function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
+  await clearDir(outputDir);
   return files.map((file) => {
     file.save();
     if (verbose) log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
@@ -53,10 +54,10 @@ function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
   });
 }
 
-function clearDir(dir: string) {
-  if (fs.existsSync(dir)) {
-    fs.rmSync(dir, { recursive: true });
-  }
+async function clearDir(dir: string) {
+  const testFiles = await fg(path.join(dir, '**', '*.spec.js'));
+  const tasks = testFiles.map((testFile) => fs.rm(testFile));
+  await Promise.all(tasks);
 }
 
 function assertConfigForCustomTest(files: TestFile[], config: BDDConfig) {

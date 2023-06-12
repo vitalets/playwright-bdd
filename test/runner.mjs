@@ -20,6 +20,7 @@ test('cucumber-config-file', (t) => execPlaywrightTest(t.name));
 test('several-projects', (t) => execPlaywrightTest(t.name));
 test('esm', (t) => execPlaywrightTest(t.name));
 test('esm-ts', (t) => execPlaywrightTest(t.name));
+test('snapshots', (t) => execPlaywrightTest(t.name));
 
 test('several-projects-no-outputdir', (t) => {
   execPlaywrightTestWithError(t.name, /please manually provide different "outputDir" option/);
