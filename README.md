@@ -82,6 +82,7 @@ npx playwright install
 
    export default defineConfig({
      testDir,
+     reporter: 'html',
    });
    ```
 
@@ -133,6 +134,10 @@ npx playwright install
 
    npx playwright show-report
    ```
+   <details>
+     <summary>Report</summary>
+     <img width="70%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/65bf827f-918e-43e0-9eb7-eaba7950b7c1"/>
+   </details>
 
 5. (Optional) Check out `.features-gen` directory to see how generated tests look like ;)
 
