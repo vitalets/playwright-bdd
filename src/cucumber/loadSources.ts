@@ -19,7 +19,10 @@ import { ILogger } from '@cucumber/cucumber/lib/logger';
  * @param coordinates - Coordinates required to find features
  * @param environment - Project environment.
  */
-export async function loadSources(coordinates: ISourcesCoordinates, environment: IRunEnvironment = {}) {
+export async function loadSources(
+  coordinates: ISourcesCoordinates,
+  environment: IRunEnvironment = {},
+) {
   const { cwd, stderr, debug } = mergeEnvironment(environment);
   const logger: ILogger = new ConsoleLogger(stderr, debug);
   const newId = IdGenerator.uuid();
