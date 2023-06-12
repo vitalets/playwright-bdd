@@ -1,5 +1,14 @@
 # Changelog
 
+## 3.0.1
+Version v3 has several major updates based on the feedback.
+Please check out updated [README.md](README.md) and feel free to report any issues.
+
+* Added support of custom fixtures and playwright-style functions for step definitions [#11](https://github.com/vitalets/playwright-bdd/issues/11)
+* Use single config file: embed Cucumber config into Playwright config [#4](https://github.com/vitalets/playwright-bdd/issues/4)
+* Nice reporting: wrap each cucumber step in `test.step` [#22](https://github.com/vitalets/playwright-bdd/issues/22)
+* Supported screenshots / snapshots persistance between test runs [#23](https://github.com/vitalets/playwright-bdd/issues/23)
+
 ## 2.2.0
 * Run only one scenario / skip scenario [#14](https://github.com/vitalets/playwright-bdd/issues/14)
 * Support "Scenario Template" keyword [#20](https://github.com/vitalets/playwright-bdd/issues/20)
