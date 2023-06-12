@@ -34,7 +34,7 @@ export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
 }
 
 type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> & {
-  testInfo: TestInfo;
+  $testInfo: TestInfo;
 };
 type StepFunction<T extends KeyValue, W extends KeyValue> = (
   fixtures: StepFunctionFixturesArg<T, W>,
@@ -51,10 +51,9 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
 ) {
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
     const cucumberFn: CucumberStepFunction = function (...args: any[]) {
-      // testInfo is treated like a special fixture
-      // $test is treated as a special fixture
+      // $testInfo is treated like a special fixture
       const fixturesArg = Object.assign({}, this.customFixtures, {
-        testInfo: this.testInfo,
+        $testInfo: this.testInfo,
       });
       return fn.call(this, fixturesArg as StepFunctionFixturesArg<T, W>, ...args);
     };
@@ -83,8 +82,8 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
 }
 
 export function getFixtureNames(cucumberFn: CucumberStepFunction) {
-  // testInfo is treated like a special fixture
-  return fixtureParameterNames(cucumberFn.fn).filter((name) => name !== 'testInfo');
+  // $testInfo is treated like a special fixture
+  return fixtureParameterNames(cucumberFn.fn).filter((name) => name !== '$testInfo');
 }
 
 function assertCustomTestExtendsBdd(customTest?: TestTypeCommon) {

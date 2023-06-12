@@ -308,12 +308,12 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 See [full example of Playwright-style](examples/playwright-style).
 
 #### Accessing `testInfo`
-To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc.. use it as a fixture:
+To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc.. use special `$testInfo` fixture:
 
 ```ts
-Given('I do something', async ({ testInfo }) => { 
-  console.log(testInfo.title); // I do something
-  testInfo.skip();
+Given('I do something', async ({ $testInfo }) => { 
+  console.log($testInfo.title); // I do something
+  $testInfo.skip();
 });
 ```
 

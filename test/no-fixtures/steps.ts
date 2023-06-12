@@ -41,6 +41,6 @@ Then(
   },
 );
 
-Then('testInfo is available as a fixture', async ({ testInfo }) => {
-  expect(testInfo.title).toEqual('Check fixtures');
+Then('testInfo is available as a fixture', async ({ $testInfo }) => {
+  expect($testInfo.title).toEqual('Check fixtures');
 });
