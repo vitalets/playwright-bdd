@@ -26,6 +26,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
     + [World](#world)
     + [Custom World](#custom-world)
 - [Watch mode](#watch-mode)
+- [API](#api)
 - [VS Code Integration](#vs-code-integration)
 - [How it works](#how-it-works)
 - [FAQ](#faq)
@@ -397,6 +398,45 @@ To watch `.feature` / steps files and automatically re-generate tests you can us
 ```
 npx nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'
 ```
+
+## API
+
+##### `defineBddConfig(config)`
+Defines BDD config inside Playwright config file.
+
+**Params**
+  * `config` *object* - bdd [configuration](#configuration)
+
+**Returns**: *string* directory where test files will be generated
+
+##### `createBdd(test?)`
+Creates `Given`, `When`, `Then` functions for defining steps.
+
+**Params**
+  * `test` *object* - custom test instance
+
+**Returns**: *object* `{ Given, When, Then }`
+
+##### `Given(fixtures, ...args)`
+Defines `Given` step implementation.
+
+**Params**
+  * `fixtures` *object* - Playwright fixtures
+  * `...args` *array<any>* - arguments captured from step pattern
+
+##### `When(fixtures, ...args)`
+Defines `When` step implementation.
+
+**Params**
+  * `fixtures` *object* - Playwright fixtures
+  * `...args` *array<any>* - arguments captured from step pattern
+
+##### `Then(fixtures, ...args)`
+Defines `Then` step implementation.
+
+**Params**
+  * `fixtures` *object* - Playwright fixtures
+  * `...args` *array<any>* - arguments captured from step pattern
 
 ## VS Code Integration
 
