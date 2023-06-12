@@ -11,4 +11,5 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   forbidOnly: Boolean(process.env.FORBID_ONLY),
+  workers: 1, // set 1 worker for testing worker scoped fixtures
 });

@@ -5,3 +5,7 @@ Feature: Another feature
       When action 2
       When async action 3
       Then result with fixtures and arg equals to "bar" - arrow fn
+
+    Scenario: Check test-scoped / worker-scoped fixture props
+      Then todoPage prop equals to "123"
+      And account username equals to "test"

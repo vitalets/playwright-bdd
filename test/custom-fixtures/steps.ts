@@ -31,8 +31,8 @@ Then(
   async ({ page, browserName, todoPage, account, option }, arg: string) => {
     expect(page).toBeDefined();
     expect(browserName).toEqual('chromium');
-    expect(todoPage.prop).toEqual('123');
-    expect(account.username).toEqual('user');
+    expect(todoPage.prop).toBeDefined();
+    expect(account).toBeDefined();
     expect(option).toEqual('foo');
     expect(arg).toEqual('bar');
   },
@@ -43,8 +43,8 @@ Then(
   async function ({ page, browserName, todoPage, account, option }, arg: string) {
     expect(page).toBeDefined();
     expect(browserName).toEqual('chromium');
-    expect(todoPage.prop).toEqual('123');
-    expect(account.username).toEqual('user');
+    expect(todoPage.prop).toBeDefined();
+    expect(account).toBeDefined();
     expect(option).toEqual('foo');
     expect(arg).toEqual('bar');
   },
