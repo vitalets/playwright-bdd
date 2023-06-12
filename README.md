@@ -69,8 +69,9 @@ npx playwright install
 
 ## Get started
 
-1. Create the following Playwright config `playwright.config.js` in project root:
+1. Create the following Playwright config in project root:
    ```js
+   // playwright.config.js
    import { defineConfig } from '@playwright/test';
    import { defineBddConfig } from 'playwright-bdd';
 
@@ -185,7 +186,7 @@ Return value is path where test files will be generated.
 It is convenient to use it as `testDir` option for Playwright.
 
 > It is possible to use separate `cucumber.js` config file, 
-but it's more convenient to keep configuration embeded in Plawright config
+but it's more convenient to keep configuration embeded in single place
 
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 
@@ -207,7 +208,8 @@ Use `@only` tag to run single feature / scenario:
 ```gherkin
 @only
 Feature: Playwright site
-
+    
+    @only
     Scenario: Check title
         Given I open url "https://playwright.dev"
 ```
@@ -218,6 +220,7 @@ Use `@skip` (or `@fixme`) tag to skip particular feature / scenario:
 @skip
 Feature: Playwright site
 
+    @skip
     Scenario: Check title
         Given I open url "https://playwright.dev"
 ```
@@ -255,7 +258,7 @@ When('I click link {string}', async ({ page }, name: string) => {
 ```
 
 #### Custom fixtures
-To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions you need the following:
+To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 
 1. Define custom fixtures with `test.extend()` and export `test` instance. For example, `fixtures.ts`:
     ```ts
@@ -292,12 +295,10 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 
 3. Set config option `importTestFrom` pointing to file exporting custom `test` function. 
    For example: 
-    ```diff
+    ```js
     const testDir = defineBddConfig({
-      +importTestFrom: 'fixtures.ts',
-      paths: ['feature/*.feature'],
-      require: ['steps/**/*.ts'],
-      requireModule: ['ts-node/register'],
+      importTestFrom: 'fixtures.ts',
+      // ...
     });
     ```
     Effect in generated files:
@@ -321,7 +322,7 @@ Given('I do something', async ({ $testInfo }) => {
 ### Cucumber-style
 Cucumber-style step definitions are compatible with CucumberJS:
 
-* use `Given`, `When`, `Then` from `@cucumber/cucumber` package
+* import `Given`, `When`, `Then` from `@cucumber/cucumber` package
 * [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrows!) 
 * use `World` from `playwright-bdd` to access Playwright API 
 
@@ -394,7 +395,7 @@ setWorldConstructor(CustomWorld);
 See [full example of Cucumber-style](examples/cucumber-style).
 
 ## Watch mode
-To watch `.feature` / steps files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
+To watch feature / steps files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
 ```
 npx nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'
 ```
@@ -477,7 +478,7 @@ test.describe('Playwright site', () => {
 
 **Phase 2: Run test files with Playwright runner**
 
-Playwright runner takes generated test files and runs them as usual. 
+Playwright runner executes generated test files as usual. 
 Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
 
 ```js
@@ -497,11 +498,11 @@ Then('I see in title {string}', async ({ page }, text) => {
 ## FAQ
 
 #### Is it possible to run BDD tests in signle command? 
-This approach was initially implemented: generation of test files occured directly in `playwright.config.ts` before test execution. It allows to run tests with `npx playwright test` instead of having separate step as `npx bddgen && npx playwright test`. But later several issues appeared:
+This approach was initially implemented: generation of test files was done directly in `playwright.config.ts` before test execution. It allows to run tests with `npx playwright test` instead of having separate step as `npx bddgen && npx playwright test`. But later several issues appeared:
 
-1. Playwright config is executed many times from a lot of places (workers, VS Code extension, UI mode, etc). And logic to detectd when we should run test generation and when not becomes complex and messy
+1. Playwright config is executed many times from a lot of places (workers, VS Code extension, UI mode, etc). And logic to detect when we should run test generation and when not becomes complex and messy
 
-2. Implementation of watch mode is also questionable. It is impossible to just run `nodemon` with `playwright.config.ts`. Having separate command for test generation allows to [easily](#watch-mode) support watch mode.
+2. Implementation of watch mode is questionable. It is impossible to just run `nodemon` with `playwright.config.ts`. Having separate command for test generation allows to [easily](#watch-mode) support watch mode
 
 3. Watching files in `--ui` mode leads to circullar dependency: change in test files triggers test run that in turn re-imports config and triggers test files update again
 
