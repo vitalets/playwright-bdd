@@ -461,11 +461,11 @@ This approach was initially implemented: generation of test files occured direct
 
 1. Playwright config is executed many times from a lot of places (workers, VS Code extension, UI mode, etc). And logic to detectd when we should run test generation and when not becomes complex and messy
 
-2. Implementation of watch mode also questionable. It is impossible to just use `nodemon` with `playwright.config.ts`
+2. Implementation of watch mode is also questionable. It is impossible to just run `nodemon` with `playwright.config.ts`. Having separate command for test generation allows to [easily](#watch-mode) support watch mode.
 
-3. `--ui` mode leads to circullar dependency: generation of test files triggers test run that in turn re-imports config triggering test generation
+3. Watching files in `--ui` mode leads to circullar dependency: change in test files triggers test run that in turn re-imports config and triggers test files update again
 
-Fow now decoupling `bddgen` from `playwright test` looks a good option.
+Fow now decoupling *test generation* from *test running* looks a better option for integration with all Playwright's tooling.
 
 ## Limitations
 
