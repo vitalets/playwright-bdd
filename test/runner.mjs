@@ -7,21 +7,14 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execSync } from 'node:child_process';
 
-test.only = (title, fn) => test(title, { only: true }, fn);
-
-// link node_modules/playwright-bdd to dist
-// as generated files import { test } from "playwright-bdd"
-execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
-
-// must build project before tests as we run exec('bddgen') without ts-node
-execSync('npm run build', { stdio: 'inherit' });
+beforeHook();
 
 test('bdd-syntax', (t) => execPlaywrightTest(t.name));
 test('bdd-syntax-cucumber-style', (t) => execPlaywrightTest(t.name));
 test('i18n', (t) => execPlaywrightTest(t.name));
 test('default-world', (t) => execPlaywrightTest(t.name));
 test('custom-world', (t) => execPlaywrightTest(t.name));
-test.only('custom-fixtures', (t) => execPlaywrightTest(t.name));
+test('custom-fixtures', (t) => execPlaywrightTest(t.name));
 test('no-fixtures', (t) => execPlaywrightTest(t.name));
 test('cucumber-config-file', (t) => execPlaywrightTest(t.name));
 test('several-projects', (t) => execPlaywrightTest(t.name));
@@ -64,6 +57,20 @@ test('undefined-step', (t) => {
 test('no-steps', (t) => {
   execPlaywrightTestWithError(t.name, /No step definitions loaded. Scanned files \(1\)/);
 });
+
+function beforeHook() {
+  test.only = (title, fn) => {
+    if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
+    test(title, { only: true }, fn);
+  };
+
+  // link node_modules/playwright-bdd to dist
+  // as generated files import { test } from "playwright-bdd"
+  execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
+
+  // must build project before tests as we run exec('bddgen') without ts-node
+  execSync('npm run build', { stdio: 'inherit' });
+}
 
 function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
   const loader = dir === 'esm-ts' ? '--loader ts-node/esm' : '';
