@@ -10,7 +10,14 @@ jobs:
       - uses: actions/github-script@v6
         id: get-versions
         with:
-          script: return ['1.32', '1.33', '1.34', '1.35']
+          script: |
+            const minimalVersion = '1.32';
+            const { execSync } = require('node:child_process');
+            const info = execSync('npm show --json @playwright/test').toString();
+            const { versions } = JSON.parse(info);
+            return versions
+              .filter((v) => v.match(/\.0$/) && v >= minimalVersion)
+              .map((v) => v.replace(/\.0$/, ''));
     outputs:
       versions: ${{ steps.get-versions.outputs.result }}
 
