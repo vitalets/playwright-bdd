@@ -6,11 +6,15 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        playwrightVersion: ['1.32', '1.33', '1.34', '1.35']
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18
       - run: npm ci
+      - run: npm install @playwright/test@${{ matrix.playwrightVersion }}
       - run: npx playwright install --with-deps chromium
       - run: FORBID_ONLY=1 npm test

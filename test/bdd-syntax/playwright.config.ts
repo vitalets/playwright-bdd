@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from '../../dist';
 
 const testDir = defineBddConfig({
-  importTestFrom: 'steps/fixtures',
+  importTestFrom: 'steps/fixtures.ts',
   paths: ['features'],
   require: ['steps/steps.ts'],
   requireModule: ['ts-node/register'],
