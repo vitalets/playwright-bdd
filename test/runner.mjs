@@ -47,7 +47,7 @@ test('error-import-test-not-from-bdd', (t) => {
   );
 });
 
-test('error-missing-import-test-from', (t) => {
+test('no-import-test-from', (t) => {
   execPlaywrightTestWithError(
     t.name,
     /When using custom "test" function in createBdd\(\) you should/,
