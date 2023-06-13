@@ -26,6 +26,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
     + [World](#world)
     + [Custom World](#custom-world)
 - [Watch mode](#watch-mode)
+- [Debugging](#debugging)
 - [API](#api)
 - [VS Code Integration](#vs-code-integration)
 - [How it works](#how-it-works)
@@ -398,6 +399,14 @@ To watch feature / steps files and automatically re-generate tests you can use [
 ```
 npx nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'
 ```
+
+## Debugging
+
+You can debug tests as usual with `--debug` flag:
+```
+npx bddgen && npx playwright test --debug
+```
+See more info on debugging in [Playwright docs](https://playwright.dev/docs/debug).
 
 ## API
 
