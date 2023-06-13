@@ -6,7 +6,7 @@ import path from 'node:path';
 import { GherkinDocument, Pickle } from '@cucumber/messages';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
-import { loadConfig } from '../cucumber/loadConfig';
+import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadFeatures } from '../cucumber/loadFeatures';
 import { loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
@@ -14,7 +14,9 @@ import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage, log } from '../utils';
 
 export async function generateTestFiles(config: BDDConfig) {
-  const { runConfiguration } = await loadConfig({ provided: extractCucumberConfig(config) });
+  const { runConfiguration } = await loadCucumberConfig({
+    provided: extractCucumberConfig(config),
+  });
   const [features, supportCodeLibrary] = await Promise.all([
     loadFeatures(runConfiguration),
     loadSteps(runConfiguration),

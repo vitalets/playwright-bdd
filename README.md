@@ -185,8 +185,7 @@ export default defineConfig({
 Return value is path where test files will be generated.
 It is convenient to use it as `testDir` option for Playwright.
 
-> It is possible to use separate `cucumber.js` config file, 
-but it's more convenient to keep configuration embeded in single place
+> If there is external `cucumber.js` config file, it is also merged into configuration.
 
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 

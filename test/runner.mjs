@@ -65,6 +65,10 @@ test('no-steps', (t) => {
   execPlaywrightTestWithError(t.name, /No step definitions loaded. Scanned files \(1\)/);
 });
 
+test('no-define-bdd-config', (t) => {
+  execPlaywrightTestWithError(t.name, /No BDD configs found/);
+});
+
 function beforeHook() {
   defineTestOnly(test);
 

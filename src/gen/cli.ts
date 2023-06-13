@@ -11,7 +11,10 @@ const program = new Command();
 program
   .name('bddgen')
   .description('Generate Playwright tests from Gherkin documents')
-  .option('-c, --config <file>', `Path to Playwright configuration file`)
+  .option(
+    '-c, --config <file>',
+    `Path to Playwright configuration file. Default: playwright.config.(js|ts)`,
+  )
   .action(async (opts) => {
     await loadPlaywrightConfig(opts.config);
     const configs = Object.values(getEnvConfigs());
