@@ -4,11 +4,22 @@ on:
   push:
 
 jobs:
+  get-playwright-versions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v6
+        id: get-versions
+        with:
+          script: return ['1.32', '1.33', '1.34', '1.35']
+    outputs:
+      versions: ${{ steps.get-versions.outputs.result }}
+
   test:
+    needs: get-playwright-versions
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        playwrightVersion: ['1.32', '1.33', '1.34', '1.35']
+        playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
