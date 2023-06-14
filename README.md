@@ -400,6 +400,16 @@ To watch feature / steps files and automatically re-generate tests you can use [
 npx nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'
 ```
 
+To automatically re-run tests after any changes you can run in parallel [Playwright `--ui` mode](https://playwright.dev/docs/test-ui-mode) with [npm-run-all](https://github.com/mysticatea/npm-run-all). Example `package.json`:
+
+```json
+"scripts": {
+  "watch:bdd": "nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'",
+  "watch:pw": "playwright test --ui",
+  "watch": "run-p watch:*"
+}
+```
+
 ## Debugging
 
 You can debug tests as usual with `--debug` flag:

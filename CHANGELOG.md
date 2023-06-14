@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* Fix `--ui` mode [#24](https://github.com/vitalets/playwright-bdd/issues/24)
 * Support `--verbose` CLI flag
 
 ## 3.0.1

@@ -32,8 +32,7 @@ export function defineBddConfig(inputConfig?: BDDInputConfig) {
   const config = getConfig(inputConfig);
 
   // In main process store config in env to be accessible by workers
-  const isMainProcess = !process.env.TEST_WORKER_INDEX;
-  if (isMainProcess) {
+  if (!process.env.TEST_WORKER_INDEX) {
     saveConfigToEnv(config);
   }
 
