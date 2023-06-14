@@ -27,12 +27,6 @@
     "toc": "markdown-toc README.md -i --maxdepth 4",
     "release": "./scripts/release.sh"
   },
-  "lint-staged": {
-    "**/*.ts": [
-      "eslint --fix",
-      "prettier --write --ignore-unknown"
-    ]
-  },
   "dependencies": {
     "fast-glob": "^3.2.12"
   },
