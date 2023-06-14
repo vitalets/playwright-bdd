@@ -5,7 +5,7 @@ import path from 'node:path';
 
 export function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
   const loader = dir === 'esm-ts' ? '--loader ts-node/esm' : '';
-  execSync(`node ${loader} ../../dist/gen/cli && npx playwright test`, {
+  execSync(p(`node ${loader} ../../dist/gen/cli && npx playwright test`), {
     cwd: path.join(`test`, dir),
     ...opts,
   });
@@ -24,7 +24,7 @@ export function execPlaywrightTestWithError(dir, regexp) {
 
 export function showPlaywrightVersion() {
   const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@playwright/test/package.json', 'utf8'),
+    fs.readFileSync(p('node_modules/@playwright/test/package.json'), 'utf8'),
   );
 
   console.log(`Playwright version: ${version}`);
@@ -33,7 +33,7 @@ export function showPlaywrightVersion() {
 export function symlinkPlaywrghtBdd() {
   // symlink node_modules/playwright-bdd to dist
   // as generated files import { test } from "playwright-bdd"
-  execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
+  execSync(p('ln -sfn ../dist ./node_modules/playwright-bdd'), { stdio: 'inherit' });
 }
 
 export function buildDist() {
@@ -45,4 +45,12 @@ export function defineTestOnly(test) {
     if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
     test(title, { only: true }, fn);
   };
+}
+
+/**
+ * Convert path from unix to win if needed.
+ * Usefull for keeping paths as strings not path.join('a', 'b', 'c')
+ */
+function p(s) {
+  return path.sep === '/' ? s : s.replaceAll('/', path.sep);
 }
