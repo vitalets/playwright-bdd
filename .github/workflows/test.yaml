@@ -5,8 +5,7 @@ on:
 
 jobs:
   get-playwright-versions:
-    # runs-on: ubuntu-latest
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/github-script@v6
         id: get-versions
@@ -24,7 +23,8 @@ jobs:
 
   test:
     needs: get-playwright-versions
-    runs-on: ubuntu-latest
+    # runs-on: ubuntu-latest
+    runs-on: windows-latest
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
