@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* Fix docs for custom fixtures [#25](https://github.com/vitalets/playwright-bdd/issues/25)
 * Fix `--ui` mode [#24](https://github.com/vitalets/playwright-bdd/issues/24)
 * Support `--verbose` CLI flag
 

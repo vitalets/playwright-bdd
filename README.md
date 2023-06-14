@@ -260,7 +260,7 @@ When('I click link {string}', async ({ page }, name: string) => {
 #### Custom fixtures
 To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 
-1. Define custom fixtures with `test.extend()` and export `test` instance. For example, `fixtures.ts`:
+1. Define custom fixtures with `.extend()` and export `test` instance. For example, `fixtures.ts`:
     ```ts
     // Note: import base from playwright-bdd, not from @playwright/test!
     import { test as base } from 'playwright-bdd';
@@ -275,7 +275,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
     }
 
     // export custom test function
-    export const test = test.extend<{ myPage: MyPage }>({
+    export const test = base.extend<{ myPage: MyPage }>({
       myPage: async ({ page }, use) => {
         await use(new MyPage(page));
       }
