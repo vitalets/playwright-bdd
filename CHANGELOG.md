@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Support `--verbose` CLI flag
+
 ## 3.0.1
 Version v3 has several major updates based on the feedback.
 Please check out updated [README.md](README.md) and feel free to report any issues.
