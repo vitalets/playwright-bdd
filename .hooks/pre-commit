@@ -3,4 +3,4 @@
 # Exit on any error
 set -euo pipefail
 
-npx lint-staged --verbose
+npx lint-staged
