@@ -16,7 +16,7 @@ export function fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
   // prettier-ignore
   return [
     `/** Generated from: ${uri} */`,
-    `import { ${varName} } from "${file}";`,
+    `import { ${varName} } from ${JSON.stringify(file)};`,
     '',
   ];
 }
