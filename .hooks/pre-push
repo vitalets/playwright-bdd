@@ -5,4 +5,4 @@ set -euo pipefail
 
 npm run lint
 npm run prettier
-FORBID_ONLY=1 npm test
+npx cross-env FORBID_ONLY=1 npm test
