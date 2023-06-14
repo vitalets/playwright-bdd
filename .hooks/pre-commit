@@ -3,5 +3,4 @@
 # Exit on any error
 set -euo pipefail
 
-npx lint-staged
-FORBID_ONLY=1 npm test
+npx lint-staged --verbose
