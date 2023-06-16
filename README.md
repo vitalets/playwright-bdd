@@ -496,7 +496,7 @@ test.describe('Playwright site', () => {
 
 **Phase 2: Run test files with Playwright runner**
 
-Playwright runner executes generated test files it would normally do. 
+Playwright runner executes generated test files as it would normally do. 
 Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
 
 ```js
