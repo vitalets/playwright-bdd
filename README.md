@@ -31,7 +31,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 - [VS Code Integration](#vs-code-integration)
 - [How it works](#how-it-works)
 - [FAQ](#faq)
-    + [Is it possible to run BDD tests in signle command?](#is-it-possible-to-run-bdd-tests-in-signle-command)
+    + [Is it possible to run BDD tests in a single command?](#is-it-possible-to-run-bdd-tests-in-a-single-command)
 - [Limitations](#limitations)
 - [Changelog](#changelog)
 - [Feedback](#feedback)
