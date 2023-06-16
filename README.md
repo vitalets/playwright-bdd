@@ -40,7 +40,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 <!-- tocstop -->
 
 ## Why Playwright runner
-Both Playwright and Cucumber have their own test runners. You can use Cucumber runner with [Playwright included as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc). Alternative way (provided by this package) is to convert BDD scenarios into Playwright tests and run them using Playwright runner. It gives the following benefits:
+Both Playwright and Cucumber have their own test runners. You can use Cucumber runner with [Playwright as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc). Alternatively, you can convert BDD scenarios into Playwright tests and run them using Playwright runner, which has the following benefits:
 
 * Automatic browser initialization and cleanup
 * Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) instead of `before / after` hooks
@@ -119,7 +119,7 @@ npx playwright install
      await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
-   > There is alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps) section.
+   > There is alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps).
 
 4. Run tests:
 
@@ -142,13 +142,13 @@ npx playwright install
      <img width="70%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/65bf827f-918e-43e0-9eb7-eaba7950b7c1"/>
    </details>
 
-5. (Optional) Check out `.features-gen` directory to see how generated tests look like ;)
+5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
 
 ## Configuration
 Configuration is passed to `defineBddConfig()` inside Playwright config file.
-Most options are from CucumberJS and there are a few special.
+Most options are from CucumberJS and there are a few special ones.
 
-Typical Cucumber options:
+Typical CucumberJS options:
 
 | Name             | Type       | Description   
 |------------------|------------|------------------------
@@ -159,7 +159,7 @@ Typical Cucumber options:
 
 See more options in [CucumberJS docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options).
 
-Own `playwright-bdd` options:
+Special `playwright-bdd` options:
 | Name              | Type       | Description
 |-------------------|------------|------------------------
 | `outputDir`       | `string`   | Directory to output generated test files. Default: `.features-gen` 
@@ -183,10 +183,10 @@ export default defineConfig({
 });
 ```
 
-Return value is path where test files will be generated.
+Return value of `defineBddConfig()` is a directory path where test files will be generated.
 It is convenient to use it as `testDir` option for Playwright.
 
-> If there is external `cucumber.js` config file, it is also merged into configuration.
+> If there is an external `cucumber.js` config file, it is also merged into configuration.
 
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 
@@ -204,7 +204,7 @@ Feature: Playwright site
 ```
 
 #### Run single feature
-Use `@only` tag to run single feature / scenario:
+Use `@only` tag to run a single feature / scenario:
 ```gherkin
 @only
 Feature: Playwright site
@@ -215,7 +215,7 @@ Feature: Playwright site
 ```
 
 #### Skip feature
-Use `@skip` (or `@fixme`) tag to skip particular feature / scenario:
+Use `@skip` (or `@fixme`) tag to skip a particular feature / scenario:
 ```gherkin
 @skip
 Feature: Playwright site
@@ -231,7 +231,7 @@ There are two ways of writing step definitions:
 2. **Cucumber-style** - recommended for migrating existing CucumberJS projects to Playwright runner
 
 ### Playwright-style
-Playwright-style allows you to write step definitions like a regular playwright tests.
+Playwright-style allows you to write step definitions like regular playwright tests.
 You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures),
 both test-scoped and worker-scoped. 
 
@@ -281,7 +281,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. Pass custom `test` function to `createBdd()` as argument. For example, `steps.ts`:
+2. Pass custom `test` function to `createBdd()` as an argument. For example, `steps.ts`:
     ```ts
     import { createBdd } from 'playwright-bdd';
     import { test } from './fixtures';
@@ -293,15 +293,15 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
     Then('I see in title {string}', async ({ myPage }, text: string) => { ... });
     ```
 
-3. Set config option `importTestFrom` pointing to file exporting custom `test` function. 
+3. Set config option `importTestFrom` which points to file exporting custom `test` function. 
    For example: 
     ```js
     const testDir = defineBddConfig({
-      importTestFrom: 'fixtures.ts',
+      importTestFrom: './fixtures.ts',
       // ...
     });
     ```
-    Effect in generated files:
+   Generated files, before and after: 
     ```diff
     -import { test } from "playwright-bdd";  
     +import { test } from "./fixtures.ts";  
@@ -310,12 +310,12 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 See [full example of Playwright-style](examples/playwright-style).
 
 #### Accessing `testInfo`
-To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc.. use special `$testInfo` fixture:
+To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc. use special `$testInfo` fixture:
 
 ```ts
 Given('I do something', async ({ $testInfo }) => { 
-  console.log($testInfo.title); // I do something
-  $testInfo.skip();
+  console.log($testInfo.title); // logs test title "I do something"
+  $testInfo.skip(); // skips test
 });
 ```
 
@@ -323,10 +323,10 @@ Given('I do something', async ({ $testInfo }) => {
 Cucumber-style step definitions are compatible with CucumberJS:
 
 * import `Given`, `When`, `Then` from `@cucumber/cucumber` package
-* [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrows!) 
+* [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrow functions!) 
 * use `World` from `playwright-bdd` to access Playwright API 
 
-Example (typescript):
+Example (TypeScript):
 
 ```ts
 import { Given, When, Then } from '@cucumber/cucumber';
@@ -347,7 +347,7 @@ Then('I see in title {string}', async function (this: World, keyword: string) {
 ```
 
 #### World
-Playwright-bdd extends [Cucumber World](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md) with Playwright [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) and [testInfo](https://playwright.dev/docs/test-advanced#testinfo-object). Just use `this.page` or `this.testInfo` in step definitions:
+Playwright-bdd extends [Cucumber World](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md) with Playwright [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) and [testInfo](https://playwright.dev/docs/test-advanced#testinfo-object). Simply use `this.page` or `this.testInfo` in step definitions:
 
 ```js
 import { Given, When, Then } from '@cucumber/cucumber';
@@ -357,7 +357,7 @@ Given('I open url {string}', async function (url) {
 });
 ```
 
-In TypeScript you should import `World` from `playwright-bdd` for propper typing:
+In TypeScript you should import `World` from `playwright-bdd` for proper typing:
 ```ts
 import { Given, When, Then } from '@cucumber/cucumber';
 import { World } from 'playwright-bdd';
@@ -395,12 +395,12 @@ setWorldConstructor(CustomWorld);
 See [full example of Cucumber-style](examples/cucumber-style).
 
 ## Watch mode
-To watch feature / steps files and automatically re-generate tests you can use [nodemon](https://github.com/remy/nodemon):
+To watch feature / steps files and automatically regenerate tests you can use [nodemon](https://github.com/remy/nodemon):
 ```
 npx nodemon -w ./features -w ./steps -e feature,js,ts --exec 'npx bddgen'
 ```
 
-To automatically re-run tests after any changes you can run in parallel [Playwright `--ui` mode](https://playwright.dev/docs/test-ui-mode) with [npm-run-all](https://github.com/mysticatea/npm-run-all). Example `package.json`:
+To automatically rerun tests after changes you can run the above command together with [Playwright `--ui` mode](https://playwright.dev/docs/test-ui-mode), utilizing [npm-run-all](https://github.com/mysticatea/npm-run-all). Example `package.json`:
 
 ```json
 "scripts": {
@@ -424,7 +424,7 @@ See more info on debugging in [Playwright docs](https://playwright.dev/docs/debu
 Defines BDD config inside Playwright config file.
 
 **Params**
-  * `config` *object* - bdd [configuration](#configuration)
+  * `config` *object* - BDD [configuration](#configuration)
 
 **Returns**: *string* - directory where test files will be generated
 
@@ -459,7 +459,7 @@ Defines `Then` step implementation.
 
 ## VS Code Integration
 
-* [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works as usual. You can run/debug tests in `.features-gen` directory:
+* [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works the usual way. You can click and run tests from `.features-gen` directory:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229162634-8a801f6e-8a79-407b-889b-7769f957896a.png">
 
 * [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
@@ -496,7 +496,7 @@ test.describe('Playwright site', () => {
 
 **Phase 2: Run test files with Playwright runner**
 
-Playwright runner executes generated test files as usual. 
+Playwright runner executes generated test files it would normally do. 
 Playwright-bdd automatically provides Playwright API (`page`, `browser`, etc) in step definitions:
 
 ```js
@@ -515,30 +515,30 @@ Then('I see in title {string}', async ({ page }, text) => {
 
 ## FAQ
 
-#### Is it possible to run BDD tests in signle command? 
-This approach was initially implemented: generation of test files was done directly in `playwright.config.ts` before test execution. It allows to run tests with `npx playwright test` instead of having separate step as `npx bddgen && npx playwright test`. But later several issues appeared:
+#### Is it possible to run BDD tests in a single command? 
+This approach was initially implemented: test files were generated directly in `playwright.config.ts` before test execution. It allowed to run tests with `npx playwright test` instead of having two commands as `npx bddgen && npx playwright test`. But later several issues appeared:
 
-1. Playwright config is executed many times from a lot of places (workers, VS Code extension, UI mode, etc). And logic to detect when we should run test generation and when not becomes complex and messy
+1. It became really hard to decide when to generate test files because Playwright config is executed many times from different sources: workers, VS Code extension, UI mode, etc.
 
-2. Implementation of watch mode is questionable. It is impossible to just run `nodemon` with `playwright.config.ts`. Having separate command for test generation allows to [easily](#watch-mode) support watch mode
+2. Implementation of watch mode is tricky. It is impossible to just run `nodemon` with `playwright.config.ts`. Separate command for test generation allows to easily [support watch mode](#watch-mode) 
 
-3. Watching files in `--ui` mode leads to circullar dependency: change in test files triggers test run that in turn re-imports config and triggers test files update again
+3. Watching files in `--ui` mode leads to circullar dependency: a change in test files triggers test run which in turn re-imports config and once again triggers a change in test files
 
-Fow now decoupling *test generation* from *test running* looks a better option for integration with all Playwright's tooling.
+For now decoupling *test generation* from *test running* is a better solution for integration with Playwright's tooling.
 
 ## Limitations
 
 Currently there are some limitations:
 
-* Cucumber tags not supported yet (wip, [#8](https://github.com/vitalets/playwright-bdd/issues/8))
+* Cucumber tags are not supported yet (wip, [#8](https://github.com/vitalets/playwright-bdd/issues/8))
 * [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. Consider using Playwright fixtures instead.
 
 ## Changelog
 Please check out [CHANGELOG.md](CHANGELOG.md).
 
 ## Feedback
-Per communication from Playwright team feedback is important for implementing BDD in Playwright core.
-Feel free to share your experience/suggestions in [issues](https://github.com/vitalets/playwright-bdd/issues). 
+Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
+This way you will help Playwright team to proceed with BDD implementation in Playwright core.
 
 ## License
 MIT
