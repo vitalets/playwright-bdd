@@ -186,8 +186,8 @@ export default defineConfig({
 });
 ```
 
-Return value of `defineBddConfig()` is a directory path where test files will be generated.
-It is convenient to use it as `testDir` option for Playwright.
+Return value of `defineBddConfig()` is a resolved directory where test files will be generated.
+It is convenient to use it as a `testDir` option for Playwright.
 
 > If there is an external `cucumber.js` config file, it is also merged into configuration.
 
@@ -234,7 +234,7 @@ There are two ways of writing step definitions:
 2. **Cucumber-style** - recommended for migrating existing CucumberJS projects to Playwright runner
 
 ### Playwright-style
-Playwright-style allows you to write step definitions like regular playwright tests.
+Playwright-style allows you to write step definitions like a regular playwright tests.
 You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures),
 both test-scoped and worker-scoped. 
 
@@ -284,7 +284,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. Pass custom `test` function to `createBdd()` as an argument. For example, `steps.ts`:
+2. Pass custom `test` function to `createBdd()` and use customs fixtures in step definitions. For example, `steps.ts`:
     ```ts
     import { createBdd } from 'playwright-bdd';
     import { test } from './fixtures';
