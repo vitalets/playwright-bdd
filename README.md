@@ -40,10 +40,13 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 <!-- tocstop -->
 
 ## Why Playwright runner
-Both Playwright and Cucumber have their own test runners. You can use Cucumber runner with [Playwright as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc). Alternatively, you can convert BDD scenarios into Playwright tests and run them using Playwright runner, which has the following benefits:
+Both Playwright and CucumberJS have their own test runners. 
+You can use CucumberJS runner with [Playwright as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc) to test BDD scenarios.
+This package offers **alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
+Such approach brings all benefits of Playwright runner:
 
 * Automatic browser initialization and cleanup
-* Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) instead of `before / after` hooks
+* Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
 * Parallelize tests with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
