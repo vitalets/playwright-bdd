@@ -3,6 +3,7 @@
 # Exit on any error
 set -euo pipefail
 
+npx publint
 npm run lint
 npm run prettier
 npx cross-env FORBID_ONLY=1 npm test
