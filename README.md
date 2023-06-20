@@ -142,7 +142,7 @@ npx playwright install
    ```
    <details>
      <summary>Report</summary>
-     <img width="70%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/65bf827f-918e-43e0-9eb7-eaba7950b7c1"/>
+     <img width="80%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/e327d97c-bc67-4ba2-8660-650f1c479c62"/>
    </details>
 
 5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
