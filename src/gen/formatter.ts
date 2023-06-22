@@ -9,6 +9,12 @@ export type ImportTestFrom = {
   varName?: string;
 };
 
+export type Flags = {
+  only?: boolean;
+  skip?: boolean;
+  fixme?: boolean;
+};
+
 export function fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
   const file = importTestFrom?.file || 'playwright-bdd';
   let varName = importTestFrom?.varName || 'test';
@@ -21,10 +27,10 @@ export function fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
   ];
 }
 
-export function suite(tags: string[], title: string, children: string[]) {
+export function suite(title: string, children: string[], flags: Flags) {
   // prettier-ignore
   return [
-    `test.describe${getMark(tags)}(${JSON.stringify(title)}, () => {`,
+    `test.describe${getSubFn(flags)}(${JSON.stringify(title)}, () => {`,
     '',
     ...children.map(indent),
     `});`,
@@ -44,11 +50,11 @@ export function beforeEach(fixtures: Set<string>, children: string[]) {
 }
 
 // eslint-disable-next-line max-params
-export function test(tags: string[], title: string, fixtures: Set<string>, children: string[]) {
+export function test(title: string, fixtures: Set<string>, children: string[], flags: Flags) {
   const fixturesStr = [...fixtures].join(', ');
   // prettier-ignore
   return [
-    `test${getMark(tags)}(${JSON.stringify(title)}, async ({ ${fixturesStr} }) => {`,
+    `test${getSubFn(flags)}(${JSON.stringify(title)}, async ({ ${fixturesStr} }) => {`,
     ...children.map(indent),
     `});`,
     '',
@@ -69,10 +75,10 @@ export function step(
   return `await ${keyword}(${args});`;
 }
 
-function getMark(tags: string[] = []) {
-  if (tags.includes('@only')) return '.only';
-  if (tags.includes('@skip')) return '.skip';
-  if (tags.includes('@fixme')) return '.fixme';
+function getSubFn(flags: Flags = {}) {
+  if (flags.only) return '.only';
+  if (flags.skip) return '.skip';
+  if (flags.fixme) return '.fixme';
   return '';
 }
 

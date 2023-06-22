@@ -1,6 +1,9 @@
 /**
  * Generate test code.
  */
+
+/* eslint-disable max-lines */
+
 import {
   GherkinDocument,
   FeatureChild,
@@ -117,10 +120,10 @@ export class TestFile {
   }
 
   private getSuite(feature: Feature | Rule) {
-    const tags = getTagNames(feature);
+    const flags = getFlags(feature);
     const lines: string[] = [];
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child)));
-    return formatter.suite(tags, feature.name, lines);
+    return formatter.suite(feature.name, lines, flags);
   }
 
   private getSuiteChild(child: FeatureChild | RuleChild) {
@@ -142,24 +145,24 @@ export class TestFile {
 
   private getOutlineSuite(scenario: Scenario) {
     const suiteLines: string[] = [];
-    const suiteTags = getTagNames(scenario);
+    const suiteFlags = getFlags(scenario);
     let exampleIndex = 0;
     scenario.examples.forEach((example) => {
-      const tags = getTagNames(example);
+      const flags = getFlags(example);
       example.tableBody.forEach((exampleRow) => {
         const title = `Example #${++exampleIndex}`;
         const { fixtures, lines } = this.getSteps(scenario, exampleRow.id);
-        const testLines = formatter.test(tags, title, fixtures, lines);
+        const testLines = formatter.test(title, fixtures, lines, flags);
         suiteLines.push(...testLines);
       });
     });
-    return formatter.suite(suiteTags, scenario.name, suiteLines);
+    return formatter.suite(scenario.name, suiteLines, suiteFlags);
   }
 
   private getTest(scenario: Scenario) {
-    const tags = getTagNames(scenario);
+    const flags = getFlags(scenario);
     const { fixtures, lines } = this.getSteps(scenario);
-    return formatter.test(tags, scenario.name, fixtures, lines);
+    return formatter.test(scenario.name, fixtures, lines, flags);
   }
 
   private getSteps(scenario: Scenario | Background, outlineExampleRowId?: string) {
@@ -223,8 +226,14 @@ export class TestFile {
   }
 }
 
-function getTagNames(item: Feature | Rule | Scenario | Examples) {
-  return item.tags.map((tag) => tag.name);
+function getFlags(item: Feature | Rule | Scenario | Examples) {
+  const flags: formatter.Flags = {};
+  item.tags.forEach((tag) => {
+    if (tag.name === '@only') flags.only = true;
+    if (tag.name === '@skip') flags.skip = true;
+    if (tag.name === '@fixme') flags.fixme = true;
+  });
+  return flags;
 }
 
 function isOutline(scenario: Scenario) {
