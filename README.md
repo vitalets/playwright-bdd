@@ -201,17 +201,17 @@ the configuration in `playwright.config.js` is following:
 For JavaScript ESM:
 ```diff
 const testDir = defineBddConfig({,
-  -require: ['steps.js'],
-  +import: ['steps.js'],
+-  require: ['steps.js'],
++  import: ['steps.js'],
 });
 ```
 
 For Typescript ESM:
 ```diff
 const testDir = defineBddConfig({,
-  -require: ['steps.js'],
-  -requireModule: ['ts-node/register'],
-  +import: ['steps.ts'],
+-  require: ['steps.js'],
+-  requireModule: ['ts-node/register'],
++  import: ['steps.ts'],
 });
 ```
 
