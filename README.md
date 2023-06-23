@@ -597,7 +597,8 @@ That is more flexible approach and allows to selectively change settings for a p
 
 Currently there are some limitations:
 
-* [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. Consider using Playwright fixtures instead.
+* [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) are not supported yet, see [#15](https://github.com/vitalets/playwright-bdd/issues/15).
+  For now, consider using [Playwright fixtures](#custom-fixtures) instead, that are more flexible and straightforward.
 
 ## Changelog
 Please check out [CHANGELOG.md](CHANGELOG.md).
