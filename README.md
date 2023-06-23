@@ -15,6 +15,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) test runner.
 - [Installation](#installation)
 - [Get started](#get-started)
 - [Configuration](#configuration)
+    + [ESM](#esm)
 - [Writing features](#writing-features)
     + [Run single feature](#run-single-feature)
     + [Skip feature](#skip-feature)
@@ -171,7 +172,7 @@ Special `playwright-bdd` options:
 | `importTestFrom`  | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
 | `verbose`         | `boolean`  | Verbose output. Default: `false`
 
-Example configuration:
+Example configuration (CommonJS project):
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
@@ -192,6 +193,32 @@ Return value of `defineBddConfig()` is a resolved output directory where test fi
 It is convenient to use it as a `testDir` option for Playwright.
 
 > If there is an external `cucumber.js` config file, it is also merged into configuration.
+
+#### ESM
+If your project runs in ESM (has `"type": "module"` in `package.json`),
+the configuration in `playwright.config.js` is following:
+
+For JavaScript ESM:
+```diff
+const testDir = defineBddConfig({,
+  -require: ['steps.js'],
+  +import: ['steps.js'],
+});
+```
+
+For Typescript ESM:
+```diff
+const testDir = defineBddConfig({,
+  -require: ['steps.js'],
+  -requireModule: ['ts-node/register'],
+  +import: ['steps.ts'],
+});
+```
+
+Command to run tests:
+```
+NODE_OPTIONS='--loader ts-node/esm --no-warnings' npx bddgen && npx playwright test
+```
 
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 
