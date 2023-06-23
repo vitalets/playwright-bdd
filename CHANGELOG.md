@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 3.1.0
 * Support Cucumber tags [#8](https://github.com/vitalets/playwright-bdd/issues/8)
 
 ## 3.0.2
