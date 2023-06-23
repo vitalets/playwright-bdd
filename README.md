@@ -158,10 +158,10 @@ Typical CucumberJS options:
 
 | Name             | Type       | Description   
 |------------------|------------|------------------------
-| `paths`          | `string[]` | Paths to feature files. Default: `features/**/*.{feature,feature.md}`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features)     
+| `paths`          | `string[]` | Paths to feature files. Default: `features/**/*.{feature,feature.md}` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features)     
 | `require`        | `string[]` | Paths to step definitions in **CommonJS**. Default: `features/**/*.(js)` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code)            
-| `import`         | `string[]` | Paths to step definitions in **ESM**. Default: `features/**/*.(js)`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/esm.md)                                       
-| `requireModule`  | `string[]` | Names of transpilation modules to load. Default: `[]`. [More](https://github.com/cucumber/cucumber-js/blob/main/docs/transpiling.md)
+| `import`         | `string[]` | Paths to step definitions in **ESM**. Default: `features/**/*.(js)` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/esm.md)                                       
+| `requireModule`  | `string[]` | Names of transpilation modules to load. Default: `[]` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/transpiling.md)
 
 See more options in [CucumberJS docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options).
 
@@ -172,7 +172,7 @@ Special `playwright-bdd` options:
 | `importTestFrom`  | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
 | `verbose`         | `boolean`  | Verbose output. Default: `false`
 
-Example configuration (CommonJS project):
+Example configuration (CommonJS TypeScript project):
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
