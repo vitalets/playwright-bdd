@@ -22,6 +22,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
   * [Playwright-style](#playwright-style)
     + [Custom fixtures](#custom-fixtures)
     + [Accessing `testInfo`](#accessing-testinfo)
+    + [Accessing tags](#accessing-tags)
   * [Cucumber-style](#cucumber-style)
     + [World](#world)
     + [Custom World](#custom-world)
@@ -32,6 +33,7 @@ Run [CucumberJS](https://github.com/cucumber/cucumber-js) BDD tests with [Playwr
 - [How it works](#how-it-works)
 - [FAQ](#faq)
     + [Is it possible to run BDD tests in a single command?](#is-it-possible-to-run-bdd-tests-in-a-single-command)
+    + [Is it possible to apply `test.use()` in a generated test file?](#is-it-possible-to-apply-testuse-in-a-generated-test-file)
 - [Limitations](#limitations)
 - [Changelog](#changelog)
 - [Feedback](#feedback)
@@ -584,6 +586,12 @@ This approach was initially implemented: test files were generated directly in `
 3. Watching files in `--ui` mode leads to circullar dependency: a change in test files triggers test run which in turn re-imports config and once again triggers a change in test files
 
 For now decoupling *test generation* from *test running* is a better solution for integration with Playwright's tooling.
+
+#### Is it possible to apply `test.use()` in a generated test file?
+Test files generation is a fully automatic process, no manual interceptions allowed.
+But instead of applying `test.use` (that has impact to all tests in a file)
+you can [utilize tags](#accessing-tags) with custom fixtures.
+That is more flexible approach and allows to selectively change settings for a particular scenario/test.
 
 ## Limitations
 
