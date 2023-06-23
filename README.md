@@ -344,7 +344,7 @@ Given('I do something', async ({ $tags }) => {
 ```
 
 The most powerfull usage of `$tags` is in your custom fixtures.
-For example, overwriting `viewport` for mobile version:
+For example, you can overwrite `viewport` for mobile version:
 
 ```gherkin
 Feature: Playwright site
@@ -369,7 +369,7 @@ export const test = base.extend({
 });
 ```
 
-Please note, that for now **Cucumber tags are not mapped to Playwright tags** by inserting into test titles. 
+Please note, that for now **Cucumber tags are not inserted into test titles** for Playwright. 
 This is done intentionally to keep test titles unchanged. Waiting for Playwright tags API, see [microsoft/playwright#23180](https://github.com/microsoft/playwright/issues/23180).
 
 However, you can simply put Playwright tags into scenario name:
