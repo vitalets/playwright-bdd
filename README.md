@@ -206,7 +206,7 @@ const testDir = defineBddConfig({,
 });
 ```
 
-For Typescript ESM:
+For TypeScript ESM:
 ```diff
 const testDir = defineBddConfig({,
 -  require: ['steps.js'],
