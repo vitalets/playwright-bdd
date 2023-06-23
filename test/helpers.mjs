@@ -4,9 +4,13 @@ import assert from 'node:assert/strict';
 import path from 'node:path';
 
 export function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
-  const loader = dir === 'esm-ts' ? '--loader ts-node/esm' : '';
+  const cmd =
+    dir === 'esm-ts'
+      ? // for esm-ts show how test script should look
+        'npm test'
+      : 'node ../../dist/gen/cli && npx playwright test';
   try {
-    execSync(`node ${loader} ../../dist/gen/cli && npx playwright test`, {
+    execSync(cmd, {
       cwd: path.join(`test`, dir),
       ...opts,
     });
