@@ -60,7 +60,7 @@ Install from npm:
 npm i -D playwright-bdd
 ```
 
-This package uses `@playwright/test` and `@cucumber/cucumber` as peer dependencies, 
+This package uses `@playwright/test` and `@cucumber/cucumber` as a peer dependencies, 
 so you may need to install them as well:
 
 ```
@@ -75,7 +75,7 @@ npx playwright install
 
 ## Get started
 
-1. Create the following Playwright config in project root:
+1. Create the following Playwright config in the project root:
    ```js
    // playwright.config.js
    import { defineConfig } from '@playwright/test';
@@ -126,7 +126,7 @@ npx playwright install
    ```
    > There is alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps).
 
-4. Run tests:
+4. Generate and run tests:
 
    ```
    npx bddgen && npx playwright test
@@ -188,7 +188,7 @@ export default defineConfig({
 });
 ```
 
-Return value of `defineBddConfig()` is a resolved directory where test files will be generated.
+Return value of `defineBddConfig()` is a resolved output directory where test files will be generated.
 It is convenient to use it as a `testDir` option for Playwright.
 
 > If there is an external `cucumber.js` config file, it is also merged into configuration.
@@ -342,6 +342,8 @@ Given('I do something', async ({ $tags }) => {
   console.log($tags); // outputs ["@slow", "@jira:123"]
 });
 ```
+
+> Special tags `@only`, `@skip` and `@fixme` are excluded from `$tags` to avoid impact on test during debug
 
 The most powerfull usage of `$tags` is in your custom fixtures.
 For example, you can overwrite `viewport` for mobile version:
