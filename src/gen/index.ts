@@ -31,7 +31,7 @@ export async function generateTestFiles(config: BDDConfig) {
 function buildFiles(
   features: Map<GherkinDocument, Pickle[]>,
   supportCodeLibrary: ISupportCodeLibrary,
-  { outputDir, importTestFrom }: BDDConfig,
+  config: BDDConfig,
 ) {
   const files: TestFile[] = [];
   features.forEach((pickles, doc) => {
@@ -39,8 +39,7 @@ function buildFiles(
       doc,
       pickles,
       supportCodeLibrary,
-      outputDir,
-      importTestFrom,
+      config,
     }).build();
     files.push(file);
   });

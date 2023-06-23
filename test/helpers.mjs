@@ -5,10 +5,19 @@ import path from 'node:path';
 
 export function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
   const loader = dir === 'esm-ts' ? '--loader ts-node/esm' : '';
-  execSync(`node ${loader} ../../dist/gen/cli && npx playwright test`, {
-    cwd: path.join(`test`, dir),
-    ...opts,
-  });
+  try {
+    execSync(`node ${loader} ../../dist/gen/cli && npx playwright test`, {
+      cwd: path.join(`test`, dir),
+      ...opts,
+    });
+  } catch (e) {
+    if (opts.stdio === 'inherit') {
+      // error already printed
+      process.exit(1);
+    } else {
+      throw e;
+    }
+  }
 }
 
 export function execPlaywrightTestWithError(dir, regexp) {

@@ -75,6 +75,22 @@ export function step(
   return `await ${keyword}(${args});`;
 }
 
+export function tagsFixture(tagsMap: Map<string, string[]>, testKeySeparator: string) {
+  return tagsMap.size > 0
+    ? [
+        '// == technical section ==',
+        '',
+        'test.use({',
+        '  $tags: ({}, use, testInfo) => use({',
+        ...Array.from(tagsMap).map(([key, tags]) => {
+          return `${' '.repeat(4)}${JSON.stringify(key)}: ${JSON.stringify(tags)},`;
+        }),
+        `  }[testInfo.titlePath.slice(2).join(${JSON.stringify(testKeySeparator)})] || [])`,
+        '});',
+      ]
+    : [];
+}
+
 function getSubFn(flags: Flags = {}) {
   if (flags.only) return '.only';
   if (flags.skip) return '.skip';

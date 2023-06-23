@@ -65,3 +65,7 @@ Then(
     expect(String(this[key])).toEqual(value);
   },
 );
+
+Then('Tags are {string}', async function (this: World, tags: string) {
+  expect(this.tags.join(' ')).toEqual(tags);
+});

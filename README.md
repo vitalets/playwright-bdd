@@ -322,6 +322,62 @@ Given('I do something', async ({ $testInfo }) => {
 });
 ```
 
+#### Accessing tags
+[Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) can be accessed by special `$tags` fixture:
+
+```gherkin
+@slow
+Feature: Playwright site
+    
+    @jira:123
+    Scenario: Check title
+      Given I do something
+      ...
+```
+In step definition:
+```ts
+Given('I do something', async ({ $tags }) => {
+  console.log($tags); // outputs ["@slow", "@jira:123"]
+});
+```
+
+The most powerfull usage of `$tags` is in your custom fixtures.
+For example, overwriting `viewport` for mobile version:
+
+```gherkin
+Feature: Playwright site
+    
+    @mobile
+    Scenario: Check title
+      Given I do something
+      ...
+```
+
+Custom `fixtures.ts`:
+```ts
+import { test as base } from 'playwright-bdd';
+
+export const test = base.extend({
+  viewport: async ({ $tags, viewport }, use) => {
+    if ($tags.includes('@mobile')) {
+      viewport = { width: 375, height: 667 };
+    }
+    await use(viewport);
+  }
+});
+```
+
+Please note, that for now **Cucumber tags are not mapped to Playwright tags** by inserting into test titles. 
+This is done intentionally to keep test titles unchanged. Waiting for Playwright tags API, see [microsoft/playwright#23180](https://github.com/microsoft/playwright/issues/23180).
+
+However, you can simply put Playwright tags into scenario name:
+```gherkin
+Feature: Playwright site
+    
+    Scenario: Check title @slow
+      ...
+```
+
 ### Cucumber-style
 Cucumber-style step definitions are compatible with CucumberJS:
 
@@ -533,7 +589,6 @@ For now decoupling *test generation* from *test running* is a better solution fo
 
 Currently there are some limitations:
 
-* Cucumber tags are not supported yet (wip, [#8](https://github.com/vitalets/playwright-bdd/issues/8))
 * [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md) do not run. Consider using Playwright fixtures instead.
 
 ## Changelog

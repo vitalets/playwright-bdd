@@ -16,6 +16,7 @@ import {
   Feature,
   Rule,
   Examples,
+  TableRow,
 } from '@cucumber/messages';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -27,19 +28,21 @@ import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { CucumberStepFunction, getFixtureNames } from '../run/createBdd';
 import { TestTypeCommon } from '../playwright/types';
 import { isParentChildTest } from '../playwright/testTypeImpl';
+import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
+import { BDDConfig } from '../config';
 
 export type TestFileOptions = {
   doc: GherkinDocument;
   pickles: Pickle[];
   supportCodeLibrary: ISupportCodeLibrary;
-  outputDir: string;
-  importTestFrom?: formatter.ImportTestFrom;
+  config: BDDConfig;
 };
 
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
   private _outputPath?: string;
+  private testFileTags = new TestFileTags();
   public customTest?: TestTypeCommon;
 
   constructor(private options: TestFileOptions) {}
@@ -58,6 +61,10 @@ export class TestFile {
     return this.options.doc.feature?.language || 'en';
   }
 
+  get config() {
+    return this.options.config;
+  }
+
   get outputPath() {
     if (!this._outputPath) {
       const relativeSourceFile = path.isAbsolute(this.sourceFile)
@@ -70,7 +77,7 @@ export class TestFile {
         .filter((part) => part !== '..')
         .join(path.sep);
 
-      this._outputPath = path.join(this.options.outputDir, `${finalPath}.spec.js`);
+      this._outputPath = path.join(this.config.outputDir, `${finalPath}.spec.js`);
     }
 
     return this._outputPath;
@@ -81,6 +88,7 @@ export class TestFile {
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
       ...this.getRootSuite(),
+      ...this.getTagsFixture(),
     ];
     return this;
   }
@@ -103,7 +111,7 @@ export class TestFile {
   }
 
   private getRelativeImportTestFrom() {
-    const { importTestFrom } = this.options;
+    const { importTestFrom } = this.config;
     if (!importTestFrom) return;
     const { file, varName } = importTestFrom;
     const dir = path.dirname(this.outputPath);
@@ -113,54 +121,97 @@ export class TestFile {
     };
   }
 
+  private getTagsFixture() {
+    return formatter.tagsFixture(this.testFileTags.tagsMap, TEST_KEY_SEPARATOR);
+  }
+
   private getRootSuite() {
     const { feature } = this.options.doc;
     if (!feature) throw new Error(`Document without feature.`);
     return this.getSuite(feature);
   }
 
-  private getSuite(feature: Feature | Rule) {
-    const flags = getFlags(feature);
+  /**
+   * Generate test.describe suite for root Feature or Rule
+   */
+  private getSuite(feature: Feature | Rule, parents: (Feature | Rule)[] = []) {
+    const flags = getFormatterFlags(feature);
     const lines: string[] = [];
-    feature.children.forEach((child) => lines.push(...this.getSuiteChild(child)));
+    const newParents = [...parents, feature];
+    feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, newParents)));
     return formatter.suite(feature.name, lines, flags);
   }
 
-  private getSuiteChild(child: FeatureChild | RuleChild) {
-    if ('rule' in child && child.rule) return this.getSuite(child.rule);
-    const { background, scenario } = child;
-    if (background) return this.getBeforeEach(background);
-    if (scenario) return this.getScenarioLines(scenario);
+  private getSuiteChild(child: FeatureChild | RuleChild, parents: (Feature | Rule)[]) {
+    if ('rule' in child && child.rule) return this.getSuite(child.rule, parents);
+    if (child.background) return this.getBeforeEach(child.background);
+    if (child.scenario) return this.getScenarioLines(child.scenario, parents);
     throw new Error(`Empty child: ${JSON.stringify(child)}`);
   }
 
-  private getScenarioLines(scenario: Scenario) {
-    return isOutline(scenario) ? this.getOutlineSuite(scenario) : this.getTest(scenario);
+  private getScenarioLines(scenario: Scenario, parents: (Feature | Rule)[]) {
+    return isOutline(scenario)
+      ? this.getOutlineSuite(scenario, parents)
+      : this.getTest(scenario, parents);
   }
 
+  /**
+   * Generate test.beforeEach for Background
+   */
   private getBeforeEach(bg: Background) {
     const { fixtures, lines } = this.getSteps(bg);
     return formatter.beforeEach(fixtures, lines);
   }
 
-  private getOutlineSuite(scenario: Scenario) {
-    const suiteLines: string[] = [];
-    const suiteFlags = getFlags(scenario);
+  /**
+   * Generate test.describe suite for Scenario Outline
+   */
+  private getOutlineSuite(scenario: Scenario, parents: (Feature | Rule)[]) {
+    const lines: string[] = [];
+    const flags = getFormatterFlags(scenario);
+    const newParents = [...parents, scenario];
     let exampleIndex = 0;
-    scenario.examples.forEach((example) => {
-      const flags = getFlags(example);
-      example.tableBody.forEach((exampleRow) => {
-        const title = `Example #${++exampleIndex}`;
-        const { fixtures, lines } = this.getSteps(scenario, exampleRow.id);
-        const testLines = formatter.test(title, fixtures, lines, flags);
-        suiteLines.push(...testLines);
+    scenario.examples.forEach((examples) => {
+      examples.tableBody.forEach((exampleRow) => {
+        lines.push(
+          ...this.getOutlineTest(
+            // prettier-ignore
+            scenario,
+            examples,
+            exampleRow,
+            ++exampleIndex,
+            newParents,
+          ),
+        );
       });
     });
-    return formatter.suite(scenario.name, suiteLines, suiteFlags);
+    return formatter.suite(scenario.name, lines, flags);
   }
 
-  private getTest(scenario: Scenario) {
-    const flags = getFlags(scenario);
+  /**
+   * Generate test from Examples row
+   */
+  // eslint-disable-next-line max-params
+  private getOutlineTest(
+    scenario: Scenario,
+    examples: Examples,
+    exampleRow: TableRow,
+    exampleIndex: number,
+    parents: (Feature | Rule | Scenario)[],
+  ) {
+    const flags = getFormatterFlags(examples);
+    const title = `Example #${exampleIndex}`;
+    this.testFileTags.registerTestTags(parents, title, examples.tags);
+    const { fixtures, lines } = this.getSteps(scenario, exampleRow.id);
+    return formatter.test(title, fixtures, lines, flags);
+  }
+
+  /**
+   * Generate test from Scenario
+   */
+  private getTest(scenario: Scenario, parents: (Feature | Rule)[]) {
+    this.testFileTags.registerTestTags(parents, scenario.name, scenario.tags);
+    const flags = getFormatterFlags(scenario);
     const { fixtures, lines } = this.getSteps(scenario);
     return formatter.test(scenario.name, fixtures, lines, flags);
   }
@@ -224,16 +275,6 @@ export class TestFile {
     }
     // todo: customTests are mix of different fixtures -> error?
   }
-}
-
-function getFlags(item: Feature | Rule | Scenario | Examples) {
-  const flags: formatter.Flags = {};
-  item.tags.forEach((tag) => {
-    if (tag.name === '@only') flags.only = true;
-    if (tag.name === '@skip') flags.skip = true;
-    if (tag.name === '@fixme') flags.fixme = true;
-  });
-  return flags;
 }
 
 function isOutline(scenario: Scenario) {

@@ -59,3 +59,8 @@ Then('File {string} contains', async ({ $testInfo }, fileName: string, table: Da
 Then('Context prop {string} to equal {string}', async ({ ctx }, key: string, value: string) => {
   expect(String(ctx[key])).toEqual(value);
 });
+
+Then('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string) => {
+  expect($tags.join(' ')).toEqual(tags);
+  expect(tagsFromCustomFixture.join(' ')).toEqual(tags);
+});

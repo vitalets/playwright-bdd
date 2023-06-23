@@ -12,10 +12,11 @@ type BDDFixtures = {
   Then: World['invokeStep'];
   And: World['invokeStep'];
   But: World['invokeStep'];
+  $tags: string[];
 };
 
 export const test = base.extend<BDDFixtures>({
-  cucumberWorld: async ({ page, context, browser, browserName, request }, use, testInfo) => {
+  cucumberWorld: async ({ page, context, browser, browserName, request, $tags }, use, testInfo) => {
     const config = getConfigFromEnv(testInfo.project.testDir);
     const { runConfiguration } = await loadCucumberConfig({
       provided: extractCucumberConfig(config),
@@ -30,6 +31,7 @@ export const test = base.extend<BDDFixtures>({
       request,
       testInfo,
       supportCodeLibrary,
+      $tags,
       parameters: runConfiguration.runtime.worldParameters || {},
       log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
       attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
@@ -43,4 +45,6 @@ export const test = base.extend<BDDFixtures>({
   Then: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
   And: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
   But: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
+  // eslint-disable-next-line no-empty-pattern
+  $tags: ({}, use) => use([]),
 });

@@ -18,6 +18,7 @@ export type WorldOptions<ParametersType = any> = IWorldOptions<ParametersType> &
   request: APIRequestContext;
   testInfo: TestInfo;
   supportCodeLibrary: ISupportCodeLibrary;
+  $tags: string[];
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -73,6 +74,10 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
 
   get testInfo() {
     return this.options.testInfo;
+  }
+
+  get tags() {
+    return this.options.$tags;
   }
 
   async init() {
