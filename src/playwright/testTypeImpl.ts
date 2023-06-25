@@ -7,7 +7,7 @@ import { Location } from '@playwright/test/reporter';
 import { getSymbolByName } from '../utils';
 import { TestTypeCommon } from './types';
 
-export type FixturesWithLocation = {
+type FixturesWithLocation = {
   fixtures: Fixtures;
   location: Location;
 };
@@ -17,7 +17,7 @@ const testTypeSymbol = getSymbolByName(test, 'testType');
 /**
  * Returns test fixtures using Symbol.
  */
-export function getTestFixtures(test: TestTypeCommon) {
+function getTestFixtures(test: TestTypeCommon) {
   return getTestImpl(test).fixtures as FixturesWithLocation[];
 }
 

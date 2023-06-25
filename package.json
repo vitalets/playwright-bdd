@@ -17,6 +17,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .hooks",
     "lint": "eslint .",
+    "knip": "knip -c knip.config.ts",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/runner.mjs",
@@ -28,6 +29,7 @@
     "release": "./scripts/release.sh"
   },
   "dependencies": {
+    "commander": "^11.0.0",
     "fast-glob": "^3.2.12"
   },
   "devDependencies": {
@@ -35,12 +37,12 @@
     "@eslint/js": "^8.42.0",
     "@playwright/test": "1.32",
     "@types/node": "^18.15.0",
-    "@types/yargs": "^17.0.24",
     "@typescript-eslint/eslint-plugin": "^5.59.9",
     "@typescript-eslint/parser": "^5.59.9",
     "cross-env": "^7.0.3",
     "eslint": "^8.42.0",
     "globals": "^13.20.0",
+    "knip": "^2.14.2",
     "lint-staged": "^13.2.2",
     "markdown-toc": "^1.2.0",
     "np": "^8.0.2",

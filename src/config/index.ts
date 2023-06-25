@@ -20,12 +20,13 @@ type OwnConfig = {
   skip?: boolean;
 };
 
-export const defaults = {
+export const defaults: Required<Pick<BDDInputConfig, 'outputDir' | 'publishQuiet' | 'verbose'>> = {
   outputDir: '.features-gen',
+  verbose: false,
   publishQuiet: true,
-} satisfies Required<Pick<BDDInputConfig, 'outputDir' | 'publishQuiet'>>;
+};
 
-export type BDDInputConfig = OwnConfig & CucumberConfig;
+type BDDInputConfig = OwnConfig & CucumberConfig;
 export type BDDConfig = ReturnType<typeof getConfig>;
 
 export function defineBddConfig(inputConfig?: BDDInputConfig) {

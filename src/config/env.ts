@@ -8,7 +8,7 @@ import { BDDConfig } from '.';
 import { exitWithMessage } from '../utils';
 
 type OutputDir = string;
-export type EnvConfigs = Record<OutputDir, BDDConfig & { _pid: number }>;
+type EnvConfigs = Record<OutputDir, BDDConfig & { _pid: number }>;
 
 export function saveConfigToEnv(config: BDDConfig) {
   const envConfigs = getEnvConfigs();

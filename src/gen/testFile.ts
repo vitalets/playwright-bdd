@@ -31,7 +31,7 @@ import { isParentChildTest } from '../playwright/testTypeImpl';
 import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 
-export type TestFileOptions = {
+type TestFileOptions = {
   doc: GherkinDocument;
   pickles: Pickle[];
   supportCodeLibrary: ISupportCodeLibrary;
