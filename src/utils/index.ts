@@ -4,7 +4,7 @@ export function log(...args: unknown[]) {
 }
 
 export function exitWithMessage(...messages: string[]) {
-  log('ERROR:\n', ...messages);
+  log('ERROR:', ...messages);
   process.exit(1);
 }
 

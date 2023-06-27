@@ -12,10 +12,7 @@ export async function loadSteps(
   let lib = cache.get(cacheKey);
 
   if (!lib) {
-    lib = loadSupport(runConfiguration, environment).then((lib) => {
-      assertStepsLoaded(lib);
-      return lib;
-    });
+    lib = loadSupport(runConfiguration, environment);
     cache.set(cacheKey, lib);
   }
 
@@ -23,16 +20,14 @@ export async function loadSteps(
 }
 
 export function findStepDefinition(
-  { stepDefinitions }: ISupportCodeLibrary,
+  supportCodeLibrary: ISupportCodeLibrary,
   stepText: string,
   file: string,
 ) {
-  const matchedSteps = stepDefinitions.filter((step) => {
+  const matchedSteps = supportCodeLibrary.stepDefinitions.filter((step) => {
     return step.matchesStepName(stepText);
   });
-  if (matchedSteps.length === 0) {
-    exitWithMessage(`Undefined step: ${stepText} (${file})`);
-  }
+  if (matchedSteps.length === 0) return;
   if (matchedSteps.length > 1)
     exitWithMessage(
       [
@@ -42,18 +37,4 @@ export function findStepDefinition(
     );
   // todo: check stepDefinition.keyword with PickleStepType
   return matchedSteps[0];
-}
-
-function assertStepsLoaded(lib: ISupportCodeLibrary) {
-  if (lib.stepDefinitions.length === 0) {
-    const { requirePaths, importPaths } = lib.originalCoordinates;
-    const total = requirePaths.length + importPaths.length;
-    exitWithMessage(
-      [
-        `No step definitions loaded. Scanned files (${total}):`,
-        ...requirePaths,
-        ...importPaths,
-      ].join('\n'),
-    );
-  }
 }

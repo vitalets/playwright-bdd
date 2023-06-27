@@ -36,6 +36,9 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
       text,
       this.testInfo.file,
     );
+    if (!stepDefinition) {
+      throw new Error(`Undefined step: "${text}"`);
+    }
     const { parameters } = await stepDefinition.getInvocationParameters({
       hookParameter: {} as ITestCaseHookParameter,
       step: { text, argument } as PickleStep,

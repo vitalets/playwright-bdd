@@ -3,12 +3,11 @@ import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-export function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
-  const cmd =
-    dir === 'esm-ts'
-      ? // for esm-ts show how test script should look
-        'npm test'
-      : 'node ../../dist/gen/cli && npx playwright test';
+const stdioForErrors = process.env.TEST_DEBUG ? 'inherit' : 'pipe';
+
+export function execPlaywrightTest(dir, opts, cmd) {
+  opts = Object.assign({ stdio: 'inherit' }, opts);
+  cmd = cmd || 'node ../../dist/gen/cli && npx playwright test';
   try {
     execSync(cmd, {
       cwd: path.join(`test`, dir),
@@ -24,12 +23,18 @@ export function execPlaywrightTest(dir, opts = { stdio: 'inherit' }) {
   }
 }
 
-export function execPlaywrightTestWithError(dir, regexp) {
+export function execPlaywrightTestWithError(dir, substr) {
   assert.throws(
-    () => execPlaywrightTest(dir, { stdio: 'pipe' }),
+    () => execPlaywrightTest(dir, { stdio: stdioForErrors }),
     (e) => {
+      const stdout = e.stdout.toString();
       assert.equal(e.status, 1);
-      assert.match(e.stdout.toString(), regexp);
+      substr = Array.isArray(substr) ? substr : [substr];
+      substr.forEach((s) => {
+        if (!stdout.includes(s)) {
+          assert.fail(`Not found:\n\n${s}\n\nSTDOUT:\n${stdout}`);
+        }
+      });
       return true;
     },
   );

@@ -22,6 +22,7 @@
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/runner.mjs",
     "only": "node --test-only test/runner.mjs",
+    "only:d": "TEST_DEBUG=1 npm run only",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "examples:b": "./scripts/examples-build.sh",
     "examples": "./scripts/examples.sh",

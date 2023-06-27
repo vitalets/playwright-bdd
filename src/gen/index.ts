@@ -12,17 +12,22 @@ import { loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage, log } from '../utils';
+import { showSnippetsAndExit } from '../snippets';
+import { IRunConfiguration } from '@cucumber/cucumber/api';
 
 export async function generateTestFiles(config: BDDConfig) {
   const { runConfiguration } = await loadCucumberConfig({
     provided: extractCucumberConfig(config),
   });
+
   const [features, supportCodeLibrary] = await Promise.all([
     loadFeatures(runConfiguration),
     loadSteps(runConfiguration),
   ]);
+
   const files = buildFiles(features, supportCodeLibrary, config);
-  assertConfigForCustomTest(files, config);
+  await checkUndefinedSteps(files, runConfiguration, supportCodeLibrary);
+  checkImportCustomTest(files, config);
   const paths = await saveFiles(files, config);
   if (config.verbose) log(`Generated files: ${paths.length}`);
   return paths;
@@ -61,12 +66,23 @@ async function clearDir(dir: string) {
   await Promise.all(tasks);
 }
 
-function assertConfigForCustomTest(files: TestFile[], config: BDDConfig) {
+async function checkUndefinedSteps(
+  files: TestFile[],
+  runConfiguration: IRunConfiguration,
+  supportCodeLibrary: ISupportCodeLibrary,
+) {
+  const undefinedSteps = files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
+  if (undefinedSteps > 0) {
+    await showSnippetsAndExit(files, runConfiguration, supportCodeLibrary);
+  }
+}
+
+function checkImportCustomTest(files: TestFile[], config: BDDConfig) {
   const hasCustomTest = files.some((file) => file.customTest);
   if (hasCustomTest && !config.importTestFrom) {
     exitWithMessage(
-      `When using custom "test" function in createBdd() you should ` +
-        `set "importTestFrom" config option that points to file exporting custom test.`,
+      `When using custom "test" function in createBdd() you should`,
+      `set "importTestFrom" config option that points to file exporting custom test.`,
     );
   }
 }

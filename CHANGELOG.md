@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Generate snippets for undefined steps [#17](https://github.com/vitalets/playwright-bdd/issues/17)
+
 ## 3.1.0
 * Support Cucumber tags [#8](https://github.com/vitalets/playwright-bdd/issues/8)
 
