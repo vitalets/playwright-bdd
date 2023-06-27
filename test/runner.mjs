@@ -35,7 +35,7 @@ test('several-projects-no-outputdir', (t) => {
 });
 
 test('parse-error', (t) => {
-  execPlaywrightTestWithError(t.name, `Parse error in "sample\.feature" (1:1)`);
+  execPlaywrightTestWithError(t.name, `Parse error in "sample.feature" (1:1)`);
 });
 
 test('error-import-test-from-steps', (t) => {
