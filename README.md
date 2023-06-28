@@ -19,6 +19,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) test runner.
 - [Writing features](#writing-features)
     + [Run single feature](#run-single-feature)
     + [Skip feature](#skip-feature)
+    + [Customize examples title](#customize-examples-title)
 - [Writing steps](#writing-steps)
   * [Playwright-style](#playwright-style)
     + [Custom fixtures](#custom-fixtures)
@@ -166,11 +167,12 @@ Typical CucumberJS options:
 See more options in [CucumberJS docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options).
 
 Special `playwright-bdd` options:
-| Name              | Type       | Description
-|-------------------|------------|------------------------
-| `outputDir`       | `string`   | Directory to output generated test files. Default: `.features-gen` 
-| `importTestFrom`  | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
-| `verbose`         | `boolean`  | Verbose output. Default: `false`
+| Name                 | Type       | Description
+|----------------------|------------|------------------------
+| `outputDir`          | `string`   | Directory to output generated test files. Default: `.features-gen` 
+| `importTestFrom`     | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
+| `examplesTitleFormat`| `string`   | Title format for scenario outline examples. Default: `Example #<_index_>`
+| `verbose`            | `boolean`  | Verbose output. Default: `false`
 
 Example configuration (CommonJS TypeScript project):
 ```ts
@@ -255,6 +257,41 @@ Feature: Playwright site
     @skip
     Scenario: Check title
         Given I open url "https://playwright.dev"
+```
+
+#### Customize examples title
+By default each row from Scenario Outline examples is converted into test with title `Example #{index}`.
+It can be not reliable for reporters that keep track of test history, because on every insertion / deletion of rows
+test titles will shift.
+
+You can provide own fixed title format by adding a special comment right above `Examples`. 
+The comment should start with `# title-format:` and can reference column names as `<column>`:
+```gherkin
+Feature: calculator
+
+    Scenario Outline: Check doubled
+      Then Doubled <start> equals <end>
+
+      # title-format: Example for <start>
+      Examples:
+          | start | end |
+          |    2  |   4 |
+          |    3  |   6 |
+```
+
+Generated test file:
+```js
+test.describe("calculator", () => {
+
+  test.describe("Check doubled", () => {
+
+    test("Example for 2", async ({ Then }) => {
+      await Then("Doubled 2 equals 4");
+    });
+
+    test("Example for 3", async ({ Then }) => {
+      await Then("Doubled 3 equals 6");
+    });
 ```
 
 ## Writing steps

@@ -36,3 +36,18 @@ Feature: scenario-outline
       | substring |
       | Then("Uppercase \\"hi\\" equals \\"HI\\"") |
       | Then("Uppercase \\"fo\\" equals \\"FO\\"") |
+
+	Scenario Outline: Custom titles
+    Given State <start>
+
+  # title-format: Test with <start> and "<end>">, without <notexist>
+	Examples:
+		| start | end |
+		|    2  |   4 |
+		|    3  |   6 |
+
+  Scenario: Generated file contains all examples for "custom titles"
+    Then File "scenario-outline.feature.spec.js" contains
+      | substring |
+      | test("Test with 2 and \\"4\\">, without <notexist>", |
+      | test("Test with 3 and \\"6\\">, without <notexist>", |

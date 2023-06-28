@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* Customize test titles for scenario outline [#29](https://github.com/vitalets/playwright-bdd/issues/29)
 * Generate snippets for undefined steps [#17](https://github.com/vitalets/playwright-bdd/issues/17)
 
 ## 3.1.0

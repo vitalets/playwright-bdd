@@ -30,6 +30,7 @@ import { isParentChildTest } from '../playwright/testTypeImpl';
 import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
+import { template } from '../utils';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -179,17 +180,22 @@ export class TestFile {
     const newParents = [...parents, scenario];
     let exampleIndex = 0;
     scenario.examples.forEach((examples) => {
+      const titleFormat = this.getExamplesTitleFormat(examples);
       examples.tableBody.forEach((exampleRow) => {
-        lines.push(
-          ...this.getOutlineTest(
-            // prettier-ignore
-            scenario,
-            examples,
-            exampleRow,
-            ++exampleIndex,
-            newParents,
-          ),
+        const testTitle = this.getOutlineTestTitle(
+          titleFormat,
+          examples,
+          exampleRow,
+          ++exampleIndex,
         );
+        const testLines = this.getOutlineTest(
+          scenario,
+          examples,
+          exampleRow,
+          testTitle,
+          newParents,
+        );
+        lines.push(...testLines);
       });
     });
     return formatter.suite(scenario.name, lines, flags);
@@ -203,11 +209,10 @@ export class TestFile {
     scenario: Scenario,
     examples: Examples,
     exampleRow: TableRow,
-    exampleIndex: number,
+    title: string,
     parents: (Feature | Rule | Scenario)[],
   ) {
     const flags = getFormatterFlags(examples);
-    const title = `Example #${exampleIndex}`;
     this.testFileTags.registerTestTags(parents, title, examples.tags);
     const { fixtures, lines } = this.getSteps(scenario, exampleRow.id);
     return formatter.test(title, fixtures, lines, flags);
@@ -306,6 +311,38 @@ export class TestFile {
       this.customTest = customTest;
     }
     // todo: customTests are mix of different fixtures -> error?
+  }
+
+  // eslint-disable-next-line max-params
+  private getOutlineTestTitle(
+    titleFormat: string,
+    examples: Examples,
+    exampleRow: TableRow,
+    exampleIndex: number,
+  ) {
+    const params: Record<string, unknown> = {
+      _index_: exampleIndex,
+    };
+
+    exampleRow.cells.forEach((cell, index) => {
+      const colName = examples.tableHeader?.cells[index]?.value;
+      if (colName) params[colName] = cell.value;
+    });
+
+    return template(titleFormat, params);
+  }
+
+  private getExamplesTitleFormat(examples: Examples) {
+    const { line } = examples.location;
+    const titleFormatCommentLine = line - 1;
+    const comment = this.options.doc.comments.find((c) => {
+      return c.location.line === titleFormatCommentLine;
+    });
+    const commentText = comment?.text?.trim();
+    const prefix = '# title-format:';
+    return commentText?.startsWith(prefix)
+      ? commentText.replace(prefix, '').trim()
+      : this.config.examplesTitleFormat;
   }
 }
 

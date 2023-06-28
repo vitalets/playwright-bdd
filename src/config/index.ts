@@ -18,11 +18,16 @@ type OwnConfig = {
   verbose?: boolean;
   /** Skip generation of test files */
   skip?: boolean;
+  /** Test title format for scenario outline examples */
+  examplesTitleFormat?: string;
 };
 
-export const defaults: Required<Pick<BDDInputConfig, 'outputDir' | 'publishQuiet' | 'verbose'>> = {
+export const defaults: Required<
+  Pick<BDDInputConfig, 'outputDir' | 'publishQuiet' | 'verbose' | 'examplesTitleFormat'>
+> = {
   outputDir: '.features-gen',
   verbose: false,
+  examplesTitleFormat: 'Example #<_index_>',
   publishQuiet: true,
 };
 

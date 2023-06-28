@@ -17,3 +17,13 @@ export function getSymbolByName<T extends object>(target: T, name?: string) {
   }
   return symbol as keyof T;
 }
+
+/**
+ * Inserts params into template.
+ * Params defined as <param>.
+ */
+export function template(t: string, params: Record<string, unknown> = {}) {
+  return t.replace(/<(.+?)>/g, (match, key) => {
+    return params[key] !== undefined ? String(params[key]) : match;
+  });
+}
