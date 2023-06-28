@@ -24,7 +24,6 @@ import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
-import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { CucumberStepFunction, getFixtureNames } from '../run/createBdd';
 import { TestTypeCommon } from '../playwright/types';
 import { isParentChildTest } from '../playwright/testTypeImpl';
@@ -232,33 +231,13 @@ export class TestFile {
     let previousKeywordType: KeywordType | undefined = undefined;
 
     const lines = scenario.steps.map((step) => {
-      // todo: move to getStep and check eslint for getSteps()
-      const pickleStep = this.getPickleStep(step, outlineExampleRowId);
-      const stepDefinition = findStepDefinition(
-        this.options.supportCodeLibrary,
-        pickleStep.text,
-        this.sourceFile,
-      );
-
-      const keywordType = (previousKeywordType = getStepKeywordType({
-        keyword: step.keyword,
-        language: this.language,
-        previousKeywordType,
-      }));
-
-      if (!stepDefinition) {
-        this.undefinedSteps.push({
-          keywordType,
-          step,
-          pickleStep,
-        });
-      }
-
       const {
         keyword,
+        keywordType,
         fixtures: stepFixtures,
         line,
-      } = this.getStep(step, pickleStep, stepDefinition);
+      } = this.getStep(step, previousKeywordType, outlineExampleRowId);
+      previousKeywordType = keywordType;
       fixtures.add(keyword);
       stepFixtures.forEach((fixture) => fixtures.add(fixture));
 
@@ -271,13 +250,31 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
-  private getStep(step: Step, pickleStep: PickleStep, stepDefinition?: StepDefinition) {
+  private getStep(
+    step: Step,
+    previousKeywordType: KeywordType | undefined,
+    outlineExampleRowId?: string,
+  ) {
+    const pickleStep = this.getPickleStep(step, outlineExampleRowId);
+    const stepDefinition = findStepDefinition(
+      this.options.supportCodeLibrary,
+      pickleStep.text,
+      this.sourceFile,
+    );
+    const keywordType = getStepKeywordType({
+      keyword: step.keyword,
+      language: this.language,
+      previousKeywordType,
+    });
+    if (!stepDefinition) {
+      this.undefinedSteps.push({ keywordType, step, pickleStep });
+    }
     const keyword = this.getKeyword(step);
     const code = stepDefinition?.code as CucumberStepFunction | undefined;
     const fixtureNames = code ? getFixtureNames(code) : ['/* Undefined step! */'];
     if (code) this.updateCustomTest(code);
     const line = formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
-    return { keyword, fixtures: fixtureNames, line };
+    return { keyword, keywordType, fixtures: fixtureNames, line };
   }
 
   private getPickleStep(step: Step, outlineExampleRowId?: string) {
