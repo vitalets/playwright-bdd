@@ -24,8 +24,7 @@
     "only": "node --test-only test/runner.mjs",
     "only:d": "TEST_DEBUG=1 npm run only",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
-    "examples:b": "./scripts/examples-build.sh",
-    "examples": "./scripts/examples.sh",
+    "examples": "ts-node scripts/examples.ts",
     "toc": "markdown-toc README.md -i --maxdepth 4",
     "release": "./scripts/release.sh"
   },
