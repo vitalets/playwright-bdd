@@ -6,11 +6,11 @@ const config: KnipConfig = {
   ignore: ['**/*.d.ts'],
   ignoreDependencies: [
     '@cucumber/messages',
+    '@cucumber/cucumber-expressions',
     '@cucumber/gherkin',
     'lint-staged',
     'np',
     'npm-run-all',
-    'ts-node',
   ],
 };
 
