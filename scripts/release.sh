@@ -10,4 +10,4 @@ npm run prettier
 npm run knip
 npx cross-env FORBID_ONLY=1 npm test # 'npm run build' is called inside
 npm run examples
-npx np --yolo --no-release-draft --no-tests --any-branch
+SKIP_PRE_PUSH=1 npx np --yolo --no-release-draft --no-tests --any-branch

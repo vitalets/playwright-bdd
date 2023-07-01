@@ -3,6 +3,10 @@
 # Exit on any error
 set -euo pipefail
 
+if [[ -n "${SKIP_PRE_PUSH-}" ]]; then
+    exit 0
+fi
+
 npm run lint
 npm run prettier
 npx cross-env FORBID_ONLY=1 npm test
