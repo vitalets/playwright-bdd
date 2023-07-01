@@ -11,6 +11,7 @@ const config: KnipConfig = {
     'lint-staged',
     'np',
     'npm-run-all',
+    'publint',
   ],
 };
 
