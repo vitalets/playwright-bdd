@@ -76,7 +76,9 @@ function isTypeScript(supportCodeLibrary: ISupportCodeLibrary) {
 }
 
 function isPlaywrightStyle(supportCodeLibrary: ISupportCodeLibrary) {
-  return supportCodeLibrary.stepDefinitions.some((d) => (d.code as CucumberStepFunction).fn);
+  return supportCodeLibrary.stepDefinitions.length > 0
+    ? supportCodeLibrary.stepDefinitions.some((d) => (d.code as CucumberStepFunction).fn)
+    : true;
 }
 
 function getWarnOnZeroScannedFiles(supportCodeLibrary: ISupportCodeLibrary) {
