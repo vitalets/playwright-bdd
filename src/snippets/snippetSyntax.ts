@@ -35,7 +35,7 @@ export default class {
 
     return [
       functionSignature, // prettier-ignore
-      `  // write step definition here...`,
+      `  // ...`,
       '});',
     ].join('\n');
   }

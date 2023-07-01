@@ -9,82 +9,97 @@ import { exitWithMessage, log } from '../utils';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { CucumberStepFunction } from '../run/createBdd';
 
-export async function showSnippetsAndExit(
-  files: TestFile[],
-  runConfiguration: IRunConfiguration,
-  supportCodeLibrary: ISupportCodeLibrary,
-) {
-  let { snippetInterface, snippetSyntax } = runConfiguration.formats.options;
+export class Snippets {
+  private snippetBuilder!: StepDefinitionSnippetBuilder;
 
-  if (!snippetSyntax && isPlaywrightStyle(supportCodeLibrary)) {
-    snippetSyntax = isTypeScript(supportCodeLibrary)
-      ? require.resolve('./snippetSyntaxTs.js')
-      : require.resolve('./snippetSyntax.js');
+  constructor(
+    private files: TestFile[],
+    private runConfiguration: IRunConfiguration,
+    private supportCodeLibrary: ISupportCodeLibrary,
+  ) {}
+
+  async showSnippetsAndExit() {
+    this.snippetBuilder = await this.createSnippetBuilder();
+    const snippets = this.getSnippets();
+    this.logOutput(snippets);
   }
 
-  const snippetBuilder = await loadSnippetBuilder(
-    supportCodeLibrary,
-    snippetInterface,
-    snippetSyntax,
-  );
+  private async createSnippetBuilder() {
+    const { snippetInterface } = this.runConfiguration.formats.options;
+    const snippetSyntax = this.getSnippetSyntax();
+    return loadSnippetBuilder(this.supportCodeLibrary, snippetInterface, snippetSyntax);
+  }
 
-  const snippets = getSnippets(snippetBuilder, files);
+  private getSnippetSyntax() {
+    const { snippetSyntax } = this.runConfiguration.formats.options;
+    if (!snippetSyntax && this.isPlaywrightStyle()) {
+      return this.isTypeScript()
+        ? require.resolve('./snippetSyntaxTs.js')
+        : require.resolve('./snippetSyntax.js');
+    } else {
+      return snippetSyntax;
+    }
+  }
 
-  log(snippets.concat(['']).join('\n\n'));
-
-  exitWithMessage(
-    `Missing step definitions (${snippets.length}).`,
-    'Use snippets above to create them.',
-    getWarnOnZeroScannedFiles(supportCodeLibrary),
-  );
-}
-
-function getSnippets(snippetBuilder: StepDefinitionSnippetBuilder, files: TestFile[]) {
-  let index = 0;
-  const snippets: string[] = [];
-  files.forEach((file) => {
-    file.undefinedSteps.forEach((undefinedStep) => {
-      const snippet = getSnippet(snippetBuilder, file, ++index, undefinedStep);
-      snippets.push(snippet);
+  private getSnippets() {
+    let index = 0;
+    const snippetsSet = new Set<string>();
+    const snippets: string[] = [];
+    this.files.forEach((file) => {
+      file.undefinedSteps.forEach((undefinedStep) => {
+        const { snippet, snippetWithLocation } = this.getSnippet(file, ++index, undefinedStep);
+        if (!snippetsSet.has(snippet)) {
+          snippetsSet.add(snippet);
+          snippets.push(snippetWithLocation);
+        }
+      });
     });
-  });
 
-  return snippets;
-}
+    return snippets;
+  }
 
-// eslint-disable-next-line max-params
-function getSnippet(
-  snippetBuilder: StepDefinitionSnippetBuilder,
-  file: TestFile,
-  index: number,
-  undefinedStep: UndefinedStep,
-) {
-  const snippet = snippetBuilder.build({
-    keywordType: undefinedStep.keywordType,
-    pickleStep: undefinedStep.pickleStep,
-  });
-  const { line, column } = undefinedStep.step.location;
-  return [
-    `${index}. Missing step definition for "${file.sourceFile}:${line}:${column}"`,
-    snippet,
-  ].join('\n\n');
-}
+  private getSnippet(file: TestFile, index: number, undefinedStep: UndefinedStep) {
+    const snippet = this.snippetBuilder.build({
+      keywordType: undefinedStep.keywordType,
+      pickleStep: undefinedStep.pickleStep,
+    });
+    const { line, column } = undefinedStep.step.location;
+    const snippetWithLocation = [
+      `${index}. Missing step definition for "${file.sourceFile}:${line}:${column}"`,
+      snippet,
+    ].join('\n\n');
 
-function isTypeScript(supportCodeLibrary: ISupportCodeLibrary) {
-  const { requirePaths, importPaths } = supportCodeLibrary.originalCoordinates;
-  return requirePaths.some((p) => p.endsWith('.ts')) || importPaths.some((p) => p.endsWith('.ts'));
-}
+    return { snippet, snippetWithLocation };
+  }
 
-function isPlaywrightStyle(supportCodeLibrary: ISupportCodeLibrary) {
-  return supportCodeLibrary.stepDefinitions.length > 0
-    ? supportCodeLibrary.stepDefinitions.some((d) => (d.code as CucumberStepFunction).fn)
-    : true;
-}
+  private isTypeScript() {
+    const { requirePaths, importPaths } = this.supportCodeLibrary.originalCoordinates;
+    return (
+      requirePaths.some((p) => p.endsWith('.ts')) || importPaths.some((p) => p.endsWith('.ts'))
+    );
+  }
 
-function getWarnOnZeroScannedFiles(supportCodeLibrary: ISupportCodeLibrary) {
-  const { requirePaths, importPaths } = supportCodeLibrary.originalCoordinates;
-  const scannedFilesCount = requirePaths.length + importPaths.length;
-  return scannedFilesCount === 0
-    ? `\nNote that 0 step definition files found, check the config.`
-    : '';
+  private isPlaywrightStyle() {
+    const { stepDefinitions } = this.supportCodeLibrary;
+    return stepDefinitions.length > 0
+      ? stepDefinitions.some((d) => (d.code as CucumberStepFunction).fn)
+      : true;
+  }
+
+  private logOutput(snippets: string[]) {
+    log(snippets.concat(['']).join('\n\n'));
+    exitWithMessage(
+      `Missing step definitions (${snippets.length}).`,
+      'Use snippets above to create them.',
+      this.getWarnOnZeroScannedFiles(),
+    );
+  }
+
+  private getWarnOnZeroScannedFiles() {
+    const { requirePaths, importPaths } = this.supportCodeLibrary.originalCoordinates;
+    const scannedFilesCount = requirePaths.length + importPaths.length;
+    return scannedFilesCount === 0
+      ? `\nNote that 0 step definition files found, check the config.`
+      : '';
+  }
 }

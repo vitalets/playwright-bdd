@@ -1,8 +1,12 @@
 import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import test from 'node:test';
 
 const stdioForErrors = process.env.TEST_DEBUG ? 'inherit' : 'pipe';
+
+defineTestOnly(test);
+export { test };
 
 export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
@@ -41,4 +45,11 @@ export function execPlaywrightTestWithError(dir, substr) {
       return true;
     },
   );
+}
+
+export function defineTestOnly(test) {
+  test.only = (title, fn) => {
+    if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
+    test(title, { only: true }, fn);
+  };
 }

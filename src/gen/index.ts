@@ -12,7 +12,7 @@ import { loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage, log } from '../utils';
-import { showSnippetsAndExit } from '../snippets';
+import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 
 export async function generateTestFiles(config: BDDConfig) {
@@ -73,7 +73,8 @@ async function checkUndefinedSteps(
 ) {
   const undefinedSteps = files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
   if (undefinedSteps > 0) {
-    await showSnippetsAndExit(files, runConfiguration, supportCodeLibrary);
+    const snippets = new Snippets(files, runConfiguration, supportCodeLibrary);
+    await snippets.showSnippetsAndExit();
   }
 }
 
