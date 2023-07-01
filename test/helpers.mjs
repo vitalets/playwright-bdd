@@ -1,9 +1,12 @@
-import fs from 'node:fs';
 import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
 const stdioForErrors = process.env.TEST_DEBUG ? 'inherit' : 'pipe';
+
+export function getTestName(importMeta) {
+  return importMeta.url.split('/').slice(-2)[0];
+}
 
 export function execPlaywrightTest(dir, opts, cmd) {
   opts = Object.assign({ stdio: 'inherit' }, opts);
@@ -38,29 +41,4 @@ export function execPlaywrightTestWithError(dir, substr) {
       return true;
     },
   );
-}
-
-export function showPlaywrightVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@playwright/test/package.json', 'utf8'),
-  );
-
-  console.log(`Playwright version: ${version}`);
-}
-
-export function symlinkPlaywrghtBdd() {
-  // symlink node_modules/playwright-bdd to dist
-  // as generated files import { test } from "playwright-bdd"
-  execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
-}
-
-export function buildDist() {
-  execSync('npm run build', { stdio: 'inherit' });
-}
-
-export function defineTestOnly(test) {
-  test.only = (title, fn) => {
-    if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
-    test(title, { only: true }, fn);
-  };
 }
