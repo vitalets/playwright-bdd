@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 3.2.1
 * Improve snippets
 
 ## 3.2.0
