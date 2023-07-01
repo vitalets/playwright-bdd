@@ -18,10 +18,12 @@ export class Snippets {
     private supportCodeLibrary: ISupportCodeLibrary,
   ) {}
 
-  async showSnippetsAndExit() {
+  async printSnippetsAndExit() {
     this.snippetBuilder = await this.createSnippetBuilder();
     const snippets = this.getSnippets();
-    this.logOutput(snippets);
+    this.printHeader();
+    this.printSnippets(snippets);
+    this.printFooter(snippets);
   }
 
   private async createSnippetBuilder() {
@@ -42,12 +44,15 @@ export class Snippets {
   }
 
   private getSnippets() {
-    let index = 0;
     const snippetsSet = new Set<string>();
     const snippets: string[] = [];
     this.files.forEach((file) => {
       file.undefinedSteps.forEach((undefinedStep) => {
-        const { snippet, snippetWithLocation } = this.getSnippet(file, ++index, undefinedStep);
+        const { snippet, snippetWithLocation } = this.getSnippet(
+          file,
+          snippets.length + 1,
+          undefinedStep,
+        );
         if (!snippetsSet.has(snippet)) {
           snippetsSet.add(snippet);
           snippets.push(snippetWithLocation);
@@ -65,9 +70,9 @@ export class Snippets {
     });
     const { line, column } = undefinedStep.step.location;
     const snippetWithLocation = [
-      `${index}. Missing step definition for "${file.sourceFile}:${line}:${column}"`,
+      `// ${index}. Missing step definition for "${file.sourceFile}:${line}:${column}"`,
       snippet,
-    ].join('\n\n');
+    ].join('\n');
 
     return { snippet, snippetWithLocation };
   }
@@ -86,8 +91,21 @@ export class Snippets {
       : true;
   }
 
-  private logOutput(snippets: string[]) {
+  private printHeader() {
+    log(
+      [
+        `Missing steps found. Use snippets below:`,
+        `import { createBdd } from 'playwright-bdd';`,
+        `const { Given, When, Then } = createBdd();\n`,
+      ].join('\n\n'),
+    );
+  }
+
+  private printSnippets(snippets: string[]) {
     log(snippets.concat(['']).join('\n\n'));
+  }
+
+  private printFooter(snippets: string[]) {
     exitWithMessage(
       `Missing step definitions (${snippets.length}).`,
       'Use snippets above to create them.',

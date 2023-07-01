@@ -74,7 +74,7 @@ async function checkUndefinedSteps(
   const undefinedSteps = files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
   if (undefinedSteps > 0) {
     const snippets = new Snippets(files, runConfiguration, supportCodeLibrary);
-    await snippets.showSnippetsAndExit();
+    await snippets.printSnippetsAndExit();
   }
 }
 
