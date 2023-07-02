@@ -46,7 +46,7 @@ export type CucumberStepFunction = TestStepFunction<World> & {
 };
 
 function defineStep<T extends KeyValue, W extends KeyValue = {}>(
-  CucumberStepFn: IDefineStep,
+  CucumberDefineStep: IDefineStep,
   customTest?: TestType<T, W>,
 ) {
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
@@ -64,7 +64,7 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
     cucumberFn.customTest = customTest;
 
     try {
-      CucumberStepFn(pattern, cucumberFn);
+      CucumberDefineStep(pattern, cucumberFn);
     } catch (e) {
       // todo: detect that this is import from test file
       // and skip/delay registering cucumber steps until cucumber is loaded
