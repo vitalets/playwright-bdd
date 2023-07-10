@@ -5,7 +5,7 @@
 import url from 'url';
 import { requirePlaywrightModule } from './utils';
 
-export interface Location {
+interface Location {
   file: string;
   line: number;
   column: number;
