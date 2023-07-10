@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import test from 'node:test';
+import { expect } from '@playwright/test';
 
 const stdioForErrors = process.env.TEST_DEBUG ? 'inherit' : 'pipe';
 
@@ -36,13 +37,9 @@ export function execPlaywrightTestWithError(dir, substr) {
     () => execPlaywrightTest(dir, { stdio: stdioForErrors }),
     (e) => {
       const stdout = e.stdout.toString();
-      assert.equal(e.status, 1);
+      expect(e.status).toEqual(1);
       substr = Array.isArray(substr) ? substr : [substr];
-      substr.forEach((s) => {
-        if (!stdout.includes(s)) {
-          assert.fail(`Not found:\n\n${s}\n\nSTDOUT:\n${stdout}`);
-        }
-      });
+      substr.forEach((s) => expect(stdout).toContain(s));
       return true;
     },
   );

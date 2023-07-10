@@ -1,8 +1,8 @@
 module.exports = {
-  '**/*.{js,ts}': [
+  '**/*.{js,mjs,ts}': [
     'eslint --fix',
     'prettier --write --ignore-unknown',
     () => 'cross-env FORBID_ONLY=1 npm test',
   ],
-  '!(**/*.{js,ts})': 'prettier --write --ignore-unknown',
+  '!(**/*.{js,mjs,ts})': 'prettier --write --ignore-unknown',
 };
