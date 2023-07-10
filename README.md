@@ -86,8 +86,6 @@ npx playwright install
    const testDir = defineBddConfig({
      paths: ['sample.feature'],
      require: ['steps.js'],
-     // uncomment and install 'ts-node' if using TypeScript
-     // requireModule: ['ts-node/register'],
    });
 
    export default defineConfig({
@@ -162,9 +160,10 @@ Typical CucumberJS options:
 | `paths`          | `string[]` | Paths to feature files. Default: `features/**/*.{feature,feature.md}` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features)     
 | `require`        | `string[]` | Paths to step definitions in **CommonJS**. Default: `features/**/*.(js)` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code)            
 | `import`         | `string[]` | Paths to step definitions in **ESM**. Default: `features/**/*.(js)` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/esm.md)                                       
-| `requireModule`  | `string[]` | Names of transpilation modules to load. Default: `[]` [More](https://github.com/cucumber/cucumber-js/blob/main/docs/transpiling.md)
 
 See more options in [CucumberJS docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#options).
+
+> Note: Cucumber's option `requireModule: ['ts-node/register']` is not recommended for playwright-bdd. TypeScript compilation is performed with Playwright's built-in loader.
 
 Special `playwright-bdd` options:
 | Name                 | Type       | Description
@@ -183,7 +182,6 @@ const testDir = defineBddConfig({
   importTestFrom: 'fixtures.ts',
   paths: ['feature/*.feature'],
   require: ['steps/**/*.ts'],
-  requireModule: ['ts-node/register'],
 });
 
 export default defineConfig({
@@ -212,7 +210,6 @@ For TypeScript ESM:
 ```diff
 const testDir = defineBddConfig({,
 -  require: ['steps.js'],
--  requireModule: ['ts-node/register'],
 +  import: ['steps.ts'],
 });
 ```

@@ -4,7 +4,6 @@ import { defineBddConfig } from '../../dist';
 const testDir = defineBddConfig({
   paths: ['../bdd-syntax/features'],
   require: ['steps.ts'],
-  requireModule: ['ts-node/register'],
 });
 
 export default defineConfig({

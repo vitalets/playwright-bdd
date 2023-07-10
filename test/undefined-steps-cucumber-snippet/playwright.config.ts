@@ -5,7 +5,6 @@ import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definiti
 const testDir = defineBddConfig({
   paths: ['*.feature'],
   require: ['steps.ts'],
-  requireModule: ['ts-node/register'],
   formatOptions: {
     snippetInterface: SnippetInterface.AsyncAwait,
   },

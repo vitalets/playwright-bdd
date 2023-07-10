@@ -5,7 +5,6 @@ const testDir = defineBddConfig({
   importTestFrom: 'steps/fixtures.ts',
   paths: ['features'],
   require: ['steps/steps.ts'],
-  requireModule: ['ts-node/register'],
 });
 
 export default defineConfig({

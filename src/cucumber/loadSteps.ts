@@ -1,6 +1,7 @@
 import { IRunConfiguration, IRunEnvironment, loadSupport } from '@cucumber/cucumber/api';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { exitWithMessage } from '../utils';
+import { installTransform } from '../playwright/transform';
 
 const cache = new Map<string, Promise<ISupportCodeLibrary>>();
 
@@ -12,7 +13,10 @@ export async function loadSteps(
   let lib = cache.get(cacheKey);
 
   if (!lib) {
-    lib = loadSupport(runConfiguration, environment);
+    // use Playwright's built-in hook to compile TypeScript steps
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    const uninstall = !hasTsNodeRegister(runConfiguration) ? installTransform() : () => {};
+    lib = loadSupport(runConfiguration, environment).finally(() => uninstall());
     cache.set(cacheKey, lib);
   }
 
@@ -37,4 +41,8 @@ export function findStepDefinition(
     );
   // todo: check stepDefinition.keyword with PickleStepType
   return matchedSteps[0];
+}
+
+export function hasTsNodeRegister(runConfiguration: IRunConfiguration) {
+  return runConfiguration.support.requireModules.includes('ts-node/register');
 }

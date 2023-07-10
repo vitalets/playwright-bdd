@@ -5,6 +5,12 @@
 import url from 'url';
 import path from 'path';
 
+export interface Location {
+  file: string;
+  line: number;
+  column: number;
+}
+
 export function getLocationByStacktrace({ level }: { level: number }) {
   const sourceMapSupport = requireSourceMapSupport();
   const oldPrepareStackTrace = Error.prepareStackTrace;

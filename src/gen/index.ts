@@ -8,7 +8,7 @@ import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadFeatures } from '../cucumber/loadFeatures';
-import { loadSteps } from '../cucumber/loadSteps';
+import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage, log } from '../utils';
@@ -20,6 +20,8 @@ export async function generateTestFiles(config: BDDConfig) {
     provided: extractCucumberConfig(config),
   });
 
+  warnForTsNodeRegister(runConfiguration);
+
   const [features, supportCodeLibrary] = await Promise.all([
     loadFeatures(runConfiguration),
     loadSteps(runConfiguration),
@@ -30,6 +32,7 @@ export async function generateTestFiles(config: BDDConfig) {
   checkImportCustomTest(files, config);
   const paths = await saveFiles(files, config);
   if (config.verbose) log(`Generated files: ${paths.length}`);
+
   return paths;
 }
 
@@ -84,6 +87,16 @@ function checkImportCustomTest(files: TestFile[], config: BDDConfig) {
     exitWithMessage(
       `When using custom "test" function in createBdd() you should`,
       `set "importTestFrom" config option that points to file exporting custom test.`,
+    );
+  }
+}
+
+function warnForTsNodeRegister(runConfiguration: IRunConfiguration) {
+  if (hasTsNodeRegister(runConfiguration)) {
+    log(
+      `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
+      `Remove this option from defineBddConfig() and`,
+      `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
     );
   }
 }

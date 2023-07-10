@@ -16,10 +16,11 @@ export function execPlaywrightTest(dir, opts, cmd) {
   opts = Object.assign({ stdio: 'inherit' }, opts);
   cmd = cmd || 'node ../../dist/gen/cli && npx playwright test';
   try {
-    execSync(cmd, {
+    const stdout = execSync(cmd, {
       cwd: path.join(`test`, dir),
       ...opts,
     });
+    return stdout?.toString() || '';
   } catch (e) {
     if (opts.stdio === 'inherit') {
       // error already printed

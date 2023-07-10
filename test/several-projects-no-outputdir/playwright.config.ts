@@ -9,7 +9,6 @@ export default defineConfig({
         importTestFrom: 'fixtures.ts',
         paths: ['one/*.feature'],
         require: ['steps.ts'],
-        requireModule: ['ts-node/register'],
       }),
     },
     {
@@ -18,7 +17,6 @@ export default defineConfig({
         importTestFrom: 'fixtures.ts',
         paths: ['two/*.feature'],
         require: ['steps.ts'],
-        requireModule: ['ts-node/register'],
       }),
     },
   ],

@@ -9,5 +9,6 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  reporter: [['./reporter.ts']],
   forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

@@ -4,7 +4,6 @@ import { defineBddConfig } from '../../dist';
 const testDir = defineBddConfig({
   paths: ['*.feature'],
   require: ['steps/*.ts'],
-  requireModule: ['ts-node/register'],
   worldParameters: { myParam: 'myValue' },
 });
 

@@ -1,6 +1,6 @@
 {
   "type": "module",
   "scripts": {
-    "test": "NODE_OPTIONS='--loader ts-node/esm --no-warnings' node ../../dist/gen/cli && npx playwright test"
+    "test": "cross-env NODE_OPTIONS='--loader ts-node/esm --no-warnings' node ../../dist/gen/cli && npx playwright test"
   }
 }

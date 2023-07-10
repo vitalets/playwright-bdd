@@ -6,7 +6,7 @@
 import path from 'node:path';
 
 export async function loadConfig(cliConfig?: string) {
-  const { ConfigLoader, resolveConfigFile } = await importConfigLoader();
+  const { ConfigLoader, resolveConfigFile } = requireConfigLoader();
   const configFileOrDirectory = cliConfig ? path.resolve(process.cwd(), cliConfig) : process.cwd();
   const resolvedConfigFile = resolveConfigFile(configFileOrDirectory);
   const configLoader = new ConfigLoader();
@@ -14,8 +14,8 @@ export async function loadConfig(cliConfig?: string) {
   return configLoader.loadConfigFile(resolvedConfigFile, true);
 }
 
-function importConfigLoader() {
+function requireConfigLoader() {
   const playwrightRoot = path.dirname(require.resolve('@playwright/test'));
   const configLoaderPath = path.join(playwrightRoot, 'lib', 'common', 'configLoader.js');
-  return import(configLoaderPath);
+  return require(configLoaderPath);
 }
