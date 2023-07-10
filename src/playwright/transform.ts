@@ -1,5 +1,7 @@
 import Module from 'module';
-import { requirePlaywrightModule } from './utils';
+import fs from 'node:fs';
+import path from 'node:path';
+import { getPlaywrightModulePath, requirePlaywrightModule } from './utils';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 /* eslint-disable max-params */
@@ -11,9 +13,7 @@ import { requirePlaywrightModule } from './utils';
  */
 export function installTransform(): () => void {
   const { pirates } = requirePlaywrightModule('lib/utilsBundle.js');
-  const { resolveHook, shouldTransform, transformHook } = requirePlaywrightModule(
-    'lib/transform/transform.js',
-  );
+  const { resolveHook, shouldTransform, transformHook } = requireTransform();
 
   let reverted = false;
 
@@ -40,4 +40,18 @@ export function installTransform(): () => void {
     (Module as any)._resolveFilename = originalResolveFilename;
     revertPirates();
   };
+}
+
+function requireTransform() {
+  const transformPathSince1_35 = getPlaywrightModulePath('lib/transform/transform.js');
+  if (fs.existsSync(transformPathSince1_35)) {
+    const { resolveHook, shouldTransform, transformHook } =
+      requirePlaywrightModule(transformPathSince1_35);
+    return { resolveHook, shouldTransform, transformHook };
+  } else {
+    const { resolveHook, transformHook } = requirePlaywrightModule('lib/common/transform.js');
+    // see: https://github.com/microsoft/playwright/blob/b4ffb848de1b00e9a0abad6dacdccce60cce9bed/packages/playwright-test/src/reporters/base.ts#L524
+    const shouldTransform = (file: string) => !file.includes(`${path.sep}node_modules${path.sep}`);
+    return { resolveHook, shouldTransform, transformHook };
+  }
 }
