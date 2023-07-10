@@ -3,7 +3,7 @@
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/transform.ts#L229
  */
 import url from 'url';
-import path from 'path';
+import { requirePlaywrightModule } from './utils';
 
 export interface Location {
   file: string;
@@ -12,7 +12,7 @@ export interface Location {
 }
 
 export function getLocationByStacktrace({ level }: { level: number }) {
-  const sourceMapSupport = requireSourceMapSupport();
+  const { sourceMapSupport } = requirePlaywrightModule('lib/utilsBundle.js');
   const oldPrepareStackTrace = Error.prepareStackTrace;
   Error.prepareStackTrace = (error, stackFrames) => {
     const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(stackFrames[level]);
@@ -35,12 +35,4 @@ export function getLocationByStacktrace({ level }: { level: number }) {
   Error.stackTraceLimit = oldStackTraceLimit;
   Error.prepareStackTrace = oldPrepareStackTrace;
   return location;
-}
-
-function requireSourceMapSupport() {
-  const playwrightRoot = path.dirname(require.resolve('@playwright/test'));
-  const utilsBundlePath = path.join(playwrightRoot, 'lib', 'utilsBundle.js');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  const { sourceMapSupport } = require(utilsBundlePath);
-  return sourceMapSupport;
 }

@@ -1,6 +1,6 @@
-import path from 'path';
 import Module from 'module';
 import { addHook } from 'pirates';
+import { requirePlaywrightModule } from './utils';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 /* eslint-disable max-params */
@@ -11,7 +11,9 @@ import { addHook } from 'pirates';
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/transform/transform.ts
  */
 export function installTransform(): () => void {
-  const { resolveHook, shouldTransform, transformHook } = requireTransform();
+  const { resolveHook, shouldTransform, transformHook } = requirePlaywrightModule(
+    'lib/transform/transform.js',
+  );
 
   let reverted = false;
 
@@ -38,11 +40,4 @@ export function installTransform(): () => void {
     (Module as any)._resolveFilename = originalResolveFilename;
     revertPirates();
   };
-}
-
-export function requireTransform() {
-  const playwrightRoot = path.dirname(require.resolve('@playwright/test'));
-  const filePath = path.join(playwrightRoot, 'lib', 'transform', 'transform.js');
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
-  return require(filePath);
 }
