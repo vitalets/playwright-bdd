@@ -1,5 +1,4 @@
 import Module from 'module';
-import { addHook } from 'pirates';
 import { requirePlaywrightModule } from './utils';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
@@ -11,6 +10,7 @@ import { requirePlaywrightModule } from './utils';
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/transform/transform.ts
  */
 export function installTransform(): () => void {
+  const { pirates } = requirePlaywrightModule('lib/utilsBundle.js');
   const { resolveHook, shouldTransform, transformHook } = requirePlaywrightModule(
     'lib/transform/transform.js',
   );
@@ -27,7 +27,7 @@ export function installTransform(): () => void {
   }
   (Module as any)._resolveFilename = resolveFilename;
 
-  const revertPirates = addHook(
+  const revertPirates = pirates.addHook(
     (code: string, filename: string) => {
       if (!shouldTransform(filename)) return code;
       return transformHook(code, filename);

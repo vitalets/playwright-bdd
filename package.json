@@ -30,8 +30,7 @@
   },
   "dependencies": {
     "commander": "^11.0.0",
-    "fast-glob": "^3.2.12",
-    "pirates": "^4.0.6"
+    "fast-glob": "^3.2.12"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^9.1.2",
