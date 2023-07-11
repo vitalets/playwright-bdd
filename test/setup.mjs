@@ -34,9 +34,11 @@ function showPlaywrightVersion() {
 }
 
 function symlinkPlaywrghtBdd() {
+  const playwrightBddPath = './node_modules/playwright-bdd';
+  fs.rmdirSync(playwrightBddPath, { recursive: true, force: true });
   // symlink node_modules/playwright-bdd to dist
   // as generated files import { test } from "playwright-bdd"
-  execSync('ln -sfn ../dist ./node_modules/playwright-bdd', { stdio: 'inherit' });
+  execSync(`ln -sfn ../dist ${playwrightBddPath}`, { stdio: 'inherit' });
 }
 
 function buildDist() {
