@@ -10,6 +10,7 @@ function setup() {
   !process.env.CI && ensureNodeVersion(20);
 
   showPlaywrightVersion();
+  showCucumberVersion();
 
   // link node_modules/playwright-bdd to dist
   // as generated files import { test } from "playwright-bdd"
@@ -31,6 +32,14 @@ function showPlaywrightVersion() {
   );
 
   console.log(`Playwright version: ${version}`);
+}
+
+function showCucumberVersion() {
+  const { version } = JSON.parse(
+    fs.readFileSync('node_modules/@cucumber/cucumber/package.json', 'utf8'),
+  );
+
+  console.log(`Cucumber version: ${version}`);
 }
 
 function symlinkPlaywrghtBdd() {
