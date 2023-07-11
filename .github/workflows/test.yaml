@@ -38,3 +38,17 @@ jobs:
       - run: npm install @playwright/test@${{ matrix.playwrightVersion }}
       - run: npx playwright install --with-deps chromium
       - run: npx cross-env FORBID_ONLY=1 npm test
+
+  examples:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run examples
