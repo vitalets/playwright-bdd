@@ -2,5 +2,5 @@
 import { test as base } from 'playwright-bdd';
 
 export const test = base.extend({
-  option: ['foo', { option: true }],
+  foo: ['bar', { option: true }],
 });

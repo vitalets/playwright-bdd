@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist/index.js';
+import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   importTestFrom: 'fixtures.js',

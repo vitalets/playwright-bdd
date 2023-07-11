@@ -35,7 +35,11 @@ function showPlaywrightVersion() {
 
 function symlinkPlaywrghtBdd() {
   const playwrightBddPath = './node_modules/playwright-bdd';
-  fs.rmdirSync(playwrightBddPath, { recursive: true, force: true });
+  // important to use lstat to get info about symlink itself
+  const stat = fs.lstatSync(playwrightBddPath, { throwIfNoEntry: false });
+  if (stat?.isDirectory()) {
+    fs.rmdirSync(playwrightBddPath, { recursive: true });
+  }
   // symlink node_modules/playwright-bdd to dist
   // as generated files import { test } from "playwright-bdd"
   execSync(`ln -sfn ../dist ${playwrightBddPath}`, { stdio: 'inherit' });

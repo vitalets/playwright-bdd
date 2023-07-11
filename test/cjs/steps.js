@@ -1,6 +1,6 @@
-import { expect } from '@playwright/test';
-import { createBdd } from '../../dist/index.js';
-import { test } from './fixtures.js';
+const { expect } = require('@playwright/test');
+const { createBdd } = require('playwright-bdd');
+const { test } = require('./fixtures');
 
 const { Given } = createBdd(test);
 
