@@ -3,7 +3,7 @@ import { World as CucumberWorld, IWorldOptions, ITestCaseHookParameter } from '@
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
-import { getLocationByStacktrace } from '../playwright/getLocationByStacktrace';
+import { getLocationInFile } from '../playwright/getLocationInFile';
 import { CucumberStepFunction } from './createBdd';
 import { test as baseTest } from './baseTest';
 import { getTestImpl } from '../playwright/testTypeImpl';
@@ -36,22 +36,27 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
       text,
       this.testInfo.file,
     );
+
     if (!stepDefinition) {
       throw new Error(`Undefined step: "${text}"`);
     }
+
+    // attach custom fixtures to world - the only way to pass them to cucumber step fn
+    this.customFixtures = customFixtures;
+    const code = stepDefinition.code as CucumberStepFunction;
+    const test = code.customTest || baseTest;
+    // get location of step call in generated test file
+    const location = getLocationInFile(test.info().file);
+
     const { parameters } = await stepDefinition.getInvocationParameters({
       hookParameter: {} as ITestCaseHookParameter,
       step: { text, argument } as PickleStep,
       world: this,
     });
-    // get location of step call in generated test file
-    const location = getLocationByStacktrace({ level: 2 });
-    // attach custom fixtures to world - the only way to pass them to cucumber step fn
-    this.customFixtures = customFixtures;
-    const code = stepDefinition.code as CucumberStepFunction;
-    const test = code.customTest || baseTest;
+
     const res = await getTestImpl(test)._step(location, text, () => code.apply(this, parameters));
     delete this.customFixtures;
+
     return res;
   }
 

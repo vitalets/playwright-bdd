@@ -1,7 +1,3 @@
-/**
- * Copied from Playwright wrapFunctionWithLocation
- * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/transform.ts#L229
- */
 import url from 'url';
 import { requirePlaywrightModule } from './utils';
 
@@ -11,11 +7,18 @@ interface Location {
   column: number;
 }
 
-export function getLocationByStacktrace({ level }: { level: number }) {
+/**
+ * Inspects stacktrace and finds call location in provided file.
+ * This function is based on Playwright's getLocationByStacktrace().
+ * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/transform.ts#L229
+ */
+export function getLocationInFile(filePath: string) {
   const { sourceMapSupport } = requirePlaywrightModule('lib/utilsBundle.js');
   const oldPrepareStackTrace = Error.prepareStackTrace;
   Error.prepareStackTrace = (error, stackFrames) => {
-    const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(stackFrames[level]);
+    const frameInFile = stackFrames.find((frame) => frame.getFileName() === filePath);
+    if (!frameInFile) return { file: '', line: 0, column: 0 };
+    const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(frameInFile);
     const fileName = frame.getFileName();
     // Node error stacks for modules use file:// urls instead of paths.
     const file =
@@ -26,13 +29,14 @@ export function getLocationByStacktrace({ level }: { level: number }) {
       column: frame.getColumnNumber(),
     };
   };
-  const oldStackTraceLimit = Error.stackTraceLimit;
-  Error.stackTraceLimit = level + 1;
+  // commented stackTraceLImit modification, todo: check if it has perf impact
+  // const oldStackTraceLimit = Error.stackTraceLimit;
+  // Error.stackTraceLimit = level + 1;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const obj: { stack: Location } = {} as any;
   Error.captureStackTrace(obj);
   const location = obj.stack;
-  Error.stackTraceLimit = oldStackTraceLimit;
+  // Error.stackTraceLimit = oldStackTraceLimit;
   Error.prepareStackTrace = oldPrepareStackTrace;
   return location;
 }
