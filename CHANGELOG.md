@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* Fix getting location from stacktrace, [#31](https://github.com/vitalets/playwright-bdd/issues/31)
 * Use built-in Playwright's loader for TS instead of `ts-node`, fixes [#27](https://github.com/vitalets/playwright-bdd/issues/27)
 
 ## 3.2.1
