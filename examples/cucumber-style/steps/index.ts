@@ -2,14 +2,14 @@ import { expect } from '@playwright/test';
 import { Given, When, Then } from '@cucumber/cucumber';
 import { CustomWorld } from './world';
 
-Given('I open url {string}', async function (this: CustomWorld, url: string) {
-  await this.page.goto(url);
+Given('I am on home page', async function (this: CustomWorld) {
+  await this.openHomePage();
 });
 
 When('I click link {string}', async function (this: CustomWorld, name: string) {
-  await this.page.getByRole('link', { name }).click();
+  await this.clickLink(name);
 });
 
-Then('I see in title {string}', async function (this: CustomWorld, keyword: string) {
-  await expect(this.page).toHaveTitle(new RegExp(keyword));
+Then('I see in title {string}', async function (this: CustomWorld, text: string) {
+  await expect(this.page).toHaveTitle(new RegExp(text));
 });

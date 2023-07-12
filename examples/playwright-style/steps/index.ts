@@ -1,16 +1,17 @@
+import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
 const { Given, When, Then } = createBdd(test);
 
-Given('I open url {string}', async ({ page }, url: string) => {
-  await page.goto(url);
+Given('I am on home page', async ({ homePage }) => {
+  await homePage.open();
 });
 
-When(/^I click link "(.+)"$/, async ({ pwPage }, name: string) => {
-  await pwPage.openLink(name);
+When('I click link {string}', async ({ homePage }, name: string) => {
+  await homePage.clickLink(name);
 });
 
-Then('I see in title {string}', async ({ pwPage }, text: string) => {
-  await pwPage.matchTitle(text);
+Then('I see in title {string}', async ({ page }, text: string) => {
+  await expect(page).toHaveTitle(new RegExp(text));
 });

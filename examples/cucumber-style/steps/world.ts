@@ -2,10 +2,12 @@ import { setWorldConstructor } from '@cucumber/cucumber';
 import { World } from 'playwright-bdd';
 
 export class CustomWorld extends World {
-  myBrowserName: string;
-  constructor(...args: ConstructorParameters<typeof World>) {
-    super(...args);
-    this.myBrowserName = args[0].browserName;
+  async openHomePage() {
+    await this.page.goto('https://playwright.dev');
+  }
+
+  async clickLink(name: string) {
+    await this.page.getByRole('link', { name }).click();
   }
 }
 
