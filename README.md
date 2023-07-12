@@ -76,6 +76,9 @@ npx playwright install
 ```
 
 ## Get started
+You can follow steps below to setup playwright-bdd manually 
+or clone [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
+to quickly check how it works.
 
 1. Create the following Playwright config in the project root:
    ```js
@@ -170,7 +173,7 @@ Special `playwright-bdd` options:
 |----------------------|------------|------------------------
 | `outputDir`          | `string`   | Directory to output generated test files. Default: `.features-gen` 
 | `importTestFrom`     | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
-| `examplesTitleFormat`| `string`   | Title format for scenario outline examples. Default: `Example #<_index_>`
+| `examplesTitleFormat`| `string`   | Title format for scenario outline examples in generated tests. Default: `Example #<_index_>`
 | `verbose`            | `boolean`  | Verbose output. Default: `false`
 
 Example configuration (CommonJS TypeScript project):
