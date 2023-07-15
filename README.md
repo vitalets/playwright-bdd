@@ -24,7 +24,8 @@ Run BDD tests with [Playwright](https://playwright.dev/) test runner.
   * [Playwright-style](#playwright-style)
     + [Custom fixtures](#custom-fixtures)
     + [Accessing `testInfo`](#accessing-testinfo)
-    + [Accessing tags](#accessing-tags)
+    + [Using tags](#using-tags)
+    + [Using `DataTables`](#using-datatables)
   * [Cucumber-style](#cucumber-style)
     + [World](#world)
     + [Custom World](#custom-world)
@@ -388,7 +389,7 @@ Given('I do something', async ({ $testInfo }) => {
 });
 ```
 
-#### Accessing tags
+#### Using tags
 [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) can be accessed by special `$tags` fixture:
 
 ```gherkin
@@ -445,6 +446,41 @@ Feature: Playwright site
     Scenario: Check title @slow
       ...
 ```
+
+#### Using `DataTables`
+Playwright-bdd provides full support of [`DataTables`](https://cucumber.io/docs/gherkin/reference/#data-tables).
+For example:
+```gherkin
+Feature: Some feature
+
+    Scenario: Login
+        When I fill login form with values
+          | label     | value    |
+          | Username  | vitalets |
+          | Password  | 12345    |
+```
+
+Step definition:
+```ts
+import { createBdd } from 'playwright-bdd';
+import { DataTable } from '@cucumber/cucumber';
+
+const { Given, When, Then } = createBdd();
+
+When('I fill login form with values', async ({ page }, data: DataTable) => {
+  for (const row of data.hashes()) {
+    await page.getByLabel(row.label).fill(row.value);
+  }
+  /*
+  data.hashes() returns:
+  [
+    { label: 'Username', value: 'vitalets' },
+    { label: 'Password', value: '12345' }
+  ]
+  */
+});
+```
+Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/data_table_interface.md) in Cucumber docs.
 
 ### Cucumber-style
 Cucumber-style step definitions are compatible with CucumberJS:
