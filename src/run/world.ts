@@ -5,8 +5,8 @@ import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { CucumberStepFunction } from './createBdd';
-import { test as baseTest } from './baseTest';
 import { getTestImpl } from '../playwright/testTypeImpl';
+import { TestTypeCommon } from '../playwright/types';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,6 +19,7 @@ export type WorldOptions<ParametersType = any> = IWorldOptions<ParametersType> &
   testInfo: TestInfo;
   supportCodeLibrary: ISupportCodeLibrary;
   $tags: string[];
+  $test: TestTypeCommon;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -44,9 +45,9 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
     // attach custom fixtures to world - the only way to pass them to cucumber step fn
     this.customFixtures = customFixtures;
     const code = stepDefinition.code as CucumberStepFunction;
-    const test = code.customTest || baseTest;
+
     // get location of step call in generated test file
-    const location = getLocationInFile(test.info().file);
+    const location = getLocationInFile(this.test.info().file);
 
     const { parameters } = await stepDefinition.getInvocationParameters({
       hookParameter: {} as ITestCaseHookParameter,
@@ -54,7 +55,9 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
       world: this,
     });
 
-    const res = await getTestImpl(test)._step(location, text, () => code.apply(this, parameters));
+    const res = await getTestImpl(this.test)._step(location, text, () =>
+      code.apply(this, parameters),
+    );
     delete this.customFixtures;
 
     return res;
@@ -86,6 +89,10 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
 
   get tags() {
     return this.options.$tags;
+  }
+
+  get test() {
+    return this.options.$test;
   }
 
   async init() {

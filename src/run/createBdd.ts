@@ -33,16 +33,22 @@ export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   return { Given, When, Then };
 }
 
-type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> & {
-  $testInfo: TestInfo;
+// these fixtures automatically injected into step call
+type BddAutoFixtures = {
+  $testInfo: TestInfo; // todo: deprecate $testInfo in favor of $test.info()
+  $test: TestTypeCommon;
+  $tags: string[];
 };
+type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> &
+  BddAutoFixtures;
 type StepFunction<T extends KeyValue, W extends KeyValue> = (
   fixtures: StepFunctionFixturesArg<T, W>,
   ...args: any[]
 ) => unknown;
+// extend Cucumber step function with some properties
 export type CucumberStepFunction = TestStepFunction<World> & {
   fn?: Function;
-  customTest?: TestTypeCommon;
+  hasCustomTest?: boolean;
 };
 
 function defineStep<T extends KeyValue, W extends KeyValue = {}>(
@@ -51,17 +57,17 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
 ) {
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
     const cucumberFn: CucumberStepFunction = function (...args: any[]) {
-      // $testInfo is treated like a special fixture
       const fixturesArg = Object.assign({}, this.customFixtures, {
         $testInfo: this.testInfo,
+        $test: this.test,
+        $tags: this.tags,
       });
       return fn.call(this, fixturesArg as StepFunctionFixturesArg<T, W>, ...args);
     };
 
-    // store original fn and test instance in wrapping fn
-    // to be able to extract fixture names and test info
+    // store original fn to be able to extract fixture names
     cucumberFn.fn = fn;
-    cucumberFn.customTest = customTest;
+    cucumberFn.hasCustomTest = Boolean(customTest);
 
     try {
       CucumberDefineStep(pattern, cucumberFn);
@@ -81,9 +87,11 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
   };
 }
 
+const BDD_AUTO_FIXTURES: (keyof BddAutoFixtures)[] = ['$testInfo', '$test', '$tags'];
 export function getFixtureNames(cucumberFn: CucumberStepFunction) {
-  // $testInfo is treated like a special fixture
-  return fixtureParameterNames(cucumberFn.fn).filter((name) => name !== '$testInfo');
+  return fixtureParameterNames(cucumberFn.fn).filter((name) => {
+    return !BDD_AUTO_FIXTURES.includes(name as keyof BddAutoFixtures);
+  });
 }
 
 function assertCustomTestExtendsBdd(customTest?: TestTypeCommon) {

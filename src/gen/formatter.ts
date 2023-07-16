@@ -75,18 +75,30 @@ export function step(
   return `await ${keyword}(${args});`;
 }
 
+export function useFixtures(fixtures: string[]) {
+  return fixtures.length > 0
+    ? [
+        '// == technical section ==', // prettier-ignore
+        '',
+        'test.use({',
+        ...fixtures.map(indent),
+        '});',
+      ]
+    : [];
+}
+
+export function testFixture() {
+  return ['$test: ({}, use) => use(test),'];
+}
+
 export function tagsFixture(tagsMap: Map<string, string[]>, testKeySeparator: string) {
   return tagsMap.size > 0
     ? [
-        '// == technical section ==',
-        '',
-        'test.use({',
-        '  $tags: ({}, use, testInfo) => use({',
-        ...Array.from(tagsMap).map(([key, tags]) => {
-          return `${' '.repeat(4)}${JSON.stringify(key)}: ${JSON.stringify(tags)},`;
-        }),
-        `  }[testInfo.titlePath.slice(2).join(${JSON.stringify(testKeySeparator)})] || [])`,
-        '});',
+        '$tags: ({}, use, testInfo) => use({',
+        ...Array.from(tagsMap)
+          .map(([key, tags]) => `${JSON.stringify(key)}: ${JSON.stringify(tags)},`)
+          .map(indent),
+        `}[testInfo.titlePath.slice(2).join(${JSON.stringify(testKeySeparator)})] || []),`,
       ]
     : [];
 }

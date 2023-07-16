@@ -82,7 +82,7 @@ async function checkUndefinedSteps(
 }
 
 function checkImportCustomTest(files: TestFile[], config: BDDConfig) {
-  const hasCustomTest = files.some((file) => file.customTest);
+  const hasCustomTest = files.some((file) => file.hasCustomTest);
   if (hasCustomTest && !config.importTestFrom) {
     exitWithMessage(
       `When using custom "test" function in createBdd() you should`,

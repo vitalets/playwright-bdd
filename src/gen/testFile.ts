@@ -25,8 +25,6 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { CucumberStepFunction, getFixtureNames } from '../run/createBdd';
-import { TestTypeCommon } from '../playwright/types';
-import { isParentChildTest } from '../playwright/testTypeImpl';
 import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
@@ -50,7 +48,7 @@ export class TestFile {
   private keywordsMap?: KeywordsMap;
   private _outputPath?: string;
   private testFileTags = new TestFileTags();
-  public customTest?: TestTypeCommon;
+  public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
 
   constructor(private options: TestFileOptions) {}
@@ -96,7 +94,7 @@ export class TestFile {
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
       ...this.getRootSuite(),
-      ...this.getTagsFixture(),
+      ...this.getUseFixtures(),
     ];
     return this;
   }
@@ -129,8 +127,11 @@ export class TestFile {
     };
   }
 
-  private getTagsFixture() {
-    return formatter.tagsFixture(this.testFileTags.tagsMap, TEST_KEY_SEPARATOR);
+  private getUseFixtures() {
+    return formatter.useFixtures([
+      ...formatter.testFixture(),
+      ...formatter.tagsFixture(this.testFileTags.tagsMap, TEST_KEY_SEPARATOR),
+    ]);
   }
 
   private getRootSuite() {
@@ -277,7 +278,7 @@ export class TestFile {
     const keyword = this.getKeyword(step);
     const code = stepDefinition?.code as CucumberStepFunction | undefined;
     const fixtureNames = code ? getFixtureNames(code) : ['/* Undefined step! */'];
-    if (code) this.updateCustomTest(code);
+    if (code?.hasCustomTest) this.hasCustomTest = true;
     const line = formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
     return { keyword, keywordType, fixtures: fixtureNames, line };
   }
@@ -302,15 +303,6 @@ export class TestFile {
     const enKeyword = this.keywordsMap.get(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
-  }
-
-  private updateCustomTest(code: CucumberStepFunction) {
-    const { customTest } = code;
-    if (!customTest || customTest === this.customTest) return;
-    if (!this.customTest || isParentChildTest(this.customTest, customTest)) {
-      this.customTest = customTest;
-    }
-    // todo: customTests are mix of different fixtures -> error?
   }
 
   // eslint-disable-next-line max-params
