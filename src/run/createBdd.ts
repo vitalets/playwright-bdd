@@ -25,11 +25,10 @@ import { isParentChildTest } from '../playwright/testTypeImpl';
 export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
-  customTest = excludeBaseTest(customTest);
-  assertCustomTestExtendsBdd(customTest);
-  const Given = defineStep<T, W>(CucumberGiven, customTest);
-  const When = defineStep<T, W>(CucumberWhen, customTest);
-  const Then = defineStep<T, W>(CucumberThen, customTest);
+  const hasCustomTest = isCustomTest(customTest);
+  const Given = defineStep<T, W>(CucumberGiven, hasCustomTest);
+  const When = defineStep<T, W>(CucumberWhen, hasCustomTest);
+  const Then = defineStep<T, W>(CucumberThen, hasCustomTest);
   return { Given, When, Then };
 }
 
@@ -53,7 +52,7 @@ export type CucumberStepFunction = TestStepFunction<World> & {
 
 function defineStep<T extends KeyValue, W extends KeyValue = {}>(
   CucumberDefineStep: IDefineStep,
-  customTest?: TestType<T, W>,
+  hasCustomTest: boolean,
 ) {
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
     const cucumberFn: CucumberStepFunction = function (...args: any[]) {
@@ -67,7 +66,7 @@ function defineStep<T extends KeyValue, W extends KeyValue = {}>(
 
     // store original fn to be able to extract fixture names
     cucumberFn.fn = fn;
-    cucumberFn.hasCustomTest = Boolean(customTest);
+    cucumberFn.hasCustomTest = hasCustomTest;
 
     try {
       CucumberDefineStep(pattern, cucumberFn);
@@ -94,14 +93,12 @@ export function getFixtureNames(cucumberFn: CucumberStepFunction) {
   });
 }
 
-function assertCustomTestExtendsBdd(customTest?: TestTypeCommon) {
-  if (customTest && !isParentChildTest(baseTest, customTest)) {
-    exitWithMessage(`createBdd() should use test extended from "playwright-bdd"`);
-  }
-}
-
-function excludeBaseTest<T extends KeyValue = {}, W extends KeyValue = {}>(
+function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
-  return customTest === (baseTest as TestTypeCommon) ? undefined : customTest;
+  const isCustomTest = Boolean(customTest && customTest !== (baseTest as TestTypeCommon));
+  if (isCustomTest && !isParentChildTest(baseTest, customTest!)) {
+    exitWithMessage(`createBdd() should use test extended from "playwright-bdd"`);
+  }
+  return isCustomTest;
 }
