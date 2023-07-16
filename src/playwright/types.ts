@@ -14,11 +14,11 @@ import {
 
 export type KeyValue = { [key: string]: any };
 
-export type FixturesArg<T extends KeyValue = {}, W extends KeyValue = {}> = T &
-  W &
-  PlaywrightTestArgs &
+export type BuiltInFixtures = PlaywrightTestArgs &
   PlaywrightTestOptions &
   PlaywrightWorkerArgs &
   PlaywrightWorkerOptions;
+
+export type FixturesArg<T extends KeyValue = {}, W extends KeyValue = {}> = T & W & BuiltInFixtures;
 
 export type TestTypeCommon = TestType<KeyValue, KeyValue>;

@@ -6,7 +6,7 @@ import { extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 
-type BDDFixtures = {
+export type BDDFixtures = {
   cucumberWorld: World;
   Given: World['invokeStep'];
   When: World['invokeStep'];
