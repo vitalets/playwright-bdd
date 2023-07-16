@@ -11,7 +11,6 @@ import {
 } from '@cucumber/cucumber';
 import {
   DefineStepPattern,
-  IDefineStep,
   TestStepFunction,
 } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { World } from './world';
@@ -21,14 +20,15 @@ import { TestInfo, TestType } from '@playwright/test';
 import { exitWithMessage } from '../utils';
 import { test as baseTest } from './baseTest';
 import { isParentChildTest } from '../playwright/testTypeImpl';
+import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 
 export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
   const hasCustomTest = isCustomTest(customTest);
-  const Given = defineStepCtor<T, W>(CucumberGiven, hasCustomTest);
-  const When = defineStepCtor<T, W>(CucumberWhen, hasCustomTest);
-  const Then = defineStepCtor<T, W>(CucumberThen, hasCustomTest);
+  const Given = defineStepCtor<T, W>('Given', hasCustomTest);
+  const When = defineStepCtor<T, W>('When', hasCustomTest);
+  const Then = defineStepCtor<T, W>('Then', hasCustomTest);
   return { Given, When, Then };
 }
 
@@ -51,39 +51,69 @@ export type CucumberStepFunction = TestStepFunction<World> & {
 };
 
 function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
-  CucumberDefineStep: IDefineStep,
+  keyword: GherkinStepKeyword,
   hasCustomTest: boolean,
 ) {
   return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
-    const cucumberFn: CucumberStepFunction = function (...args: any[]) {
-      const fixturesArg = Object.assign({}, this.customFixtures, {
-        $testInfo: this.testInfo,
-        $test: this.test,
-        $tags: this.tags,
-      });
-      return fn.call(this, fixturesArg as StepFunctionFixturesArg<T, W>, ...args);
-    };
-
-    // store original fn to be able to extract fixture names
-    cucumberFn.fn = fn;
-    cucumberFn.hasCustomTest = hasCustomTest;
-
-    try {
-      CucumberDefineStep(pattern, cucumberFn);
-    } catch (e) {
-      // todo: detect that this is import from test file
-      // and skip/delay registering cucumber steps until cucumber is loaded
-      const isMissingCucumber = /Cucumber that isn't running/i.test(e.message);
-      if (isMissingCucumber) {
-        exitWithMessage(
-          `Option "importTestFrom" should point to separate file without step definitions`,
-          `(e.g. without calls of Given, When, Then)`,
-        );
-      } else {
-        throw e;
-      }
-    }
+    defineStep({
+      keyword,
+      pattern,
+      fn,
+      hasCustomTest,
+    });
   };
+}
+
+type DefineStepOptions = {
+  keyword: GherkinStepKeyword;
+  pattern: DefineStepPattern;
+  fn: Function;
+  hasCustomTest: boolean;
+};
+
+function defineStep({ keyword, pattern, fn, hasCustomTest }: DefineStepOptions) {
+  const cucumberFn: CucumberStepFunction = function (...args: any[]) {
+    const fixturesArg = Object.assign({}, this.customFixtures, {
+      $testInfo: this.testInfo,
+      $test: this.test,
+      $tags: this.tags,
+    });
+    return fn.call(this, fixturesArg, ...args);
+  };
+
+  // store original fn to be able to extract fixture names
+  cucumberFn.fn = fn;
+  cucumberFn.hasCustomTest = hasCustomTest;
+
+  const cucumberDefineStepFn = getCucumberDefineStepFn(keyword);
+  try {
+    cucumberDefineStepFn(pattern, cucumberFn);
+  } catch (e) {
+    // todo: detect that this is import from test file
+    // and skip/delay registering cucumber steps until cucumber is loaded
+    const isMissingCucumber = /Cucumber that isn't running/i.test(e.message);
+    if (isMissingCucumber) {
+      exitWithMessage(
+        `Option "importTestFrom" should point to separate file without step definitions`,
+        `(e.g. without calls of Given, When, Then)`,
+      );
+    } else {
+      throw e;
+    }
+  }
+}
+
+function getCucumberDefineStepFn(keyword: GherkinStepKeyword) {
+  switch (keyword) {
+    case 'Given':
+      return CucumberGiven;
+    case 'When':
+      return CucumberWhen;
+    case 'Then':
+      return CucumberThen;
+    default:
+      throw new Error(`Unsupported keyword: ${keyword}`);
+  }
 }
 
 const BDD_AUTO_FIXTURES: (keyof BddAutoFixtures)[] = ['$testInfo', '$test', '$tags'];
