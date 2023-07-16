@@ -26,9 +26,9 @@ export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
   const hasCustomTest = isCustomTest(customTest);
-  const Given = defineStep<T, W>(CucumberGiven, hasCustomTest);
-  const When = defineStep<T, W>(CucumberWhen, hasCustomTest);
-  const Then = defineStep<T, W>(CucumberThen, hasCustomTest);
+  const Given = defineStepCtor<T, W>(CucumberGiven, hasCustomTest);
+  const When = defineStepCtor<T, W>(CucumberWhen, hasCustomTest);
+  const Then = defineStepCtor<T, W>(CucumberThen, hasCustomTest);
   return { Given, When, Then };
 }
 
@@ -50,7 +50,7 @@ export type CucumberStepFunction = TestStepFunction<World> & {
   hasCustomTest?: boolean;
 };
 
-function defineStep<T extends KeyValue, W extends KeyValue = {}>(
+function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
   CucumberDefineStep: IDefineStep,
   hasCustomTest: boolean,
 ) {
