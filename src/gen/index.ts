@@ -14,6 +14,8 @@ import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage, log } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
+import { appendDecoratorSteps } from '../stepDefinitions/createBddDecorators';
+import { requireTransform } from '../playwright/transform';
 
 export async function generateTestFiles(config: BDDConfig) {
   const { runConfiguration } = await loadCucumberConfig({
@@ -26,6 +28,13 @@ export async function generateTestFiles(config: BDDConfig) {
     loadFeatures(runConfiguration),
     loadSteps(runConfiguration),
   ]);
+
+  if (config.importTestFrom) {
+    // require importTestFrom for case when it is not required by step definitions
+    // possible re-require but it's not a problem as it is cached by Node.js
+    await requireTransform().requireOrImport(config.importTestFrom.file);
+    appendDecoratorSteps(supportCodeLibrary);
+  }
 
   const files = buildFiles(features, supportCodeLibrary, config);
   await checkUndefinedSteps(files, runConfiguration, supportCodeLibrary);

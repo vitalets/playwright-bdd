@@ -24,11 +24,12 @@ import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
-import { CucumberStepFunction, getFixtureNames } from '../run/createBdd';
+import { getFixtureNames } from '../stepDefinitions/createBdd';
 import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { template } from '../utils';
+import { CucumberStepFunction } from '../stepDefinitions/defineStep';
 
 type TestFileOptions = {
   doc: GherkinDocument;

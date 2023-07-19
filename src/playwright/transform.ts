@@ -42,16 +42,17 @@ export function installTransform(): () => void {
   };
 }
 
-function requireTransform() {
+export function requireTransform() {
   const transformPathSince1_35 = getPlaywrightModulePath('lib/transform/transform.js');
   if (fs.existsSync(transformPathSince1_35)) {
-    const { resolveHook, shouldTransform, transformHook } =
+    const { resolveHook, shouldTransform, transformHook, requireOrImport } =
       requirePlaywrightModule(transformPathSince1_35);
-    return { resolveHook, shouldTransform, transformHook };
+    return { resolveHook, shouldTransform, transformHook, requireOrImport };
   } else {
-    const { resolveHook, transformHook } = requirePlaywrightModule('lib/common/transform.js');
+    const { resolveHook, transformHook, requireOrImport } =
+      requirePlaywrightModule('lib/common/transform.js');
     // see: https://github.com/microsoft/playwright/blob/b4ffb848de1b00e9a0abad6dacdccce60cce9bed/packages/playwright-test/src/reporters/base.ts#L524
     const shouldTransform = (file: string) => !file.includes(`${path.sep}node_modules${path.sep}`);
-    return { resolveHook, shouldTransform, transformHook };
+    return { resolveHook, shouldTransform, transformHook, requireOrImport };
   }
 }

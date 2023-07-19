@@ -1,6 +1,5 @@
 /**
- * Custom snippeet syntax class.
- * Shows handy snippets for undefined steps in playwright style (ts/js).
+ * Playwright-style snippet syntax.
  *
  * See: https://github.com/cucumber/cucumber-js/blob/main/docs/custom_snippet_syntaxes.md
  */
@@ -49,7 +48,3 @@ export default class {
     return source;
   }
 }
-
-// Given('Step with two int parameters {int} and {int}', async ({}, arg: number, agr2: number) => {
-//   // write step definition here...
-// });

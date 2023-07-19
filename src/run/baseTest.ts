@@ -5,6 +5,7 @@ import { World, getWorldConstructor } from './world';
 import { extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
+import { appendDecoratorSteps } from '../stepDefinitions/createBddDecorators';
 
 export type BDDFixtures = {
   cucumberWorld: World;
@@ -28,6 +29,9 @@ export const test = base.extend<BDDFixtures>({
       provided: extractCucumberConfig(config),
     });
     const supportCodeLibrary = await loadSteps(runConfiguration);
+
+    appendDecoratorSteps(supportCodeLibrary);
+
     const World = getWorldConstructor(supportCodeLibrary);
     const world = new World({
       page,

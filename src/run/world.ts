@@ -4,9 +4,9 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { CucumberStepFunction } from './createBdd';
 import { getTestImpl } from '../playwright/testTypeImpl';
 import { TestTypeCommon } from '../playwright/types';
+import { CucumberStepFunction } from '../stepDefinitions/defineStep';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
