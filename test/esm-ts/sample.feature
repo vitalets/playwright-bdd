@@ -1,4 +1,4 @@
-Feature: error-missing-import-test-from
+Feature: esm-ts
     Scenario: Simple scenario
       Given State 1
 

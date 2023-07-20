@@ -23,18 +23,14 @@ export async function generateTestFiles(config: BDDConfig) {
   });
 
   warnForTsNodeRegister(runConfiguration);
+  clearCachedSteps(runConfiguration);
 
   const [features, supportCodeLibrary] = await Promise.all([
     loadFeatures(runConfiguration),
     loadSteps(runConfiguration),
   ]);
 
-  if (config.importTestFrom) {
-    // require importTestFrom for case when it is not required by step definitions
-    // possible re-require but it's not a problem as it is cached by Node.js
-    await requireTransform().requireOrImport(config.importTestFrom.file);
-    appendDecoratorSteps(supportCodeLibrary);
-  }
+  await loadDecoratorSteps(config, supportCodeLibrary);
 
   const files = buildFiles(features, supportCodeLibrary, config);
   await checkUndefinedSteps(files, runConfiguration, supportCodeLibrary);
@@ -43,6 +39,15 @@ export async function generateTestFiles(config: BDDConfig) {
   if (config.verbose) log(`Generated files: ${paths.length}`);
 
   return paths;
+}
+
+async function loadDecoratorSteps(config: BDDConfig, supportCodeLibrary: ISupportCodeLibrary) {
+  if (config.importTestFrom) {
+    // require importTestFrom for case when it is not required by step definitions
+    // possible re-require but it's not a problem as it is cached by Node.js
+    await requireTransform().requireOrImport(config.importTestFrom.file);
+    appendDecoratorSteps(supportCodeLibrary);
+  }
 }
 
 function buildFiles(
@@ -108,4 +113,20 @@ function warnForTsNodeRegister(runConfiguration: IRunConfiguration) {
       `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
     );
   }
+}
+
+function clearCachedSteps(runConfiguration: IRunConfiguration) {
+  const { requirePaths } = runConfiguration.support;
+  // to register common steps for several projects we need to clear require/import cache
+  requirePaths.forEach((requirePath) => {
+    delete require.cache[path.resolve(requirePath)];
+  });
+
+  // Appending query to importPath does not work b/c Cucumber internally
+  // applies glob to importPaths
+  // See: https://github.com/cucumber/cucumber-js/blob/2fd424aa7127a6449291015ad326f555ed957203/src/api/paths.ts#L61
+  // todo: load steps yourself without cucumber
+  // importPaths.forEach((importPath, i) => {
+  //   importPaths[i] = `${importPath}?v=${Math.random()}`;
+  // });
 }

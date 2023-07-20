@@ -18,7 +18,7 @@ export default defineConfig({
         outputDir: '.features-gen/two',
         importTestFrom: 'two/fixtures.ts',
         paths: ['two/*.feature'],
-        require: ['two/steps.ts'],
+        require: ['one/steps.ts', 'two/steps.ts'],
       }),
     },
   ],

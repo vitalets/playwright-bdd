@@ -3,13 +3,28 @@ import { defineConfig } from '@playwright/test';
 // @ts-ignore
 import { defineBddConfig } from 'playwright-bdd';
 
-const testDir = defineBddConfig({
-  importTestFrom: 'fixtures.ts',
-  paths: ['*.feature'],
-  import: ['steps.ts'], // <- note 'import' instead of 'require'
-});
-
 export default defineConfig({
-  testDir,
+  projects: [
+    {
+      name: 'project one',
+      testDir: defineBddConfig({
+        outputDir: '.features-gen/one',
+        importTestFrom: 'fixtures.ts',
+        paths: ['*.feature'],
+        import: ['steps.ts'], // <- note 'import' instead of 'require'
+      }),
+    },
+    // dont use project two now as there is no way to clear import cache with Cucumber
+    // {
+    //   name: 'project two',
+    //   dependencies: ['project one'],
+    //   testDir: defineBddConfig({
+    //     outputDir: '.features-gen/two',
+    //     importTestFrom: 'project-two/fixtures.ts',
+    //     paths: ['project-two/*.feature'],
+    //     import: ['steps.ts', 'project-two/steps.ts'],
+    //   }),
+    // },
+  ],
   forbidOnly: Boolean(process.env.FORBID_ONLY),
 });
