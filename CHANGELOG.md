@@ -2,6 +2,7 @@
 
 ## dev
 * Fix running several Playwright projects with shared steps [#32](https://github.com/vitalets/playwright-bdd/issues/32)
+* Support decorators for defining steps [#35](https://github.com/vitalets/playwright-bdd/issues/35)
 
 ## 3.3.0
 * Fix getting location from stacktrace, [#31](https://github.com/vitalets/playwright-bdd/issues/31)
