@@ -1,26 +1,18 @@
-import { Locator, Page } from '@playwright/test';
 import { createBddDecorators } from '../../dist';
 import { test } from './fixtures';
 
 const { Given, When } = createBddDecorators<typeof test>('todoPage');
 
 export class TodoPage {
-  readonly inputBox: Locator;
-  readonly todoItems: Locator;
-
-  constructor(public readonly page: Page) {
-    this.inputBox = this.page.locator('input.new-todo');
-    this.todoItems = this.page.getByTestId('todo-item');
-  }
+  todos: string[] = [];
 
   @Given('I am on todo page')
-  async goto() {
-    await this.page.goto('https://demo.playwright.dev/todomvc/');
+  async init() {
+    this.todos = [];
   }
 
   @When('I add todo {string}')
   async addToDo(text: string) {
-    await this.inputBox.fill(text);
-    await this.inputBox.press('Enter');
+    this.todos.push(text);
   }
 }
