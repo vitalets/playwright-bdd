@@ -1,6 +1,6 @@
 Feature: Todo Page
 
-    Scenario: todo page
+    Scenario: Adding todos
       Given I am on todo page
       When I add todo "foo"
       And I add todo "bar"

@@ -1,6 +1,6 @@
 import { Locator, Page, expect } from '@playwright/test';
 import { createBddDecorators } from 'playwright-bdd';
-import { test } from './fixtures';
+import type { test } from './fixtures';
 
 const { Given, When, Then, Step } = createBddDecorators<typeof test>('todoPage');
 
@@ -25,7 +25,7 @@ export class TodoPage {
   }
 
   @Then('visible todos count is {int}')
-  async checkVisibleTodosCount(count: number) {
+  async expectVisibleTodosCount(count: number) {
     await expect(this.todoItems).toHaveCount(count);
   }
 

@@ -26,6 +26,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) test runner.
     + [Accessing `testInfo`](#accessing-testinfo)
     + [Using tags](#using-tags)
     + [Using `DataTables`](#using-datatables)
+    + [Using decorators](#using-decorators)
   * [Cucumber-style](#cucumber-style)
     + [World](#world)
     + [Custom World](#custom-world)
@@ -128,7 +129,9 @@ to quickly check how it works.
      await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
-   > There is alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps).
+   > **NEW!** You can also use [decorators](#using-decorators) to define steps inside existing Page Object Models
+
+   > There is an alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps)
 
 4. Generate and run tests:
 
@@ -482,6 +485,72 @@ When('I fill login form with values', async ({ page }, data: DataTable) => {
 ```
 Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/data_table_interface.md) in Cucumber docs.
 
+#### Using decorators
+Playwright-bdd supports [ECMAScript decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
+
+```ts
+// TodoPage.ts
+import { Page, expect } from '@playwright/test';
+import { createBddDecorators } from 'playwright-bdd';
+
+const { Given, When, Then, Step } = createBddDecorators('todoPage');
+
+export class TodoPage {
+  constructor(public page: Page) { }
+
+  @Given('I am on todo page')
+  async goto() {
+    await this.page.goto('https://demo.playwright.dev/todomvc/');
+  }
+
+  @When('I add todo {string}')
+  async addToDo(text: string) {
+    await this.page.locator('input.new-todo').fill(text);
+    await this.page.locator('input.new-todo').press('Enter');
+  }
+
+  @Then('visible todos count is {int}')
+  async expectVisibleTodosCount(count: number) {
+    await expect(this.page.getByTestId('todo-item')).toHaveCount(count);
+  }
+}
+```
+
+Then use it in `test.extend` as a regular fixture:
+```ts
+// fixtures.ts
+import { test as base } from 'playwright-bdd';
+import { TodoPage } from './TodoPage';
+
+export const test = base.extend<{ todoPage: TodoPage }>({
+  todoPage: ({ page }, use) => use(new TodoPage(page)),
+});
+```
+
+And point to this `fixtures.ts` in `playwright.config.ts`:
+```ts
+const testDir = defineBddConfig({
+  paths: ['features/todo.feature'],
+  importTestFrom: './fixtures.ts',
+  // ...
+});
+```
+
+Now you can use these steps in `.feature` files:
+```gherkin
+# features/todo.feature
+Feature: Todo Page
+
+    Scenario: Adding todos
+      Given I am on todo page
+      When I add todo "foo"
+      And I add todo "bar"
+      Then visible todos count is 2
+```
+Check out [full example of using decorators](examples/decorators) with playwright-bdd.
+
+> To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
+
 ### Cucumber-style
 Cucumber-style step definitions are compatible with CucumberJS:
 
@@ -599,33 +668,51 @@ Creates `Given`, `When`, `Then` functions for defining steps.
 
 **Returns**: *object* - `{ Given, When, Then }`
 
-##### `Given(fixtures, ...args)`
+##### `Given(pattern, (fixtures, ...args) => void)`
 Defines `Given` step implementation.
 
 **Params**
+  * `pattern` *string | regexp* - step pattern
   * `fixtures` *object* - Playwright fixtures
   * `...args` *array* - arguments captured from step pattern
 
-##### `When(fixtures, ...args)`
+##### `When(pattern, (fixtures, ...args) => void)`
 Defines `When` step implementation.
 
 **Params**
+  * `pattern` *string | regexp* - step pattern
   * `fixtures` *object* - Playwright fixtures
   * `...args` *array* - arguments captured from step pattern
 
-##### `Then(fixtures, ...args)`
+##### `Then(pattern, (fixtures, ...args) => void)`
 Defines `Then` step implementation.
 
 **Params**
+  * `pattern` *string | regexp* - step pattern
   * `fixtures` *object* - Playwright fixtures
   * `...args` *array* - arguments captured from step pattern
+
+##### `createBddDecorators(fixtureName)`
+Creates `Given`, `When`, `Then`, `Step` decorator functions for defining steps inside POMs.
+
+**Params**
+  * `fixtureName` *string* - fixture name for the given class.
+
+**Returns**: *object* - `{ Given, When, Then, Step }`. Each decorator accepts single argument `pattern: string | regexp`.
+
+It is also possible to provide `test` type as a generic parameter to restrict `fixtureName` to available fixture names:
+```ts
+import type { test } from './fixtures';
+
+const { Given, When, Then } = createBddDecorators<typeof test>('todoPage');
+```
 
 ## VS Code Integration
 
 * [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works the usual way. You can click and run tests from `.features-gen` directory:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229162634-8a801f6e-8a79-407b-889b-7769f957896a.png">
 
-* [Cucumber autocompletion](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
+* [Cucumber autocomplete extension](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
 
 ## How it works
