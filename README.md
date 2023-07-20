@@ -200,7 +200,7 @@ It is convenient to use it as a `testDir` option for Playwright.
 
 #### ESM
 If your project runs in ESM (has `"type": "module"` in `package.json`),
-the configuration in `playwright.config.js` is following:
+then configuration in `playwright.config.js` should be the following:
 
 For JavaScript ESM:
 ```diff
@@ -222,6 +222,8 @@ Command to run tests:
 ```
 NODE_OPTIONS='--loader ts-node/esm --no-warnings' npx bddgen && npx playwright test
 ```
+
+> Please note that currently running several Playwright projects with **shared** steps in ESM is not possible due to caching issues. Resolving these issues is in progress.
 
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 

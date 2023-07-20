@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Fix running several Playwright projects with shared steps [#32](https://github.com/vitalets/playwright-bdd/issues/32)
+
 ## 3.3.0
 * Fix getting location from stacktrace, [#31](https://github.com/vitalets/playwright-bdd/issues/31)
 * Use built-in Playwright's loader for TS instead of `ts-node`, fixes [#27](https://github.com/vitalets/playwright-bdd/issues/27)
