@@ -23,7 +23,6 @@ export async function generateTestFiles(config: BDDConfig) {
   });
 
   warnForTsNodeRegister(runConfiguration);
-  clearCachedSteps(runConfiguration);
 
   const [features, supportCodeLibrary] = await Promise.all([
     loadFeatures(runConfiguration),
@@ -113,20 +112,4 @@ function warnForTsNodeRegister(runConfiguration: IRunConfiguration) {
       `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
     );
   }
-}
-
-function clearCachedSteps(runConfiguration: IRunConfiguration) {
-  const { requirePaths } = runConfiguration.support;
-  // to register common steps for several projects we need to clear require/import cache
-  requirePaths.forEach((requirePath) => {
-    delete require.cache[path.resolve(requirePath)];
-  });
-
-  // Appending query to importPath does not work b/c Cucumber internally
-  // applies glob to importPaths
-  // See: https://github.com/cucumber/cucumber-js/blob/2fd424aa7127a6449291015ad326f555ed957203/src/api/paths.ts#L61
-  // todo: load steps yourself without cucumber
-  // importPaths.forEach((importPath, i) => {
-  //   importPaths[i] = `${importPath}?v=${Math.random()}`;
-  // });
 }

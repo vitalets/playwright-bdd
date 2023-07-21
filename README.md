@@ -223,8 +223,6 @@ Command to run tests:
 NODE_OPTIONS='--loader ts-node/esm --no-warnings' npx bddgen && npx playwright test
 ```
 
-> Please note that currently running several Playwright projects with **shared** steps in ESM is not possible due to caching issues. Resolving these issues is in progress.
-
 ## Writing features
 Write features in `*.feature` files using [Gherkin syntax](https://cucumber.io/docs/gherkin/reference/#keywords). 
 All keywords are supported.

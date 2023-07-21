@@ -3,6 +3,6 @@
 // @ts-ignore
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ option: string }>({
-  option: ['foo', { option: true }],
+export const test = base.extend<{ someOption: string }>({
+  someOption: ['foo', { option: true }],
 });

@@ -14,17 +14,16 @@ export default defineConfig({
         import: ['steps.ts'], // <- note 'import' instead of 'require'
       }),
     },
-    // dont use project two now as there is no way to clear import cache with Cucumber
-    // {
-    //   name: 'project two',
-    //   dependencies: ['project one'],
-    //   testDir: defineBddConfig({
-    //     outputDir: '.features-gen/two',
-    //     importTestFrom: 'project-two/fixtures.ts',
-    //     paths: ['project-two/*.feature'],
-    //     import: ['steps.ts', 'project-two/steps.ts'],
-    //   }),
-    // },
+    {
+      name: 'project two',
+      dependencies: ['project one'],
+      testDir: defineBddConfig({
+        outputDir: '.features-gen/two',
+        importTestFrom: 'project-two/fixtures.ts',
+        paths: ['project-two/*.feature'],
+        import: ['steps.ts', 'project-two/steps.ts'],
+      }),
+    },
   ],
   forbidOnly: Boolean(process.env.FORBID_ONLY),
 });
