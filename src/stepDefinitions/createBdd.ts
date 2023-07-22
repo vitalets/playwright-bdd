@@ -10,7 +10,7 @@ import { TestInfo, TestType } from '@playwright/test';
 import { exitWithMessage } from '../utils';
 import { test as baseTest } from '../run/baseTest';
 import { isParentChildTest } from '../playwright/testTypeImpl';
-import { CucumberStepFunction, defineStep } from './defineStep';
+import { defineStep } from './defineStep';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -24,7 +24,7 @@ export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   return { Given, When, Then };
 }
 
-// these fixtures automatically injected into step call
+// these fixtures automatically injected into every step call
 type BddAutoFixtures = {
   $testInfo: TestInfo; // todo: deprecate $testInfo in favor of $test.info()
   $test: TestTypeCommon;
@@ -48,13 +48,15 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
       pattern,
       fn,
       hasCustomTest,
+      isDecorator: false,
+      possibleFixtureNames: [],
     });
   };
 }
 
 const BDD_AUTO_FIXTURES: (keyof BddAutoFixtures)[] = ['$testInfo', '$test', '$tags'];
-export function getFixtureNames(cucumberFn: CucumberStepFunction) {
-  return fixtureParameterNames(cucumberFn.fn).filter((name) => {
+export function extractFixtureNames(fn?: Function) {
+  return fixtureParameterNames(fn).filter((name) => {
     return !BDD_AUTO_FIXTURES.includes(name as keyof BddAutoFixtures);
   });
 }

@@ -91,14 +91,14 @@ export class Snippets {
   private isPlaywrightStyle() {
     const { stepDefinitions } = this.supportCodeLibrary;
     return stepDefinitions.length > 0
-      ? stepDefinitions.some((d) => (d.code as CucumberStepFunction).fn)
+      ? stepDefinitions.some((d) => (d.code as CucumberStepFunction).stepConfig)
       : true;
   }
 
   private isDecorators() {
     const { stepDefinitions } = this.supportCodeLibrary;
     const decoratorSteps = stepDefinitions.filter(
-      (d) => (d.code as CucumberStepFunction).isDecorator,
+      (d) => (d.code as CucumberStepFunction).stepConfig?.isDecorator,
     );
     return decoratorSteps.length > stepDefinitions.length / 2;
   }

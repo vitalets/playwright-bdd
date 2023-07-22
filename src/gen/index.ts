@@ -14,7 +14,7 @@ import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage, log } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
-import { appendDecoratorSteps } from '../stepDefinitions/createBddDecorators';
+import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 import { requireTransform } from '../playwright/transform';
 
 export async function generateTestFiles(config: BDDConfig) {

@@ -6,6 +6,8 @@
     "useUnknownInCatchVariables": false,
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
+    "skipLibCheck": true,
+    "noEmit": true,
     "resolveJsonModule": true,
     "esModuleInterop": true
   },

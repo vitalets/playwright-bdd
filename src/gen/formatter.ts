@@ -103,6 +103,10 @@ export function tagsFixture(tagsMap: Map<string, string[]>, testKeySeparator: st
     : [];
 }
 
+export function missingStep(keyword: string, text: string) {
+  return `// missing step: ${keyword}(${JSON.stringify(text)});`;
+}
+
 function getSubFn(flags: Flags = {}) {
   if (flags.only) return '.only';
   if (flags.skip) return '.skip';

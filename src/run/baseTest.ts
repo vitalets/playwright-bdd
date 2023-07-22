@@ -5,7 +5,7 @@ import { World, getWorldConstructor } from './world';
 import { extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
-import { appendDecoratorSteps } from '../stepDefinitions/createBddDecorators';
+import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 
 export type BDDFixtures = {
   cucumberWorld: World;

@@ -2,7 +2,7 @@
  * Generate test code.
  */
 
-/* eslint-disable max-lines */
+/* eslint-disable max-lines, max-params */
 
 import {
   GherkinDocument,
@@ -24,18 +24,28 @@ import * as formatter from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
-import { getFixtureNames } from '../stepDefinitions/createBdd';
+import { extractFixtureNames } from '../stepDefinitions/createBdd';
 import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { template } from '../utils';
-import { CucumberStepFunction } from '../stepDefinitions/defineStep';
+import { CucumberStepFunction, StepConfig } from '../stepDefinitions/defineStep';
+import { filterFixtureNamesByTags } from '../stepDefinitions/createDecorators';
 
 type TestFileOptions = {
   doc: GherkinDocument;
   pickles: Pickle[];
   supportCodeLibrary: ISupportCodeLibrary;
   config: BDDConfig;
+};
+
+// Decorator step that has several possible fixtures
+// and handled after all steps in test
+type UnsureDecoratorStep = {
+  index: number;
+  keyword: string;
+  fixtureNames: string[];
+  pickleStep: PickleStep;
 };
 
 export type UndefinedStep = {
@@ -215,8 +225,8 @@ export class TestFile {
     parents: (Feature | Rule | Scenario)[],
   ) {
     const flags = getFormatterFlags(examples);
-    this.testFileTags.registerTestTags(parents, title, examples.tags);
-    const { fixtures, lines } = this.getSteps(scenario, exampleRow.id);
+    const testTags = this.testFileTags.registerTestTags(parents, title, examples.tags);
+    const { fixtures, lines } = this.getSteps(scenario, testTags, exampleRow.id);
     return formatter.test(title, fixtures, lines, flags);
   }
 
@@ -224,34 +234,46 @@ export class TestFile {
    * Generate test from Scenario
    */
   private getTest(scenario: Scenario, parents: (Feature | Rule)[]) {
-    this.testFileTags.registerTestTags(parents, scenario.name, scenario.tags);
+    const testTags = this.testFileTags.registerTestTags(parents, scenario.name, scenario.tags);
     const flags = getFormatterFlags(scenario);
-    const { fixtures, lines } = this.getSteps(scenario);
+    const { fixtures, lines } = this.getSteps(scenario, testTags);
     return formatter.test(scenario.name, fixtures, lines, flags);
   }
 
   /**
    * Generate test steps
    */
-  private getSteps(scenario: Scenario | Background, outlineExampleRowId?: string) {
-    const fixtures = new Set<string>();
+  private getSteps(
+    scenario: Scenario | Background,
+    testTags?: string[],
+    outlineExampleRowId?: string,
+  ) {
+    const testFixtureNames = new Set<string>();
+    const unsureSteps: UnsureDecoratorStep[] = [];
     let previousKeywordType: KeywordType | undefined = undefined;
 
-    const lines = scenario.steps.map((step) => {
+    const lines = scenario.steps.map((step, index) => {
       const {
         keyword,
         keywordType,
-        fixtures: stepFixtures,
+        fixtureNames: stepFixtureNames,
         line,
-      } = this.getStep(step, previousKeywordType, outlineExampleRowId);
+        pickleStep,
+      } = this.getStep(step, previousKeywordType, testTags, outlineExampleRowId);
       previousKeywordType = keywordType;
-      fixtures.add(keyword);
-      stepFixtures.forEach((fixture) => fixtures.add(fixture));
+      testFixtureNames.add(keyword);
+      stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
+
+      if (!line) {
+        unsureSteps.push({ index, keyword, pickleStep, fixtureNames: stepFixtureNames });
+      }
 
       return line;
     });
 
-    return { fixtures, lines };
+    unsureSteps.forEach((unsureStep) => this.handleUnsureStep(unsureStep, testFixtureNames, lines));
+
+    return { fixtures: testFixtureNames, lines };
   }
 
   /**
@@ -260,6 +282,7 @@ export class TestFile {
   private getStep(
     step: Step,
     previousKeywordType: KeywordType | undefined,
+    testTags?: string[],
     outlineExampleRowId?: string,
   ) {
     const pickleStep = this.getPickleStep(step, outlineExampleRowId);
@@ -273,15 +296,58 @@ export class TestFile {
       language: this.language,
       previousKeywordType,
     });
+    const keyword = this.getKeyword(step);
     if (!stepDefinition) {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
+      return this.getMissingStep(keyword, keywordType, pickleStep);
     }
-    const keyword = this.getKeyword(step);
-    const code = stepDefinition?.code as CucumberStepFunction | undefined;
-    const fixtureNames = code ? getFixtureNames(code) : ['/* Undefined step! */'];
-    if (code?.hasCustomTest) this.hasCustomTest = true;
-    const line = formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
-    return { keyword, keywordType, fixtures: fixtureNames, line };
+    // for cucumber-style stepConfig is undefined
+    const { stepConfig } = stepDefinition.code as CucumberStepFunction;
+    if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
+    // isUnsureStep - decorator step that has several possible fixtures, will be filled later
+    const { isUnsureStep, fixtureNames } = this.getStepFixtureNames(stepConfig, testTags);
+    const line = isUnsureStep
+      ? ''
+      : formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
+    return {
+      keyword,
+      keywordType,
+      fixtureNames,
+      line,
+      pickleStep,
+    };
+  }
+
+  private getStepFixtureNames(stepConfig: StepConfig | undefined, testTags?: string[]) {
+    if (stepConfig?.isDecorator) {
+      const { possibleFixtureNames } = stepConfig;
+      if (possibleFixtureNames.length === 1) {
+        return {
+          isUnsureStep: false,
+          fixtureNames: possibleFixtureNames,
+        };
+      }
+      const filteredFixtureNames = filterFixtureNamesByTags(possibleFixtureNames, testTags || []);
+      return {
+        isUnsureStep: filteredFixtureNames.length !== 1,
+        fixtureNames: filteredFixtureNames.length > 0 ? filteredFixtureNames : possibleFixtureNames,
+      };
+    } else {
+      return {
+        isUnsureStep: false,
+        fixtureNames: extractFixtureNames(stepConfig?.fn),
+      };
+    }
+  }
+
+  private getMissingStep(keyword: string, keywordType: KeywordType, pickleStep: PickleStep) {
+    return {
+      keyword,
+      keywordType,
+      fixtureNames: [],
+      line: formatter.missingStep(keyword, pickleStep.text),
+      pickleStep,
+    };
   }
 
   private getPickleStep(step: Step, outlineExampleRowId?: string) {
@@ -306,7 +372,27 @@ export class TestFile {
     return enKeyword;
   }
 
-  // eslint-disable-next-line max-params
+  private handleUnsureStep(
+    { index, keyword, pickleStep, fixtureNames }: UnsureDecoratorStep,
+    testFixtures: Set<string>,
+    lines: string[],
+  ) {
+    const usedFixtureNames = fixtureNames.filter((fixtureName) => {
+      return testFixtures.has(fixtureName);
+    });
+
+    if (usedFixtureNames.length !== 1) {
+      throw new Error(
+        [
+          `Can't guess fixture to use with decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
+          `Please set tag @fixture:%fixtureName% or refactor your Page Object classes.`,
+        ].join('\n'),
+      );
+    }
+
+    lines[index] = formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureNames[0]]);
+  }
+
   private getOutlineTestTitle(
     titleFormat: string,
     examples: Examples,

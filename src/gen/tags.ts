@@ -23,9 +23,11 @@ export class TestFileTags {
     testTags: readonly Tag[],
   ) {
     const tags = this.getTestTags(parents, testTags);
-    if (tags.length === 0) return;
-    const key = this.getTestKey(parents, testTitle);
-    this.addTestTags(key, tags);
+    if (tags.length > 0) {
+      const key = this.getTestKey(parents, testTitle);
+      this.addTestTags(key, tags);
+    }
+    return tags;
   }
 
   private getTestTags(parents: (Feature | Rule | Scenario)[], testTags: readonly Tag[]) {

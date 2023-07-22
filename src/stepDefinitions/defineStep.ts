@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
-
 import {
   Given as CucumberGiven,
   When as CucumberWhen,
@@ -14,23 +12,26 @@ import {
 import { World } from '../run/world';
 import { exitWithMessage } from '../utils';
 
-export type DefineStepOptions = {
+export type StepConfig = {
   keyword: GherkinStepKeyword;
   pattern: DefineStepPattern;
-  fn: Function;
-  hasCustomTest: boolean;
-};
-
-// extend Cucumber step function with some properties
-export type CucumberStepFunction = TestStepFunction<World> & {
+  // eslint-disable-next-line @typescript-eslint/ban-types
   fn: Function;
   hasCustomTest: boolean;
   isDecorator: boolean;
+  possibleFixtureNames: string[]; // only for decorator steps
 };
 
-export function defineStep({ keyword, pattern, fn, hasCustomTest }: DefineStepOptions) {
+// attach stepConfig to Cucumber step function
+// to keep type of StepDefinition itself unchanged
+export type CucumberStepFunction = TestStepFunction<World> & {
+  stepConfig?: StepConfig;
+};
+
+export function defineStep(stepConfig: StepConfig) {
+  const { keyword, pattern } = stepConfig;
   const cucumberDefineStepFn = getCucumberDefineStepFn(keyword);
-  const code = getCucumberStepFn(fn, { hasCustomTest });
+  const code = buildCucumberStepFn(stepConfig);
   try {
     cucumberDefineStepFn(pattern, code);
   } catch (e) {
@@ -48,20 +49,19 @@ export function defineStep({ keyword, pattern, fn, hasCustomTest }: DefineStepOp
   }
 }
 
-export function getCucumberStepFn(fn: Function, { hasCustomTest = false, isDecorator = false }) {
+export function buildCucumberStepFn(stepConfig: StepConfig) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const code: CucumberStepFunction = function (...args: any[]) {
     const fixturesArg = Object.assign({}, this.customFixtures, {
       $testInfo: this.testInfo,
       $test: this.test,
       $tags: this.tags,
     });
-    return fn.call(this, fixturesArg, ...args);
+
+    return stepConfig.fn.call(this, fixturesArg, ...args);
   };
 
-  // store original fn to be able to extract fixture names
-  code.fn = fn;
-  code.hasCustomTest = hasCustomTest;
-  code.isDecorator = isDecorator;
+  code.stepConfig = stepConfig;
 
   return code;
 }

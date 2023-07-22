@@ -1,17 +1,11 @@
 import { expect } from '@playwright/test';
-import { createBddDecorators } from '../../dist';
-import { test } from './fixtures';
+import { Fixture, When, Then, Step } from '../../../dist/decorators';
+import { test } from '.';
+import { BasePage } from './BasePage';
 
-const { Given, When, Then, Step } = createBddDecorators<typeof test>('todoPage');
-
-export class TodoPage {
-  todos: string[] = [];
-
-  @Given('I am on todo page')
-  async init() {
-    this.todos = [];
-  }
-
+export
+@Fixture<typeof test>('todoPage')
+class TodoPage extends BasePage {
   @When('I add todo {string}')
   async addToDo(text: string) {
     this.todos.push(text);

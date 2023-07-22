@@ -14,10 +14,6 @@ export function fixtureParameterNames(fn: Function | any): string[] {
   return fn[signatureSymbol];
 }
 
-export function forceSetFixtureParameterNames(fn: Function | any, fixtureNames: string[]) {
-  fn[signatureSymbol] = fixtureNames;
-}
-
 function innerFixtureParameterNames(fn: Function): string[] {
   const text = filterOutComments(fn.toString());
   const match = text.match(/(?:async)?(?:\s+function)?[^(]*\(([^)]*)/);
