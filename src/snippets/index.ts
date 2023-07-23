@@ -107,10 +107,7 @@ export class Snippets {
     const lines = [`Missing steps found. Use snippets below:`];
     if (this.bddBuiltInSyntax) {
       if (this.isDecorators()) {
-        lines.push(
-          `import { createBddDecorators } from 'playwright-bdd';`,
-          `const { Given, When, Then, Step } = createBddDecorators('%fixtureName%');\n`,
-        );
+        lines.push(`import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';\n`);
       } else {
         lines.push(
           `import { createBdd } from 'playwright-bdd';`,
