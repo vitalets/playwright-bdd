@@ -6,6 +6,10 @@
     "bddgen": "./dist/gen/cli.js"
   },
   "main": "./dist/index.js",
+  "exports": {
+    ".": "./dist/index.js",
+    "./decorators": "./dist/decorators.js"
+  },
   "engines": {
     "node": ">=16"
   },

@@ -1,4 +1,4 @@
-import { Fixture, Given } from '../../dist/decorators.js';
+import { Fixture, Given } from 'playwright-bdd/decorators.js';
 import { test } from './fixtures';
 
 export

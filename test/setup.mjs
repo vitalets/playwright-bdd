@@ -50,7 +50,7 @@ function symlinkPlaywrghtBdd() {
     fs.rmdirSync(playwrightBddPath, { recursive: true });
   }
   // symlink node_modules/playwright-bdd to dist
-  // as generated files import { test } from "playwright-bdd"
+  // as generated files use: import { test } from "playwright-bdd"
   execSync(`ln -sfn ../dist ${playwrightBddPath}`, { stdio: 'inherit' });
 }
 
