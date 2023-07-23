@@ -3,9 +3,11 @@
 [![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
 [![npm version](https://img.shields.io/npm/v/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
 
-Run BDD tests with [Playwright](https://playwright.dev/) test runner.
+Run BDD tests with [Playwright](https://playwright.dev/) runner.
 
 > Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
+
+> **NEW!** Check out [decorators syntax](#decorators) to define BDD steps right inside existing Page Object Models
 
 ## Contents
 
@@ -26,18 +28,17 @@ Run BDD tests with [Playwright](https://playwright.dev/) test runner.
     + [Accessing `testInfo`](#accessing-testinfo)
     + [Using tags](#using-tags)
     + [Using `DataTables`](#using-datatables)
-    + [Using decorators](#using-decorators)
   * [Cucumber-style](#cucumber-style)
     + [World](#world)
     + [Custom World](#custom-world)
+- [Decorators](#decorators)
+  * [Inheritance](#inheritance)
 - [Watch mode](#watch-mode)
 - [Debugging](#debugging)
 - [API](#api)
 - [VS Code Integration](#vs-code-integration)
 - [How it works](#how-it-works)
 - [FAQ](#faq)
-    + [Is it possible to run BDD tests in a single command?](#is-it-possible-to-run-bdd-tests-in-a-single-command)
-    + [Is it possible to apply `test.use()` in a generated test file?](#is-it-possible-to-apply-testuse-in-a-generated-test-file)
 - [Limitations](#limitations)
 - [Changelog](#changelog)
 - [Feedback](#feedback)
@@ -129,9 +130,8 @@ to quickly check how it works.
      await expect(page).toHaveTitle(new RegExp(keyword));
    });
    ```
-   > **NEW!** You can also use [decorators](#using-decorators) to define steps inside existing Page Object Models
 
-   > There is an alternative Cucumber-compatible syntax for step definitions, see [Writing steps](#writing-steps)
+   > There are alternative ways of defining steps: [Decorators](#decorators) and [Cucumber-style syntax](#cucumber-style)
 
 4. Generate and run tests:
 
@@ -485,72 +485,6 @@ When('I fill login form with values', async ({ page }, data: DataTable) => {
 ```
 Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/data_table_interface.md) in Cucumber docs.
 
-#### Using decorators
-Playwright-bdd supports [ECMAScript decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
-
-```ts
-// TodoPage.ts
-import { Page, expect } from '@playwright/test';
-import { createBddDecorators } from 'playwright-bdd';
-
-const { Given, When, Then, Step } = createBddDecorators('todoPage');
-
-export class TodoPage {
-  constructor(public page: Page) { }
-
-  @Given('I am on todo page')
-  async goto() {
-    await this.page.goto('https://demo.playwright.dev/todomvc/');
-  }
-
-  @When('I add todo {string}')
-  async addToDo(text: string) {
-    await this.page.locator('input.new-todo').fill(text);
-    await this.page.locator('input.new-todo').press('Enter');
-  }
-
-  @Then('visible todos count is {int}')
-  async expectVisibleTodosCount(count: number) {
-    await expect(this.page.getByTestId('todo-item')).toHaveCount(count);
-  }
-}
-```
-
-Then use it in `test.extend` as a regular fixture:
-```ts
-// fixtures.ts
-import { test as base } from 'playwright-bdd';
-import { TodoPage } from './TodoPage';
-
-export const test = base.extend<{ todoPage: TodoPage }>({
-  todoPage: ({ page }, use) => use(new TodoPage(page)),
-});
-```
-
-And point to this `fixtures.ts` in `playwright.config.ts`:
-```ts
-const testDir = defineBddConfig({
-  paths: ['features/todo.feature'],
-  importTestFrom: './fixtures.ts',
-  // ...
-});
-```
-
-Now you can use these steps in `.feature` files:
-```gherkin
-# features/todo.feature
-Feature: Todo Page
-
-    Scenario: Adding todos
-      Given I am on todo page
-      When I add todo "foo"
-      And I add todo "bar"
-      Then visible todos count is 2
-```
-Check out [full example of using decorators](examples/decorators) with playwright-bdd.
-
-> To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
-
 ### Cucumber-style
 Cucumber-style step definitions are compatible with CucumberJS:
 
@@ -625,6 +559,103 @@ setWorldConstructor(CustomWorld);
 > Consider asynchronous setup and teardown of World instance with `init()` / `destroy()` methods.
 
 See [full example of Cucumber-style](examples/cucumber-style).
+
+## Decorators
+Playwright-bdd supports [TypeScript decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right above methods of [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
+
+```ts
+// TodoPage.ts
+import { Page, expect } from '@playwright/test';
+import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
+
+export @Fixture('todoPage') class TodoPage {
+  constructor(public page: Page) { }
+
+  @Given('I am on todo page')
+  async open() {
+    await this.page.goto('https://demo.playwright.dev/todomvc/');
+  }
+
+  @When('I add todo {string}')
+  async addToDo(text: string) {
+    await this.page.locator('input.new-todo').fill(text);
+    await this.page.locator('input.new-todo').press('Enter');
+  }
+
+  @Then('visible todos count is {int}')
+  async checkVisibleTodosCount(count: number) {
+    await expect(this.page.getByTestId('todo-item')).toHaveCount(count);
+  }
+}
+```
+
+Then use this class in `test.extend` as a regular fixture:
+```ts
+// fixtures.ts
+import { test as base } from 'playwright-bdd';
+import { TodoPage } from './TodoPage';
+
+export const test = base.extend<{ todoPage: TodoPage }>({
+  todoPage: ({ page }, use) => use(new TodoPage(page)),
+});
+```
+
+And point to this `fixtures.ts` in `playwright.config.ts`:
+```ts
+const testDir = defineBddConfig({
+  importTestFrom: './fixtures.ts',
+  paths: ['features/todo.feature'],
+  // ...
+});
+```
+
+Now you can use these steps in `.feature` files:
+```gherkin
+# features/todo.feature
+Feature: Todo Page
+
+    Scenario: Adding todos
+      Given I am on todo page
+      When I add todo "foo"
+      And I add todo "bar"
+      Then visible todos count is 2
+```
+Check out [full example of using decorators](examples/decorators) with playwright-bdd.
+
+> To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
+
+### Inheritance
+When one Page Object is inherited from another, `playwright-bdd` can automatically guess
+what fixture to use in particular scenario. Imagine two parent-child classes with decorator steps:
+
+```ts
+// TodoPage
+export @Fixture('todoPage') class TodoPage {
+  @Given('I am on todo page')
+  async open() { ... }
+}
+
+// AdminTodoPage inherited from TodoPage
+export @Fixture('adminTodoPage') class AdminTodoPage extends TodoPage {
+  @When('I add todo {string}')
+  async addToDo(text: string) { ... }
+}
+```  
+And scenario that uses steps from both classes:
+```gherkin
+Scenario: Adding todos
+  Given I am on todo page # <- step defined in TodoPage
+  When I add todo "foo"   # <- step defined in AdminTodoPage
+```
+Here `playwright-bdd` will create single fixture `AdminTodoPage` for all steps instead of creating two fixtures.
+
+In some cases you may want to force usage of particular fixture.
+For that you can apply special tag `@fixture:%name%`:
+```gherkin
+@fixture:adminTodoPage
+Scenario: Adding todos
+  Given I am on todo page # <- will be called on adminTodoPage, although defined in TodoPage
+```
 
 ## Watch mode
 To watch feature / steps files and automatically regenerate tests you can use [nodemon](https://github.com/remy/nodemon):
@@ -765,7 +796,7 @@ Then('I see in title {string}', async ({ page }, text) => {
 
 ## FAQ
 
-#### Is it possible to run BDD tests in a single command? 
+##### Is it possible to run BDD tests in a single command? 
 This approach was initially implemented: test files were generated directly in `playwright.config.ts` before test execution. It allowed to run tests with `npx playwright test` instead of having two commands as `npx bddgen && npx playwright test`. But later several issues appeared:
 
 1. It became really hard to decide when to generate test files because Playwright config is executed many times from different sources: workers, VS Code extension, UI mode, etc.
@@ -776,7 +807,7 @@ This approach was initially implemented: test files were generated directly in `
 
 For now decoupling *test generation* from *test running* is a better solution for integration with Playwright's tooling.
 
-#### Is it possible to apply `test.use()` in a generated test file?
+##### Is it possible to apply `test.use()` in a generated test file?
 Test files generation is a fully automatic process, no manual interceptions allowed.
 But instead of applying `test.use` (that has impact to all tests in a file)
 you can [utilize tags](#accessing-tags) with custom fixtures.
