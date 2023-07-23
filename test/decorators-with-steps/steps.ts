@@ -4,6 +4,10 @@ import { test } from './fixtures';
 
 const { Then } = createBdd(test);
 
-Then('visible todos count is {int}', async ({ todoPage }, count: number) => {
-  expect(todoPage.todos).toHaveLength(count);
+Then('Regular step using TodoPage', async ({ todoPage }) => {
+  expect(todoPage).toBeDefined();
+});
+
+Then('Regular step using AdminTodoPage', async ({ adminTodoPage }) => {
+  expect(adminTodoPage).toBeDefined();
 });

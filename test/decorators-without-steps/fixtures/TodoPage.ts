@@ -1,23 +1,41 @@
 import { expect } from '@playwright/test';
-import { Fixture, When, Then, Step } from '../../../dist/decorators';
+import { Fixture, Given, When, Then } from '../../../dist/decorators';
 import { test } from '.';
-import { BasePage } from './BasePage';
+import { BasePage, IntermediateBasePage } from './BasePage';
 
 export
 @Fixture<typeof test>('todoPage')
-class TodoPage extends BasePage {
-  @When('I add todo {string}')
-  async addToDo(text: string) {
-    this.todos.push(text);
-  }
+class TodoPage extends IntermediateBasePage {
+  @Given('TodoPage: step')
+  async step() {}
 
-  @Then('visible todos count is {int}')
-  async checkVisibleTodosCount(count: number) {
-    expect(this.todos).toHaveLength(count);
+  @Then('TodoPage: used fixture is {string}')
+  checkUsedFixture(name: string) {
+    expect(this.constructor.name).toEqual(name);
   }
+}
 
-  @Step('has todos count {int}')
-  async hasTodosCount(count: number) {
-    expect(this.todos).toHaveLength(count);
+export
+@Fixture<typeof test>('todoPageOnlyFixture')
+class TodoPageOnlyFixture extends TodoPage {}
+
+class IntermediateTodoPage extends TodoPageOnlyFixture {}
+
+export
+@Fixture<typeof test>('adminTodoPage')
+class AdminTodoPage extends IntermediateTodoPage {
+  @When('AdminTodoPage: step')
+  async step() {}
+}
+
+export
+@Fixture<typeof test>('todoPage2')
+class TodoPage2 extends BasePage {
+  @Given('TodoPage2: step')
+  async step() {}
+
+  @Then('TodoPage2: used fixture is {string}')
+  checkUsedFixture(name: string) {
+    expect(this.constructor.name).toEqual(name);
   }
 }

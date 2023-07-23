@@ -49,16 +49,18 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
       fn,
       hasCustomTest,
       isDecorator: false,
-      possibleFixtureNames: [],
     });
   };
 }
 
 const BDD_AUTO_FIXTURES: (keyof BddAutoFixtures)[] = ['$testInfo', '$test', '$tags'];
+
+export function isBddAutoFixture(name: string) {
+  return BDD_AUTO_FIXTURES.includes(name as keyof BddAutoFixtures);
+}
+
 export function extractFixtureNames(fn?: Function) {
-  return fixtureParameterNames(fn).filter((name) => {
-    return !BDD_AUTO_FIXTURES.includes(name as keyof BddAutoFixtures);
-  });
+  return fixtureParameterNames(fn).filter((name) => !isBddAutoFixture(name));
 }
 
 function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(

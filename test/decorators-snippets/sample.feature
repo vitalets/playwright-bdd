@@ -1,4 +1,4 @@
-Feature: decorators
+Feature: decorators-snippets
 
     Scenario: todo page
       Given I am on todo page

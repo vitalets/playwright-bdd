@@ -1,16 +1,16 @@
 import { expect } from '@playwright/test';
-import { Given, Then } from '../../../dist/decorators';
+import { Then } from '../../../dist/decorators';
 
 export class BasePage {
-  todos: string[] = [];
-
-  @Given('I am on todo page')
-  async init() {
-    this.todos = [];
+  @Then('BasePage: used fixture is {string}')
+  checkUsedFixture(name: string) {
+    expect(this.constructor.name).toEqual(name);
   }
+}
 
-  @Then('used fixture is {string}')
-  checkUsedFixtureName(name: string) {
+export class IntermediateBasePage extends BasePage {
+  @Then('IntermediateBasePage: used fixture is {string}')
+  checkUsedFixture(name: string) {
     expect(this.constructor.name).toEqual(name);
   }
 }

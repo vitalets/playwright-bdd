@@ -29,8 +29,9 @@ import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { template } from '../utils';
-import { CucumberStepFunction, StepConfig } from '../stepDefinitions/defineStep';
+import { CucumberStepFunction, PomNode, StepConfig } from '../stepDefinitions/defineStep';
 import { filterFixtureNamesByTags } from '../stepDefinitions/createDecorators';
+import { POMS, buildFixtureTag } from './poms';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -39,13 +40,12 @@ type TestFileOptions = {
   config: BDDConfig;
 };
 
-// Decorator step that has several possible fixtures
-// and handled after all steps in test
-type UnsureDecoratorStep = {
+// Decorator steps handled after all steps to resolve fixtures correctly
+type PreparedDecoratorStep = {
   index: number;
   keyword: string;
-  fixtureNames: string[];
   pickleStep: PickleStep;
+  pomNode: PomNode;
 };
 
 export type UndefinedStep = {
@@ -249,7 +249,8 @@ export class TestFile {
     outlineExampleRowId?: string,
   ) {
     const testFixtureNames = new Set<string>();
-    const unsureSteps: UnsureDecoratorStep[] = [];
+    const usedPoms = new POMS();
+    const decoratorSteps: PreparedDecoratorStep[] = [];
     let previousKeywordType: KeywordType | undefined = undefined;
 
     const lines = scenario.steps.map((step, index) => {
@@ -259,19 +260,29 @@ export class TestFile {
         fixtureNames: stepFixtureNames,
         line,
         pickleStep,
-      } = this.getStep(step, previousKeywordType, testTags, outlineExampleRowId);
+        stepConfig,
+      } = this.getStep(step, previousKeywordType, outlineExampleRowId);
       previousKeywordType = keywordType;
       testFixtureNames.add(keyword);
       stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
 
-      if (!line) {
-        unsureSteps.push({ index, keyword, pickleStep, fixtureNames: stepFixtureNames });
+      if (!line && stepConfig?.pomNode) {
+        usedPoms.add(stepConfig.pomNode);
+        decoratorSteps.push({ index, keyword, pickleStep, pomNode: stepConfig.pomNode });
       }
 
       return line;
     });
 
-    unsureSteps.forEach((unsureStep) => this.handleUnsureStep(unsureStep, testFixtureNames, lines));
+    if (decoratorSteps.length) {
+      testFixtureNames.forEach((fixtureName) => usedPoms.addByFixtureName(fixtureName));
+      testTags?.forEach((tag) => usedPoms.addByTag(tag));
+      decoratorSteps.forEach((step) => {
+        const { line, fixtureNames } = this.getDecoratorStep(step, usedPoms);
+        lines[step.index] = line;
+        fixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
+      });
+    }
 
     return { fixtures: testFixtureNames, lines };
   }
@@ -282,7 +293,6 @@ export class TestFile {
   private getStep(
     step: Step,
     previousKeywordType: KeywordType | undefined,
-    testTags?: string[],
     outlineExampleRowId?: string,
   ) {
     const pickleStep = this.getPickleStep(step, outlineExampleRowId);
@@ -304,9 +314,8 @@ export class TestFile {
     // for cucumber-style stepConfig is undefined
     const { stepConfig } = stepDefinition.code as CucumberStepFunction;
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
-    // isUnsureStep - decorator step that has several possible fixtures, will be filled later
-    const { isUnsureStep, fixtureNames } = this.getStepFixtureNames(stepConfig, testTags);
-    const line = isUnsureStep
+    const fixtureNames = stepConfig?.isDecorator ? [] : extractFixtureNames(stepConfig?.fn);
+    const line = stepConfig?.isDecorator
       ? ''
       : formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
     return {
@@ -315,12 +324,14 @@ export class TestFile {
       fixtureNames,
       line,
       pickleStep,
+      stepConfig,
     };
   }
 
   private getStepFixtureNames(stepConfig: StepConfig | undefined, testTags?: string[]) {
     if (stepConfig?.isDecorator) {
-      const { possibleFixtureNames } = stepConfig;
+      // const { possibleFixtureNames } = stepConfig;
+      const possibleFixtureNames: string[] = [];
       if (possibleFixtureNames.length === 1) {
         return {
           isUnsureStep: false,
@@ -347,6 +358,7 @@ export class TestFile {
       fixtureNames: [],
       line: formatter.missingStep(keyword, pickleStep.text),
       pickleStep,
+      stepConfig: undefined,
     };
   }
 
@@ -372,25 +384,24 @@ export class TestFile {
     return enKeyword;
   }
 
-  private handleUnsureStep(
-    { index, keyword, pickleStep, fixtureNames }: UnsureDecoratorStep,
-    testFixtures: Set<string>,
-    lines: string[],
-  ) {
-    const usedFixtureNames = fixtureNames.filter((fixtureName) => {
-      return testFixtures.has(fixtureName);
-    });
+  private getDecoratorStep(step: PreparedDecoratorStep, usedPoms: POMS) {
+    const { keyword, pickleStep, pomNode } = step;
+    const fixtureNames = usedPoms.resolveFixtureNames(pomNode);
 
-    if (usedFixtureNames.length !== 1) {
+    if (fixtureNames.length !== 1) {
+      const suggestedTags = fixtureNames.map((name) => buildFixtureTag(name)).join(', ');
       throw new Error(
         [
           `Can't guess fixture to use with decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
-          `Please set tag @fixture:%fixtureName% or refactor your Page Object classes.`,
+          `Please set one of the following tags (${suggestedTags}) or refactor your Page Object classes.`,
         ].join('\n'),
       );
     }
 
-    lines[index] = formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureNames[0]]);
+    return {
+      fixtureNames,
+      line: formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureNames[0]]),
+    };
   }
 
   private getOutlineTestTitle(

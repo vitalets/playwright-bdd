@@ -12,6 +12,12 @@ import {
 import { World } from '../run/world';
 import { exitWithMessage } from '../utils';
 
+// Page Object Node is used in decorator steps dependency graph
+export type PomNode = {
+  fixtureName: string;
+  children: Set<PomNode>;
+};
+
 export type StepConfig = {
   keyword: GherkinStepKeyword;
   pattern: DefineStepPattern;
@@ -19,7 +25,7 @@ export type StepConfig = {
   fn: Function;
   hasCustomTest: boolean;
   isDecorator: boolean;
-  possibleFixtureNames: string[]; // only for decorator steps
+  pomNode?: PomNode;
 };
 
 // attach stepConfig to Cucumber step function

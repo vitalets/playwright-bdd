@@ -1,7 +1,10 @@
-Feature: decorators
+Feature: decorators-with-steps
 
-    Scenario: todo page
-      Given I am on todo page
-      When I add todo "foo"
-      And I add todo "bar"
-      Then visible todos count is 2
+    Scenario: guess TodoPage by regular step
+      Then Regular step using TodoPage
+      Then BasePage: used fixture is "TodoPage"
+
+    Scenario: guess AdminTodoPage by regular step
+      Given TodoPage: step
+      Then Regular step using AdminTodoPage
+      Then BasePage: used fixture is "AdminTodoPage"
