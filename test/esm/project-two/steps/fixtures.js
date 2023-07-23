@@ -1,4 +1,4 @@
-import { test as base } from '../fixtures.js';
+import { test as base } from '../../steps/fixtures.js';
 
 export const test = base.extend({
   anotherOption: ['bar', { option: true }],

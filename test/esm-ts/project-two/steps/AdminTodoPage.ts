@@ -1,6 +1,6 @@
 import { Fixture, Given } from 'playwright-bdd/decorators.js';
 import { test } from './fixtures.js';
-import { TodoPage } from '../TodoPage.js';
+import { TodoPage } from '../../steps/TodoPage.js';
 
 export
 @Fixture<typeof test>('adminTodoPage')
