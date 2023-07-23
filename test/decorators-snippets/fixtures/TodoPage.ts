@@ -1,5 +1,5 @@
-import { Fixture, Given } from '../../dist/decorators';
-import { test } from './fixtures';
+import { Fixture, Given } from '../../../dist/decorators';
+import { test } from '.';
 
 export
 @Fixture<typeof test>('todoPage')

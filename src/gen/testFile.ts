@@ -28,7 +28,7 @@ import { extractFixtureNames } from '../stepDefinitions/createBdd';
 import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { template } from '../utils';
+import { exitWithMessage, template } from '../utils';
 import { CucumberStepFunction, PomNode, StepConfig } from '../stepDefinitions/defineStep';
 import { filterFixtureNamesByTags } from '../stepDefinitions/createDecorators';
 import { POMS, buildFixtureTag } from './poms';
@@ -390,11 +390,9 @@ export class TestFile {
 
     if (fixtureNames.length !== 1) {
       const suggestedTags = fixtureNames.map((name) => buildFixtureTag(name)).join(', ');
-      throw new Error(
-        [
-          `Can't guess fixture to use with decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
-          `Please set one of the following tags (${suggestedTags}) or refactor your Page Object classes.`,
-        ].join('\n'),
+      exitWithMessage(
+        `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
+        `Please set one of the following tags (${suggestedTags}) or refactor your Page Object classes.`,
       );
     }
 
