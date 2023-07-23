@@ -600,7 +600,7 @@ export const test = base.extend<{ todoPage: TodoPage }>({
 });
 ```
 
-And point to this `fixtures.ts` in `playwright.config.ts`:
+And set `importTestFrom` to `./fixtures.ts` in `playwright.config.ts`:
 ```ts
 const testDir = defineBddConfig({
   importTestFrom: './fixtures.ts',
@@ -641,20 +641,20 @@ export @Fixture('adminTodoPage') class AdminTodoPage extends TodoPage {
   async addToDo(text: string) { ... }
 }
 ```  
-And scenario that uses steps from both classes:
+And scenario that uses both steps:
 ```gherkin
 Scenario: Adding todos
   Given I am on todo page # <- step defined in TodoPage
   When I add todo "foo"   # <- step defined in AdminTodoPage
 ```
-Here `playwright-bdd` will create single fixture `AdminTodoPage` for all steps instead of creating two fixtures.
+Here `playwright-bdd` will use single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
 
 In some cases you may want to force usage of particular fixture.
 For that you can apply special tag `@fixture:%name%`:
 ```gherkin
 @fixture:adminTodoPage
 Scenario: Adding todos
-  Given I am on todo page # <- will be called on adminTodoPage, although defined in TodoPage
+  Given I am on todo page # <- step will be called on AdminTodoPage, although defined in TodoPage
 ```
 
 ## Watch mode
