@@ -9,4 +9,5 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   reporter: 'html',
+  timeout: 10 * 1000,
 });

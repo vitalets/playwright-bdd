@@ -1,20 +1,20 @@
 import { Locator, Page, expect } from '@playwright/test';
-import { createBddDecorators } from 'playwright-bdd';
+import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
 import type { test } from './fixtures';
 
-const { Given, When, Then, Step } = createBddDecorators<typeof test>('todoPage');
-
-export class TodoPage {
+export
+@Fixture<typeof test>('todoPage')
+class TodoPage {
   readonly inputBox: Locator;
   readonly todoItems: Locator;
 
-  constructor(public readonly page: Page) {
+  constructor(public page: Page) {
     this.inputBox = this.page.locator('input.new-todo');
     this.todoItems = this.page.getByTestId('todo-item');
   }
 
   @Given('I am on todo page')
-  async goto() {
+  async open() {
     await this.page.goto('https://demo.playwright.dev/todomvc/');
   }
 
@@ -25,12 +25,7 @@ export class TodoPage {
   }
 
   @Then('visible todos count is {int}')
-  async expectVisibleTodosCount(count: number) {
-    await expect(this.todoItems).toHaveCount(count);
-  }
-
-  @Step('has todos count {int}')
-  async hasTodosCount(count: number) {
+  async checkVisibleTodosCount(count: number) {
     await expect(this.todoItems).toHaveCount(count);
   }
 }

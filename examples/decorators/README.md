@@ -1,1 +1,1 @@
-# playwright-bdd project with decorators
+# playwright-bdd example with decorators
