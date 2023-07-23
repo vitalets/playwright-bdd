@@ -31,40 +31,6 @@ export function Fixture<T>(fixtureName: CustomFixturesNames<T>) {
   // context parameter is required for decorator by TS even though it's not used
   return (Ctor: Function, _context: ClassDecoratorContext) => {
     createPomNode(Ctor, fixtureName);
-    // getDecoratedSteps(Ctor).forEach((stepConfig) => (stepConfig.pomNode = pomNode));
-    // // find parent pom / or create if there are steps without pom
-    // const parentCtor = Object.getPrototypeOf(Ctor);
-    // parentPomNode.children.add(pomNode);
-    // let prevCtor: Function | undefined = undefined;
-    // while (Ctor?.prototype) {
-    //   console.log('Ctor', Ctor);
-    //   // get or create pomNode
-    //   // if pomNode exists -> exit
-    //   // if not exists -> create, attch to steps, continue
-    //   if (pomGraph.has(Ctor)) {
-    //     pomGraph.get(Ctor)?.children.add(prevCtor);
-    //     break;
-    //   } else {
-    //     const pomNode: PomNode = {
-    //       fixtureName,
-    //       children: new Set(),
-    //       // fixtureNameForCurrentTest: '',
-    //     };
-    //     pomGraph.set(Ctor, pomNode);
-    //     getDecoratedSteps(Ctor).forEach((stepConfig) => (stepConfig.pomNode = pomNode));
-    //     // attach child
-    //     prevCtor = Ctor;
-    //     Ctor = Object.getPrototypeOf(Ctor);
-    //   }
-    //   // Object.getOwnPropertyNames(Ctor.prototype).forEach((methodName) => {
-    //   //   const decoratedStep = (Ctor.prototype[methodName] as DecoratedMethod)[decoratedStepSymbol];
-    //   //   if (decoratedStep) {
-    //   //     decoratedStep.possibleFixtureNames.push(fixtureName);
-    //   //     decoratedSteps.add(decoratedStep);
-    //   //   }
-    //   // });
-    //   // Ctor = Object.getPrototypeOf(Ctor);
-    // }
   };
 }
 
@@ -155,10 +121,4 @@ function getFirstNonAutoFixture(fixturesArg: Record<string, unknown>, stepConfig
   }
 
   return fixturesArg[fixtureNames[0]];
-}
-
-export function filterFixtureNamesByTags(fixtureNames: string[], tags: string[]) {
-  return fixtureNames.filter((fixtureName) => {
-    return tags.includes(`@fixture:${fixtureName}`);
-  });
 }

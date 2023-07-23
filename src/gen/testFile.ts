@@ -29,8 +29,7 @@ import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { exitWithMessage, template } from '../utils';
-import { CucumberStepFunction, PomNode, StepConfig } from '../stepDefinitions/defineStep';
-import { filterFixtureNamesByTags } from '../stepDefinitions/createDecorators';
+import { CucumberStepFunction, PomNode } from '../stepDefinitions/defineStep';
 import { POMS, buildFixtureTag } from './poms';
 
 type TestFileOptions = {
@@ -326,29 +325,6 @@ export class TestFile {
       pickleStep,
       stepConfig,
     };
-  }
-
-  private getStepFixtureNames(stepConfig: StepConfig | undefined, testTags?: string[]) {
-    if (stepConfig?.isDecorator) {
-      // const { possibleFixtureNames } = stepConfig;
-      const possibleFixtureNames: string[] = [];
-      if (possibleFixtureNames.length === 1) {
-        return {
-          isUnsureStep: false,
-          fixtureNames: possibleFixtureNames,
-        };
-      }
-      const filteredFixtureNames = filterFixtureNamesByTags(possibleFixtureNames, testTags || []);
-      return {
-        isUnsureStep: filteredFixtureNames.length !== 1,
-        fixtureNames: filteredFixtureNames.length > 0 ? filteredFixtureNames : possibleFixtureNames,
-      };
-    } else {
-      return {
-        isUnsureStep: false,
-        fixtureNames: extractFixtureNames(stepConfig?.fn),
-      };
-    }
   }
 
   private getMissingStep(keyword: string, keywordType: KeywordType, pickleStep: PickleStep) {
