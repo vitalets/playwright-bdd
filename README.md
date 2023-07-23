@@ -723,20 +723,45 @@ Defines `Then` step implementation.
   * `fixtures` *object* - Playwright fixtures
   * `...args` *array* - arguments captured from step pattern
 
-##### `createBddDecorators(fixtureName)`
-Creates `Given`, `When`, `Then`, `Step` decorator functions for defining steps inside POMs.
+##### `@Fixture(fixtureName)`
+Class decorator to bind POM with fixture name.
 
 **Params**
   * `fixtureName` *string* - fixture name for the given class.
 
-**Returns**: *object* - `{ Given, When, Then, Step }`. Each decorator accepts single argument `pattern: string | regexp`.
-
 It is also possible to provide `test` type as a generic parameter to restrict `fixtureName` to available fixture names:
 ```ts
+import { Fixture } from 'playwright-bdd/decorators';
 import type { test } from './fixtures';
 
-const { Given, When, Then } = createBddDecorators<typeof test>('todoPage');
+export
+@Fixture<typeof test>('todoPage')
+class TodoPage { ... };
 ```
+
+##### `@Given(pattern)`
+Method decorator to define `Given` step.
+
+**Params**
+  * `pattern` *string | regexp* - step pattern
+
+##### `@When(pattern)`
+Method decorator to define `When` step.
+
+**Params**
+  * `pattern` *string | regexp* - step pattern
+
+##### `@Then(pattern)`
+Method decorator to define `Then` step.
+
+**Params**
+  * `pattern` *string | regexp* - step pattern
+
+##### `@Step(pattern)`
+Method decorator to define universal step.
+
+**Params**
+  * `pattern` *string | regexp* - step pattern
 
 ## VS Code Integration
 
