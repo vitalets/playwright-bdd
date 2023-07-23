@@ -58,7 +58,7 @@
   },
   "peerDependencies": {
     "@cucumber/cucumber": ">=9",
-    "@playwright/test": ">=1.32"
+    "@playwright/test": ">=1.33"
   },
   "repository": {
     "type": "git",
