@@ -21,6 +21,7 @@
   "scripts": {
     "prepare": "git config core.hooksPath .hooks",
     "lint": "eslint .",
+    "tsc": "tsc",
     "knip": "knip -c knip.config.ts",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
