@@ -6,6 +6,10 @@ import { BasePage, IntermediateBasePage } from './BasePage';
 export
 @Fixture<typeof test>('todoPage')
 class TodoPage extends IntermediateBasePage {
+  get getterField() {
+    throw new Error('Should not touch getters while decorating');
+  }
+
   @Given('TodoPage: step')
   async step() {}
 

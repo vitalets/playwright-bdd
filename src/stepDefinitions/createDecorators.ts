@@ -99,11 +99,16 @@ function createPomNode(Ctor: Function, fixtureName: string) {
 
 function getDecoratedSteps(Ctor: Function) {
   if (!Ctor?.prototype) return [];
-  return Object.getOwnPropertyNames(Ctor.prototype)
-    .map((methodName) => {
-      return (Ctor.prototype[methodName] as DecoratedMethod)[decoratedStepSymbol];
-    })
-    .filter(Boolean);
+  const propertyDescriptors = Object.getOwnPropertyDescriptors(Ctor.prototype);
+  return (
+    Object.keys(propertyDescriptors)
+      // filter out getters / setters
+      .filter((methodName) => typeof propertyDescriptors[methodName].value === 'function')
+      .map((methodName) => {
+        return (propertyDescriptors[methodName].value as DecoratedMethod)[decoratedStepSymbol];
+      })
+      .filter(Boolean)
+  );
 }
 
 function getFirstNonAutoFixture(fixturesArg: Record<string, unknown>, stepConfig: StepConfig) {
