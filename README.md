@@ -7,7 +7,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) runner.
 
 > Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
-> **NEW!** Check out [decorators syntax](#decorators) to define BDD steps right inside existing Page Object Models
+> **NEW!** Check out [decorators syntax](#decorators) to define BDD steps right inside Page Object Models
 
 ## Contents
 
@@ -204,7 +204,7 @@ It is convenient to use it as a `testDir` option for Playwright.
 > If there is an external `cucumber.js` config file, it is also merged into configuration.
 
 #### Multiple projects
-You can use `playwright-bdd` with multiple [Playwright projects](https://playwright.dev/docs/test-projects). For that just provide separate `defineBddConfig()` for each project:
+You can use `playwright-bdd` with multiple [Playwright projects](https://playwright.dev/docs/test-projects). For that just provide separate `defineBddConfig()` configuration for each project:
 
 ```ts
 // playwright.config.ts
@@ -591,7 +591,7 @@ setWorldConstructor(CustomWorld);
 See [full example of Cucumber-style](examples/cucumber-style).
 
 ## Decorators
-Playwright-bdd supports [TypeScript decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right above methods of [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
+Playwright-bdd supports [TypeScript decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
 
 ```ts
 // TodoPage.ts
