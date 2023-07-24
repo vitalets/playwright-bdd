@@ -7,7 +7,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) runner.
 
 > Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
-> **NEW!** Check out [decorators syntax](#decorators) to define BDD steps right inside Page Object Models
+> 🔥 Check out [decorators syntax](#decorators) to define BDD steps right inside Page Object Models
 
 ## Contents
 
