@@ -10,6 +10,16 @@
     ".": "./dist/index.js",
     "./decorators": "./dist/decorators.js"
   },
+  "typesVersions": {
+    "*": {
+      "index": [
+        "./dist/index.d.ts"
+      ],
+      "decorators": [
+        "./dist/decorators.d.ts"
+      ]
+    }
+  },
   "engines": {
     "node": ">=16"
   },
