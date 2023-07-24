@@ -1,7 +1,7 @@
 import type { KnipConfig } from 'knip';
 
 const config: KnipConfig = {
-  entry: ['src/gen/cli.ts', 'src/index.ts'],
+  entry: ['src/gen/cli.ts', 'src/gen/worker.ts', 'src/index.ts', 'src/decorators.ts'],
   project: ['src/**/*.ts'],
   ignore: ['**/*.d.ts'],
   ignoreDependencies: [

@@ -49,11 +49,3 @@ export function buildStepDefinition(
     uri,
   });
 }
-
-export function doesHaveValue<T>(value: T): boolean {
-  return !doesNotHaveValue(value);
-}
-
-export function doesNotHaveValue<T>(value: T): boolean {
-  return value === null || value === undefined;
-}
