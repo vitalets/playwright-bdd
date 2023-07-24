@@ -17,6 +17,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) runner.
 - [Installation](#installation)
 - [Get started](#get-started)
 - [Configuration](#configuration)
+    + [Multiple projects](#multiple-projects)
     + [ESM](#esm)
 - [Writing features](#writing-features)
     + [Run single feature](#run-single-feature)
@@ -182,6 +183,7 @@ Special `playwright-bdd` options:
 
 Example configuration (CommonJS TypeScript project):
 ```ts
+// playwright.config.ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
@@ -201,27 +203,55 @@ It is convenient to use it as a `testDir` option for Playwright.
 
 > If there is an external `cucumber.js` config file, it is also merged into configuration.
 
+#### Multiple projects
+You can use `playwright-bdd` with multiple [Playwright projects](https://playwright.dev/docs/test-projects). For that just provide separate `defineBddConfig()` for each project:
+
+```ts
+// playwright.config.ts
+import { defineConfig } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
+export default defineConfig({
+  projects: [
+    {
+      name: 'project-one',
+      testDir: defineBddConfig({
+        outputDir: '.features-gen/one',
+        importTestFrom: 'project-one/steps/fixtures.ts',
+        paths: ['project-one/*.feature'],
+        require: ['project-one/steps/*.ts'],
+      }),
+    },
+    {
+      name: 'project-two',
+      testDir: defineBddConfig({
+        outputDir: '.features-gen/two',
+        importTestFrom: 'project-two/steps/fixtures.ts',
+        paths: ['project-two/*.feature'],
+        require: ['project-two/steps/*.ts'],
+      }),
+    },
+  ],
+});
+```
+
+> Note that you should manually define unique `outputDir` for each project. Otherwise generated files will overwrite each other
+
 #### ESM
-If your project runs in ESM (has `"type": "module"` in `package.json`),
-then configuration in `playwright.config.js` should be the following:
+If your project runs in ESM:
+ * has `"type": "module"` in `package.json` 
+ * has `"module": "ESNext"` in `tsconfig.json`
 
-For JavaScript ESM:
+then you should use `import` instead of `require` in `defineBddConfig()`:
+
 ```diff
 const testDir = defineBddConfig({,
--  require: ['steps.js'],
-+  import: ['steps.js'],
+-  require: ['steps/*.ts'],
++  import: ['steps/*.ts'],
 });
 ```
 
-For TypeScript ESM:
-```diff
-const testDir = defineBddConfig({,
--  require: ['steps.js'],
-+  import: ['steps.ts'],
-});
-```
-
-Command to run tests:
+And use [`ts-node/esm`](https://github.com/TypeStrong/ts-node#native-ecmascript-modules) loader to run tests:
 ```
 NODE_OPTIONS='--loader ts-node/esm --no-warnings' npx bddgen && npx playwright test
 ```
