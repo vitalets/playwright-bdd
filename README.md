@@ -860,13 +860,23 @@ This approach was initially implemented: test files were generated directly in `
 
 3. Watching files in `--ui` mode leads to circullar dependency: a change in test files triggers test run which in turn re-imports config and once again triggers a change in test files
 
-For now decoupling *test generation* from *test running* is a better solution for integration with Playwright's tooling.
+For now decoupling **test generation** from **test running** is a better option for integration with Playwright's tooling.
 
 ##### Is it possible to apply `test.use()` in a generated test file?
 Test files generation is a fully automatic process, no manual interceptions allowed.
 But instead of applying `test.use` (that has impact to all tests in a file)
 you can [utilize tags](#accessing-tags) with custom fixtures.
 That is more flexible approach and allows to selectively change settings for a particular scenario/test.
+
+##### Why test files pre-generation is needed?
+The main reason of pre-generating test files in JavaScript - you get all Playwright tooling out-of-box:
+
+  * you can run particular test with single click in [VS Code extension](#vs-code-integration)
+  * you can set breakpoint on particular BDD step
+  * you can watch changes in test files using `--ui` mode
+  * you can do everything you do with regular Playwright tests
+
+Also it provides more transparency on how Playwright **see** your BDD scenarios. If for some reasons you don't want pre-generation - check out [gherkin-wrapper](https://github.com/Niitch/gherkin-wrapper) project, it runs BDD scenarios on-the-fly.
 
 ## Limitations
 
