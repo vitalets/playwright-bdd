@@ -862,7 +862,7 @@ Then('I see in title {string}', async ({ page }, text) => {
 
 ## FAQ
 
-##### Is it possible to run BDD tests in a single command? 
+##### 🔹 Is it possible to run BDD tests in a single command? 
 This approach was initially implemented: test files were generated directly in `playwright.config.ts` before test execution. It allowed to run tests with `npx playwright test` instead of having two commands as `npx bddgen && npx playwright test`. But later several issues appeared:
 
 1. It became really hard to decide when to generate test files because Playwright config is executed many times from different sources: workers, VS Code extension, UI mode, etc.
@@ -873,13 +873,13 @@ This approach was initially implemented: test files were generated directly in `
 
 For now decoupling **test generation** from **test running** is a better option for integration with Playwright's tooling.
 
-##### Is it possible to apply `test.use()` in a generated test file?
+##### 🔹 Is it possible to apply `test.use()` in a generated test file?
 Test files generation is a fully automatic process, no manual interceptions allowed.
 But instead of applying `test.use` (that has impact to all tests in a file)
 you can [utilize tags](#accessing-tags) with custom fixtures.
 That is more flexible approach and allows to selectively change settings for a particular scenario/test.
 
-##### Why test files pre-generation is needed?
+##### 🔹 Why test files pre-generation is needed?
 The main reason of pre-generating test files in JavaScript - you get all Playwright tooling out-of-box:
 
   * you can run particular test with single click in [VS Code extension](#vs-code-integration)
