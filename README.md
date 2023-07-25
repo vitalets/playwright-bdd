@@ -692,7 +692,7 @@ Scenario: Adding todos
 
 ## Ignoring generated files
 Generated test files should be in `.gitignore` as they are produced from `.feature` files.
-Important note that Playwright stores screenshots/snapshots next to test files, so
+Important note that Playwright stores snapshots next to test files, so
 instead of ignoring the whole `.features-gen` directory you'd better ignore only `*.spec.js` files:
 ```
 **/.features-gen/**/*.spec.js
