@@ -34,6 +34,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) runner.
     + [Custom World](#custom-world)
 - [Decorators](#decorators)
   * [Inheritance](#inheritance)
+- [Ignoring generated files](#ignoring-generated-files)
 - [Watch mode](#watch-mode)
 - [Debugging](#debugging)
 - [API](#api)
@@ -156,6 +157,8 @@ to quickly check how it works.
    </details>
 
 5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
+
+> Don't forget to [git-ignore generated files](#ignoring-generated-files) 
 
 ## Configuration
 Configuration is passed to `defineBddConfig()` inside Playwright config file.
@@ -685,6 +688,14 @@ For that you can apply special tag `@fixture:%name%`:
 @fixture:adminTodoPage
 Scenario: Adding todos
   Given I am on todo page # <- step will be called on AdminTodoPage, although defined in TodoPage
+```
+
+## Ignoring generated files
+Generated test files should be in `.gitignore` as they are produced from `.feature` files.
+Important note that Playwright stores screenshots/snapshots next to test files, so
+instead of ignoring the whole `.features-gen` directory you'd better ignore only `*.spec.js` files:
+```
+**/.features-gen/**/*.spec.js
 ```
 
 ## Watch mode
