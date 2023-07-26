@@ -6,7 +6,7 @@
 
 import { TestType } from '@playwright/test';
 import { BuiltInFixtures } from '../playwright/types';
-import { BDDFixtures } from '../run/baseTest';
+import { BddFixtures, isBddAutoInjectFixture } from '../run/bddFixtures';
 import { PomNode, StepConfig, buildCucumberStepFn } from './defineStep';
 import {
   DefineStepPattern,
@@ -14,10 +14,9 @@ import {
 } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { buildStepDefinition } from '../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import { isBddAutoFixture } from './createBdd';
 
 type CustomFixturesNames<T> = T extends TestType<infer U, infer W>
-  ? Exclude<keyof U | keyof W, keyof (BuiltInFixtures & BDDFixtures) | symbol | number>
+  ? Exclude<keyof U | keyof W, keyof (BuiltInFixtures & BddFixtures) | symbol | number>
   : Exclude<keyof T, symbol | number>;
 
 type DecoratedMethod = Function & { [decoratedStepSymbol]: StepConfig };
@@ -53,7 +52,7 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
   decoratedSteps.forEach((stepConfig) => {
     const { keyword, pattern, fn } = stepConfig;
     stepConfig.fn = (fixturesArg: Record<string, unknown>, ...args: unknown[]) => {
-      const fixture = getFirstNonAutoFixture(fixturesArg, stepConfig);
+      const fixture = getFirstNonAutoInjectFixture(fixturesArg, stepConfig);
       return fn.call(fixture, ...args);
     };
     const code = buildCucumberStepFn(stepConfig);
@@ -111,10 +110,13 @@ function getDecoratedSteps(Ctor: Function) {
   );
 }
 
-function getFirstNonAutoFixture(fixturesArg: Record<string, unknown>, stepConfig: StepConfig) {
+function getFirstNonAutoInjectFixture(
+  fixturesArg: Record<string, unknown>,
+  stepConfig: StepConfig,
+) {
   // there should be exatcly one suitable fixture in fixturesArg
   const fixtureNames = Object.keys(fixturesArg).filter(
-    (fixtureName) => !isBddAutoFixture(fixtureName),
+    (fixtureName) => !isBddAutoInjectFixture(fixtureName),
   );
 
   if (fixtureNames.length === 0) {

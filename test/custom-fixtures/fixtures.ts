@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test';
-import { test as base } from '../../dist/run/baseTest';
+import { test as base } from '../../dist';
 
 class TodoPage {
   prop = '123';

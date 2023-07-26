@@ -6,9 +6,13 @@ import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_b
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
-import { TestInfo, TestType } from '@playwright/test';
+import { TestType } from '@playwright/test';
 import { exitWithMessage } from '../utils';
-import { test as baseTest } from '../run/baseTest';
+import {
+  BddAutoInjectFixtures,
+  test as baseTest,
+  isBddAutoInjectFixture,
+} from '../run/bddFixtures';
 import { isParentChildTest } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
 
@@ -24,15 +28,8 @@ export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   return { Given, When, Then };
 }
 
-// these fixtures automatically injected into every step call
-type BddAutoFixtures = {
-  $testInfo: TestInfo; // todo: deprecate $testInfo in favor of $test.info()
-  $test: TestTypeCommon;
-  $tags: string[];
-};
-
 type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> &
-  BddAutoFixtures;
+  BddAutoInjectFixtures;
 type StepFunction<T extends KeyValue, W extends KeyValue> = (
   fixtures: StepFunctionFixturesArg<T, W>,
   ...args: any[]
@@ -53,14 +50,8 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
   };
 }
 
-const BDD_AUTO_FIXTURES: (keyof BddAutoFixtures)[] = ['$testInfo', '$test', '$tags'];
-
-export function isBddAutoFixture(name: string) {
-  return BDD_AUTO_FIXTURES.includes(name as keyof BddAutoFixtures);
-}
-
 export function extractFixtureNames(fn?: Function) {
-  return fixtureParameterNames(fn).filter((name) => !isBddAutoFixture(name));
+  return fixtureParameterNames(fn).filter((name) => !isBddAutoInjectFixture(name));
 }
 
 function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(

@@ -1,4 +1,4 @@
-import { test as base } from '@playwright/test';
+import { TestInfo, test as base } from '@playwright/test';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadSteps } from '../cucumber/loadSteps';
 import { World, getWorldConstructor } from './world';
@@ -7,7 +7,7 @@ import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 
-export type BDDFixtures = {
+export type BddFixtures = {
   cucumberWorld: World;
   Given: World['invokeStep'];
   When: World['invokeStep'];
@@ -18,7 +18,7 @@ export type BDDFixtures = {
   $test: TestTypeCommon;
 };
 
-export const test = base.extend<BDDFixtures>({
+export const test = base.extend<BddFixtures>({
   cucumberWorld: async (
     { page, context, browser, browserName, request, $tags, $test },
     use,
@@ -56,10 +56,19 @@ export const test = base.extend<BDDFixtures>({
   Then: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
   And: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
   But: ({ cucumberWorld }, use) => use(cucumberWorld.invokeStep),
+  // Init $tags fixture with empty array. Can be owerwritten in test file
   $tags: ({}, use) => use([]),
-  /**
-   * This fixture holds reference to current test.
-   * Initially we set 'base', but it will be always overwritten in spec files.
-   */
+  // Init $test fixture with base test, but it will be always overwritten in test file
   $test: ({}, use) => use(base),
 });
+
+/** these fixtures automatically injected into every step call */
+export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags'> & {
+  $testInfo: TestInfo; // todo: deprecate $testInfo in favor of $test.info()
+};
+
+const BDD_AUTO_INJECT_FIXTURES: (keyof BddAutoInjectFixtures)[] = ['$testInfo', '$test', '$tags'];
+
+export function isBddAutoInjectFixture(name: string) {
+  return BDD_AUTO_INJECT_FIXTURES.includes(name as keyof BddAutoInjectFixtures);
+}

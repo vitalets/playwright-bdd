@@ -1,4 +1,4 @@
-import { test as base } from '../../../dist/run/baseTest';
+import { test as base } from '../../../dist';
 import { TodoPage, TodoPage2, AdminTodoPage, TodoPageOnlyFixture } from './TodoPage';
 
 type Fixtures = {
