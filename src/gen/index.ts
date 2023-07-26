@@ -11,7 +11,7 @@ import { loadFeatures } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
-import { exitWithMessage, log } from '../utils';
+import { exitWithMessage, getCommonPath, log } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
@@ -54,17 +54,26 @@ function buildFiles(
   supportCodeLibrary: ISupportCodeLibrary,
   config: BDDConfig,
 ) {
-  const files: TestFile[] = [];
-  features.forEach((pickles, doc) => {
-    const file = new TestFile({
+  const outputPaths = buildOutputPaths(features, config);
+  return [...features.entries()].map(([doc, pickles]) => {
+    return new TestFile({
       doc,
       pickles,
       supportCodeLibrary,
+      outputPath: outputPaths.get(doc)!,
       config,
     }).build();
-    files.push(file);
   });
-  return files;
+}
+
+function buildOutputPaths(features: Map<GherkinDocument, Pickle[]>, { outputDir }: BDDConfig) {
+  // these are always relative
+  const docs = [...features.keys()];
+  const featurePaths = docs.map((doc) => doc.uri!);
+  const commonPath = getCommonPath(featurePaths);
+  const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
+  const outputPaths = relativePaths.map((p) => path.join(outputDir, `${p}.spec.js`));
+  return new Map(outputPaths.map((p, i) => [docs[i], p]));
 }
 
 async function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {

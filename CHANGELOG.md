@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/32)
+
 ## 4.0.0
 * Fix running several Playwright projects with shared steps [#32](https://github.com/vitalets/playwright-bdd/issues/32)
 * Support decorators for defining steps [#35](https://github.com/vitalets/playwright-bdd/issues/35) (set minimal Playwright version to **1.33**)

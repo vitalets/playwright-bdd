@@ -36,6 +36,7 @@ type TestFileOptions = {
   doc: GherkinDocument;
   pickles: Pickle[];
   supportCodeLibrary: ISupportCodeLibrary;
+  outputPath: string;
   config: BDDConfig;
 };
 
@@ -56,7 +57,6 @@ export type UndefinedStep = {
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
-  private _outputPath?: string;
   private testFileTags = new TestFileTags();
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
@@ -82,21 +82,7 @@ export class TestFile {
   }
 
   get outputPath() {
-    if (!this._outputPath) {
-      const relativeSourceFile = path.isAbsolute(this.sourceFile)
-        ? path.relative(process.cwd(), this.sourceFile)
-        : this.sourceFile;
-
-      // remove ".." to keep all generated files in outputDir
-      const finalPath = relativeSourceFile
-        .split(path.sep)
-        .filter((part) => part !== '..')
-        .join(path.sep);
-
-      this._outputPath = path.join(this.config.outputDir, `${finalPath}.spec.js`);
-    }
-
-    return this._outputPath;
+    return this.options.outputPath;
   }
 
   build() {
