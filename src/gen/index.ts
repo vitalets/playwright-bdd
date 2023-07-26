@@ -60,6 +60,7 @@ function buildFiles(
       doc,
       pickles,
       supportCodeLibrary,
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       outputPath: outputPaths.get(doc)!,
       config,
     }).build();
@@ -69,6 +70,7 @@ function buildFiles(
 function buildOutputPaths(features: Map<GherkinDocument, Pickle[]>, { outputDir }: BDDConfig) {
   // these are always relative
   const docs = [...features.keys()];
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const featurePaths = docs.map((doc) => doc.uri!);
   const commonPath = getCommonPath(featurePaths);
   const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
