@@ -57,6 +57,7 @@ Such approach brings all the benefits of Playwright runner:
 * Automatic browser initialization and cleanup
 * Usage of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
 * Parallelize execution with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
+* Builtin [screenshot testing](https://playwright.dev/docs/test-snapshots)
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## Installation
