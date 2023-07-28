@@ -82,7 +82,7 @@ export class TestFilesGenerator {
   }
 
   buildOutputPaths() {
-    // these are always relative: todo add test for that
+    // these are always relative (coming after cucumber handling)
     const docs = [...this.features.keys()];
     const featurePaths = docs.map((doc) => doc.uri!);
     const commonPath = getCommonPath(featurePaths);
