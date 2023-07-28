@@ -17,110 +17,212 @@ import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 import { requireTransform } from '../playwright/transform';
 
-export async function generateTestFiles(config: BDDConfig) {
-  const { runConfiguration } = await loadCucumberConfig({
-    provided: extractCucumberConfig(config),
-  });
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
-  warnForTsNodeRegister(runConfiguration);
+export class TestFilesGenerator {
+  // all these props are exist
+  private runConfiguration!: IRunConfiguration;
+  private features!: Map<GherkinDocument, Pickle[]>;
+  private supportCodeLibrary!: ISupportCodeLibrary;
+  private files: TestFile[] = [];
 
-  const [features, supportCodeLibrary] = await Promise.all([
-    loadFeatures(runConfiguration),
-    loadSteps(runConfiguration),
-  ]);
+  constructor(private config: BDDConfig) {}
 
-  await loadDecoratorSteps(config, supportCodeLibrary);
+  async generate() {
+    await this.loadCucumberConfig();
+    await this.loadFeaturesAndSteps();
+    this.buildFiles();
+    await this.checkUndefinedSteps();
+    this.checkImportCustomTest();
+    await this.clearOutputDir();
+    await this.saveFiles();
+  }
 
-  const files = buildFiles(features, supportCodeLibrary, config);
-  await checkUndefinedSteps(files, runConfiguration, supportCodeLibrary);
-  checkImportCustomTest(files, config);
-  const paths = await saveFiles(files, config);
-  if (config.verbose) log(`Generated files: ${paths.length}`);
+  private async loadCucumberConfig() {
+    const { runConfiguration } = await loadCucumberConfig({
+      provided: extractCucumberConfig(this.config),
+    });
+    this.runConfiguration = runConfiguration;
+    this.warnForTsNodeRegister();
+  }
 
-  return paths;
-}
+  private async loadFeaturesAndSteps() {
+    const [features, supportCodeLibrary] = await Promise.all([
+      loadFeatures(this.runConfiguration),
+      loadSteps(this.runConfiguration),
+    ]);
 
-async function loadDecoratorSteps(config: BDDConfig, supportCodeLibrary: ISupportCodeLibrary) {
-  if (config.importTestFrom) {
-    // require importTestFrom for case when it is not required by step definitions
-    // possible re-require but it's not a problem as it is cached by Node.js
-    await requireTransform().requireOrImport(config.importTestFrom.file);
-    appendDecoratorSteps(supportCodeLibrary);
+    this.features = features;
+    this.supportCodeLibrary = supportCodeLibrary;
+
+    await this.loadDecoratorSteps();
+  }
+
+  async loadDecoratorSteps() {
+    const { importTestFrom } = this.config;
+    if (importTestFrom) {
+      // require importTestFrom for case when it is not required by step definitions
+      // possible re-require but it's not a problem as it is cached by Node.js
+      await requireTransform().requireOrImport(importTestFrom.file);
+      appendDecoratorSteps(this.supportCodeLibrary);
+    }
+  }
+
+  private buildFiles() {
+    const outputPaths = this.buildOutputPaths();
+    this.files = [...this.features.entries()].map(([doc, pickles]) => {
+      return new TestFile({
+        doc,
+        pickles,
+        supportCodeLibrary: this.supportCodeLibrary,
+        outputPath: outputPaths.get(doc)!,
+        config: this.config,
+      }).build();
+    });
+  }
+
+  buildOutputPaths() {
+    // these are always relative: todo add test for that
+    const docs = [...this.features.keys()];
+    const featurePaths = docs.map((doc) => doc.uri!);
+    const commonPath = getCommonPath(featurePaths);
+    const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
+    const outputPaths = relativePaths.map((p) => path.join(this.config.outputDir, `${p}.spec.js`));
+    return new Map(outputPaths.map((p, i) => [docs[i], p]));
+  }
+
+  private async checkUndefinedSteps() {
+    const undefinedSteps = this.files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
+    if (undefinedSteps > 0) {
+      const snippets = new Snippets(this.files, this.runConfiguration, this.supportCodeLibrary);
+      await snippets.printSnippetsAndExit();
+    }
+  }
+
+  private checkImportCustomTest() {
+    if (this.config.importTestFrom) return;
+    const hasCustomTest = this.files.some((file) => file.hasCustomTest);
+    if (hasCustomTest) {
+      exitWithMessage(
+        `When using custom "test" function in createBdd() you should`,
+        `set "importTestFrom" config option that points to file exporting custom test.`,
+      );
+    }
+  }
+
+  async saveFiles() {
+    this.files.forEach((file) => {
+      file.save();
+      if (this.config.verbose) {
+        log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
+      }
+    });
+    if (this.config.verbose) log(`Generated files: ${this.files.length}`);
+  }
+
+  async clearOutputDir() {
+    const testFiles = await fg(path.join(this.config.outputDir, '**', '*.spec.js'));
+    const tasks = testFiles.map((testFile) => fs.rm(testFile));
+    await Promise.all(tasks);
+  }
+
+  warnForTsNodeRegister() {
+    if (hasTsNodeRegister(this.runConfiguration)) {
+      log(
+        `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
+        `Remove this option from defineBddConfig() and`,
+        `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
+      );
+    }
   }
 }
 
-function buildFiles(
-  features: Map<GherkinDocument, Pickle[]>,
-  supportCodeLibrary: ISupportCodeLibrary,
-  config: BDDConfig,
-) {
-  const outputPaths = buildOutputPaths(features, config);
-  return [...features.entries()].map(([doc, pickles]) => {
-    return new TestFile({
-      doc,
-      pickles,
-      supportCodeLibrary,
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      outputPath: outputPaths.get(doc)!,
-      config,
-    }).build();
-  });
-}
+// export async function generateTestFiles(config: BDDConfig) {
+//   const { runConfiguration } = await loadCucumberConfig({
+//     provided: extractCucumberConfig(config),
+//   });
 
-function buildOutputPaths(features: Map<GherkinDocument, Pickle[]>, { outputDir }: BDDConfig) {
-  // these are always relative
-  const docs = [...features.keys()];
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const featurePaths = docs.map((doc) => doc.uri!);
-  const commonPath = getCommonPath(featurePaths);
-  const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
-  const outputPaths = relativePaths.map((p) => path.join(outputDir, `${p}.spec.js`));
-  return new Map(outputPaths.map((p, i) => [docs[i], p]));
-}
+//   const files = buildFiles(features, supportCodeLibrary, config);
+//   await checkUndefinedSteps(files, runConfiguration, supportCodeLibrary);
+//   checkImportCustomTest(files, config);
+//   const paths = await saveFiles(files, config);
+//   if (config.verbose) log(`Generated files: ${paths.length}`);
 
-async function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
-  await clearDir(outputDir);
-  return files.map((file) => {
-    file.save();
-    if (verbose) log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
-    return file.outputPath;
-  });
-}
+//   return paths;
+// }
 
-async function clearDir(dir: string) {
-  const testFiles = await fg(path.join(dir, '**', '*.spec.js'));
-  const tasks = testFiles.map((testFile) => fs.rm(testFile));
-  await Promise.all(tasks);
-}
+// function buildFiles(
+//   features: Map<GherkinDocument, Pickle[]>,
+//   supportCodeLibrary: ISupportCodeLibrary,
+//   config: BDDConfig,
+// ) {
+//   const outputPaths = buildOutputPaths(features, config);
+//   return [...features.entries()].map(([doc, pickles]) => {
+//     return new TestFile({
+//       doc,
+//       pickles,
+//       supportCodeLibrary,
+//       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+//       outputPath: outputPaths.get(doc)!,
+//       config,
+//     }).build();
+//   });
+// }
 
-async function checkUndefinedSteps(
-  files: TestFile[],
-  runConfiguration: IRunConfiguration,
-  supportCodeLibrary: ISupportCodeLibrary,
-) {
-  const undefinedSteps = files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
-  if (undefinedSteps > 0) {
-    const snippets = new Snippets(files, runConfiguration, supportCodeLibrary);
-    await snippets.printSnippetsAndExit();
-  }
-}
+// function buildOutputPaths(features: Map<GherkinDocument, Pickle[]>, { outputDir }: BDDConfig) {
+//   // these are always relative
+//   const docs = [...features.keys()];
+//   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+//   const featurePaths = docs.map((doc) => doc.uri!);
+//   const commonPath = getCommonPath(featurePaths);
+//   const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
+//   const outputPaths = relativePaths.map((p) => path.join(outputDir, `${p}.spec.js`));
+//   return new Map(outputPaths.map((p, i) => [docs[i], p]));
+// }
 
-function checkImportCustomTest(files: TestFile[], config: BDDConfig) {
-  const hasCustomTest = files.some((file) => file.hasCustomTest);
-  if (hasCustomTest && !config.importTestFrom) {
-    exitWithMessage(
-      `When using custom "test" function in createBdd() you should`,
-      `set "importTestFrom" config option that points to file exporting custom test.`,
-    );
-  }
-}
+// async function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
+//   await clearDir(outputDir);
+//   return files.map((file) => {
+//     file.save();
+//     if (verbose) log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
+//     return file.outputPath;
+//   });
+// }
 
-function warnForTsNodeRegister(runConfiguration: IRunConfiguration) {
-  if (hasTsNodeRegister(runConfiguration)) {
-    log(
-      `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
-      `Remove this option from defineBddConfig() and`,
-      `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
-    );
-  }
-}
+// async function clearDir(dir: string) {
+//   const testFiles = await fg(path.join(dir, '**', '*.spec.js'));
+//   const tasks = testFiles.map((testFile) => fs.rm(testFile));
+//   await Promise.all(tasks);
+// }
+
+// async function checkUndefinedSteps(
+//   files: TestFile[],
+//   runConfiguration: IRunConfiguration,
+//   supportCodeLibrary: ISupportCodeLibrary,
+// ) {
+//   const undefinedSteps = files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
+//   if (undefinedSteps > 0) {
+//     const snippets = new Snippets(files, runConfiguration, supportCodeLibrary);
+//     await snippets.printSnippetsAndExit();
+//   }
+// }
+
+// function checkImportCustomTest(files: TestFile[], config: BDDConfig) {
+//   const hasCustomTest = files.some((file) => file.hasCustomTest);
+//   if (hasCustomTest && !config.importTestFrom) {
+//     exitWithMessage(
+//       `When using custom "test" function in createBdd() you should`,
+//       `set "importTestFrom" config option that points to file exporting custom test.`,
+//     );
+//   }
+// }
+
+// function warnForTsNodeRegister(runConfiguration: IRunConfiguration) {
+//   if (hasTsNodeRegister(runConfiguration)) {
+//     log(
+//       `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
+//       `Remove this option from defineBddConfig() and`,
+//       `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
+//     );
+//   }
+// }

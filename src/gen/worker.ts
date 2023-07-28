@@ -4,10 +4,10 @@
  */
 
 import { workerData } from 'node:worker_threads';
-import { generateTestFiles } from '.';
+import { TestFilesGenerator } from '.';
 
 main();
 
 async function main() {
-  await generateTestFiles(workerData.config);
+  await new TestFilesGenerator(workerData.config).generate();
 }

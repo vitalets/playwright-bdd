@@ -4,7 +4,7 @@ import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
 import { Command } from 'commander';
-import { generateTestFiles } from '.';
+import { TestFilesGenerator } from '.';
 import { exitWithMessage } from '../utils';
 import { loadConfig as loadPlaywrightConfig } from '../playwright/loadConfig';
 import { getEnvConfigs } from '../config/env';
@@ -47,7 +47,7 @@ async function generateFilesForConfigs(configs: BDDConfig[], cliConfig: Partial<
   // See: https://github.com/vitalets/playwright-bdd/issues/32
   const tasks = configs.map((config, index) => {
     const finalConfig = { ...config, ...cliConfig };
-    return index === 0 ? generateTestFiles(finalConfig) : runInWorker(finalConfig);
+    return index === 0 ? new TestFilesGenerator(finalConfig).generate() : runInWorker(finalConfig);
   });
 
   return Promise.all(tasks);
