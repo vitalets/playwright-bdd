@@ -4,12 +4,17 @@
  */
 import path from 'node:path';
 import { requirePlaywrightModule } from './utils';
+import { requireTransform } from './transform';
 
-export async function loadConfig(cliConfig?: string) {
-  const { ConfigLoader, resolveConfigFile } = requirePlaywrightModule('lib/common/configLoader.js');
-  const configFileOrDirectory = cliConfig ? path.resolve(process.cwd(), cliConfig) : process.cwd();
-  const resolvedConfigFile = resolveConfigFile(configFileOrDirectory);
-  const configLoader = new ConfigLoader();
+export async function loadConfig(cliConfigPath?: string) {
+  const resolvedConfigFile = resolveConfigFile(cliConfigPath);
+  await requireTransform().requireOrImport(resolvedConfigFile);
+}
 
-  return configLoader.loadConfigFile(resolvedConfigFile, true);
+export function resolveConfigFile(cliConfigPath?: string): string | null {
+  const { resolveConfigFile } = requirePlaywrightModule('lib/common/configLoader.js');
+  const configFileOrDirectory = cliConfigPath
+    ? path.resolve(process.cwd(), cliConfigPath)
+    : process.cwd();
+  return resolveConfigFile(configFileOrDirectory);
 }
