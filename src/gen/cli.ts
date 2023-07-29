@@ -23,13 +23,13 @@ program
   .action(async (opts) => {
     await loadPlaywrightConfig(opts.config);
     const configs = Object.values(getEnvConfigs());
-    const cliConfig = buildCliConfig(opts);
-    await generateFilesForConfigs(configs, cliConfig);
+    const cliOptions = buildCliOptions(opts);
+    await generateFilesForConfigs(configs, cliOptions);
   });
 
 program.parse();
 
-function buildCliConfig(opts: { verbose?: boolean }) {
+function buildCliOptions(opts: { verbose?: boolean }) {
   const config: Partial<BDDConfig> = {};
   if ('verbose' in opts) config.verbose = Boolean(opts.verbose);
   return config;
