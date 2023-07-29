@@ -6,6 +6,7 @@ import { extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
+import { getPlaywrightConfigDir } from '../config/dir';
 
 export type BddFixtures = {
   cucumberWorld: World;
@@ -28,7 +29,8 @@ export const test = base.extend<BddFixtures>({
     const { runConfiguration } = await loadCucumberConfig({
       provided: extractCucumberConfig(config),
     });
-    const supportCodeLibrary = await loadSteps(runConfiguration);
+    const environment = { cwd: getPlaywrightConfigDir() };
+    const supportCodeLibrary = await loadSteps(runConfiguration, environment);
 
     appendDecoratorSteps(supportCodeLibrary);
 

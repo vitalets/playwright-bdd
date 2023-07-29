@@ -16,6 +16,7 @@ import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 import { requireTransform } from '../playwright/transform';
+import { getPlaywrightConfigDir } from '../config/dir';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -47,9 +48,10 @@ export class TestFilesGenerator {
   }
 
   private async loadFeaturesAndSteps() {
+    const environment = { cwd: getPlaywrightConfigDir() };
     const [features, supportCodeLibrary] = await Promise.all([
-      loadFeatures(this.runConfiguration),
-      loadSteps(this.runConfiguration),
+      loadFeatures(this.runConfiguration, environment),
+      loadSteps(this.runConfiguration, environment),
     ]);
 
     this.features = features;

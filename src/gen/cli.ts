@@ -58,5 +58,6 @@ async function runInWorker(config: BDDConfig) {
     workerData: { config },
   });
 
+  // todo: check if worker exited with error?
   await once(worker, 'exit');
 }

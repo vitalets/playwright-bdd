@@ -5,6 +5,7 @@ import path from 'node:path';
 import { ImportTestFrom } from '../gen/formatter';
 import { IConfiguration } from '@cucumber/cucumber/api';
 import { saveConfigToEnv } from './env';
+import { getPlaywrightConfigDir } from './dir';
 
 // todo: pick only relevant fields from cucumber config
 type CucumberConfig = Partial<IConfiguration>;
@@ -47,11 +48,12 @@ export function defineBddConfig(inputConfig?: BDDInputConfig) {
 
 function getConfig(inputConfig?: BDDInputConfig) {
   const config = Object.assign({}, defaults, inputConfig);
+  const configDir = getPlaywrightConfigDir();
   return {
     ...config,
     // important to resolve outputDir as it is used as unique key for input configs
-    outputDir: path.resolve(config.outputDir),
-    importTestFrom: resolveImportTestFrom(config.importTestFrom),
+    outputDir: path.resolve(configDir, config.outputDir),
+    importTestFrom: resolveImportTestFrom(configDir, config.importTestFrom),
   };
 }
 
@@ -62,7 +64,7 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
   return cucumberConfig;
 }
 
-function resolveImportTestFrom(importTestFrom?: string | ImportTestFrom) {
+function resolveImportTestFrom(configDir: string, importTestFrom?: string | ImportTestFrom) {
   if (importTestFrom) {
     const { file, varName } =
       typeof importTestFrom === 'string'
@@ -70,7 +72,7 @@ function resolveImportTestFrom(importTestFrom?: string | ImportTestFrom) {
         : importTestFrom;
 
     return {
-      file: path.resolve(file),
+      file: path.resolve(configDir, file),
       varName,
     };
   }

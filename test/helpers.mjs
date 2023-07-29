@@ -2,6 +2,7 @@ import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import test from 'node:test';
+import fs from 'node:fs';
 import { expect } from '@playwright/test';
 
 const stdioForErrors = process.env.TEST_DEBUG ? 'inherit' : 'pipe';
@@ -50,4 +51,9 @@ export function defineTestOnly(test) {
     if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
     test(title, { only: true }, fn);
   };
+}
+
+export function expectFileExists(importMeta, file) {
+  const absPath = new URL(file, importMeta.url);
+  assert(fs.existsSync(absPath), `Missing file: ${file}`);
 }
