@@ -5,7 +5,7 @@ import { DataTable } from '@cucumber/cucumber';
 import { createBdd } from '../../../dist';
 import { test } from './fixtures';
 
-const { Given, When, Then } = createBdd(test);
+const { Given, When, Then, Step } = createBdd(test);
 
 Given('State {int}', async () => {
   // noop
@@ -60,7 +60,7 @@ Then('Context prop {string} to equal {string}', async ({ ctx }, key: string, val
   expect(String(ctx[key])).toEqual(value);
 });
 
-Then('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string) => {
+Step('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string) => {
   expect($tags.join(' ')).toEqual(tags);
   expect(tagsFromCustomFixture.join(' ')).toEqual(tags);
 });

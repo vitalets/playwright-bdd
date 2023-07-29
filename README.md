@@ -734,7 +734,7 @@ Defines BDD config inside Playwright config file.
 **Returns**: *string* - directory where test files will be generated
 
 ##### `createBdd(test?)`
-Creates `Given`, `When`, `Then` functions for defining steps.
+Creates `Given`, `When`, `Then`, `Step` functions for defining steps.
 
 **Params**
   * `test` *object* - custom test instance
@@ -764,6 +764,14 @@ Defines `Then` step implementation.
   * `pattern` *string | regexp* - step pattern
   * `fixtures` *object* - Playwright fixtures
   * `...args` *array* - arguments captured from step pattern
+
+##### `Step(pattern, (fixtures, ...args) => void)`
+Defines universal step implementation.
+
+**Params**
+  * `pattern` *string | regexp* - step pattern
+  * `fixtures` *object* - Playwright fixtures
+  * `...args` *array* - arguments captured from step pattern  
 
 ##### `@Fixture(fixtureName)`
 Class decorator to bind POM with fixture name.

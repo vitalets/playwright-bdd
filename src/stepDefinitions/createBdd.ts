@@ -25,7 +25,8 @@ export function createBdd<T extends KeyValue = {}, W extends KeyValue = {}>(
   const Given = defineStepCtor<T, W>('Given', hasCustomTest);
   const When = defineStepCtor<T, W>('When', hasCustomTest);
   const Then = defineStepCtor<T, W>('Then', hasCustomTest);
-  return { Given, When, Then };
+  const Step = defineStepCtor<T, W>('Unknown', hasCustomTest);
+  return { Given, When, Then, Step };
 }
 
 type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> &
