@@ -2,6 +2,7 @@
 
 ## dev
 * Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/32)
+* Imporve support for several calls of `defineBddConfig()` [#39](https://github.com/vitalets/playwright-bdd/issues/39)
 
 ## 4.0.0
 * Fix running several Playwright projects with shared steps [#32](https://github.com/vitalets/playwright-bdd/issues/32)
