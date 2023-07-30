@@ -1,14 +1,9 @@
-import { Page } from '@playwright/test';
 import { test as base } from '../../dist';
 
 class MyPage {
-  constructor(private page: Page) {}
-
-  async open() {
-    await this.page.goto('https://example.com');
-  }
+  constructor() {}
 }
 
 export const test = base.extend<{ myPage: MyPage }>({
-  myPage: ({ page }, use) => use(new MyPage(page)),
+  myPage: ({}, use) => use(new MyPage()),
 });

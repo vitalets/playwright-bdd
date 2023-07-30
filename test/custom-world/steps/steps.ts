@@ -9,7 +9,10 @@ Then('check custom world', function (this: CustomWorld) {
   expect(this.browserName).toEqual('chromium');
   expect(this.request).toBeDefined();
   expect(this.testInfo).toBeDefined();
-  expect(this.myBrowserName).toEqual('chromium');
+  expect(this.testInfo.title).toEqual('Check custom world');
+  expect(this.test).toBeDefined();
+  expect(this.tags).toEqual(['@mytag']);
+  expect(this.propFromConstructor).toEqual('valueFromConstructor');
   expect(this.propFromInit).toEqual('valueFromInit');
   expect(this.parameters).toEqual({ myParam: 'myValue' });
 });

@@ -1,5 +1,4 @@
-Feature: Example site
+Feature: snapshots
 
-    Scenario: Check title
-        Given I open url "https://example.com"
-        Then I see correct title
+    Scenario: Check snapshot
+        Then snapshot contains text "Example Domain"

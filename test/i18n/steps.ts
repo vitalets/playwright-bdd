@@ -1,6 +1,7 @@
 import { expect } from '@playwright/test';
-import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from '../../dist';
+import { createBdd } from '../../dist';
+
+const { Given, When, Then } = createBdd();
 
 Given('Состояние {int}', async function () {
   // noop
@@ -14,6 +15,6 @@ Then('Результат {int}', async function () {
   // noop
 });
 
-Then('Переданный аргумент {string} равен "куку"', async function (this: World, arg: string) {
+Then('Переданный аргумент {string} равен "куку"', async function ({}, arg: string) {
   expect(arg).toEqual('куку');
 });

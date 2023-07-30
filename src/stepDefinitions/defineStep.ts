@@ -9,8 +9,9 @@ import {
   DefineStepPattern,
   TestStepFunction,
 } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { World } from '../run/world';
+import { BddWorld } from '../run/bddWorld';
 import { exitWithMessage } from '../utils';
+import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 
 // Page Object Node is used in decorator steps dependency graph
 export type PomNode = {
@@ -30,7 +31,7 @@ export type StepConfig = {
 
 // attach stepConfig to Cucumber step function
 // to keep type of StepDefinition itself unchanged
-export type CucumberStepFunction = TestStepFunction<World> & {
+export type CucumberStepFunction = TestStepFunction<BddWorld> & {
   stepConfig?: StepConfig;
 };
 
@@ -70,6 +71,14 @@ export function buildCucumberStepFn(stepConfig: StepConfig) {
   code.stepConfig = stepConfig;
 
   return code;
+}
+
+export function getStepConfig(step: StepDefinition) {
+  return (step.code as CucumberStepFunction).stepConfig;
+}
+
+export function isPlaywrightStyle(step: StepDefinition) {
+  return Boolean(getStepConfig(step));
 }
 
 function getCucumberDefineStepFn(keyword: GherkinStepKeyword) {

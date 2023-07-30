@@ -478,7 +478,7 @@ This is done intentionally to keep test titles unchanged. Waiting for Playwright
 
 However, you can simply put Playwright tags into scenario name:
 ```gherkin
-Feature: Playwright site
+Feature: Playwright site @desktop
     
     Scenario: Check title @slow
       ...
@@ -524,61 +524,62 @@ Cucumber-style step definitions are compatible with CucumberJS:
 
 * import `Given`, `When`, `Then` from `@cucumber/cucumber` package
 * [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrow functions!) 
-* use `World` from `playwright-bdd` to access Playwright API 
+* use `BddWorld` from `playwright-bdd` to access Playwright API 
 
 Example (TypeScript):
 
 ```ts
 import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from 'playwright-bdd';
+import { BddWorld } from 'playwright-bdd';
 import { expect } from '@playwright/test';
 
-Given('I open url {string}', async function (this: World, url: string) {
+Given('I open url {string}', async function (this: BddWorld, url: string) {
   await this.page.goto(url);
 });
 
-When('I click link {string}', async function (this: World, name: string) {
+When('I click link {string}', async function (this: BddWorld, name: string) {
   await this.page.getByRole('link', { name }).click();
 });
 
-Then('I see in title {string}', async function (this: World, keyword: string) {
+Then('I see in title {string}', async function (this: BddWorld, keyword: string) {
   await expect(this.page).toHaveTitle(new RegExp(keyword));
 });
 ```
 
 #### World
-Playwright-bdd extends [Cucumber World](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md) with Playwright [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) and [testInfo](https://playwright.dev/docs/test-advanced#testinfo-object). Simply use `this.page` or `this.testInfo` in step definitions:
+Playwright-bdd provides `BddWorld` extending [Cucumber World](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md) with Playwright [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) and [testInfo](https://playwright.dev/docs/test-advanced#testinfo-object). Simply use `this.page` or `this.testInfo` in step definitions:
 
 ```js
 import { Given, When, Then } from '@cucumber/cucumber';
 
 Given('I open url {string}', async function (url) {
+  console.log(this.testInfo.title);
   await this.page.goto(url);
 });
 ```
 
-In TypeScript you should import `World` from `playwright-bdd` for proper typing:
+In TypeScript you should import `BddWorld` type from `playwright-bdd` for proper typing:
 ```ts
 import { Given, When, Then } from '@cucumber/cucumber';
-import { World } from 'playwright-bdd';
+import { BddWorld } from 'playwright-bdd';
 
-Given('I open url {string}', async function (this: World, url: string) {
+Given('I open url {string}', async function (this: BddWorld, url: string) {
   await this.page.goto(url);
 });
 ```
 
-Check out [all available props of World](https://github.com/vitalets/playwright-bdd/blob/main/src/run/world.ts). 
+Check out [all available props of BddWorld](https://github.com/vitalets/playwright-bdd/blob/main/src/run/bddWorld.ts). 
 
 #### Custom World
-To use Custom World you should inherit it from playwright-bdd `World` and pass to Cucumber's `setWorldConstructor`:
+To use Custom World you should inherit it from `BddWorld` and pass to Cucumber's `setWorldConstructor`:
 
 ```ts
 import { setWorldConstructor } from '@cucumber/cucumber';
-import { World, WorldOptions } from 'playwright-bdd';
+import { BddWorld, BddWorldOptions } from 'playwright-bdd';
 
-export class CustomWorld extends World {
+export class CustomWorld extends BddWorld {
   myBaseUrl: string;
-  constructor(options: WorldOptions) {
+  constructor(options: BddWorldOptions) {
     super(options);
     this.myBaseUrl = 'https://playwright.dev';
   }
@@ -590,7 +591,7 @@ export class CustomWorld extends World {
 
 setWorldConstructor(CustomWorld);
 ```
-> Consider asynchronous setup and teardown of World instance with `init()` / `destroy()` methods.
+> Consider asynchronous setup and teardown of `BddWorld` using `init()` / `destroy()` methods.
 
 See [full example of Cucumber-style](examples/cucumber-style).
 

@@ -1,9 +1,8 @@
-import { Page } from '@playwright/test';
 import { test as base } from '../../dist';
 
 class TodoPage {
   prop = '123';
-  constructor(public page: Page) {}
+  constructor() {}
 }
 
 class Account {
@@ -12,8 +11,8 @@ class Account {
 
 export const test = base.extend<{ option: string; todoPage: TodoPage }, { account: Account }>({
   option: ['foo', { option: true }],
-  todoPage: async ({ page }, use) => {
-    await use(new TodoPage(page));
+  todoPage: async ({}, use) => {
+    await use(new TodoPage());
   },
   account: [
     async ({}, use) => {

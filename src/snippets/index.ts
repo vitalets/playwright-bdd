@@ -7,7 +7,7 @@ import { loadSnippetBuilder } from '../cucumber/loadSnippetBuilder';
 import { TestFile, UndefinedStep } from '../gen/testFile';
 import { exitWithMessage } from '../utils';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
-import { CucumberStepFunction } from '../stepDefinitions/defineStep';
+import { getStepConfig, isPlaywrightStyle } from '../stepDefinitions/defineStep';
 import { logger } from '../utils/logger';
 
 export class Snippets {
@@ -92,15 +92,13 @@ export class Snippets {
   private isPlaywrightStyle() {
     const { stepDefinitions } = this.supportCodeLibrary;
     return stepDefinitions.length > 0
-      ? stepDefinitions.some((d) => (d.code as CucumberStepFunction).stepConfig)
+      ? stepDefinitions.some((step) => isPlaywrightStyle(step))
       : true;
   }
 
   private isDecorators() {
     const { stepDefinitions } = this.supportCodeLibrary;
-    const decoratorSteps = stepDefinitions.filter(
-      (d) => (d.code as CucumberStepFunction).stepConfig?.isDecorator,
-    );
+    const decoratorSteps = stepDefinitions.filter((step) => getStepConfig(step)?.isDecorator);
     return decoratorSteps.length > stepDefinitions.length / 2;
   }
 

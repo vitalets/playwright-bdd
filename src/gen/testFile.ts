@@ -29,7 +29,7 @@ import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { exitWithMessage, template } from '../utils';
-import { CucumberStepFunction, PomNode } from '../stepDefinitions/defineStep';
+import { PomNode, getStepConfig, isPlaywrightStyle } from '../stepDefinitions/defineStep';
 import { POMS, buildFixtureTag } from './poms';
 
 type TestFileOptions = {
@@ -275,6 +275,7 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
+  // eslint-disable-next-line max-statements, complexity
   private getStep(
     step: Step,
     previousKeywordType: KeywordType | undefined,
@@ -291,14 +292,18 @@ export class TestFile {
       language: this.language,
       previousKeywordType,
     });
-    const keyword = this.getKeyword(step);
+    let keyword = this.getStepKeyword(step);
     if (!stepDefinition) {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
       return this.getMissingStep(keyword, keywordType, pickleStep);
     }
     // for cucumber-style stepConfig is undefined
-    const { stepConfig } = stepDefinition.code as CucumberStepFunction;
+    const stepConfig = getStepConfig(stepDefinition);
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
+    // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
+    // to use fixtures with correct bddWorld
+    if (!isPlaywrightStyle(stepDefinition)) keyword = `${keyword}_`;
+    // for decorator steps fixtures defined later in second pass
     const fixtureNames = stepConfig?.isDecorator ? [] : extractFixtureNames(stepConfig?.fn);
     const line = stepConfig?.isDecorator
       ? ''
@@ -337,11 +342,14 @@ export class TestFile {
     throw new Error(`Pickle step not found for step: ${step.text}`);
   }
 
-  private getKeyword(step: Step) {
+  private getStepKeyword(step: Step) {
     const origKeyword = step.keyword.trim();
-    if (origKeyword === '*') return 'And';
-    if (!this.keywordsMap) return origKeyword;
-    const enKeyword = this.keywordsMap.get(origKeyword);
+    let enKeyword;
+    if (origKeyword === '*') {
+      enKeyword = 'And';
+    } else {
+      enKeyword = this.keywordsMap ? this.keywordsMap.get(origKeyword) : origKeyword;
+    }
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
   }

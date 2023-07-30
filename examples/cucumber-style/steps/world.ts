@@ -1,7 +1,7 @@
 import { setWorldConstructor } from '@cucumber/cucumber';
-import { World } from 'playwright-bdd';
+import { BddWorld } from 'playwright-bdd';
 
-export class CustomWorld extends World {
+export class CustomWorld extends BddWorld {
   async openHomePage() {
     await this.page.goto('https://playwright.dev');
   }

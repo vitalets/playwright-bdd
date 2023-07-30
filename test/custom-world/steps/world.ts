@@ -1,16 +1,16 @@
 import { setWorldConstructor } from '@cucumber/cucumber';
-import { World, WorldOptions } from '../../../dist';
+import { BddWorld, BddWorldOptions } from '../../../dist';
 
 export type WorldParameters = {
   foo: string;
 };
 
-export class CustomWorld extends World<WorldParameters> {
-  myBrowserName: string;
+export class CustomWorld extends BddWorld<WorldParameters> {
+  propFromConstructor: string;
   propFromInit = '';
-  constructor(options: WorldOptions<WorldParameters>) {
+  constructor(options: BddWorldOptions<WorldParameters>) {
     super(options);
-    this.myBrowserName = options.browserName;
+    this.propFromConstructor = 'valueFromConstructor';
   }
 
   async init() {

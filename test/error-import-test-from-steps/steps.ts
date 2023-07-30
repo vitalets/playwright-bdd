@@ -7,7 +7,6 @@ export const test = base.extend<{ option: string }>({
 
 const { Given } = createBdd(test);
 
-Given('State {int}', async ({ page, option }) => {
-  expect(page).toBeDefined();
-  expect(option).toBeDefined();
+Given('State {int}', async ({ option }) => {
+  expect(option).toEqual('foo');
 });

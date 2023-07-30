@@ -10,23 +10,27 @@ import { CucumberStepFunction } from '../stepDefinitions/defineStep';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type WorldOptions<ParametersType = any> = IWorldOptions<ParametersType> & {
-  page: Page;
-  context: BrowserContext;
-  browser: Browser;
-  browserName: string;
-  request: APIRequestContext;
+export type BddWorldOptions<ParametersType = any> = IWorldOptions<ParametersType> & {
   testInfo: TestInfo;
   supportCodeLibrary: ISupportCodeLibrary;
   $tags: string[];
   $test: TestTypeCommon;
 };
 
+type BuiltinFixtures = {
+  page: Page;
+  context: BrowserContext;
+  browser: Browser;
+  browserName: string;
+  request: APIRequestContext;
+};
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
+export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType> {
+  builtinFixtures!: BuiltinFixtures;
   customFixtures: unknown;
 
-  constructor(public options: WorldOptions<ParametersType>) {
+  constructor(public options: BddWorldOptions<ParametersType>) {
     super(options);
     this.invokeStep = this.invokeStep.bind(this);
   }
@@ -64,23 +68,23 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
   }
 
   get page() {
-    return this.options.page;
+    return this.builtinFixtures.page;
   }
 
   get context() {
-    return this.options.context;
+    return this.builtinFixtures.context;
   }
 
   get browser() {
-    return this.options.browser;
+    return this.builtinFixtures.browser;
   }
 
   get browserName() {
-    return this.options.browserName;
+    return this.builtinFixtures.browserName;
   }
 
   get request() {
-    return this.options.request;
+    return this.builtinFixtures.request;
   }
 
   get testInfo() {
@@ -107,10 +111,10 @@ export class World<ParametersType = any> extends CucumberWorld<ParametersType> {
 export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   // setWorldConstructor was not called
   if (supportCodeLibrary.World === CucumberWorld) {
-    return World;
+    return BddWorld;
   }
-  if (!Object.prototype.isPrototypeOf.call(World, supportCodeLibrary.World)) {
+  if (!Object.prototype.isPrototypeOf.call(BddWorld, supportCodeLibrary.World)) {
     throw new Error(`CustomWorld should inherit from playwright-bdd World`);
   }
-  return supportCodeLibrary.World as typeof World;
+  return supportCodeLibrary.World as typeof BddWorld;
 }

@@ -1,8 +1,14 @@
 # Changelog
 
 ## dev
-* **breaking:** Resolve paths relative to Playwright config file, not to `process.cwd()`
-* **breaking:** Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/32)
+There are several breaking changes in this release. 
+Please check carefully after upgrade.
+* **breaking:** Optimize world initialization, rename `World` -> `BddWorld`, `WorldOptions` -> `BddWorldOptions`.
+  *If you use these classes you will need tohould rename it as well*
+* **breaking:** Resolve paths relative to Playwright config file, not to `process.cwd()`.
+  *If you use custom Playwright config file you will need to update paths in it*
+* **breaking:** Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/32).
+  *If you use snapshots you will need to re-save them in new paths*
 * Imporve support for several calls of `defineBddConfig()` [#39](https://github.com/vitalets/playwright-bdd/issues/39)
 
 ## 4.0.0
