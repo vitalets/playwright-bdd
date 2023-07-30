@@ -30,10 +30,13 @@ export type BddFixtures = {
 export const test = base.extend<BddFixtures>({
   $bddWorldBase: async ({ $tags, $test }, use, testInfo) => {
     const config = getConfigFromEnv(testInfo.project.testDir);
-    const { runConfiguration } = await loadCucumberConfig({
-      provided: extractCucumberConfig(config),
-    });
     const environment = { cwd: getPlaywrightConfigDir() };
+    const { runConfiguration } = await loadCucumberConfig(
+      {
+        provided: extractCucumberConfig(config),
+      },
+      environment,
+    );
     const supportCodeLibrary = await loadSteps(runConfiguration, environment);
 
     appendDecoratorSteps(supportCodeLibrary);
@@ -62,6 +65,7 @@ export const test = base.extend<BddFixtures>({
     };
     await use($bddWorldBase);
   },
+
   // below fixtures are used in playwright-style
   // and does not automatically init Playwright builtin fixtures
   Given: ({ $bddWorldBase }, use) => use($bddWorldBase.invokeStep),

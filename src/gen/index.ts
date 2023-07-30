@@ -41,9 +41,13 @@ export class TestFilesGenerator {
   }
 
   private async loadCucumberConfig() {
-    const { runConfiguration } = await loadCucumberConfig({
-      provided: extractCucumberConfig(this.config),
-    });
+    const environment = { cwd: getPlaywrightConfigDir() };
+    const { runConfiguration } = await loadCucumberConfig(
+      {
+        provided: extractCucumberConfig(this.config),
+      },
+      environment,
+    );
     this.runConfiguration = runConfiguration;
     this.warnForTsNodeRegister();
   }

@@ -205,7 +205,7 @@ export default defineConfig({
 Return value of `defineBddConfig()` is a resolved output directory where test files will be generated.
 It is convenient to use it as a `testDir` option for Playwright.
 
-> If there is an external `cucumber.js` config file, it is also merged into configuration.
+> If there is `cucumber.js` config file (next to `playwright.config.ts`), it is also merged into configuration.
 
 #### Multiple projects
 You can use `playwright-bdd` with multiple [Playwright projects](https://playwright.dev/docs/test-projects). For that just provide separate `defineBddConfig()` configuration for each project:
