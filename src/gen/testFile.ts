@@ -20,7 +20,7 @@ import {
 } from '@cucumber/messages';
 import fs from 'node:fs';
 import path from 'node:path';
-import * as formatter from './formatter';
+import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
@@ -58,10 +58,13 @@ export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
   private testFileTags = new TestFileTags();
+  private formatter: Formatter;
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
 
-  constructor(private options: TestFileOptions) {}
+  constructor(private options: TestFileOptions) {
+    this.formatter = new Formatter(options.config);
+  }
 
   get sourceFile() {
     const { uri } = this.options.doc;
@@ -103,7 +106,7 @@ export class TestFile {
 
   private getFileHeader() {
     const importTestFrom = this.getRelativeImportTestFrom();
-    return formatter.fileHeader(this.sourceFile, importTestFrom);
+    return this.formatter.fileHeader(this.sourceFile, importTestFrom);
   }
 
   private loadI18nKeywords() {
@@ -124,9 +127,9 @@ export class TestFile {
   }
 
   private getUseFixtures() {
-    return formatter.useFixtures([
-      ...formatter.testFixture(),
-      ...formatter.tagsFixture(this.testFileTags.tagsMap, TEST_KEY_SEPARATOR),
+    return this.formatter.useFixtures([
+      ...this.formatter.testFixture(),
+      ...this.formatter.tagsFixture(this.testFileTags.tagsMap, TEST_KEY_SEPARATOR),
     ]);
   }
 
@@ -144,7 +147,7 @@ export class TestFile {
     const lines: string[] = [];
     const newParents = [...parents, feature];
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, newParents)));
-    return formatter.suite(feature.name, lines, flags);
+    return this.formatter.suite(feature.name, lines, flags);
   }
 
   private getSuiteChild(child: FeatureChild | RuleChild, parents: (Feature | Rule)[]) {
@@ -165,7 +168,7 @@ export class TestFile {
    */
   private getBeforeEach(bg: Background) {
     const { fixtures, lines } = this.getSteps(bg);
-    return formatter.beforeEach(fixtures, lines);
+    return this.formatter.beforeEach(fixtures, lines);
   }
 
   /**
@@ -195,7 +198,7 @@ export class TestFile {
         lines.push(...testLines);
       });
     });
-    return formatter.suite(scenario.name, lines, flags);
+    return this.formatter.suite(scenario.name, lines, flags);
   }
 
   /**
@@ -212,7 +215,7 @@ export class TestFile {
     const flags = getFormatterFlags(examples);
     const testTags = this.testFileTags.registerTestTags(parents, title, examples.tags);
     const { fixtures, lines } = this.getSteps(scenario, testTags, exampleRow.id);
-    return formatter.test(title, fixtures, lines, flags);
+    return this.formatter.test(title, fixtures, lines, flags);
   }
 
   /**
@@ -222,7 +225,7 @@ export class TestFile {
     const testTags = this.testFileTags.registerTestTags(parents, scenario.name, scenario.tags);
     const flags = getFormatterFlags(scenario);
     const { fixtures, lines } = this.getSteps(scenario, testTags);
-    return formatter.test(scenario.name, fixtures, lines, flags);
+    return this.formatter.test(scenario.name, fixtures, lines, flags);
   }
 
   /**
@@ -307,7 +310,7 @@ export class TestFile {
     const fixtureNames = stepConfig?.isDecorator ? [] : extractFixtureNames(stepConfig?.fn);
     const line = stepConfig?.isDecorator
       ? ''
-      : formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
+      : this.formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
     return {
       keyword,
       keywordType,
@@ -323,7 +326,7 @@ export class TestFile {
       keyword,
       keywordType,
       fixtureNames: [],
-      line: formatter.missingStep(keyword, pickleStep.text),
+      line: this.formatter.missingStep(keyword, pickleStep.text),
       pickleStep,
       stepConfig: undefined,
     };
@@ -368,7 +371,7 @@ export class TestFile {
 
     return {
       fixtureNames,
-      line: formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureNames[0]]),
+      line: this.formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureNames[0]]),
     };
   }
 

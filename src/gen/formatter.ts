@@ -1,8 +1,9 @@
 /**
- * Helpers to format Playwright test file.
+ * Helper to format Playwright test file.
  */
 
 import { PickleStepArgument } from '@cucumber/messages';
+import { BDDConfig } from '../config';
 
 export type ImportTestFrom = {
   file: string;
@@ -15,103 +16,106 @@ export type Flags = {
   fixme?: boolean;
 };
 
-export function fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
-  const file = importTestFrom?.file || 'playwright-bdd';
-  let varName = importTestFrom?.varName || 'test';
-  if (varName !== 'test') varName = `${varName} as test`;
-  // prettier-ignore
-  return [
-    `/** Generated from: ${uri} */`,
-    `import { ${varName} } from ${JSON.stringify(file)};`,
-    '',
-  ];
-}
+export class Formatter {
+  constructor(private config: BDDConfig) {}
 
-export function suite(title: string, children: string[], flags: Flags) {
-  // prettier-ignore
-  return [
-    `test.describe${getSubFn(flags)}(${JSON.stringify(title)}, () => {`,
-    '',
+  fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
+    const file = importTestFrom?.file || 'playwright-bdd';
+    let varName = importTestFrom?.varName || 'test';
+    if (varName !== 'test') varName = `${varName} as test`;
+    // prettier-ignore
+    return [
+      `/** Generated from: ${uri} */`,
+      `import { ${varName} } from ${this.quoted(file)};`,
+      '',
+    ];
+  }
+
+  suite(title: string, children: string[], flags: Flags) {
+    // prettier-ignore
+    return [
+      `test.describe${this.getSubFn(flags)}(${this.quoted(title)}, () => {`,
+      '',
+      ...children.map(indent),
+      `});`,
+      '',
+    ];
+  }
+
+  beforeEach(fixtures: Set<string>, children: string[]) {
+    const fixturesStr = [...fixtures].join(', ');
+    // prettier-ignore
+    return [
+      `test.beforeEach(async ({ ${fixturesStr} }) => {`,
+      ...children.map(indent),
+      `});`,
+      '',
+    ];
+  }
+
+  // eslint-disable-next-line max-params
+  test(title: string, fixtures: Set<string>, children: string[], flags: Flags) {
+    const fixturesStr = [...fixtures].join(', ');
+    // prettier-ignore
+    return [
+    `test${this.getSubFn(flags)}(${this.quoted(title)}, async ({ ${fixturesStr} }) => {`,
     ...children.map(indent),
     `});`,
     '',
   ];
-}
+  }
 
-export function beforeEach(fixtures: Set<string>, children: string[]) {
-  const fixturesStr = [...fixtures].join(', ');
-  // prettier-ignore
-  return [
-    `test.beforeEach(async ({ ${fixturesStr} }) => {`,
-    ...children.map(indent),
-    `});`,
-    '',
-  ];
-}
+  // eslint-disable-next-line max-params
+  step(keyword: string, text: string, argument?: PickleStepArgument, fixtureNames: string[] = []) {
+    const fixtures = fixtureNames.length ? `{ ${fixtureNames.join(', ')} }` : '';
+    const argumentArg = argument ? JSON.stringify(argument) : fixtures ? 'null' : '';
+    const textArg = this.quoted(text);
+    const args = [textArg, argumentArg, fixtures].filter((arg) => arg !== '').join(', ');
+    return `await ${keyword}(${args});`;
+  }
 
-// eslint-disable-next-line max-params
-export function test(title: string, fixtures: Set<string>, children: string[], flags: Flags) {
-  const fixturesStr = [...fixtures].join(', ');
-  // prettier-ignore
-  return [
-    `test${getSubFn(flags)}(${JSON.stringify(title)}, async ({ ${fixturesStr} }) => {`,
-    ...children.map(indent),
-    `});`,
-    '',
-  ];
-}
+  missingStep(keyword: string, text: string) {
+    return `// missing step: ${keyword}(${this.quoted(text)});`;
+  }
 
-// eslint-disable-next-line max-params
-export function step(
-  keyword: string,
-  text: string,
-  argument?: PickleStepArgument,
-  fixtureNames: string[] = [],
-) {
-  const fixtures = fixtureNames.length ? `{ ${fixtureNames.join(', ')} }` : '';
-  const argumentArg = argument ? JSON.stringify(argument) : fixtures ? 'null' : '';
-  const textArg = JSON.stringify(text);
-  const args = [textArg, argumentArg, fixtures].filter((arg) => arg !== '').join(', ');
-  return `await ${keyword}(${args});`;
-}
+  useFixtures(fixtures: string[]) {
+    return fixtures.length > 0
+      ? [
+          '// == technical section ==', // prettier-ignore
+          '',
+          'test.use({',
+          ...fixtures.map(indent),
+          '});',
+        ]
+      : [];
+  }
 
-export function useFixtures(fixtures: string[]) {
-  return fixtures.length > 0
-    ? [
-        '// == technical section ==', // prettier-ignore
-        '',
-        'test.use({',
-        ...fixtures.map(indent),
-        '});',
-      ]
-    : [];
-}
+  testFixture() {
+    return ['$test: ({}, use) => use(test),'];
+  }
 
-export function testFixture() {
-  return ['$test: ({}, use) => use(test),'];
-}
+  tagsFixture(tagsMap: Map<string, string[]>, testKeySeparator: string) {
+    return tagsMap.size > 0
+      ? [
+          '$tags: ({}, use, testInfo) => use({',
+          ...Array.from(tagsMap)
+            .map(([key, tags]) => `${JSON.stringify(key)}: ${JSON.stringify(tags)},`)
+            .map(indent),
+          `}[testInfo.titlePath.slice(2).join(${JSON.stringify(testKeySeparator)})] || []),`,
+        ]
+      : [];
+  }
 
-export function tagsFixture(tagsMap: Map<string, string[]>, testKeySeparator: string) {
-  return tagsMap.size > 0
-    ? [
-        '$tags: ({}, use, testInfo) => use({',
-        ...Array.from(tagsMap)
-          .map(([key, tags]) => `${JSON.stringify(key)}: ${JSON.stringify(tags)},`)
-          .map(indent),
-        `}[testInfo.titlePath.slice(2).join(${JSON.stringify(testKeySeparator)})] || []),`,
-      ]
-    : [];
-}
+  private getSubFn(flags: Flags = {}) {
+    if (flags.only) return '.only';
+    if (flags.skip) return '.skip';
+    if (flags.fixme) return '.fixme';
+    return '';
+  }
 
-export function missingStep(keyword: string, text: string) {
-  return `// missing step: ${keyword}(${JSON.stringify(text)});`;
-}
-
-function getSubFn(flags: Flags = {}) {
-  if (flags.only) return '.only';
-  if (flags.skip) return '.skip';
-  if (flags.fixme) return '.fixme';
-  return '';
+  private quoted(str: string) {
+    return JSON.stringify(str);
+  }
 }
 
 function indent(value: string) {
