@@ -5,42 +5,47 @@ import test from 'node:test';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
 
-const stdioForErrors = process.env.TEST_DEBUG ? 'inherit' : 'pipe';
-
 defineTestOnly(test);
 export { test };
 
+/**
+ * Test name = test dir from 'test/xxx/test.mjs'
+ */
 export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
-export function execPlaywrightTest(dir, opts, cmd) {
-  opts = Object.assign({ stdio: 'inherit' }, opts);
+function execPlaywrightTestInternal(dir, cmd) {
+  dir = path.join('test', dir);
   cmd = cmd || 'node ../../dist/gen/cli && npx playwright test';
+  const stdout = execSync(cmd, { cwd: dir, stdio: 'pipe' });
+  return stdout?.toString() || '';
+}
+
+export function execPlaywrightTest(dir, cmd) {
   try {
-    const stdout = execSync(cmd, {
-      cwd: path.join(`test`, dir),
-      ...opts,
-    });
-    return stdout?.toString() || '';
+    const stdout = execPlaywrightTestInternal(dir, cmd);
+    if (process.env.TEST_DEBUG) console.log(stdout);
+    return stdout;
   } catch (e) {
-    if (opts.stdio === 'inherit') {
-      // error already printed
-      process.exit(1);
-    } else {
-      throw e;
-    }
+    // if playwright tests not passed -> output is in stdout
+    // if playwright cmd exits -> output is in stderr
+    // if test.mjs not passed -> output is in stderr
+    // That's why always print stdout + stderr
+    console.log(e.message);
+    console.log(e.stdout?.toString());
+    console.log(e.stderr?.toString());
+    process.exit(1);
   }
 }
 
-export function execPlaywrightTestWithError(dir, substr) {
+export function execPlaywrightTestWithError(dir, error, cmd) {
   assert.throws(
-    () => execPlaywrightTest(dir, { stdio: stdioForErrors }),
+    () => execPlaywrightTestInternal(dir, cmd),
     (e) => {
-      const stdout = e.stdout.toString();
-      expect(e.status).toEqual(1);
-      substr = Array.isArray(substr) ? substr : [substr];
-      substr.forEach((s) => expect(stdout).toContain(s));
+      const stderr = e.stderr.toString();
+      const errors = Array.isArray(error) ? error : [error];
+      errors.forEach((error) => expect(stderr).toContain(error));
       return true;
     },
   );

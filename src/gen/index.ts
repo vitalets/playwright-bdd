@@ -11,12 +11,13 @@ import { loadFeatures } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
-import { exitWithMessage, getCommonPath, log } from '../utils';
+import { exitWithMessage, getCommonPath } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/dir';
+import { logger } from '../utils/logger';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -116,10 +117,10 @@ export class TestFilesGenerator {
     this.files.forEach((file) => {
       file.save();
       if (this.config.verbose) {
-        log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
+        logger.log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
       }
     });
-    if (this.config.verbose) log(`Generated files: ${this.files.length}`);
+    if (this.config.verbose) logger.log(`Generated files: ${this.files.length}`);
   }
 
   async clearOutputDir() {
@@ -130,7 +131,7 @@ export class TestFilesGenerator {
 
   warnForTsNodeRegister() {
     if (hasTsNodeRegister(this.runConfiguration)) {
-      log(
+      logger.log(
         `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
         `Remove this option from defineBddConfig() and`,
         `Playwright's built-in loader will be used to compile TypeScript step definitions.`,

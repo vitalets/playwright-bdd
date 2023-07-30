@@ -5,9 +5,10 @@
 import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
 import { loadSnippetBuilder } from '../cucumber/loadSnippetBuilder';
 import { TestFile, UndefinedStep } from '../gen/testFile';
-import { exitWithMessage, log } from '../utils';
+import { exitWithMessage } from '../utils';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { CucumberStepFunction } from '../stepDefinitions/defineStep';
+import { logger } from '../utils/logger';
 
 export class Snippets {
   private snippetBuilder!: StepDefinitionSnippetBuilder;
@@ -117,11 +118,11 @@ export class Snippets {
     } else {
       lines.push(`import { Given, When, Then } from '@cucumber/cucumber';\n`);
     }
-    log(lines.join('\n\n'));
+    logger.error(lines.join('\n\n'));
   }
 
   private printSnippets(snippets: string[]) {
-    log(snippets.concat(['']).join('\n\n'));
+    logger.error(snippets.concat(['']).join('\n\n'));
   }
 
   private printFooter(snippets: string[]) {

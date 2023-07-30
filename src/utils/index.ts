@@ -1,12 +1,8 @@
 import path from 'node:path';
-
-export function log(...args: unknown[]) {
-  // eslint-disable-next-line no-console
-  console.log(...args);
-}
+import { logger } from './logger';
 
 export function exitWithMessage(...messages: string[]) {
-  log('ERROR:', ...messages);
+  logger.error('ERROR:', ...messages);
   process.exit(1);
 }
 
