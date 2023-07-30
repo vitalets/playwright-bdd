@@ -58,6 +58,11 @@ export function defineTestOnly(test) {
   };
 }
 
+export function clearDir(importMeta, relativePath) {
+  const absPath = new URL(relativePath, importMeta.url);
+  if (fs.existsSync(absPath)) fs.rmSync(absPath, { recursive: true });
+}
+
 export function expectFileExists(importMeta, file) {
   const absPath = new URL(file, importMeta.url);
   assert(fs.existsSync(absPath), `Missing file: ${file}`);

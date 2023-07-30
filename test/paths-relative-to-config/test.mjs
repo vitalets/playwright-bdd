@@ -1,7 +1,8 @@
 import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest, expectFileExists } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, expectFileExists, clearDir } from '../helpers.mjs';
 
 test(getTestName(import.meta), (t) => {
+  clearDir(import.meta, 'subdir/.features-gen');
   const stdout = execPlaywrightTest(
     t.name,
     'node ../../dist/gen/cli -c subdir && npx playwright test -c subdir',
