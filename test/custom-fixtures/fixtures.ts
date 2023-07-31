@@ -6,7 +6,10 @@ class TodoPage {
 }
 
 class Account {
-  constructor(public username: string, public password: string) {}
+  constructor(
+    public username: string,
+    public password: string,
+  ) {}
 }
 
 export const test = base.extend<{ option: string; todoPage: TodoPage }, { account: Account }>({
