@@ -47,7 +47,7 @@ function symlinkPlaywrghtBdd() {
   // important to use lstat to get info about symlink itself
   const stat = fs.lstatSync(playwrightBddPath, { throwIfNoEntry: false });
   if (stat?.isDirectory()) {
-    fs.rmdirSync(playwrightBddPath, { recursive: true });
+    fs.rmSync(playwrightBddPath, { recursive: true });
   }
   // symlink node_modules/playwright-bdd to dist
   // as generated files use: import { test } from "playwright-bdd"
