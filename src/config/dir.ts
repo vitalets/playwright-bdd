@@ -14,7 +14,11 @@ import { resolveConfigFile } from '../playwright/loadConfig';
  */
 export function getPlaywrightConfigDir() {
   if (!process.env.PLAYWRIGHT_BDD_CONFIG_DIR) {
-    const cliConfigPath = new Command().option('-c, --config <file>').parse().opts().config;
+    const cliConfigPath = new Command()
+      .allowUnknownOption()
+      .option('-c, --config <file>')
+      .parse()
+      .opts().config;
     const playwrightConfigFile = resolveConfigFile(cliConfigPath);
     process.env.PLAYWRIGHT_BDD_CONFIG_DIR = playwrightConfigFile
       ? path.dirname(playwrightConfigFile)
