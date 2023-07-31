@@ -184,6 +184,7 @@ Special `playwright-bdd` options:
 | `importTestFrom`     | `string`   | Path to file that exports custom `test` to be used in generated files. Default: `playwright-bdd`
 | `examplesTitleFormat`| `string`   | Title format for scenario outline examples in generated tests. Default: `Example #<_index_>`
 | `verbose`            | `boolean`  | Verbose output. Default: `false`
+| `quotes`             | `string`   | Quotes style in generated files: `single`, `double`, `backtick`. Default: `double`
 
 Example configuration (CommonJS TypeScript project):
 ```ts

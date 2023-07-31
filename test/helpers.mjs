@@ -15,9 +15,11 @@ export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
+export const DEFAULT_CMD = 'node ../../dist/gen/cli && npx playwright test';
+
 function execPlaywrightTestInternal(dir, cmd) {
   dir = path.join('test', dir);
-  cmd = cmd || 'node ../../dist/gen/cli && npx playwright test';
+  cmd = cmd || DEFAULT_CMD;
   const stdout = execSync(cmd, { cwd: dir, stdio: 'pipe' });
   return stdout?.toString() || '';
 }

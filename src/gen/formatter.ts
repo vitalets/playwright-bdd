@@ -4,6 +4,7 @@
 
 import { PickleStepArgument } from '@cucumber/messages';
 import { BDDConfig } from '../config';
+import { jsStringWrap } from '../utils/jsStringWrap';
 
 export type ImportTestFrom = {
   file: string;
@@ -23,10 +24,10 @@ export class Formatter {
     const file = importTestFrom?.file || 'playwright-bdd';
     let varName = importTestFrom?.varName || 'test';
     if (varName !== 'test') varName = `${varName} as test`;
-    // prettier-ignore
     return [
-      `/** Generated from: ${uri} */`,
-      `import { ${varName} } from ${this.quoted(file)};`,
+      `/** Generated from: ${uri} */`, // prettier-ignore
+      // this.quoted() is not possible for 'import from' as backticks not parsed
+      `import { ${varName} } from ${JSON.stringify(file)};`,
       '',
     ];
   }
@@ -113,8 +114,14 @@ export class Formatter {
     return '';
   }
 
+  /**
+   * Apply this function only to string literals (mostly titles here).
+   * Objects and arrays are handled with JSON.strinigfy,
+   * b/c object keys can't be in backtiks.
+   * See: https://stackoverflow.com/questions/33194138/template-string-as-object-property-name
+   */
   private quoted(str: string) {
-    return JSON.stringify(str);
+    return jsStringWrap(str, { quotes: this.config.quotes });
   }
 }
 

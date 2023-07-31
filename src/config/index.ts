@@ -21,18 +21,21 @@ type OwnConfig = {
   skip?: boolean;
   /** Test title format for scenario outline examples */
   examplesTitleFormat?: string;
+  /** Quotes style in generated tests */
+  quotes?: 'single' | 'double' | 'backtick';
 };
 
 export const defaults: Required<
-  Pick<BDDInputConfig, 'outputDir' | 'publishQuiet' | 'verbose' | 'examplesTitleFormat'>
+  Pick<BDDInputConfig, 'outputDir' | 'publishQuiet' | 'verbose' | 'examplesTitleFormat' | 'quotes'>
 > = {
   outputDir: '.features-gen',
   verbose: false,
   examplesTitleFormat: 'Example #<_index_>',
   publishQuiet: true,
+  quotes: 'double',
 };
 
-type BDDInputConfig = OwnConfig & CucumberConfig;
+export type BDDInputConfig = OwnConfig & CucumberConfig;
 export type BDDConfig = ReturnType<typeof getConfig>;
 
 export function defineBddConfig(inputConfig?: BDDInputConfig) {
