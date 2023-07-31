@@ -2,6 +2,8 @@
 [![lint](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml)
 [![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
 [![npm version](https://img.shields.io/npm/v/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
+[![license](https://img.shields.io/npm/l/playwright-bdd)](#license)
+
 
 Run BDD tests with [Playwright](https://playwright.dev/) runner.
 
