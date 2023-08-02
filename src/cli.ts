@@ -4,12 +4,13 @@ import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
 import { Command } from 'commander';
-import { TestFilesGenerator } from '.';
-import { exitWithMessage } from '../utils';
-import { loadConfig as loadPlaywrightConfig } from '../playwright/loadConfig';
-import { getEnvConfigs } from '../config/env';
-import { BDDConfig, defaults } from '../config';
+import { TestFilesGenerator } from './gen';
+import { exitWithMessage } from './utils';
+import { loadConfig as loadPlaywrightConfig } from './playwright/loadConfig';
+import { getEnvConfigs } from './config/env';
+import { BDDConfig, defaults } from './config';
 
+const GEN_WORKER_PATH = path.resolve(__dirname, 'gen', 'worker.js');
 const program = new Command();
 
 program
@@ -54,7 +55,7 @@ async function generateFilesForConfigs(configs: BDDConfig[], cliConfig: Partial<
 }
 
 async function runInWorker(config: BDDConfig) {
-  const worker = new Worker(path.resolve(__dirname, 'worker.js'), {
+  const worker = new Worker(GEN_WORKER_PATH, {
     workerData: { config },
   });
 

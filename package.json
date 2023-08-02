@@ -3,7 +3,7 @@
   "description": "BDD Testing with Playwright runner and CucumberJS",
   "version": "5.0.1",
   "bin": {
-    "bddgen": "./dist/gen/cli.js"
+    "bddgen": "./dist/cli.js"
   },
   "main": "./dist/index.js",
   "exports": {

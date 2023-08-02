@@ -10,7 +10,7 @@ import { resolveConfigFile } from '../playwright/loadConfig';
 
 /**
  * Resolve playwright config dir considering cli flags.
- * todo: keep in sync with resolving config in gen/cli.ts
+ * todo: keep in sync with resolving config in cli
  */
 export function getPlaywrightConfigDir() {
   if (!process.env.PLAYWRIGHT_BDD_CONFIG_DIR) {
