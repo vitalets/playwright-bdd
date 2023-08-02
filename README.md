@@ -301,12 +301,12 @@ Feature: Playwright site
 ```
 
 #### Customize examples title
-By default each row from Scenario Outline examples is converted into test with title `Example #{index}`.
+By default each row from `Scenario Outline` examples is converted into test with title `Example #{index}`.
 It can be not reliable for reporters that keep track of test history, because on every insertion / deletion of rows
 test titles will shift.
 
 You can provide own fixed title format by adding a special comment right above `Examples`. 
-The comment should start with `# title-format:` and can reference column names as `<column>`:
+The comment should start with `# title-format:` and can reference column names as `<column>`. For example:
 ```gherkin
 Feature: calculator
 

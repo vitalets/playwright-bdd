@@ -24,10 +24,12 @@ class TodoPage {
     await this.inputBox.press('Enter');
   }
 
-  @When('I toggle todo {string}')
-  async toggleTodo(hasText: string) {
-    const todo = this.todoItems.filter({ hasText });
-    await todo.getByRole('checkbox').click();
+  @When('I complete todo {string}')
+  async completeTodo(hasText: string) {
+    const checkbox = this.todoItems.filter({ hasText }).getByRole('checkbox');
+    if (!(await checkbox.isChecked())) {
+      await checkbox.click();
+    }
   }
 
   @When(/I filter todos as "(All|Completed)"/)
