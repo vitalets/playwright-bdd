@@ -19,9 +19,20 @@ class TodoPage {
   }
 
   @When('I add todo {string}')
-  async addToDo(text: string) {
+  async addTodo(text: string) {
     await this.inputBox.fill(text);
     await this.inputBox.press('Enter');
+  }
+
+  @When('I toggle todo {string}')
+  async toggleTodo(hasText: string) {
+    const todo = this.todoItems.filter({ hasText });
+    await todo.getByRole('checkbox').click();
+  }
+
+  @When(/I filter todos as "(All|Completed)"/)
+  async filterTodos(name: 'All' | 'Completed') {
+    await this.page.getByRole('link', { name }).click();
   }
 
   @Then('visible todos count is {int}')

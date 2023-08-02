@@ -3,13 +3,23 @@ Feature: Todo Page
     Background:
       Given I am on todo page
 
-    Scenario: Adding todos
+    Scenario: Empty list
+      Then visible todos count is 0
+
+    Scenario: Add todos
       When I add todo "foo"
       And I add todo "bar"
       Then visible todos count is 2
 
-    Scenario: Removing todos as admin
+    Scenario: Complete todos
       When I add todo "foo"
       And I add todo "bar"
-      And I remove todo "foo"
+      And I toggle todo "bar"
+      And I filter todos as "Completed"
+      Then visible todos count is 1
+
+    Scenario: Remove todos
+      When I add todo "foo"
+      And I add todo "bar"
+      And I remove todo "bar"
       Then visible todos count is 1
