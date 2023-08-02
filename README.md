@@ -4,7 +4,6 @@
 [![npm version](https://img.shields.io/npm/v/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
 [![license](https://img.shields.io/npm/l/playwright-bdd)](#license)
 
-
 Run BDD tests with [Playwright](https://playwright.dev/) runner.
 
 > Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
@@ -308,30 +307,33 @@ test titles will shift.
 You can provide own fixed title format by adding a special comment right above `Examples`. 
 The comment should start with `# title-format:` and can reference column names as `<column>`. For example:
 ```gherkin
-Feature: calculator
+Feature: Localization
 
-    Scenario Outline: Check doubled
-      Then Doubled <start> equals <end>
+    Scenario Outline: Check title
+      Given user locale is "<locale>"
+      Then page title is "<title>"
 
-      # title-format: Example for <start>
+      # title-format: locale - <locale>
       Examples:
-          | start | end |
-          |    2  |   4 |
-          |    3  |   6 |
+          | locale | title      |
+          | en     | Playwright |
+          | es     | Dramaturgo |
 ```
 
 Generated test file:
 ```js
-test.describe("calculator", () => {
+test.describe(`Localization`, () => {
 
-  test.describe("Check doubled", () => {
+  test.describe(`Check title`, () => {
 
-    test("Example for 2", async ({ Then }) => {
-      await Then("Doubled 2 equals 4");
+    test(`locale - en`, async ({ Given, Then }) => {
+      await Given(`user locale is "en"`);
+      await Then(`page title is "Playwright"`);
     });
 
-    test("Example for 3", async ({ Then }) => {
-      await Then("Doubled 3 equals 6");
+    test(`locale - es`, async ({ Given, Then }) => {
+      await Given(`user locale is "es"`);
+      await Then(`page title is "Dramaturgo"`);
     });
 ```
 
