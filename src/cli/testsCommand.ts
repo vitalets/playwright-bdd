@@ -1,25 +1,19 @@
-#!/usr/bin/env node
-
-import path from 'node:path';
 import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
+import path from 'node:path';
 import { Command } from 'commander';
-import { TestFilesGenerator } from './gen';
-import { exitWithMessage } from './utils';
-import { loadConfig as loadPlaywrightConfig } from './playwright/loadConfig';
-import { getEnvConfigs } from './config/env';
-import { BDDConfig, defaults } from './config';
+import { TestFilesGenerator } from '../gen';
+import { exitWithMessage } from '../utils';
+import { loadConfig as loadPlaywrightConfig } from '../playwright/loadConfig';
+import { getEnvConfigs } from '../config/env';
+import { BDDConfig, defaults } from '../config';
+import { configOption } from './configOption';
 
-const GEN_WORKER_PATH = path.resolve(__dirname, 'gen', 'worker.js');
-const program = new Command();
+const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'gen', 'worker.js');
 
-program
-  .name('bddgen')
+export const testsCommand = new Command('tests')
   .description('Generate Playwright tests from Gherkin documents')
-  .option(
-    '-c, --config <file>',
-    `Path to Playwright configuration file (default: playwright.config.(js|ts))`,
-  )
+  .addOption(configOption)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .action(async (opts) => {
     await loadPlaywrightConfig(opts.config);
@@ -27,8 +21,6 @@ program
     const cliOptions = buildCliOptions(opts);
     await generateFilesForConfigs(configs, cliOptions);
   });
-
-program.parse();
 
 function buildCliOptions(opts: { verbose?: boolean }) {
   const config: Partial<BDDConfig> = {};

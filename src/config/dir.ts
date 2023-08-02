@@ -5,20 +5,15 @@
  */
 
 import path from 'node:path';
-import { Command } from 'commander';
 import { resolveConfigFile } from '../playwright/loadConfig';
+import { getCliConfigPath } from '../cli/configOption';
 
 /**
  * Resolve playwright config dir considering cli flags.
- * todo: keep in sync with resolving config in cli
  */
 export function getPlaywrightConfigDir() {
   if (!process.env.PLAYWRIGHT_BDD_CONFIG_DIR) {
-    const cliConfigPath = new Command()
-      .allowUnknownOption()
-      .option('-c, --config <file>')
-      .parse()
-      .opts().config;
+    const cliConfigPath = getCliConfigPath();
     const playwrightConfigFile = resolveConfigFile(cliConfigPath);
     process.env.PLAYWRIGHT_BDD_CONFIG_DIR = playwrightConfigFile
       ? path.dirname(playwrightConfigFile)

@@ -3,7 +3,7 @@
   "description": "BDD Testing with Playwright runner and CucumberJS",
   "version": "5.0.1",
   "bin": {
-    "bddgen": "./dist/cli.js"
+    "bddgen": "./dist/cli/index.js"
   },
   "main": "./dist/index.js",
   "exports": {
@@ -40,6 +40,7 @@
     "only:d": "TEST_DEBUG=1 npm run only",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "examples": "ts-node scripts/examples.ts",
+    "help": "ts-node src/cli help",
     "toc": "markdown-toc README.md -i --maxdepth 4",
     "release": "./scripts/release.sh"
   },
