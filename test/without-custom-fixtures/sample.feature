@@ -8,4 +8,5 @@ Feature: Playwright style bdd
       When action 1
       Then result with fixtures and arg equals to "bar" - function
       Then result with fixtures and arg equals to "bar" - arrow fn
-      Then testInfo is available as a fixture
+      Then $testInfo is available as a fixture and its title equals to "Check fixtures"
+      Then $test is available as a fixture and its title equals to "Check fixtures"

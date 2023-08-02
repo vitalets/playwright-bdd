@@ -51,10 +51,19 @@ Then(
 );
 
 Then(
-  'testInfo is available as a fixture and its title equals to {string}',
+  '$testInfo is available as a fixture and its title equals to {string}',
   async ({ $testInfo }, title: string) => {
     expect($testInfo).toBeDefined();
     expect($testInfo.title).toEqual(title);
+  },
+);
+
+Then(
+  '$test is available as a fixture and test.info\\().title equals to {string}',
+  async ({ $test }, title: string) => {
+    expect($test).toBeDefined();
+    expect($test.skip).toBeDefined();
+    expect($test.info().title).toEqual(title);
   },
 );
 

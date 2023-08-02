@@ -54,7 +54,7 @@ Then('Uppercase {string} equals {string}', async function (this: BddWorld, s1: s
 });
 
 Then('File {string} contains', async function (this: BddWorld, fileName: string, table: DataTable) {
-  const filePath = path.join(path.dirname(this.testInfo.file), fileName);
+  const filePath = path.join(path.dirname(this.test.info().file), fileName);
   const content = fs.readFileSync(filePath, 'utf8');
   table.rows().forEach((row) => {
     // for cucumber-style transform Given/When/Then -> Given_/When_/Then_

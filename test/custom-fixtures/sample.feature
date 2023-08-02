@@ -8,7 +8,8 @@ Feature: Playwright style bdd
       When action 1
       Then result with fixtures and arg equals to "bar" - function
       Then result with fixtures and arg equals to "bar" - arrow fn
-      Then testInfo is available as a fixture and its title equals to "fixtures defined in different function formats"
+      Then $testInfo is available as a fixture and its title equals to "fixtures defined in different function formats"
+      Then $test is available as a fixture and test.info().title equals to "fixtures defined in different function formats"
 
     Scenario: Set test-scoped / worker-scoped fixture props
       When update todoPage prop to "456"

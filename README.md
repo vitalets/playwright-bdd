@@ -28,7 +28,7 @@ Run BDD tests with [Playwright](https://playwright.dev/) runner.
 - [Writing steps](#writing-steps)
   * [Playwright-style](#playwright-style)
     + [Custom fixtures](#custom-fixtures)
-    + [Accessing `testInfo`](#accessing-testinfo)
+    + [Accessing `test` and `testInfo`](#accessing-test-and-testinfo)
     + [Using tags](#using-tags)
     + [Using `DataTables`](#using-datatables)
   * [Cucumber-style](#cucumber-style)
@@ -419,15 +419,23 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 
 See [full example of Playwright-style](examples/playwright-style).
 
-#### Accessing `testInfo`
-To access [`testInfo`](https://playwright.dev/docs/api/class-testinfo) for conditionally skipping tests, attaching screenshots, etc. use special `$testInfo` fixture:
+#### Accessing `test` and `testInfo`
+You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) using special fixtures `$test` and `$testInfo` respectively. It allows to:
 
+  * increate test timeout
+  * conditionally skip tests
+  * attach screenshots
+  * ...etc
+
+Example:
 ```ts
-Given('I do something', async ({ $testInfo }) => { 
-  console.log($testInfo.title); // logs test title "I do something"
-  $testInfo.skip(); // skips test
+Given('I do something', async ({ $test, $testInfo }) => { 
+  $test.skip();
+  console.log(`skipped test: ${$testInfo.title}`);
 });
 ```
+
+> Instead of `$testInfo` you can use `$test.info()` :)
 
 #### Using tags
 [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) can be accessed by special `$tags` fixture:

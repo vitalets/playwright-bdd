@@ -90,7 +90,7 @@ export const test = base.extend<BddFixtures>({
 
 /** these fixtures automatically injected into every step call */
 export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags'> & {
-  $testInfo: TestInfo; // todo: deprecate $testInfo in favor of $test.info()
+  $testInfo: TestInfo;
 };
 
 const BDD_AUTO_INJECT_FIXTURES: (keyof BddAutoInjectFixtures)[] = ['$testInfo', '$test', '$tags'];
