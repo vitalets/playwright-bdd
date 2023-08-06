@@ -31,7 +31,7 @@ export class TestFilesGenerator {
   private tagsExpression?: ReturnType<typeof parseTagsExpression>;
 
   constructor(private config: BDDConfig) {
-    this.tagsExpression = config.tags ? parseTagsExpression(config.tags) : undefined;
+    if (config.tags) this.tagsExpression = parseTagsExpression(config.tags);
   }
 
   async generate() {
@@ -81,16 +81,18 @@ export class TestFilesGenerator {
 
   private buildFiles() {
     const outputPaths = this.buildOutputPaths();
-    this.files = [...this.features.entries()].map(([doc, pickles]) => {
-      return new TestFile({
-        doc,
-        pickles,
-        supportCodeLibrary: this.supportCodeLibrary,
-        outputPath: outputPaths.get(doc)!,
-        config: this.config,
-        tagsExpression: this.tagsExpression,
-      }).build();
-    });
+    this.files = [...this.features.entries()]
+      .map(([doc, pickles]) => {
+        return new TestFile({
+          doc,
+          pickles,
+          supportCodeLibrary: this.supportCodeLibrary,
+          outputPath: outputPaths.get(doc)!,
+          config: this.config,
+          tagsExpression: this.tagsExpression,
+        }).build();
+      })
+      .filter((file) => file.testNodes.length > 0);
   }
 
   buildOutputPaths() {

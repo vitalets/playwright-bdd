@@ -1,12 +1,14 @@
 import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest, expectFileExists, clearDir } from '../helpers.mjs';
+import { test, execPlaywrightTest, TestDir } from '../helpers.mjs';
 
-test(getTestName(import.meta), (t) => {
-  clearDir(import.meta, 'subdir/.features-gen');
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => {
+  testDir.clearDir('subdir/.features-gen');
   const stdout = execPlaywrightTest(
-    t.name,
+    testDir.name,
     'node ../../dist/cli -c subdir && npx playwright test -c subdir',
   );
-  expectFileExists(import.meta, 'subdir/.features-gen/sample.feature.spec.js');
+  expect(testDir.isFileExists('subdir/.features-gen/sample.feature.spec.js')).toEqual(true);
   expect(stdout).toContain('1 passed');
 });

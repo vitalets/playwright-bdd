@@ -1,4 +1,4 @@
-Feature: snapshots
+Feature: should be skipped
 
     Background:
       Given state 1

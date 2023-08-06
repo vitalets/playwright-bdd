@@ -148,7 +148,7 @@ export class TestFile {
     const node = new TestNode(feature, parent);
     const lines: string[] = [];
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
-    return lines.length ? this.formatter.suite(node, lines) : [];
+    return this.formatter.suite(node, lines);
   }
 
   private getSuiteChild(child: FeatureChild | RuleChild, parent: TestNode) {
@@ -196,7 +196,7 @@ export class TestFile {
   }
 
   /**
-   * Generate test from Examples row
+   * Generate test from Examples row of Scenario Outline
    */
   // eslint-disable-next-line max-params
   private getOutlineTest(
@@ -207,6 +207,7 @@ export class TestFile {
     parent: TestNode,
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
+    if (this.skipByTagsExpression(node)) return [];
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.ownTags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
@@ -217,6 +218,7 @@ export class TestFile {
    */
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
+    if (this.skipByTagsExpression(node)) return [];
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.ownTags);
     return this.formatter.test(node, fixtures, lines);
@@ -400,8 +402,9 @@ export class TestFile {
       : this.config.examplesTitleFormat;
   }
 
-  private skipByTags(tags: string[]) {
-    return this.options.tagsExpression?.evaluate(tags) === false;
+  private skipByTagsExpression(node: TestNode) {
+    // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
+    return this.options.tagsExpression?.evaluate(node.tags) === false;
   }
 }
 

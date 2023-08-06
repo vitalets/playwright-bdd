@@ -1,20 +1,25 @@
-// import { expect } from '@playwright/test';
-import {
-  test,
-  getTestName,
-  execPlaywrightTest,
-  expectFileExists,
-  expectFileNotExists,
-  clearDir,
-} from '../helpers.mjs';
+import { expect } from '@playwright/test';
+import { test, execPlaywrightTest, TestDir } from '../helpers.mjs';
 
-test.skip(getTestName(import.meta), (t) => {
-  clearDir(import.meta, '.features-gen');
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => {
+  testDir.clearDir('.features-gen');
   execPlaywrightTest(
-    t.name,
+    testDir.name,
     'node ../../dist/cli --tags "@include and not @exclude" && npx playwright test',
   );
-  expectFileNotExists(import.meta, '.features-gen/skip.feature.spec.js');
-  expectFileExists(import.meta, '.features-gen/include.feature.spec.js');
-  // expect(stdout).toContain('passed');
+  expect(testDir.isFileExists('.features-gen/skip-no-tags.feature.spec.js')).toEqual(false);
+  expect(testDir.isFileExists('.features-gen/skip-by-top-tag.feature.spec.js')).toEqual(false);
+
+  expect(testDir.isFileExists('.features-gen/include.feature.spec.js')).toEqual(true);
+  let fileContents = testDir.getFileContents('.features-gen/include.feature.spec.js');
+  expect(fileContents).toContain(`test("scenario 1",`);
+  expect(fileContents).not.toContain(`test("scenario 2",`);
+
+  expect(testDir.isFileExists('.features-gen/outline.feature.spec.js')).toEqual(true);
+  fileContents = testDir.getFileContents('.features-gen/outline.feature.spec.js');
+  expect(fileContents).not.toContain(`test("Example #1",`);
+  expect(fileContents).not.toContain(`test("Example #2",`);
+  expect(fileContents).toContain(`test("Example #3",`);
 });

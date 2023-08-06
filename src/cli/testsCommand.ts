@@ -14,7 +14,7 @@ const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'gen', 'worker.js');
 export const testsCommand = new Command('tests')
   .description('Generate Playwright tests from Gherkin documents')
   .addOption(configOption)
-  .option('--tags', `Tags expression to filter scenarios`)
+  .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .action(async (opts) => {
     await loadPlaywrightConfig(opts.config);
@@ -23,8 +23,9 @@ export const testsCommand = new Command('tests')
     await generateFilesForConfigs(configs, cliOptions);
   });
 
-function buildCliOptions(opts: { verbose?: boolean }) {
+function buildCliOptions(opts: { tags?: string; verbose?: boolean }) {
   const config: Partial<BDDConfig> = {};
+  if ('tags' in opts) config.tags = opts.tags;
   if ('verbose' in opts) config.verbose = Boolean(opts.verbose);
   return config;
 }

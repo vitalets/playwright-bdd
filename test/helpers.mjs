@@ -9,7 +9,7 @@ defineTestOnly(test);
 export { test };
 
 /**
- * Test name = test dir from 'test/xxx/test.mjs'
+ * Test name = test dir from 'test/<xxx>/test.mjs'
  */
 export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
@@ -27,7 +27,7 @@ function execPlaywrightTestInternal(dir, cmd) {
 export function execPlaywrightTest(dir, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
-    if (process.env.TEST_DEBUG) console.log(stdout);
+    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
     return stdout;
   } catch (e) {
     // if playwright tests not passed -> output is in stdout
@@ -60,8 +60,44 @@ export function defineTestOnly(test) {
   };
 }
 
-export function clearDir(importMeta, relativePath) {
-  const absPath = new URL(relativePath, importMeta.url);
+export class TestDir {
+  constructor(importMeta) {
+    this.importMeta = importMeta;
+  }
+
+  /**
+   * Test name = test dir from 'test/<xxx>/test.mjs'
+   */
+  get name() {
+    return this.importMeta.url.split('/').slice(-2)[0];
+  }
+
+  getAbsPath(relativePath) {
+    return new URL(relativePath, this.importMeta.url);
+  }
+
+  clearDir(relativePath) {
+    const absPath = this.getAbsPath(relativePath);
+    if (fs.existsSync(absPath)) fs.rmSync(absPath, { recursive: true });
+  }
+
+  isFileExists(relativePath) {
+    const absPath = this.getAbsPath(relativePath);
+    return fs.existsSync(absPath);
+  }
+
+  getFileContents(relativePath) {
+    const absPath = this.getAbsPath(relativePath);
+    return fs.readFileSync(absPath, 'utf8');
+  }
+}
+
+export function getAbsPath(relativePath, importMeta) {
+  return new URL(relativePath, importMeta.url);
+}
+
+export function clearDir(relativePath, importMeta) {
+  const absPath = getAbsPath(relativePath, importMeta.url);
   if (fs.existsSync(absPath)) fs.rmSync(absPath, { recursive: true });
 }
 
