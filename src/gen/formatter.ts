@@ -5,17 +5,14 @@
 import { PickleStepArgument } from '@cucumber/messages';
 import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
+import { TestNode } from './testNode';
 
 export type ImportTestFrom = {
   file: string;
   varName?: string;
 };
 
-export type Flags = {
-  only?: boolean;
-  skip?: boolean;
-  fixme?: boolean;
-};
+const TAGS_FIXTURE_TEST_KEY_SEPARATOR = '|';
 
 export class Formatter {
   constructor(private config: BDDConfig) {}
@@ -32,10 +29,10 @@ export class Formatter {
     ];
   }
 
-  suite(title: string, children: string[], flags: Flags) {
+  suite(node: TestNode, children: string[]) {
     // prettier-ignore
     return [
-      `test.describe${this.getSubFn(flags)}(${this.quoted(title)}, () => {`,
+      `test.describe${this.getSubFn(node)}(${this.quoted(node.title)}, () => {`,
       '',
       ...children.map(indent),
       `});`,
@@ -54,12 +51,11 @@ export class Formatter {
     ];
   }
 
-  // eslint-disable-next-line max-params
-  test(title: string, fixtures: Set<string>, children: string[], flags: Flags) {
+  test(node: TestNode, fixtures: Set<string>, children: string[]) {
     const fixturesStr = [...fixtures].join(', ');
     // prettier-ignore
     return [
-    `test${this.getSubFn(flags)}(${this.quoted(title)}, async ({ ${fixturesStr} }) => {`,
+    `test${this.getSubFn(node)}(${this.quoted(node.title)}, async ({ ${fixturesStr} }) => {`,
     ...children.map(indent),
     `});`,
     '',
@@ -95,22 +91,30 @@ export class Formatter {
     return ['$test: ({}, use) => use(test),'];
   }
 
-  tagsFixture(tagsMap: Map<string, string[]>, testKeySeparator: string) {
-    return tagsMap.size > 0
+  tagsFixture(testNodes: TestNode[]) {
+    const lines = testNodes
+      .filter((node) => node.tags.length)
+      .map((node) => {
+        // remove first parent as it is the same for all tests: root suite
+        const key = node.titlePath.slice(1).join(TAGS_FIXTURE_TEST_KEY_SEPARATOR);
+        return `${JSON.stringify(key)}: ${JSON.stringify(node.tags)},`;
+      });
+    return lines.length > 0
       ? [
           '$tags: ({}, use, testInfo) => use({',
-          ...Array.from(tagsMap)
-            .map(([key, tags]) => `${JSON.stringify(key)}: ${JSON.stringify(tags)},`)
-            .map(indent),
-          `}[testInfo.titlePath.slice(2).join(${JSON.stringify(testKeySeparator)})] || []),`,
+          ...lines.map(indent),
+          // .slice(2) -> b/c we remove filename and root suite title
+          `}[testInfo.titlePath.slice(2).join(${JSON.stringify(
+            TAGS_FIXTURE_TEST_KEY_SEPARATOR,
+          )})] || []),`,
         ]
       : [];
   }
 
-  private getSubFn(flags: Flags = {}) {
-    if (flags.only) return '.only';
-    if (flags.skip) return '.skip';
-    if (flags.fixme) return '.fixme';
+  private getSubFn(node: TestNode) {
+    if (node.flags.only) return '.only';
+    if (node.flags.skip) return '.skip';
+    if (node.flags.fixme) return '.fixme';
     return '';
   }
 

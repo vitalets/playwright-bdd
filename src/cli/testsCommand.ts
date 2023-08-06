@@ -14,6 +14,7 @@ const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'gen', 'worker.js');
 export const testsCommand = new Command('tests')
   .description('Generate Playwright tests from Gherkin documents')
   .addOption(configOption)
+  .option('--tags', `Tags expression to filter scenarios`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .action(async (opts) => {
     await loadPlaywrightConfig(opts.config);

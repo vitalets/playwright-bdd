@@ -23,6 +23,8 @@ type OwnConfig = {
   examplesTitleFormat?: string;
   /** Quotes style in generated tests */
   quotes?: 'single' | 'double' | 'backtick';
+  /** Tags expression to filter scenarios for generation */
+  tags?: string;
 };
 
 export const defaults: Required<

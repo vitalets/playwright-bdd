@@ -44,3 +44,7 @@ export function getCommonPath(filePaths: string[]) {
     }, [])
     .join(path.sep);
 }
+
+export function removeDuplicates(arr: string[]) {
+  return [...new Set(arr)];
+}

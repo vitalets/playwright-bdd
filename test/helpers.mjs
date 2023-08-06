@@ -65,7 +65,12 @@ export function clearDir(importMeta, relativePath) {
   if (fs.existsSync(absPath)) fs.rmSync(absPath, { recursive: true });
 }
 
-export function expectFileExists(importMeta, file) {
-  const absPath = new URL(file, importMeta.url);
-  assert(fs.existsSync(absPath), `Missing file: ${file}`);
+export function expectFileExists(importMeta, relPath) {
+  const absPath = new URL(relPath, importMeta.url);
+  assert(fs.existsSync(absPath), `Missing file: ${relPath}`);
+}
+
+export function expectFileNotExists(importMeta, relPath) {
+  const absPath = new URL(relPath, importMeta.url);
+  assert(!fs.existsSync(absPath), `Expect file to not exist: ${relPath}`);
 }

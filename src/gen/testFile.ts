@@ -25,12 +25,13 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { extractFixtureNames } from '../stepDefinitions/createBdd';
-import { TEST_KEY_SEPARATOR, TestFileTags, getFormatterFlags } from './tags';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { exitWithMessage, template } from '../utils';
 import { PomNode, getStepConfig, isPlaywrightStyle } from '../stepDefinitions/defineStep';
 import { POMS, buildFixtureTag } from './poms';
+import parseTagsExpression from '@cucumber/tag-expressions';
+import { TestNode } from './testNode';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -38,6 +39,7 @@ type TestFileOptions = {
   supportCodeLibrary: ISupportCodeLibrary;
   outputPath: string;
   config: BDDConfig;
+  tagsExpression?: ReturnType<typeof parseTagsExpression>;
 };
 
 // Decorator steps handled after all steps to resolve fixtures correctly
@@ -57,8 +59,8 @@ export type UndefinedStep = {
 export class TestFile {
   private lines: string[] = [];
   private keywordsMap?: KeywordsMap;
-  private testFileTags = new TestFileTags();
   private formatter: Formatter;
+  public testNodes: TestNode[] = [];
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
 
@@ -93,7 +95,7 @@ export class TestFile {
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
       ...this.getRootSuite(),
-      ...this.getUseFixtures(),
+      ...this.getFileFixtures(),
     ];
     return this;
   }
@@ -126,10 +128,10 @@ export class TestFile {
     };
   }
 
-  private getUseFixtures() {
+  private getFileFixtures() {
     return this.formatter.useFixtures([
       ...this.formatter.testFixture(),
-      ...this.formatter.tagsFixture(this.testFileTags.tagsMap, TEST_KEY_SEPARATOR),
+      ...this.formatter.tagsFixture(this.testNodes),
     ]);
   }
 
@@ -142,25 +144,24 @@ export class TestFile {
   /**
    * Generate test.describe suite for root Feature or Rule
    */
-  private getSuite(feature: Feature | Rule, parents: (Feature | Rule)[] = []) {
-    const flags = getFormatterFlags(feature);
+  private getSuite(feature: Feature | Rule, parent?: TestNode) {
+    const node = new TestNode(feature, parent);
     const lines: string[] = [];
-    const newParents = [...parents, feature];
-    feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, newParents)));
-    return this.formatter.suite(feature.name, lines, flags);
+    feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
+    return lines.length ? this.formatter.suite(node, lines) : [];
   }
 
-  private getSuiteChild(child: FeatureChild | RuleChild, parents: (Feature | Rule)[]) {
-    if ('rule' in child && child.rule) return this.getSuite(child.rule, parents);
+  private getSuiteChild(child: FeatureChild | RuleChild, parent: TestNode) {
+    if ('rule' in child && child.rule) return this.getSuite(child.rule, parent);
     if (child.background) return this.getBeforeEach(child.background);
-    if (child.scenario) return this.getScenarioLines(child.scenario, parents);
+    if (child.scenario) return this.getScenarioLines(child.scenario, parent);
     throw new Error(`Empty child: ${JSON.stringify(child)}`);
   }
 
-  private getScenarioLines(scenario: Scenario, parents: (Feature | Rule)[]) {
+  private getScenarioLines(scenario: Scenario, parent: TestNode) {
     return isOutline(scenario)
-      ? this.getOutlineSuite(scenario, parents)
-      : this.getTest(scenario, parents);
+      ? this.getOutlineSuite(scenario, parent)
+      : this.getTest(scenario, parent);
   }
 
   /**
@@ -174,10 +175,9 @@ export class TestFile {
   /**
    * Generate test.describe suite for Scenario Outline
    */
-  private getOutlineSuite(scenario: Scenario, parents: (Feature | Rule)[]) {
+  private getOutlineSuite(scenario: Scenario, parent: TestNode) {
+    const node = new TestNode(scenario, parent);
     const lines: string[] = [];
-    const flags = getFormatterFlags(scenario);
-    const newParents = [...parents, scenario];
     let exampleIndex = 0;
     scenario.examples.forEach((examples) => {
       const titleFormat = this.getExamplesTitleFormat(examples);
@@ -188,17 +188,11 @@ export class TestFile {
           exampleRow,
           ++exampleIndex,
         );
-        const testLines = this.getOutlineTest(
-          scenario,
-          examples,
-          exampleRow,
-          testTitle,
-          newParents,
-        );
+        const testLines = this.getOutlineTest(scenario, examples, exampleRow, testTitle, node);
         lines.push(...testLines);
       });
     });
-    return this.formatter.suite(scenario.name, lines, flags);
+    return this.formatter.suite(node, lines);
   }
 
   /**
@@ -210,22 +204,22 @@ export class TestFile {
     examples: Examples,
     exampleRow: TableRow,
     title: string,
-    parents: (Feature | Rule | Scenario)[],
+    parent: TestNode,
   ) {
-    const flags = getFormatterFlags(examples);
-    const testTags = this.testFileTags.registerTestTags(parents, title, examples.tags);
-    const { fixtures, lines } = this.getSteps(scenario, testTags, exampleRow.id);
-    return this.formatter.test(title, fixtures, lines, flags);
+    const node = new TestNode({ name: title, tags: examples.tags }, parent);
+    this.testNodes.push(node);
+    const { fixtures, lines } = this.getSteps(scenario, node.ownTags, exampleRow.id);
+    return this.formatter.test(node, fixtures, lines);
   }
 
   /**
    * Generate test from Scenario
    */
-  private getTest(scenario: Scenario, parents: (Feature | Rule)[]) {
-    const testTags = this.testFileTags.registerTestTags(parents, scenario.name, scenario.tags);
-    const flags = getFormatterFlags(scenario);
-    const { fixtures, lines } = this.getSteps(scenario, testTags);
-    return this.formatter.test(scenario.name, fixtures, lines, flags);
+  private getTest(scenario: Scenario, parent: TestNode) {
+    const node = new TestNode(scenario, parent);
+    this.testNodes.push(node);
+    const { fixtures, lines } = this.getSteps(scenario, node.ownTags);
+    return this.formatter.test(node, fixtures, lines);
   }
 
   /**
@@ -233,7 +227,7 @@ export class TestFile {
    */
   private getSteps(
     scenario: Scenario | Background,
-    testTags?: string[],
+    ownTestTags?: string[],
     outlineExampleRowId?: string,
   ) {
     const testFixtureNames = new Set<string>();
@@ -264,7 +258,7 @@ export class TestFile {
 
     if (decoratorSteps.length) {
       testFixtureNames.forEach((fixtureName) => usedPoms.addByFixtureName(fixtureName));
-      testTags?.forEach((tag) => usedPoms.addByTag(tag));
+      ownTestTags?.forEach((tag) => usedPoms.addByTag(tag));
       decoratorSteps.forEach((step) => {
         const { line, fixtureNames } = this.getDecoratorStep(step, usedPoms);
         lines[step.index] = line;
@@ -304,7 +298,7 @@ export class TestFile {
     const stepConfig = getStepConfig(stepDefinition);
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
     // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
-    // to use fixtures with correct bddWorld
+    // to use fixtures with own bddWorld (containing fixtures)
     if (!isPlaywrightStyle(stepDefinition)) keyword = `${keyword}_`;
     // for decorator steps fixtures defined later in second pass
     const fixtureNames = stepConfig?.isDecorator ? [] : extractFixtureNames(stepConfig?.fn);
@@ -404,6 +398,10 @@ export class TestFile {
     return commentText?.startsWith(prefix)
       ? commentText.replace(prefix, '').trim()
       : this.config.examplesTitleFormat;
+  }
+
+  private skipByTags(tags: string[]) {
+    return this.options.tagsExpression?.evaluate(tags) === false;
   }
 }
 

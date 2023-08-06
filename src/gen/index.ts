@@ -18,6 +18,7 @@ import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/dir';
 import { logger } from '../utils/logger';
+import parseTagsExpression from '@cucumber/tag-expressions';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -27,8 +28,11 @@ export class TestFilesGenerator {
   private features!: Map<GherkinDocument, Pickle[]>;
   private supportCodeLibrary!: ISupportCodeLibrary;
   private files: TestFile[] = [];
+  private tagsExpression?: ReturnType<typeof parseTagsExpression>;
 
-  constructor(private config: BDDConfig) {}
+  constructor(private config: BDDConfig) {
+    this.tagsExpression = config.tags ? parseTagsExpression(config.tags) : undefined;
+  }
 
   async generate() {
     await this.loadCucumberConfig();
@@ -84,6 +88,7 @@ export class TestFilesGenerator {
         supportCodeLibrary: this.supportCodeLibrary,
         outputPath: outputPaths.get(doc)!,
         config: this.config,
+        tagsExpression: this.tagsExpression,
       }).build();
     });
   }
@@ -143,93 +148,3 @@ export class TestFilesGenerator {
     }
   }
 }
-
-// export async function generateTestFiles(config: BDDConfig) {
-//   const { runConfiguration } = await loadCucumberConfig({
-//     provided: extractCucumberConfig(config),
-//   });
-
-//   const files = buildFiles(features, supportCodeLibrary, config);
-//   await checkUndefinedSteps(files, runConfiguration, supportCodeLibrary);
-//   checkImportCustomTest(files, config);
-//   const paths = await saveFiles(files, config);
-//   if (config.verbose) log(`Generated files: ${paths.length}`);
-
-//   return paths;
-// }
-
-// function buildFiles(
-//   features: Map<GherkinDocument, Pickle[]>,
-//   supportCodeLibrary: ISupportCodeLibrary,
-//   config: BDDConfig,
-// ) {
-//   const outputPaths = buildOutputPaths(features, config);
-//   return [...features.entries()].map(([doc, pickles]) => {
-//     return new TestFile({
-//       doc,
-//       pickles,
-//       supportCodeLibrary,
-//       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//       outputPath: outputPaths.get(doc)!,
-//       config,
-//     }).build();
-//   });
-// }
-
-// function buildOutputPaths(features: Map<GherkinDocument, Pickle[]>, { outputDir }: BDDConfig) {
-//   // these are always relative
-//   const docs = [...features.keys()];
-//   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-//   const featurePaths = docs.map((doc) => doc.uri!);
-//   const commonPath = getCommonPath(featurePaths);
-//   const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
-//   const outputPaths = relativePaths.map((p) => path.join(outputDir, `${p}.spec.js`));
-//   return new Map(outputPaths.map((p, i) => [docs[i], p]));
-// }
-
-// async function saveFiles(files: TestFile[], { outputDir, verbose }: BDDConfig) {
-//   await clearDir(outputDir);
-//   return files.map((file) => {
-//     file.save();
-//     if (verbose) log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
-//     return file.outputPath;
-//   });
-// }
-
-// async function clearDir(dir: string) {
-//   const testFiles = await fg(path.join(dir, '**', '*.spec.js'));
-//   const tasks = testFiles.map((testFile) => fs.rm(testFile));
-//   await Promise.all(tasks);
-// }
-
-// async function checkUndefinedSteps(
-//   files: TestFile[],
-//   runConfiguration: IRunConfiguration,
-//   supportCodeLibrary: ISupportCodeLibrary,
-// ) {
-//   const undefinedSteps = files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
-//   if (undefinedSteps > 0) {
-//     const snippets = new Snippets(files, runConfiguration, supportCodeLibrary);
-//     await snippets.printSnippetsAndExit();
-//   }
-// }
-
-// function checkImportCustomTest(files: TestFile[], config: BDDConfig) {
-//   const hasCustomTest = files.some((file) => file.hasCustomTest);
-//   if (hasCustomTest && !config.importTestFrom) {
-//     exitWithMessage(
-//       `When using custom "test" function in createBdd() you should`,
-//       `set "importTestFrom" config option that points to file exporting custom test.`,
-//     );
-//   }
-// }
-
-// function warnForTsNodeRegister(runConfiguration: IRunConfiguration) {
-//   if (hasTsNodeRegister(runConfiguration)) {
-//     log(
-//       `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
-//       `Remove this option from defineBddConfig() and`,
-//       `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
-//     );
-//   }
-// }
