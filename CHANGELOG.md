@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 5.1.0
 * Add [`--tags`](https://github.com/vitalets/playwright-bdd#bddgen-test-or-just-bddgen) option to filter scenarios by tags expression [#36](https://github.com/vitalets/playwright-bdd/issues/36).
 * Add `bddgen env` command to display environment info.
 
