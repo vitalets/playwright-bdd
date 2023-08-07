@@ -280,6 +280,23 @@ Feature: Playwright site
         Then I see in title "Playwright"
 ```
 
+#### Tagging
+[Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) are fully supported. For example:
+```gherkin
+@desktop
+Feature: Playwright site
+
+    @slow
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+```
+
+After adding tags to your scenarios you can generate and run subset of tests using `--tags` option with [tags expression](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
+```
+npx bddgen --tags "@desktop and not @slow" && npx playwright test
+```
+Also you can [access tags inside step definitions](#using-tags).
+
 #### Run single feature
 Use `@only` tag to run a single feature / scenario:
 ```gherkin
@@ -443,7 +460,7 @@ Given('I do something', async ({ $test, $testInfo }) => {
 > Instead of `$testInfo` you can use `$test.info()` :)
 
 #### Using tags
-[Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) can be accessed by special `$tags` fixture:
+You can access [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) in step definitions by special `$tags` fixture:
 
 ```gherkin
 @slow
@@ -492,12 +509,16 @@ export const test = base.extend({
 Please note, that for now **Cucumber tags are not inserted into test titles** for Playwright. 
 This is done intentionally to keep test titles unchanged. Waiting for Playwright tags API, see [microsoft/playwright#23180](https://github.com/microsoft/playwright/issues/23180).
 
-However, you can simply put Playwright tags into scenario name:
+However, you can simply append Playwright tags to feature/scenario name:
 ```gherkin
 Feature: Playwright site @desktop
     
     Scenario: Check title @slow
       ...
+```
+And then run with Playwright option [`--grep`](https://playwright.dev/docs/test-annotations#tag-tests):
+```
+npx bddgen && npx playwright test --grep @desktop
 ```
 
 #### Using `DataTables`
