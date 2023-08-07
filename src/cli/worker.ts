@@ -4,7 +4,7 @@
  */
 
 import { workerData } from 'node:worker_threads';
-import { TestFilesGenerator } from '.';
+import { TestFilesGenerator } from '../gen';
 
 main();
 

@@ -9,7 +9,7 @@ import { getEnvConfigs } from '../../config/env';
 import { BDDConfig, defaults } from '../../config';
 import { configOption } from '../configOption';
 
-const GEN_WORKER_PATH = path.resolve(__dirname, '..', '..', 'gen', 'worker.js');
+const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
 export const testsCommand = new Command('test')
   .description('Generate Playwright test files from Gherkin documents')
