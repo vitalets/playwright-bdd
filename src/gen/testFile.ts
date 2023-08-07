@@ -58,7 +58,7 @@ export type UndefinedStep = {
 
 export class TestFile {
   private lines: string[] = [];
-  private keywordsMap?: KeywordsMap;
+  private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
   public testNodes: TestNode[] = [];
   public hasCustomTest = false;
@@ -113,7 +113,7 @@ export class TestFile {
 
   private loadI18nKeywords() {
     if (this.language !== 'en') {
-      this.keywordsMap = getKeywordsMap(this.language);
+      this.i18nKeywordsMap = getKeywordsMap(this.language);
     }
   }
 
@@ -347,7 +347,7 @@ export class TestFile {
     if (origKeyword === '*') {
       enKeyword = 'And';
     } else {
-      enKeyword = this.keywordsMap ? this.keywordsMap.get(origKeyword) : origKeyword;
+      enKeyword = this.i18nKeywordsMap ? this.i18nKeywordsMap.get(origKeyword) : origKeyword;
     }
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
