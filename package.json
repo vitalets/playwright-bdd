@@ -40,7 +40,8 @@
     "only:d": "TEST_DEBUG=1 npm run only",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
     "examples": "ts-node scripts/examples.ts",
-    "help": "ts-node src/cli help",
+    "help": "ts-node src/cli -h",
+    "env": "ts-node src/cli env",
     "toc": "markdown-toc README.md -i --maxdepth 4",
     "release": "./scripts/release.sh"
   },

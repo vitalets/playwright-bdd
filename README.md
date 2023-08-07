@@ -724,7 +724,6 @@ export default defineConfig({
 });
 ```
 
-
 ## Watch mode
 To watch feature / steps files and automatically regenerate tests you can use [nodemon](https://github.com/remy/nodemon):
 ```
@@ -778,6 +777,20 @@ npx bddgen test -h
 # or to show global help
 npx bddgen -h
 ```
+
+### `bddgen env`
+Outputs info about current environment:
+```
+$ npx bddgen env
+
+Playwright-bdd environment info:
+
+platform: darwin
+playwright-bdd: v5.0.1
+@playwright/test: v1.36.2
+@cucumber/cucumber: v9.2.0
+```
+
 
 ## API
 

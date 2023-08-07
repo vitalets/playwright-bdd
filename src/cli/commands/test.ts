@@ -11,7 +11,7 @@ import { configOption } from '../configOption';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
-export const testsCommand = new Command('test')
+export const testCommand = new Command('test')
   .description('Generate Playwright test files from Gherkin documents')
   .addOption(configOption)
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
