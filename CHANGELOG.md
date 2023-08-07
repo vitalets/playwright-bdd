@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Add [`--tags`](https://github.com/vitalets/playwright-bdd#bddgen-test-or-just-bddgen) option to filter scenarios by tags expression [#36](https://github.com/vitalets/playwright-bdd/issues/36).
+
 ## 5.0.1
 There are several breaking changes in this release. 
 Please check carefully after upgrade.
@@ -7,7 +10,7 @@ Please check carefully after upgrade.
   *If you use these classes you may need to rename it as well*
 * **breaking:** Resolve paths relative to Playwright config file, not to `process.cwd()`.
   *If you use custom Playwright config file you may need to update paths in it*
-* **breaking:** Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/32).
+* **breaking:** Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/40).
   *If you use snapshots you may need to re-save them in new paths*
 * Imporve support for several calls of `defineBddConfig()` [#39](https://github.com/vitalets/playwright-bdd/issues/39)
 * Add config option `quotes` = `'single' | 'double' | 'backtick'` to control quotes style in generated tests [#34](https://github.com/vitalets/playwright-bdd/issues/34)

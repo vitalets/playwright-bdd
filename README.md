@@ -38,6 +38,8 @@ Run BDD tests with [Playwright](https://playwright.dev/) runner.
 - [Ignoring generated files](#ignoring-generated-files)
 - [Watch mode](#watch-mode)
 - [Debugging](#debugging)
+- [CLI](#cli)
+  * [`bddgen test` (or just `bddgen`)](#bddgen-test-or-just-bddgen)
 - [API](#api)
 - [VS Code Integration](#vs-code-integration)
 - [How it works](#how-it-works)
@@ -186,6 +188,7 @@ Special `playwright-bdd` options:
 | `examplesTitleFormat`| `string`   | Title format for scenario outline examples in generated tests. Default: `Example #<_index_>`
 | `verbose`            | `boolean`  | Verbose output. Default: `false`
 | `quotes`             | `string`   | Quotes style in generated files: `single`, `double`, `backtick`. Default: `double`
+| `tags`               | `string`   | [Tags expression](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions) to filter scenarios for generation. Can be also defined by CLI option `--tags` 
 
 Example configuration (CommonJS TypeScript project):
 ```ts
@@ -745,6 +748,36 @@ You can debug tests as usual with `--debug` flag:
 npx bddgen && npx playwright test --debug
 ```
 See more info on debugging in [Playwright docs](https://playwright.dev/docs/debug).
+
+## CLI
+Command line `bddgen` 
+
+### `bddgen test` (or just `bddgen`)
+Generates Playwright test files from Gherkin documents (`.feature` files).
+This command is typically followed by `npx playwright test` to run generated tests. 
+It also assumes that there is `playwright.config.(ts|js)` with one or several calls of [`defineBddConfig()`](#definebddconfigconfig).
+
+Examples:
+
+Generate and run test files using `playwright.config.ts` in default location (working dir):
+```
+npx bddgen && npx playwright test
+```
+Generate and run test files using custom `playwright.config.ts`. 
+The same config should be provided to both `bddgen` and `playwright test`):
+```
+npx bddgen -c path/to/playwright.config.ts && npx playwright test -c path/to/playwright.config.ts
+```
+Generate and run test files with filtering scenarios by [Cucumber tags expression](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
+```
+npx bddgen --tags "@foo and not @bar" && npx playwright test
+```
+Show help:
+```
+npx bddgen test -h
+# or to show global help
+npx bddgen -h
+```
 
 ## API
 

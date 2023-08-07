@@ -2,17 +2,17 @@ import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
 import path from 'node:path';
 import { Command } from 'commander';
-import { TestFilesGenerator } from '../gen';
-import { exitWithMessage } from '../utils';
-import { loadConfig as loadPlaywrightConfig } from '../playwright/loadConfig';
-import { getEnvConfigs } from '../config/env';
-import { BDDConfig, defaults } from '../config';
-import { configOption } from './configOption';
+import { TestFilesGenerator } from '../../gen';
+import { exitWithMessage } from '../../utils';
+import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
+import { getEnvConfigs } from '../../config/env';
+import { BDDConfig, defaults } from '../../config';
+import { configOption } from '../configOption';
 
-const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'gen', 'worker.js');
+const GEN_WORKER_PATH = path.resolve(__dirname, '..', '..', 'gen', 'worker.js');
 
-export const testsCommand = new Command('tests')
-  .description('Generate Playwright tests from Gherkin documents')
+export const testsCommand = new Command('test')
+  .description('Generate Playwright test files from Gherkin documents')
   .addOption(configOption)
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
