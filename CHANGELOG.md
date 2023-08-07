@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Hotfix for output directory structure with tags filter, see [comment](https://github.com/vitalets/playwright-bdd/issues/36#issuecomment-1667819050)
+
 ## 5.1.0
 * Add [`--tags`](https://github.com/vitalets/playwright-bdd#bddgen-test-or-just-bddgen) option to filter scenarios by tags expression [#36](https://github.com/vitalets/playwright-bdd/issues/36).
 * Add `bddgen env` command to display environment info.

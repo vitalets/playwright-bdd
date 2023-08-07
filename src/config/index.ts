@@ -64,8 +64,20 @@ function getConfig(inputConfig?: BDDInputConfig) {
 
 export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
   // todo: find more strict way to omit own config fields
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { outputDir, importTestFrom, ...cucumberConfig } = config;
+  // see: https://bobbyhadz.com/blog/typescript-object-remove-property
+  const ownProps: Record<keyof OwnConfig, true> = {
+    outputDir: true,
+    importTestFrom: true,
+    verbose: true,
+    skip: true,
+    examplesTitleFormat: true,
+    quotes: true,
+    tags: true,
+  };
+  const ownKeys = Object.keys(ownProps) as (keyof OwnConfig)[];
+  const cucumberConfig = { ...config };
+  ownKeys.forEach((key) => delete cucumberConfig[key]);
+
   return cucumberConfig;
 }
 
