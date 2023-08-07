@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 5.1.1
 * Hotfix for output directory structure with tags filter, see [comment](https://github.com/vitalets/playwright-bdd/issues/36#issuecomment-1667819050)
 
 ## 5.1.0
