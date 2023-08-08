@@ -8,15 +8,15 @@ assignees: ''
 ---
 
 **Given**
-what is your feature file, directories structure or other details of context?
+what is your feature file, playwright config and directories structure?
 
 **When**
-what actions did you do?
+what command did you run / any other actions?
 
-**Then**
-what is actual behavior?
+**Then (actual behavior)**
+what did actually happen? If there is error - post full error message with stack trace
 
-**Expected behavior**
+**Then (expected behavior)**
 what did you expect?
 
 **Isolated demo**
