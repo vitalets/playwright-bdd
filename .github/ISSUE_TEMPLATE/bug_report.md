@@ -8,16 +8,16 @@ assignees: ''
 ---
 
 **Given**
-what is your feature file, playwright config and directories structure?
+What is your setup: paste your playwright config, feature file and directories structure
 
 **When**
-what command did you run / any other actions?
+What command did you run / any other actions?
 
-**Then (actual behavior)**
-what did actually happen? If there is error - post full error message with stack trace
+**Then**
+What did actually happen? If there is error - please post full error message with stack trace
 
-**Then (expected behavior)**
-what did you expect?
+**Expected behavior**
+What did you expect?
 
 **Isolated demo**
 It's very helpful if you try to reproduce your behavior on the reference repo [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example). Feel free to make a pull request and post link here.
