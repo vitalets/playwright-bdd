@@ -10,6 +10,7 @@ export const envCommand = new Command('env')
   .action(async () => {
     logger.log(`Playwright-bdd environment info:\n`);
     logger.log(`platform: ${process.platform}`);
+    logger.log(`node: ${process.version}`);
     showPackageVersion('playwright-bdd');
     showPackageVersion('@playwright/test');
     showPackageVersion('@cucumber/cucumber');
