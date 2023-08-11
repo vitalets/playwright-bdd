@@ -831,7 +831,7 @@ Creates `Given`, `When`, `Then`, `Step` functions for defining steps.
 **Params**
   * `test` *object* - custom test instance
 
-**Returns**: *object* - `{ Given, When, Then }`
+**Returns**: *object* - `{ Given, When, Then, Step }`
 
 ##### `Given(pattern, (fixtures, ...args) => void)`
 Defines `Given` step implementation.
