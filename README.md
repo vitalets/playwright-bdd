@@ -1016,4 +1016,4 @@ Feel free to share your feedback in [issues](https://github.com/vitalets/playwri
 This way you will help Playwright team to proceed with BDD implementation in Playwright core.
 
 ## License
-MIT
+[MIT](LICENSE)
