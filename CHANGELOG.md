@@ -1,10 +1,13 @@
 # Changelog
 
+## dev
+* New [documentation website](https://vitalets.github.io/playwright-bdd/#/).
+
 ## 5.1.1
 * Hotfix for output directory structure with tags filter, see [comment](https://github.com/vitalets/playwright-bdd/issues/36#issuecomment-1667819050)
 
 ## 5.1.0
-* Add [`--tags`](https://github.com/vitalets/playwright-bdd#bddgen-test-or-just-bddgen) option to filter scenarios by tags expression [#36](https://github.com/vitalets/playwright-bdd/issues/36).
+* Add `--tags` option to filter scenarios by tags expression [#36](https://github.com/vitalets/playwright-bdd/issues/36).
 * Add `bddgen env` command to display environment info.
 
 ## 5.0.1
@@ -45,7 +48,6 @@ Please check carefully after upgrade.
 
 ## 3.0.1
 Version v3 has several major updates based on the feedback.
-Please check out updated [README.md](README.md) and feel free to report any issues.
 
 * Added support of custom fixtures and playwright-style functions for step definitions [#11](https://github.com/vitalets/playwright-bdd/issues/11)
 * Use single config file: embed Cucumber config into Playwright config [#4](https://github.com/vitalets/playwright-bdd/issues/4)

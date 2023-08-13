@@ -51,7 +51,7 @@ Follow the steps below to setup `playwright-bdd` project.
    });
    ```
 
-   > There are alternative ways of defining steps: [Decorators](#decorators) and [Cucumber-style syntax](#cucumber-style)
+   > There are alternative ways of defining steps: [Decorators](./decorators.md) and [Cucumber-style syntax](./writing-steps.md#cucumber-style)
 
 4. Generate and run tests:
 
@@ -76,4 +76,4 @@ Follow the steps below to setup `playwright-bdd` project.
 
 5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
 
-> Don't forget to [git-ignore generated files](#ignoring-generated-files) 
+> Don't forget to [git-ignore generated files](./recipes.md#ignoring-generated-files) 

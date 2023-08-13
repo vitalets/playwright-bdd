@@ -58,7 +58,7 @@ Feature: Todo Page
       And I add todo "bar"
       Then visible todos count is 2
 ```
-Check out [full example of using decorators](examples/decorators) with playwright-bdd.
+Check out [full example of using decorators](https://github.com/vitalets/playwright-bdd/tree/main/examples/decorators) with playwright-bdd.
 
 > To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
 
@@ -78,17 +78,21 @@ export @Fixture('adminTodoPage') class AdminTodoPage extends TodoPage {
   @When('I add todo {string}')
   async addToDo(text: string) { ... }
 }
-```  
+```
+
 And scenario that uses both steps:
+
 ```gherkin
 Scenario: Adding todos
   Given I am on todo page # <- step defined in TodoPage
   When I add todo "foo"   # <- step defined in AdminTodoPage
 ```
+
 Here `playwright-bdd` will use single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
 
 In some cases you may want to force usage of particular fixture.
 For that you can apply special tag `@fixture:%name%`:
+
 ```gherkin
 @fixture:adminTodoPage
 Scenario: Adding todos

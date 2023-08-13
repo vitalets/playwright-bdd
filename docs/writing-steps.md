@@ -80,7 +80,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
     +import { test } from "./fixtures.ts";  
     ```
 
-See [full example of Playwright-style](examples/playwright-style).
+See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/playwright-style).
 
 ### Accessing `test` and `testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) using special fixtures `$test` and `$testInfo` respectively. It allows to:
@@ -271,4 +271,4 @@ setWorldConstructor(CustomWorld);
 ```
 > Consider asynchronous setup and teardown of `BddWorld` using `init()` / `destroy()` methods.
 
-See [full example of Cucumber-style](examples/cucumber-style).
+See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
