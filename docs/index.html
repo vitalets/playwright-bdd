@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+    <meta name="description" content="Description" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0" />
+    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css" />
+  </head>
+  <body>
+    <div id="app"></div>
+    <script>
+      window.$docsify = {
+        name: 'playwright-bdd',
+        repo: 'vitalets/playwright-bdd',
+        auto2top: true,
+        loadSidebar: true,
+        subMaxLevel: 3,
+        alias: {
+          '.*?/changelog':
+            'https://raw.githubusercontent.com/vitalets/playwright-bdd/main/CHANGELOG.md',
+          '.*?/license': 'https://raw.githubusercontent.com/vitalets/playwright-bdd/main/LICENSE',
+        },
+      };
+    </script>
+    <!-- Docsify v4 -->
+    <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+    <script src="//unpkg.com/docsify-copy-code@2"></script>
+    <script src="//unpkg.com/docsify-pagination/dist/docsify-pagination.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-typescript.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-gherkin.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/prismjs@1/components/prism-diff.min.js"></script>
+  </body>
+</html>

@@ -43,6 +43,7 @@
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",
     "toc": "markdown-toc README.md -i --maxdepth 4",
+    "docs": "docsify serve ./docs",
     "release": "./scripts/release.sh"
   },
   "dependencies": {

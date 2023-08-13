@@ -1,0 +1,79 @@
+# Getting started
+
+> You can clone [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) to get ready-to-use project on your machine and quickly check how it works
+
+Follow the steps below to setup `playwright-bdd` project.
+
+1. Create the following `playwright.config.js` in the project root:
+   ```js
+   import { defineConfig } from '@playwright/test';
+   import { defineBddConfig } from 'playwright-bdd';
+
+   const testDir = defineBddConfig({
+     paths: ['sample.feature'],
+     require: ['steps.js'],
+   });
+
+   export default defineConfig({
+     testDir,
+     reporter: 'html',
+   });
+   ```
+
+2. Create feature file `sample.feature`:
+
+   ```gherkin
+   Feature: Playwright site
+
+       Scenario: Check title
+           Given I open url "https://playwright.dev"
+           When I click link "Get started"
+           Then I see in title "Playwright"
+   ```
+
+3. Implement steps in `steps.js`:
+   ```ts
+   import { expect } from '@playwright/test';
+   import { createBdd } from 'playwright-bdd';
+
+   const { Given, When, Then } = createBdd();
+
+   Given('I open url {string}', async ({ page }, url) => {
+     await page.goto(url);
+   });
+
+   When('I click link {string}', async ({ page }, name) => {
+     await page.getByRole('link', { name }).click();
+   });
+
+   Then('I see in title {string}', async ({ page }, keyword) => {
+     await expect(page).toHaveTitle(new RegExp(keyword));
+   });
+   ```
+
+   > There are alternative ways of defining steps: [Decorators](#decorators) and [Cucumber-style syntax](#cucumber-style)
+
+4. Generate and run tests:
+
+   ```
+   npx bddgen && npx playwright test
+   ```
+
+   Output:
+
+   ```
+   Running 1 test using 1 worker
+   1 passed (2.0s)
+
+   To open last HTML report run:
+
+   npx playwright show-report
+   ```
+   <details>
+     <summary>Report</summary>
+     <img width="80%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/e327d97c-bc67-4ba2-8660-650f1c479c62"/>
+   </details>
+
+5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
+
+> Don't forget to [git-ignore generated files](#ignoring-generated-files) 
