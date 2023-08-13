@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { Given, When, Then, DataTable } from '@cucumber/cucumber';
+import { Given, When, Then, DataTable, defineParameterType } from '@cucumber/cucumber';
 import { BddWorld } from '../../dist';
 
 Given('State {int}', async function () {
@@ -29,6 +29,17 @@ Then('Passed string arg {string} to equal "foo"', async function (this: BddWorld
 
 Then('Passed int arg {int} to equal 42', async function (this: BddWorld, arg: number) {
   expect(arg).toEqual(42);
+});
+
+type Color = 'red' | 'blue' | 'yellow';
+defineParameterType({
+  name: 'color',
+  regexp: /red|blue|yellow/,
+  transformer: (s) => s.toLowerCase() as Color,
+});
+
+Then('Passed custom type arg {color} to equal "red"', function (this: BddWorld, color: Color) {
+  expect(color).toEqual('red');
 });
 
 Then(

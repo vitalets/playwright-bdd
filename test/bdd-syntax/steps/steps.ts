@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { DataTable } from '@cucumber/cucumber';
+import { DataTable, defineParameterType } from '@cucumber/cucumber';
 import { createBdd } from '../../../dist';
 import { test } from './fixtures';
 
@@ -29,6 +29,17 @@ Then('Passed string arg {string} to equal "foo"', async ({}, arg: string) => {
 
 Then('Passed int arg {int} to equal 42', ({}, arg: number) => {
   expect(arg).toEqual(42);
+});
+
+type Color = 'red' | 'blue' | 'yellow';
+defineParameterType({
+  name: 'color',
+  regexp: /red|blue|yellow/,
+  transformer: (s) => s.toLowerCase() as Color,
+});
+
+Then('Passed custom type arg {color} to equal "red"', ({}, color: Color) => {
+  expect(color).toEqual('red');
 });
 
 Then('Passed doc string to contain {string}', async ({}, arg: string, docString: string) => {
