@@ -3,6 +3,8 @@ Feature: decorators-without-steps
     Scenario: guess TodoPage from 1 variant
       Given TodoPage: step
       Then TodoPage: used fixture is "TodoPage"
+      # custom types not supported yet for decorator steps
+      # And TodoPage: passed custom type arg red to equal "red"
 
     Scenario: guess TodoPage from 2 variants
       Given TodoPage: step

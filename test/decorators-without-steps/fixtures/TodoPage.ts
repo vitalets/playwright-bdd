@@ -3,6 +3,15 @@ import { Fixture, Given, When, Then } from '../../../dist/decorators';
 import { test } from '.';
 import { BasePage, IntermediateBasePage } from './BasePage';
 
+// custom types not supported yet for decorator steps
+// import { defineParameterType } from '@cucumber/cucumber';
+// type Color = 'red' | 'blue' | 'yellow';
+// defineParameterType({
+//   name: 'color',
+//   regexp: /red|blue|yellow/,
+//   transformer: (s) => s.toLowerCase() as Color,
+// });
+
 export
 @Fixture<typeof test>('todoPage')
 class TodoPage extends IntermediateBasePage {
@@ -17,6 +26,11 @@ class TodoPage extends IntermediateBasePage {
   checkUsedFixture(name: string) {
     expect(this.constructor.name).toEqual(name);
   }
+
+  // @Then('TodoPage: passed custom type arg {color} to equal "red"')
+  // checkCustomType(color: Color) {
+  //   expect(color).toEqual('red');
+  // }
 }
 
 export
