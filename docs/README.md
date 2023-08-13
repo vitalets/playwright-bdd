@@ -8,14 +8,6 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 
 > 🔥 Check out new [decorators syntax](decorators.md) to define BDD steps right inside Page Object Models
 
-<!-- ## Links
-* Check out [documentation](#)
-* Clone and play with [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
-* Discover latest updates in [changelog](changelog.md)
-* Learn more about [BDD](https://cucumber.io/docs/bdd/)
-* Share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues)
-* License - [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE) -->
-
 ## Quick start
 Jump to [installation guide](installation.md) or continue reading to learn more about `playwright-bdd` architecture.
 
