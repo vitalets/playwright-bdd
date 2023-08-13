@@ -2,6 +2,9 @@ name: test
 
 on:
   push:
+    branches: [main, beta]
+  pull_request:
+    branches: [main, beta]
 
 jobs:
   get-playwright-versions:
