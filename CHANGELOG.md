@@ -1,6 +1,17 @@
 # Changelog
 
 ## dev
+
+* **possibly breaking:** Introduce `featuresRoot` option to have more control of generated files structure [#44](https://github.com/vitalets/playwright-bdd/issues/44).
+
+  This fix actually reverts simplification of `outputDir` by common parent (added in v5, see [#40](https://github.com/vitalets/playwright-bdd/issues/40)).
+
+  *❤️ I need to admit that automatic simplification of `outputDir` structure was not the right choice. Playwright heavily relies on tests structure for storing screenshots and we should keep it as stable as possible. I don't like such reverting but better to do it now than later. Introduced `featuresRoot` allows to control output structure the same way as TypeScript controls it with [rootDir](https://www.typescriptlang.org/tsconfig#rootDir).*
+
+  *If you use screenshots/snapshots you may need to re-save them to new paths after upgrading.*
+
+https://github.com/vitalets/playwright-bdd/issues/44#issuecomment-1676738848
+
 * New [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 
 ## 5.1.1

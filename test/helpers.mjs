@@ -49,7 +49,13 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
     (e) => {
       const stderr = e.stderr.toString();
       const errors = Array.isArray(error) ? error : [error];
-      errors.forEach((error) => expect(stderr).toContain(error));
+      errors.forEach((error) => {
+        if (typeof error === 'string') {
+          expect(stderr).toContain(error);
+        } else {
+          expect(stderr).toMatch(error);
+        }
+      });
       return true;
     },
   );

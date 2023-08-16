@@ -13,7 +13,7 @@ test(testDir.name, () => {
   // to ensure that directory structure kept the same when running with tags
 
   testDir.getAllFiles('features').forEach((relativePath) => {
-    const outputFilePath = path.join('.features-gen', `${relativePath}.spec.js`);
+    const outputFilePath = path.join('.features-gen/features', `${relativePath}.spec.js`);
     const fileName = path.basename(relativePath);
     const shouldExist = !fileName.startsWith('skip');
     const message = `File: ${outputFilePath} expected to ${shouldExist ? 'exist' : 'not exist'}`;
@@ -21,11 +21,13 @@ test(testDir.name, () => {
     assert(testDir.isFileExists(outputFilePath) === shouldExist, message);
   });
 
-  let fileContents = testDir.getFileContents('.features-gen/subdir/include.feature.spec.js');
+  let fileContents = testDir.getFileContents(
+    '.features-gen/features/subdir/include.feature.spec.js',
+  );
   expect(fileContents).toContain(`test("scenario 1",`);
   expect(fileContents).not.toContain(`test("scenario 2",`);
 
-  fileContents = testDir.getFileContents('.features-gen/subdir/outline.feature.spec.js');
+  fileContents = testDir.getFileContents('.features-gen/features/subdir/outline.feature.spec.js');
   expect(fileContents).not.toContain(`test("Example #1",`);
   expect(fileContents).not.toContain(`test("Example #2",`);
   expect(fileContents).toContain(`test("Example #3",`);
