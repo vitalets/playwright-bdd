@@ -11,8 +11,7 @@
 * Add `bddgen env` command to display environment info.
 
 ## 5.0.1
-There are several breaking changes in this release. 
-Please check carefully after upgrade.
+There are several breaking changes in this release. Please check carefully after upgrade.
 * **breaking:** Optimize world initialization, rename `World` -> `BddWorld`, `WorldOptions` -> `BddWorldOptions`.
   *If you use these classes you may need to rename it as well*
 * **breaking:** Resolve paths relative to Playwright config file, not to `process.cwd()`.
