@@ -6,7 +6,7 @@
 
 import path from 'node:path';
 import { resolveConfigFile } from '../playwright/loadConfig';
-import { getCliConfigPath } from '../cli/configOption';
+import { getCliConfigPath } from '../cli/options';
 
 /**
  * Resolve playwright config dir considering cli flags.

@@ -1,5 +1,4 @@
-@include
-Feature: cli-option-tags
+Feature: cli-command-env
 
     Background:
       Given state 1
@@ -7,6 +6,5 @@ Feature: cli-option-tags
     Scenario: scenario 1
       Given state 1
       
-    @exclude
     Scenario: scenario 2
       Given state 2

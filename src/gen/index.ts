@@ -44,6 +44,12 @@ export class TestFilesGenerator {
     await this.saveFiles();
   }
 
+  async getSteps() {
+    await this.loadCucumberConfig();
+    await this.loadFeaturesAndSteps();
+    return this.supportCodeLibrary.stepDefinitions;
+  }
+
   private async loadCucumberConfig() {
     const environment = { cwd: getPlaywrightConfigDir() };
     const { runConfiguration } = await loadCucumberConfig(

@@ -1,6 +1,6 @@
 import fs from 'node:fs';
 import { Command } from 'commander';
-import { configOption } from '../configOption';
+import { configOption } from '../options';
 import path from 'node:path';
 import { logger } from '../../utils/logger';
 

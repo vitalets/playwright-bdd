@@ -12,12 +12,13 @@ export async function loadConfig(cliConfigPath?: string) {
   const resolvedConfigFile = resolveConfigFile(cliConfigPath);
   assertConfigFileExists(resolvedConfigFile, cliConfigPath);
   await requireTransform().requireOrImport(resolvedConfigFile);
+  return { resolvedConfigFile };
 }
 
-export function resolveConfigFile(cliConfigPath?: string): string | null {
+export function resolveConfigFile(cliConfigPath?: string): string {
   const { resolveConfigFile } = requirePlaywrightModule('lib/common/configLoader.js');
   const configFileOrDirectory = getConfigFilePath(cliConfigPath);
-  return resolveConfigFile(configFileOrDirectory);
+  return resolveConfigFile(configFileOrDirectory) || '';
 }
 
 function getConfigFilePath(cliConfigPath?: string) {

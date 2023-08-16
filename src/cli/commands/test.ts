@@ -7,7 +7,7 @@ import { exitWithMessage } from '../../utils';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { getEnvConfigs } from '../../config/env';
 import { BDDConfig, defaults } from '../../config';
-import { configOption } from '../configOption';
+import { configOption } from '../options';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
@@ -19,6 +19,7 @@ export const testCommand = new Command('test')
   .action(async (opts) => {
     await loadPlaywrightConfig(opts.config);
     const configs = Object.values(getEnvConfigs());
+    assertConfigsCount(configs);
     const cliOptions = buildCliOptions(opts);
     await generateFilesForConfigs(configs, cliOptions);
   });
@@ -30,14 +31,13 @@ function buildCliOptions(opts: { tags?: string; verbose?: boolean }) {
   return config;
 }
 
-function assertConfigsCount(configs: unknown[]) {
+export function assertConfigsCount(configs: unknown[]) {
   if (configs.length === 0) {
     exitWithMessage(`No BDD configs found. Did you use defineBddConfig() in playwright.config.ts?`);
   }
 }
 
 async function generateFilesForConfigs(configs: BDDConfig[], cliConfig: Partial<BDDConfig>) {
-  assertConfigsCount(configs);
   // run first config in main thread and other in workers (to have fresh require cache)
   // See: https://github.com/vitalets/playwright-bdd/issues/32
   const tasks = configs.map((config, index) => {

@@ -30,6 +30,41 @@ Examples:
     npx bddgen -h
     ```
 
+## `bddgen export`
+Prints list of all found step definitions. 
+Useful for building AI prompt to generate BDD scenarios.
+```
+$ npx bddgen export
+```
+Example output:
+```
+List of all steps found by config: playwright.config.ts
+
+* Given I am on todo page
+* When I add todo {string}
+* When I remove todo {string}
+* Then visible todos count is {int}
+```
+<details>
+  <summary>Example prompt for ChatGPT</summary>
+
+  ```
+  Generate BDD scenarios for the following feature:
+
+  Todo app that allows to add and remove todo items. 
+
+  Format output as a single gherkin file. 
+  Use Background for common steps.
+  Use "And" keyword for repeated "Given" / "When" / "Then".
+  Strictly use only the following step definitions:
+
+  * Given I am on todo page
+  * When I add todo {string}
+  * When I remove todo {string}
+  * Then visible todos count is {int}
+  ```
+</details>
+
 ## `bddgen env`
 Displays info about current environment:
 ```
