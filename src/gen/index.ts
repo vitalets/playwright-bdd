@@ -11,7 +11,7 @@ import { loadFeatures } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
-import { exitWithMessage, getCommonPath } from '../utils';
+import { exitWithMessage } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
@@ -80,14 +80,13 @@ export class TestFilesGenerator {
   }
 
   private buildFiles() {
-    const outputPaths = this.buildOutputPaths();
     this.files = [...this.features.entries()]
       .map(([doc, pickles]) => {
         return new TestFile({
           doc,
           pickles,
           supportCodeLibrary: this.supportCodeLibrary,
-          outputPath: outputPaths.get(doc)!,
+          outputPath: this.getOutputPath(doc),
           config: this.config,
           tagsExpression: this.tagsExpression,
         }).build();
@@ -95,14 +94,23 @@ export class TestFilesGenerator {
       .filter((file) => file.testNodes.length > 0);
   }
 
-  buildOutputPaths() {
-    // these are always relative (coming after cucumber handling)
-    const docs = [...this.features.keys()];
-    const featurePaths = docs.map((doc) => doc.uri!);
-    const commonPath = getCommonPath(featurePaths);
-    const relativePaths = featurePaths.map((p) => path.relative(commonPath, p));
-    const outputPaths = relativePaths.map((p) => path.join(this.config.outputDir, `${p}.spec.js`));
-    return new Map(outputPaths.map((p, i) => [docs[i], p]));
+  private getOutputPath(doc: GherkinDocument) {
+    const configDir = getPlaywrightConfigDir();
+    // doc.uri is always relative to cwd (coming after cucumber handling)
+    // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
+    const relFeaturePath = doc.uri!;
+    const absFeaturePath = path.resolve(configDir, relFeaturePath);
+    const relOutputPath = path.relative(this.config.featuresRoot, absFeaturePath);
+    if (relOutputPath.startsWith('..')) {
+      exitWithMessage(
+        `All feature files should be located underneath featuresRoot.`,
+        `Please change featuresRoot or paths in configuration.\n`,
+        `featureFile: ${absFeaturePath}\n`,
+        `featuresRoot: ${this.config.featuresRoot}\n`,
+      );
+    }
+    const absOutputPath = path.resolve(this.config.outputDir, relOutputPath);
+    return `${absOutputPath}.spec.js`;
   }
 
   private async checkUndefinedSteps() {

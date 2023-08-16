@@ -64,6 +64,47 @@ Path to file that exports custom `test` to be used in generated test files.
 
 Directory to output generated test files.
 
+### featuresRoot
+
+- Type: `string`
+- Default: *location of config file*
+
+Base directory used to construct relative paths to feature files, 
+that then used to place test files inside `outputDir`.
+
+The behavior is similar to TypeScript [rootDir](https://www.typescriptlang.org/tsconfig#rootDir) option, that sets common parent for all `.ts` files and actually defines `outDir` structure.
+
+<details>
+  <summary>Example</summary>
+
+  Imagine the following project structure:
+
+  ```
+  features
+    feature1.feature
+    subdir
+      feature2.feature
+  playwright.config.ts 
+  ```
+
+  If you generate tests without `featuresRoot` you will get the following output:
+  ```
+  .features-gen
+    features
+      feature1.feature.spec.js
+      subdir
+        feature2.feature.spec.js
+  ```
+
+  If you don't want to include `features` directory into output, you can set `featuresRoot: './features'` and then all output paths will be resolved from it:
+  ```
+  .features-gen
+    feature1.feature.spec.js
+    subdir
+      feature2.feature.spec.js
+  ```
+</details>
+
 ### examplesTitleFormat
 
 - Type: `string`

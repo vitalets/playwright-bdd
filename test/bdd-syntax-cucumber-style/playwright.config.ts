@@ -3,6 +3,7 @@ import { defineBddConfig } from '../../dist';
 
 const testDir = defineBddConfig({
   paths: ['../bdd-syntax/features'],
+  featuresRoot: '../bdd-syntax/features',
   require: ['steps.ts'],
 });
 

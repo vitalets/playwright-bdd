@@ -2,8 +2,9 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from '../../../dist';
 
 const testDir = defineBddConfig({
-  paths: ['.'],
-  require: ['*.ts'],
+  paths: ['../root.feature'],
+  require: ['../steps.ts'],
+  outputDir: '../.features-gen',
 });
 
 export default defineConfig({

@@ -25,6 +25,8 @@ type OwnConfig = {
   quotes?: 'single' | 'double' | 'backtick';
   /** Tags expression to filter scenarios for generation */
   tags?: string;
+  /** Parent directory for all feature files used to construct output paths */
+  featuresRoot?: string;
 };
 
 export const defaults: Required<
@@ -54,11 +56,16 @@ export function defineBddConfig(inputConfig?: BDDInputConfig) {
 function getConfig(inputConfig?: BDDInputConfig) {
   const config = Object.assign({}, defaults, inputConfig);
   const configDir = getPlaywrightConfigDir();
+  const featuresRoot = config.featuresRoot
+    ? path.resolve(configDir, config.featuresRoot)
+    : configDir;
+
   return {
     ...config,
     // important to resolve outputDir as it is used as unique key for input configs
     outputDir: path.resolve(configDir, config.outputDir),
     importTestFrom: resolveImportTestFrom(configDir, config.importTestFrom),
+    featuresRoot,
   };
 }
 
@@ -73,6 +80,7 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
     examplesTitleFormat: true,
     quotes: true,
     tags: true,
+    featuresRoot: true,
   };
   const ownKeys = Object.keys(ownProps) as (keyof OwnConfig)[];
   const cucumberConfig = { ...config };
