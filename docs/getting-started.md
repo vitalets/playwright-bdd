@@ -2,7 +2,10 @@
 
 > You can clone [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) to get ready-to-use project on your machine and quickly check how it works
 
-Follow the steps below to setup `playwright-bdd` project.
+> In this guide we use JavaScript for simplicity, but you can use TypeScript as well
+
+Follow the steps below to setup `playwright-bdd` project. 
+
 
 1. Create the following `playwright.config.js` in the project root:
    ```js
