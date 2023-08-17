@@ -72,7 +72,7 @@ function getConfig(inputConfig?: BDDInputConfig) {
 export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
   // todo: find more strict way to omit own config fields
   // see: https://bobbyhadz.com/blog/typescript-object-remove-property
-  const ownProps: Record<keyof OwnConfig, true> = {
+  const omitProps: Record<keyof OwnConfig, true> = {
     outputDir: true,
     importTestFrom: true,
     verbose: true,
@@ -82,9 +82,9 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
     tags: true,
     featuresRoot: true,
   };
-  const ownKeys = Object.keys(ownProps) as (keyof OwnConfig)[];
+  const keys = Object.keys(omitProps) as (keyof OwnConfig)[];
   const cucumberConfig = { ...config };
-  ownKeys.forEach((key) => delete cucumberConfig[key]);
+  keys.forEach((key) => delete cucumberConfig[key]);
 
   return cucumberConfig;
 }
