@@ -27,25 +27,6 @@ export function template(t: string, params: Record<string, unknown> = {}) {
   });
 }
 
-/**
- * Returns common path of files.
- * Example:
- * - '/foo/bar/1.txt'
- * - '/foo/bar/baz/2.txt'
- * => '/foo/bar'
- */
-export function getCommonPath(filePaths: string[]) {
-  return filePaths
-    .reduce((commonPath: string[], filePath, index) => {
-      const dirPath = path.dirname(filePath);
-      const dirs = dirPath.split(path.sep);
-      if (index === 0) return dirs;
-      const stopIndex = commonPath.findIndex((dir, index) => dir !== dirs[index]);
-      return stopIndex === -1 ? commonPath : commonPath.slice(0, stopIndex);
-    }, [])
-    .join(path.sep);
-}
-
 export function removeDuplicates(arr: string[]) {
   return [...new Set(arr)];
 }
