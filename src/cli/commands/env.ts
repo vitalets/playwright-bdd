@@ -3,6 +3,7 @@ import { Command } from 'commander';
 import { configOption } from '../options';
 import path from 'node:path';
 import { logger } from '../../utils/logger';
+import { getPackageVersion } from '../../utils';
 
 export const envCommand = new Command('env')
   .description('Prints environment info')
@@ -17,16 +18,15 @@ export const envCommand = new Command('env')
   });
 
 function showPackageVersion(packageName: string) {
-  let version = '';
-  if (packageName === 'playwright-bdd') {
-    version = getOwnVersion();
-  } else {
-    const packageJsonPath = require.resolve(`${packageName}/package.json`);
-    version = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8')).version;
-  }
+  const version =
+    packageName === 'playwright-bdd' ? getOwnVersion() : getPackageVersion(packageName);
   logger.log(`${packageName}: v${version}`);
 }
 
+/**
+ * Getting own version by relative path instead of using getPackageVersion(),
+ * to aneble using directly from /dist in tests.
+ */
 export function getOwnVersion() {
   const packageJsonPath = path.resolve(__dirname, '..', '..', '..', `package.json`);
   const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));

@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import { logger } from './logger';
 
@@ -47,4 +48,16 @@ export function getCommonPath(filePaths: string[]) {
 
 export function removeDuplicates(arr: string[]) {
   return [...new Set(arr)];
+}
+
+export function resolvePackageRoot(packageName: string) {
+  const packageJsonPath = require.resolve(`${packageName}/package.json`);
+  return path.dirname(packageJsonPath);
+}
+
+export function getPackageVersion(packageName: string) {
+  const packageRoot = resolvePackageRoot(packageName);
+  const packageJsonPath = path.join(packageRoot, 'package.json');
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  return packageJson.version as string;
 }

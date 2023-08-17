@@ -1,6 +1,7 @@
 import path from 'path';
+import { resolvePackageRoot } from '../utils';
 
-const playwrightRoot = path.dirname(require.resolve('@playwright/test'));
+const playwrightRoot = resolvePackageRoot('@playwright/test');
 
 /**
  * Requires Playwright's internal module that is not exported via package.exports.
