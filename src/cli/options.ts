@@ -3,6 +3,8 @@
  */
 import { Command, Option } from 'commander';
 
+export type ConfigOption = { config?: string };
+
 export const configOption = new Option(
   `-c, --config <file>`,
   `Path to Playwright configuration file (default: playwright.config.(js|ts))`,

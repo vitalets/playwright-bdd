@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Command } from 'commander';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { configOption } from '../options';
+import { ConfigOption, configOption } from '../options';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { logger } from '../../utils/logger';
 import { getEnvConfigs } from '../../config/env';
@@ -14,7 +14,7 @@ import { TestFilesGenerator } from '../../gen';
 export const exportCommand = new Command('export')
   .description('Prints all step definitions')
   .addOption(configOption)
-  .action(async (opts) => {
+  .action(async (opts: ConfigOption) => {
     const { resolvedConfigFile } = await loadPlaywrightConfig(opts.config);
     logger.log(
       `List of all steps found by config: ${path.relative(process.cwd(), resolvedConfigFile)}\n`,

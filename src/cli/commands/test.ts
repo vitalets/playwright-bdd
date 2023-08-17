@@ -7,16 +7,21 @@ import { exitWithMessage } from '../../utils';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { getEnvConfigs } from '../../config/env';
 import { BDDConfig, defaults } from '../../config';
-import { configOption } from '../options';
+import { ConfigOption, configOption } from '../options';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
+
+type TestCommandOptions = ConfigOption & {
+  tags?: string;
+  verbose?: string;
+};
 
 export const testCommand = new Command('test')
   .description('Generate Playwright test files from Gherkin documents')
   .addOption(configOption)
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
-  .action(async (opts) => {
+  .action(async (opts: TestCommandOptions) => {
     await loadPlaywrightConfig(opts.config);
     const configs = Object.values(getEnvConfigs());
     assertConfigsCount(configs);
@@ -24,7 +29,7 @@ export const testCommand = new Command('test')
     await generateFilesForConfigs(configs, cliOptions);
   });
 
-function buildCliOptions(opts: { tags?: string; verbose?: boolean }) {
+function buildCliOptions(opts: TestCommandOptions) {
   const config: Partial<BDDConfig> = {};
   if ('tags' in opts) config.tags = opts.tags;
   if ('verbose' in opts) config.verbose = Boolean(opts.verbose);

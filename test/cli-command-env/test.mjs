@@ -6,4 +6,5 @@ test(getTestName(import.meta), (t) => {
   expect(stdout).toContain('platform:');
   expect(stdout).toContain('playwright-bdd:');
   expect(stdout).toContain('@playwright/test: v1.');
+  expect(stdout).toContain('Playwright config file: playwright.config.ts');
 });
