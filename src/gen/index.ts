@@ -36,7 +36,7 @@ export class TestFilesGenerator {
 
   async generate() {
     await this.loadCucumberConfig();
-    await this.loadFeaturesAndSteps();
+    await Promise.all([this.loadFeatures(), this.loadSteps()]);
     this.buildFiles();
     await this.checkUndefinedSteps();
     this.checkImportCustomTest();
@@ -44,9 +44,9 @@ export class TestFilesGenerator {
     await this.saveFiles();
   }
 
-  async getSteps() {
+  async extractSteps() {
     await this.loadCucumberConfig();
-    await this.loadFeaturesAndSteps();
+    await this.loadSteps();
     return this.supportCodeLibrary.stepDefinitions;
   }
 
@@ -62,20 +62,18 @@ export class TestFilesGenerator {
     this.warnForTsNodeRegister();
   }
 
-  private async loadFeaturesAndSteps() {
+  private async loadFeatures() {
     const environment = { cwd: getPlaywrightConfigDir() };
-    const [features, supportCodeLibrary] = await Promise.all([
-      loadFeatures(this.runConfiguration, environment),
-      loadSteps(this.runConfiguration, environment),
-    ]);
+    this.features = await loadFeatures(this.runConfiguration, environment);
+  }
 
-    this.features = features;
-    this.supportCodeLibrary = supportCodeLibrary;
-
+  private async loadSteps() {
+    const environment = { cwd: getPlaywrightConfigDir() };
+    this.supportCodeLibrary = await loadSteps(this.runConfiguration, environment);
     await this.loadDecoratorSteps();
   }
 
-  async loadDecoratorSteps() {
+  private async loadDecoratorSteps() {
     const { importTestFrom } = this.config;
     if (importTestFrom) {
       // require importTestFrom for case when it is not required by step definitions
@@ -138,7 +136,7 @@ export class TestFilesGenerator {
     }
   }
 
-  async saveFiles() {
+  private async saveFiles() {
     this.files.forEach((file) => {
       file.save();
       if (this.config.verbose) {
@@ -148,13 +146,13 @@ export class TestFilesGenerator {
     if (this.config.verbose) logger.log(`Generated files: ${this.files.length}`);
   }
 
-  async clearOutputDir() {
+  private async clearOutputDir() {
     const testFiles = await fg(path.join(this.config.outputDir, '**', '*.spec.js'));
     const tasks = testFiles.map((testFile) => fs.rm(testFile));
     await Promise.all(tasks);
   }
 
-  warnForTsNodeRegister() {
+  private warnForTsNodeRegister() {
     if (hasTsNodeRegister(this.runConfiguration)) {
       logger.log(
         `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,

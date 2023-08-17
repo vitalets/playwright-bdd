@@ -29,7 +29,7 @@ async function showStepsForConfigs(configs: BDDConfig[]) {
   // are already in node cache, we collected them.
   const steps = new Set<string>();
   const tasks = configs.map(async (config) => {
-    const stepDefinitions = await new TestFilesGenerator(config).getSteps();
+    const stepDefinitions = await new TestFilesGenerator(config).extractSteps();
     stepDefinitions.forEach((s) => steps.add(`* ${getStepText(s)}`));
   });
 
