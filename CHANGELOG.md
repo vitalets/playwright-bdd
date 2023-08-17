@@ -12,6 +12,7 @@
 
 * Add CLI command `bddgen export`.
 * New [documentation website](https://vitalets.github.io/playwright-bdd/#/).
+* Suppress `publishQuiet` deprecation warning for Cucumber v9.4+, see [#47](https://github.com/vitalets/playwright-bdd/issues/47)
 
 ## 5.1.1
 * Hotfix for output directory structure with tags filter, see [comment](https://github.com/vitalets/playwright-bdd/issues/36#issuecomment-1667819050)

@@ -6,6 +6,7 @@ import { ImportTestFrom } from '../gen/formatter';
 import { IConfiguration } from '@cucumber/cucumber/api';
 import { saveConfigToEnv } from './env';
 import { getPlaywrightConfigDir } from './dir';
+import { getPackageVersion } from '../utils';
 
 // todo: pick only relevant fields from cucumber config
 type CucumberConfig = Partial<IConfiguration>;
@@ -86,6 +87,8 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
   const cucumberConfig = { ...config };
   keys.forEach((key) => delete cucumberConfig[key]);
 
+  stripPublishQuiet(cucumberConfig);
+
   return cucumberConfig;
 }
 
@@ -100,5 +103,17 @@ function resolveImportTestFrom(configDir: string, importTestFrom?: string | Impo
       file: path.resolve(configDir, file),
       varName,
     };
+  }
+}
+
+function stripPublishQuiet(cucumberConfig: CucumberConfig) {
+  const cucumberVersion = getPackageVersion('@cucumber/cucumber');
+  // Playwright-bdd supports Cucumber from v9+
+  // publishQuiet was deprecated in Cucumber 9.4.0.
+  // See: https://github.com/cucumber/cucumber-js/pull/2311
+  // Remove publishQuite from Cucumber config to hide deprecation warning.
+  // See: https://github.com/vitalets/playwright-bdd/pull/47
+  if (!/^9\.[0123]\./.test(cucumberVersion)) {
+    delete cucumberConfig.publishQuiet;
   }
 }
