@@ -1,5 +1,5 @@
 # Decorators
-Playwright-bdd supports [TypeScript decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
+Playwright-bdd supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
 
 ```ts
 // TodoPage.ts
