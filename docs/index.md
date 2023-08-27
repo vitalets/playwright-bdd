@@ -9,7 +9,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 > 🔥 Check out new [decorators syntax](decorators.md) to define BDD steps right inside Page Object Models
 
 ## Quick start
-Jump to [installation guide](installation.md) or continue reading to learn more about `playwright-bdd` architecture.
+Jump to [installation guide](installation.md) or read below about `playwright-bdd` architecture.
 
 ## Why Playwright runner
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
@@ -29,7 +29,7 @@ Typical command to run tests with `playwright-bdd` is following:
 npx bddgen && npx playwright test
 ```
 
-### Phase 1: Generate 
+### Phase 1: Generate tests
 CLI command `npx bddgen` generates test files from BDD feature files. For example:
 
 From
@@ -57,7 +57,7 @@ test.describe('Playwright site', () => {
 });    
 ```
 
-### Phase 2: Run
+### Phase 2: Run tests
 CLI commmand `npx playwright test` runs generated test files with Playwright runner.
 Playwright-bdd makes Playwright API available in step definitions (`page`, `browser`, etc):
 
