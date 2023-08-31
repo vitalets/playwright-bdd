@@ -3,13 +3,13 @@ import { Command } from 'commander';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { ConfigOption, configOption } from '../options';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
-import { logger } from '../../utils/logger';
+import { Logger } from '../../utils/logger';
 import { getEnvConfigs } from '../../config/env';
 import { assertConfigsCount } from './test';
 import { BDDConfig } from '../../config';
 import { TestFilesGenerator } from '../../gen';
 
-// filter by project?
+const logger = new Logger({ verbose: true });
 
 export const exportCommand = new Command('export')
   .description('Prints all step definitions')

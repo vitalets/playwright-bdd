@@ -17,7 +17,7 @@ import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
 import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/dir';
-import { logger } from '../utils/logger';
+import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
@@ -29,8 +29,10 @@ export class TestFilesGenerator {
   private supportCodeLibrary!: ISupportCodeLibrary;
   private files: TestFile[] = [];
   private tagsExpression?: ReturnType<typeof parseTagsExpression>;
+  private logger: Logger;
 
   constructor(private config: BDDConfig) {
+    this.logger = new Logger({ verbose: config.verbose });
     if (config.tags) this.tagsExpression = parseTagsExpression(config.tags);
   }
 
@@ -64,13 +66,18 @@ export class TestFilesGenerator {
 
   private async loadFeatures() {
     const environment = { cwd: getPlaywrightConfigDir() };
+    this.logger.log(`Loading features from: ${this.runConfiguration.sources.paths.join(', ')}`);
     this.features = await loadFeatures(this.runConfiguration, environment);
+    this.logger.log(`Loaded features: ${this.features.size}`);
   }
 
   private async loadSteps() {
+    const { requirePaths, importPaths } = this.runConfiguration.support;
+    this.logger.log(`Loading steps from: ${requirePaths.concat(importPaths).join(', ')}`);
     const environment = { cwd: getPlaywrightConfigDir() };
     this.supportCodeLibrary = await loadSteps(this.runConfiguration, environment);
     await this.loadDecoratorSteps();
+    this.logger.log(`Loaded steps: ${this.supportCodeLibrary.stepDefinitions.length}`);
   }
 
   private async loadDecoratorSteps() {
@@ -139,11 +146,9 @@ export class TestFilesGenerator {
   private async saveFiles() {
     this.files.forEach((file) => {
       file.save();
-      if (this.config.verbose) {
-        logger.log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
-      }
+      this.logger.log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
     });
-    if (this.config.verbose) logger.log(`Generated files: ${this.files.length}`);
+    this.logger.log(`Generated files: ${this.files.length}`);
   }
 
   private async clearOutputDir() {
@@ -154,7 +159,7 @@ export class TestFilesGenerator {
 
   private warnForTsNodeRegister() {
     if (hasTsNodeRegister(this.runConfiguration)) {
-      logger.log(
+      this.logger.warn(
         `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
         `Remove this option from defineBddConfig() and`,
         `Playwright's built-in loader will be used to compile TypeScript step definitions.`,

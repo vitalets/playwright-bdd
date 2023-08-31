@@ -2,13 +2,28 @@
  * Simple logger
  */
 
-export const logger = {
-  log: (...args: unknown[]) => {
-    // eslint-disable-next-line no-console
-    console.log(...args);
-  },
-  error: (...args: unknown[]) => {
-    // eslint-disable-next-line no-console
-    console.error(...args);
-  },
+/* eslint-disable no-console */
+
+export type LoggerOptions = {
+  verbose?: boolean;
 };
+
+export class Logger {
+  constructor(private options: LoggerOptions = {}) {}
+
+  log(...args: unknown[]) {
+    if (this.options.verbose) console.log(...args);
+  }
+
+  warn(...args: unknown[]) {
+    // using log() to output warnings to stdout, not stderr
+    console.log(...args);
+  }
+
+  error(...args: unknown[]) {
+    console.error(...args);
+  }
+}
+
+// default logger
+export const logger = new Logger();
