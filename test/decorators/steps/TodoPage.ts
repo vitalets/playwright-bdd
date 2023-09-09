@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { Fixture, Given, When, Then } from '../../../dist/decorators';
-import { test } from '.';
+import { test } from './fixtures';
 import { BasePage, IntermediateBasePage } from './BasePage';
 
 // custom types not supported yet for decorator steps

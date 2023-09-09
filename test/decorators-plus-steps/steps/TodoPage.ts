@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { Fixture, Given, When, Then } from '../../../dist/decorators';
-import { test } from '.';
+import { test } from './fixtures';
 
 class BasePage {
   @Then('BasePage: used fixture is {string}')
