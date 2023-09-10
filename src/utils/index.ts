@@ -3,7 +3,7 @@ import path from 'node:path';
 import { logger } from './logger';
 
 export function exitWithMessage(...messages: string[]) {
-  logger.error('ERROR:', ...messages);
+  logger.error('ERROR:', ...messages.filter(Boolean));
   process.exit(1);
 }
 

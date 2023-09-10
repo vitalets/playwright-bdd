@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* Support feature level `@fixture:` tags.
+
 ## 5.2.0
 
 * **possibly breaking:** Introduce `featuresRoot` option to have more control of generated files structure [#44](https://github.com/vitalets/playwright-bdd/issues/44).

@@ -1,43 +1,111 @@
+/**
+ * Track PomNodes used in the particular test.
+ * To select correct fixture for decorator steps.
+ *
+ * Idea: try to use the deepest child fixture for parent steps.
+ *
+ * Example inheritance tree:
+ *      A
+ *     / \
+ *    B   C
+ *   / \   \
+ *  D   E   F
+ *
+ * If test uses steps from classes A and D:
+ * -> resolved fixture will be D, even for steps from A.
+ *
+ * If test uses steps from classes A, D and C:
+ * -> error, b/c A has 2 possible fixtures.
+ *
+ * If test uses steps from classes A and C, but @fixture tag is D:
+ * -> error, b/c A has 2 possible fixtures.
+ */
 import { PomNode, getPomNodeByFixtureName } from '../stepDefinitions/decorators/poms';
+import { exitWithMessage } from '../utils';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';
 
-/**
- * Track POMs used in the particular test.
- */
-export class TestPoms {
-  private usedPoms = new Map<PomNode, string[] | null>();
+type UsedFixture = {
+  name: string;
+  byTag: boolean;
+};
 
-  add(pomNode?: PomNode) {
-    if (pomNode) this.usedPoms.set(pomNode, null);
+type UsedPom = {
+  byTag: boolean;
+  fixtures?: UsedFixture[];
+};
+
+export class TestPoms {
+  // map of poms used in test
+  private usedPoms = new Map<PomNode, UsedPom>();
+
+  constructor(private title: string) {}
+
+  addByStep(pomNode?: PomNode) {
+    this.addUsedPom(pomNode, { byTag: false });
   }
 
   addByFixtureName(fixtureName: string) {
     const pomNode = getPomNodeByFixtureName(fixtureName);
-    if (pomNode) this.add(pomNode);
+    this.addUsedPom(pomNode, { byTag: false });
   }
 
   addByTag(tag: string) {
     const fixtureName = extractFixtureName(tag);
-    if (fixtureName) this.addByFixtureName(fixtureName);
+    if (fixtureName) {
+      const pomNode = getPomNodeByFixtureName(fixtureName);
+      this.addUsedPom(pomNode, { byTag: true });
+    }
   }
 
+  /**
+   * Returns fixtures suitable for particular pomNode (actually for step)
+   */
   resolveFixtureNames(pomNode: PomNode) {
-    const resolvedFixtureNames = this.usedPoms.get(pomNode);
-    if (resolvedFixtureNames) return resolvedFixtureNames;
+    const usedPom = this.usedPoms.get(pomNode);
+    if (usedPom?.fixtures) return usedPom.fixtures;
 
-    const fixtureNames: string[] = [...pomNode.children]
+    // Recursively resolve children fixtures, used in test.
+    let childFixtures: UsedFixture[] = [...pomNode.children]
       .map((child) => this.resolveFixtureNames(child))
       .flat();
 
-    if (this.usedPoms.has(pomNode)) {
-      // if nothing returned from children, use own fixtureName,
-      // otherwise use what returned from child
-      if (!fixtureNames.length) fixtureNames.push(pomNode.fixtureName);
-      this.usedPoms.set(pomNode, fixtureNames);
+    if (!usedPom) return childFixtures;
+
+    if (childFixtures.length) {
+      this.verifyChildFixtures(pomNode, usedPom, childFixtures);
+      usedPom.fixtures = childFixtures;
+    } else {
+      usedPom.fixtures = [{ name: pomNode.fixtureName, byTag: usedPom.byTag }];
     }
 
-    return fixtureNames;
+    return usedPom.fixtures;
+  }
+
+  private addUsedPom(pomNode: PomNode | undefined, { byTag }: { byTag: boolean }) {
+    if (!pomNode) return;
+    const usedPom = this.usedPoms.get(pomNode);
+    if (usedPom) {
+      if (byTag && !usedPom.byTag) usedPom.byTag = true;
+    } else {
+      this.usedPoms.set(pomNode, { byTag });
+    }
+  }
+
+  /**
+   * For scenarios with @fixture:xxx tags verify that there are no steps from fixtures,
+   * deeper than xxx.
+   * @fixture:xxx tag provides maximum fixture that can be used in the scenario.
+   */
+  private verifyChildFixtures(pomNode: PomNode, usedPom: UsedPom, childFixtures: UsedFixture[]) {
+    if (!usedPom.byTag) return;
+    const childFixturesBySteps = childFixtures.filter((f) => !f.byTag);
+    if (childFixturesBySteps.length) {
+      exitWithMessage(
+        `Scenario "${this.title}" contains ${childFixturesBySteps.length} step(s)`,
+        `not compatible with required fixture "${pomNode.fixtureName}"`,
+      );
+    }
   }
 }
 

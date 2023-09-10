@@ -3,7 +3,7 @@ import { defineBddConfig } from '../../dist';
 
 const testDir = defineBddConfig({
   importTestFrom: 'steps/fixtures.ts',
-  paths: ['features'],
+  paths: ['features/*.feature'],
 });
 
 export default defineConfig({
