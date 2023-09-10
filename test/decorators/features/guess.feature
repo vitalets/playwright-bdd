@@ -1,4 +1,4 @@
-Feature: decorators-without-steps
+Feature: guess fixture by steps
 
     Scenario: guess TodoPage from 1 variant
       Given TodoPage: step
@@ -25,21 +25,3 @@ Feature: decorators-without-steps
       And TodoPage2: step
       Then TodoPage: used fixture is "AdminTodoPage"
       And TodoPage2: used fixture is "TodoPage2"
-
-    @fixture:adminTodoPage
-    Scenario: guess AdminTodoPage by tag from 1 variant
-      Then BasePage: used fixture is "AdminTodoPage"
-
-    @fixture:adminTodoPage
-    Scenario: guess AdminTodoPage by tag from 2 variants
-      Then BasePage: used fixture is "AdminTodoPage"
-      And TodoPage: used fixture is "AdminTodoPage"
-
-    @fixture:adminTodoPage
-    Scenario: guess AdminTodoPage by tag with second fixture
-      Then TodoPage: used fixture is "AdminTodoPage"
-      And TodoPage2: used fixture is "TodoPage2"
-
-    @fixture:TodoPage
-    Scenario: not applied fixture tag because provided fixture is not relevant
-      Then TodoPage2: used fixture is "TodoPage2"

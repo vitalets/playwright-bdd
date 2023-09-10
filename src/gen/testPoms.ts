@@ -1,13 +1,11 @@
-/**
- * Handle POMs graph for decorator steps.
- */
-
-import { getPomNodeByFixtureName } from '../stepDefinitions/createDecorators';
-import { PomNode } from '../stepDefinitions/defineStep';
+import { PomNode, getPomNodeByFixtureName } from '../stepDefinitions/decorators/poms';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';
 
-export class POMS {
+/**
+ * Track POMs used in the particular test.
+ */
+export class TestPoms {
   private usedPoms = new Map<PomNode, string[] | null>();
 
   add(pomNode?: PomNode) {

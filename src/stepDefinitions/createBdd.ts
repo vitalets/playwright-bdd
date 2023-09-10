@@ -46,7 +46,6 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
       pattern,
       fn,
       hasCustomTest,
-      isDecorator: false,
     });
   };
 }

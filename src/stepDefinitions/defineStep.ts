@@ -5,40 +5,18 @@ import {
   defineStep as CucumberDefineStep,
 } from '@cucumber/cucumber';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import {
-  DefineStepPattern,
-  TestStepFunction,
-} from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { BddWorld } from '../run/bddWorld';
 import { exitWithMessage } from '../utils';
+import { CucumberStepFunction, StepConfig } from './stepConfig';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 
-// Page Object Node is used in decorator steps dependency graph
-export type PomNode = {
-  fixtureName: string;
-  children: Set<PomNode>;
-};
-
-export type StepConfig = {
-  keyword: GherkinStepKeyword;
-  pattern: DefineStepPattern;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  fn: Function;
-  hasCustomTest: boolean;
-  isDecorator: boolean;
-  pomNode?: PomNode;
-};
-
-// attach stepConfig to Cucumber step function
-// to keep type of StepDefinition itself unchanged
-export type CucumberStepFunction = TestStepFunction<BddWorld> & {
-  stepConfig?: StepConfig;
-};
-
+/**
+ * Defines step by config.
+ * Calls cucumber's Given(), When(), Then() under the hood.
+ */
 export function defineStep(stepConfig: StepConfig) {
   const { keyword, pattern } = stepConfig;
   const cucumberDefineStepFn = getCucumberDefineStepFn(keyword);
-  const code = buildCucumberStepFn(stepConfig);
+  const code = buildCucumberStepCode(stepConfig);
   try {
     cucumberDefineStepFn(pattern, code);
   } catch (e) {
@@ -56,7 +34,7 @@ export function defineStep(stepConfig: StepConfig) {
   }
 }
 
-export function buildCucumberStepFn(stepConfig: StepConfig) {
+export function buildCucumberStepCode(stepConfig: StepConfig) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const code: CucumberStepFunction = function (...args: any[]) {
     const fixturesArg = Object.assign({}, this.customFixtures, {
@@ -73,12 +51,8 @@ export function buildCucumberStepFn(stepConfig: StepConfig) {
   return code;
 }
 
-export function getStepConfig(step: StepDefinition) {
-  return (step.code as CucumberStepFunction).stepConfig;
-}
-
-export function isPlaywrightStyle(step: StepDefinition) {
-  return Boolean(getStepConfig(step));
+export function getStepCode(stepDefinition: StepDefinition) {
+  return stepDefinition.code as CucumberStepFunction;
 }
 
 function getCucumberDefineStepFn(keyword: GherkinStepKeyword) {

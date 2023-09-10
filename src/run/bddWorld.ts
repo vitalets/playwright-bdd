@@ -6,7 +6,7 @@ import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { getTestImpl } from '../playwright/testTypeImpl';
 import { TestTypeCommon } from '../playwright/types';
-import { CucumberStepFunction } from '../stepDefinitions/defineStep';
+import { getStepCode } from '../stepDefinitions/defineStep';
 
 // See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -48,7 +48,7 @@ export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType
 
     // attach custom fixtures to world - the only way to pass them to cucumber step fn
     this.customFixtures = customFixtures;
-    const code = stepDefinition.code as CucumberStepFunction;
+    const code = getStepCode(stepDefinition);
 
     // get location of step call in generated test file
     const location = getLocationInFile(this.test.info().file);

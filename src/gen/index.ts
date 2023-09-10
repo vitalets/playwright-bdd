@@ -14,7 +14,7 @@ import { extractCucumberConfig, BDDConfig } from '../config';
 import { exitWithMessage } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
-import { appendDecoratorSteps } from '../stepDefinitions/createDecorators';
+import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
 import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/dir';
 import { Logger } from '../utils/logger';

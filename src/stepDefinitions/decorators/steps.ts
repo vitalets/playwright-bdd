@@ -4,50 +4,56 @@
 
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { TestType } from '@playwright/test';
-import { BuiltInFixtures } from '../playwright/types';
-import { BddFixtures, isBddAutoInjectFixture } from '../run/bddFixtures';
-import { PomNode, StepConfig, buildCucumberStepFn } from './defineStep';
+import { isBddAutoInjectFixture } from '../../run/bddFixtures';
 import {
   DefineStepPattern,
   ISupportCodeLibrary,
 } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { buildStepDefinition } from '../cucumber/buildStepDefinition';
+import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
+import { StepConfig } from '../stepConfig';
+import { buildCucumberStepCode } from '../defineStep';
+import { PomNode } from './poms';
 
-type CustomFixturesNames<T> = T extends TestType<infer U, infer W>
-  ? Exclude<keyof U | keyof W, keyof (BuiltInFixtures & BddFixtures) | symbol | number>
-  : Exclude<keyof T, symbol | number>;
-
+// initially we sotre step data inside method,
+// and then extract it in @Fixture decorator call
+const decoratedStepSymbol = Symbol('decoratedStep');
 type DecoratedMethod = Function & { [decoratedStepSymbol]: StepConfig };
 
-const pomGraph = new Map<Function, PomNode>();
-
-const decoratedStepSymbol = Symbol('decoratedStep');
+// global list of all decorator steps
 const decoratedSteps = new Set<StepConfig>();
 
-export function Fixture<T>(fixtureName: CustomFixturesNames<T>) {
-  // context parameter is required for decorator by TS even though it's not used
-  return (Ctor: Function, _context: ClassDecoratorContext) => {
-    createPomNode(Ctor, fixtureName);
-  };
-}
-
+/**
+ * Creates @Given, @When, @Then decorators.
+ */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
   return (pattern: DefineStepPattern) => {
     // context parameter is required for decorator by TS even though it's not used
     return (method: Function, _context: ClassMethodDecoratorContext) => {
-      (method as DecoratedMethod)[decoratedStepSymbol] = {
+      saveStepConfigToMethod(method, {
         keyword,
         pattern,
         fn: method,
         hasCustomTest: true,
-        isDecorator: true,
-      };
+      });
     };
   };
 }
 
+export function linkStepsWithPomNode(Ctor: Function, pomNode: PomNode) {
+  if (!Ctor?.prototype) return;
+  const propertyDescriptors = Object.getOwnPropertyDescriptors(Ctor.prototype);
+  return Object.values(propertyDescriptors).forEach((descriptor) => {
+    const stepConfig = getStepConfigFromMethod(descriptor);
+    if (!stepConfig) return;
+    stepConfig.pomNode = pomNode;
+    decoratedSteps.add(stepConfig);
+  });
+}
+
+/**
+ * Append decorator steps to Cucumber's supportCodeLibrary.
+ */
 export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
   decoratedSteps.forEach((stepConfig) => {
     const { keyword, pattern, fn } = stepConfig;
@@ -55,7 +61,7 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
       const fixture = getFirstNonAutoInjectFixture(fixturesArg, stepConfig);
       return fn.call(fixture, ...args);
     };
-    const code = buildCucumberStepFn(stepConfig);
+    const code = buildCucumberStepCode(stepConfig);
     const stepDefinition = buildStepDefinition(
       {
         keyword,
@@ -71,43 +77,6 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
   });
   decoratedSteps.clear();
   // todo: fill supportCodeLibrary.originalCoordinates as it is used in snippets?
-}
-
-export function getPomNodeByFixtureName(fixtureName: string) {
-  for (const pomNode of pomGraph.values()) {
-    if (pomNode.fixtureName === fixtureName) return pomNode;
-  }
-}
-
-function createPomNode(Ctor: Function, fixtureName: string) {
-  const pomNode: PomNode = {
-    fixtureName,
-    children: new Set(),
-  };
-  pomGraph.set(Ctor, pomNode);
-  getDecoratedSteps(Ctor).forEach((stepConfig) => {
-    stepConfig.pomNode = pomNode;
-    decoratedSteps.add(stepConfig);
-  });
-  const parentCtor = Object.getPrototypeOf(Ctor);
-  if (!parentCtor) return;
-  const parentPomNode = pomGraph.get(parentCtor) || createPomNode(parentCtor, '');
-  parentPomNode?.children.add(pomNode);
-  return pomNode;
-}
-
-function getDecoratedSteps(Ctor: Function) {
-  if (!Ctor?.prototype) return [];
-  const propertyDescriptors = Object.getOwnPropertyDescriptors(Ctor.prototype);
-  return (
-    Object.keys(propertyDescriptors)
-      // filter out getters / setters
-      .filter((methodName) => typeof propertyDescriptors[methodName].value === 'function')
-      .map((methodName) => {
-        return (propertyDescriptors[methodName].value as DecoratedMethod)[decoratedStepSymbol];
-      })
-      .filter(Boolean)
-  );
 }
 
 function getFirstNonAutoInjectFixture(
@@ -128,4 +97,15 @@ function getFirstNonAutoInjectFixture(
   }
 
   return fixturesArg[fixtureNames[0]];
+}
+
+function saveStepConfigToMethod(method: Function, stepConfig: StepConfig) {
+  (method as DecoratedMethod)[decoratedStepSymbol] = stepConfig;
+}
+
+function getStepConfigFromMethod(descriptor: PropertyDescriptor) {
+  // filter out getters / setters
+  return typeof descriptor.value === 'function'
+    ? (descriptor.value as DecoratedMethod)[decoratedStepSymbol]
+    : undefined;
 }

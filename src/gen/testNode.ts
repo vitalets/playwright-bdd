@@ -1,6 +1,6 @@
 /**
- * Universal TestNode class with accumulated data (tags, titiles)
- * of parent-child relations in test file structure.
+ * Universal TestNode class of parent-child relations in test file structure.
+ * Holds tags and titiles path.
  */
 
 import { Tag } from '@cucumber/messages';
