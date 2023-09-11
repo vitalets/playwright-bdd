@@ -22,14 +22,24 @@ export const DEFAULT_CMD = 'node ../../dist/cli && npx playwright test';
 function execPlaywrightTestInternal(dir, cmd) {
   dir = path.join('test', dir);
   cmd = cmd || DEFAULT_CMD;
-  const stdout = execSync(cmd, { cwd: dir, stdio: 'pipe' });
-  return stdout?.toString() || '';
+  try {
+    const stdout = execSync(cmd, { cwd: dir, stdio: 'pipe' });
+    if (process.env.TEST_DEBUG) {
+      console.log('STDOUT:', stdout?.toString());
+    }
+    return stdout?.toString() || '';
+  } catch (e) {
+    if (process.env.TEST_DEBUG) {
+      console.log('STDOUT:', e.stdout?.toString());
+      console.log('STDERR:', e.stderr?.toString());
+    }
+    throw e;
+  }
 }
 
 export function execPlaywrightTest(dir, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
-    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
     return stdout;
   } catch (e) {
     // if playwright tests not passed -> output is in stdout

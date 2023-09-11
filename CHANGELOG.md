@@ -1,7 +1,7 @@
 # Changelog
 
 ## dev
-* Support feature level `@fixture:` tags.
+* Support feature level `@fixture:` tags [#52](https://github.com/vitalets/playwright-bdd/issues/52)).
 
 ## 5.2.0
 

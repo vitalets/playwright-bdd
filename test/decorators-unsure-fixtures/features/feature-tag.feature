@@ -1,5 +1,5 @@
-@fixture:basePage
+@fixture:todoPage
 Feature: incorrect feature tag 
 
-    Scenario: error as BasePage does not have "TodoPage: step"
-      Given TodoPage: step
+    Scenario: step not from todoPage
+      Given AdminTodoPage: step

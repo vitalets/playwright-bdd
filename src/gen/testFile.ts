@@ -263,6 +263,7 @@ export class TestFile {
     if (decoratorSteps.length) {
       testFixtureNames.forEach((fixtureName) => testPoms.addByFixtureName(fixtureName));
       tags?.forEach((tag) => testPoms.addByTag(tag));
+      testPoms.resolveFixtures();
       decoratorSteps.forEach((step) => {
         const { line, fixtureName } = this.getDecoratorStep(step, testPoms);
         lines[step.index] = line;
@@ -361,7 +362,7 @@ export class TestFile {
 
   private getDecoratorStep(step: PreparedDecoratorStep, testPoms: TestPoms) {
     const { keyword, pickleStep, pomNode } = step;
-    const resolvedFixtures = testPoms.resolveFixtureNames(pomNode);
+    const resolvedFixtures = testPoms.getResolvedFixtures(pomNode);
 
     if (resolvedFixtures.length !== 1) {
       const suggestedTags = resolvedFixtures

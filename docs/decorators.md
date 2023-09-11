@@ -95,6 +95,11 @@ For that you can apply special tag `@fixture:%name%`:
 
 ```gherkin
 @fixture:adminTodoPage
-Scenario: Adding todos
-  Given I am on todo page # <- step will be called on AdminTodoPage, although defined in TodoPage
+Feature: Some feature
+
+    Background: 
+      Given I am on todo page # <- will use AdminTodoPage
+
+    Scenario: Adding todos
+      When I add todo "foo"   # <- will use AdminTodoPage
 ```

@@ -59,15 +59,26 @@ export class TestPoms {
   }
 
   /**
+   * Resolve all used pomNodes to fixtures.
+   * This is needed to handle @fixture: tagged pomNodes
+   * that does not have steps in the test, but should be considered.
+   */
+  resolveFixtures() {
+    this.usedPoms.forEach((_, pomNode) => {
+      this.getResolvedFixtures(pomNode);
+    });
+  }
+
+  /**
    * Returns fixtures suitable for particular pomNode (actually for step)
    */
-  resolveFixtureNames(pomNode: PomNode) {
+  getResolvedFixtures(pomNode: PomNode) {
     const usedPom = this.usedPoms.get(pomNode);
     if (usedPom?.fixtures) return usedPom.fixtures;
 
     // Recursively resolve children fixtures, used in test.
     let childFixtures: UsedFixture[] = [...pomNode.children]
-      .map((child) => this.resolveFixtureNames(child))
+      .map((child) => this.getResolvedFixtures(child))
       .flat();
 
     if (!usedPom) return childFixtures;

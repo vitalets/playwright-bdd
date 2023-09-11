@@ -1,5 +1,5 @@
 Feature: incorrect scenario tag 
 
-    @fixture:BasePage
-    Scenario: error as BasePage does not have "TodoPage: step"
-      Given TodoPage: step
+    @fixture:todoPage
+    Scenario: step from another fixture
+      Given AdminTodoPage: step

@@ -1,8 +1,8 @@
-@fixture:basePage
+@fixture:todoPage
 Feature: incorrect feature tag for bg
 
     Background:
-      Given TodoPage: step
+      Given AdminTodoPage: step
 
     Scenario: error in background
-      Given BasePage: step
+      Given TodoPage: step
