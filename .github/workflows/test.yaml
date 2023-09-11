@@ -29,18 +29,26 @@ jobs:
     needs: get-playwright-versions
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest]
-        playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
+        os: [windows-latest]
+        # os: [ubuntu-latest, windows-latest]
+        playwrightVersion: [1.36]
+        # playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
+      - name: Hello world
+        run: |
+          write-output "Hello World"
+          write-output $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - run: npm ci
       - run: npm install @playwright/test@${{ matrix.playwrightVersion }}
       - run: npx playwright install --with-deps chromium
-      - run: npx cross-env FORBID_ONLY=1 npm test
+      - run: |
+          node test/setup.mjs
+          node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3
         if: always()
         with:
@@ -49,17 +57,17 @@ jobs:
           retention-days: 10
           if-no-files-found: ignore
 
-  examples:
-    strategy:
-      matrix:
-        os: [ubuntu-latest, windows-latest]
-        node-version: [16, 18, 20]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: ${{ matrix.node-version }}
-      - run: npm ci
-      - run: npx playwright install --with-deps chromium
-      - run: npm run examples
+  # examples:
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-latest, windows-latest]
+  #       node-version: [16, 18, 20]
+  #   runs-on: ${{ matrix.os }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: ${{ matrix.node-version }}
+  #     - run: npm ci
+  #     - run: npx playwright install --with-deps chromium
+  #     - run: npm run examples

@@ -46,11 +46,16 @@ function symlinkPlaywrghtBdd() {
   const playwrightBddPath = './node_modules/playwright-bdd';
   // important to use lstat to get info about symlink itself
   const stat = fs.lstatSync(playwrightBddPath, { throwIfNoEntry: false });
+  console.log('symlink stat', stat); // eslint-disable-line
   if (stat) fs.rmSync(playwrightBddPath, { recursive: true });
+  console.log('symlink removed'); // eslint-disable-line
   // see: https://github.com/nodejs/node/issues/18518#issuecomment-513866491
   fs.symlinkSync('../dist', playwrightBddPath, 'junction');
+  console.log('symlink created.'); // eslint-disable-line
 }
 
 function buildDist() {
+  console.log('build started'); // eslint-disable-line
   execSync('npm run build', { stdio: 'inherit' });
+  console.log('build finished'); // eslint-disable-line
 }
