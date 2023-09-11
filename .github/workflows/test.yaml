@@ -2,7 +2,8 @@ name: test
 
 on:
   push:
-    branches: [main, beta]
+    # temp to check
+    # branches: [main, beta]
   pull_request:
     branches: [main, beta]
 
@@ -26,12 +27,11 @@ jobs:
 
   test:
     needs: get-playwright-versions
-    runs-on: ubuntu-latest
-    # todo: running on windows is not possible now because of using symlink in test
-    # runs-on: windows-latest
     strategy:
       matrix:
+        os: [ubuntu-latest, windows-latest]
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
