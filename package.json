@@ -36,7 +36,6 @@
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
-    "test:win": "node test/setup.mjs && node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName",
     "only": "node test/setup.mjs && node --test --test-only test/**/test.mjs",
     "only:d": "TEST_DEBUG=1 npm run only",
     "build": "rm -rf dist && tsc -p tsconfig.build.json",
