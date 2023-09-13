@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { test, TestDir, execPlaywrightTestWithError, DEFAULT_CMD } from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
@@ -6,7 +7,9 @@ test(testDir.name + ' (guess)', () =>
   execPlaywrightTestWithError(
     testDir.name,
     [
-      `Can't guess fixture for decorator step "BasePage: step" in file: features/guess.feature`,
+      `Can't guess fixture for decorator step "BasePage: step" in file: ${path.normalize(
+        'features/guess.feature',
+      )}`,
       `Please refactor your Page Object classes or set one of the following tags: @fixture:todoPage, @fixture:todoPage2`,
     ],
     `npx cross-env FEATURE=guess.feature ${DEFAULT_CMD}`,
