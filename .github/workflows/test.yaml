@@ -46,8 +46,9 @@ jobs:
       - run: npm ci
       - run: npm install @playwright/test@${{ matrix.playwrightVersion }}
       - run: npx playwright install --with-deps chromium
-      - run: |
-          npx cross-env FORBID_ONLY=1
+      - env:
+          FORBID_ONLY: 1
+        run: |
           node test/setup.mjs
           node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3
