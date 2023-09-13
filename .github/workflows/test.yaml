@@ -48,10 +48,10 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: run tests
         env:
-          FORBID_ONLY: 1
+          # FORBID_ONLY: 1
         run: |
           node test/setup.mjs
-          node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
+          node --test --test-only $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3
         if: always()
         with:
