@@ -47,8 +47,8 @@ jobs:
       - run: npm install @playwright/test@${{ matrix.playwrightVersion }}
       - run: npx playwright install --with-deps chromium
       - name: run tests
-        env:
-          # FORBID_ONLY: 1
+        # env:
+        #   FORBID_ONLY: 1
         run: |
           node test/setup.mjs
           node --test --test-only $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
