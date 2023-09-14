@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* Fix output dir clear on Windows [#49](https://github.com/vitalets/playwright-bdd/issues/49)).
 * Support feature level `@fixture:` tags [#52](https://github.com/vitalets/playwright-bdd/issues/52)).
 
 ## 5.2.0
