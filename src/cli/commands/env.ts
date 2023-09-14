@@ -2,9 +2,11 @@ import fs from 'node:fs';
 import { Command } from 'commander';
 import { ConfigOption, configOption } from '../options';
 import path from 'node:path';
-import { logger } from '../../utils/logger';
+import { Logger } from '../../utils/logger';
 import { getPackageVersion } from '../../utils';
 import { resolveConfigFile } from '../../playwright/loadConfig';
+
+const logger = new Logger({ verbose: true });
 
 export const envCommand = new Command('env')
   .description('Prints environment info')

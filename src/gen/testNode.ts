@@ -1,6 +1,6 @@
 /**
- * Universal TestNode class with accumulated data (tags, titiles)
- * of parent-child relations in test file structure.
+ * Universal TestNode class of parent-child relations in test file structure.
+ * Holds tags and titles path.
  */
 
 import { Tag } from '@cucumber/messages';
@@ -9,7 +9,7 @@ import { removeDuplicates } from '../utils';
 const SPECIAL_TAGS = ['@only', '@skip', '@fixme'] as const;
 type SpecialTag = (typeof SPECIAL_TAGS)[number];
 
-interface TestNodeOriginalItem {
+interface GherkinNode {
   name: string;
   tags: readonly Tag[];
 }
@@ -27,15 +27,15 @@ export class TestNode {
   tags: string[] = [];
   flags: TestNodeFlags = {};
 
-  constructor(origItem: TestNodeOriginalItem, parent?: TestNode) {
-    this.initOwnTags(origItem);
+  constructor(gherkinNode: GherkinNode, parent?: TestNode) {
+    this.initOwnTags(gherkinNode);
     this.tags = removeDuplicates((parent?.tags || []).concat(this.ownTags));
-    this.title = origItem.name;
+    this.title = gherkinNode.name;
     this.titlePath = (parent?.titlePath || []).concat([this.title]);
   }
 
-  private initOwnTags(origItem: TestNodeOriginalItem) {
-    const tagNames = removeDuplicates(getTagNames(origItem.tags));
+  private initOwnTags(gherkinNode: GherkinNode) {
+    const tagNames = removeDuplicates(getTagNames(gherkinNode.tags));
     tagNames.forEach((tag) => {
       if (isSpecialTag(tag)) {
         this.setFlag(tag);

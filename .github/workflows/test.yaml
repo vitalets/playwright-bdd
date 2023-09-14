@@ -27,8 +27,6 @@ jobs:
   test:
     needs: get-playwright-versions
     runs-on: ubuntu-latest
-    # todo: running on windows is not possible now because of using symlink in test
-    # runs-on: windows-latest
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}

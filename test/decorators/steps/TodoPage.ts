@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { Fixture, Given, When, Then } from '../../../dist/decorators';
-import { test } from '.';
-import { BasePage, IntermediateBasePage } from './BasePage';
+import { test } from './fixtures';
+import { IntermediateBasePage } from './BasePage';
 
 // custom types not supported yet for decorator steps
 // import { defineParameterType } from '@cucumber/cucumber';
@@ -37,6 +37,8 @@ export
 @Fixture<typeof test>('todoPageOnlyFixture')
 class TodoPageOnlyFixture extends TodoPage {}
 
+// this class in needed to check that algorithm correctly handles
+// intermediate classes
 class IntermediateTodoPage extends TodoPageOnlyFixture {}
 
 export
@@ -44,16 +46,4 @@ export
 class AdminTodoPage extends IntermediateTodoPage {
   @When('AdminTodoPage: step')
   async step() {}
-}
-
-export
-@Fixture<typeof test>('todoPage2')
-class TodoPage2 extends BasePage {
-  @Given('TodoPage2: step')
-  async step() {}
-
-  @Then('TodoPage2: used fixture is {string}')
-  checkUsedFixture(name: string) {
-    expect(this.constructor.name).toEqual(name);
-  }
 }

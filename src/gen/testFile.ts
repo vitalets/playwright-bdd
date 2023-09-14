@@ -28,10 +28,11 @@ import { extractFixtureNames } from '../stepDefinitions/createBdd';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { exitWithMessage, template } from '../utils';
-import { PomNode, getStepConfig, isPlaywrightStyle } from '../stepDefinitions/defineStep';
-import { POMS, buildFixtureTag } from './poms';
+import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
+import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
+import { PomNode } from '../stepDefinitions/decorators/poms';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -147,13 +148,15 @@ export class TestFile {
   private getSuite(feature: Feature | Rule, parent?: TestNode) {
     const node = new TestNode(feature, parent);
     const lines: string[] = [];
+    // const { backgrounds, rules, scenarios } =
+    // bgFixtures, bgTags - used as fixture hints for decorator steps
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
     return this.formatter.suite(node, lines);
   }
 
   private getSuiteChild(child: FeatureChild | RuleChild, parent: TestNode) {
     if ('rule' in child && child.rule) return this.getSuite(child.rule, parent);
-    if (child.background) return this.getBeforeEach(child.background);
+    if (child.background) return this.getBeforeEach(child.background, parent);
     if (child.scenario) return this.getScenarioLines(child.scenario, parent);
     throw new Error(`Empty child: ${JSON.stringify(child)}`);
   }
@@ -167,8 +170,9 @@ export class TestFile {
   /**
    * Generate test.beforeEach for Background
    */
-  private getBeforeEach(bg: Background) {
-    const { fixtures, lines } = this.getSteps(bg);
+  private getBeforeEach(bg: Background, parent: TestNode) {
+    const node = new TestNode({ name: 'background', tags: [] }, parent);
+    const { fixtures, lines } = this.getSteps(bg, node.tags);
     return this.formatter.beforeEach(fixtures, lines);
   }
 
@@ -209,7 +213,7 @@ export class TestFile {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
     this.testNodes.push(node);
-    const { fixtures, lines } = this.getSteps(scenario, node.ownTags, exampleRow.id);
+    const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
   }
 
@@ -220,21 +224,18 @@ export class TestFile {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
     this.testNodes.push(node);
-    const { fixtures, lines } = this.getSteps(scenario, node.ownTags);
+    const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);
   }
 
   /**
    * Generate test steps
    */
-  private getSteps(
-    scenario: Scenario | Background,
-    ownTestTags?: string[],
-    outlineExampleRowId?: string,
-  ) {
+  private getSteps(scenario: Scenario | Background, tags?: string[], outlineExampleRowId?: string) {
     const testFixtureNames = new Set<string>();
-    const usedPoms = new POMS();
+    const testPoms = new TestPoms(scenario.name || 'Background');
     const decoratorSteps: PreparedDecoratorStep[] = [];
+
     let previousKeywordType: KeywordType | undefined = undefined;
 
     const lines = scenario.steps.map((step, index) => {
@@ -250,21 +251,23 @@ export class TestFile {
       testFixtureNames.add(keyword);
       stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
 
-      if (!line && stepConfig?.pomNode) {
-        usedPoms.add(stepConfig.pomNode);
+      if (isDecorator(stepConfig)) {
+        testPoms.addByStep(stepConfig.pomNode);
         decoratorSteps.push({ index, keyword, pickleStep, pomNode: stepConfig.pomNode });
       }
 
       return line;
     });
 
+    // decorator steps handled in second pass to guess fixtures
     if (decoratorSteps.length) {
-      testFixtureNames.forEach((fixtureName) => usedPoms.addByFixtureName(fixtureName));
-      ownTestTags?.forEach((tag) => usedPoms.addByTag(tag));
+      testFixtureNames.forEach((fixtureName) => testPoms.addByFixtureName(fixtureName));
+      tags?.forEach((tag) => testPoms.addByTag(tag));
+      testPoms.resolveFixtures();
       decoratorSteps.forEach((step) => {
-        const { line, fixtureNames } = this.getDecoratorStep(step, usedPoms);
+        const { line, fixtureName } = this.getDecoratorStep(step, testPoms);
         lines[step.index] = line;
-        fixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
+        testFixtureNames.add(fixtureName);
       });
     }
 
@@ -296,17 +299,21 @@ export class TestFile {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
       return this.getMissingStep(keyword, keywordType, pickleStep);
     }
+
     // for cucumber-style stepConfig is undefined
     const stepConfig = getStepConfig(stepDefinition);
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
+
     // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
-    // to use fixtures with own bddWorld (containing fixtures)
-    if (!isPlaywrightStyle(stepDefinition)) keyword = `${keyword}_`;
-    // for decorator steps fixtures defined later in second pass
-    const fixtureNames = stepConfig?.isDecorator ? [] : extractFixtureNames(stepConfig?.fn);
-    const line = stepConfig?.isDecorator
+    // to use own bddWorld (containing PW built-in fixtures)
+    if (!isPlaywrightStyle(stepConfig)) keyword = `${keyword}_`;
+
+    // for decorator steps fixtureNames are defined later in second pass
+    const fixtureNames = isDecorator(stepConfig) ? [] : extractFixtureNames(stepConfig?.fn);
+    const line = isDecorator(stepConfig)
       ? ''
       : this.formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
+
     return {
       keyword,
       keywordType,
@@ -353,21 +360,31 @@ export class TestFile {
     return enKeyword;
   }
 
-  private getDecoratorStep(step: PreparedDecoratorStep, usedPoms: POMS) {
+  private getDecoratorStep(step: PreparedDecoratorStep, testPoms: TestPoms) {
     const { keyword, pickleStep, pomNode } = step;
-    const fixtureNames = usedPoms.resolveFixtureNames(pomNode);
+    const resolvedFixtures = testPoms.getResolvedFixtures(pomNode);
 
-    if (fixtureNames.length !== 1) {
-      const suggestedTags = fixtureNames.map((name) => buildFixtureTag(name)).join(', ');
+    if (resolvedFixtures.length !== 1) {
+      const suggestedTags = resolvedFixtures
+        .filter((f) => !f.byTag)
+        .map((f) => buildFixtureTag(f.name))
+        .join(', ');
+
+      const suggestedTagsStr = suggestedTags.length
+        ? ` or set one of the following tags: ${suggestedTags}`
+        : '.';
+
       exitWithMessage(
         `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
-        `Please set one of the following tags (${suggestedTags}) or refactor your Page Object classes.`,
+        `Please refactor your Page Object classes${suggestedTagsStr}`,
       );
     }
 
+    const fixtureName = resolvedFixtures[0].name;
+
     return {
-      fixtureNames,
-      line: this.formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureNames[0]]),
+      fixtureName,
+      line: this.formatter.step(keyword, pickleStep.text, pickleStep.argument, [fixtureName]),
     };
   }
 

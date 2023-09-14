@@ -1,7 +1,9 @@
-import path from 'path';
+import fs from 'node:fs';
+import path from 'node:path';
 import { resolvePackageRoot } from '../utils';
 
-const playwrightRoot = resolvePackageRoot('@playwright/test');
+// cache playwright root
+let playwrightRoot = '';
 
 /**
  * Requires Playwright's internal module that is not exported via package.exports.
@@ -13,6 +15,18 @@ export function requirePlaywrightModule(modulePath: string) {
 }
 
 export function getPlaywrightModulePath(relativePath: string) {
-  const parts = relativePath.split('/');
-  return path.join(playwrightRoot, ...parts);
+  return path.join(getPlaywrightRoot(), relativePath);
+}
+
+function getPlaywrightRoot() {
+  if (!playwrightRoot) {
+    // Since 1.38 all modules moved from @playwright/test to playwright.
+    // Here we check existance of 'lib' dir instead of checking version.
+    // See: https://github.com/microsoft/playwright/pull/26946
+    const playwrightTestRoot = resolvePackageRoot('@playwright/test');
+    const libDir = path.join(playwrightTestRoot, 'lib');
+    playwrightRoot = fs.existsSync(libDir) ? playwrightTestRoot : resolvePackageRoot('playwright');
+  }
+
+  return playwrightRoot;
 }

@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.3.0
+* Add support for Playwright `1.38`.
+* Fix output dir clear on Windows [#49](https://github.com/vitalets/playwright-bdd/issues/49)).
+* Support feature level `@fixture:` tags [#52](https://github.com/vitalets/playwright-bdd/issues/52)).
+
 ## 5.2.0
 
 * **possibly breaking:** Introduce `featuresRoot` option to have more control of generated files structure [#44](https://github.com/vitalets/playwright-bdd/issues/44).

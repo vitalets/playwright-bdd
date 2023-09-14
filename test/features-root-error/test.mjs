@@ -7,8 +7,8 @@ test(testDir.name, () => {
     testDir.name,
     [
       'All feature files should be located underneath featuresRoot',
-      /featureFile:.+features-root-error\/root\.feature/,
-      /featuresRoot:.+features-root-error\/config/,
+      /featureFile:.+features-root-error[/\\]root\.feature/,
+      /featuresRoot:.+features-root-error[/\\]config/,
     ],
     'node ../../dist/cli -c config && npx playwright test -c config',
   );

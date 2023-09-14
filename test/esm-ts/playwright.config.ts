@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { defineConfig } from '@playwright/test';
-// @ts-ignore
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig } from '../../dist/index.js';
 
 export default defineConfig({
   projects: [

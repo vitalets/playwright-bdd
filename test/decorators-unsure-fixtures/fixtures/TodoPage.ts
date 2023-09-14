@@ -14,6 +14,13 @@ class TodoPage extends BasePage {
 }
 
 export
+@Fixture<typeof test>('adminTodoPage')
+class AdminTodoPage extends TodoPage {
+  @Given('AdminTodoPage: step')
+  async step() {}
+}
+
+export
 @Fixture<typeof test>('todoPage2')
 class TodoPage2 extends BasePage {
   @Given('TodoPage2: step')

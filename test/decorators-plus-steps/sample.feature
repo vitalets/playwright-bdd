@@ -1,4 +1,4 @@
-Feature: decorators-with-steps
+Feature: decorators-plus-steps
 
     Scenario: guess TodoPage by regular step
       Then Regular step using TodoPage

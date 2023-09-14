@@ -1,4 +1,4 @@
-import { Fixture, Given } from 'playwright-bdd/decorators';
+import { Fixture, Given } from '../../../../dist/decorators';
 import { test } from './fixtures.js';
 import { TodoPage } from '../../one/steps/TodoPage.js';
 

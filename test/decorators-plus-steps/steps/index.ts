@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { createBdd } from '../../dist';
+import { createBdd } from '../../../dist';
 import { test } from './fixtures';
 
 const { Then } = createBdd(test);

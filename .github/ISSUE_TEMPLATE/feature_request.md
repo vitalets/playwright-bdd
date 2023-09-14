@@ -7,14 +7,8 @@ assignees: ''
 
 ---
 
-**Describe the problem**
-A clear and concise description of what the problem is. Ex. I'm always frustrated when [...]
+**The problem**
+<!-- Describe the problem. Please provide sample feature file / step definition / cli command output / screenshots. -->
 
-**Describe the solution**
-A clear and concise description of what you want to happen.
-
-**Describe alternatives you've considered**
-A clear and concise description of any alternative solutions or features you've considered.
-
-**Additional context**
-Add any other context or screenshots about the feature request here.
+**A solution**
+<!-- Suggest a possible solution or any thoughts how to solve the problem. -->
