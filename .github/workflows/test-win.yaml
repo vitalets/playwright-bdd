@@ -24,7 +24,7 @@ jobs:
           FORBID_ONLY: 1
         run: |
           node test/setup.mjs
-          node test/cli-option-tags/test.mjs
+          node test/bdd-syntax/test.mjs
         # this command gets all test files in powershell
         # node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3
