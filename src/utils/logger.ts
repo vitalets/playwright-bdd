@@ -4,7 +4,7 @@
 
 /* eslint-disable no-console */
 
-export type LoggerOptions = {
+type LoggerOptions = {
   verbose?: boolean;
 };
 
