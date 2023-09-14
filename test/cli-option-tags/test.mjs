@@ -1,3 +1,4 @@
+import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
@@ -6,7 +7,14 @@ import { test, execPlaywrightTest, TestDir } from '../helpers.mjs';
 const testDir = new TestDir(import.meta);
 
 test(testDir.name, () => {
-  testDir.clearDir('.features-gen');
+  const outputDir = testDir.getAbsPath('.features-gen');
+  testDir.clearDir(outputDir);
+
+  // create file in .features-gen to ensure that it is cleared
+  if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+  const fileToBeCleared = '.features-gen/foo.spec.js';
+  fs.writeFileSync(testDir.getAbsPath(fileToBeCleared), '');
+
   execPlaywrightTest(testDir.name, 'node ../../dist/cli --tags "@include and not @exclude"');
 
   // important to keep included files in separate directory (subdir)
@@ -31,4 +39,6 @@ test(testDir.name, () => {
   expect(fileContents).not.toContain(`test("Example #1",`);
   expect(fileContents).not.toContain(`test("Example #2",`);
   expect(fileContents).toContain(`test("Example #3",`);
+
+  expect(testDir.isFileExists(fileToBeCleared)).toEqual(false);
 });
