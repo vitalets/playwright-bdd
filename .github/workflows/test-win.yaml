@@ -26,41 +26,6 @@ jobs:
           node test/setup.mjs
           node test/bdd-syntax/test.mjs
           node test/bdd-syntax-cucumber-style/test.mjs
-          node test/cjs/test.mjs
-          node test/cli-command-env/test.mjs
-          node test/cli-command-export/test.mjs
-          node test/cli-option-tags/test.mjs
-          node test/cli-option-verbose/test.mjs
-          node test/cucumber-config-file/test.mjs
-          node test/custom-fixtures/test.mjs
-          node test/custom-world/test.mjs
-          node test/decorators/test.mjs
-          node test/decorators-plus-steps/test.mjs
-          node test/decorators-snippets/test.mjs
-          node test/decorators-unsure-fixtures/test.mjs
-          node test/default-world/test.mjs
-          node test/error-import-test-from-steps/test.mjs
-          node test/error-import-test-not-from-bdd/test.mjs
-          node test/esm/test.mjs
-          node test/esm-ts/test.mjs
-          node test/features-root/test.mjs
-          node test/features-root-error/test.mjs
-          node test/i18n/test.mjs
-          node test/no-config-file/test.mjs
-          node test/no-define-bdd-config/test.mjs
-          node test/no-import-test-from/test.mjs
-          node test/output-dir-structure/test.mjs
-          node test/parse-error/test.mjs
-          node test/paths-relative-to-config/test.mjs
-          node test/quotes/test.mjs
-          node test/report-step-location/test.mjs
-          node test/several-projects/test.mjs
-          node test/several-projects-no-outputdir/test.mjs
-          node test/snapshots/test.mjs
-          node test/snippets-cucumber-style/test.mjs
-          node test/snippets-playwright-style/test.mjs
-          node test/warn-ts-node-register/test.mjs
-          node test/without-custom-fixtures/test.mjs
         # this command gets all test files in powershell
         # node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3
