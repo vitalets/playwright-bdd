@@ -152,7 +152,9 @@ export class TestFilesGenerator {
   }
 
   private async clearOutputDir() {
-    const testFiles = await fg(path.join(this.config.outputDir, '**', '*.spec.js'));
+    const pattern = `${fg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
+    const testFiles = await fg(pattern);
+    this.logger.log(`Clearing output dir: ${testFiles.length} file(s)`);
     const tasks = testFiles.map((testFile) => fs.rm(testFile));
     await Promise.all(tasks);
   }
