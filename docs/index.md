@@ -4,7 +4,7 @@
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
-> 🔥 Learn how to [generate BDD tests with ChatGPT](https://dev.to/vitalets/generate-bdd-tests-with-chatgpt-and-run-them-with-playwright-4ffm)
+> 🔥 How to [use ChatGPT for Playwright BDD testing](https://dev.to/vitalets/generate-bdd-tests-with-chatgpt-and-run-them-with-playwright-4ffm)
 
 ## Quick start
 Jump to [installation guide](installation.md) or read below about `playwright-bdd` architecture.
