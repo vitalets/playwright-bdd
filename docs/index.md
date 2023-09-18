@@ -22,13 +22,13 @@ Such approach brings all the benefits of Playwright runner:
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## How playwright-bdd works
-Typical command to run tests with `playwright-bdd` is following:
+Typical command to run tests with `playwright-bdd` is the following:
 ```
 npx bddgen && npx playwright test
 ```
 
 ### Phase 1: Generate tests
-CLI command `npx bddgen` generates test files from BDD feature files. For example:
+CLI command `npx bddgen` generates intermediate test files from BDD feature files. For example:
 
 From
 ```gherkin
