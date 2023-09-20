@@ -8,9 +8,9 @@ Given('State {int}', async function () {
   // noop
 });
 
-Given(
+Given<BddWorld & Record<string, string>>(
   'Set context prop {string} = {string}',
-  async function (this: BddWorld & Record<string, string>, key: string, value: string) {
+  async function (key: string, value: string) {
     this[key] = value;
   },
 );
@@ -23,11 +23,11 @@ Then(/^Check (\d+)$/, async function (n: number) {
   expect(typeof n).toEqual('number');
 });
 
-Then('Passed string arg {string} to equal "foo"', async function (this: BddWorld, arg: string) {
+Then<BddWorld>('Passed string arg {string} to equal "foo"', async function (arg: string) {
   expect(arg).toEqual('foo');
 });
 
-Then('Passed int arg {int} to equal 42', async function (this: BddWorld, arg: number) {
+Then<BddWorld>('Passed int arg {int} to equal 42', async function (arg: number) {
   expect(arg).toEqual(42);
 });
 
@@ -38,33 +38,33 @@ defineParameterType({
   transformer: (s) => s.toLowerCase() as Color,
 });
 
-Then('Passed custom type arg {color} to equal "red"', function (this: BddWorld, color: Color) {
+Then<BddWorld>('Passed custom type arg {color} to equal "red"', function (color: Color) {
   expect(color).toEqual('red');
 });
 
-Then(
+Then<BddWorld>(
   'Passed doc string to contain {string}',
-  async function (this: BddWorld, arg: string, docString: string) {
+  async function (arg: string, docString: string) {
     expect(docString).toContain(arg);
   },
 );
 
-Then(
+Then<BddWorld>(
   'Passed data table to have in row {int} col {string} value {string}',
-  async function (this: BddWorld, row: number, col: string, value: string, table: DataTable) {
+  async function (row: number, col: string, value: string, table: DataTable) {
     expect(table.hashes()[row][col]).toEqual(value);
   },
 );
 
-Then('Doubled {int} equals {int}', async function (this: BddWorld, arg: number, doubled: number) {
+Then<BddWorld>('Doubled {int} equals {int}', async function (arg: number, doubled: number) {
   expect(arg * 2).toEqual(doubled);
 });
 
-Then('Uppercase {string} equals {string}', async function (this: BddWorld, s1: string, s2: string) {
+Then<BddWorld>('Uppercase {string} equals {string}', async function (s1: string, s2: string) {
   expect(s1.toUpperCase()).toEqual(s2);
 });
 
-Then('File {string} contains', async function (this: BddWorld, fileName: string, table: DataTable) {
+Then<BddWorld>('File {string} contains', async function (fileName: string, table: DataTable) {
   const filePath = path.join(path.dirname(this.test.info().file), fileName);
   const content = fs.readFileSync(filePath, 'utf8');
   table.rows().forEach((row) => {
@@ -74,13 +74,13 @@ Then('File {string} contains', async function (this: BddWorld, fileName: string,
   });
 });
 
-Then(
+Then<BddWorld & Record<string, string>>(
   'Context prop {string} to equal {string}',
-  async function (this: BddWorld & Record<string, string>, key: string, value: string) {
+  async function (key: string, value: string) {
     expect(String(this[key])).toEqual(value);
   },
 );
 
-Then('Tags are {string}', async function (this: BddWorld, tags: string) {
+Then<BddWorld>('Tags are {string}', async function (tags: string) {
   expect(this.tags.join(' ')).toEqual(tags);
 });

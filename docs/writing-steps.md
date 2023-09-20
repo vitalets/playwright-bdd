@@ -211,15 +211,15 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import { BddWorld } from 'playwright-bdd';
 import { expect } from '@playwright/test';
 
-Given('I open url {string}', async function (this: BddWorld, url: string) {
+Given<BddWorld>('I open url {string}', async function (url: string) {
   await this.page.goto(url);
 });
 
-When('I click link {string}', async function (this: BddWorld, name: string) {
+When<BddWorld>('I click link {string}', async function (name: string) {
   await this.page.getByRole('link', { name }).click();
 });
 
-Then('I see in title {string}', async function (this: BddWorld, keyword: string) {
+Then<BddWorld>('I see in title {string}', async function (keyword: string) {
   await expect(this.page).toHaveTitle(new RegExp(keyword));
 });
 ```
@@ -241,7 +241,7 @@ In TypeScript you should import `BddWorld` type from `playwright-bdd` for proper
 import { Given, When, Then } from '@cucumber/cucumber';
 import { BddWorld } from 'playwright-bdd';
 
-Given('I open url {string}', async function (this: BddWorld, url: string) {
+Given<BddWorld>('I open url {string}', async function (url: string) {
   await this.page.goto(url);
 });
 ```
