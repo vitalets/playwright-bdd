@@ -162,7 +162,7 @@ export class TestFile {
   }
 
   private getScenarioLines(scenario: Scenario, parent: TestNode) {
-    return isOutline(scenario)
+    return this.isOutline(scenario)
       ? this.getOutlineSuite(scenario, parent)
       : this.getTest(scenario, parent);
   }
@@ -354,7 +354,7 @@ export class TestFile {
     if (origKeyword === '*') {
       enKeyword = 'And';
     } else {
-      enKeyword = this.i18nKeywordsMap ? this.i18nKeywordsMap.get(origKeyword) : origKeyword;
+      enKeyword = this.getEnglishKeyword(origKeyword)
     }
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
@@ -423,8 +423,12 @@ export class TestFile {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
     return this.options.tagsExpression?.evaluate(node.tags) === false;
   }
-}
+  private isOutline(scenario: Scenario) {
+    const keyword = this.getEnglishKeyword(scenario.keyword)
+    return keyword === 'ScenarioOutline' || keyword === 'Scenario Outline' || keyword === 'Scenario Template';
+  }
 
-function isOutline(scenario: Scenario) {
-  return scenario.keyword === 'Scenario Outline' || scenario.keyword === 'Scenario Template';
+  private getEnglishKeyword(keyword: string) {
+    return this.i18nKeywordsMap ? this.i18nKeywordsMap.get(keyword) : keyword;
+  }
 }
