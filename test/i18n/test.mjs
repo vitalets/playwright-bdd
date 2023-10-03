@@ -4,7 +4,7 @@ import { expect } from '@playwright/test';
 const testDir = new TestDir(import.meta);
 test(getTestName(import.meta), (t) => execPlaywrightTest(t.name));
 
-test(testDir.name, () => {
+test(testDir.name + '-generate-scenario-outlines', () => {
     const outputDir = testDir.getAbsPath('.features-gen');
     testDir.clearDir(outputDir);
 
