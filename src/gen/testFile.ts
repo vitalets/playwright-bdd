@@ -354,7 +354,7 @@ export class TestFile {
     if (origKeyword === '*') {
       enKeyword = 'And';
     } else {
-      enKeyword = this.getEnglishKeyword(origKeyword)
+      enKeyword = this.getEnglishKeyword(origKeyword);
     }
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
@@ -424,8 +424,12 @@ export class TestFile {
     return this.options.tagsExpression?.evaluate(node.tags) === false;
   }
   private isOutline(scenario: Scenario) {
-    const keyword = this.getEnglishKeyword(scenario.keyword)
-    return keyword === 'ScenarioOutline' || keyword === 'Scenario Outline' || keyword === 'Scenario Template';
+    const keyword = this.getEnglishKeyword(scenario.keyword);
+    return (
+      keyword === 'ScenarioOutline' ||
+      keyword === 'Scenario Outline' ||
+      keyword === 'Scenario Template'
+    );
   }
 
   private getEnglishKeyword(keyword: string) {
