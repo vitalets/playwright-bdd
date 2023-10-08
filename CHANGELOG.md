@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* i18n: Generate scenario outlines correctly [#60](https://github.com/vitalets/playwright-bdd/issues/60)).
+
 ## 5.3.0
 * Add support for Playwright `1.38`.
 * Fix output dir clear on Windows [#49](https://github.com/vitalets/playwright-bdd/issues/49)).
