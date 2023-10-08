@@ -10,9 +10,6 @@ test(testDir.name + '-generate-scenario-outlines', () => {
 
   execPlaywrightTest(testDir.name, 'node ../../dist/cli --tags "@outline"');
 
-  // important to keep included files in separate directory (subdir)
-  // to ensure that directory structure kept the same when running with tags
-
   let fileContents = testDir.getFileContents('.features-gen/sample.feature.spec.js');
   expect(fileContents).toContain(`test.describe("русский язык"`);
   expect(fileContents).toContain(`test.describe("русский сценарий 2"`);

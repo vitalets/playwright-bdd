@@ -350,12 +350,7 @@ export class TestFile {
 
   private getStepKeyword(step: Step) {
     const origKeyword = step.keyword.trim();
-    let enKeyword;
-    if (origKeyword === '*') {
-      enKeyword = 'And';
-    } else {
-      enKeyword = this.getEnglishKeyword(origKeyword);
-    }
+    const enKeyword = origKeyword === '*' ? 'And' : this.getEnglishKeyword(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
   }
@@ -423,6 +418,7 @@ export class TestFile {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
     return this.options.tagsExpression?.evaluate(node.tags) === false;
   }
+
   private isOutline(scenario: Scenario) {
     const keyword = this.getEnglishKeyword(scenario.keyword);
     return (
