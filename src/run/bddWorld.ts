@@ -4,7 +4,7 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { getTestImpl } from '../playwright/testTypeImpl';
+import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { TestTypeCommon } from '../playwright/types';
 import { getStepCode } from '../stepDefinitions/defineStep';
 
@@ -50,7 +50,8 @@ export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType
     this.customFixtures = customFixtures;
     const code = getStepCode(stepDefinition);
 
-    // get location of step call in generated test file
+    // Get location of step call in generated test file.
+    // This call must be exactly here to have correct call stack.
     const location = getLocationInFile(this.test.info().file);
 
     const { parameters } = await stepDefinition.getInvocationParameters({
@@ -59,9 +60,10 @@ export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType
       world: this,
     });
 
-    const res = await getTestImpl(this.test)._step(location, text, () =>
+    const res = await runStepWithCustomLocation(this.test, text, location, () =>
       code.apply(this, parameters),
     );
+
     delete this.customFixtures;
 
     return res;
