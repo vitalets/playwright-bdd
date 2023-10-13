@@ -6,7 +6,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { requirePlaywrightModule } from './utils';
 import { requireTransform } from './transform';
-import { exitWithMessage } from '../utils';
+import { exit } from '../utils/exit';
 
 export async function loadConfig(cliConfigPath?: string) {
   const resolvedConfigFile = resolveConfigFile(cliConfigPath);
@@ -28,6 +28,6 @@ function getConfigFilePath(cliConfigPath?: string) {
 function assertConfigFileExists(resolvedConfigFile: string | null, cliConfigPath?: string) {
   if (!resolvedConfigFile || !fs.existsSync(resolvedConfigFile)) {
     const configFilePath = getConfigFilePath(cliConfigPath);
-    exitWithMessage(`Can't find Playwright config file in: ${configFilePath}`);
+    exit(`Can't find Playwright config file in: ${configFilePath}`);
   }
 }

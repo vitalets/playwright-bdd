@@ -7,7 +7,6 @@ import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_k
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { exitWithMessage } from '../utils';
 import {
   BddAutoInjectFixtures,
   test as baseTest,
@@ -15,6 +14,7 @@ import {
 } from '../run/bddFixtures';
 import { isParentChildTest } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
+import { exit } from '../utils/exit';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -59,7 +59,7 @@ function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(
 ) {
   const isCustomTest = Boolean(customTest && customTest !== (baseTest as TestTypeCommon));
   if (isCustomTest && customTest && !isParentChildTest(baseTest, customTest)) {
-    exitWithMessage(`createBdd() should use test extended from "playwright-bdd"`);
+    exit(`createBdd() should use test extended from "playwright-bdd"`);
   }
   return isCustomTest;
 }

@@ -57,7 +57,7 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
   assert.throws(
     () => execPlaywrightTestInternal(dir, cmd),
     (e) => {
-      const stderr = e.stderr.toString();
+      const stderr = e.stderr.toString().trim();
       const errors = Array.isArray(error) ? error : [error];
       errors.forEach((error) => {
         if (typeof error === 'string') {

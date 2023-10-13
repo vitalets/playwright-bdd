@@ -3,11 +3,11 @@ import { once } from 'node:events';
 import path from 'node:path';
 import { Command } from 'commander';
 import { TestFilesGenerator } from '../../gen';
-import { exitWithMessage } from '../../utils';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { getEnvConfigs } from '../../config/env';
 import { BDDConfig, defaults } from '../../config';
 import { ConfigOption, configOption } from '../options';
+import { exit } from '../../utils/exit';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
@@ -23,31 +23,36 @@ export const testCommand = new Command('test')
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .action(async (opts: TestCommandOptions) => {
     await loadPlaywrightConfig(opts.config);
-    const configs = Object.values(getEnvConfigs());
-    assertConfigsCount(configs);
-    const cliOptions = buildCliOptions(opts);
-    await generateFilesForConfigs(configs, cliOptions);
+    const configs = readConfigsFromEnv();
+    mergeCliOptions(configs, opts);
+
+    await generateFilesForConfigs(configs);
   });
 
-function buildCliOptions(opts: TestCommandOptions) {
-  const config: Partial<BDDConfig> = {};
-  if ('tags' in opts) config.tags = opts.tags;
-  if ('verbose' in opts) config.verbose = Boolean(opts.verbose);
-  return config;
+function readConfigsFromEnv() {
+  const configs: BDDConfig[] = Object.values(getEnvConfigs());
+  assertConfigsCount(configs);
+  return configs;
+}
+
+function mergeCliOptions(configs: BDDConfig[], opts: TestCommandOptions) {
+  configs.forEach((config) => {
+    if ('tags' in opts) config.tags = opts.tags;
+    if ('verbose' in opts) config.verbose = Boolean(opts.verbose);
+  });
 }
 
 export function assertConfigsCount(configs: unknown[]) {
   if (configs.length === 0) {
-    exitWithMessage(`No BDD configs found. Did you use defineBddConfig() in playwright.config.ts?`);
+    exit(`No BDD configs found. Did you use defineBddConfig() in playwright.config.ts?`);
   }
 }
 
-async function generateFilesForConfigs(configs: BDDConfig[], cliConfig: Partial<BDDConfig>) {
+async function generateFilesForConfigs(configs: BDDConfig[]) {
   // run first config in main thread and other in workers (to have fresh require cache)
   // See: https://github.com/vitalets/playwright-bdd/issues/32
   const tasks = configs.map((config, index) => {
-    const finalConfig = { ...config, ...cliConfig };
-    return index === 0 ? new TestFilesGenerator(finalConfig).generate() : runInWorker(finalConfig);
+    return index === 0 ? new TestFilesGenerator(config).generate() : runInWorker(config);
   });
 
   return Promise.all(tasks);
@@ -58,6 +63,6 @@ async function runInWorker(config: BDDConfig) {
     workerData: { config },
   });
 
-  // todo: check if worker exited with error?
-  await once(worker, 'exit');
+  const [exitCode] = await once(worker, 'exit');
+  if (exitCode) exit();
 }

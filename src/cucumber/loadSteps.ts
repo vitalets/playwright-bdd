@@ -1,7 +1,7 @@
 import { IRunConfiguration, IRunEnvironment, loadSupport } from '@cucumber/cucumber/api';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { exitWithMessage } from '../utils';
 import { installTransform } from '../playwright/transform';
+import { exit } from '../utils/exit';
 
 const cache = new Map<string, Promise<ISupportCodeLibrary>>();
 
@@ -33,7 +33,7 @@ export function findStepDefinition(
   });
   if (matchedSteps.length === 0) return;
   if (matchedSteps.length > 1)
-    exitWithMessage(
+    exit(
       [
         `Several step definitions found for text: ${stepText} (${file})`,
         ...matchedSteps.map((s) => `- ${s.pattern}`),

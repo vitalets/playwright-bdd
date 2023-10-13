@@ -5,9 +5,9 @@ import {
   defineStep as CucumberDefineStep,
 } from '@cucumber/cucumber';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import { exitWithMessage } from '../utils';
 import { CucumberStepFunction, StepConfig } from './stepConfig';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import { exit } from '../utils/exit';
 
 /**
  * Defines step by config.
@@ -24,8 +24,8 @@ export function defineStep(stepConfig: StepConfig) {
     // and skip/delay registering cucumber steps until cucumber is loaded
     const isMissingCucumber = /Cucumber that isn't running/i.test(e.message);
     if (isMissingCucumber) {
-      exitWithMessage(
-        `Option "importTestFrom" should point to separate file without step definitions`,
+      exit(
+        `Option "importTestFrom" should point to a separate file without step definitions`,
         `(e.g. without calls of Given, When, Then)`,
       );
     } else {

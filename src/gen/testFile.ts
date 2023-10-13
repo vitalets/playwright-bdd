@@ -27,12 +27,13 @@ import { findStepDefinition } from '../cucumber/loadSteps';
 import { extractFixtureNames } from '../stepDefinitions/createBdd';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { exitWithMessage, template } from '../utils';
+import { template } from '../utils';
 import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
 import { PomNode } from '../stepDefinitions/decorators/poms';
+import { exit } from '../utils/exit';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -369,7 +370,7 @@ export class TestFile {
         ? ` or set one of the following tags: ${suggestedTags}`
         : '.';
 
-      exitWithMessage(
+      exit(
         `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
         `Please refactor your Page Object classes${suggestedTagsStr}`,
       );

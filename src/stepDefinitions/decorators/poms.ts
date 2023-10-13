@@ -8,7 +8,7 @@ import { TestType } from '@playwright/test';
 import { BuiltInFixtures } from '../../playwright/types';
 import { BddFixtures } from '../../run/bddFixtures';
 import { linkStepsWithPomNode } from './steps';
-import { exitWithMessage } from '../../utils';
+import { exit } from '../../utils/exit';
 
 type PomClass = Function;
 
@@ -56,7 +56,7 @@ function ensureUniqueFixtureName({ fixtureName, className }: PomNode) {
   if (!fixtureName) return;
   const existingPom = getPomNodeByFixtureName(fixtureName);
   if (existingPom)
-    exitWithMessage(
+    exit(
       `Duplicate fixture name "${fixtureName}"`,
       `defined for classes: ${existingPom.className}, ${className}`,
     );

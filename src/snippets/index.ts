@@ -5,7 +5,6 @@
 import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
 import { loadSnippetBuilder } from '../cucumber/loadSnippetBuilder';
 import { TestFile, UndefinedStep } from '../gen/testFile';
-import { exitWithMessage } from '../utils';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { logger } from '../utils/logger';
 import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
@@ -20,12 +19,13 @@ export class Snippets {
     private supportCodeLibrary: ISupportCodeLibrary,
   ) {}
 
-  async printSnippetsAndExit() {
+  async print() {
     this.snippetBuilder = await this.createSnippetBuilder();
     const snippets = this.getSnippets();
     this.printHeader();
     this.printSnippets(snippets);
     this.printFooter(snippets);
+    // exit();
   }
 
   private async createSnippetBuilder() {
@@ -124,18 +124,18 @@ export class Snippets {
   }
 
   private printFooter(snippets: string[]) {
-    exitWithMessage(
+    logger.error(
       `Missing step definitions (${snippets.length}).`,
-      'Use snippets above to create them.',
-      this.getWarnOnZeroScannedFiles(),
+      `Use snippets above to create them.`,
     );
+    this.printWarningOnZeroScannedFiles();
   }
 
-  private getWarnOnZeroScannedFiles() {
+  private printWarningOnZeroScannedFiles() {
     const { requirePaths, importPaths } = this.supportCodeLibrary.originalCoordinates;
     const scannedFilesCount = requirePaths.length + importPaths.length;
-    return scannedFilesCount === 0 && !this.isDecorators()
-      ? `\nNote that 0 step definition files found, check the config.`
-      : '';
+    if (scannedFilesCount === 0 && !this.isDecorators()) {
+      logger.error(`Note that 0 step definition files found, check the config.`);
+    }
   }
 }
