@@ -21,7 +21,7 @@
  * -> error, b/c A has 2 possible fixtures.
  */
 import { PomNode, getPomNodeByFixtureName } from '../stepDefinitions/decorators/poms';
-import { exitWithMessage } from '../utils';
+import { exit } from '../utils/exit';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';
 
@@ -112,7 +112,7 @@ export class TestPoms {
     if (!usedPom.byTag) return;
     const childFixturesBySteps = childFixtures.filter((f) => !f.byTag);
     if (childFixturesBySteps.length) {
-      exitWithMessage(
+      exit(
         `Scenario "${this.title}" contains ${childFixturesBySteps.length} step(s)`,
         `not compatible with required fixture "${pomNode.fixtureName}"`,
       );

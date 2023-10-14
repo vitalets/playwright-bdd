@@ -30,13 +30,17 @@ jobs:
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
+        cucumberVersion: ['9']
+        include:
+          - playwrightVersion: '1.37'
+            cucumberVersion: '10'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 18
       - run: npm ci
-      - run: npm install @playwright/test@${{ matrix.playwrightVersion }}
+      - run: npm install @playwright/test@${{ matrix.playwrightVersion }} @cucumber/cucumber@${{ matrix.cucumberVersion }}
       - run: npx playwright install --with-deps chromium
       - run: npx cross-env FORBID_ONLY=1 npm test
       - uses: actions/upload-artifact@v3

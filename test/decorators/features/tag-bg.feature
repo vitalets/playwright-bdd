@@ -1,5 +1,5 @@
 @fixture:todoPage
-Feature: guess with bg
+Feature: tag with bg
 
     Background:
       Then BasePage: used fixture is "TodoPage"

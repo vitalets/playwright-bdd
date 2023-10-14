@@ -2,7 +2,7 @@ import { IRunConfiguration, IRunEnvironment } from '@cucumber/cucumber/api';
 import { GherkinDocument, Pickle, ParseError } from '@cucumber/messages';
 import { PickleWithDocument } from '@cucumber/cucumber/lib/api/gherkin';
 import { loadSources } from './loadSources';
-import { exitWithMessage } from '../utils';
+import { exit } from '../utils/exit';
 
 export async function loadFeatures(
   runConfiguration: IRunConfiguration,
@@ -33,6 +33,6 @@ function handleParseErrors(parseErrors: ParseError[]) {
         return `Parse error in "${parseError.source.uri}" ${parseError.message}`;
       })
       .join('\n');
-    exitWithMessage(message);
+    exit(message);
   }
 }

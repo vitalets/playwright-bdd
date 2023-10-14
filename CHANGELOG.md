@@ -1,5 +1,12 @@
 # Changelog
 
+## 5.4.0
+* i18n: Generate scenario outlines correctly [#60](https://github.com/vitalets/playwright-bdd/issues/60).
+* Check for duplicate fixture names [#52](https://github.com/vitalets/playwright-bdd/issues/52)
+* Fix flushing logs for several projects [#59](https://github.com/vitalets/playwright-bdd/issues/59)
+* Support Playwright `1.39`.
+* Docs: add search.
+
 ## 5.3.0
 * Add support for Playwright `1.38`.
 * Fix output dir clear on Windows [#49](https://github.com/vitalets/playwright-bdd/issues/49)).

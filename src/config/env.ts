@@ -5,7 +5,7 @@
 
 import path from 'node:path';
 import { BDDConfig } from '.';
-import { exitWithMessage } from '../utils';
+import { exit } from '../utils/exit';
 
 type OutputDir = string;
 type EnvConfigs = Record<OutputDir, BDDConfig>;
@@ -18,7 +18,7 @@ export function saveConfigToEnv(config: BDDConfig) {
     // Throw error only if different calls of defineBddConfig() use the same outputDir.
     // See: https://github.com/vitalets/playwright-bdd/issues/39#issuecomment-1653805368
     if (!isSameConfigs(config, existingConfig)) {
-      exitWithMessage(
+      exit(
         `When using several calls of defineBddConfig()`,
         `please manually provide different "outputDir" option.`,
       );
@@ -34,7 +34,7 @@ export function getConfigFromEnv(outputDir: string) {
   outputDir = path.resolve(outputDir);
   const config = envConfigs[outputDir];
   if (!config) {
-    exitWithMessage(
+    exit(
       `Config not found for outputDir: "${outputDir}".`,
       `Available dirs: ${Object.keys(envConfigs).join('\n')}`,
     );

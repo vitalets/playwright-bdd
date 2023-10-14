@@ -4,8 +4,8 @@ test(getTestName(import.meta), (t) =>
   execPlaywrightTestWithError(t.name, [
     `import { createBdd } from 'playwright-bdd';`,
     `const { Given, When, Then } = createBdd();`,
-    `// 1. Missing step definition for "sample.feature:4:9"`,
-    `// 10. Missing step definition for "sample.feature:23:9"`,
+    `// 1. Missing step definition for "one.feature:4:9"`,
+    `// 10. Missing step definition for "one.feature:23:9"`,
     `Given('Step without parameters', async ({}) => {`,
     `Given('Step with one string parameter {string}', async ({}, arg: string) => {`,
     `Given('Step with two string parameters {string} and {string}', async ({}, arg: string, arg1: string) => {`,

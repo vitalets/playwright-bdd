@@ -21,9 +21,28 @@ function getTestFixtures(test: TestTypeCommon) {
   return getTestImpl(test).fixtures as FixturesWithLocation[];
 }
 
-export function getTestImpl(test: TestTypeCommon) {
+function getTestImpl(test: TestTypeCommon) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return test[testTypeSymbol] as any;
+}
+
+/**
+ * Run step with location pointing to Given, When, Then call.
+ */
+// eslint-disable-next-line max-params
+export async function runStepWithCustomLocation(
+  test: TestTypeCommon,
+  stepText: string,
+  location: Location,
+  body: () => unknown,
+) {
+  const testInfo = test.info();
+
+  // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/common/testType.ts#L221
+  // @ts-expect-error _runAsStep is hidden from public
+  return testInfo._runAsStep({ category: 'test.step', title: stepText, location }, async () => {
+    return await body();
+  });
 }
 
 /**

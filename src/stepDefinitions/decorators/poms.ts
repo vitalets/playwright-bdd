@@ -8,6 +8,7 @@ import { TestType } from '@playwright/test';
 import { BuiltInFixtures } from '../../playwright/types';
 import { BddFixtures } from '../../run/bddFixtures';
 import { linkStepsWithPomNode } from './steps';
+import { exit } from '../../utils/exit';
 
 type PomClass = Function;
 
@@ -17,9 +18,10 @@ type PomClass = Function;
  */
 const pomGraph = new Map<PomClass, PomNode>();
 
-// Representation of POM class with inherited children classes.
+// POM class with inherited children POMs: representation of classes inheritance.
 export type PomNode = {
   fixtureName: string;
+  className: string;
   children: Set<PomNode>;
 };
 
@@ -38,17 +40,32 @@ export function Fixture<T>(fixtureName: CustomFixturesNames<T>) {
 }
 
 function createPomNode(Ctor: PomClass, fixtureName: string) {
-  const pomNode: PomNode = { fixtureName, children: new Set() };
+  const pomNode: PomNode = {
+    fixtureName,
+    className: Ctor.name,
+    children: new Set(),
+  };
+  ensureUniqueFixtureName(pomNode);
   pomGraph.set(Ctor, pomNode);
   linkStepsWithPomNode(Ctor, pomNode);
   linkParentWithPomNode(Ctor, pomNode);
   return pomNode;
 }
 
+function ensureUniqueFixtureName({ fixtureName, className }: PomNode) {
+  if (!fixtureName) return;
+  const existingPom = getPomNodeByFixtureName(fixtureName);
+  if (existingPom)
+    exit(
+      `Duplicate fixture name "${fixtureName}"`,
+      `defined for classes: ${existingPom.className}, ${className}`,
+    );
+}
+
 function linkParentWithPomNode(Ctor: PomClass, pomNode: PomNode) {
   const parentCtor = Object.getPrototypeOf(Ctor);
   if (!parentCtor) return;
-  // if parentCtor is not in pomGraph, add it as well
+  // if parentCtor is not in pomGraph, add it.
   // Case: parent class is not marked with @Fixture, but has decorator steps (base class)
   const parentPomNode = pomGraph.get(parentCtor) || createPomNode(parentCtor, '');
   parentPomNode.children.add(pomNode);

@@ -1,12 +1,22 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from '../../dist';
 
-const testDir = defineBddConfig({
-  paths: ['*.feature'],
-  require: ['steps.ts'],
-});
-
 export default defineConfig({
-  testDir,
+  projects: [
+    {
+      testDir: defineBddConfig({
+        outputDir: `.features-gen/two`,
+        paths: ['two.feature'],
+        require: ['steps.ts'],
+      }),
+    },
+    {
+      testDir: defineBddConfig({
+        outputDir: `.features-gen/one`,
+        paths: ['one.feature'],
+        require: ['steps.ts'],
+      }),
+    },
+  ],
   forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

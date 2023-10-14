@@ -27,12 +27,13 @@ import { findStepDefinition } from '../cucumber/loadSteps';
 import { extractFixtureNames } from '../stepDefinitions/createBdd';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { exitWithMessage, template } from '../utils';
+import { template } from '../utils';
 import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
 import { PomNode } from '../stepDefinitions/decorators/poms';
+import { exit } from '../utils/exit';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -162,7 +163,7 @@ export class TestFile {
   }
 
   private getScenarioLines(scenario: Scenario, parent: TestNode) {
-    return isOutline(scenario)
+    return this.isOutline(scenario)
       ? this.getOutlineSuite(scenario, parent)
       : this.getTest(scenario, parent);
   }
@@ -350,12 +351,7 @@ export class TestFile {
 
   private getStepKeyword(step: Step) {
     const origKeyword = step.keyword.trim();
-    let enKeyword;
-    if (origKeyword === '*') {
-      enKeyword = 'And';
-    } else {
-      enKeyword = this.i18nKeywordsMap ? this.i18nKeywordsMap.get(origKeyword) : origKeyword;
-    }
+    const enKeyword = origKeyword === '*' ? 'And' : this.getEnglishKeyword(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
   }
@@ -374,7 +370,7 @@ export class TestFile {
         ? ` or set one of the following tags: ${suggestedTags}`
         : '.';
 
-      exitWithMessage(
+      exit(
         `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
         `Please refactor your Page Object classes${suggestedTagsStr}`,
       );
@@ -423,8 +419,17 @@ export class TestFile {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
     return this.options.tagsExpression?.evaluate(node.tags) === false;
   }
-}
 
-function isOutline(scenario: Scenario) {
-  return scenario.keyword === 'Scenario Outline' || scenario.keyword === 'Scenario Template';
+  private isOutline(scenario: Scenario) {
+    const keyword = this.getEnglishKeyword(scenario.keyword);
+    return (
+      keyword === 'ScenarioOutline' ||
+      keyword === 'Scenario Outline' ||
+      keyword === 'Scenario Template'
+    );
+  }
+
+  private getEnglishKeyword(keyword: string) {
+    return this.i18nKeywordsMap ? this.i18nKeywordsMap.get(keyword) : keyword;
+  }
 }

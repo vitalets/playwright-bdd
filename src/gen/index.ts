@@ -11,7 +11,6 @@ import { loadFeatures } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
-import { exitWithMessage } from '../utils';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
@@ -19,6 +18,7 @@ import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/dir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
+import { exit, withExitHandler } from '../utils/exit';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -37,13 +37,15 @@ export class TestFilesGenerator {
   }
 
   async generate() {
-    await this.loadCucumberConfig();
-    await Promise.all([this.loadFeatures(), this.loadSteps()]);
-    this.buildFiles();
-    await this.checkUndefinedSteps();
-    this.checkImportCustomTest();
-    await this.clearOutputDir();
-    await this.saveFiles();
+    await withExitHandler(async () => {
+      await this.loadCucumberConfig();
+      await Promise.all([this.loadFeatures(), this.loadSteps()]);
+      this.buildFiles();
+      await this.checkUndefinedSteps();
+      this.checkImportCustomTest();
+      await this.clearOutputDir();
+      await this.saveFiles();
+    });
   }
 
   async extractSteps() {
@@ -113,7 +115,7 @@ export class TestFilesGenerator {
     const absFeaturePath = path.resolve(configDir, relFeaturePath);
     const relOutputPath = path.relative(this.config.featuresRoot, absFeaturePath);
     if (relOutputPath.startsWith('..')) {
-      exitWithMessage(
+      exit(
         `All feature files should be located underneath featuresRoot.`,
         `Please change featuresRoot or paths in configuration.\n`,
         `featureFile: ${absFeaturePath}\n`,
@@ -128,7 +130,8 @@ export class TestFilesGenerator {
     const undefinedSteps = this.files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
     if (undefinedSteps > 0) {
       const snippets = new Snippets(this.files, this.runConfiguration, this.supportCodeLibrary);
-      await snippets.printSnippetsAndExit();
+      await snippets.print();
+      exit();
     }
   }
 
@@ -136,7 +139,7 @@ export class TestFilesGenerator {
     if (this.config.importTestFrom) return;
     const hasCustomTest = this.files.some((file) => file.hasCustomTest);
     if (hasCustomTest) {
-      exitWithMessage(
+      exit(
         `When using custom "test" function in createBdd() you should`,
         `set "importTestFrom" config option that points to file exporting custom test.`,
       );
