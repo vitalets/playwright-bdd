@@ -33,7 +33,7 @@ jobs:
         cucumberVersion: ['9']
         include:
           - playwrightVersion: '1.37'
-          - cucumberVersion: '10'
+            cucumberVersion: '10'
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
