@@ -21,7 +21,7 @@ function getTestFixtures(test: TestTypeCommon) {
   return getTestImpl(test).fixtures as FixturesWithLocation[];
 }
 
-export function getTestImpl(test: TestTypeCommon) {
+function getTestImpl(test: TestTypeCommon) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   return test[testTypeSymbol] as any;
 }
