@@ -12,6 +12,8 @@ function setup() {
   showPlaywrightVersion();
   showCucumberVersion();
 
+  removeTestResultsDir();
+
   // link node_modules/playwright-bdd to dist
   // as generated files import { test } from "playwright-bdd"
   symlinkPlaywrghtBdd();
@@ -55,4 +57,9 @@ function symlinkPlaywrghtBdd() {
 
 function buildDist() {
   execSync('npm run build', { stdio: 'inherit' });
+}
+
+function removeTestResultsDir() {
+  const dir = './test-results';
+  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
