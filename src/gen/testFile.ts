@@ -24,7 +24,6 @@ import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
-import { extractFixtureNames } from '../stepDefinitions/createBdd';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { template } from '../utils';
@@ -34,6 +33,8 @@ import { TestNode } from './testNode';
 import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
 import { PomNode } from '../stepDefinitions/decorators/poms';
 import { exit } from '../utils/exit';
+import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtures';
+import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -309,8 +310,7 @@ export class TestFile {
     // to use own bddWorld (containing PW built-in fixtures)
     if (!isPlaywrightStyle(stepConfig)) keyword = `${keyword}_`;
 
-    // for decorator steps fixtureNames are defined later in second pass
-    const fixtureNames = isDecorator(stepConfig) ? [] : extractFixtureNames(stepConfig?.fn);
+    const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)
       ? ''
       : this.formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
@@ -354,6 +354,16 @@ export class TestFile {
     const enKeyword = origKeyword === '*' ? 'And' : this.getEnglishKeyword(origKeyword);
     if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
     return enKeyword;
+  }
+
+  private getStepFixtureNames(stepDefinition: StepDefinition) {
+    const stepConfig = getStepConfig(stepDefinition);
+    if (isPlaywrightStyle(stepConfig)) {
+      // for decorator steps fixtureNames are defined later in second pass
+      return isDecorator(stepConfig) ? [] : extractFixtureNames(stepConfig.fn);
+    } else {
+      return extractFixtureNamesFromFnBodyMemo(stepDefinition.code);
+    }
   }
 
   private getDecoratorStep(step: PreparedDecoratorStep, testPoms: TestPoms) {

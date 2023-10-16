@@ -1,10 +1,10 @@
 import { test as base } from '../../dist';
 
-class TestScopedFixture {
+export class TestScopedFixture {
   prop = 'initial value';
 }
 
-class WorkerScopedFixture {
+export class WorkerScopedFixture {
   prop = 'initial value';
 }
 

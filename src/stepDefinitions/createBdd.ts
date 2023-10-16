@@ -4,14 +4,9 @@
 
 import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import {
-  BddAutoInjectFixtures,
-  test as baseTest,
-  isBddAutoInjectFixture,
-} from '../run/bddFixtures';
+import { BddAutoInjectFixtures, test as baseTest } from '../run/bddFixtures';
 import { isParentChildTest } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
 import { exit } from '../utils/exit';
@@ -48,10 +43,6 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
       hasCustomTest,
     });
   };
-}
-
-export function extractFixtureNames(fn?: Function) {
-  return fixtureParameterNames(fn).filter((name) => !isBddAutoInjectFixture(name));
 }
 
 function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(

@@ -4,9 +4,7 @@
 
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { TestType } from '@playwright/test';
-import { BuiltInFixtures } from '../../playwright/types';
-import { BddFixtures } from '../../run/bddFixtures';
+import { CustomFixtures, KeyValue } from '../../playwright/types';
 import { linkStepsWithPomNode } from './steps';
 import { exit } from '../../utils/exit';
 
@@ -25,14 +23,10 @@ export type PomNode = {
   children: Set<PomNode>;
 };
 
-type CustomFixturesNames<T> = T extends TestType<infer U, infer W>
-  ? Exclude<keyof U | keyof W, keyof (BuiltInFixtures & BddFixtures) | symbol | number>
-  : Exclude<keyof T, symbol | number>;
-
 /**
  * @Fixture decorator.
  */
-export function Fixture<T>(fixtureName: CustomFixturesNames<T>) {
+export function Fixture<T extends KeyValue>(fixtureName: keyof CustomFixtures<T>) {
   // context parameter is required for decorator by TS even though it's not used
   return (Ctor: Function, _context: ClassDecoratorContext) => {
     createPomNode(Ctor, fixtureName);

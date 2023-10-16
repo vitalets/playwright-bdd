@@ -40,6 +40,6 @@ export function isDecorator(
  * Cucumber-style steps don't have stepConfig
  * b/c they created directly via cucumber's Given, When, Then.
  */
-export function isPlaywrightStyle(stepConfig?: StepConfig) {
+export function isPlaywrightStyle(stepConfig?: StepConfig): stepConfig is StepConfig {
   return Boolean(stepConfig);
 }

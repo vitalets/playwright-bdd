@@ -5,18 +5,21 @@ import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
-import { TestTypeCommon } from '../playwright/types';
+import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { getStepCode } from '../stepDefinitions/defineStep';
 
-// See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type BddWorldOptions<ParametersType = any> = IWorldOptions<ParametersType> & {
+export type BddWorldOptions<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ParametersType = any,
+  TestType extends TestTypeCommon = TestTypeCommon,
+> = IWorldOptions<ParametersType> & {
   testInfo: TestInfo;
   supportCodeLibrary: ISupportCodeLibrary;
   $tags: string[];
-  $test: TestTypeCommon;
+  $test: TestType;
 };
 
+// See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
 type BuiltinFixtures = {
   page: Page;
   context: BrowserContext;
@@ -25,17 +28,22 @@ type BuiltinFixtures = {
   request: APIRequestContext;
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType> {
-  builtinFixtures!: BuiltinFixtures;
-  customFixtures: unknown;
+type CustomFixtures = Record<string, unknown>;
 
-  constructor(public options: BddWorldOptions<ParametersType>) {
+export class BddWorld<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  ParametersType = any,
+  TestType extends TestTypeCommon = TestTypeCommon,
+> extends CucumberWorld<ParametersType> {
+  builtinFixtures!: BuiltinFixtures;
+  customFixtures: CustomFixtures = {};
+
+  constructor(public options: BddWorldOptions<ParametersType, TestType>) {
     super(options);
     this.invokeStep = this.invokeStep.bind(this);
   }
 
-  async invokeStep(text: string, argument?: unknown, customFixtures?: unknown) {
+  async invokeStep(text: string, argument?: unknown, customFixtures?: CustomFixtures) {
     const stepDefinition = findStepDefinition(
       this.options.supportCodeLibrary,
       text,
@@ -47,7 +55,7 @@ export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType
     }
 
     // attach custom fixtures to world - the only way to pass them to cucumber step fn
-    this.customFixtures = customFixtures;
+    this.customFixtures = customFixtures || {};
     const code = getStepCode(stepDefinition);
 
     // Get location of step call in generated test file.
@@ -64,9 +72,29 @@ export class BddWorld<ParametersType = any> extends CucumberWorld<ParametersType
       code.apply(this, parameters),
     );
 
-    delete this.customFixtures;
+    this.customFixtures = {};
 
     return res;
+  }
+
+  /**
+   * Use particular fixture in cucumber-style steps.
+   *
+   * Note: TS does not support partial generic inference,
+   * that's why we can't use this.useFixture<typeof test>('xxx');
+   * The solution is to pass TestType as a generic to BddWorld
+   * and call useFixture without explicit generic params.
+   * Finally, it looks even better as there is no need to pass `typeof test`
+   * in every `this.useFixture` call.
+   *
+   * The downside - it's impossible to pass fixtures type directly to `this.useFixture`
+   * like it's done in @Fixture decorator.
+   *
+   * See: https://stackoverflow.com/questions/45509621/specify-only-first-type-argument
+   * See: https://github.com/Microsoft/TypeScript/pull/26349
+   */
+  useFixture<K extends keyof Fixtures<TestType>>(fixtureName: K) {
+    return (this.customFixtures as Fixtures<TestType>)[fixtureName];
   }
 
   get page() {
@@ -120,3 +148,15 @@ export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   }
   return supportCodeLibrary.World as typeof BddWorld;
 }
+
+// type X = {
+//   a: string;
+//   b: number;
+// };
+
+// function f<T extends KeyValue, const K extends keyof T>(k: K) {
+//   // type V =
+//   return ({} as T)[k];
+// }
+
+// const x = f<X>('a');
