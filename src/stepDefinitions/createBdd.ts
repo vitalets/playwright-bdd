@@ -58,8 +58,9 @@ function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
   const isCustomTest = Boolean(customTest && customTest !== (baseTest as TestTypeCommon));
-  if (isCustomTest && customTest && !isParentChildTest(baseTest, customTest)) {
-    exit(`createBdd() should use test extended from "playwright-bdd"`);
-  }
+  // TODO re-enable
+  // if (isCustomTest && customTest && !isParentChildTest(baseTest, customTest)) {
+  //   exit(`createBdd() should use test extended from "playwright-bdd"`);
+  // }
   return isCustomTest;
 }

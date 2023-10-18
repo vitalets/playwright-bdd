@@ -1,11 +1,11 @@
-// TODO continue here
-// import { test as base } from '@playwright/experimental-ct-react'
-import { test as base } from 'playwright-bdd';
+import { test as ctBase } from '@playwright/experimental-ct-react'
+import { BddFixtures, bddFixtures } from '../../../dist';
 
 type Fixtures = {
   ctx: Record<string, string>;
 };
 
-export const test = base.extend<Fixtures>({
+const bddCtBase = ctBase.extend<BddFixtures>(bddFixtures);
+export const test = bddCtBase.extend<Fixtures>({
   ctx: ({}, use) => use({}),
 });
