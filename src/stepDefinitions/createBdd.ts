@@ -12,9 +12,8 @@ import {
   test as baseTest,
   isBddAutoInjectFixture,
 } from '../run/bddFixtures';
-import { isParentChildTest } from '../playwright/testTypeImpl';
+import { assertHasBddFixtures } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
-import { exit } from '../utils/exit';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -58,9 +57,8 @@ function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(
   customTest?: TestType<T, W>,
 ) {
   const isCustomTest = Boolean(customTest && customTest !== (baseTest as TestTypeCommon));
-  // TODO re-enable
-  // if (isCustomTest && customTest && !isParentChildTest(baseTest, customTest)) {
-  //   exit(`createBdd() should use test extended from "playwright-bdd"`);
-  // }
+  if (customTest && isCustomTest) {
+    assertHasBddFixtures(customTest);
+  }
   return isCustomTest;
 }
