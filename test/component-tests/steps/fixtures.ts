@@ -1,4 +1,4 @@
-import { test as ctBase } from '@playwright/experimental-ct-react'
+import { test as ctBase } from '@playwright/experimental-ct-react';
 import { BddFixtures, bddFixtures } from '../../../dist';
 
 type Fixtures = {
@@ -9,5 +9,5 @@ type Fixtures = {
 
 const bddCtBase = ctBase.extend<BddFixtures>(bddFixtures);
 export const test = bddCtBase.extend<Fixtures>({
-  world: ({}, use) => use({clickedTimes: 0}),
+  world: ({}, use) => use({ clickedTimes: 0 }),
 });

@@ -35,7 +35,7 @@ export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
       {
         provided: extractCucumberConfig(config),
       },
-      environment
+      environment,
     );
     const supportCodeLibrary = await loadSteps(runConfiguration, environment);
 
@@ -48,8 +48,8 @@ export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
       $tags,
       $test,
       parameters: runConfiguration.runtime.worldParameters || {},
-      log: () => { },
-      attach: async () => { }, // eslint-disable-line @typescript-eslint/no-empty-function
+      log: () => {},
+      attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
     });
     await world.init();
     await use(world);
@@ -83,9 +83,9 @@ export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
   But_: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
 
   // Init $tags fixture with empty array. Can be owerwritten in test file
-  $tags: ({ }, use) => use([]),
+  $tags: ({}, use) => use([]),
   // Init $test fixture with base test, but it will be always overwritten in test file
-  $test: ({ }, use) => use(base),
+  $test: ({}, use) => use(base),
 };
 export const test = base.extend<BddFixtures>(bddFixtures);
 

@@ -20,7 +20,7 @@ const testTypeSymbol = getSymbolByName(test, 'testType');
  * Returns test fixtures using Symbol.
  */
 function getTestFixtures(test: TestTypeCommon) {
-  return (getTestImpl(test).fixtures as FixturesWithLocation[]);
+  return getTestImpl(test).fixtures as FixturesWithLocation[];
 }
 
 function getTestImpl(test: TestTypeCommon) {
@@ -60,9 +60,15 @@ export function assertHasBddFixtures(test: TestTypeCommon) {
     Record<string, unknown>,
     Record<string, unknown>
   >;
-  
-  const missingFixtures = Object.keys(bddFixtures).filter((name) => allDefinedFixtures[name] === undefined)
-  if(missingFixtures.length > 0) {
-    exit(`createBdd() should use test extended from "playwright-bdd" Missing fixtures: ${missingFixtures.join(', ')}`);
+
+  const missingFixtures = Object.keys(bddFixtures).filter(
+    (name) => allDefinedFixtures[name] === undefined,
+  );
+  if (missingFixtures.length > 0) {
+    exit(
+      `createBdd() should use test extended from "playwright-bdd" Missing fixtures: ${missingFixtures.join(
+        ', ',
+      )}`,
+    );
   }
 }

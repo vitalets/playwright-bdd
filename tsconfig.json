@@ -10,7 +10,7 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "jsx": "react",
+    "jsx": "react"
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx"]
 }
