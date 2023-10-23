@@ -24,8 +24,7 @@ Inspect the latest updates in [changelog](https://vitalets.github.io/playwright-
 
 ## Sponsors ❤️
 
-<!-- sponsors -->
-<!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><!-- sponsors -->
 
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
