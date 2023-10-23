@@ -4,9 +4,7 @@
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
-> Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
-
-> 🔥 Learn how to [generate BDD tests with ChatGPT](https://dev.to/vitalets/generate-bdd-tests-with-chatgpt-and-run-them-with-playwright-4ffm)
+> 🔥 How to [use ChatGPT for Playwright BDD testing](https://dev.to/vitalets/generate-bdd-tests-with-chatgpt-and-run-them-with-playwright-4ffm)
 
 ## Quick start
 Jump to [installation guide](installation.md) or read below about `playwright-bdd` architecture.
@@ -24,13 +22,13 @@ Such approach brings all the benefits of Playwright runner:
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## How playwright-bdd works
-Typical command to run tests with `playwright-bdd` is following:
+Typical command to run tests with `playwright-bdd` is the following:
 ```
 npx bddgen && npx playwright test
 ```
 
 ### Phase 1: Generate tests
-CLI command `npx bddgen` generates test files from BDD feature files. For example:
+CLI command `npx bddgen` generates intermediate test files from BDD feature files. For example:
 
 From
 ```gherkin

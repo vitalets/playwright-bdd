@@ -5,8 +5,7 @@ There are two ways of writing step definitions:
 
 ## Playwright-style
 Playwright-style allows you to write step definitions like a regular playwright tests.
-You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures),
-both test-scoped and worker-scoped. 
+You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
 
 Playwright-style highlights:
 
@@ -83,22 +82,20 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/playwright-style).
 
 ### Accessing `test` and `testInfo`
-You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) using special fixtures `$test` and `$testInfo` respectively. It allows to:
+You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:
 
   * increate test timeout
   * conditionally skip tests
   * attach screenshots
   * ...etc
 
-Example:
+Example - skip test for `firefox`:
 ```ts
-Given('I do something', async ({ $test, $testInfo }) => { 
-  $test.skip();
-  console.log(`skipped test: ${$testInfo.title}`);
+Given('I do something', async ({ browserName, $test }) => { 
+  if (browserName === 'firefox') $test.skip();
+  // ...
 });
 ```
-
-> Instead of `$testInfo` you can use `$test.info()` :)
 
 ### Using tags
 You can access [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) in step definitions by special `$tags` fixture:
@@ -122,18 +119,22 @@ Given('I do something', async ({ $tags }) => {
 > Special tags `@only`, `@skip` and `@fixme` are excluded from `$tags` to avoid impact on test during debug
 
 The most powerfull usage of `$tags` is in your custom fixtures.
-For example, you can overwrite `viewport` for mobile version:
 
-```gherkin
-Feature: Playwright site
-    
-    @mobile
-    Scenario: Check title
-      Given I do something
-      ...
+**Example 1** - run scenarios with `@firefox` tag only in Firefox:
+```ts
+import { test as base } from 'playwright-bdd';
+
+export const test = base.extend<{ browserSpecificTest: void }>({
+  browserSpecificTest: [async ({ $tags }, use, testInfo) => {
+    if ($tags.includes('@firefox') && testInfo.project.name !== 'firefox') {
+      testInfo.skip();
+    }
+    await use();
+  }, { auto: true }],
+});
 ```
 
-Custom `fixtures.ts`:
+**Example 2** - overwrite `viewport` for scenarios with `@mobile` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
 
@@ -145,12 +146,12 @@ export const test = base.extend({
     await use(viewport);
   }
 });
-```
+``` 
 
-Please note, that for now **Cucumber tags are not inserted into test titles** for Playwright. 
+Please note, that **Cucumber tags are not automatically appended to test title** for Playwright. 
 This is done intentionally to keep test titles unchanged. Waiting for Playwright tags API, see [microsoft/playwright#23180](https://github.com/microsoft/playwright/issues/23180).
 
-However, you can simply append Playwright tags to feature/scenario name:
+If you need [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests) you can manually append them to feature/scenario name:
 ```gherkin
 Feature: Playwright site @desktop
     
