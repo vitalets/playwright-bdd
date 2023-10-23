@@ -89,15 +89,13 @@ You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testIn
   * attach screenshots
   * ...etc
 
-Example:
+Example - skip test for `firefox`:
 ```ts
-Given('I do something', async ({ $test, $testInfo }) => { 
-  $test.skip();
-  console.log(`skipped test: ${$testInfo.title}`);
+Given('I do something', async ({ browserName, $test }) => { 
+  if (browserName === 'firefox') $test.skip();
+  // ...
 });
 ```
-
-> Instead of `$testInfo` you can use `$test.info()` :)
 
 ### Using tags
 You can access [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) in step definitions by special `$tags` fixture:
