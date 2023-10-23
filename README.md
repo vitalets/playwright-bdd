@@ -22,7 +22,8 @@ Feel free to share feedback in [issues](https://github.com/vitalets/playwright-b
 ## Changelog
 Inspect the latest updates in [changelog](https://vitalets.github.io/playwright-bdd/#/changelog).
 
-## Sponsors ❤️
+## Sponsors
+Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
 
 <!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><!-- sponsors -->
 
