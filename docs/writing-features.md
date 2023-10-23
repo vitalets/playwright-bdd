@@ -51,6 +51,8 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
+To conditionally skip scenario check out [$tags fixture](./writing-steps.md#using-tags).
+
 ## Customize examples title
 By default each row from `Scenario Outline` examples is converted into test with title `Example #{index}`.
 It can be not reliable for reporters that keep track of test history, because on every insertion / deletion of rows
