@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* add workflow to sync sponsors in README.md, [#62](https://github.com/vitalets/playwright-bdd/issues/62)
 * support custom fixtures in cucumber-style steps
 
 ## 5.4.0

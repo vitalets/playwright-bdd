@@ -22,5 +22,10 @@ Feel free to share feedback in [issues](https://github.com/vitalets/playwright-b
 ## Changelog
 Inspect the latest updates in [changelog](https://vitalets.github.io/playwright-bdd/#/changelog).
 
+## Sponsors ❤️
+
+<!-- sponsors -->
+<!-- sponsors -->
+
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)

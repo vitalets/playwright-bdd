@@ -1,0 +1,25 @@
+# Update sponsors in README.md
+name: sponsors
+on:
+  workflow_dispatch:
+  schedule:
+    # run every day at 00:00
+    - cron: 0 0 * * 0-6
+
+jobs:
+  sponsors:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Update sponsors in README.md
+        uses: JamesIves/github-sponsors-readme-action@v1
+        with:
+          token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          file: README.md
+
+      - name: Push changes to main branch
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: main
+          folder: '.'
