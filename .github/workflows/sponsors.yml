@@ -1,13 +1,15 @@
 # Update sponsors in README.md
-name: sponsors
+name: update-sponsors
 on:
   workflow_dispatch:
   schedule:
     # run every day at 00:00
     - cron: 0 0 * * 0-6
 
+permissions: write-all
+
 jobs:
-  sponsors:
+  update-sponsors:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
