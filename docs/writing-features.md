@@ -51,7 +51,7 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
-To conditionally skip scenario check out [$tags fixture](./writing-steps.md#using-tags).
+To conditionally skip scenario use [$test and $tags fixtures](./writing-steps.md#accessing-test-and-testinfo).
 
 ## Customize examples title
 By default each row from `Scenario Outline` examples is converted into test with title `Example #{index}`.

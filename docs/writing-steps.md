@@ -5,8 +5,7 @@ There are two ways of writing step definitions:
 
 ## Playwright-style
 Playwright-style allows you to write step definitions like a regular playwright tests.
-You get all benefits of [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures),
-both test-scoped and worker-scoped. 
+You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
 
 Playwright-style highlights:
 
@@ -83,7 +82,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
 See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/playwright-style).
 
 ### Accessing `test` and `testInfo`
-You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) using special fixtures `$test` and `$testInfo` respectively. It allows to:
+You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:
 
   * increate test timeout
   * conditionally skip tests
