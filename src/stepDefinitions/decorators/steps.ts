@@ -13,7 +13,7 @@ import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { StepConfig } from '../stepConfig';
 import { buildCucumberStepCode } from '../defineStep';
-import { PomNode } from './poms';
+import { PomNode } from './class';
 
 // initially we sotre step data inside method,
 // and then extract it in @Fixture decorator call

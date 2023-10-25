@@ -1,5 +1,5 @@
 /**
- * POM classes marked with @Fixture
+ * Class level @Fixture decorator.
  */
 
 /* eslint-disable @typescript-eslint/ban-types */

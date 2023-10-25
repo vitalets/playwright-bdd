@@ -31,7 +31,7 @@ import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
-import { PomNode } from '../stepDefinitions/decorators/poms';
+import { PomNode } from '../stepDefinitions/decorators/class';
 import { exit } from '../utils/exit';
 import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtures';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';

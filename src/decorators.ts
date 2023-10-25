@@ -1,4 +1,4 @@
-import { Fixture } from './stepDefinitions/decorators/poms';
+import { Fixture } from './stepDefinitions/decorators/class';
 import { createStepDecorator } from './stepDefinitions/decorators/steps';
 
 export { Fixture };
