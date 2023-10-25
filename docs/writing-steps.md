@@ -273,3 +273,122 @@ setWorldConstructor(CustomWorld);
 > Consider asynchronous setup and teardown of `BddWorld` using `init()` / `destroy()` methods.
 
 See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
+
+### Custom fixtures
+Along with built-in fixtures you can use any custom fixture in cucumber-style steps.
+To get fixture call `this.useFixture(fixtureName)` method inside step body.
+
+For example:
+```js
+When('I open todo page', async function () {
+  const todoPage = this.useFixture('todoPage');
+  await todoPage.open();
+});
+```
+
+For **TypeScript** you can pass `typeof test` as a second generic parameter to `BddWorld`:
+
+```ts
+type MyWorld = BddWorld<object, typeof test>;
+
+When<MyWorld>('I open todo page', async function () {
+  const todoPage = this.useFixture('todoPage');
+  await todoPage.open();
+});
+```
+
+> Please note that **you can only pass static strings** to `this.useFixture()`. Function body is analyzed to find used fixtures. Below **will not work**:
+```ts
+// will not work!
+const fixtureName = 'todoPage';
+const todoPage = this.useFixture(fixtureName);
+```
+
+## Hooks
+
+Hooks are functions that run before/after some parts of test execution.
+
+> Please note that Playwright offers concept of [fixtures](https://playwright.dev/docs/test-fixtures#introduction). In most cases fixtures is a better alternative to hooks, can fully replace them and provide [a lot of advantages](https://playwright.dev/docs/test-fixtures#with-fixtures). By default always consider to use fixtures.
+
+If you still need to use hooks, there are 3 cases:
+
+1. to run code before/after **overall test execution** - use Playwright's [global setup and teardown](https://playwright.dev/docs/test-global-setup-teardown)
+2. to run code before/after **every worker** - use `BeforeAll` / `AfterAll` hooks
+3. to run code before/after **every scenario** - use `Before` / `After` hooks
+
+Playwright-bdd supports all types of hooks.
+
+<details>
+<summary>Internally hooks are implemented via fixtures. Expand to learn more.</summary>
+
+Here is the base code to demonstrate how hooks relate to fixtures:
+```ts
+export const testWithHooks = base.extend<
+  { scenarioHooks: void },
+  { workerHooks: void }
+>({
+  scenarioHooks: [async ({}, use) => {
+    // run Before hooks
+    await use();
+    // run After hooks
+  }, { auto: true }],
+  workerHooks: [async ({}, use) => {
+    // run BeforeAll hooks
+    await use();
+    // run AfterAll hooks
+  }, { auto: true, scope: 'worker' }],
+});
+```
+You can re-use this snippet in your project to get full control over hooks.
+
+</details>
+
+Example of hooks:
+```ts
+import { BeforeAll, AfterAll, Before, After } from 'playwright-bdd';
+
+BeforeAll(async () => {
+  console.log('run before all scenarios inside worker');
+});
+
+AfterAll(async () => {
+  console.log('run after all scenarios inside worker');
+});
+
+Before(async () => {
+  console.log('run before each scenario');
+});
+
+After(async () => {
+  console.log('run after each scenario');
+});
+```
+
+For **cucumber-style**, I you need to access **World** as `this` in `Before / After` hooks, you should use regular functions instead of arrows:
+```ts
+Before(async function () {
+  console.log('before', this.page.url());
+});
+
+After(async function () {
+  console.log('after', this.page.url());
+});
+```
+
+Hooks accept built-in fixtures as a first parameter. Note that `BeforeAll / AfterAll` hooks accept only `worker` scoped fixtures and don't have access to `World` (as World is re-created for every scenario).
+
+### Conditional hooks
+
+`Before / After` hooks can run conditionally depending on tags. Synax is the same as in Cucumber:
+
+```ts
+import { Before, After } from 'playwright-bdd';
+
+Before('@foo and not @bar', async function () {
+  console.log('run only before scenarios with @foo and not @bar tags');
+});
+
+After('@foo and not @bar', async function () {
+  console.log('run only after scenarios with @foo and not @bar tags');
+});
+```
