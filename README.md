@@ -8,7 +8,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 
 > Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
-> 🔥 How to [use ChatGPT for Playwright BDD testing](https://dev.to/vitalets/generate-bdd-tests-with-chatgpt-and-run-them-with-playwright-4ffm)
+> 🔥 Check out [decorators syntax](https://vitalets.github.io/playwright-bdd/#/decorators) to define BDD steps right inside Page Object Models
 
 ## Documentation
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
