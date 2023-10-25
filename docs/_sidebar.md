@@ -3,6 +3,7 @@
 - [Configuration](configuration.md)
 - [Writing features](writing-features.md)
 - [Writing steps](writing-steps.md)
+- [Hooks](./hooks.md)
 - [Decorators](decorators.md)
 - [Recipes](recipes.md)
 - [CLI](cli.md)

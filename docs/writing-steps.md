@@ -276,7 +276,7 @@ See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/
 
 ### Custom fixtures
 Along with built-in fixtures you can use any custom fixture in cucumber-style steps.
-To get fixture call `this.useFixture(fixtureName)` method inside step body.
+To get fixture use method `this.useFixture(fixtureName)` inside step body.
 
 For example:
 ```js
@@ -286,7 +286,8 @@ When('I open todo page', async function () {
 });
 ```
 
-For **TypeScript** you can pass `typeof test` as a second generic parameter to `BddWorld`:
+For **TypeScript** you can pass `typeof test` as a second generic parameter to `BddWorld`
+to get propper typing:
 
 ```ts
 type MyWorld = BddWorld<object, typeof test>;
