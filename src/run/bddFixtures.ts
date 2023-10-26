@@ -87,7 +87,13 @@ export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
   // Init $test fixture with base test, but it will be always overwritten in test file
   $test: ({}, use) => use(base),
 };
-export const test = base.extend<BddFixtures>(bddFixtures);
+
+export function createBddTest<T extends typeof base>(ctBase:T) {
+  return ctBase.extend<BddFixtures>(bddFixtures);
+}
+
+export const test = createBddTest(base)
+
 
 /** these fixtures automatically injected into every step call */
 export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags'> & {
