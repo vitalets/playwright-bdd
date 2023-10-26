@@ -27,7 +27,7 @@ export type BddFixtures = {
   $test: TestTypeCommon;
 };
 
-export const test = base.extend<BddFixtures>({
+export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
   $bddWorldBase: async ({ $tags, $test }, use, testInfo) => {
     const config = getConfigFromEnv(testInfo.project.testDir);
     const environment = { cwd: getPlaywrightConfigDir() };
@@ -48,7 +48,7 @@ export const test = base.extend<BddFixtures>({
       $tags,
       $test,
       parameters: runConfiguration.runtime.worldParameters || {},
-      log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+      log: () => {},
       attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
     });
     await world.init();
@@ -86,7 +86,8 @@ export const test = base.extend<BddFixtures>({
   $tags: ({}, use) => use([]),
   // Init $test fixture with base test, but it will be always overwritten in test file
   $test: ({}, use) => use(base),
-});
+};
+export const test = base.extend<BddFixtures>(bddFixtures);
 
 /** these fixtures automatically injected into every step call */
 export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags'> & {
