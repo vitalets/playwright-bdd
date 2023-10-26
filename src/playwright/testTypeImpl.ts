@@ -51,18 +51,14 @@ export async function runStepWithCustomLocation(
  * Returns true if this `test` function has all the fixtures we need
  */
 export function assertHasBddFixtures(test: TestTypeCommon) {
-  const allDefinedFixtures = Object.assign(
-    {},
-    ...getTestFixtures(test).map((fixtureSet) => fixtureSet.fixtures),
-  ) as Fixtures<
-    Record<string, unknown>,
-    Record<string, unknown>,
-    Record<string, unknown>,
-    Record<string, unknown>
-  >;
+  const allDefinedFixtures = new Set(
+    getTestFixtures(test)
+      .map(({ fixtures }) => Object.keys(fixtures || {}))
+      .flat(),
+  );
 
   const missingFixtures = Object.keys(bddFixtures).filter(
-    (name) => allDefinedFixtures[name] === undefined,
+    (name) => !allDefinedFixtures.has(name),
   );
   if (missingFixtures.length > 0) {
     exit(
