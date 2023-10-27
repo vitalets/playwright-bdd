@@ -1,4 +1,4 @@
-import React from 'react-dom';
+import React from 'react';
 import { expect } from '@playwright/test';
 import { createBdd } from '../../../dist';
 import { test } from './fixtures';
