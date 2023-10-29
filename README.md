@@ -25,7 +25,7 @@ Inspect the latest updates in [changelog](https://vitalets.github.io/playwright-
 ## Sponsors
 Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
 
-<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/timm-z"><img src="https://github.com/timm-z.png" width="60px" alt="timmz" /></a><!-- sponsors -->
 
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
