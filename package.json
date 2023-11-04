@@ -84,5 +84,6 @@
     "testing",
     "e2e"
   ],
+  "funding": "https://github.com/sponsors/vitalets",
   "license": "MIT"
 }
