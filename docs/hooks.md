@@ -71,7 +71,7 @@ export const test = base.extend<{}, { workerHooks: void }>({
 
 ## Conditional hooks
 
-You can run scenario-level hooks conditionally by tags. 
+You can run scenario-level hooks conditionally by tags, similar to Cucumber [tagged hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#tagged-hooks). 
 Use `$tags` fixture:
 ```ts
 import { test as base } from 'playwright-bdd';
@@ -88,7 +88,7 @@ export const test = base.extend<{ scenarioHooks: void }>({
 
 ## Access to World
 
-You can access `World` instance in scenario-level hooks. 
+You can access World instance in scenario-level hooks. 
 Use `$bddWorld` fixture:
 ```ts
 import { test as base } from 'playwright-bdd';
@@ -100,3 +100,5 @@ export const test = base.extend<{ scenarioHooks: void }>({
   }, { auto: true }],
 });
 ```
+
+> Note that there is no access to `$bddWorld` in **worker-level hooks** because World is re-created for every test. Here is a [discussion](https://github.com/cucumber/cucumber-js/issues/1393) in Cucumber repo.
