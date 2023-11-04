@@ -3,14 +3,15 @@
  */
 import fs from 'node:fs';
 import { execSync } from 'node:child_process';
+import { getPlaywrightVersion, getCucumberVersion } from './helpers.mjs';
 
 setup();
 
 function setup() {
   !process.env.CI && ensureNodeVersion(20);
 
-  showPlaywrightVersion();
-  showCucumberVersion();
+  console.log(`Playwright version: ${getPlaywrightVersion()}`);
+  console.log(`Cucumber version: ${getCucumberVersion()}`);
 
   removeTestResultsDir();
 
@@ -26,22 +27,6 @@ function ensureNodeVersion(version) {
   if (!process.version.startsWith(`v${version}.`)) {
     throw new Error(`Expected node version: ${version}`);
   }
-}
-
-function showPlaywrightVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@playwright/test/package.json', 'utf8'),
-  );
-
-  console.log(`Playwright version: ${version}`);
-}
-
-function showCucumberVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@cucumber/cucumber/package.json', 'utf8'),
-  );
-
-  console.log(`Cucumber version: ${version}`);
 }
 
 function symlinkPlaywrghtBdd() {

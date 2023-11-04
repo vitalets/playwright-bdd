@@ -133,3 +133,19 @@ export function expectFileNotExists(importMeta, relPath) {
   const absPath = new URL(relPath, importMeta.url);
   assert(!fs.existsSync(absPath), `Expect file to not exist: ${relPath}`);
 }
+
+export function getPlaywrightVersion() {
+  const { version } = JSON.parse(
+    fs.readFileSync('node_modules/@playwright/test/package.json', 'utf8'),
+  );
+
+  return version;
+}
+
+export function getCucumberVersion() {
+  const { version } = JSON.parse(
+    fs.readFileSync('node_modules/@cucumber/cucumber/package.json', 'utf8'),
+  );
+
+  return version;
+}
