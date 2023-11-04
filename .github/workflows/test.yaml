@@ -5,6 +5,9 @@ on:
     branches: [main, beta]
   pull_request:
     branches: [main, beta]
+  schedule:
+    # run daily at 00:00
+    - cron: 0 0 * * *
 
 jobs:
   get-playwright-versions:
