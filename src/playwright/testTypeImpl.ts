@@ -57,9 +57,7 @@ export function assertHasBddFixtures(test: TestTypeCommon) {
       .flat(),
   );
 
-  const missingFixtures = Object.keys(bddFixtures).filter(
-    (name) => !allDefinedFixtures.has(name),
-  );
+  const missingFixtures = Object.keys(bddFixtures).filter((name) => !allDefinedFixtures.has(name));
   if (missingFixtures.length > 0) {
     exit(
       `createBdd() should use test extended from "playwright-bdd" Missing fixtures: ${missingFixtures.join(
