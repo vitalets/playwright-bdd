@@ -17,15 +17,19 @@ Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 Clone and play with [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) repo.
 
 ## Feedback
-Feel free to share feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
+Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
 
 ## Changelog
-Inspect the latest updates in [changelog](https://vitalets.github.io/playwright-bdd/#/changelog).
+Inspect the latest updates in the [changelog](https://vitalets.github.io/playwright-bdd/#/changelog).
 
 ## Sponsors
 Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
 
 <!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/timm-z"><img src="https://github.com/timm-z.png" width="60px" alt="timmz" /></a><a href="https://github.com/NikkTod"><img src="https://github.com/NikkTod.png" width="60px" alt="" /></a><a href="https://github.com/alescinskis"><img src="https://github.com/alescinskis.png" width="60px" alt="Arturs Leščinskis" /></a><!-- sponsors -->
+
+## How to make BDD valuable for my company?
+
+Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id=how-to-make-bdd-valuable-for-my-company).
 
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
