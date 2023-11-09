@@ -8,6 +8,14 @@ import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { getStepCode } from '../stepDefinitions/defineStep';
 
+export type BddWorldFixtures = {
+  page: Page;
+  context: BrowserContext;
+  browser: Browser;
+  browserName: string;
+  request: APIRequestContext;
+};
+
 export type BddWorldOptions<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ParametersType = any,
@@ -17,15 +25,7 @@ export type BddWorldOptions<
   supportCodeLibrary: ISupportCodeLibrary;
   $tags: string[];
   $test: TestType;
-};
-
-// See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
-type BuiltinFixtures = {
-  page: Page;
-  context: BrowserContext;
-  browser: Browser;
-  browserName: string;
-  request: APIRequestContext;
+  $bddWorldFixtures: BddWorldFixtures;
 };
 
 type CustomFixtures = Record<string, unknown>;
@@ -35,7 +35,6 @@ export class BddWorld<
   ParametersType = any,
   TestType extends TestTypeCommon = TestTypeCommon,
 > extends CucumberWorld<ParametersType> {
-  builtinFixtures!: BuiltinFixtures;
   customFixtures: CustomFixtures = {};
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
@@ -98,23 +97,23 @@ export class BddWorld<
   }
 
   get page() {
-    return this.builtinFixtures.page;
+    return this.options.$bddWorldFixtures.page;
   }
 
   get context() {
-    return this.builtinFixtures.context;
+    return this.options.$bddWorldFixtures.context;
   }
 
   get browser() {
-    return this.builtinFixtures.browser;
+    return this.options.$bddWorldFixtures.browser;
   }
 
   get browserName() {
-    return this.builtinFixtures.browserName;
+    return this.options.$bddWorldFixtures.browserName;
   }
 
   get request() {
-    return this.builtinFixtures.request;
+    return this.options.$bddWorldFixtures.request;
   }
 
   get testInfo() {
@@ -148,15 +147,3 @@ export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   }
   return supportCodeLibrary.World as typeof BddWorld;
 }
-
-// type X = {
-//   a: string;
-//   b: number;
-// };
-
-// function f<T extends KeyValue, const K extends keyof T>(k: K) {
-//   // type V =
-//   return ({} as T)[k];
-// }
-
-// const x = f<X>('a');

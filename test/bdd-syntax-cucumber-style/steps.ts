@@ -68,9 +68,7 @@ Then<BddWorld>('File {string} contains', async function (fileName: string, table
   const filePath = path.join(path.dirname(this.test.info().file), fileName);
   const content = fs.readFileSync(filePath, 'utf8');
   table.rows().forEach((row) => {
-    // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
-    const substr = row[0].replace(/(Given|When|Then)\(/g, '$1_(');
-    expect(content).toContain(substr);
+    expect(content).toContain(row[0]);
   });
 });
 

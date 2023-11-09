@@ -63,6 +63,7 @@ export class TestFile {
   private lines: string[] = [];
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
+  private hasCucumberStyle = false;
   public testNodes: TestNode[] = [];
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
@@ -134,6 +135,7 @@ export class TestFile {
   private getFileFixtures() {
     return this.formatter.useFixtures([
       ...this.formatter.testFixture(),
+      ...(this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
       ...this.formatter.tagsFixture(this.testNodes),
     ]);
   }
@@ -306,9 +308,7 @@ export class TestFile {
     const stepConfig = getStepConfig(stepDefinition);
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
 
-    // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
-    // to use own bddWorld (containing PW built-in fixtures)
-    if (!isPlaywrightStyle(stepConfig)) keyword = `${keyword}_`;
+    if (!isPlaywrightStyle(stepConfig)) this.hasCucumberStyle = true;
 
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)

@@ -6,6 +6,7 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
+import { BddWorldFixtures } from '../run/bddWorld';
 
 export type ImportTestFrom = {
   file: string;
@@ -89,6 +90,22 @@ export class Formatter {
 
   testFixture() {
     return ['$test: ({}, use) => use(test),'];
+  }
+
+  bddWorldFixtures() {
+    const fixtures: Record<keyof BddWorldFixtures, null> = {
+      page: null,
+      context: null,
+      browser: null,
+      browserName: null,
+      request: null,
+    };
+    const fixturesStr = Object.keys(fixtures).join(', ');
+    return [
+      `$bddWorldFixtures: async ({ ${fixturesStr} }, use) => {`,
+      `  await use({ ${fixturesStr} });`,
+      `},`,
+    ];
   }
 
   tagsFixture(testNodes: TestNode[]) {
