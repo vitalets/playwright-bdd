@@ -28,21 +28,19 @@ export type BddWorldOptions<
   $bddWorldFixtures: BddWorldFixtures;
 };
 
-type CustomFixtures = Record<string, unknown>;
-
 export class BddWorld<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ParametersType = any,
   TestType extends TestTypeCommon = TestTypeCommon,
 > extends CucumberWorld<ParametersType> {
-  customFixtures: CustomFixtures = {};
+  stepFixtures: Fixtures<TestTypeCommon> = {};
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
     super(options);
     this.invokeStep = this.invokeStep.bind(this);
   }
 
-  async invokeStep(text: string, argument?: unknown, customFixtures?: CustomFixtures) {
+  async invokeStep(text: string, argument?: unknown, stepFixtures?: Fixtures<TestTypeCommon>) {
     const stepDefinition = findStepDefinition(
       this.options.supportCodeLibrary,
       text,
@@ -53,8 +51,8 @@ export class BddWorld<
       throw new Error(`Undefined step: "${text}"`);
     }
 
-    // attach custom fixtures to world - the only way to pass them to cucumber step fn
-    this.customFixtures = customFixtures || {};
+    // attach step fixtures to the world - the only way to pass them to cucumber step fn
+    this.stepFixtures = stepFixtures || {};
     const code = getStepCode(stepDefinition);
 
     // Get location of step call in generated test file.
@@ -71,7 +69,7 @@ export class BddWorld<
       code.apply(this, parameters),
     );
 
-    this.customFixtures = {};
+    this.stepFixtures = {};
 
     return res;
   }
@@ -93,7 +91,7 @@ export class BddWorld<
    * See: https://github.com/Microsoft/TypeScript/pull/26349
    */
   useFixture<K extends keyof Fixtures<TestType>>(fixtureName: K) {
-    return (this.customFixtures as Fixtures<TestType>)[fixtureName];
+    return (this.stepFixtures as Fixtures<TestType>)[fixtureName];
   }
 
   get page() {
