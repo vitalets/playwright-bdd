@@ -298,10 +298,11 @@ export class TestFile {
       language: this.language,
       previousKeywordType,
     });
-    let keyword = this.getStepKeyword(step);
+
+    const enKeyword = this.getStepEnglishKeyword(step);
     if (!stepDefinition) {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
-      return this.getMissingStep(keyword, keywordType, pickleStep);
+      return this.getMissingStep(enKeyword, keywordType, pickleStep);
     }
 
     // for cucumber-style stepConfig is undefined
@@ -313,10 +314,10 @@ export class TestFile {
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)
       ? ''
-      : this.formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
+      : this.formatter.step(enKeyword, pickleStep.text, pickleStep.argument, fixtureNames);
 
     return {
-      keyword,
+      keyword: enKeyword,
       keywordType,
       fixtureNames,
       line,
@@ -349,10 +350,10 @@ export class TestFile {
     throw new Error(`Pickle step not found for step: ${step.text}`);
   }
 
-  private getStepKeyword(step: Step) {
-    const origKeyword = step.keyword.trim();
-    const enKeyword = origKeyword === '*' ? 'And' : this.getEnglishKeyword(origKeyword);
-    if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
+  private getStepEnglishKeyword(step: Step) {
+    const nativeKeyword = step.keyword.trim();
+    const enKeyword = nativeKeyword === '*' ? 'And' : this.getEnglishKeyword(nativeKeyword);
+    if (!enKeyword) throw new Error(`Keyword not found: ${nativeKeyword}`);
     return enKeyword;
   }
 
