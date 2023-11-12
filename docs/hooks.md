@@ -16,68 +16,50 @@ Here is a general template to define hooks via fixtures:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const testWithHooks = base.extend<
-  { scenarioHooks: void },
-  { workerHooks: void }
+export const test = base.extend<
+  { Before: void, After: void },
+  { BeforeAll: void, AfterAll: void }
 >({
-  scenarioHooks: [async ({ page }, use, testInfo) => {
+  Before: [async ({}, use, testInfo) => {
     // run Before hooks
     await use();
-    // run After hooks
   }, { auto: true }],
-  workerHooks: [async ({ browser }, use, workerInfo) => {
+  After: [async ({}, use, testInfo) => {
+    await use();
+    // run After hooks
+  }, { auto: true }],  
+  BeforeAll: [async ({}, use, workerInfo) => {
     // run BeforeAll hooks
     await use();
-    // run AfterAll hooks
   }, { auto: true, scope: 'worker' }],
+  AfterAll: [async ({}, use, workerInfo) => {
+    await use();
+    // run AfterAll hooks
+  }, { auto: true, scope: 'worker' }],  
 });
 ```
 
-**Example #1**: implementation of `Before` hook to log every test title:
+**Example**: use `Before` hook to log every test title:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ scenarioHooks: void }>({
-  scenarioHooks: [async ({ page }, use, testInfo) => {
+export const test = base.extend<{ Before: void }>({
+  Before: [async ({}, use, testInfo) => {
     console.log('Test title', testInfo.title); // <- before hook
     await use();
   }, { auto: true }],
 });
 ```
 
-**Example #2**: implementation of `BeforeAll` hook to authenticate user:
-
-You can define hook itself in a separate file `hooks.ts`:
-```ts
-import { Browser, WorkerInfo } from '@playwright/test';
-
-export async function authenticateUser(browser: Browser, workerInfo: WorkerInfo) {
-  // authenticate user before all scenarios
-}
-```
-
-Then use it in `test.extend`:
-```ts
-import { test as base } from 'playwright-bdd';
-import { authenticateUser } from './hooks.ts';
-
-export const test = base.extend<{}, { workerHooks: void }>({
-  workerHooks: [async ({ browser }, use, workerInfo) => {
-    await authenticateUser(browser, workerInfo); // <- before all hook
-    await use();
-  }, { auto: true, scope: 'worker' }],
-});
-```
-
 ## Conditional hooks
 
-You can run scenario-level hooks conditionally by tags, similar to Cucumber [tagged hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#tagged-hooks). 
+You can run `Before / After` hooks conditionally by tags, similar to Cucumber [tagged hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#tagged-hooks). 
 Use `$tags` fixture:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ scenarioHooks: void }>({
-  scenarioHooks: [async ({ $tags }, use, testInfo) => {
+export const test = base.extend<{ Before: void }>({
+  Before: [async ({ $tags }, use, testInfo) => {
     if ($tags.includes('@logme')) {
       console.log('Test title', testInfo.title);
     }
@@ -88,17 +70,17 @@ export const test = base.extend<{ scenarioHooks: void }>({
 
 ## Access to World
 
-You can access World instance in scenario-level hooks. 
+You can access World instance in `Before / After` hooks. 
 Use `$bddWorld` fixture:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ scenarioHooks: void }>({
-  scenarioHooks: [async ({ $bddWorld }, use, testInfo) => {
+export const test = base.extend<{ Before: void }>({
+  Before: [async ({ $bddWorld }, use, testInfo) => {
     await $bddWorld.setup();
     await use();
   }, { auto: true }],
 });
 ```
 
-> Note that there is no access to `$bddWorld` in **worker-level hooks** because World is re-created for every test. Here is a [discussion](https://github.com/cucumber/cucumber-js/issues/1393) in Cucumber repo.
+> Note that there is no access to `$bddWorld` in **worker-level hooks** because World is created for every test. Here is a [discussion](https://github.com/cucumber/cucumber-js/issues/1393) in Cucumber repo.
