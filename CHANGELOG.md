@@ -3,6 +3,7 @@
 ## dev
 * add workflow to sync sponsors in README.md, [#62](https://github.com/vitalets/playwright-bdd/issues/62)
 * support custom fixtures in cucumber-style steps
+* fix snippets on win for cucumber@10, [#71](https://github.com/vitalets/playwright-bdd/issues/71)
 
 ## 5.4.0
 * i18n: Generate scenario outlines correctly [#60](https://github.com/vitalets/playwright-bdd/issues/60).

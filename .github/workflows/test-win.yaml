@@ -11,13 +11,16 @@ on:
 jobs:
   test-win:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        cucumberVersion: ['9', '10']
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 20
       - run: npm ci
-      - run: npm install @playwright/test@1.36
+      - run: npm install @playwright/test@1.36 @cucumber/cucumber@${{ matrix.cucumberVersion }}
       - run: npx playwright install --with-deps chromium
       - name: run tests
         env:
@@ -25,6 +28,7 @@ jobs:
         run: |
           node test/setup.mjs
           node test/bdd-syntax/test.mjs
+          node test/snippets-playwright-style/test.mjs
         # this command gets all test files in powershell
         # node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3

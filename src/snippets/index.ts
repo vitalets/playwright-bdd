@@ -2,6 +2,7 @@
  * Generate and show snippets for undefined steps
  */
 
+import { pathToFileURL } from 'node:url';
 import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
 import { loadSnippetBuilder } from '../cucumber/loadSnippetBuilder';
 import { TestFile, UndefinedStep } from '../gen/testFile';
@@ -38,11 +39,12 @@ export class Snippets {
     const { snippetSyntax } = this.runConfiguration.formats.options;
     if (!snippetSyntax && this.isPlaywrightStyle()) {
       this.bddBuiltInSyntax = true;
-      return this.isDecorators()
+      const filePath = this.isDecorators()
         ? require.resolve('./snippetSyntaxDecorators.js')
         : this.isTypeScript()
         ? require.resolve('./snippetSyntaxTs.js')
         : require.resolve('./snippetSyntax.js');
+      return pathToFileURL(filePath).toString();
     } else {
       return snippetSyntax;
     }
