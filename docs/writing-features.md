@@ -12,7 +12,7 @@ Feature: Playwright site
         Then I see in title "Playwright"
 ```
 
-## Tagging
+## Tags
 [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) are fully supported. For example:
 ```gherkin
 @desktop
