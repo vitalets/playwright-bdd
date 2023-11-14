@@ -120,12 +120,13 @@ Given('I do something', async ({ $tags }) => {
 
 The most powerfull usage of `$tags` is in your custom fixtures.
 
-**Example 1** - run scenarios with `@firefox` tag only in Firefox:
+##### Example 1
+Run scenarios with `@firefox` tag only in Firefox:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ browserSpecificTest: void }>({
-  browserSpecificTest: [async ({ $tags }, use, testInfo) => {
+export const test = base.extend<{ firefoxOnly: void }>({
+  firefoxOnly: [async ({ $tags }, use, testInfo) => {
     if ($tags.includes('@firefox') && testInfo.project.name !== 'firefox') {
       testInfo.skip();
     }
@@ -134,7 +135,24 @@ export const test = base.extend<{ browserSpecificTest: void }>({
 });
 ```
 
-**Example 2** - overwrite `viewport` for scenarios with `@mobile` tag:
+##### Example 2
+Show tags in Playwright html-report:
+```ts
+import { test as base } from 'playwright-bdd';
+
+export const test = base.extend<{ addTags: void }>({
+  addTags: [async ({ $tags }, use, testInfo) => {
+    testInfo.annotations.push({
+      type: 'tags',
+      description: $tags.join(', '),
+    });
+    await use();
+  }, { auto: true }],
+});
+```
+
+##### Example 3
+Overwrite `viewport` for scenarios with `@mobile` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
 
@@ -146,9 +164,10 @@ export const test = base.extend({
     await use(viewport);
   }
 });
-``` 
+```
 
-Please note, that **Cucumber tags are not automatically appended to test title** for Playwright. 
+#### Playwright tags
+Please note, that **Cucumber tags are not automatically appended to the test title** for Playwright. 
 This is done intentionally to keep test titles unchanged. Waiting for Playwright tags API, see [microsoft/playwright#23180](https://github.com/microsoft/playwright/issues/23180).
 
 If you need [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests) you can manually append them to feature/scenario name:
@@ -201,7 +220,7 @@ Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blo
 ## Cucumber-style
 Cucumber-style step definitions are compatible with CucumberJS:
 
-* import `Given`, `When`, `Then` from `@cucumber/cucumber` package
+* import `Given`, `When`, `Then` directly from `@cucumber/cucumber` package
 * [use regular functions for steps](https://github.com/cucumber/cucumber-js/blob/main/docs/faq.md#the-world-instance-isnt-available-in-my-hooks-or-step-definitions) (not arrow functions!) 
 * use `BddWorld` from `playwright-bdd` to access Playwright API 
 
@@ -274,9 +293,12 @@ setWorldConstructor(CustomWorld);
 
 See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
 
+<!--
+uncomment after release!
+
 ### Custom fixtures
-Along with built-in fixtures you can use any custom fixture in cucumber-style steps.
-To get fixture use method `this.useFixture(fixtureName)` inside step body.
+Along with Playwright built-in fixtures, you can use any custom fixture in cucumber-style steps.
+To get a fixture, use method `this.useFixture(fixtureName)` inside step body.
 
 For example:
 ```js
@@ -304,3 +326,4 @@ When<MyWorld>('I open todo page', async function () {
 const fixtureName = 'todoPage';
 const todoPage = this.useFixture(fixtureName);
 ```
+-->
