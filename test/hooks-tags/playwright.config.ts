@@ -7,6 +7,5 @@ export default defineConfig({
     require: ['steps.ts'],
   }),
   workers: 1,
-  reporter: 'null',
   forbidOnly: Boolean(process.env.FORBID_ONLY),
 });
