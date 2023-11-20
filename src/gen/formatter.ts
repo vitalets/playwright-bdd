@@ -139,6 +139,10 @@ export class Formatter {
     ];
   }
 
+  langFixture(lang: string) {
+    return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
+  }
+
   private getSubFn(node: TestNode) {
     if (node.flags.only) return '.only';
     if (node.flags.skip) return '.skip';

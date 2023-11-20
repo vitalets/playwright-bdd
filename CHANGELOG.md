@@ -2,8 +2,8 @@
 
 ## dev
 * add support for hooks, [#15](https://github.com/vitalets/playwright-bdd/issues/15)
-* add workflow to sync sponsors in README.md, [#62](https://github.com/vitalets/playwright-bdd/issues/62)
-* support custom fixtures in cucumber-style steps
+* add support for custom fixtures in cucumber-style steps
+* enrich html-report with keywords, [#69](https://github.com/vitalets/playwright-bdd/issues/69)
 * fix snippets on win for cucumber@10, [#71](https://github.com/vitalets/playwright-bdd/issues/71)
 
 ## 5.4.0

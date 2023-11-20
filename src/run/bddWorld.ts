@@ -21,6 +21,7 @@ export type BddWorldOptions<
   $tags: string[];
   $test: TestType;
   $bddWorldFixtures: BddWorldFixtures;
+  lang: string;
 };
 
 export class BddWorld<

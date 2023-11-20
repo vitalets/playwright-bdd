@@ -11,6 +11,7 @@ import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { getStepCode } from '../stepDefinitions/defineStep';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import { isEnglish } from '../config/lang';
 
 type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';
 
@@ -72,9 +73,8 @@ export class StepInvoker {
   }
 
   private getStepTitle() {
-    // return this.world.options.$bddWorldFixtures.lang === 'en'
-    //   ? `${this.keyword} ${this.text}`
-    //   : this.text;
-    return `${this.text}`;
+    // Currently prepend keyword only for English.
+    // For other langs it's more complex as we need to pass original keyword from step.
+    return isEnglish(this.world.options.lang) ? `${this.keyword} ${this.text}` : this.text;
   }
 }

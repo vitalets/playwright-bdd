@@ -29,6 +29,7 @@ export type BddFixtures = {
   $scenarioHookFixtures: Record<string, unknown>;
   $before: void;
   $after: void;
+  $lang: string;
 };
 
 type BddFixturesWorker = {
@@ -65,9 +66,10 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     },
     { auto: true, scope: 'worker' },
   ],
+  $lang: ({}, use) => use(''),
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
-  $bddWorld: async ({ $tags, $test, $bddWorldFixtures, $cucumber }, use, testInfo) => {
+  $bddWorld: async ({ $tags, $test, $bddWorldFixtures, $cucumber, $lang }, use, testInfo) => {
     const { runConfiguration, supportCodeLibrary, World } = $cucumber;
     const world = new World({
       testInfo,
@@ -75,6 +77,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       $tags,
       $test,
       $bddWorldFixtures,
+      lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
       log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
       attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function

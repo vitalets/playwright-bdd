@@ -37,6 +37,7 @@ import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtur
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { hasScenarioHooks, getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
+import { LANG_EN, isEnglish } from '../config/lang';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -85,7 +86,11 @@ export class TestFile {
   }
 
   get language() {
-    return this.options.doc.feature?.language || 'en';
+    return this.options.doc.feature?.language || LANG_EN;
+  }
+
+  get isEnglish() {
+    return isEnglish(this.language);
   }
 
   get config() {
@@ -118,7 +123,7 @@ export class TestFile {
   }
 
   private loadI18nKeywords() {
-    if (this.language !== 'en') {
+    if (!this.isEnglish) {
       this.i18nKeywordsMap = getKeywordsMap(this.language);
     }
   }
@@ -137,6 +142,7 @@ export class TestFile {
   private getFileFixtures() {
     return this.formatter.useFixtures([
       ...this.formatter.testFixture(),
+      ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
