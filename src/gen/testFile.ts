@@ -35,6 +35,8 @@ import { PomNode } from '../stepDefinitions/decorators/class';
 import { exit } from '../utils/exit';
 import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtures';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import { hasScenarioHooks, getScenarioHooksFixtures } from '../hooks/scenario';
+import { getWorkerHooksFixtures } from '../hooks/worker';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -135,7 +137,9 @@ export class TestFile {
   private getFileFixtures() {
     return this.formatter.useFixtures([
       ...this.formatter.testFixture(),
-      ...(this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
+      ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
+      ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
+      ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
       ...this.formatter.tagsFixture(this.testNodes),
     ]);
   }
@@ -428,7 +432,8 @@ export class TestFile {
 
   private skipByTagsExpression(node: TestNode) {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
-    return this.options.tagsExpression?.evaluate(node.tags) === false;
+    const { tagsExpression } = this.options;
+    return tagsExpression && !tagsExpression.evaluate(node.tags);
   }
 
   private isOutline(scenario: Scenario) {

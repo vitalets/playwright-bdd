@@ -93,19 +93,15 @@ export class Formatter {
   }
 
   bddWorldFixtures() {
-    const fixtures: Record<keyof BddWorldFixtures, null> = {
+    const fixturesObj: Record<keyof BddWorldFixtures, null> = {
       page: null,
       context: null,
       browser: null,
       browserName: null,
       request: null,
     };
-    const fixturesStr = Object.keys(fixtures).join(', ');
-    return [
-      `$bddWorldFixtures: async ({ ${fixturesStr} }, use) => {`,
-      `  await use({ ${fixturesStr} });`,
-      `},`,
-    ];
+    const fixtures = Object.keys(fixturesObj).join(', ');
+    return [`$bddWorldFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
   }
 
   tagsFixture(testNodes: TestNode[]) {
@@ -126,6 +122,21 @@ export class Formatter {
           )})] || []),`,
         ]
       : [];
+  }
+
+  scenarioHookFixtures(fixtureNames: string[]) {
+    if (!fixtureNames.length) return [];
+    const fixtures = fixtureNames.join(', ');
+    return [`$scenarioHookFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
+  }
+
+  workerHookFixtures(fixtureNames: string[]) {
+    if (!fixtureNames.length) return [];
+    const fixtures = fixtureNames.join(', ');
+    const scope = this.quoted('worker');
+    return [
+      `$workerHookFixtures: [({ ${fixtures} }, use) => use({ ${fixtures} }), { scope: ${scope} }],`,
+    ];
   }
 
   private getSubFn(node: TestNode) {

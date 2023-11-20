@@ -293,9 +293,6 @@ setWorldConstructor(CustomWorld);
 
 See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
 
-<!--
-uncomment after release!
-
 ### Custom fixtures
 Along with Playwright built-in fixtures, you can use any custom fixture in cucumber-style steps.
 To get a fixture, use method `this.useFixture(fixtureName)` inside step body.
@@ -326,4 +323,3 @@ When<MyWorld>('I open todo page', async function () {
 const fixtureName = 'todoPage';
 const todoPage = this.useFixture(fixtureName);
 ```
--->

@@ -15,10 +15,8 @@ import { BddFixtures } from '../run/bddFixtures';
 
 export type KeyValue = { [key: string]: any };
 
-export type BuiltInFixtures = PlaywrightTestArgs &
-  PlaywrightTestOptions &
-  PlaywrightWorkerArgs &
-  PlaywrightWorkerOptions;
+export type BuiltInFixturesWorker = PlaywrightWorkerArgs & PlaywrightWorkerOptions;
+export type BuiltInFixtures = PlaywrightTestArgs & PlaywrightTestOptions & BuiltInFixturesWorker;
 
 export type FixturesArg<T extends KeyValue = {}, W extends KeyValue = {}> = T & W & BuiltInFixtures;
 

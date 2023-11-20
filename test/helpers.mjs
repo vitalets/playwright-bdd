@@ -54,21 +54,44 @@ export function execPlaywrightTest(dir, cmd) {
 }
 
 export function execPlaywrightTestWithError(dir, error, cmd) {
-  assert.throws(
-    () => execPlaywrightTestInternal(dir, cmd),
-    (e) => {
-      const stderr = e.stderr.toString().trim();
-      const errors = Array.isArray(error) ? error : [error];
-      errors.forEach((error) => {
-        if (typeof error === 'string') {
-          expect(stderr).toContain(error);
-        } else {
-          expect(stderr).toMatch(error);
-        }
-      });
-      return true;
-    },
-  );
+  try {
+    execPlaywrightTestInternal(dir, cmd);
+  } catch (e) {
+    const stdout = e.stdout.toString().trim();
+    const stderr = e.stderr.toString().trim();
+    const errors = Array.isArray(error) ? error : [error];
+    errors.forEach((error) => {
+      if (typeof error === 'string') {
+        expect(stderr).toContain(error);
+      } else {
+        expect(stderr).toMatch(error);
+      }
+    });
+
+    return stdout;
+  }
+  assert.fail(`Expected to exit with error.`);
+
+  //   let stdout = '';
+  //   assert.throws(
+  //     () => execPlaywrightTestInternal(dir, cmd),
+  //     (e) => {
+  //       stdout = e.stdout.toString().trim();
+  //       const stderr = e.stderr.toString().trim();
+  //       const errors = Array.isArray(error) ? error : [error];
+  //       errors.forEach((error) => {
+  //         if (typeof error === 'string') {
+  //           expect(stderr).toContain(error);
+  //         } else {
+  //           expect(stderr).toMatch(error);
+  //         }
+  //       });
+  //       return true;
+  //     },
+  //   );
+  //   console.log(111, stdout);
+  //   return stdout;
+  // }
 }
 
 export function defineTestOnly(test) {
