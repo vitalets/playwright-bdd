@@ -1,12 +1,7 @@
 import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
-import { World as CucumberWorld, IWorldOptions, ITestCaseHookParameter } from '@cucumber/cucumber';
+import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { PickleStep } from '@cucumber/messages';
-import { findStepDefinition } from '../cucumber/loadSteps';
-import { getLocationInFile } from '../playwright/getLocationInFile';
-import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
-import { getStepCode } from '../stepDefinitions/defineStep';
 
 export type BddWorldFixtures = {
   page: Page;
@@ -37,41 +32,6 @@ export class BddWorld<
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
     super(options);
-    this.invokeStep = this.invokeStep.bind(this);
-  }
-
-  async invokeStep(text: string, argument?: unknown, stepFixtures?: Fixtures<TestTypeCommon>) {
-    const stepDefinition = findStepDefinition(
-      this.options.supportCodeLibrary,
-      text,
-      this.testInfo.file,
-    );
-
-    if (!stepDefinition) {
-      throw new Error(`Undefined step: "${text}"`);
-    }
-
-    // attach step fixtures to the world - the only way to pass them to cucumber step fn
-    this.stepFixtures = stepFixtures || {};
-    const code = getStepCode(stepDefinition);
-
-    // Get location of step call in generated test file.
-    // This call must be exactly here to have correct call stack.
-    const location = getLocationInFile(this.test.info().file);
-
-    const { parameters } = await stepDefinition.getInvocationParameters({
-      hookParameter: {} as ITestCaseHookParameter,
-      step: { text, argument } as PickleStep,
-      world: this,
-    });
-
-    const res = await runStepWithCustomLocation(this.test, text, location, () =>
-      code.apply(this, parameters),
-    );
-
-    this.stepFixtures = {};
-
-    return res;
   }
 
   /**

@@ -10,6 +10,7 @@ import { getPlaywrightConfigDir } from '../config/dir';
 import { runScenarioHooks } from '../hooks/scenario';
 import { runWorkerHooks } from '../hooks/worker';
 import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
+import { StepInvoker } from './StepInvoker';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -18,11 +19,11 @@ export type BddFixtures = {
   // empty object for pw-style, builtin fixtures for cucumber-style
   $bddWorldFixtures: BddWorldFixtures;
   $bddWorld: BddWorld;
-  Given: BddWorld['invokeStep'];
-  When: BddWorld['invokeStep'];
-  Then: BddWorld['invokeStep'];
-  And: BddWorld['invokeStep'];
-  But: BddWorld['invokeStep'];
+  Given: StepInvoker['invoke'];
+  When: StepInvoker['invoke'];
+  Then: StepInvoker['invoke'];
+  And: StepInvoker['invoke'];
+  But: StepInvoker['invoke'];
   $tags: string[];
   $test: TestTypeCommon;
   $scenarioHookFixtures: Record<string, unknown>;
@@ -83,11 +84,11 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     await world.destroy();
   },
 
-  Given: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  When: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  Then: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  And: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  But: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
+  Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
+  When: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'When').invoke),
+  Then: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Then').invoke),
+  And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
+  But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
 
   // init $tags with empty array, can be owerwritten in test file
   $tags: ({}, use) => use([]),
