@@ -42,8 +42,8 @@ export class Snippets {
       const filePath = this.isDecorators()
         ? require.resolve('./snippetSyntaxDecorators.js')
         : this.isTypeScript()
-        ? require.resolve('./snippetSyntaxTs.js')
-        : require.resolve('./snippetSyntax.js');
+          ? require.resolve('./snippetSyntaxTs.js')
+          : require.resolve('./snippetSyntax.js');
       return pathToFileURL(filePath).toString();
     } else {
       return snippetSyntax;
