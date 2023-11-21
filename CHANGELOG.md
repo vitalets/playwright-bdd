@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 5.5.0
 * add support for hooks, [#15](https://github.com/vitalets/playwright-bdd/issues/15)
 * add support for custom fixtures in cucumber-style steps
 * enrich html-report with keywords, [#69](https://github.com/vitalets/playwright-bdd/issues/69)
