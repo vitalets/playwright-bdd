@@ -6,9 +6,21 @@
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
-> Inspired by the issue in Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
+> Inspired by the issue in the Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
 > 🔥 Check out [decorators syntax](https://vitalets.github.io/playwright-bdd/#/decorators) to define BDD steps right inside Page Object Models
+
+## Why Playwright runner?
+Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
+You can use CucumberJS runner with [Playwright as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc) to test BDD scenarios.
+This package offers **alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
+Such approach brings all the benefits of Playwright runner:
+
+* Automatic browser initialization and cleanup
+* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
+* Out-of-box [screenshot testing](https://playwright.dev/docs/test-snapshots)
+* Parallelization with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
+* [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## Documentation
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
