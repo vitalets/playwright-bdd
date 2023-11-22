@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* fix empty step locations for esm
+
 ## 5.5.0
 * add support for hooks, [#15](https://github.com/vitalets/playwright-bdd/issues/15)
 * add support for custom fixtures in cucumber-style steps

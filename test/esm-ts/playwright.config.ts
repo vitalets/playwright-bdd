@@ -2,6 +2,7 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from '../../dist/index.js';
 
 export default defineConfig({
+  reporter: [['./reporter.ts']],
   projects: [
     {
       name: 'project one',
