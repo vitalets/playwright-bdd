@@ -6,7 +6,7 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
-import { BddWorldFixtures } from '../run/bddWorld';
+import { BddWorldFixtures } from '../run/BddWorld';
 
 export type ImportTestFrom = {
   file: string;

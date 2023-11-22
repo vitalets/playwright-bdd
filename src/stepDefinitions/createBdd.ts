@@ -16,7 +16,7 @@ import { BddAutoInjectFixtures, test as baseTest } from '../run/bddFixtures';
 import { isParentChildTest } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
 import { exit } from '../utils/exit';
-import { BddWorld } from '../run/bddWorld';
+import { BddWorld } from '../run/BddWorld';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
 
