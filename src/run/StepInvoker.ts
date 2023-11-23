@@ -2,7 +2,7 @@
  * Class to invoke steps in generated files.
  */
 
-import { BddWorld } from './BddWorld';
+import { BddWorld } from './bddWorld';
 import { ITestCaseHookParameter } from '@cucumber/cucumber';
 import { PickleStep } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';

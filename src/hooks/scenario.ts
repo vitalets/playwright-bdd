@@ -8,7 +8,7 @@
 
 import { TestInfo } from '@playwright/test';
 import parseTagsExpression from '@cucumber/tag-expressions';
-import { BddWorld } from '../run/BddWorld';
+import { BddWorld } from '../run/bddWorld';
 import { KeyValue } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';

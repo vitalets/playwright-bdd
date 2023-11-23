@@ -1,7 +1,7 @@
 import { TestInfo, test as base } from '@playwright/test';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadSteps } from '../cucumber/loadSteps';
-import { BddWorld, BddWorldFixtures, getWorldConstructor } from './BddWorld';
+import { BddWorld, BddWorldFixtures, getWorldConstructor } from './bddWorld';
 import { extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
