@@ -2,6 +2,7 @@
 
 ## dev
 * fix empty step locations for esm
+* fix duplicate steps error message, [#74](https://github.com/vitalets/playwright-bdd/issues/74)
 
 ## 5.5.0
 * add support for hooks, [#15](https://github.com/vitalets/playwright-bdd/issues/15)
