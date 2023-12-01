@@ -12,8 +12,8 @@ import {
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { BddAutoInjectFixtures, test as baseTest } from '../run/bddFixtures';
-import { isParentChildTest } from '../playwright/testTypeImpl';
+import { BddAutoInjectFixtures, test as baseBddTest } from '../run/bddFixtures';
+import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
 import { exit } from '../utils/exit';
 import { BddWorld } from '../run/bddWorld';
@@ -22,6 +22,9 @@ import { workerHookFactory } from '../hooks/worker';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
+// Global flag showing that custom test was passed.
+// Used when checking 'importTestFrom' config option.
+// todo: https://github.com/vitalets/playwright-bdd/issues/46
 export let hasCustomTest = false;
 
 export function createBdd<
@@ -62,12 +65,14 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
   };
 }
 
-function isCustomTest<T extends KeyValue = {}, W extends KeyValue = {}>(
-  customTest?: TestType<T, W> | null,
-) {
-  const isCustomTest = Boolean(customTest && customTest !== (baseTest as TestTypeCommon));
-  if (isCustomTest && customTest && !isParentChildTest(baseTest, customTest)) {
-    exit(`createBdd() should use test extended from "playwright-bdd"`);
+function isCustomTest(customTest?: TestTypeCommon | null) {
+  if (!customTest || customTest === (baseBddTest as TestTypeCommon)) return false;
+  assertTestHasBddFixtures(customTest);
+  return true;
+}
+
+function assertTestHasBddFixtures(customTest: TestTypeCommon) {
+  if (!isTestContainsSubtest(customTest, baseBddTest)) {
+    exit(`createBdd() should use 'test' extended from "playwright-bdd"`);
   }
-  return isCustomTest;
 }

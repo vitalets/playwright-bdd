@@ -46,15 +46,15 @@ export async function runStepWithCustomLocation(
 }
 
 /**
- * Returns true if all fixtures of parent test found in child test.
+ * Returns true if test contains all fixtures of subtest.
+ * - test was extended from subtest
+ * - test is a result of mergeTests(subtest, ...)
  */
-export function isParentChildTest(parent: TestTypeCommon, child: TestTypeCommon) {
-  if (parent === child) return false;
-  const childLocationsSet = new Set(
-    getTestFixtures(child).map((f) => locationToString(f.location)),
-  );
-  return getTestFixtures(parent).every((f) => {
-    return childLocationsSet.has(locationToString(f.location));
+export function isTestContainsSubtest(test: TestTypeCommon, subtest: TestTypeCommon) {
+  if (test === subtest) return true;
+  const testFixtures = new Set(getTestFixtures(test).map((f) => locationToString(f.location)));
+  return getTestFixtures(subtest).every((f) => {
+    return testFixtures.has(locationToString(f.location));
   });
 }
 
