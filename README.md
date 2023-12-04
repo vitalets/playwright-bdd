@@ -37,7 +37,7 @@ Inspect the latest updates in the [changelog](https://vitalets.github.io/playwri
 ## Sponsors
 Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
 
-<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/NikkTod"><img src="https://github.com/NikkTod.png" width="60px" alt="" /></a><a href="https://github.com/alescinskis"><img src="https://github.com/alescinskis.png" width="60px" alt="Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https://github.com/kahuna227.png" width="60px" alt="" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/alescinskis"><img src="https://github.com/alescinskis.png" width="60px" alt="Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https://github.com/kahuna227.png" width="60px" alt="" /></a><!-- sponsors -->
 
 ## How to make BDD valuable for my project?
 
