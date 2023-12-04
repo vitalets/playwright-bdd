@@ -25,6 +25,14 @@ export function template(t: string, params: Record<string, unknown> = {}) {
   });
 }
 
+/**
+ * Extracts all template params from string.
+ * Params defined as <param>.
+ */
+export function extractTemplateParams(t: string) {
+  return [...t.matchAll(/<(.+?)>/g)].map((m) => m[1]);
+}
+
 export function removeDuplicates(arr: string[]) {
   return [...new Set(arr)];
 }

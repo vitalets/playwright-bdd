@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* allow outline scenario name to be used as an examples template, [#67](https://github.com/vitalets/playwright-bdd/issues/67)
 * fix empty step locations for esm
 * fix duplicate steps error message, [#74](https://github.com/vitalets/playwright-bdd/issues/74)
 
