@@ -43,5 +43,22 @@ Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a 
 
 Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id=how-to-make-bdd-valuable-for-my-project).
 
+## Development
+
+#### Test locally on different Playwright versions
+```
+# install needed Playwright version
+npm i --no-save @playwright/test@1.33
+
+# install corresponding chromium without clearing other versions
+npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 playwright install chromium
+
+# run all tests
+npm run test
+
+# run particular test
+npm run only
+```
+
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)

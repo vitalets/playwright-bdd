@@ -3,42 +3,23 @@
  */
 import fs from 'node:fs';
 import { execSync } from 'node:child_process';
+import { getPackageVersion } from './helpers.mjs';
 
 setup();
 
 function setup() {
   !process.env.CI && ensureNodeVersion(20);
-  showPlaywrightVersion();
-  showCucumberVersion();
+  console.log(`Playwright version: ${getPackageVersion('@playwright/test')}`);
+  console.log(`Cucumber version: ${getPackageVersion('@cucumber/cucumber')}`);
   removeTestResultsDir();
   // must build project before tests as we run tests without ts-node
-  buildDist();
+  execSync('npm run build', { stdio: 'inherit' });
 }
 
 function ensureNodeVersion(version) {
   if (!process.version.startsWith(`v${version}.`)) {
     throw new Error(`Expected node version: ${version}`);
   }
-}
-
-function showPlaywrightVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@playwright/test/package.json', 'utf8'),
-  );
-
-  console.log(`Playwright version: ${version}`);
-}
-
-function showCucumberVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@cucumber/cucumber/package.json', 'utf8'),
-  );
-
-  console.log(`Cucumber version: ${version}`);
-}
-
-function buildDist() {
-  execSync('npm run build', { stdio: 'inherit' });
 }
 
 function removeTestResultsDir() {

@@ -3,6 +3,8 @@ import { defineBddConfig } from 'playwright-bdd';
 
 export default defineConfig({
   reporter: [['./reporter.ts']],
+  // for debug
+  // reporter: 'html',
   projects: [
     {
       name: 'project one',
@@ -10,7 +12,7 @@ export default defineConfig({
         outputDir: '.features-gen/one',
         importTestFrom: 'steps/fixtures.ts',
         paths: ['*.feature'],
-        import: ['steps/index.ts'], // <- note 'import' instead of 'require'
+        import: ['steps/*.ts'], // <- note 'import' instead of 'require'
       }),
     },
     {

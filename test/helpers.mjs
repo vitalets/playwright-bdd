@@ -103,6 +103,12 @@ export function defineTestOnly(test) {
   };
 }
 
+export function getPackageVersion(pkg) {
+  const { version } = JSON.parse(fs.readFileSync(`node_modules/${pkg}/package.json`, 'utf8'));
+
+  return version;
+}
+
 export class TestDir {
   constructor(importMeta) {
     this.importMeta = importMeta;
