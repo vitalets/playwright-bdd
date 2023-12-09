@@ -43,7 +43,7 @@
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",
     "docs": "docsify serve ./docs",
-    "release": "scripts/release.sh"
+    "release": "bash scripts/release.sh"
   },
   "dependencies": {
     "commander": "^11.1.0",
