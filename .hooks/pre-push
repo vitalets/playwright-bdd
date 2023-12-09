@@ -8,9 +8,10 @@ if [[ -n "${SKIP_PRE_PUSH-}" ]]; then exit 0; fi
 GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
 
 npm run lint
+node scripts/no-only-in-features.mjs test/**/*.feature
 npm run prettier
 
 # skip tests for docs branch
 if [ "$GIT_BRANCH" == "docs" ]; then exit 0; fi
 
-npx cross-env FORBID_ONLY=1 npm test
+npm test

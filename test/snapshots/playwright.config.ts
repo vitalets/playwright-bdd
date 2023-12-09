@@ -9,5 +9,4 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   outputDir: './test-results',
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

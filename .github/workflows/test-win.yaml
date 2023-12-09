@@ -26,8 +26,6 @@ jobs:
       - run: npm install @playwright/test@1.36 @cucumber/cucumber@${{ matrix.cucumberVersion }}
       - run: npx playwright install --with-deps chromium
       - name: run tests
-        env:
-          FORBID_ONLY: 1
         run: |
           node test/setup.mjs
           node test/bdd-syntax/test.mjs

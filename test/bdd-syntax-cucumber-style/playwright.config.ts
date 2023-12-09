@@ -10,5 +10,4 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   testIgnore: 'only-skip-fixme.feature.spec.js',
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

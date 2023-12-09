@@ -6,5 +6,4 @@ export default defineConfig({
     paths: ['*.feature'],
     require: [process.env.STEPS || ''],
   }),
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

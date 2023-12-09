@@ -26,5 +26,4 @@ export default defineConfig({
       }),
     },
   ],
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

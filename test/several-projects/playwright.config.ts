@@ -40,5 +40,4 @@ export default defineConfig({
       dependencies: ['project-one'],
     },
   ],
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

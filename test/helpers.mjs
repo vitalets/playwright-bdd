@@ -7,7 +7,6 @@ import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
 
-defineTestOnly(test);
 export { test };
 
 /**
@@ -73,34 +72,6 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
     return stdout;
   }
   assert.fail(`Expected to exit with error.`);
-
-  //   let stdout = '';
-  //   assert.throws(
-  //     () => execPlaywrightTestInternal(dir, cmd),
-  //     (e) => {
-  //       stdout = e.stdout.toString().trim();
-  //       const stderr = e.stderr.toString().trim();
-  //       const errors = Array.isArray(error) ? error : [error];
-  //       errors.forEach((error) => {
-  //         if (typeof error === 'string') {
-  //           expect(stderr).toContain(error);
-  //         } else {
-  //           expect(stderr).toMatch(error);
-  //         }
-  //       });
-  //       return true;
-  //     },
-  //   );
-  //   console.log(111, stdout);
-  //   return stdout;
-  // }
-}
-
-export function defineTestOnly(test) {
-  test.only = (title, fn) => {
-    if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
-    test(title, { only: true }, fn);
-  };
 }
 
 export function getPackageVersion(pkg) {
