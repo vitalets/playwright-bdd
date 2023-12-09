@@ -38,12 +38,12 @@
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
     "only": "node test/setup.mjs && node --test --test-only test/**/test.mjs",
     "only:d": "TEST_DEBUG=1 npm run only",
-    "build": "./scripts/build.sh",
+    "build": "scripts/build.sh",
     "examples": "ts-node scripts/examples.ts",
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",
     "docs": "docsify serve ./docs",
-    "release": "./scripts/release.sh"
+    "release": "scripts/release.sh"
   },
   "dependencies": {
     "commander": "^11.1.0",
