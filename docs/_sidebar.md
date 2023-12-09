@@ -5,6 +5,7 @@
 - [Writing steps](writing-steps.md)
 - [Hooks](./hooks.md)
 - [Decorators](decorators.md)
+- [Component tests](./component-tests.md)
 - [Recipes](recipes.md)
 - [CLI](cli.md)
 - [API](api.md)
