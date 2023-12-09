@@ -9,7 +9,7 @@ npm-debug.log
 # my
 /dist
 **/.features-gen/**/*.spec.js
-**/.cache
+.cache
 test-results
 playwright-report
 /examples/playwright-bdd*.tgz
