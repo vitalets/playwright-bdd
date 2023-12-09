@@ -8,6 +8,9 @@ import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
 
 export { test };
+export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
+export const PLAYWRIGHT_CMD = 'npx playwright test';
+export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
 
 /**
  * Test name = test dir from 'test/<xxx>/test.mjs'
@@ -16,15 +19,12 @@ export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
-export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
-export const PLAYWRIGHT_CMD = 'npx playwright test';
-export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
-
 function execPlaywrightTestInternal(dir, cmd) {
-  dir = path.join('test', dir);
-  cmd = cmd || DEFAULT_CMD;
+  const cwd = path.join('test', dir);
+  const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
+  const env = Object.assign({}, process.env, cmd?.env);
   try {
-    const stdout = execSync(cmd, { cwd: dir, stdio: 'pipe' });
+    const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
     if (process.env.TEST_DEBUG) {
       console.log('STDOUT:', stdout?.toString());
     }
