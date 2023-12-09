@@ -72,6 +72,11 @@ Then<BddWorld>('File {string} contains', async function (fileName: string, table
   });
 });
 
+Then<BddWorld>('File {string} does not exist', async function (fileName: string) {
+  const filePath = path.join(path.dirname(this.test.info().file), fileName);
+  expect(fs.existsSync(filePath)).toEqual(false);
+});
+
 Then<BddWorld & Record<string, string>>(
   'Context prop {string} to equal {string}',
   async function (key: string, value: string) {

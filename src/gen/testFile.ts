@@ -161,9 +161,8 @@ export class TestFile {
    */
   private getSuite(feature: Feature | Rule, parent?: TestNode) {
     const node = new TestNode(feature, parent);
+    if (node.isSkipped()) return this.formatter.suite(node, []);
     const lines: string[] = [];
-    // const { backgrounds, rules, scenarios } =
-    // bgFixtures, bgTags - used as fixture hints for decorator steps
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
     return this.formatter.suite(node, lines);
   }
@@ -195,6 +194,7 @@ export class TestFile {
    */
   private getOutlineSuite(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
+    if (node.isSkipped()) return this.formatter.suite(node, []);
     const lines: string[] = [];
     let exampleIndex = 0;
     scenario.examples.forEach((examples) => {
@@ -226,6 +226,7 @@ export class TestFile {
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
+    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
@@ -237,6 +238,7 @@ export class TestFile {
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
+    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);

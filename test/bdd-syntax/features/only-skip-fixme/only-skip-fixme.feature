@@ -15,8 +15,8 @@ Feature: only-skip-fixme
   Scenario: Skip
       Given State 1  
 
-  # in case of several system tags, only takes precendence
-  @skip @only
+  # in case of several system tags, @only takes precendence
+  @only @skip
   Scenario: Skip with only
       Given State 2 
 
@@ -38,3 +38,11 @@ Feature: only-skip-fixme
 	Examples:
 		| start | end |
 		|    4  |   8 |   
+
+  @skip
+	Scenario Outline: Skipped scenario outline
+    Given State <value>
+
+	Examples:
+		| value |
+		|   1   |

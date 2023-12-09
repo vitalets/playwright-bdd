@@ -67,6 +67,11 @@ Then('File {string} contains', async ({ $test }, fileName: string, table: DataTa
   table.rows().forEach((row) => expect(content).toContain(row[0]));
 });
 
+Then('File {string} does not exist', async ({ $test }, fileName: string) => {
+  const filePath = path.join(path.dirname($test.info().file), fileName);
+  expect(fs.existsSync(filePath)).toEqual(false);
+});
+
 Then('Context prop {string} to equal {string}', async ({ ctx }, key: string, value: string) => {
   expect(String(ctx[key])).toEqual(value);
 });
