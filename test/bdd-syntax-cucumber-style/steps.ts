@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { Given, When, Then, DataTable, defineParameterType } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 
 Given('State {int}', async function () {
   // noop

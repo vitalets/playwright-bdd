@@ -1,5 +1,5 @@
 import { setWorldConstructor } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 
 export class CustomWorld extends BddWorld {
   foo = 'bar';

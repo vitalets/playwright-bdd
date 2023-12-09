@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { When, Then } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 import { test } from './fixtures';
 
 type MyWorld = BddWorld<object, typeof test>;

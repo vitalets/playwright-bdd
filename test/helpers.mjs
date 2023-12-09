@@ -17,7 +17,9 @@ export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
-export const DEFAULT_CMD = 'node ../../dist/cli && npx playwright test';
+export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
+export const PLAYWRIGHT_CMD = 'npx playwright test';
+export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
 
 function execPlaywrightTestInternal(dir, cmd) {
   dir = path.join('test', dir);

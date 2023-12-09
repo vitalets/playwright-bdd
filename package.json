@@ -38,7 +38,7 @@
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
     "only": "node test/setup.mjs && node --test --test-only test/**/test.mjs",
     "only:d": "TEST_DEBUG=1 npm run only",
-    "build": "rm -rf dist && tsc -p tsconfig.build.json",
+    "build": "./scripts/build.sh",
     "examples": "ts-node scripts/examples.ts",
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",

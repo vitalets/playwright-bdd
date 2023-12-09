@@ -1,4 +1,4 @@
-import { Fixture, Given } from 'playwright-bdd/decorators.js';
+import { Fixture, Given } from 'playwright-bdd/decorators';
 import { test } from './fixtures.js';
 import { TodoPage } from '../../steps/TodoPage.js';
 

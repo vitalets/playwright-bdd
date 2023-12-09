@@ -8,16 +8,9 @@ setup();
 
 function setup() {
   !process.env.CI && ensureNodeVersion(20);
-
   showPlaywrightVersion();
   showCucumberVersion();
-
   removeTestResultsDir();
-
-  // link node_modules/playwright-bdd to dist
-  // as generated files import { test } from "playwright-bdd"
-  symlinkPlaywrghtBdd();
-
   // must build project before tests as we run tests without ts-node
   buildDist();
 }
@@ -42,17 +35,6 @@ function showCucumberVersion() {
   );
 
   console.log(`Cucumber version: ${version}`);
-}
-
-function symlinkPlaywrghtBdd() {
-  const playwrightBddPath = './node_modules/playwright-bdd';
-
-  // important to use lstat to get info about symlink itself
-  const stat = fs.lstatSync(playwrightBddPath, { throwIfNoEntry: false });
-  if (stat) fs.rmSync(playwrightBddPath, { recursive: true });
-
-  // see: https://github.com/nodejs/node/issues/18518#issuecomment-513866491
-  fs.symlinkSync('../dist', playwrightBddPath, 'junction');
 }
 
 function buildDist() {

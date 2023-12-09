@@ -1,4 +1,10 @@
-import { test, execPlaywrightTestWithError, TestDir } from '../helpers.mjs';
+import {
+  test,
+  execPlaywrightTestWithError,
+  TestDir,
+  BDDGEN_CMD,
+  PLAYWRIGHT_CMD,
+} from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -10,6 +16,6 @@ test(testDir.name, () => {
       /featureFile:.+features-root-error[/\\]root\.feature/,
       /featuresRoot:.+features-root-error[/\\]config/,
     ],
-    'node ../../dist/cli -c config && npx playwright test -c config',
+    `${BDDGEN_CMD} -c config && ${PLAYWRIGHT_CMD} -c config`,
   );
 });

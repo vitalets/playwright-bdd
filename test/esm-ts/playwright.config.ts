@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist/index.js';
+import { defineBddConfig } from 'playwright-bdd';
 
 export default defineConfig({
   reporter: [['./reporter.ts']],
@@ -10,7 +10,7 @@ export default defineConfig({
         outputDir: '.features-gen/one',
         importTestFrom: 'steps/fixtures.ts',
         paths: ['*.feature'],
-        import: ['steps/*.ts'], // <- note 'import' instead of 'require'
+        import: ['steps/index.ts'], // <- note 'import' instead of 'require'
       }),
     },
     {

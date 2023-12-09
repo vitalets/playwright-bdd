@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { Given } from '@cucumber/cucumber';
-import { createBdd } from '../../dist';
+import { createBdd } from 'playwright-bdd';
 import { CustomWorld } from './world';
 import { test } from './fixtures';
 

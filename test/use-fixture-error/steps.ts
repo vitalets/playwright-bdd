@@ -1,5 +1,5 @@
 import { Given } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 
 Given<BddWorld>('State {int}', async function () {
   const fixtureName = 'foo';
