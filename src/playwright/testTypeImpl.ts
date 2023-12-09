@@ -6,8 +6,6 @@ import { test, Fixtures } from '@playwright/test';
 import { Location } from '@playwright/test/reporter';
 import { getSymbolByName } from '../utils';
 import { TestTypeCommon } from './types';
-import { bddFixtures } from '../run/bddFixtures';
-import { exit } from '../utils/exit';
 
 type FixturesWithLocation = {
   fixtures: Fixtures;
@@ -48,21 +46,18 @@ export async function runStepWithCustomLocation(
 }
 
 /**
- * Returns true if this `test` function has all the fixtures we need
+ * Returns true if test contains all fixtures of subtest.
+ * - test was extended from subtest
+ * - test is a result of mergeTests(subtest, ...)
  */
-export function assertHasBddFixtures(test: TestTypeCommon) {
-  const allDefinedFixtures = new Set(
-    getTestFixtures(test)
-      .map(({ fixtures }) => Object.keys(fixtures || {}))
-      .flat(),
-  );
+export function isTestContainsSubtest(test: TestTypeCommon, subtest: TestTypeCommon) {
+  if (test === subtest) return true;
+  const testFixtures = new Set(getTestFixtures(test).map((f) => locationToString(f.location)));
+  return getTestFixtures(subtest).every((f) => {
+    return testFixtures.has(locationToString(f.location));
+  });
+}
 
-  const missingFixtures = Object.keys(bddFixtures).filter((name) => !allDefinedFixtures.has(name));
-  if (missingFixtures.length > 0) {
-    exit(
-      `createBdd() should use test extended from "playwright-bdd" Missing fixtures: ${missingFixtures.join(
-        ', ',
-      )}`,
-    );
-  }
+function locationToString({ file, line, column }: Location) {
+  return `${file}:${line}:${column}`;
 }

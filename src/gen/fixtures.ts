@@ -2,6 +2,7 @@
 
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { isBddAutoInjectFixture } from '../run/bddFixtures';
+import { exit } from '../utils/exit';
 
 const bodyFixturesSymbol = Symbol('bodyFixtures');
 
@@ -33,6 +34,19 @@ export function extractFixtureNamesFromFnBodyMemo(fn?: Function) {
 }
 
 function extractFixtureNamesFromFnBody(fn: Function) {
-  const matches = fn.toString().matchAll(/this\.useFixture\(['"`]([^'"`]+)['"`]\)/gi);
-  return [...matches].map((m) => m[1]);
+  const matches = fn.toString().matchAll(/this\.useFixture\((.+)\)/gi) || [];
+  return [...matches].map((match) => getFixtureName(match[1]));
+}
+
+function getFixtureName(arg: string) {
+  if (!/^['"`]/.test(arg)) {
+    // todo: log file location with incorrect useFixture
+    exit('this.useFixture() can accept only static string as an argument.');
+  }
+
+  if (arg.startsWith('`') && arg.includes('${')) {
+    exit('this.useFixture() can accept only static string as an argument.');
+  }
+
+  return arg.replace(/['"`]/g, '');
 }

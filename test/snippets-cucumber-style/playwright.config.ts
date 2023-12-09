@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
 
 const testDir = defineBddConfig({
@@ -12,5 +12,4 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

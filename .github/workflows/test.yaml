@@ -5,6 +5,9 @@ on:
     branches: [main, beta]
   pull_request:
     branches: [main, beta]
+  schedule:
+    # run daily at 00:00
+    - cron: 0 0 * * *
 
 jobs:
   get-playwright-versions:
@@ -47,7 +50,7 @@ jobs:
           @cucumber/cucumber@${{ matrix.cucumberVersion }}
 
       - run: npx playwright install --with-deps chromium
-      - run: npx cross-env FORBID_ONLY=1 npm test
+      - run: npm test
       - uses: actions/upload-artifact@v3
         if: always()
         with:

@@ -1,4 +1,4 @@
-import { test, getTestName, execPlaywrightTest, TestDir } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, TestDir, BDDGEN_CMD } from '../helpers.mjs';
 import { expect } from '@playwright/test';
 
 const testDir = new TestDir(import.meta);
@@ -8,7 +8,7 @@ test(testDir.name + '-generate-scenario-outlines', () => {
   const outputDir = testDir.getAbsPath('.features-gen');
   testDir.clearDir(outputDir);
 
-  execPlaywrightTest(testDir.name, 'node ../../dist/cli --tags "@outline"');
+  execPlaywrightTest(testDir.name, `${BDDGEN_CMD} --tags "@outline"`);
 
   let fileContents = testDir.getFileContents('.features-gen/sample.feature.spec.js');
   expect(fileContents).toContain(`test.describe("русский язык"`);

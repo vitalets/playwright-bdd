@@ -1,6 +1,6 @@
 import React from 'react';
 import { expect } from '@playwright/test';
-import { createBdd } from '../../../dist';
+import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
 const { Given, When, Then } = createBdd(test);

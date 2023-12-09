@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 
 export default defineConfig({
   projects: [
@@ -31,5 +31,4 @@ export default defineConfig({
       }),
     },
   ],
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

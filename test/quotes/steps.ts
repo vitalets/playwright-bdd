@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { createBdd } from '../../dist';
+import { createBdd } from 'playwright-bdd';
 import { DataTable } from '@cucumber/cucumber';
 
 const { Given } = createBdd();

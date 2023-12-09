@@ -1,6 +1,8 @@
-import { test, getTestName, execPlaywrightTest, getPlaywrightVersion } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, getPackageVersion } from '../helpers.mjs';
 
-const isPW133 = getPlaywrightVersion().startsWith('1.33.');
+// Playwright 1.33 has a strange error
+// See: https://github.com/vitalets/playwright-bdd/pull/63#issuecomment-1782832507
+const isPW133 = getPackageVersion('@playwright/test').startsWith('1.33.');
 
 test(getTestName(import.meta), { skip: isPW133 }, (t) => {
   execPlaywrightTest(t.name);

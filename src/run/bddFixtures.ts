@@ -1,52 +1,83 @@
 import { TestInfo, test as base } from '@playwright/test';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadSteps } from '../cucumber/loadSteps';
-import { BddWorld, getWorldConstructor } from './bddWorld';
+import { BddWorld, BddWorldFixtures, getWorldConstructor } from './bddWorld';
 import { extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
 import { getPlaywrightConfigDir } from '../config/dir';
+import { runScenarioHooks } from '../hooks/scenario';
+import { runWorkerHooks } from '../hooks/worker';
+import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
+import { StepInvoker } from './StepInvoker';
+
+// BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 export type BddFixtures = {
-  // bddWorldBase is used internally for playwright-style and does not contain Playwright builtin fixtures
-  $bddWorldBase: BddWorld;
-  // bddWorld is used for cucumber-style and contains Playwright builtin fixtures
+  // fixtures injected into BddWorld:
+  // empty object for pw-style, builtin fixtures for cucumber-style
+  $bddWorldFixtures: BddWorldFixtures;
   $bddWorld: BddWorld;
-  Given: BddWorld['invokeStep'];
-  When: BddWorld['invokeStep'];
-  Then: BddWorld['invokeStep'];
-  And: BddWorld['invokeStep'];
-  But: BddWorld['invokeStep'];
-  Given_: BddWorld['invokeStep'];
-  When_: BddWorld['invokeStep'];
-  Then_: BddWorld['invokeStep'];
-  And_: BddWorld['invokeStep'];
-  But_: BddWorld['invokeStep'];
+  Given: StepInvoker['invoke'];
+  When: StepInvoker['invoke'];
+  Then: StepInvoker['invoke'];
+  And: StepInvoker['invoke'];
+  But: StepInvoker['invoke'];
   $tags: string[];
   $test: TestTypeCommon;
+  $scenarioHookFixtures: Record<string, unknown>;
+  $before: void;
+  $after: void;
+  $lang: string;
 };
 
-export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
-  $bddWorldBase: async ({ $tags, $test }, use, testInfo) => {
-    const config = getConfigFromEnv(testInfo.project.testDir);
-    const environment = { cwd: getPlaywrightConfigDir() };
-    const { runConfiguration } = await loadCucumberConfig(
-      {
-        provided: extractCucumberConfig(config),
-      },
-      environment,
-    );
-    const supportCodeLibrary = await loadSteps(runConfiguration, environment);
+type BddFixturesWorker = {
+  $cucumber: {
+    runConfiguration: IRunConfiguration;
+    supportCodeLibrary: ISupportCodeLibrary;
+    World: typeof BddWorld;
+  };
+  $workerHookFixtures: Record<string, unknown>;
+  $beforeAll: void;
+  $afterAll: void;
+};
 
-    appendDecoratorSteps(supportCodeLibrary);
+export const test = base.extend<BddFixtures, BddFixturesWorker>({
+  // load cucumber once per worker (auto-fixture)
+  // todo: maybe remove caching in cucumber/loadConfig.ts and cucumber/loadSteps.ts
+  // as we call it once per worker. Check generation phase.
+  $cucumber: [
+    async ({}, use, workerInfo) => {
+      const config = getConfigFromEnv(workerInfo.project.testDir);
+      const environment = { cwd: getPlaywrightConfigDir() };
+      const { runConfiguration } = await loadCucumberConfig(
+        {
+          provided: extractCucumberConfig(config),
+        },
+        environment,
+      );
 
-    const World = getWorldConstructor(supportCodeLibrary);
+      const supportCodeLibrary = await loadSteps(runConfiguration, environment);
+      appendDecoratorSteps(supportCodeLibrary);
+      const World = getWorldConstructor(supportCodeLibrary);
+
+      await use({ runConfiguration, supportCodeLibrary, World });
+    },
+    { auto: true, scope: 'worker' },
+  ],
+  $lang: ({}, use) => use(''),
+  // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
+  $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
+  $bddWorld: async ({ $tags, $test, $bddWorldFixtures, $cucumber, $lang }, use, testInfo) => {
+    const { runConfiguration, supportCodeLibrary, World } = $cucumber;
     const world = new World({
       testInfo,
       supportCodeLibrary,
       $tags,
       $test,
+      $bddWorldFixtures,
+      lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
       log: () => {},
       attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
@@ -55,44 +86,64 @@ export const bddFixtures: Parameters<typeof base.extend<BddFixtures>>[0] = {
     await use(world);
     await world.destroy();
   },
-  $bddWorld: async ({ $bddWorldBase, page, context, browser, browserName, request }, use) => {
-    $bddWorldBase.builtinFixtures = {
-      page,
-      context,
-      browser,
-      browserName,
-      request,
-    };
-    await use($bddWorldBase);
-  },
 
-  // below fixtures are used in playwright-style
-  // and does not automatically init Playwright builtin fixtures
-  Given: ({ $bddWorldBase }, use) => use($bddWorldBase.invokeStep),
-  When: ({ $bddWorldBase }, use) => use($bddWorldBase.invokeStep),
-  Then: ({ $bddWorldBase }, use) => use($bddWorldBase.invokeStep),
-  And: ({ $bddWorldBase }, use) => use($bddWorldBase.invokeStep),
-  But: ({ $bddWorldBase }, use) => use($bddWorldBase.invokeStep),
+  Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
+  When: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'When').invoke),
+  Then: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Then').invoke),
+  And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
+  But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
 
-  // below fixtures are used in cucumber-style
-  // and automatically init Playwright builtin fixtures
-  Given_: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  When_: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  Then_: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  And_: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-  But_: ({ $bddWorld }, use) => use($bddWorld.invokeStep),
-
-  // Init $tags fixture with empty array. Can be owerwritten in test file
+  // init $tags with empty array, can be owerwritten in test file
   $tags: ({}, use) => use([]),
-  // Init $test fixture with base test, but it will be always overwritten in test file
+  // init $test with base test, but it will be always overwritten in test file
   $test: ({}, use) => use(base),
-};
 
-export function createBddTest<T extends typeof base>(ctBase: T) {
-  return ctBase.extend<BddFixtures>(bddFixtures);
-}
+  // can be owerwritten in test file if there are scenario hooks
+  $scenarioHookFixtures: ({}, use) => use({}),
+  $before: [
+    // Unused dependencies are important:
+    // 1. $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
+    // 2. $after: to call after hooks in case of errors in before hooks
+    async (
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      { $scenarioHookFixtures, $bddWorld, $tags, $beforeAll, $afterAll, $after },
+      use,
+      $testInfo,
+    ) => {
+      await runScenarioHooks('before', { $bddWorld, $tags, $testInfo, ...$scenarioHookFixtures });
+      await use();
+    },
+    { auto: true },
+  ],
+  $after: [
+    async ({ $scenarioHookFixtures, $bddWorld, $tags }, use, $testInfo) => {
+      await use();
+      await runScenarioHooks('after', { $bddWorld, $tags, $testInfo, ...$scenarioHookFixtures });
+    },
+    { auto: true },
+  ],
 
-export const test = createBddTest(base);
+  // can be owerwritten in test file if there are worker hooks
+  $workerHookFixtures: [({}, use) => use({}), { scope: 'worker' }],
+  $beforeAll: [
+    // Important unused dependencies:
+    // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
+    // 2. $cucumber: to load hooks before this fixtures
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async ({ $workerHookFixtures, $cucumber }, use, $workerInfo) => {
+      await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
+      await use();
+    },
+    { auto: true, scope: 'worker' },
+  ],
+  $afterAll: [
+    async ({ $workerHookFixtures }, use, $workerInfo) => {
+      await use();
+      await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
+    },
+    { auto: true, scope: 'worker' },
+  ],
+});
 
 /** these fixtures automatically injected into every step call */
 export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags'> & {

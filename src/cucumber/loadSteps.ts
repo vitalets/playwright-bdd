@@ -35,11 +35,12 @@ export function findStepDefinition(
   if (matchedSteps.length > 1)
     exit(
       [
-        `Several step definitions found for text: ${stepText} (${file})`,
-        ...matchedSteps.map((s) => `- ${s.pattern}`),
+        `Multiple step definitions matched for text: "${stepText}" (${file})`,
+        // todo: print location of every step definition (as in cucumber)
+        ...matchedSteps.map((s) => `  ${s.pattern}`),
       ].join('\n'),
     );
-  // todo: check stepDefinition.keyword with PickleStepType
+
   return matchedSteps[0];
 }
 

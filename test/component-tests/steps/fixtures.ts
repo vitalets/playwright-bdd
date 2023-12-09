@@ -1,5 +1,6 @@
 import { test as ctBase } from '@playwright/experimental-ct-react';
-import { createBddTest } from '../../../dist';
+import { test as base } from 'playwright-bdd';
+import { mergeTests } from './mergeTests';
 
 type Fixtures = {
   world: {
@@ -7,6 +8,6 @@ type Fixtures = {
   };
 };
 
-export const test = createBddTest(ctBase).extend<Fixtures>({
+export const test = mergeTests(base, ctBase).extend<Fixtures>({
   world: ({}, use) => use({ clickedTimes: 0 }),
 });

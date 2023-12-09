@@ -26,7 +26,7 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { template } from '../utils';
+import { extractTemplateParams, template } from '../utils';
 import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
@@ -35,6 +35,9 @@ import { PomNode } from '../stepDefinitions/decorators/class';
 import { exit } from '../utils/exit';
 import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtures';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import { hasScenarioHooks, getScenarioHooksFixtures } from '../hooks/scenario';
+import { getWorkerHooksFixtures } from '../hooks/worker';
+import { LANG_EN, isEnglish } from '../config/lang';
 
 type TestFileOptions = {
   doc: GherkinDocument;
@@ -63,6 +66,7 @@ export class TestFile {
   private lines: string[] = [];
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
+  private hasCucumberStyle = false;
   public testNodes: TestNode[] = [];
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
@@ -82,7 +86,11 @@ export class TestFile {
   }
 
   get language() {
-    return this.options.doc.feature?.language || 'en';
+    return this.options.doc.feature?.language || LANG_EN;
+  }
+
+  get isEnglish() {
+    return isEnglish(this.language);
   }
 
   get config() {
@@ -115,7 +123,7 @@ export class TestFile {
   }
 
   private loadI18nKeywords() {
-    if (this.language !== 'en') {
+    if (!this.isEnglish) {
       this.i18nKeywordsMap = getKeywordsMap(this.language);
     }
   }
@@ -134,6 +142,10 @@ export class TestFile {
   private getFileFixtures() {
     return this.formatter.useFixtures([
       ...this.formatter.testFixture(),
+      ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
+      ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
+      ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
+      ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
       ...this.formatter.tagsFixture(this.testNodes),
     ]);
   }
@@ -149,9 +161,8 @@ export class TestFile {
    */
   private getSuite(feature: Feature | Rule, parent?: TestNode) {
     const node = new TestNode(feature, parent);
+    if (node.isSkipped()) return this.formatter.suite(node, []);
     const lines: string[] = [];
-    // const { backgrounds, rules, scenarios } =
-    // bgFixtures, bgTags - used as fixture hints for decorator steps
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
     return this.formatter.suite(node, lines);
   }
@@ -183,10 +194,11 @@ export class TestFile {
    */
   private getOutlineSuite(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
+    if (node.isSkipped()) return this.formatter.suite(node, []);
     const lines: string[] = [];
     let exampleIndex = 0;
     scenario.examples.forEach((examples) => {
-      const titleFormat = this.getExamplesTitleFormat(examples);
+      const titleFormat = this.getExamplesTitleFormat(scenario, examples);
       examples.tableBody.forEach((exampleRow) => {
         const testTitle = this.getOutlineTestTitle(
           titleFormat,
@@ -214,6 +226,7 @@ export class TestFile {
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
+    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
@@ -225,6 +238,7 @@ export class TestFile {
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
+    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);
@@ -296,27 +310,26 @@ export class TestFile {
       language: this.language,
       previousKeywordType,
     });
-    let keyword = this.getStepKeyword(step);
+
+    const enKeyword = this.getStepEnglishKeyword(step);
     if (!stepDefinition) {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
-      return this.getMissingStep(keyword, keywordType, pickleStep);
+      return this.getMissingStep(enKeyword, keywordType, pickleStep);
     }
 
     // for cucumber-style stepConfig is undefined
     const stepConfig = getStepConfig(stepDefinition);
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
 
-    // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
-    // to use own bddWorld (containing PW built-in fixtures)
-    if (!isPlaywrightStyle(stepConfig)) keyword = `${keyword}_`;
+    if (!isPlaywrightStyle(stepConfig)) this.hasCucumberStyle = true;
 
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)
       ? ''
-      : this.formatter.step(keyword, pickleStep.text, pickleStep.argument, fixtureNames);
+      : this.formatter.step(enKeyword, pickleStep.text, pickleStep.argument, fixtureNames);
 
     return {
-      keyword,
+      keyword: enKeyword,
       keywordType,
       fixtureNames,
       line,
@@ -349,10 +362,10 @@ export class TestFile {
     throw new Error(`Pickle step not found for step: ${step.text}`);
   }
 
-  private getStepKeyword(step: Step) {
-    const origKeyword = step.keyword.trim();
-    const enKeyword = origKeyword === '*' ? 'And' : this.getEnglishKeyword(origKeyword);
-    if (!enKeyword) throw new Error(`Keyword not found: ${origKeyword}`);
+  private getStepEnglishKeyword(step: Step) {
+    const nativeKeyword = step.keyword.trim();
+    const enKeyword = nativeKeyword === '*' ? 'And' : this.getEnglishKeyword(nativeKeyword);
+    if (!enKeyword) throw new Error(`Keyword not found: ${nativeKeyword}`);
     return enKeyword;
   }
 
@@ -412,7 +425,15 @@ export class TestFile {
     return template(titleFormat, params);
   }
 
-  private getExamplesTitleFormat(examples: Examples) {
+  private getExamplesTitleFormat(scenario: Scenario, examples: Examples) {
+    return (
+      this.getExamplesTitleFormatFromComment(examples) ||
+      this.getExamplesTitleFormatFromScenarioName(scenario, examples) ||
+      this.config.examplesTitleFormat
+    );
+  }
+
+  private getExamplesTitleFormatFromComment(examples: Examples) {
     const { line } = examples.location;
     const titleFormatCommentLine = line - 1;
     const comment = this.options.doc.comments.find((c) => {
@@ -420,14 +441,23 @@ export class TestFile {
     });
     const commentText = comment?.text?.trim();
     const prefix = '# title-format:';
-    return commentText?.startsWith(prefix)
-      ? commentText.replace(prefix, '').trim()
-      : this.config.examplesTitleFormat;
+    return commentText?.startsWith(prefix) ? commentText.replace(prefix, '').trim() : '';
+  }
+
+  private getExamplesTitleFormatFromScenarioName(scenario: Scenario, examples: Examples) {
+    const columnsInScenarioName = extractTemplateParams(scenario.name);
+    const hasColumnsFromExamples =
+      columnsInScenarioName.length &&
+      examples.tableHeader?.cells?.some((cell) => {
+        return cell.value && columnsInScenarioName.includes(cell.value);
+      });
+    return hasColumnsFromExamples ? scenario.name : '';
   }
 
   private skipByTagsExpression(node: TestNode) {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
-    return this.options.tagsExpression?.evaluate(node.tags) === false;
+    const { tagsExpression } = this.options;
+    return tagsExpression && !tagsExpression.evaluate(node.tags);
   }
 
   private isOutline(scenario: Scenario) {

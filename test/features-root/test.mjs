@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test, execPlaywrightTest, TestDir } from '../helpers.mjs';
+import { test, execPlaywrightTest, TestDir, BDDGEN_CMD, PLAYWRIGHT_CMD } from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -7,7 +7,7 @@ test(testDir.name, () => {
   testDir.clearDir('.features-gen');
   const stdout = execPlaywrightTest(
     testDir.name,
-    'node ../../dist/cli -c config && npx playwright test -c config',
+    `${BDDGEN_CMD} -c config && ${PLAYWRIGHT_CMD} -c config`,
   );
   expect(testDir.isFileExists('.features-gen/root.feature.spec.js')).toEqual(true);
   expect(testDir.isFileExists('.features-gen/config/features/sample.feature.spec.js')).toEqual(

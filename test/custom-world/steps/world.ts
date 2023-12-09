@@ -1,5 +1,5 @@
 import { setWorldConstructor } from '@cucumber/cucumber';
-import { BddWorld, BddWorldOptions } from '../../../dist';
+import { BddWorld, BddWorldOptions } from 'playwright-bdd';
 
 export type WorldParameters = {
   foo: string;

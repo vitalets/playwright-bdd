@@ -1,12 +1,15 @@
 import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
-import { World as CucumberWorld, IWorldOptions, ITestCaseHookParameter } from '@cucumber/cucumber';
+import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { PickleStep } from '@cucumber/messages';
-import { findStepDefinition } from '../cucumber/loadSteps';
-import { getLocationInFile } from '../playwright/getLocationInFile';
-import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
-import { getStepCode } from '../stepDefinitions/defineStep';
+
+export type BddWorldFixtures = {
+  page: Page;
+  context: BrowserContext;
+  browser: Browser;
+  browserName: string;
+  request: APIRequestContext;
+};
 
 export type BddWorldOptions<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -17,64 +20,19 @@ export type BddWorldOptions<
   supportCodeLibrary: ISupportCodeLibrary;
   $tags: string[];
   $test: TestType;
+  $bddWorldFixtures: BddWorldFixtures;
+  lang: string;
 };
-
-// See: https://playwright.dev/docs/test-fixtures#built-in-fixtures
-type BuiltinFixtures = {
-  page: Page;
-  context: BrowserContext;
-  browser: Browser;
-  browserName: string;
-  request: APIRequestContext;
-};
-
-type CustomFixtures = Record<string, unknown>;
 
 export class BddWorld<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ParametersType = any,
   TestType extends TestTypeCommon = TestTypeCommon,
 > extends CucumberWorld<ParametersType> {
-  builtinFixtures!: BuiltinFixtures;
-  customFixtures: CustomFixtures = {};
+  stepFixtures: Fixtures<TestTypeCommon> = {};
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
     super(options);
-    this.invokeStep = this.invokeStep.bind(this);
-  }
-
-  async invokeStep(text: string, argument?: unknown, customFixtures?: CustomFixtures) {
-    const stepDefinition = findStepDefinition(
-      this.options.supportCodeLibrary,
-      text,
-      this.testInfo.file,
-    );
-
-    if (!stepDefinition) {
-      throw new Error(`Undefined step: "${text}"`);
-    }
-
-    // attach custom fixtures to world - the only way to pass them to cucumber step fn
-    this.customFixtures = customFixtures || {};
-    const code = getStepCode(stepDefinition);
-
-    // Get location of step call in generated test file.
-    // This call must be exactly here to have correct call stack.
-    const location = getLocationInFile(this.test.info().file);
-
-    const { parameters } = await stepDefinition.getInvocationParameters({
-      hookParameter: {} as ITestCaseHookParameter,
-      step: { text, argument } as PickleStep,
-      world: this,
-    });
-
-    const res = await runStepWithCustomLocation(this.test, text, location, () =>
-      code.apply(this, parameters),
-    );
-
-    this.customFixtures = {};
-
-    return res;
   }
 
   /**
@@ -94,27 +52,27 @@ export class BddWorld<
    * See: https://github.com/Microsoft/TypeScript/pull/26349
    */
   useFixture<K extends keyof Fixtures<TestType>>(fixtureName: K) {
-    return (this.customFixtures as Fixtures<TestType>)[fixtureName];
+    return (this.stepFixtures as Fixtures<TestType>)[fixtureName];
   }
 
   get page() {
-    return this.builtinFixtures.page;
+    return this.options.$bddWorldFixtures.page;
   }
 
   get context() {
-    return this.builtinFixtures.context;
+    return this.options.$bddWorldFixtures.context;
   }
 
   get browser() {
-    return this.builtinFixtures.browser;
+    return this.options.$bddWorldFixtures.browser;
   }
 
   get browserName() {
-    return this.builtinFixtures.browserName;
+    return this.options.$bddWorldFixtures.browserName;
   }
 
   get request() {
-    return this.builtinFixtures.request;
+    return this.options.$bddWorldFixtures.request;
   }
 
   get testInfo() {
@@ -148,15 +106,3 @@ export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   }
   return supportCodeLibrary.World as typeof BddWorld;
 }
-
-// type X = {
-//   a: string;
-//   b: number;
-// };
-
-// function f<T extends KeyValue, const K extends keyof T>(k: K) {
-//   // type V =
-//   return ({} as T)[k];
-// }
-
-// const x = f<X>('a');

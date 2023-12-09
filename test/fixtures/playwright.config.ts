@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 
 export default defineConfig({
   workers: 1, // set 1 worker for testing worker scoped fixtures
@@ -23,5 +23,4 @@ export default defineConfig({
       }),
     },
   ],
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

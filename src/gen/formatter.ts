@@ -6,6 +6,7 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
+import { BddWorldFixtures } from '../run/bddWorld';
 
 export type ImportTestFrom = {
   file: string;
@@ -30,14 +31,9 @@ export class Formatter {
   }
 
   suite(node: TestNode, children: string[]) {
-    // prettier-ignore
-    return [
-      `test.describe${this.getSubFn(node)}(${this.quoted(node.title)}, () => {`,
-      '',
-      ...children.map(indent),
-      `});`,
-      '',
-    ];
+    const firstLine = `test.describe${this.getSubFn(node)}(${this.quoted(node.title)}, () => {`;
+    if (!children.length) return [`${firstLine}});`, ''];
+    return [firstLine, '', ...children.map(indent), `});`, ''];
   }
 
   beforeEach(fixtures: Set<string>, children: string[]) {
@@ -53,13 +49,10 @@ export class Formatter {
 
   test(node: TestNode, fixtures: Set<string>, children: string[]) {
     const fixturesStr = [...fixtures].join(', ');
-    // prettier-ignore
-    return [
-    `test${this.getSubFn(node)}(${this.quoted(node.title)}, async ({ ${fixturesStr} }) => {`,
-    ...children.map(indent),
-    `});`,
-    '',
-  ];
+    const title = this.quoted(node.title);
+    const firstLine = `test${this.getSubFn(node)}(${title}, async ({ ${fixturesStr} }) => {`;
+    if (!children.length) return [`${firstLine}});`, ''];
+    return [firstLine, ...children.map(indent), `});`, ''];
   }
 
   // eslint-disable-next-line max-params
@@ -91,6 +84,18 @@ export class Formatter {
     return ['$test: ({}, use) => use(test),'];
   }
 
+  bddWorldFixtures() {
+    const fixturesObj: Record<keyof BddWorldFixtures, null> = {
+      page: null,
+      context: null,
+      browser: null,
+      browserName: null,
+      request: null,
+    };
+    const fixtures = Object.keys(fixturesObj).join(', ');
+    return [`$bddWorldFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
+  }
+
   tagsFixture(testNodes: TestNode[]) {
     const lines = testNodes
       .filter((node) => node.tags.length)
@@ -109,6 +114,25 @@ export class Formatter {
           )})] || []),`,
         ]
       : [];
+  }
+
+  scenarioHookFixtures(fixtureNames: string[]) {
+    if (!fixtureNames.length) return [];
+    const fixtures = fixtureNames.join(', ');
+    return [`$scenarioHookFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
+  }
+
+  workerHookFixtures(fixtureNames: string[]) {
+    if (!fixtureNames.length) return [];
+    const fixtures = fixtureNames.join(', ');
+    const scope = this.quoted('worker');
+    return [
+      `$workerHookFixtures: [({ ${fixtures} }, use) => use({ ${fixtures} }), { scope: ${scope} }],`,
+    ];
+  }
+
+  langFixture(lang: string) {
+    return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
   }
 
   private getSubFn(node: TestNode) {

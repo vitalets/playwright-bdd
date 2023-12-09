@@ -7,8 +7,10 @@ import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
 
-defineTestOnly(test);
 export { test };
+export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
+export const PLAYWRIGHT_CMD = 'npx playwright test';
+export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
 
 /**
  * Test name = test dir from 'test/<xxx>/test.mjs'
@@ -17,13 +19,12 @@ export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
-export const DEFAULT_CMD = 'node ../../dist/cli && npx playwright test';
-
 function execPlaywrightTestInternal(dir, cmd) {
-  dir = path.join('test', dir);
-  cmd = cmd || DEFAULT_CMD;
+  const cwd = path.join('test', dir);
+  const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
+  const env = Object.assign({}, process.env, cmd?.env);
   try {
-    const stdout = execSync(cmd, { cwd: dir, stdio: 'pipe' });
+    const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
     if (process.env.TEST_DEBUG) {
       console.log('STDOUT:', stdout?.toString());
     }
@@ -54,28 +55,39 @@ export function execPlaywrightTest(dir, cmd) {
 }
 
 export function execPlaywrightTestWithError(dir, error, cmd) {
-  assert.throws(
-    () => execPlaywrightTestInternal(dir, cmd),
-    (e) => {
-      const stderr = e.stderr.toString().trim();
-      const errors = Array.isArray(error) ? error : [error];
-      errors.forEach((error) => {
-        if (typeof error === 'string') {
-          expect(stderr).toContain(error);
-        } else {
-          expect(stderr).toMatch(error);
-        }
-      });
-      return true;
-    },
-  );
+  try {
+    execPlaywrightTestInternal(dir, cmd);
+  } catch (e) {
+    const stdout = e.stdout.toString().trim();
+    const stderr = e.stderr.toString().trim();
+    const errors = Array.isArray(error) ? error : [error];
+    errors.forEach((error) => {
+      if (typeof error === 'string') {
+        expect(stderr).toContain(error);
+      } else {
+        expect(stderr).toMatch(error);
+      }
+    });
+
+    return stdout;
+  }
+  assert.fail(`Expected to exit with error.`);
 }
 
-export function defineTestOnly(test) {
-  test.only = (title, fn) => {
-    if (process.env.FORBID_ONLY) throw new Error(`test.only is forbidden`);
-    test(title, { only: true }, fn);
-  };
+export function getPackageVersion(pkg) {
+  const { version } = JSON.parse(fs.readFileSync(`node_modules/${pkg}/package.json`, 'utf8'));
+
+  return version;
+}
+
+export function ensureNodeVersion(version) {
+  if (!process.version.startsWith(`v${version}.`)) {
+    throw new Error(`Expected node version: ${version}`);
+  }
+}
+
+export function removeDir(dir) {
+  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
 }
 
 export class TestDir {
@@ -132,20 +144,4 @@ export function expectFileExists(importMeta, relPath) {
 export function expectFileNotExists(importMeta, relPath) {
   const absPath = new URL(relPath, importMeta.url);
   assert(!fs.existsSync(absPath), `Expect file to not exist: ${relPath}`);
-}
-
-export function getPlaywrightVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@playwright/test/package.json', 'utf8'),
-  );
-
-  return version;
-}
-
-export function getCucumberVersion() {
-  const { version } = JSON.parse(
-    fs.readFileSync('node_modules/@cucumber/cucumber/package.json', 'utf8'),
-  );
-
-  return version;
 }

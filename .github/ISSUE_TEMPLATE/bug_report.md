@@ -16,7 +16,7 @@ assignees: ''
 **Then**
 <!-- What did actually happen? If there is error - please post full error message with stack trace -->
 
-**Expected behavior**
+**But I expect**
 <!-- What did you expect? -->
 
 **Isolated demo**

@@ -1,7 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import timers from 'node:timers/promises';
 
-// See: https://stackoverflow.com/questions/50453640/how-can-i-get-the-value-of-a-symbol-property
+/**
+ * Returns Symbol by name.
+ * See: https://stackoverflow.com/questions/50453640/how-can-i-get-the-value-of-a-symbol-property
+ */
 export function getSymbolByName<T extends object>(target: T, name?: string) {
   const ownKeys = Reflect.ownKeys(target);
   const symbol = ownKeys.find((key) => key.toString() === `Symbol(${name})`);
@@ -21,6 +25,14 @@ export function template(t: string, params: Record<string, unknown> = {}) {
   });
 }
 
+/**
+ * Extracts all template params from string.
+ * Params defined as <param>.
+ */
+export function extractTemplateParams(t: string) {
+  return [...t.matchAll(/<(.+?)>/g)].map((m) => m[1]);
+}
+
 export function removeDuplicates(arr: string[]) {
   return [...new Set(arr)];
 }
@@ -35,4 +47,16 @@ export function getPackageVersion(packageName: string) {
   const packageJsonPath = path.join(packageRoot, 'package.json');
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   return (packageJson.version || '') as string;
+}
+
+export async function callWithTimeout<T>(fn: () => T, timeout?: number, timeoutMsg?: string) {
+  if (!timeout) return fn();
+
+  const ac = new AbortController();
+  return Promise.race([
+    fn(),
+    timers.setTimeout(timeout, null, { ref: false, signal: ac.signal }).then(() => {
+      throw new Error(timeoutMsg || `Function timeout (${timeout} ms)`);
+    }),
+  ]).finally(() => ac.abort());
 }

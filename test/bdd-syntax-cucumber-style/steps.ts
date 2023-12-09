@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { Given, When, Then, DataTable, defineParameterType } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 
 Given('State {int}', async function () {
   // noop
@@ -68,10 +68,13 @@ Then<BddWorld>('File {string} contains', async function (fileName: string, table
   const filePath = path.join(path.dirname(this.test.info().file), fileName);
   const content = fs.readFileSync(filePath, 'utf8');
   table.rows().forEach((row) => {
-    // for cucumber-style transform Given/When/Then -> Given_/When_/Then_
-    const substr = row[0].replace(/(Given|When|Then)\(/g, '$1_(');
-    expect(content).toContain(substr);
+    expect(content).toContain(row[0]);
   });
+});
+
+Then<BddWorld>('File {string} does not exist', async function (fileName: string) {
+  const filePath = path.join(path.dirname(this.test.info().file), fileName);
+  expect(fs.existsSync(filePath)).toEqual(false);
 });
 
 Then<BddWorld & Record<string, string>>(

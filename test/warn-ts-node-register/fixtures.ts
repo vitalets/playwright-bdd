@@ -1,4 +1,4 @@
-import { test as base } from '../../dist';
+import { test as base } from 'playwright-bdd';
 
 class MyPage {
   constructor() {}

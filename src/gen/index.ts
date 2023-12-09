@@ -19,6 +19,7 @@ import { getPlaywrightConfigDir } from '../config/dir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
+import { hasCustomTest } from '../stepDefinitions/createBdd';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -42,7 +43,7 @@ export class TestFilesGenerator {
       await Promise.all([this.loadFeatures(), this.loadSteps()]);
       this.buildFiles();
       await this.checkUndefinedSteps();
-      this.checkImportCustomTest();
+      this.checkImportTestFrom();
       await this.clearOutputDir();
       await this.saveFiles();
     });
@@ -135,10 +136,8 @@ export class TestFilesGenerator {
     }
   }
 
-  private checkImportCustomTest() {
-    if (this.config.importTestFrom) return;
-    const hasCustomTest = this.files.some((file) => file.hasCustomTest);
-    if (hasCustomTest) {
+  private checkImportTestFrom() {
+    if (hasCustomTest && !this.config.importTestFrom) {
       exit(
         `When using custom "test" function in createBdd() you should`,
         `set "importTestFrom" config option that points to file exporting custom test.`,

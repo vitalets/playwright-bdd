@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Fixture, Given, When, Then } from '../../../dist/decorators';
+import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
 import { test } from './fixtures';
 import { IntermediateBasePage } from './BasePage';
 

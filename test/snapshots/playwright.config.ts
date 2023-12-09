@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   paths: ['*.feature'],
@@ -9,5 +9,4 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   outputDir: './test-results',
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

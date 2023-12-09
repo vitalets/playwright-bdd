@@ -13,16 +13,19 @@ interface Location {
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/transform.ts#L229
  */
 export function getLocationInFile(filePath: string) {
+  const filePathUrl = url.pathToFileURL(filePath).toString();
   const { sourceMapSupport } = requirePlaywrightModule('lib/utilsBundle.js');
   const oldPrepareStackTrace = Error.prepareStackTrace;
   Error.prepareStackTrace = (error, stackFrames) => {
-    const frameInFile = stackFrames.find((frame) => frame.getFileName() === filePath);
+    const frameInFile = stackFrames.find((frame) => {
+      const frameFile = frame.getFileName();
+      return frameFile === filePath || frameFile === filePathUrl;
+    });
     if (!frameInFile) return { file: '', line: 0, column: 0 };
     const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(frameInFile);
     const fileName = frame.getFileName();
     // Node error stacks for modules use file:// urls instead of paths.
-    const file =
-      fileName && fileName.startsWith('file://') ? url.fileURLToPath(fileName) : fileName;
+    const file = fileName?.startsWith('file://') ? url.fileURLToPath(fileName) : fileName;
     return {
       file,
       line: frame.getLineNumber(),

@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/experimental-ct-react';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   importTestFrom: 'steps/fixtures.ts',
@@ -9,5 +9,4 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

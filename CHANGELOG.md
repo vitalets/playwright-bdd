@@ -1,8 +1,16 @@
 # Changelog
 
 ## dev
-* add workflow to sync sponsors in README.md, [#62](https://github.com/vitalets/playwright-bdd/issues/62)
-* support custom fixtures in cucumber-style steps
+* generate skipped tests with empty body, [#73](https://github.com/vitalets/playwright-bdd/issues/73)
+* allow outline scenario name to be used as an examples template, [#67](https://github.com/vitalets/playwright-bdd/issues/67)
+* fix empty step locations for esm
+* fix duplicate steps error message, [#74](https://github.com/vitalets/playwright-bdd/issues/74)
+
+## 5.5.0
+* add support for hooks, [#15](https://github.com/vitalets/playwright-bdd/issues/15)
+* add support for custom fixtures in cucumber-style steps
+* enrich html-report with keywords, [#69](https://github.com/vitalets/playwright-bdd/issues/69)
+* fix snippets on win for cucumber@10, [#71](https://github.com/vitalets/playwright-bdd/issues/71)
 
 ## 5.4.0
 * i18n: Generate scenario outlines correctly [#60](https://github.com/vitalets/playwright-bdd/issues/60).

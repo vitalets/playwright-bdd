@@ -1,6 +1,6 @@
 import { expect } from '@playwright/test';
 import { Given, Then } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 
 Given(
   'Set world prop {string} = {string}',
