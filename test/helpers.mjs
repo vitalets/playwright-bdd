@@ -80,6 +80,16 @@ export function getPackageVersion(pkg) {
   return version;
 }
 
+export function ensureNodeVersion(version) {
+  if (!process.version.startsWith(`v${version}.`)) {
+    throw new Error(`Expected node version: ${version}`);
+  }
+}
+
+export function removeDir(dir) {
+  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
+}
+
 export class TestDir {
   constructor(importMeta) {
     this.importMeta = importMeta;
