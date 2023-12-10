@@ -7,23 +7,24 @@ Initialize components testing [per instruction](https://playwright.dev/docs/test
 npm init playwright@latest -- --ct
 ```
 
-Update `playwright-ct.config.ts`:
-```diff
+Add `playwright-bdd` configuration to `playwright-ct.config.ts`:
+```ts
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
-+ import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig } from 'playwright-bdd';
+
+const testDir = defineBddConfig({
+  importTestFrom: 'fixtures.ts',
+  paths: ['features/*.feature'],
+  require: ['steps.tsx'],
+});
 
 export default defineConfig({
--  testDir: './',
-+  testDir: defineBddConfig({
-+    importTestFrom: 'fixtures.ts',
-+    paths: ['features/*.feature'],
-+    require: ['steps.tsx'],
-+  }),
-
-// ...
+  testDir,
+  // ...
+});
 ```
 
-Create `fixtures.ts` file that exports custom `test`:
+Create `fixtures.ts` that exports custom `test`:
 ```ts
 import { mergeTests } from '@playwright/test';
 import { test as ctBase } from '@playwright/experimental-ct-react';
@@ -42,7 +43,7 @@ import { test } from './fixtures';
 const { Given, When, Then } = createBdd(test);
 
 Given('Mounted input component', async ({ mount }) => {
-  await mount(<input type="text" data-testid="textField" />);
+  await mount(<textarea data-testid="textField" />);
 });
 
 When('I type {string}', async ({ page }, arg: string) => {
@@ -64,12 +65,11 @@ Feature: input component
         Then input field has "ABC"
 ```
 
-Update `test-ct` command in `package.json` to generate BDD tests before running Playwright:
-```diff
-  "scripts": {
--    "test-ct": "playwright test -c playwright-ct.config.ts"
-+    "test-ct": "npx bddgen -c playwright-ct.config.ts && playwright test -c playwright-ct.config.ts"
-  },
+Update `test-ct` command in `package.json` to run `bddgen` before running Playwright:
+```json
+"scripts": {
+  "test-ct": "npx bddgen -c playwright-ct.config.ts && playwright test -c playwright-ct.config.ts"
+},
 ```
 
 Finally, run tests:
