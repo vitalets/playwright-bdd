@@ -6,7 +6,9 @@ import { test } from './fixtures';
 const { Given, When, Then } = createBdd(test);
 
 Given('Mounted input component', async ({ mount }) => {
-  await mount(<input type="text" data-testid="textField" />);
+  // use <textarea> instead of <input>
+  // see: https://github.com/microsoft/playwright/issues/28566
+  await mount(<textarea data-testid="textField" />);
 });
 
 When('I type {string}', async ({ page }, arg: string) => {
