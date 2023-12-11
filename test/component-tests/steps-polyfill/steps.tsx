@@ -32,6 +32,9 @@ When('I press the button', async ({ page }) => {
   await page.getByTestId('button').click();
 });
 
-Then('the recorded number of times the button was pressed is {int}', async ({ world }, arg) => {
-  expect(world.clickedTimes).toBe(arg);
-});
+Then(
+  'the recorded number of times the button was pressed is {int}',
+  async ({ world }, arg: number) => {
+    expect(world.clickedTimes).toBe(arg);
+  },
+);

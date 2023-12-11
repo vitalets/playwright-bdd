@@ -2,9 +2,13 @@ import { defineConfig } from '@playwright/experimental-ct-react';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  importTestFrom: 'steps/fixtures.ts',
+  importTestFrom: process.env.NATIVE_MERGE_TESTS
+    ? 'steps-native/fixtures.js'
+    : 'steps-polyfill/fixtures.ts',
   paths: ['features'],
-  require: ['steps/steps.tsx'],
+  require: process.env.NATIVE_MERGE_TESTS
+    ? ['steps-native/steps.jsx']
+    : ['steps-polyfill/steps.tsx'],
 });
 
 export default defineConfig({
