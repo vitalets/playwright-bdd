@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 
 export default defineConfig({
   testDir: defineBddConfig({
@@ -8,5 +8,4 @@ export default defineConfig({
     require: ['steps.ts'],
   }),
   workers: 1,
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

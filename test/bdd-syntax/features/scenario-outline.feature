@@ -40,7 +40,7 @@ Feature: scenario-outline
 	Scenario Outline: Custom titles
     Given State <start>
 
-  # title-format: Test with <start> and "<end>">, without <notexist>
+  # title-format: Test with <start> and "<end>", extra >, without <notexist>
 	Examples:
 		| start | end |
 		|    2  |   4 |
@@ -49,5 +49,20 @@ Feature: scenario-outline
   Scenario: Generated file contains all examples for "custom titles"
     Then File "scenario-outline.feature.spec.js" contains
       | substring |
-      | test("Test with 2 and \\"4\\">, without <notexist>", |
-      | test("Test with 3 and \\"6\\">, without <notexist>", |
+      | test("Test with 2 and \\"4\\", extra >, without <notexist>", |
+      | test("Test with 3 and \\"6\\", extra >, without <notexist>", |
+
+  # see: https://github.com/vitalets/playwright-bdd/issues/67
+	Scenario Outline: Scenario title used as a template with <start> and "<end>", extra <, without <notexist>
+    Given State <start>
+
+	Examples:
+		| start | end |
+		|    2  |   4 |
+		|    3  |   6 |
+
+  Scenario: Generated file contains all examples for "Scenario title used as a template"
+    Then File "scenario-outline.feature.spec.js" contains
+      | substring |
+      | test("Scenario title used as a template with 2 and \\"4\\", extra <, without <notexist>", |
+      | test("Scenario title used as a template with 3 and \\"6\\", extra <, without <notexist>", |

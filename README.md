@@ -13,7 +13,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
 You can use CucumberJS runner with [Playwright as a library](https://medium.com/@manabie/how-to-use-playwright-in-cucumberjs-f8ee5b89bccc) to test BDD scenarios.
-This package offers **alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
+This package offers **an alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
 Such approach brings all the benefits of Playwright runner:
 
 * Automatic browser initialization and cleanup
@@ -32,12 +32,15 @@ Clone and play with [playwright-bdd-example](https://github.com/vitalets/playwri
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
 
 ## Changelog
-Inspect the latest updates in the [changelog](https://vitalets.github.io/playwright-bdd/#/changelog).
+Inspect the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
+
+## Contributing
+Review the [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for contributing.
 
 ## Sponsors
-Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
+Great thanks to the sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
 
-<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/timm-z"><img src="https://github.com/timm-z.png" width="60px" alt="timmz" /></a><a href="https://github.com/NikkTod"><img src="https://github.com/NikkTod.png" width="60px" alt="" /></a><a href="https://github.com/alescinskis"><img src="https://github.com/alescinskis.png" width="60px" alt="Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https://github.com/kahuna227.png" width="60px" alt="" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/alescinskis"><img src="https://github.com/alescinskis.png" width="60px" alt="Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https://github.com/kahuna227.png" width="60px" alt="" /></a><!-- sponsors -->
 
 ## How to make BDD valuable for my project?
 

@@ -2,7 +2,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import timers from 'node:timers/promises';
 
-// See: https://stackoverflow.com/questions/50453640/how-can-i-get-the-value-of-a-symbol-property
+/**
+ * Returns Symbol by name.
+ * See: https://stackoverflow.com/questions/50453640/how-can-i-get-the-value-of-a-symbol-property
+ */
 export function getSymbolByName<T extends object>(target: T, name?: string) {
   const ownKeys = Reflect.ownKeys(target);
   const symbol = ownKeys.find((key) => key.toString() === `Symbol(${name})`);
@@ -20,6 +23,14 @@ export function template(t: string, params: Record<string, unknown> = {}) {
   return t.replace(/<(.+?)>/g, (match, key) => {
     return params[key] !== undefined ? String(params[key]) : match;
   });
+}
+
+/**
+ * Extracts all template params from string.
+ * Params defined as <param>.
+ */
+export function extractTemplateParams(t: string) {
+  return [...t.matchAll(/<(.+?)>/g)].map((m) => m[1]);
 }
 
 export function removeDuplicates(arr: string[]) {

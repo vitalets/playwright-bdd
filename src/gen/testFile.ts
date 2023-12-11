@@ -26,7 +26,7 @@ import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { template } from '../utils';
+import { extractTemplateParams, template } from '../utils';
 import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
@@ -161,9 +161,8 @@ export class TestFile {
    */
   private getSuite(feature: Feature | Rule, parent?: TestNode) {
     const node = new TestNode(feature, parent);
+    if (node.isSkipped()) return this.formatter.suite(node, []);
     const lines: string[] = [];
-    // const { backgrounds, rules, scenarios } =
-    // bgFixtures, bgTags - used as fixture hints for decorator steps
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
     return this.formatter.suite(node, lines);
   }
@@ -195,10 +194,11 @@ export class TestFile {
    */
   private getOutlineSuite(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
+    if (node.isSkipped()) return this.formatter.suite(node, []);
     const lines: string[] = [];
     let exampleIndex = 0;
     scenario.examples.forEach((examples) => {
-      const titleFormat = this.getExamplesTitleFormat(examples);
+      const titleFormat = this.getExamplesTitleFormat(scenario, examples);
       examples.tableBody.forEach((exampleRow) => {
         const testTitle = this.getOutlineTestTitle(
           titleFormat,
@@ -226,6 +226,7 @@ export class TestFile {
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
+    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
@@ -237,6 +238,7 @@ export class TestFile {
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
+    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);
@@ -423,7 +425,15 @@ export class TestFile {
     return template(titleFormat, params);
   }
 
-  private getExamplesTitleFormat(examples: Examples) {
+  private getExamplesTitleFormat(scenario: Scenario, examples: Examples) {
+    return (
+      this.getExamplesTitleFormatFromComment(examples) ||
+      this.getExamplesTitleFormatFromScenarioName(scenario, examples) ||
+      this.config.examplesTitleFormat
+    );
+  }
+
+  private getExamplesTitleFormatFromComment(examples: Examples) {
     const { line } = examples.location;
     const titleFormatCommentLine = line - 1;
     const comment = this.options.doc.comments.find((c) => {
@@ -431,9 +441,17 @@ export class TestFile {
     });
     const commentText = comment?.text?.trim();
     const prefix = '# title-format:';
-    return commentText?.startsWith(prefix)
-      ? commentText.replace(prefix, '').trim()
-      : this.config.examplesTitleFormat;
+    return commentText?.startsWith(prefix) ? commentText.replace(prefix, '').trim() : '';
+  }
+
+  private getExamplesTitleFormatFromScenarioName(scenario: Scenario, examples: Examples) {
+    const columnsInScenarioName = extractTemplateParams(scenario.name);
+    const hasColumnsFromExamples =
+      columnsInScenarioName.length &&
+      examples.tableHeader?.cells?.some((cell) => {
+        return cell.value && columnsInScenarioName.includes(cell.value);
+      });
+    return hasColumnsFromExamples ? scenario.name : '';
   }
 
   private skipByTagsExpression(node: TestNode) {

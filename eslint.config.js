@@ -2,14 +2,14 @@ const globals = require('globals');
 const js = require('@eslint/js');
 const tsParser = require('@typescript-eslint/parser');
 const tsPlugin = require('@typescript-eslint/eslint-plugin');
+const playwright = require('eslint-plugin-playwright');
 
 module.exports = [
   {
-    ignores: ['.features-gen', 'examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/*.js'],
+    ignores: ['examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/.cache'],
   },
   js.configs.recommended,
   {
-    files: ['**/*.mjs'],
     languageOptions: {
       globals: globals.node,
     },
@@ -21,7 +21,6 @@ module.exports = [
       parserOptions: {
         project: './tsconfig.json',
       },
-      globals: globals.node,
     },
     plugins: {
       '@typescript-eslint': tsPlugin,
@@ -52,11 +51,24 @@ module.exports = [
     },
   },
   {
-    files: ['test/**/*.ts'],
+    files: ['test/**/*.{ts,js,mjs}'],
+    plugins: {
+      playwright,
+    },
     rules: {
       'max-params': 0,
       'no-empty-pattern': 0,
       '@typescript-eslint/no-empty-function': 0,
+      'playwright/no-focused-test': 'error',
+    },
+  },
+  {
+    files: ['test/**/only-skip-fixme.feature.spec.js'],
+    plugins: {
+      playwright,
+    },
+    rules: {
+      'playwright/no-focused-test': 0,
     },
   },
 ];

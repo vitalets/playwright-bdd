@@ -1,4 +1,4 @@
-import { createBdd } from '../../dist';
+import { createBdd } from 'playwright-bdd';
 
 const { Given, When, Then, Step } = createBdd();
 

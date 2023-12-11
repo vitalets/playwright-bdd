@@ -1,4 +1,4 @@
-import { Fixture, Given } from '../../../dist/decorators';
+import { Fixture, Given } from 'playwright-bdd/decorators';
 import { test } from '.';
 
 class BasePage {

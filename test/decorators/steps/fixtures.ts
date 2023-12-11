@@ -1,4 +1,4 @@
-import { test as base } from '../../../dist';
+import { test as base } from 'playwright-bdd';
 import { TodoPage, AdminTodoPage, TodoPageOnlyFixture } from './TodoPage';
 import { TodoPage2, AdminTodoPage2 } from './TodoPage2';
 

@@ -1,4 +1,4 @@
-import { test as base } from '../../../dist';
+import { test as base } from 'playwright-bdd';
 import { TodoPage, AdminTodoPage } from './TodoPage';
 
 export const test = base.extend<{ todoPage: TodoPage; adminTodoPage: AdminTodoPage }>({

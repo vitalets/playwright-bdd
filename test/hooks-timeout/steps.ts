@@ -1,5 +1,5 @@
 import timers from 'node:timers/promises';
-import { createBdd } from '../../dist';
+import { createBdd } from 'playwright-bdd';
 
 const { Given, Before, BeforeAll, After, AfterAll } = createBdd();
 

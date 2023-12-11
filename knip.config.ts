@@ -10,10 +10,15 @@ const config: KnipConfig = {
     '@cucumber/cucumber-expressions',
     '@cucumber/gherkin',
     '@cucumber/tag-expressions',
+    '@types/react',
+    '@types/react-dom',
+    'react',
+    'react-dom',
     'lint-staged',
     'np',
     'npm-run-all',
     'publint',
+    'cross-env',
   ],
 };
 

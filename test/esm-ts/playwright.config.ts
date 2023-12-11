@@ -1,7 +1,10 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist/index.js';
+import { defineBddConfig } from 'playwright-bdd';
 
 export default defineConfig({
+  reporter: [['./reporter.ts']],
+  // for debug
+  // reporter: 'html',
   projects: [
     {
       name: 'project one',
@@ -23,5 +26,4 @@ export default defineConfig({
       }),
     },
   ],
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

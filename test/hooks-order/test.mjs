@@ -135,14 +135,10 @@ test('error in afterAll: all other AfterAll hooks called', () => {
   ]);
 });
 
-// todo: tags
-
 function execPlaywrightWithErrorInHook(hook) {
-  return execPlaywrightTestWithError(
-    testDir.name,
-    ``,
-    `npx cross-env-shell ERROR="${hook}" "${DEFAULT_CMD}"`,
-  );
+  return execPlaywrightTestWithError(testDir.name, ``, {
+    env: { ERROR: hook },
+  });
 }
 
 function expectHookCalls(stdout, hookCalls) {

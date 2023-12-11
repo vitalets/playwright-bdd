@@ -31,14 +31,9 @@ export class Formatter {
   }
 
   suite(node: TestNode, children: string[]) {
-    // prettier-ignore
-    return [
-      `test.describe${this.getSubFn(node)}(${this.quoted(node.title)}, () => {`,
-      '',
-      ...children.map(indent),
-      `});`,
-      '',
-    ];
+    const firstLine = `test.describe${this.getSubFn(node)}(${this.quoted(node.title)}, () => {`;
+    if (!children.length) return [`${firstLine}});`, ''];
+    return [firstLine, '', ...children.map(indent), `});`, ''];
   }
 
   beforeEach(fixtures: Set<string>, children: string[]) {
@@ -54,13 +49,10 @@ export class Formatter {
 
   test(node: TestNode, fixtures: Set<string>, children: string[]) {
     const fixturesStr = [...fixtures].join(', ');
-    // prettier-ignore
-    return [
-    `test${this.getSubFn(node)}(${this.quoted(node.title)}, async ({ ${fixturesStr} }) => {`,
-    ...children.map(indent),
-    `});`,
-    '',
-  ];
+    const title = this.quoted(node.title);
+    const firstLine = `test${this.getSubFn(node)}(${title}, async ({ ${fixturesStr} }) => {`;
+    if (!children.length) return [`${firstLine}});`, ''];
+    return [firstLine, ...children.map(indent), `});`, ''];
   }
 
   // eslint-disable-next-line max-params

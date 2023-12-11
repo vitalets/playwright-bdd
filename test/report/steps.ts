@@ -1,4 +1,4 @@
-import { createBdd } from '../../dist';
+import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
 const { Given, When } = createBdd(test);

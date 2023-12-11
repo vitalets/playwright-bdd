@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from '../../dist';
+import { defineBddConfig } from 'playwright-bdd';
 
 // Exporting const from config and importing in test is shown in Playwright docs.
 // This leads to re-evaluation of config in worker and re-call of defineBddConfig().
@@ -40,5 +40,4 @@ export default defineConfig({
       dependencies: ['project-one'],
     },
   ],
-  forbidOnly: Boolean(process.env.FORBID_ONLY),
 });

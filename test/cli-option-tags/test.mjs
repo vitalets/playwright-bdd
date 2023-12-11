@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { expect } from '@playwright/test';
-import { test, execPlaywrightTest, TestDir } from '../helpers.mjs';
+import { test, execPlaywrightTest, TestDir, BDDGEN_CMD } from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -15,7 +15,7 @@ test(testDir.name, () => {
   const fileToBeCleared = '.features-gen/foo.spec.js';
   fs.writeFileSync(testDir.getAbsPath(fileToBeCleared), '');
 
-  execPlaywrightTest(testDir.name, 'node ../../dist/cli --tags "@include and not @exclude"');
+  execPlaywrightTest(testDir.name, `${BDDGEN_CMD} --tags "@include and not @exclude"`);
 
   // important to keep included files in separate directory (subdir)
   // to ensure that directory structure kept the same when running with tags

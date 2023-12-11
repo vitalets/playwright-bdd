@@ -1,5 +1,5 @@
-import { test as base } from '../../dist';
-import { Fixture, Given } from '../../dist/decorators';
+import { test as base } from 'playwright-bdd';
+import { Fixture, Given } from 'playwright-bdd/decorators';
 
 type Fixtures = {
   todoPage: TodoPage;

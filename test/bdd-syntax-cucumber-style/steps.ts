@@ -2,7 +2,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { Given, When, Then, DataTable, defineParameterType } from '@cucumber/cucumber';
-import { BddWorld } from '../../dist';
+import { BddWorld } from 'playwright-bdd';
 
 Given('State {int}', async function () {
   // noop
@@ -70,6 +70,11 @@ Then<BddWorld>('File {string} contains', async function (fileName: string, table
   table.rows().forEach((row) => {
     expect(content).toContain(row[0]);
   });
+});
+
+Then<BddWorld>('File {string} does not exist', async function (fileName: string) {
+  const filePath = path.join(path.dirname(this.test.info().file), fileName);
+  expect(fs.existsSync(filePath)).toEqual(false);
 });
 
 Then<BddWorld & Record<string, string>>(

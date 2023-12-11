@@ -79,7 +79,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       $bddWorldFixtures,
       lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
-      log: () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+      log: () => {},
       attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
     });
     await world.init();

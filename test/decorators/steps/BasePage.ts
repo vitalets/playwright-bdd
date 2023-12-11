@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { Then } from '../../../dist/decorators';
+import { Then } from 'playwright-bdd/decorators';
 
 export class BasePage {
   @Then('BasePage: used fixture is {string}')

@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test, TestDir, DEFAULT_CMD, execPlaywrightTestWithError } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -80,11 +80,9 @@ test('error in afterAll: all other AfterAll hooks called', () => {
 });
 
 function execPlaywrightWithTimeoutInHook(hook) {
-  const stdout = execPlaywrightTestWithError(
-    testDir.name,
-    ``,
-    `npx cross-env-shell TIMEOUT="${hook}" "${DEFAULT_CMD}"`,
-  );
+  const stdout = execPlaywrightTestWithError(testDir.name, ``, {
+    env: { TIMEOUT: hook },
+  });
   expect(stdout).toContain('hook timeout (5 ms)');
   return stdout;
 }

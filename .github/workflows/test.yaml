@@ -43,9 +43,14 @@ jobs:
         with:
           node-version: 18
       - run: npm ci
-      - run: npm install @playwright/test@${{ matrix.playwrightVersion }} @cucumber/cucumber@${{ matrix.cucumberVersion }}
+      - run: >
+          npm install
+          @playwright/test@${{ matrix.playwrightVersion }}
+          @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
+          @cucumber/cucumber@${{ matrix.cucumberVersion }}
+
       - run: npx playwright install --with-deps chromium
-      - run: npx cross-env FORBID_ONLY=1 npm test
+      - run: npm test
       - uses: actions/upload-artifact@v3
         if: always()
         with:

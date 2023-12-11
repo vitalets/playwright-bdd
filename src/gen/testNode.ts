@@ -34,6 +34,10 @@ export class TestNode {
     this.titlePath = (parent?.titlePath || []).concat([this.title]);
   }
 
+  isSkipped() {
+    return this.flags.skip || this.flags.fixme;
+  }
+
   private initOwnTags(gherkinNode: GherkinNode) {
     const tagNames = removeDuplicates(getTagNames(gherkinNode.tags));
     tagNames.forEach((tag) => {
@@ -45,10 +49,12 @@ export class TestNode {
     });
   }
 
+  // eslint-disable-next-line complexity
   private setFlag(tag: SpecialTag) {
-    if (tag === '@only') this.flags.only = true;
-    if (tag === '@skip') this.flags.skip = true;
-    if (tag === '@fixme') this.flags.fixme = true;
+    // in case of several system tags, @only takes precendence
+    if (tag === '@only') this.flags = { only: true };
+    if (tag === '@skip' && !this.flags.only) this.flags.skip = true;
+    if (tag === '@fixme' && !this.flags.only) this.flags.fixme = true;
   }
 }
 
