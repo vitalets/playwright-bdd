@@ -32,33 +32,19 @@ Clone and play with [playwright-bdd-example](https://github.com/vitalets/playwri
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
 
 ## Changelog
-Inspect the latest updates in the [changelog](https://vitalets.github.io/playwright-bdd/#/changelog).
+Inspect the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
+
+## Contributing
+Review the [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for contributing.
 
 ## Sponsors
-Great thanks to sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
+Great thanks to the sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
 
 <!-- sponsors --><a href="https://github.com/currents-dev"><img src="https://github.com/currents-dev.png" width="60px" alt="Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https://github.com/jzaratei.png" width="60px" alt="" /></a><a href="https://github.com/alescinskis"><img src="https://github.com/alescinskis.png" width="60px" alt="Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https://github.com/kahuna227.png" width="60px" alt="" /></a><!-- sponsors -->
 
 ## How to make BDD valuable for my project?
 
 Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id=how-to-make-bdd-valuable-for-my-project).
-
-## Development
-
-#### Test locally on different Playwright versions
-```
-# install needed Playwright version
-npm i --no-save @playwright/test@1.40 @playwright/experimental-ct-react@1.40
-
-# install corresponding chromium without clearing other versions
-npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium
-
-# run all tests
-npm run test
-
-# run particular test
-npm run only
-```
 
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
