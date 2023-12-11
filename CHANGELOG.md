@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 5.6.0
 * support component tests, [#57](https://github.com/vitalets/playwright-bdd/issues/57)
 * generate skipped tests with empty body, [#73](https://github.com/vitalets/playwright-bdd/issues/73)
 * allow outline scenario name to be used as an examples template, [#67](https://github.com/vitalets/playwright-bdd/issues/67)
