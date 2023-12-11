@@ -2,13 +2,12 @@
  * Test setup
  */
 import { execSync } from 'node:child_process';
-import { ensureNodeVersion, getPackageVersion, removeDir } from './helpers.mjs';
+import { ensureNodeVersion, getPackageVersion } from './helpers.mjs';
 
 !process.env.CI && ensureNodeVersion(20);
 showVersion('@playwright/test');
 showVersion('@playwright/experimental-ct-react');
 showVersion('@cucumber/cucumber');
-removeDir('./test-results');
 // must build project before tests as we run tests without ts-node
 execSync('npm run build', { stdio: 'inherit' });
 

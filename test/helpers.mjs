@@ -86,10 +86,6 @@ export function ensureNodeVersion(version) {
   }
 }
 
-export function removeDir(dir) {
-  if (fs.existsSync(dir)) fs.rmSync(dir, { recursive: true, force: true });
-}
-
 export class TestDir {
   constructor(importMeta) {
     this.importMeta = importMeta;
