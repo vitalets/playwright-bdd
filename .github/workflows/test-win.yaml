@@ -1,8 +1,3 @@
-# Running all tests on win always hangs-up.
-# This is possibly related to deadlocks due node --test subprocesses + Playwright supprocesses
-# Keep this file with single test just to have at least something on win.
-# Also you can create custom branch with particular test to check on win.
-# See: https://github.com/actions/runner/issues/1326#issuecomment-1172283561
 name: test-win
 
 on:
@@ -23,15 +18,15 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-      - run: npm install @playwright/test@1.36 @cucumber/cucumber@${{ matrix.cucumberVersion }}
+      - run: npm install @cucumber/cucumber@${{ matrix.cucumberVersion }}
       - run: npx playwright install --with-deps chromium
       - name: run tests
         run: |
+          # don't use 'npm t' here as it doesn't expand filename wildcards
           node test/setup.mjs
-          node test/bdd-syntax/test.mjs
-          node test/snippets-playwright-style/test.mjs
-        # this command gets all test files in powershell
-        # node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
+          node --test test/**/test.mjs
+          # this command gets all test files in powershell
+          # node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
       - uses: actions/upload-artifact@v3
         if: always()
         with:
