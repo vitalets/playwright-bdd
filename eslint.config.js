@@ -6,7 +6,7 @@ const playwright = require('eslint-plugin-playwright');
 
 module.exports = [
   {
-    ignores: ['examples', 'dist', '*.config.js', 'cucumber.js'],
+    ignores: ['examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/.cache'],
   },
   js.configs.recommended,
   {

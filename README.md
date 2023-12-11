@@ -48,10 +48,10 @@ Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id
 #### Test locally on different Playwright versions
 ```
 # install needed Playwright version
-npm i --no-save @playwright/test@1.33
+npm i --no-save @playwright/test@1.40 @playwright/experimental-ct-react@1.40
 
 # install corresponding chromium without clearing other versions
-npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 playwright install chromium
+npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium
 
 # run all tests
 npm run test
