@@ -9,6 +9,8 @@ const config: KnipConfig = {
     '@cucumber/messages',
     '@cucumber/cucumber-expressions',
     '@cucumber/gherkin',
+    '@cucumber/gherkin-streams',
+    '@cucumber/gherkin-utils',
     '@cucumber/tag-expressions',
     '@types/react',
     '@types/react-dom',

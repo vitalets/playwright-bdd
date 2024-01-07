@@ -41,7 +41,11 @@ export const defaults: Required<
 };
 
 export type BDDInputConfig = OwnConfig & CucumberConfig;
-export type BDDConfig = ReturnType<typeof getConfig>;
+export type BDDConfig = BDDInputConfig &
+  typeof defaults & {
+    featuresRoot: string;
+    importTestFrom?: ImportTestFrom;
+  };
 
 export function defineBddConfig(inputConfig?: BDDInputConfig) {
   const config = getConfig(inputConfig);
@@ -54,7 +58,7 @@ export function defineBddConfig(inputConfig?: BDDInputConfig) {
   return config.outputDir;
 }
 
-function getConfig(inputConfig?: BDDInputConfig) {
+function getConfig(inputConfig?: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, inputConfig);
   const configDir = getPlaywrightConfigDir();
   const featuresRoot = config.featuresRoot
@@ -92,7 +96,10 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
   return cucumberConfig;
 }
 
-function resolveImportTestFrom(configDir: string, importTestFrom?: string | ImportTestFrom) {
+function resolveImportTestFrom(
+  configDir: string,
+  importTestFrom?: string | ImportTestFrom,
+): ImportTestFrom | undefined {
   if (importTestFrom) {
     const { file, varName } =
       typeof importTestFrom === 'string'

@@ -22,7 +22,7 @@ npm t
 ```
 
 ## Test on different Playwright version
-Install needed Playwright version
+Install needed Playwright version (without saving to `package.json`):
 ```
 npm i --no-save @playwright/test@1.40 @playwright/experimental-ct-react@1.40
 ```
@@ -32,6 +32,16 @@ Install corresponding browsers without clearing other versions:
 npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium
 ```
 
+Run tests:
+```
+npm run test
+```
+
+## Test on different Cucumber version
+Install needed Cuucmber version (without saving to `package.json`):
+```
+npm i --no-save @cucumber/cucumber@10
+```
 Run tests:
 ```
 npm run test

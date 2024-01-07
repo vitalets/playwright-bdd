@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.7.0
+* suppport Cucumber 10.1, [#80](https://github.com/vitalets/playwright-bdd/issues/80)
+
 ## 5.6.0
 * support component tests, [#57](https://github.com/vitalets/playwright-bdd/issues/57)
 * generate skipped tests with empty body, [#73](https://github.com/vitalets/playwright-bdd/issues/73)
