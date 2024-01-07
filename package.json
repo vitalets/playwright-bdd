@@ -1,7 +1,7 @@
 {
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright runner and CucumberJS",
-  "version": "5.6.0",
+  "version": "5.7.0",
   "type": "commonjs",
   "bin": {
     "bddgen": "./dist/cli/index.js"
