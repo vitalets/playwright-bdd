@@ -84,7 +84,7 @@ See [full example of Playwright-style](https://github.com/vitalets/playwright-bd
 ### Accessing `test` and `testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:
 
-  * increate test timeout
+  * increase test timeout
   * conditionally skip tests
   * attach screenshots
   * ...etc
@@ -118,7 +118,7 @@ Given('I do something', async ({ $tags }) => {
 
 > Special tags `@only`, `@skip` and `@fixme` are excluded from `$tags` to avoid impact on test during debug
 
-The most powerfull usage of `$tags` is in your custom fixtures.
+The most powerful usage of `$tags` is in your custom fixtures.
 
 ##### Example 1
 Run scenarios with `@firefox` tag only in Firefox:
