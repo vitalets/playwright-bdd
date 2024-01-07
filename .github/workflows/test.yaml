@@ -35,7 +35,10 @@ jobs:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
         cucumberVersion: ['9']
         include:
+          # there were breaking changes in cucumber 10.1 -> test on both 10.0 and 10
           - playwrightVersion: '1.37'
+            cucumberVersion: '10.0'
+          - playwrightVersion: '1.38'
             cucumberVersion: '10'
     steps:
       - uses: actions/checkout@v3
