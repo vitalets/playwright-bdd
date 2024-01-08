@@ -6,7 +6,7 @@ import { IdGenerator } from '@cucumber/messages';
 import { CucumberExpression, RegularExpression } from '@cucumber/cucumber-expressions';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/api';
+import { ISupportCodeLibrary } from './types';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

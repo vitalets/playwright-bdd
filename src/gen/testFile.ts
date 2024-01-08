@@ -22,7 +22,6 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
@@ -38,6 +37,7 @@ import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { hasScenarioHooks, getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
+import { ISupportCodeLibrary } from '../cucumber/types';
 
 type TestFileOptions = {
   doc: GherkinDocument;

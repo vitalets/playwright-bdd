@@ -9,8 +9,9 @@ import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
 import { getPlaywrightConfigDir } from '../config/dir';
 import { runScenarioHooks } from '../hooks/scenario';
 import { runWorkerHooks } from '../hooks/worker';
-import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
+import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from './StepInvoker';
+import { ISupportCodeLibrary } from '../cucumber/types';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

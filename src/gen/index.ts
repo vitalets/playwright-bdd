@@ -9,7 +9,6 @@ import { TestFile } from './testFile';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadFeatures } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
@@ -20,6 +19,7 @@ import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
 import { hasCustomTest } from '../stepDefinitions/createBdd';
+import { ISupportCodeLibrary } from '../cucumber/types';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

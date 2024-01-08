@@ -1,7 +1,7 @@
 import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@playwright/test';
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
+import { ISupportCodeLibrary } from '../cucumber/types';
 
 export type BddWorldFixtures = {
   page: Page;

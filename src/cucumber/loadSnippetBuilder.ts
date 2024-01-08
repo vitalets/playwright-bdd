@@ -4,8 +4,8 @@
  */
 
 import { FormatterBuilder } from '@cucumber/cucumber';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/api';
 import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
+import { ISupportCodeLibrary } from './types';
 
 export async function loadSnippetBuilder(
   supportCodeLibrary: ISupportCodeLibrary,
@@ -16,6 +16,8 @@ export async function loadSnippetBuilder(
     cwd: process.cwd(),
     snippetInterface,
     snippetSyntax,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore it's safe to use our ISupportCodeLibrary because only .parameterTypeRegistry is used
     supportCodeLibrary,
   });
 }
