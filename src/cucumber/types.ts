@@ -15,7 +15,7 @@ export interface ISupportCodeLibrary {
   originalCoordinates: ISupportCodeCoordinates;
 }
 
-export interface ISupportCodeCoordinates {
+interface ISupportCodeCoordinates {
   requireModules: string[];
   requirePaths: string[];
   importPaths: string[];
