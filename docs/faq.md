@@ -31,11 +31,11 @@ For now decoupling **test generation** from **test running** proves to be a bett
 It is very easy to do BDD in a wrong way.
 
 The main point - BDD is a collaboration technique. **Create BDD scenarios together with your team during calls and discussions**.
-Use it as a format for clarifying requirements between business analyst, QA and developers. It will save a lot of time for your team to get everybody on the same page instead of endless meetings and email ping-pong.
+Use it as a format for clarifying requirements between business, QA and developers. It will save a lot of time for your team to get everybody on the same page instead of endless meetings and email ping-pong.
 
-Don't just write BDD scenarios on your own.
+Don't just write BDD scenarios on your own. It's like having a corporate messenger used by a single employee.
 
-Check out [this article](https://www.serenity-dojo.com/minimal-bdd) for more details.
+For more information check out [this post](https://news.ycombinator.com/item?id=10194242) of Cucumber creator and [Real-World BDD article](https://www.serenity-dojo.com/minimal-bdd).
 
 
 

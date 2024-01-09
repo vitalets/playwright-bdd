@@ -73,4 +73,4 @@ Then('I see in title {string}', async ({ page }, text) => {
 });  
 ```
 
-To try it in action proceed to [installation guide](installation.md).
+Proceed to [installation guide](installation.md) to try it in action!
