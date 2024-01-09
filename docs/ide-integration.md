@@ -9,7 +9,7 @@ Playwright-bdd provides support for all Playwright IDE integrations, because gen
 * [Cucumber autocomplete extension](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
 
-## Intellij Idea / Aqua
+## IntelliJ IDE / Aqua
 Built-in Playwright support works as usual:
   <img width="70%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/bf82dfdc-9797-44d0-b07c-185aea578174">
 
