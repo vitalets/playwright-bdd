@@ -60,7 +60,7 @@ It can be not reliable for reporters that keep track of test history, because on
 There are 3 ways to set consistent title for examples.
 
 #### 1. Use scenario name as a template
-You can add column names like `<column>` to the scenario name. In that case sceanrio name will be used as a title template for generated examples. E.g.:
+You can add column names like `<column>` to the scenario name. In that case scenario name will be used as a title template for generated examples. E.g.:
 ```gherkin
 Feature: Localization
 
@@ -194,7 +194,7 @@ Strictly use only the following step definitions:
 {steps list from bddgen export}
 ```
 
-> Feel free to imporve that template and share the results
+> Feel free to improve that template and share the results
 
 Filled prompt for Todo app:
 ```

@@ -3,12 +3,14 @@
  */
 
 import { pathToFileURL } from 'node:url';
-import { IRunConfiguration, ISupportCodeLibrary } from '@cucumber/cucumber/api';
+import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { loadSnippetBuilder } from '../cucumber/loadSnippetBuilder';
 import { TestFile, UndefinedStep } from '../gen/testFile';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
+import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
 import { logger } from '../utils/logger';
 import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
+import { ISupportCodeLibrary } from '../cucumber/types';
 
 export class Snippets {
   private snippetBuilder!: StepDefinitionSnippetBuilder;
@@ -30,13 +32,15 @@ export class Snippets {
   }
 
   private async createSnippetBuilder() {
-    const { snippetInterface } = this.runConfiguration.formats.options;
+    const snippetInterface = this.runConfiguration.formats.options.snippetInterface as
+      | SnippetInterface
+      | undefined;
     const snippetSyntax = this.getSnippetSyntax();
     return loadSnippetBuilder(this.supportCodeLibrary, snippetInterface, snippetSyntax);
   }
 
   private getSnippetSyntax() {
-    const { snippetSyntax } = this.runConfiguration.formats.options;
+    const snippetSyntax = this.runConfiguration.formats.options.snippetSyntax as string | undefined;
     if (!snippetSyntax && this.isPlaywrightStyle()) {
       this.bddBuiltInSyntax = true;
       const filePath = this.isDecorators()

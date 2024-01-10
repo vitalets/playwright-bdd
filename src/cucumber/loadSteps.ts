@@ -1,7 +1,7 @@
 import { IRunConfiguration, IRunEnvironment, loadSupport } from '@cucumber/cucumber/api';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { installTransform } from '../playwright/transform';
 import { exit } from '../utils/exit';
+import { ISupportCodeLibrary } from './types';
 
 const cache = new Map<string, Promise<ISupportCodeLibrary>>();
 
@@ -16,7 +16,9 @@ export async function loadSteps(
     // use Playwright's built-in hook to compile TypeScript steps
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const uninstall = !hasTsNodeRegister(runConfiguration) ? installTransform() : () => {};
-    lib = loadSupport(runConfiguration, environment).finally(() => uninstall());
+    lib = loadSupport(runConfiguration, environment).finally(() =>
+      uninstall(),
+    ) as Promise<ISupportCodeLibrary>;
     cache.set(cacheKey, lib);
   }
 

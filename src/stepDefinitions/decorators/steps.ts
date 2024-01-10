@@ -5,15 +5,13 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { isBddAutoInjectFixture } from '../../run/bddFixtures';
-import {
-  DefineStepPattern,
-  ISupportCodeLibrary,
-} from '@cucumber/cucumber/lib/support_code_library_builder/types';
+import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { StepConfig } from '../stepConfig';
 import { buildCucumberStepCode } from '../defineStep';
 import { PomNode } from './class';
+import { ISupportCodeLibrary } from '../../cucumber/types';
 
 // initially we sotre step data inside method,
 // and then extract it in @Fixture decorator call

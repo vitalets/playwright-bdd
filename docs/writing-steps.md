@@ -4,7 +4,7 @@ There are two ways of writing step definitions:
 2. **Cucumber-style** - recommended for migrating existing CucumberJS projects to Playwright runner
 
 ## Playwright-style
-Playwright-style allows you to write step definitions like a regular playwright tests.
+Playwright-style allows you to write step definitions like regular Playwright tests.
 You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
 
 Playwright-style highlights:
@@ -306,7 +306,7 @@ When('I open todo page', async function () {
 ```
 
 For **TypeScript** you can pass `typeof test` as a second generic parameter to `BddWorld`
-to get propper typing:
+to get proper typing:
 
 ```ts
 type MyWorld = BddWorld<object, typeof test>;

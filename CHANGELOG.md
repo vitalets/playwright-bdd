@@ -1,7 +1,10 @@
 # Changelog
 
+## 5.7.1
+* support Cucumber 10.2
+
 ## 5.7.0
-* suppport Cucumber 10.1, [#80](https://github.com/vitalets/playwright-bdd/issues/80)
+* support Cucumber 10.1, [#80](https://github.com/vitalets/playwright-bdd/issues/80)
 
 ## 5.6.0
 * support component tests, [#57](https://github.com/vitalets/playwright-bdd/issues/57)
