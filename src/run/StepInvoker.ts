@@ -1,10 +1,10 @@
 /**
- * Class to invoke steps in generated files.
+ * Class to invoke step in playwright runner.
  */
 
 import { BddWorld } from './bddWorld';
 import { ITestCaseHookParameter } from '@cucumber/cucumber';
-import { PickleStep } from '@cucumber/messages';
+import { PickleStep, PickleStepArgument } from '@cucumber/messages';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
@@ -16,9 +16,6 @@ import { isEnglish } from '../config/lang';
 type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';
 
 export class StepInvoker {
-  private text = '';
-  private argument?: unknown;
-
   constructor(
     private world: BddWorld,
     private keyword: StepKeyword,
@@ -26,55 +23,66 @@ export class StepInvoker {
     this.invoke = this.invoke.bind(this);
   }
 
-  async invoke(text: string, argument?: unknown, stepFixtures?: Fixtures<TestTypeCommon>) {
-    this.text = text;
-    this.argument = argument;
-    const { world } = this;
-
-    world.stepFixtures = stepFixtures || {};
-    const stepDefinition = this.getStepDefinition();
+  /**
+   * Invokes particular step.
+   * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L299
+   */
+  async invoke(
+    text: string,
+    argument?: PickleStepArgument | null,
+    stepFixtures?: Fixtures<TestTypeCommon>,
+  ) {
+    this.world.$internal.currentStepFixtures = stepFixtures || {};
+    const stepDefinition = this.getStepDefinition(text);
 
     // Get location of step call in generated test file.
     // This call must be exactly here to have correct call stack (before async calls)
-    const location = getLocationInFile(world.test.info().file);
+    const location = getLocationInFile(this.world.testInfo.file);
 
-    const stepTitle = this.getStepTitle();
+    const stepTitle = this.getStepTitle(text);
     const code = getStepCode(stepDefinition);
-    const parameters = await this.getStepParameters(stepDefinition);
+    const parameters = await this.getStepParameters(stepDefinition, text, argument || undefined);
 
-    return runStepWithCustomLocation(world.test, stepTitle, location, () =>
-      code.apply(world, parameters),
+    // this.world.$internal.registerStep(stepDefinition, pickleStep);
+
+    return runStepWithCustomLocation(this.world.test, stepTitle, location, () =>
+      code.apply(this.world, parameters),
     );
   }
 
-  private getStepDefinition() {
+  private getStepDefinition(text: string) {
     const stepDefinition = findStepDefinition(
       this.world.options.supportCodeLibrary,
-      this.text,
+      text,
       this.world.testInfo.file,
     );
 
     if (!stepDefinition) {
-      throw new Error(`Undefined step: "${this.text}"`);
+      throw new Error(`Undefined step: "${text}"`);
     }
 
     return stepDefinition;
   }
 
-  private async getStepParameters(stepDefinition: StepDefinition) {
-    const { text, argument, world } = this;
+  private async getStepParameters(
+    stepDefinition: StepDefinition,
+    text: string,
+    argument?: PickleStepArgument,
+  ) {
+    // see: https://github.com/cucumber/cucumber-js/blob/main/src/models/step_definition.ts#L25
     const { parameters } = await stepDefinition.getInvocationParameters({
       hookParameter: {} as ITestCaseHookParameter,
+      // only text and argument are needed
       step: { text, argument } as PickleStep,
-      world,
+      world: this.world,
     });
 
     return parameters;
   }
 
-  private getStepTitle() {
+  private getStepTitle(text: string) {
     // Currently prepend keyword only for English.
     // For other langs it's more complex as we need to pass original keyword from step.
-    return isEnglish(this.world.options.lang) ? `${this.keyword} ${this.text}` : this.text;
+    return isEnglish(this.world.options.lang) ? `${this.keyword} ${text}` : text;
   }
 }

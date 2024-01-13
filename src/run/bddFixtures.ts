@@ -86,6 +86,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     await world.init();
     await use(world);
     await world.destroy();
+    await world.$internal.attachBddData();
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),

@@ -100,7 +100,9 @@ export class TestFilesGenerator {
           doc,
           pickles,
           supportCodeLibrary: this.supportCodeLibrary,
-          outputPath: this.getOutputPath(doc),
+          // doc.uri is always relative to cwd (coming after cucumber handling)
+          // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
+          outputPath: this.getSpecPathByFeaturePath(doc.uri!),
           config: this.config,
           tagsExpression: this.tagsExpression,
         }).build();
@@ -108,11 +110,8 @@ export class TestFilesGenerator {
       .filter((file) => file.testNodes.length > 0);
   }
 
-  private getOutputPath(doc: GherkinDocument) {
+  private getSpecPathByFeaturePath(relFeaturePath: string) {
     const configDir = getPlaywrightConfigDir();
-    // doc.uri is always relative to cwd (coming after cucumber handling)
-    // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
-    const relFeaturePath = doc.uri!;
     const absFeaturePath = path.resolve(configDir, relFeaturePath);
     const relOutputPath = path.relative(this.config.featuresRoot, absFeaturePath);
     if (relOutputPath.startsWith('..')) {

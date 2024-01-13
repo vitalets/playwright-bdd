@@ -36,6 +36,7 @@ export async function getPicklesAndErrors({
 }): Promise<{
   filterablePickles: IFilterablePickle[];
   parseErrors: ParseError[];
+  gherkinQuery: GherkinQuery;
 }> {
   const gherkinQuery = new GherkinQuery();
   const parseErrors: ParseError[] = [];
@@ -54,6 +55,7 @@ export async function getPicklesAndErrors({
       onEnvelope?.(envelope);
     },
   );
+
   const filterablePickles = gherkinQuery.getPickles().map((pickle) => {
     const gherkinDocument = gherkinQuery
       .getGherkinDocuments()
@@ -72,6 +74,7 @@ export async function getPicklesAndErrors({
   return {
     filterablePickles,
     parseErrors,
+    gherkinQuery,
   };
 }
 

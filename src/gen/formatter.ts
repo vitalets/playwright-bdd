@@ -96,6 +96,10 @@ export class Formatter {
     return [`$bddWorldFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
   }
 
+  /**
+   * For tests with tags create special $tags fixture
+   * that maps test titles to corresponding tags.
+   */
   tagsFixture(testNodes: TestNode[]) {
     const lines = testNodes
       .filter((node) => node.tags.length)

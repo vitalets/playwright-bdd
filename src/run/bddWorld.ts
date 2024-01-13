@@ -2,6 +2,7 @@ import { APIRequestContext, Browser, BrowserContext, Page, TestInfo } from '@pla
 import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { ISupportCodeLibrary } from '../cucumber/types';
+import { BddWorldInternal } from './bddWorldInternal';
 
 export type BddWorldFixtures = {
   page: Page;
@@ -29,10 +30,12 @@ export class BddWorld<
   ParametersType = any,
   TestType extends TestTypeCommon = TestTypeCommon,
 > extends CucumberWorld<ParametersType> {
-  stepFixtures: Fixtures<TestTypeCommon> = {};
+  // special namespace to hold internal bdd related methods, must be public.
+  $internal: BddWorldInternal;
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
     super(options);
+    this.$internal = new BddWorldInternal(this);
   }
 
   /**
@@ -52,7 +55,7 @@ export class BddWorld<
    * See: https://github.com/Microsoft/TypeScript/pull/26349
    */
   useFixture<K extends keyof Fixtures<TestType>>(fixtureName: K) {
-    return (this.stepFixtures as Fixtures<TestType>)[fixtureName];
+    return (this.$internal.currentStepFixtures as Fixtures<TestType>)[fixtureName];
   }
 
   get page() {

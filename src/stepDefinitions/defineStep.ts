@@ -38,7 +38,7 @@ export function buildCucumberStepCode(stepConfig: StepConfig) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const code: CucumberStepFunction = function (...args: any[]) {
     // build the first argument (fixtures) for step fn
-    const fixturesArg = Object.assign({}, this.stepFixtures, {
+    const fixturesArg = Object.assign({}, this.$internal.currentStepFixtures, {
       $testInfo: this.testInfo,
       $test: this.test,
       $tags: this.tags,
