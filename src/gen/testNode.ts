@@ -1,6 +1,7 @@
 /**
- * Universal TestNode class of parent-child relations in test file structure.
- * Holds tags and titles path.
+ * Universal TestNode class representing test or suite in a test file.
+ * Holds parent-child links.
+ * Allows to inherit tags and titles path.
  */
 
 import { Tag } from '@cucumber/messages';

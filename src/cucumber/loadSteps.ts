@@ -25,6 +25,13 @@ export async function loadSteps(
   return lib;
 }
 
+/**
+ * Finds step definition by step text.
+ * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/assemble_test_cases.ts#L103
+ *
+ * Handling case when several step definitions found:
+ * https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L313
+ */
 export function findStepDefinition(
   supportCodeLibrary: ISupportCodeLibrary,
   stepText: string,

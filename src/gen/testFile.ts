@@ -67,6 +67,7 @@ export class TestFile {
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
   private hasCucumberStyle = false;
+  // list of nodes representing tests (not suites)
   public testNodes: TestNode[] = [];
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
