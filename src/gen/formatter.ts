@@ -7,13 +7,12 @@ import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
 import { BddWorldFixtures } from '../run/bddWorld';
+import { TestMetaBuilder } from './testMeta';
 
 export type ImportTestFrom = {
   file: string;
   varName?: string;
 };
-
-const TAGS_FIXTURE_TEST_KEY_SEPARATOR = '|';
 
 export class Formatter {
   constructor(private config: BDDConfig) {}
@@ -68,20 +67,22 @@ export class Formatter {
     return `// missing step: ${keyword}(${this.quoted(text)});`;
   }
 
-  useFixtures(fixtures: string[]) {
-    return fixtures.length > 0
-      ? [
-          '// == technical section ==', // prettier-ignore
-          '',
-          'test.use({',
-          ...fixtures.map(indent),
-          '});',
-        ]
-      : [];
-  }
-
-  testFixture() {
-    return ['$test: ({}, use) => use(test),'];
+  technicalSection(testMetaBuilder: TestMetaBuilder, fixtures: string[]) {
+    return [
+      '// == technical section ==', // prettier-ignore
+      '',
+      'test.use({',
+      ...[
+        '$test: ({}, use) => use(test),',
+        '$testMetaMap: ({}, use) => use(testMetaMap),',
+        ...fixtures,
+      ].map(indent),
+      '});',
+      '',
+      'const testMetaMap = {',
+      ...testMetaBuilder.getObjectLines().map(indent),
+      '};',
+    ];
   }
 
   bddWorldFixtures() {
@@ -94,30 +95,6 @@ export class Formatter {
     };
     const fixtures = Object.keys(fixturesObj).join(', ');
     return [`$bddWorldFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
-  }
-
-  /**
-   * For tests with tags create special $tags fixture
-   * that maps test titles to corresponding tags.
-   */
-  tagsFixture(testNodes: TestNode[]) {
-    const lines = testNodes
-      .filter((node) => node.tags.length)
-      .map((node) => {
-        // remove first parent as it is the same for all tests: root suite
-        const key = node.titlePath.slice(1).join(TAGS_FIXTURE_TEST_KEY_SEPARATOR);
-        return `${JSON.stringify(key)}: ${JSON.stringify(node.tags)},`;
-      });
-    return lines.length > 0
-      ? [
-          '$tags: ({}, use, testInfo) => use({',
-          ...lines.map(indent),
-          // .slice(2) -> b/c we remove filename and root suite title
-          `}[testInfo.titlePath.slice(2).join(${JSON.stringify(
-            TAGS_FIXTURE_TEST_KEY_SEPARATOR,
-          )})] || []),`,
-        ]
-      : [];
   }
 
   scenarioHookFixtures(fixtureNames: string[]) {
@@ -149,7 +126,7 @@ export class Formatter {
   /**
    * Apply this function only to string literals (mostly titles here).
    * Objects and arrays are handled with JSON.strinigfy,
-   * b/c object keys can't be in backtiks.
+   * b/c object keys can't be in backticks.
    * See: https://stackoverflow.com/questions/33194138/template-string-as-object-property-name
    */
   private quoted(str: string) {
