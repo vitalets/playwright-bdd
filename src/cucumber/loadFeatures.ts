@@ -6,7 +6,6 @@
  */
 import { IRunConfiguration, IRunEnvironment } from '@cucumber/cucumber/api';
 import { mergeEnvironment } from '@cucumber/cucumber/lib/api/environment';
-import { ISourcesCoordinates } from '@cucumber/cucumber/lib/api/types';
 import { ConsoleLogger } from '@cucumber/cucumber/lib/api/console_logger';
 import { GherkinStreams, IGherkinStreamOptions } from '@cucumber/gherkin-streams';
 import { ILogger } from '@cucumber/cucumber/lib/logger';
@@ -36,19 +35,50 @@ export async function loadFeatures(
   environment: IRunEnvironment = {},
 ) {
   const { cwd, stderr, debug } = mergeEnvironment(environment);
+  const { defaultDialect } = runConfiguration.sources;
   const logger: ILogger = new ConsoleLogger(stderr, debug);
   const { featurePaths } = await resovleFeaturePaths(logger, cwd, runConfiguration.sources);
-  const { gherkinQuery, parseErrors } = await loadFiles({
-    newId: IdGenerator.uuid(),
-    cwd,
-    sourcePaths: featurePaths,
-    coordinates: runConfiguration.sources,
-  });
+  const { gherkinQuery, parseErrors } = await loadFiles(cwd, featurePaths, defaultDialect);
+
   handleParseErrors(parseErrors);
 
   return buildDocumentsWithPickles(gherkinQuery);
 }
 
+async function loadFiles(cwd: string, featurePaths: string[], defaultDialect = 'en') {
+  const newId = IdGenerator.uuid();
+  const gherkinQuery = new GherkinQuery();
+  const parseErrors: ParseError[] = [];
+  await gherkinFromPaths(
+    featurePaths,
+    {
+      newId,
+      relativeTo: cwd,
+      defaultDialect,
+    },
+    (envelope) => {
+      gherkinQuery.update(envelope);
+      if (envelope.parseError) {
+        parseErrors.push(envelope.parseError);
+      }
+    },
+  );
+
+  return { gherkinQuery, parseErrors };
+}
+
+function buildDocumentsWithPickles(gherkinQuery: GherkinQuery): DocumentWithPickles[] {
+  return gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
+    const pickles = gherkinQuery
+      .getPickles()
+      .filter((pickle) => gherkinDocument.uri === pickle.uri)
+      .map((pickle) => buildPickleWithLocation(gherkinQuery, pickle));
+
+    return { gherkinDocument, pickles };
+  });
+}
+
+// todo: move to main script?
 function handleParseErrors(parseErrors: ParseError[]) {
   if (parseErrors.length) {
     const message = parseErrors
@@ -60,48 +90,11 @@ function handleParseErrors(parseErrors: ParseError[]) {
   }
 }
 
-function buildDocumentsWithPickles(gherkinQuery: GherkinQuery): DocumentWithPickles[] {
-  return gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
-    const pickles = gherkinQuery
-      .getPickles()
-      .filter((pickle) => gherkinDocument.uri === pickle.uri)
-      .map((pickle) => {
-        return { ...pickle, location: getPickleLocation(gherkinQuery, pickle) };
-      });
-
-    return { gherkinDocument, pickles };
-  });
-}
-
-async function loadFiles({
-  newId,
-  cwd,
-  sourcePaths,
-  coordinates,
-}: {
-  newId: IdGenerator.NewId;
-  cwd: string;
-  sourcePaths: string[];
-  coordinates: ISourcesCoordinates;
-}) {
-  const gherkinQuery = new GherkinQuery();
-  const parseErrors: ParseError[] = [];
-  await gherkinFromPaths(
-    sourcePaths,
-    {
-      newId,
-      relativeTo: cwd,
-      defaultDialect: coordinates.defaultDialect,
-    },
-    (envelope) => {
-      gherkinQuery.update(envelope);
-      if (envelope.parseError) {
-        parseErrors.push(envelope.parseError);
-      }
-    },
-  );
-
-  return { gherkinQuery, parseErrors };
+function buildPickleWithLocation(gherkinQuery: GherkinQuery, pickle: Pickle): PickleWithLocation {
+  return {
+    ...pickle,
+    location: getPickleLocation(gherkinQuery, pickle),
+  };
 }
 
 function getPickleLocation(gherkinQuery: GherkinQuery, pickle: Pickle) {

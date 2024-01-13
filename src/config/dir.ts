@@ -1,7 +1,7 @@
 /**
  * Store playwright config dir in env to provide access to it in workers.
  * Important that in workers there is different process.argv, that's why we save it to env.
- * Config dir is needed to resolve all paths.
+ * Config dir is needed to resolve all paths (features, step definitions).
  */
 
 import path from 'node:path';
