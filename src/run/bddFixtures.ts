@@ -12,7 +12,7 @@ import { runWorkerHooks } from '../hooks/worker';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from './StepInvoker';
 import { ISupportCodeLibrary } from '../cucumber/types';
-import { TestMetaMap, getTestMeta } from '../gen/testMeta';
+import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -27,6 +27,7 @@ export type BddFixtures = {
   And: StepInvoker['invoke'];
   But: StepInvoker['invoke'];
   $testMetaMap: TestMetaMap;
+  $testMeta: TestMeta;
   $tags: string[];
   $test: TestTypeCommon;
   $scenarioHookFixtures: Record<string, unknown>;
@@ -73,7 +74,11 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   $lang: ({}, use) => use(''),
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
-  $bddWorld: async ({ $tags, $test, $bddWorldFixtures, $cucumber, $lang }, use, testInfo) => {
+  $bddWorld: async (
+    { $tags, $test, $bddWorldFixtures, $cucumber, $lang, $testMeta },
+    use,
+    testInfo,
+  ) => {
     const { runConfiguration, supportCodeLibrary, World } = $cucumber;
     const world = new World({
       testInfo,
@@ -89,7 +94,8 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     await world.init();
     await use(world);
     await world.destroy();
-    await world.$internal.attachBddData();
+    // todo: hide under config option
+    await world.$internal.attachBddData($testMeta);
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
@@ -98,11 +104,14 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
   But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
 
-  // init $testMetaMap with empty object, will be owerwritten in each test file
+  // init $testMetaMap with empty object, will be overwritten in each test file
   $testMetaMap: ({}, use) => use({}),
 
-  // get tags from testMeta
-  $tags: ({ $testMetaMap }, use, testInfo) => use(getTestMeta($testMetaMap, testInfo).tags || []),
+  // concrete test meta
+  $testMeta: ({ $testMetaMap }, use, testInfo) => use(getTestMeta($testMetaMap, testInfo)),
+
+  // concrete test tags
+  $tags: ({ $testMeta }, use) => use($testMeta.tags || []),
 
   // init $test with base test, but it will be always overwritten in test file
   $test: ({}, use) => use(base),

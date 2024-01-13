@@ -14,11 +14,11 @@ import { TestNode } from './testNode';
 import { PickleWithLocation } from '../cucumber/loadFeatures';
 import { TestInfo } from '@playwright/test';
 
-const TAGS_FIXTURE_TEST_KEY_SEPARATOR = '|';
+const TEST_KEY_SEPARATOR = '|';
 
 export type TestMetaMap = Record<string, TestMeta>;
 
-type TestMeta = {
+export type TestMeta = {
   pickleLocation: string;
   tags?: string[];
 };
@@ -48,14 +48,14 @@ export class TestMetaBuilder {
   }
 
   private getTestKey(node: TestNode) {
-    // .slice(1) b/c we remove top describe title (it's same for all tests)
-    return node.titlePath.slice(1).join(TAGS_FIXTURE_TEST_KEY_SEPARATOR);
+    // .slice(1) -> b/c we remove top describe title (it's same for all tests)
+    return node.titlePath.slice(1).join(TEST_KEY_SEPARATOR);
   }
 }
 
 export function getTestMeta(testMetaMap: TestMetaMap, testInfo: TestInfo) {
-  // .slice(2) b/c we remove filename and top describe title
-  const key = testInfo.titlePath.slice(2).join(TAGS_FIXTURE_TEST_KEY_SEPARATOR);
+  // .slice(2) -> b/c we remove filename and top describe title
+  const key = testInfo.titlePath.slice(2).join(TEST_KEY_SEPARATOR);
   const testMeta = testMetaMap[key];
   if (!testMeta) throw new Error(`Can't find testMeta for key "${key}"`);
   return testMeta;
