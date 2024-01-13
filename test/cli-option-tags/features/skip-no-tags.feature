@@ -1,4 +1,4 @@
-Feature: should be skipped
+Feature: should be skipped b/c does not have @include tag
 
     Background:
       Given state 1

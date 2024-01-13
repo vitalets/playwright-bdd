@@ -3,11 +3,10 @@
  */
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import { GherkinDocument, Pickle } from '@cucumber/messages';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
-import { loadFeatures } from '../cucumber/loadFeatures';
+import { DocumentWithPickles, loadFeatures } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { Snippets } from '../snippets';
@@ -26,7 +25,7 @@ import { ISupportCodeLibrary } from '../cucumber/types';
 export class TestFilesGenerator {
   // all these props are exist
   private runConfiguration!: IRunConfiguration;
-  private features!: Map<GherkinDocument, Pickle[]>;
+  private features: DocumentWithPickles[] = [];
   private supportCodeLibrary!: ISupportCodeLibrary;
   private files: TestFile[] = [];
   private tagsExpression?: ReturnType<typeof parseTagsExpression>;
@@ -71,7 +70,7 @@ export class TestFilesGenerator {
     const environment = { cwd: getPlaywrightConfigDir() };
     this.logger.log(`Loading features from: ${this.runConfiguration.sources.paths.join(', ')}`);
     this.features = await loadFeatures(this.runConfiguration, environment);
-    this.logger.log(`Loaded features: ${this.features.size}`);
+    this.logger.log(`Loaded features: ${this.features.length}`);
   }
 
   private async loadSteps() {
@@ -94,20 +93,19 @@ export class TestFilesGenerator {
   }
 
   private buildFiles() {
-    this.files = [...this.features.entries()]
-      .map(([doc, pickles]) => {
+    this.files = this.features
+      .map((feature) => {
         return new TestFile({
-          doc,
-          pickles,
+          feature,
           supportCodeLibrary: this.supportCodeLibrary,
           // doc.uri is always relative to cwd (coming after cucumber handling)
           // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
-          outputPath: this.getSpecPathByFeaturePath(doc.uri!),
+          outputPath: this.getSpecPathByFeaturePath(feature.gherkinDocument.uri!),
           config: this.config,
           tagsExpression: this.tagsExpression,
         }).build();
       })
-      .filter((file) => file.testNodes.length > 0);
+      .filter((file) => file.testCount > 0);
   }
 
   private getSpecPathByFeaturePath(relFeaturePath: string) {

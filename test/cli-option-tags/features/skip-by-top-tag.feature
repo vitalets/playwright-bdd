@@ -1,5 +1,5 @@
 @exclude
-Feature: should be skipped
+Feature: should be skipped b/c has @exclude tag
 
     Background:
       Given state 1

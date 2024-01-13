@@ -12,6 +12,7 @@ import { runWorkerHooks } from '../hooks/worker';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from './StepInvoker';
 import { ISupportCodeLibrary } from '../cucumber/types';
+import { TestMetaMap, getTestMeta } from '../gen/testMeta';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -25,6 +26,7 @@ export type BddFixtures = {
   Then: StepInvoker['invoke'];
   And: StepInvoker['invoke'];
   But: StepInvoker['invoke'];
+  $testMetaMap: TestMetaMap;
   $tags: string[];
   $test: TestTypeCommon;
   $scenarioHookFixtures: Record<string, unknown>;
@@ -67,6 +69,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     },
     { auto: true, scope: 'worker' },
   ],
+  // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
@@ -95,8 +98,12 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
   But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
 
-  // init $tags with empty array, can be owerwritten in test file
-  $tags: ({}, use) => use([]),
+  // init $testMetaMap with empty object, will be owerwritten in each test file
+  $testMetaMap: ({}, use) => use({}),
+
+  // get tags from testMeta
+  $tags: ({ $testMetaMap }, use, testInfo) => use(getTestMeta($testMetaMap, testInfo).tags || []),
+
   // init $test with base test, but it will be always overwritten in test file
   $test: ({}, use) => use(base),
 
