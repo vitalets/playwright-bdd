@@ -60,3 +60,7 @@ export async function callWithTimeout<T>(fn: () => T, timeout?: number, timeoutM
     }),
   ]).finally(() => ac.abort());
 }
+
+export function stringifyLocation({ line, column }: { line: number; column?: number }) {
+  return `${line}:${column}`;
+}

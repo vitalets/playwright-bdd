@@ -13,6 +13,7 @@
 import { TestNode } from './testNode';
 import { PickleWithLocation } from '../cucumber/loadFeatures';
 import { TestInfo } from '@playwright/test';
+import { stringifyLocation } from '../utils';
 
 const TEST_KEY_SEPARATOR = '|';
 
@@ -59,8 +60,4 @@ export function getTestMeta(testMetaMap: TestMetaMap, testInfo: TestInfo) {
   const testMeta = testMetaMap[key];
   if (!testMeta) throw new Error(`Can't find testMeta for key "${key}"`);
   return testMeta;
-}
-
-export function stringifyLocation({ line, column }: PickleWithLocation['location']) {
-  return `${line}:${column}`;
 }

@@ -30,6 +30,7 @@ export type BddFixtures = {
   $testMeta: TestMeta;
   $tags: string[];
   $test: TestTypeCommon;
+  $uri: string;
   $scenarioHookFixtures: Record<string, unknown>;
   $before: void;
   $after: void;
@@ -75,7 +76,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
   $bddWorld: async (
-    { $tags, $test, $bddWorldFixtures, $cucumber, $lang, $testMeta },
+    { $tags, $test, $bddWorldFixtures, $cucumber, $lang, $testMeta, $uri },
     use,
     testInfo,
   ) => {
@@ -95,7 +96,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     await use(world);
     await world.destroy();
     // todo: hide under config option
-    await world.$internal.attachBddData($testMeta);
+    await world.$internal.attachBddData($testMeta, $uri);
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
@@ -113,8 +114,11 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   // concrete test tags
   $tags: ({ $testMeta }, use) => use($testMeta.tags || []),
 
-  // init $test with base test, but it will be always overwritten in test file
+  // init $test with base test, but it will be overwritten in test file
   $test: ({}, use) => use(base),
+
+  // feature file uri, relative to configDir, will be overwritten in test file
+  $uri: ({}, use) => use(''),
 
   // can be owerwritten in test file if there are scenario hooks
   $scenarioHookFixtures: ({}, use) => use({}),

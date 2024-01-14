@@ -4,25 +4,12 @@
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/api/load_sources.ts
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts
  */
-import { IRunConfiguration, IRunEnvironment } from '@cucumber/cucumber/api';
-import { mergeEnvironment } from '@cucumber/cucumber/lib/api/environment';
-import { ConsoleLogger } from '@cucumber/cucumber/lib/api/console_logger';
-import { GherkinStreams, IGherkinStreamOptions } from '@cucumber/gherkin-streams';
-import { ILogger } from '@cucumber/cucumber/lib/logger';
-import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
-import {
-  Envelope,
-  IdGenerator,
-  ParseError,
-  Pickle,
-  GherkinDocument,
-  Location,
-} from '@cucumber/messages';
-import { exit } from '../utils/exit';
-import { resovleFeaturePaths } from './resolveFeaturePaths';
 
-export type DocumentWithPickles = {
-  gherkinDocument: GherkinDocument;
+import { GherkinStreams, IGherkinStreamOptions } from '@cucumber/gherkin-streams';
+import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
+import { Envelope, ParseError, Pickle, GherkinDocument, Location } from '@cucumber/messages';
+
+export type GherkinDocumentWithPickles = GherkinDocument & {
   pickles: PickleWithLocation[];
 };
 
@@ -30,76 +17,53 @@ export type PickleWithLocation = Pickle & {
   location: Location;
 };
 
-export async function loadFeatures(
-  runConfiguration: IRunConfiguration,
-  environment: IRunEnvironment = {},
-) {
-  const { cwd, stderr, debug } = mergeEnvironment(environment);
-  const { defaultDialect } = runConfiguration.sources;
-  const logger: ILogger = new ConsoleLogger(stderr, debug);
-  const { featurePaths } = await resovleFeaturePaths(logger, cwd, runConfiguration.sources);
-  const { gherkinQuery, parseErrors } = await loadFiles(cwd, featurePaths, defaultDialect);
+export class FeaturesLoader {
+  gherkinQuery = new GherkinQuery();
+  parseErrors: ParseError[] = [];
 
-  handleParseErrors(parseErrors);
-
-  return buildDocumentsWithPickles(gherkinQuery);
-}
-
-async function loadFiles(cwd: string, featurePaths: string[], defaultDialect = 'en') {
-  const newId = IdGenerator.uuid();
-  const gherkinQuery = new GherkinQuery();
-  const parseErrors: ParseError[] = [];
-  await gherkinFromPaths(
-    featurePaths,
-    {
-      newId,
-      relativeTo: cwd,
-      defaultDialect,
-    },
-    (envelope) => {
-      gherkinQuery.update(envelope);
+  /**
+   * Loads and parses feature files.
+   * - featurePaths should be absolute.
+   *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/GherkinStreams.ts#L36
+   * - if options.relativeTo is provided, uri in gherkin documents will be relative to it.
+   *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/SourceMessageStream.ts#L31
+   * - options.defaultDialect is 'en' by default.
+   *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/makeGherkinOptions.ts#L5
+   */
+  async load(featurePaths: string[], options: IGherkinStreamOptions) {
+    this.gherkinQuery = new GherkinQuery();
+    this.parseErrors = [];
+    await gherkinFromPaths(featurePaths, options, (envelope) => {
+      this.gherkinQuery.update(envelope);
       if (envelope.parseError) {
-        parseErrors.push(envelope.parseError);
+        this.parseErrors.push(envelope.parseError);
       }
-    },
-  );
+    });
+  }
 
-  return { gherkinQuery, parseErrors };
-}
+  getDocumentsCount() {
+    return this.gherkinQuery.getGherkinDocuments().length;
+  }
 
-function buildDocumentsWithPickles(gherkinQuery: GherkinQuery): DocumentWithPickles[] {
-  return gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
-    const pickles = gherkinQuery
+  getDocumentsWithPickles(): GherkinDocumentWithPickles[] {
+    return this.gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
+      const pickles = this.getDocumentPickles(gherkinDocument);
+      return { ...gherkinDocument, pickles };
+    });
+  }
+
+  private getDocumentPickles(gherkinDocument: GherkinDocument) {
+    return this.gherkinQuery
       .getPickles()
       .filter((pickle) => gherkinDocument.uri === pickle.uri)
-      .map((pickle) => buildPickleWithLocation(gherkinQuery, pickle));
-
-    return { gherkinDocument, pickles };
-  });
-}
-
-// todo: move to main script?
-function handleParseErrors(parseErrors: ParseError[]) {
-  if (parseErrors.length) {
-    const message = parseErrors
-      .map((parseError) => {
-        return `Parse error in "${parseError.source.uri}" ${parseError.message}`;
-      })
-      .join('\n');
-    exit(message);
+      .map((pickle) => this.getPickleWithLocation(pickle));
   }
-}
 
-function buildPickleWithLocation(gherkinQuery: GherkinQuery, pickle: Pickle): PickleWithLocation {
-  return {
-    ...pickle,
-    location: getPickleLocation(gherkinQuery, pickle),
-  };
-}
-
-function getPickleLocation(gherkinQuery: GherkinQuery, pickle: Pickle) {
-  // use last astNode as a pickle location
-  return gherkinQuery.getLocation(pickle.astNodeIds[pickle.astNodeIds.length - 1]);
+  private getPickleWithLocation(pickle: Pickle) {
+    const lastAstNodeId = pickle.astNodeIds[pickle.astNodeIds.length - 1];
+    const location = this.gherkinQuery.getLocation(lastAstNodeId);
+    return { ...pickle, location };
+  }
 }
 
 async function gherkinFromPaths(
