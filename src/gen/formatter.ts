@@ -67,7 +67,7 @@ export class Formatter {
     return `// missing step: ${keyword}(${this.quoted(text)});`;
   }
 
-  technicalSection(testMetaBuilder: TestMetaBuilder, fixtures: string[]) {
+  technicalSection(testMetaBuilder: TestMetaBuilder, sourceFile: string, fixtures: string[]) {
     return [
       '// == technical section ==', // prettier-ignore
       '',
@@ -75,6 +75,7 @@ export class Formatter {
       ...[
         '$test: ({}, use) => use(test),',
         '$testMetaMap: ({}, use) => use(testMetaMap),',
+        `$uri: ({}, use) => use(${this.quoted(sourceFile)}),`,
         ...fixtures,
       ].map(indent),
       '});',

@@ -6,7 +6,7 @@ import path from 'node:path';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
-import { DocumentWithPickles, loadFeatures } from '../cucumber/loadFeatures';
+import { FeaturesLoader } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { Snippets } from '../snippets';
@@ -19,13 +19,14 @@ import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
 import { hasCustomTest } from '../stepDefinitions/createBdd';
 import { ISupportCodeLibrary } from '../cucumber/types';
+import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 export class TestFilesGenerator {
   // all these props are exist
   private runConfiguration!: IRunConfiguration;
-  private features: DocumentWithPickles[] = [];
+  private featuresLoader = new FeaturesLoader();
   private supportCodeLibrary!: ISupportCodeLibrary;
   private files: TestFile[] = [];
   private tagsExpression?: ReturnType<typeof parseTagsExpression>;
@@ -67,10 +68,13 @@ export class TestFilesGenerator {
   }
 
   private async loadFeatures() {
-    const environment = { cwd: getPlaywrightConfigDir() };
-    this.logger.log(`Loading features from: ${this.runConfiguration.sources.paths.join(', ')}`);
-    this.features = await loadFeatures(this.runConfiguration, environment);
-    this.logger.log(`Loaded features: ${this.features.length}`);
+    const cwd = getPlaywrightConfigDir();
+    const { paths, defaultDialect } = this.runConfiguration.sources;
+    this.logger.log(`Loading features from: ${paths.join(', ')}`);
+    const { featurePaths } = await resovleFeaturePaths(this.runConfiguration, { cwd });
+    await this.featuresLoader.load(featurePaths, { relativeTo: cwd, defaultDialect });
+    this.handleParseErrors();
+    this.logger.log(`Loaded features: ${this.featuresLoader.getDocumentsCount()}`);
   }
 
   private async loadSteps() {
@@ -93,14 +97,15 @@ export class TestFilesGenerator {
   }
 
   private buildFiles() {
-    this.files = this.features
-      .map((feature) => {
+    this.files = this.featuresLoader
+      .getDocumentsWithPickles()
+      .map((gherkinDocument) => {
         return new TestFile({
-          feature,
+          gherkinDocument,
           supportCodeLibrary: this.supportCodeLibrary,
           // doc.uri is always relative to cwd (coming after cucumber handling)
           // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
-          outputPath: this.getSpecPathByFeaturePath(feature.gherkinDocument.uri!),
+          outputPath: this.getSpecPathByFeaturePath(gherkinDocument.uri!),
           config: this.config,
           tagsExpression: this.tagsExpression,
         }).build();
@@ -165,6 +170,18 @@ export class TestFilesGenerator {
         `Remove this option from defineBddConfig() and`,
         `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
       );
+    }
+  }
+
+  private handleParseErrors() {
+    const { parseErrors } = this.featuresLoader;
+    if (parseErrors.length) {
+      const message = parseErrors
+        .map((parseError) => {
+          return `Parse error in "${parseError.source.uri}" ${parseError.message}`;
+        })
+        .join('\n');
+      exit(message);
     }
   }
 }

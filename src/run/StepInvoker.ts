@@ -43,7 +43,7 @@ export class StepInvoker {
     const code = getStepCode(stepDefinition);
     const parameters = await this.getStepParameters(stepDefinition, text, argument || undefined);
 
-    // this.world.$internal.registerStep(stepDefinition, pickleStep);
+    this.world.$internal.registerStep(stepDefinition, text);
 
     return runStepWithCustomLocation(this.world.test, stepTitle, location, () =>
       code.apply(this.world, parameters),

@@ -37,10 +37,10 @@ import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMetaBuilder } from './testMeta';
-import { DocumentWithPickles } from '../cucumber/loadFeatures';
+import { GherkinDocumentWithPickles } from '../cucumber/loadFeatures';
 
 type TestFileOptions = {
-  feature: DocumentWithPickles;
+  gherkinDocument: GherkinDocumentWithPickles;
   supportCodeLibrary: ISupportCodeLibrary;
   outputPath: string;
   config: BDDConfig;
@@ -76,11 +76,11 @@ export class TestFile {
   }
 
   get gherkinDocument() {
-    return this.options.feature.gherkinDocument;
+    return this.options.gherkinDocument;
   }
 
   get pickles() {
-    return this.options.feature.pickles;
+    return this.gherkinDocument.pickles;
   }
 
   get sourceFile() {
@@ -152,7 +152,7 @@ export class TestFile {
   }
 
   private getTechnicalSection() {
-    return this.formatter.technicalSection(this.testMetaBuilder, [
+    return this.formatter.technicalSection(this.testMetaBuilder, this.sourceFile, [
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
