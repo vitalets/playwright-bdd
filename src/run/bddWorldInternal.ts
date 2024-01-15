@@ -1,12 +1,14 @@
 /**
  * BddWorld sub-property for internal usage.
  */
-import { TestStep } from '@cucumber/messages';
+import { StepMatchArgumentsList } from '@cucumber/messages';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { BddWorld } from './bddWorld';
 import { TestMeta } from '../gen/testMeta';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { createTestStep } from '../cucumber/createTestStep';
+import { stringifyLocation } from '../utils';
+import { PlaywrightLocation } from '../playwright/getLocationInFile';
 
 // special attachment to provide data for cucumber reporters
 // todo: move from this file
@@ -16,18 +18,32 @@ export type BddTestAttachment = {
   // location of pickle related to this test
   pickleLocation: string;
   // info about parsed arguments of each step to highlight in report
-  steps: TestStep[];
+  steps: BddTestAttachmentStep[];
+};
+
+export type BddTestAttachmentStep = {
+  // playwright step location in spec file
+  pwStepLocation: string;
+  // stepDefinition match result
+  stepMatchArgumentsLists: readonly StepMatchArgumentsList[];
 };
 
 export class BddWorldInternal {
   currentStepFixtures: Fixtures<TestTypeCommon> = {};
-  private steps: TestStep[] = [];
+  private steps: BddTestAttachmentStep[] = [];
 
   constructor(private world: BddWorld) {}
 
-  registerStep(stepDefinition: StepDefinition, stepText: string) {
+  registerStep(
+    stepDefinition: StepDefinition,
+    stepText: string,
+    pwStepLocation: PlaywrightLocation,
+  ) {
     const step = createTestStep(stepDefinition, stepText);
-    this.steps.push(step);
+    this.steps.push({
+      pwStepLocation: stringifyLocation(pwStepLocation),
+      stepMatchArgumentsLists: step.stepMatchArgumentsLists || [],
+    });
   }
 
   /**

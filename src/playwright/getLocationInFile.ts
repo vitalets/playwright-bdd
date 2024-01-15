@@ -1,7 +1,8 @@
 import url from 'url';
 import { requirePlaywrightModule } from './utils';
 
-interface Location {
+// cucumber has also Location type, but it does not contain file and column is optional.
+export interface PlaywrightLocation {
   file: string;
   line: number;
   column: number;
@@ -36,7 +37,7 @@ export function getLocationInFile(filePath: string) {
   // const oldStackTraceLimit = Error.stackTraceLimit;
   // Error.stackTraceLimit = level + 1;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const obj: { stack: Location } = {} as any;
+  const obj: { stack: PlaywrightLocation } = {} as any;
   Error.captureStackTrace(obj);
   const location = obj.stack;
   // Error.stackTraceLimit = oldStackTraceLimit;
