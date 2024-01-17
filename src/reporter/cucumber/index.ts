@@ -50,8 +50,7 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> i
   }
 
   printsToStdio() {
-    // return this.reporter.printsToStdio();
-    return true;
+    return this.reporter.printsToStdio();
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
@@ -62,11 +61,9 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> i
     this.messagesBuilderRef.onEnd(result);
 
     await this.messagesBuilderRef.builder.buildMessages();
+    this.messagesBuilderRef.builder.emitMessages(this.reporter.eventBroadcaster);
 
-    const reporter = this.createCucumberReporter();
-    this.messagesBuilderRef.builder.emitMessages(reporter.eventBroadcaster);
-
-    await reporter.finished();
+    await this.reporter.finished();
   }
 
   private createCucumberReporter() {
