@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { Writable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import { EventEmitter } from 'node:events';
-import EventDataCollector from '../../cucumber/EventDataCollector';
+import EventDataCollector from './helpers/EventDataCollector';
 
 export type BaseReporterOptions = {
   cwd: string;
@@ -16,7 +16,7 @@ export type BaseReporterOptions = {
   eventDataCollector: EventDataCollector;
 };
 
-export class BaseReporter {
+export default class BaseReporter {
   protected outputStream: Writable = process.stdout;
 
   constructor(protected baseOptions: BaseReporterOptions) {}
@@ -36,7 +36,8 @@ export class BaseReporter {
     }
   }
 
-  protected async setOutputStreamToFile(outputFile: string) {
+  protected setOutputStream(outputFile?: string) {
+    if (!outputFile) return;
     const absolutePath = path.resolve(this.baseOptions.cwd, outputFile);
     fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
     this.outputStream = fs.createWriteStream(absolutePath);

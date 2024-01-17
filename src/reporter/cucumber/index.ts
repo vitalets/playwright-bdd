@@ -4,10 +4,11 @@
 import EventEmitter from 'node:events';
 import { FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder';
-import { MessageReporter } from './messageReporter';
-import { HtmlReporter } from './htmlReporter';
-import { BaseReporterOptions } from './baseReporter';
+import { BaseReporterOptions } from './base';
 import { getPlaywrightConfigDir } from '../../config/dir';
+import MessageReporter from './message';
+import HtmlReporter from './html';
+import JunitReporter from './junit';
 
 /**
  * Helper function to define reporter in a type-safe way.
@@ -28,6 +29,7 @@ export function cucumberReporter<T extends keyof BuiltinReporters>(
 const builtinReporters = {
   html: HtmlReporter,
   message: MessageReporter,
+  junit: JunitReporter,
 } as const;
 
 type BuiltinReporters = typeof builtinReporters;
