@@ -12,7 +12,7 @@ import { TestCaseBuilder } from './TestCase';
 import { Meta } from './Meta';
 import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
 import EventEmitter from 'node:events';
-import EventDataCollector from '../../../cucumber/EventDataCollector';
+import EventDataCollector from '../helpers/EventDataCollector';
 
 export type MessagesBuilderRef = ReturnType<typeof getMessagesBuilderRef>;
 

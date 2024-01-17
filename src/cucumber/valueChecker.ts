@@ -1,6 +1,5 @@
 /**
- * Copied from Cucumber.
- * See: https://github.com/cucumber/cucumber-js/blob/main/src/value_checker.ts
+ * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/value_checker.ts
  */
 
 export function doesHaveValue<T>(value: T): value is NonNullable<T> {
@@ -11,7 +10,7 @@ export function doesNotHaveValue<T>(value: T): boolean {
   return value === null || value === undefined;
 }
 
-export function valueOrDefault<T>(value: T, defaultValue: T): T {
+export function valueOrDefault<T>(value: T | undefined, defaultValue: T): T {
   if (doesHaveValue(value)) {
     return value;
   }

@@ -1,6 +1,6 @@
 /**
  * Groups Cucumber messages for easier access.
- * Copied from Cucumber, with some changes due to strictNullChecks errors.
+ * Based on Cucumber, with some changes due to strictNullChecks errors.
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/helpers/event_data_collector.ts
  */
 
@@ -8,7 +8,7 @@
 
 import { EventEmitter } from 'node:events';
 import * as messages from '@cucumber/messages';
-import { doesHaveValue, doesNotHaveValue } from './valueChecker';
+import { doesHaveValue, doesNotHaveValue } from '../../../cucumber/valueChecker';
 
 interface ITestCaseAttemptData {
   attempt: number;
