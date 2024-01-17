@@ -5,12 +5,14 @@
 
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { FeaturesLoader } from '../../cucumber/loadFeatures';
-import { getPlaywrightConfigDir } from '../../config/dir';
+import { FeaturesLoader } from '../../../cucumber/loadFeatures';
+import { getPlaywrightConfigDir } from '../../../config/dir';
 import { TestCaseRun } from './TestCaseRun';
 import { TestCaseBuilder } from './TestCase';
 import { Meta } from './Meta';
 import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
+import EventEmitter from 'node:events';
+import EventDataCollector from '../../../cucumber/EventDataCollector';
 
 export type MessagesBuilderRef = ReturnType<typeof getMessagesBuilderRef>;
 
@@ -47,6 +49,9 @@ class MessagesBuilder {
   private onEndPromiseResolve = () => {};
   private buildMessagesPromise?: Promise<void>;
 
+  private eventDataCollectorEmitter = new EventEmitter();
+  public eventDataCollector = new EventDataCollector(this.eventDataCollectorEmitter);
+
   constructor() {
     this.onEndPromise = new Promise((resolve) => (this.onEndPromiseResolve = resolve));
   }
@@ -69,6 +74,10 @@ class MessagesBuilder {
     return this.buildMessagesPromise;
   }
 
+  emitMessages(eventBroadcaster: EventEmitter) {
+    this.messages.forEach((message) => eventBroadcaster.emit('envelope', message));
+  }
+
   private async doBuildMessages() {
     await this.onEndPromise;
     await this.loadFeatures();
@@ -82,7 +91,7 @@ class MessagesBuilder {
     this.addTestCaseRuns();
     this.addTestRunFinished();
 
-    // console.log(this.messages);
+    this.buildEventDataCollector();
   }
 
   private addMeta() {
@@ -153,6 +162,10 @@ class MessagesBuilder {
     const cwd = getPlaywrightConfigDir();
     const featurePaths = this.getFeaturePaths();
     await this.featuresLoader.load(featurePaths, { relativeTo: cwd });
+  }
+
+  private buildEventDataCollector() {
+    this.emitMessages(this.eventDataCollectorEmitter);
   }
 
   private getFullResultTiming() {

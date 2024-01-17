@@ -4,7 +4,7 @@
  */
 import os from 'node:os';
 import * as messages from '@cucumber/messages';
-import { getPackageVersion } from '../../utils';
+import { getPackageVersion } from '../../../utils';
 
 export class Meta {
   buildMessage(): messages.Envelope {

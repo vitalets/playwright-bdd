@@ -2,9 +2,9 @@
  * Builds particular cucumber testCase.
  */
 import * as messages from '@cucumber/messages';
-import { GherkinDocumentWithPickles } from '../../cucumber/loadFeatures';
+import { GherkinDocumentWithPickles } from '../../../cucumber/loadFeatures';
 import { TestCaseRun } from './TestCaseRun';
-import { stringifyLocation } from '../../utils';
+import { stringifyLocation } from '../../../utils';
 
 export class TestCaseBuilder {
   constructor(
