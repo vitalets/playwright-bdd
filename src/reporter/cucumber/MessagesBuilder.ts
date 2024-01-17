@@ -18,8 +18,8 @@ let instance: MessagesBuilder;
 let referenceCount = 0;
 
 /**
- * Return reference to messages builder instance.
- * We pass onTestEnd and onEnd calls only for the first reference,
+ * Returns reference to messagesBuilder singleton instance.
+ * We pass onTestEnd and onEnd calls only for the first reference (reporter),
  * otherwise there will be duplicates.
  */
 export function getMessagesBuilderRef() {
@@ -30,8 +30,8 @@ export function getMessagesBuilderRef() {
     onTestEnd(test: pw.TestCase, result: pw.TestResult) {
       isFirstRef && this.builder.onTestEnd(test, result);
     },
-    onEnd(result: pw.FullResult) {
-      isFirstRef && this.builder.onEnd(result);
+    onEnd(fullResult: pw.FullResult) {
+      isFirstRef && this.builder.onEnd(fullResult);
     },
   };
 }
@@ -42,19 +42,35 @@ class MessagesBuilder {
   private testCaseRuns: TestCaseRun[] = [];
   private testCases = new Map</* testId */ string, messages.TestCase>();
   private featuresLoader = new FeaturesLoader();
-  private _fullResultTiming?: TimeMeasured;
+  private fullResultTiming?: TimeMeasured;
+  private onEndPromise: Promise<void>;
+  private onEndPromiseResolve = () => {};
+  private buildMessagesPromise?: Promise<void>;
+
+  constructor() {
+    this.onEndPromise = new Promise((resolve) => (this.onEndPromiseResolve = resolve));
+  }
 
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
     this.testCaseRuns.push(new TestCaseRun(test, result));
   }
 
-  onEnd(result: pw.FullResult) {
-    this.fullResult = result;
+  onEnd(fullResult: pw.FullResult) {
+    this.fullResult = fullResult;
+    this.onEndPromiseResolve();
   }
 
+  /**
+   * Builds Cucumber messages.
+   * Note: wrapped into promise to build messages once for all reporters.
+   */
   async buildMessages() {
-    // wait test end
-    // wrap as a single promise
+    if (!this.buildMessagesPromise) this.buildMessagesPromise = this.doBuildMessages();
+    return this.buildMessagesPromise;
+  }
+
+  private async doBuildMessages() {
+    await this.onEndPromise;
     await this.loadFeatures();
 
     this.addMeta();
@@ -140,20 +156,20 @@ class MessagesBuilder {
   }
 
   private getFullResultTiming() {
-    if (this._fullResultTiming) return this._fullResultTiming;
+    if (this.fullResultTiming) return this.fullResultTiming;
     // result.startTime and result.duration were added in pw 1.37
     // see: https://github.com/microsoft/playwright/pull/26760
     if ('startTime' in this.fullResult && 'duration' in this.fullResult) {
-      this._fullResultTiming = {
+      this.fullResultTiming = {
         startTime: this.fullResult.startTime as Date,
         duration: this.fullResult.duration as number,
       };
     } else {
       // Calculate overall startTime and duration based on test timings
       const items = this.testCaseRuns.map((t) => t.result);
-      this._fullResultTiming = calcMinMaxByArray(items);
+      this.fullResultTiming = calcMinMaxByArray(items);
     }
 
-    return this._fullResultTiming;
+    return this.fullResultTiming;
   }
 }
