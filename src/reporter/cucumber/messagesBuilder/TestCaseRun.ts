@@ -3,8 +3,8 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { BddTestAttachment } from '../../run/bddWorldInternal';
-import { stringifyLocation } from '../../utils';
+import { BddTestAttachment } from '../../../run/bddWorldInternal';
+import { stringifyLocation } from '../../../utils';
 
 export class TestCaseRun {
   private messages: messages.Envelope[] = [];
