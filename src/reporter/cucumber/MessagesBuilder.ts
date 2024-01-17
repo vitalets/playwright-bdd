@@ -12,15 +12,31 @@ import { TestCaseBuilder } from './TestCase';
 import { Meta } from './Meta';
 import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
 
-export class CucumberMessagesBuilder {
-  static instance: CucumberMessagesBuilder;
-  static referenceCount = 0;
-  static getInstance() {
-    if (!this.instance) this.instance = new CucumberMessagesBuilder();
-    this.referenceCount++;
-    return this.instance;
-  }
+export type MessagesBuilderRef = ReturnType<typeof getMessagesBuilderRef>;
 
+let instance: MessagesBuilder;
+let referenceCount = 0;
+
+/**
+ * Return reference to messages builder instance.
+ * We pass onTestEnd and onEnd calls only for the first reference,
+ * otherwise there will be duplicates.
+ */
+export function getMessagesBuilderRef() {
+  if (!instance) instance = new MessagesBuilder();
+  const isFirstRef = ++referenceCount === 1;
+  return {
+    builder: instance,
+    onTestEnd(test: pw.TestCase, result: pw.TestResult) {
+      isFirstRef && this.builder.onTestEnd(test, result);
+    },
+    onEnd(result: pw.FullResult) {
+      isFirstRef && this.builder.onEnd(result);
+    },
+  };
+}
+
+class MessagesBuilder {
   private messages: messages.Envelope[] = [];
   private fullResult!: pw.FullResult;
   private testCaseRuns: TestCaseRun[] = [];
@@ -50,7 +66,7 @@ export class CucumberMessagesBuilder {
     this.addTestCaseRuns();
     this.addTestRunFinished();
 
-    // console.log(this.messages)
+    // console.log(this.messages);
   }
 
   private addMeta() {

@@ -29,7 +29,7 @@ import { FormatOptions } from '@cucumber/cucumber/lib/formatter';
 // import { ISupportCodeLibrary } from '@cucumber/cucumber/api';
 // import { SourcedParameterTypeRegistry }
 // from '@cucumber/cucumber/lib/support_code_library_builder/sourced_parameter_type_registry';
-import { CucumberMessagesBuilder } from './MessagesBuilder';
+import { getMessagesBuilderRef, MessagesBuilderRef } from './MessagesBuilder';
 
 /**
  * Helper function to define reporter in a type-safe way.
@@ -51,26 +51,20 @@ export type CucumberReporterOptions = Pick<FormatOptions, 'colorsEnabled' | 'pri
 };
 
 export default class CucumberReporter implements Reporter {
-  protected messagesBuilder: CucumberMessagesBuilder;
-  protected isFirstBuilderRef = false;
+  private messagesBuilderRef: MessagesBuilderRef;
 
   constructor(protected options: CucumberReporterOptions) {
-    this.messagesBuilder = CucumberMessagesBuilder.getInstance();
-    this.isFirstBuilderRef = CucumberMessagesBuilder.referenceCount === 1;
+    this.messagesBuilderRef = getMessagesBuilderRef();
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    if (this.isFirstBuilderRef) {
-      this.messagesBuilder.onTestEnd(test, result);
-    }
+    this.messagesBuilderRef.onTestEnd(test, result);
   }
 
   async onEnd(result: FullResult) {
-    if (this.isFirstBuilderRef) {
-      this.messagesBuilder.onEnd(result);
-    }
+    this.messagesBuilderRef.onEnd(result);
 
-    await this.messagesBuilder.buildMessages();
+    await this.messagesBuilderRef.builder.buildMessages();
   }
 
   private async createFormatter() {
