@@ -6,7 +6,7 @@ export function doesHaveValue<T>(value: T): value is NonNullable<T> {
   return !doesNotHaveValue(value);
 }
 
-export function doesNotHaveValue<T>(value: T): boolean {
+export function doesNotHaveValue<T>(value: T): value is Extract<T, null | undefined> {
   return value === null || value === undefined;
 }
 

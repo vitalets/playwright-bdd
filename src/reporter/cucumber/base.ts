@@ -25,6 +25,10 @@ export default class BaseReporter {
     return this.baseOptions.eventBroadcaster;
   }
 
+  get eventDataCollector() {
+    return this.baseOptions.eventDataCollector;
+  }
+
   printsToStdio() {
     return this.outputStream === process.stdout;
   }
