@@ -9,6 +9,7 @@ import { getPlaywrightConfigDir } from '../../config/dir';
 import MessageReporter from './message';
 import HtmlReporter from './html';
 import JunitReporter from './junit';
+import JsonReporter from './json';
 
 /**
  * Helper function to define reporter in a type-safe way.
@@ -30,6 +31,7 @@ const builtinReporters = {
   html: HtmlReporter,
   message: MessageReporter,
   junit: JunitReporter,
+  json: JsonReporter,
 } as const;
 
 type BuiltinReporters = typeof builtinReporters;

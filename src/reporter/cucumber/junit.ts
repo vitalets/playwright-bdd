@@ -2,7 +2,9 @@
  * Cucumber junit reporter.
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/junit_formatter.ts
  */
+
 /* eslint-disable complexity, max-lines */
+
 import xmlbuilder from 'xmlbuilder';
 import * as messages from '@cucumber/messages';
 import {
@@ -91,10 +93,6 @@ export default class JunitReporter extends BaseReporter {
 
   get suiteName() {
     return valueOrDefault(this.options.suiteName, 'cucumber-js');
-  }
-
-  get eventDataCollector() {
-    return this.baseOptions.eventDataCollector;
   }
 
   private getTestCases() {
