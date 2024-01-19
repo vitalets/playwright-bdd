@@ -16,3 +16,4 @@ playwright-report
 /examples/package-lock.json
 /todo.txt
 /test/reporter-cucumber/**/report.ndjson
+/test/reporter-cucumber/**/report.json
