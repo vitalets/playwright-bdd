@@ -12,8 +12,10 @@ npm-debug.log
 .cache
 test-results
 playwright-report
+blob-report
 /examples/playwright-bdd*.tgz
 /examples/package-lock.json
 /todo.txt
 /test/reporter-cucumber/**/report.ndjson
 /test/reporter-cucumber/**/report.json
+/test/**/reports
