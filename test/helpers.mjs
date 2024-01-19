@@ -86,6 +86,9 @@ export function ensureNodeVersion(version) {
   }
 }
 
+/**
+ * Class to manage files inside current test dir.
+ */
 export class TestDir {
   constructor(importMeta) {
     this.importMeta = importMeta;
