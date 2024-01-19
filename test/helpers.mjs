@@ -102,7 +102,7 @@ export class TestDir {
   }
 
   getAbsPath(relativePath) {
-    return new URL(relativePath, this.importMeta.url);
+    return fileURLToPath(new URL(relativePath, this.importMeta.url));
   }
 
   clearDir(relativePath) {
@@ -121,7 +121,7 @@ export class TestDir {
   }
 
   getAllFiles(relativePath) {
-    const absPath = fileURLToPath(this.getAbsPath(relativePath));
+    const absPath = this.getAbsPath(relativePath);
     return fg.sync(path.join(absPath, '**')).map((file) => path.relative(absPath, file));
   }
 }

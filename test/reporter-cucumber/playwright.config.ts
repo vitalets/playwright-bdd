@@ -15,5 +15,8 @@ export default defineConfig({
     cucumberReporter('message', {
       outputFile: `features/${featureDir}/report.ndjson`,
     }),
+    cucumberReporter('json', {
+      outputFile: `features/${featureDir}/report.json`,
+    }),
   ],
 });
