@@ -11,6 +11,10 @@ class MyReporter implements Reporter {
     // eslint-disable-next-line no-console
     console.log(title, `${relFile}:${location?.line || 0}:${location?.column || 0}`);
   }
+
+  printsToStdio() {
+    return true;
+  }
 }
 
 export default MyReporter;
