@@ -5,6 +5,7 @@ import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { BddTestAttachment } from '../../../run/bddWorldInternal';
 import { stringifyLocation } from '../../../utils';
+import { isGeneratedAttachmentName } from '../../../run/AttachmentAdapter';
 
 export class TestCaseRun {
   private messages: messages.Envelope[] = [];
@@ -53,6 +54,7 @@ export class TestCaseRun {
     this.testCase.testSteps.forEach((testStep, stepIndex) => {
       const pwStep = this.getPlaywrightStep(stepIndex);
       this.addTestStepStarted(testStep, pwStep);
+      this.addStepAttachments(testStep, stepIndex);
       this.addTestStepFinished(testStep, pwStep);
     });
     this.addTestCaseFinished();
@@ -112,14 +114,47 @@ export class TestCaseRun {
     this.messages.push({ testStepFinished });
   }
 
+  private getBddDataStep(stepIndex: number) {
+    // find bddDataStep just by index
+    return this.bddData.steps[stepIndex];
+  }
+
   private getPlaywrightStep(stepIndex: number) {
-    // find bddDataStep in bddData just by index
-    const bddDataStep = this.bddData.steps[stepIndex];
+    const bddDataStep = this.getBddDataStep(stepIndex);
     const pwStep = this.pwSteps.find((pwStep) => {
       return pwStep.location && stringifyLocation(pwStep.location) === bddDataStep.pwStepLocation;
     });
     if (!pwStep) throw new Error('pwStep not found');
     return pwStep;
+  }
+
+  private addStepAttachments(testStep: messages.TestStep, stepIndex: number) {
+    this.getStepAttachments(stepIndex).forEach((pwAttachment) => {
+      if (pwAttachment.name === '__bddData') return;
+      // todo: support file attachments
+      if (pwAttachment.body) {
+        const attachment: messages.Attachment = {
+          // for now always attach as base64
+          // todo: for text/plain and application/json use raw to save some bytes
+          body: pwAttachment.body.toString('base64'),
+          contentEncoding: messages.AttachmentContentEncoding.BASE64,
+          mediaType: pwAttachment.contentType,
+          fileName: isGeneratedAttachmentName(pwAttachment) ? undefined : pwAttachment.name,
+          testCaseStartedId: this.id,
+          testStepId: testStep.id,
+        };
+        this.messages.push({ attachment });
+      }
+    });
+  }
+
+  private getStepAttachments(stepIndex: number) {
+    const { attachmentsStartIndex } = this.getBddDataStep(stepIndex);
+    const isLastStep = stepIndex === this.bddData.steps.length - 1;
+    const attachmentsEndIndex = isLastStep
+      ? this.result.attachments.length
+      : this.getBddDataStep(stepIndex + 1).attachmentsStartIndex;
+    return this.result.attachments.slice(attachmentsStartIndex, attachmentsEndIndex);
   }
 }
 

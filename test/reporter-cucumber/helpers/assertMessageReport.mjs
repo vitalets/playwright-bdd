@@ -7,10 +7,14 @@ import { buildShape } from './shared.mjs';
 
 // these paths are ignored in comparison.
 const getIgnorePaths = (isCCK) => [
-  isCCK ? '' : 'meta', // there is not meta message in cucumber test files
+  !isCCK ? 'meta' : '', // there is not meta message in cucumber test files
   'meta.ci',
+  'hook',
+  // todo: support stepDefinition messages
   'stepDefinition',
   'testCase.testSteps.#.stepDefinitionIds',
+  // todo: support hook messages
+  'testCase.testSteps.#.hookId',
 ];
 
 // these paths are compared by values, not by counter.
@@ -18,6 +22,8 @@ const valuePaths = [
   'source.data', // prettier-ignore
   'pickle.name',
   'pickle.steps.#.text',
+  'attachment.mediaType',
+  'attachment.fileName',
 ];
 
 /**
