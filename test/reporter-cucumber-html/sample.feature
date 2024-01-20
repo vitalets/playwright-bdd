@@ -17,8 +17,8 @@ Feature: rich feature
       Text with different quote types '`"
       ```
 
-    # And attach json
-    # And attach image inline
+    And attach text
+    And attach image inline
     # And attach screenshot as a file
 
   Scenario: Scenario with all keywords

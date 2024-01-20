@@ -1,6 +1,7 @@
 /**
  * Cucumber html reporter.
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/html_formatter.ts
+ * See: https://github.com/cucumber/html-formatter
  */
 import { finished } from 'node:stream/promises';
 import CucumberHtmlStream from '@cucumber/html-formatter';

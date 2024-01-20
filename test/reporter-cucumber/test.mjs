@@ -5,6 +5,8 @@
  * - https://github.com/cucumber/cucumber-js/tree/main/features/fixtures/formatters
  * 2. Cucumber compatibility tests (CCK)
  * - https://github.com/cucumber/compatibility-kit
+ * - for step definitions better to check Cucumber CCK suite:
+ *   https://github.com/cucumber/cucumber-js/tree/main/compatibility/features
  *
  * Run single feature:
  * node test/setup.mjs && node test/reporter-cucumber/test.mjs passed-scenario
@@ -20,6 +22,11 @@ import { test, TestDir, execPlaywrightTest } from '../helpers.mjs';
 const testDir = new TestDir(import.meta);
 
 const onlyFeatureDir = process.argv[2];
+
+const skipFeatureDirs = [
+  // skip b/c extra steps for hooks
+  'cck/attachments',
+];
 
 test(testDir.name, async () => {
   const dirs = onlyFeatureDir ? [onlyFeatureDir] : getAllFeatureDirs();
@@ -69,5 +76,5 @@ function getAllFeatureDirs() {
       deep: 2,
       onlyDirectories: true,
     })
-    .filter((dir) => dir !== 'cck');
+    .filter((dir) => dir !== 'cck' && !skipFeatureDirs.includes(dir));
 }
