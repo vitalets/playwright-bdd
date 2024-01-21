@@ -4,6 +4,10 @@ Feature: rich feature
   Background:
       Given Action 0
 
+  # keep it first to run in a first shard
+  Scenario: Failing Scenario
+    Given failing step
+
   @scenariio-tag
   Scenario: Scenario with different steps
     Given Action 1

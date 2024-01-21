@@ -23,19 +23,11 @@ function execPlaywrightTestInternal(dir, cmd) {
   const cwd = path.join('test', dir);
   const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
   const env = Object.assign({}, process.env, cmd?.env);
-  try {
-    const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
-    if (process.env.TEST_DEBUG) {
-      console.log('STDOUT:', stdout?.toString());
-    }
-    return stdout?.toString() || '';
-  } catch (e) {
-    if (process.env.TEST_DEBUG) {
-      console.log('STDOUT:', e.stdout?.toString());
-      console.log('STDERR:', e.stderr?.toString());
-    }
-    throw e;
+  const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
+  if (process.env.TEST_DEBUG) {
+    console.log('STDOUT:', stdout?.toString());
   }
+  return stdout?.toString() || '';
 }
 
 export function execPlaywrightTest(dir, cmd) {
@@ -47,19 +39,20 @@ export function execPlaywrightTest(dir, cmd) {
     // if playwright cmd exits -> output is in stderr
     // if test.mjs not passed -> output is in stderr
     // That's why always print stdout + stderr
+    console.log('STDERR:', e.stderr?.toString());
+    console.log('STDOUT:', e.stdout?.toString());
     console.log(e.message);
-    console.log(e.stdout?.toString());
-    console.log(e.stderr?.toString());
     process.exit(1);
   }
 }
 
 export function execPlaywrightTestWithError(dir, error, cmd) {
+  error = error || 'Command failed';
   try {
     execPlaywrightTestInternal(dir, cmd);
   } catch (e) {
-    const stdout = e.stdout.toString().trim();
-    const stderr = e.stderr.toString().trim();
+    const stdout = e.stdout?.toString().trim() || '';
+    const stderr = `${e.message}\n${e.stderr?.toString().trim() || ''}`;
     const errors = Array.isArray(error) ? error : [error];
     errors.forEach((error) => {
       if (typeof error === 'string') {

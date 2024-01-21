@@ -2,8 +2,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['*.feature'],
-  require: ['steps.ts'],
+  paths: ['features/*.feature'],
+  require: ['features/*.ts'],
 });
 
 export default defineConfig({
@@ -11,4 +11,7 @@ export default defineConfig({
   reporter: process.argv.includes('--shard')
     ? 'blob'
     : [cucumberReporter('html', { outputFile: 'reports/report.html' })],
+  use: {
+    screenshot: 'only-on-failure',
+  },
 });

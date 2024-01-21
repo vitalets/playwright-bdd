@@ -3,15 +3,17 @@ import { test, expect } from '@playwright/test';
 
 test.beforeEach(async ({ page }) => {
   await page.goto(pathToFileURL('reports/report.html').href);
-  await page.getByText('sample.feature').click();
 });
 
 test('general info about scenarios', async ({ page }) => {
+  await expect(page.getByText('1 failed')).toBeVisible();
   await expect(page.getByText('5 passed')).toBeVisible();
-  await expect(page.getByText('sample.feature')).toBeVisible();
+  await expect(page.getByRole('button').filter({ hasText: 'sample.feature' })).toBeVisible();
   await expect(page.getByText('Scenario with different steps')).toBeVisible();
   await expect(page.getByText('Scenario with all keywords')).toBeVisible();
   await expect(page.getByText('Check doubled')).toBeVisible();
+  // todo: better assert error details
+  await expect(page.getByText('Error:')).toBeVisible();
 });
 
 test('attachments', async ({ page }) => {
@@ -38,5 +40,12 @@ test('attachments', async ({ page }) => {
       .locator('css=details')
       .filter({ hasText: 'image attachment as file' })
       .getByAltText('Embedded Image'),
+  ).toBeVisible();
+
+  // screenshot for failing step
+  await expect(page.getByText('failing step')).toBeVisible();
+  await page.getByText('screenshot').click();
+  await expect(
+    page.locator('css=details').filter({ hasText: 'screenshot' }).getByAltText('Embedded Image'),
   ).toBeVisible();
 });
