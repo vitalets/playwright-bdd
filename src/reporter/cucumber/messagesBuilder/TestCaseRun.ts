@@ -1,6 +1,7 @@
 /**
  * Class representing single run of a test case.
  */
+import fs from 'node:fs';
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { BddTestAttachment } from '../../../run/bddWorldInternal';
@@ -131,23 +132,31 @@ export class TestCaseRun {
   private addStepAttachments(testStep: messages.TestStep, stepIndex: number) {
     this.getStepAttachments(stepIndex).forEach((pwAttachment) => {
       if (pwAttachment.name === '__bddData') return;
-      // todo: support file attachments
-      if (pwAttachment.body) {
-        const attachment: messages.Attachment = {
-          // for now always attach as base64
-          // todo: for text/plain and application/json use raw to save some bytes
-          body: pwAttachment.body.toString('base64'),
-          contentEncoding: messages.AttachmentContentEncoding.BASE64,
-          mediaType: pwAttachment.contentType,
-          fileName: isGeneratedAttachmentName(pwAttachment) ? undefined : pwAttachment.name,
-          testCaseStartedId: this.id,
-          testStepId: testStep.id,
-        };
-        this.messages.push({ attachment });
-      }
+
+      const body = pwAttachment.path
+        ? fs.readFileSync(pwAttachment.path, 'base64')
+        : pwAttachment.body!.toString('base64');
+
+      const attachment: messages.Attachment = {
+        // for now always attach as base64
+        // todo: for text/plain and application/json use raw to save some bytes
+        body,
+        contentEncoding: messages.AttachmentContentEncoding.BASE64,
+        mediaType: pwAttachment.contentType,
+        fileName: isGeneratedAttachmentName(pwAttachment) ? undefined : pwAttachment.name,
+        testCaseStartedId: this.id,
+        testStepId: testStep.id,
+      };
+
+      this.messages.push({ attachment });
     });
   }
 
+  /**
+   * Returns attachments created in particular step.
+   * It's needed b/c in Cucumber attachments are linked to step,
+   * although in Playwright attachments are linked to test.
+   */
   private getStepAttachments(stepIndex: number) {
     const { attachmentsStartIndex } = this.getBddDataStep(stepIndex);
     const isLastStep = stepIndex === this.bddData.steps.length - 1;
