@@ -19,7 +19,7 @@ Feature: rich feature
 
     And attach text
     And attach image inline
-    # And attach screenshot as a file
+    And attach image as file
 
   Scenario: Scenario with all keywords
     Given Action 1

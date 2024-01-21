@@ -9,8 +9,8 @@
  *   https://github.com/cucumber/cucumber-js/tree/main/compatibility/features
  *
  * Run single feature:
- * node test/setup.mjs && node test/reporter-cucumber/test.mjs passed-scenario
- * node test/setup.mjs && node test/reporter-cucumber/test.mjs cck/minimal
+ * npm run only -- test/reporter-cucumber passed-scenario
+ * npm run only -- test/reporter-cucumber cck/minimal
  */
 import path from 'node:path';
 import fg from 'fast-glob';

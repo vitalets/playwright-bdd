@@ -48,12 +48,11 @@ npm run test
 ```
 
 ## Run particular test 
-1. Replace `test(...)` with `test.only(...)` in `test/*/test.mjs`
-2. Run only this test:
-    ```
-    npm run only
-    ```
-3. Run only this test in **debug mode** showing `STDOUT` and `STDERR`:
-    ```
-    npm run only:d
-    ```
+Use this command (utilize autocomplete after typoing `test/`):
+```
+npm run only -- test/<%test-dir%>
+```
+Example:
+```
+npm run only -- test/reporter-cucumber-html
+```

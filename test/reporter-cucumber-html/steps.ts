@@ -15,7 +15,9 @@ When('attach image inline', async ({ $testInfo }) => {
     contentType: 'image/png',
   });
 });
-Then('attach image as file', async () => {
-  // await page.goto('https://example.com');
-  // await $testInfo.attach('screenshot', )
+Then('attach image as file', async ({ $testInfo }) => {
+  await $testInfo.attach('image attachment as file', {
+    path: 'cucumber.png',
+    contentType: 'image/png',
+  });
 });
