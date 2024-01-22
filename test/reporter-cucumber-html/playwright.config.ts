@@ -8,6 +8,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  // reporter: [['null'], cucumberReporter('html', { outputFile: 'reports/report.html' })],
   reporter: process.argv.includes('--shard')
     ? 'blob'
     : [cucumberReporter('html', { outputFile: 'reports/report.html' })],

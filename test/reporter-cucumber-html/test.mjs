@@ -14,8 +14,7 @@ test(testDir.name, () => {
   testDir.clearDir('reports');
   execPlaywrightTestWithError(testDir.name);
 
-  expect(testDir.isFileExists('reports/report.html')).toEqual(true);
-  assertHtmlReport();
+  checkHtmlReport();
 });
 
 test(`${testDir.name} (merge-reports)`, () => {
@@ -27,8 +26,7 @@ test(`${testDir.name} (merge-reports)`, () => {
   execPlaywrightTest(testDir.name, `${PLAYWRIGHT_CMD} --shard 2/2`);
   mergeReports();
 
-  expect(testDir.isFileExists('reports/report.html')).toEqual(true);
-  assertHtmlReport();
+  checkHtmlReport();
 });
 
 function mergeReports() {
@@ -38,6 +36,7 @@ function mergeReports() {
   );
 }
 
-function assertHtmlReport() {
+function checkHtmlReport() {
+  expect(testDir.isFileExists('reports/report.html')).toEqual(true);
   execPlaywrightTest(testDir.name, 'npx playwright test --config check-report');
 }

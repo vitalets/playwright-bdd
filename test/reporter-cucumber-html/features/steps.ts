@@ -11,7 +11,7 @@ When('Step with doc string', () => {});
 
 Given('failing step', async ({ page }) => {
   await page.goto('https://example.com');
-  expect(1).toEqual(2);
+  await expect(page.getByText('missing string')).toBeVisible({ timeout: 1 });
 });
 
 When('attach text', async ({ $testInfo }) => {
