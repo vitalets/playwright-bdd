@@ -7,6 +7,7 @@ import * as messages from '@cucumber/messages';
 import { BddTestAttachment } from '../../../run/bddWorldInternal';
 import { stringifyLocation } from '../../../utils';
 import { isGeneratedAttachmentName } from '../../../run/AttachmentAdapter';
+import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes';
 
 export class TestCaseRun {
   private messages: messages.Envelope[] = [];
@@ -99,14 +100,15 @@ export class TestCaseRun {
 
   private addTestStepFinished(testStep: messages.TestStep, pwStep: pw.TestStep) {
     const { error } = pwStep;
+    const errorOutput = error ? this.buildErrorOutput(error) : undefined;
     const testStepFinished: messages.TestStepFinished = {
       testCaseStartedId: this.id,
       testStepId: testStep.id,
       testStepResult: {
         duration: messages.TimeConversion.millisecondsToDuration(pwStep.duration),
         status: error ? messages.TestStepResultStatus.FAILED : messages.TestStepResultStatus.PASSED,
-        message: error ? error.stack : undefined,
-        exception: error ? { message: error.message, type: 'Error' } : undefined,
+        message: errorOutput,
+        exception: error ? { message: errorOutput, type: 'Error' } : undefined,
       },
       timestamp: messages.TimeConversion.millisecondsSinceEpochToTimestamp(
         pwStep.startTime.getTime() + pwStep.duration,
@@ -164,6 +166,10 @@ export class TestCaseRun {
       ? this.result.attachments.length
       : this.getBddDataStep(stepIndex + 1).attachmentsStartIndex;
     return this.result.attachments.slice(attachmentsStartIndex, attachmentsEndIndex);
+  }
+
+  private buildErrorOutput(error: pw.TestError) {
+    return stripAnsiEscapes([error.message, error.snippet].filter(Boolean).join('\n'));
   }
 }
 

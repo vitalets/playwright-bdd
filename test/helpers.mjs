@@ -24,9 +24,7 @@ function execPlaywrightTestInternal(dir, cmd) {
   const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
   const env = Object.assign({}, process.env, cmd?.env);
   const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
-  if (process.env.TEST_DEBUG) {
-    console.log('STDOUT:', stdout?.toString());
-  }
+  if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout?.toString());
   return stdout?.toString() || '';
 }
 
@@ -51,6 +49,10 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
   try {
     execPlaywrightTestInternal(dir, cmd);
   } catch (e) {
+    // todo: handle case when exec fails with some unexpected error
+    // and passed error param is empty.
+    // Now to debug it uncomment the line below:
+    // console.log(11, e.message);
     const stdout = e.stdout?.toString().trim() || '';
     const stderr = `${e.message}\n${e.stderr?.toString().trim() || ''}`;
     const errors = Array.isArray(error) ? error : [error];
@@ -130,7 +132,7 @@ export function clearDir(relativePath, importMeta) {
 
 export function expectFileExists(importMeta, relPath) {
   const absPath = new URL(relPath, importMeta.url);
-  assert(fs.existsSync(absPath), `Missing file: ${relPath}`);
+  assert(fs.existsSync(absPath), `Expected file to exist: ${relPath}`);
 }
 
 export function expectFileNotExists(importMeta, relPath) {
