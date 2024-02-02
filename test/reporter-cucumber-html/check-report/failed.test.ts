@@ -90,6 +90,8 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
     'step that uses failingAfterFixtureNoStep',
     'Action 3',
     'Hook "fixture: failingAfterFixtureNoStep" failed',
+    // there is no automatic screenshot here
+    // see: https://github.com/microsoft/playwright/issues/29325
   ]);
   await expect(scenario.getAttachments()).toContainText([
     'attachment in failingAfterFixtureNoStep (before use)',
