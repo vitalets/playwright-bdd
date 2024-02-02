@@ -7,12 +7,14 @@ import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { FeaturesLoader } from '../../../cucumber/loadFeatures';
 import { getPlaywrightConfigDir } from '../../../config/dir';
-import { TestCaseRun } from './TestCaseRun';
-import { TestCaseBuilder } from './TestCase';
+import { TestCaseRun, TestCaseRunEnvelope } from './TestCaseRun';
+import { TestCase } from './TestCase';
 import { Meta } from './Meta';
 import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
 import EventEmitter from 'node:events';
 import EventDataCollector from '../helpers/EventDataCollector';
+import { Hook } from './Hook';
+import { MapWithCreate } from '../../../utils/MapWithCreate';
 
 export type MessagesBuilderRef = ReturnType<typeof getMessagesBuilderRef>;
 
@@ -22,7 +24,7 @@ let referenceCount = 0;
 /**
  * Returns reference to messagesBuilder singleton instance.
  * We pass onTestEnd and onEnd calls only for the first reference (reporter),
- * otherwise there will be duplicates.
+ * otherwise all events will be duplicated.
  */
 export function getMessagesBuilderRef() {
   if (!instance) instance = new MessagesBuilder();
@@ -38,11 +40,29 @@ export function getMessagesBuilderRef() {
   };
 }
 
+type ConcreteEnvelope<T extends keyof messages.Envelope> = Required<
+  Pick<messages.Envelope, T>
+> | null;
+
 class MessagesBuilder {
-  private messages: messages.Envelope[] = [];
+  private report = {
+    meta: null as ConcreteEnvelope<'meta'>,
+    source: [] as ConcreteEnvelope<'source'>[],
+    gherkinDocument: [] as ConcreteEnvelope<'gherkinDocument'>[],
+    pickle: [] as ConcreteEnvelope<'pickle'>[],
+    stepDefinition: [] as ConcreteEnvelope<'stepDefinition'>[],
+    hook: [] as ConcreteEnvelope<'hook'>[],
+    testRunStarted: null as ConcreteEnvelope<'testRunStarted'>,
+    testCase: [] as ConcreteEnvelope<'testCase'>[],
+    testCaseRuns: [] as TestCaseRunEnvelope[],
+    testRunFinished: null as ConcreteEnvelope<'testRunFinished'>,
+  };
+
   private fullResult!: pw.FullResult;
+  private onTestEnds: { test: pw.TestCase; result: pw.TestResult }[] = [];
   private testCaseRuns: TestCaseRun[] = [];
-  private testCases = new Map</* testId */ string, messages.TestCase>();
+  private testCases = new MapWithCreate</* testId */ string, TestCase>();
+  private hooks = new MapWithCreate</* internalId */ string, Hook>();
   private featuresLoader = new FeaturesLoader();
   private fullResultTiming?: TimeMeasured;
   private onEndPromise: Promise<void>;
@@ -57,7 +77,7 @@ class MessagesBuilder {
   }
 
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
-    this.testCaseRuns.push(new TestCaseRun(test, result));
+    this.onTestEnds.push({ test, result });
   }
 
   onEnd(fullResult: pw.FullResult) {
@@ -74,18 +94,19 @@ class MessagesBuilder {
     return this.buildMessagesPromise;
   }
 
-  emitMessages(eventBroadcaster: EventEmitter) {
-    this.messages.forEach((message) => eventBroadcaster.emit('envelope', message));
-  }
-
+  // eslint-disable-next-line max-statements
   private async doBuildMessages() {
     await this.onEndPromise;
+
+    this.createTestCaseRuns();
     await this.loadFeatures();
+    this.createTestCases();
 
     this.addMeta();
     this.addSources();
     this.addGherkinDocuments();
     this.addPickles();
+    this.addHooks();
     this.addTestRunStarted();
     this.addTestCases();
     this.addTestCaseRuns();
@@ -94,62 +115,12 @@ class MessagesBuilder {
     this.buildEventDataCollector();
   }
 
-  private addMeta() {
-    this.messages.push(new Meta().buildMessage());
-  }
-
-  private addSources() {
-    const messages = this.featuresLoader.gherkinQuery.getSources().map((source) => ({ source }));
-    this.messages.push(...messages);
-  }
-
-  private addGherkinDocuments() {
-    const messages = this.featuresLoader.gherkinQuery
-      .getGherkinDocuments()
-      .map((gherkinDocument) => ({ gherkinDocument }));
-    this.messages.push(...messages);
-  }
-
-  private addPickles() {
-    const messages = this.featuresLoader.gherkinQuery.getPickles().map((pickle) => ({ pickle }));
-    this.messages.push(...messages);
-  }
-
-  private addTestCases() {
-    const docs = this.featuresLoader.getDocumentsWithPickles();
-    this.testCaseRuns.forEach((testCaseRun) => {
-      let testCase = this.testCases.get(testCaseRun.test.id);
-      if (!testCase) {
-        testCase = new TestCaseBuilder(testCaseRun, docs).build();
-        this.testCases.set(testCaseRun.test.id, testCase);
-        this.messages.push({ testCase });
-      }
-      testCaseRun.testCase = testCase;
+  emitMessages(eventBroadcaster: EventEmitter) {
+    Object.values(this.report).forEach((value) => {
+      if (!value) return;
+      const messages = Array.isArray(value) ? value : [value];
+      messages.forEach((message) => eventBroadcaster.emit('envelope', message));
     });
-  }
-
-  private addTestCaseRuns() {
-    this.testCaseRuns.map((testCaseRun) => {
-      const messages = testCaseRun.buildMessages();
-      this.messages.push(...messages);
-    });
-  }
-
-  private addTestRunStarted() {
-    const { startTime } = this.getFullResultTiming();
-    const testRunStarted: messages.TestRunStarted = {
-      timestamp: toCucumberTimestamp(startTime.getTime()),
-    };
-    this.messages.push({ testRunStarted });
-  }
-
-  private addTestRunFinished() {
-    const { startTime, duration } = this.getFullResultTiming();
-    const testRunFinished: messages.TestRunFinished = {
-      success: this.fullResult.status === 'passed',
-      timestamp: toCucumberTimestamp(startTime.getTime() + duration),
-    };
-    this.messages.push({ testRunFinished });
   }
 
   private getFeaturePaths() {
@@ -162,6 +133,86 @@ class MessagesBuilder {
     const cwd = getPlaywrightConfigDir();
     const featurePaths = this.getFeaturePaths();
     await this.featuresLoader.load(featurePaths, { relativeTo: cwd });
+  }
+
+  private createTestCases() {
+    const gherkinDocuments = this.featuresLoader.getDocumentsWithPickles();
+    this.testCaseRuns.forEach((testCaseRun) => {
+      const testId = testCaseRun.test.id;
+      const testCase = this.testCases.getOrCreate(
+        testId,
+        () => new TestCase(testId, gherkinDocuments),
+      );
+      testCase.addRun(testCaseRun);
+      testCaseRun.testCase = testCase;
+    });
+  }
+
+  private createTestCaseRuns() {
+    this.onTestEnds.forEach(({ test, result }) => {
+      const testCaseRun = new TestCaseRun(test, result, this.hooks);
+      this.testCaseRuns.push(testCaseRun);
+    });
+  }
+
+  private addMeta() {
+    this.report.meta = new Meta().buildMessage();
+  }
+
+  private addSources() {
+    this.report.source = this.featuresLoader.gherkinQuery
+      .getSources()
+      .map((source) => ({ source }));
+  }
+
+  private addGherkinDocuments() {
+    this.report.gherkinDocument = this.featuresLoader.gherkinQuery
+      .getGherkinDocuments()
+      .map((gherkinDocument) => ({ gherkinDocument }));
+  }
+
+  private addPickles() {
+    this.report.pickle = this.featuresLoader.gherkinQuery
+      .getPickles()
+      .map((pickle) => ({ pickle }));
+  }
+
+  private addHooks() {
+    this.hooks.forEach((hook) => {
+      const message = hook.buildMessage();
+      this.report.hook.push(message);
+    });
+  }
+
+  private addTestCases() {
+    this.testCases.forEach((testCase) => {
+      const message = testCase.buildMessage();
+      this.report.testCase.push(message);
+    });
+  }
+
+  private addTestCaseRuns() {
+    this.testCaseRuns.map((testCaseRun) => {
+      const messages = testCaseRun.buildMessages();
+      this.report.testCaseRuns.push(...messages);
+    });
+  }
+
+  private addTestRunStarted() {
+    const { startTime } = this.getFullResultTiming();
+    const testRunStarted: messages.TestRunStarted = {
+      timestamp: toCucumberTimestamp(startTime.getTime()),
+    };
+    this.report.testRunStarted = { testRunStarted };
+  }
+
+  private addTestRunFinished() {
+    const { startTime, duration } = this.getFullResultTiming();
+    const testRunFinished: messages.TestRunFinished = {
+      success: this.fullResult.status === 'passed',
+      timestamp: toCucumberTimestamp(startTime.getTime() + duration),
+    };
+    this.report.testRunFinished = { testRunFinished };
   }
 
   private buildEventDataCollector() {

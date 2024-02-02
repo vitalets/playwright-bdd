@@ -1,11 +1,11 @@
 import { execSync } from 'node:child_process';
+// use assert instead of Playwright's expect to have less verbose output
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import test from 'node:test';
 import fs from 'node:fs';
 import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
-import { expect } from '@playwright/test';
 
 export { test };
 export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
@@ -24,7 +24,6 @@ function execPlaywrightTestInternal(dir, cmd) {
   const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
   const env = Object.assign({}, process.env, cmd?.env);
   const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
-  if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout?.toString());
   return stdout?.toString() || '';
 }
 
@@ -44,29 +43,46 @@ export function execPlaywrightTest(dir, cmd) {
   }
 }
 
+/**
+ * Runs Playwright test with expected error output.
+ */
 export function execPlaywrightTestWithError(dir, error, cmd) {
-  error = error || 'Command failed';
+  error = error || 'Command failed:';
+  // if (!error) {
+  //   // Important to set error, otherwise we can't distinguish between expected error
+  //   // and some other error.
+  //   throw new Error(`You should set error for execPlaywrightTestWithError call.`);
+  // }
   try {
-    execPlaywrightTestInternal(dir, cmd);
+    const stdout = execPlaywrightTestInternal(dir, cmd);
+    console.log('STDOUT:', stdout);
+    // todo: how to log stderr here?
   } catch (e) {
-    // todo: handle case when exec fails with some unexpected error
-    // and passed error param is empty.
-    // Now to debug it uncomment the line below:
-    // console.log(11, e.message);
     const stdout = e.stdout?.toString().trim() || '';
-    const stderr = `${e.message}\n${e.stderr?.toString().trim() || ''}`;
+    const stderr = e.stderr?.toString().trim() || '';
+    // e.message can include whole stderr
+    e.message = e.message.replace(stderr, '').trim();
+    const output = [e.message, stderr, stdout].filter(Boolean).join('\n');
     const errors = Array.isArray(error) ? error : [error];
     errors.forEach((error) => {
       if (typeof error === 'string') {
-        expect(stderr).toContain(error);
+        assert(
+          output.includes(error),
+          [
+            `Expected output to include "${error}"`, // prettier-ignore
+            `ERROR: ${e.message}`,
+            `STDERR: ${stderr}`,
+            `STDOUT: ${stdout}`,
+          ].join('\n'),
+        );
       } else {
-        expect(stderr).toMatch(error);
+        assert.match(output, error);
       }
     });
 
     return stdout;
   }
-  assert.fail(`Expected to exit with error.`);
+  assert.fail(`Expected to exit with error: ${error}`);
 }
 
 export function getPackageVersion(pkg) {

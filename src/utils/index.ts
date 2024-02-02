@@ -33,8 +33,12 @@ export function extractTemplateParams(t: string) {
   return [...t.matchAll(/<(.+?)>/g)].map((m) => m[1]);
 }
 
-export function removeDuplicates(arr: string[]) {
+export function removeDuplicates<T>(arr: T[]) {
   return [...new Set(arr)];
+}
+
+export function toBoolean<T>(value: T): value is NonNullable<T> {
+  return Boolean(value);
 }
 
 export function resolvePackageRoot(packageName: string) {

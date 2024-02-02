@@ -1,18 +1,13 @@
-import { expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createBdd } from 'playwright-bdd';
+import { test } from './fixtures';
 
-const { Given, When, Then } = createBdd();
+const { When, Then } = createBdd(test);
 
 When('Action {int}', () => {});
 When('Step with data table', () => {});
 When('Step with doc string', () => {});
-
-Given('failing step', async ({ page }) => {
-  await page.goto('https://example.com');
-  await expect(page.getByText('missing string')).toBeVisible({ timeout: 1 });
-});
 
 When('attach text', async ({ $testInfo }) => {
   await $testInfo.attach('text attachment', { body: 'some text' });

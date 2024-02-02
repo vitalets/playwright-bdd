@@ -7,7 +7,7 @@ import * as messages from '@cucumber/messages';
 import { getPackageVersion } from '../../../utils';
 
 export class Meta {
-  buildMessage(): messages.Envelope {
+  buildMessage() {
     const meta: messages.Meta = {
       protocolVersion: messages.version,
       implementation: {
