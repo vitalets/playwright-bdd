@@ -5,7 +5,6 @@ import {
   execPlaywrightTest,
   execPlaywrightTestWithError,
   DEFAULT_CMD,
-  PLAYWRIGHT_CMD,
 } from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
@@ -21,9 +20,15 @@ test(`${testDir.name} (merge-reports)`, () => {
   testDir.clearDir('reports');
   testDir.clearDir('blob-report');
 
-  // first shard fails b/c it contains failing test
-  execPlaywrightTestWithError(testDir.name, '', `${DEFAULT_CMD} --shard 1/2`);
-  execPlaywrightTest(testDir.name, `${PLAYWRIGHT_CMD} --shard 2/2`);
+  // first shard fails b/c it contains failing tests
+  execPlaywrightTestWithError(testDir.name, '', {
+    cmd: `${DEFAULT_CMD} --shard 1/2`,
+    env: { PWTEST_BLOB_DO_NOT_REMOVE: '1' },
+  });
+  execPlaywrightTest(testDir.name, {
+    cmd: `${DEFAULT_CMD} --shard 2/2`,
+    env: { PWTEST_BLOB_DO_NOT_REMOVE: '1' },
+  });
   mergeReports();
 
   checkHtmlReport();

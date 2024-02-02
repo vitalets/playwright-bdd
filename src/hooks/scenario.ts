@@ -75,7 +75,7 @@ export function hasScenarioHooks() {
   return scenarioHooks.length > 0;
 }
 
-// eslint-disable-next-line complexity
+// eslint-disable-next-line complexity, max-statements
 export async function runScenarioHooks<
   World extends BddWorld,
   Fixtures extends ScenarioHookBddFixtures<World>,
@@ -85,13 +85,20 @@ export async function runScenarioHooks<
     if (hook.type !== type) continue;
     if (hook.tagsExpression && !hook.tagsExpression.evaluate(fixtures.$tags)) continue;
 
-    const { timeout } = hook.options;
+    const { timeout, name: hookName } = hook.options;
     try {
-      await callWithTimeout(
-        () => hook.fn.call(fixtures.$bddWorld, fixtures),
-        timeout,
-        `${type} hook timeout (${timeout} ms)`,
-      );
+      const hookFn = async () => {
+        await callWithTimeout(
+          () => hook.fn.call(fixtures.$bddWorld, fixtures),
+          timeout,
+          getTimeoutMessage(hook),
+        );
+      };
+      if (hookName) {
+        await fixtures.$bddWorld.test.step(hookName, hookFn);
+      } else {
+        await hookFn();
+      }
     } catch (e) {
       if (type === 'before') throw e;
       if (!error) error = e;
@@ -145,4 +152,9 @@ function addHook(hook: ScenarioHook) {
     // 'after' hooks run in reverse order
     scenarioHooks.unshift(hook);
   }
+}
+
+function getTimeoutMessage(hook: ScenarioHook) {
+  const { timeout, name: hookName } = hook.options;
+  return `${hook.type} hook ${hookName ? `"${hookName}" ` : ''}timeout (${timeout} ms)`;
 }

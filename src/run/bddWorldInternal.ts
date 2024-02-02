@@ -26,8 +26,6 @@ export type BddTestAttachmentStep = {
   pwStepLocation: string;
   // stepDefinition match result
   stepMatchArgumentsLists: readonly StepMatchArgumentsList[];
-  // index of the first attachment created within this step
-  attachmentsStartIndex: number;
 };
 
 export class BddWorldInternal {
@@ -45,7 +43,6 @@ export class BddWorldInternal {
     this.steps.push({
       pwStepLocation: stringifyLocation(pwStepLocation),
       stepMatchArgumentsLists: step.stepMatchArgumentsLists || [],
-      attachmentsStartIndex: this.steps.length === 0 ? 0 : this.world.testInfo.attachments.length,
     });
   }
 

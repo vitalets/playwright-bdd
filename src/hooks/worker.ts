@@ -64,11 +64,7 @@ export async function runWorkerHooks<Fixtures extends WorkerHookBddFixtures>(
 
     const { timeout } = hook.options;
     try {
-      await callWithTimeout(
-        () => hook.fn(fixtures),
-        timeout,
-        `${type} hook timeout (${timeout} ms)`,
-      );
+      await callWithTimeout(() => hook.fn(fixtures), timeout, getTimeoutMessage(hook));
     } catch (e) {
       if (type === 'beforeAll') throw e;
       if (!error) error = e;
@@ -112,4 +108,9 @@ function addHook(hook: WorkerHook) {
     // 'afterAll' hooks run in reverse order
     workerHooks.unshift(hook);
   }
+}
+
+function getTimeoutMessage(hook: WorkerHook) {
+  const { timeout } = hook.options;
+  return `${hook.type} hook timeout (${timeout} ms)`;
 }
