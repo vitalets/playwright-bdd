@@ -42,7 +42,7 @@
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
-    "only": "node test/setup.mjs && TEST_DEBUG=1 node --test",
+    "only": "node test/setup.mjs && node --test",
     "build": "bash scripts/build.sh",
     "examples": "ts-node scripts/examples.ts",
     "help": "ts-node src/cli -h",

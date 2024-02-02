@@ -58,6 +58,8 @@ export class Attachments {
   private extractStepAttachments(pwStep: pw.TestStep) {
     const attachmentSteps = pwStep.steps.filter((step) => step.category === 'attach');
     return attachmentSteps.map((attachmentStep) => {
+      // todo: use more reliable way to map attachments with steps
+      // see: https://github.com/microsoft/playwright/issues/29323
       const index = this.attachments.findIndex(
         (a) => getAttachmentStepName(a.name) === attachmentStep.title,
       );
