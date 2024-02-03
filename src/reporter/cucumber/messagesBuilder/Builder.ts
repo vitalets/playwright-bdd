@@ -124,6 +124,10 @@ export class MessagesBuilder {
 
   private createTestCaseRuns() {
     this.onTestEnds.forEach(({ test, result }) => {
+      // For skipped tests Playwright doesn't run fixtures
+      // and we don't have __bddData attachment -> don't know feature uri.
+      // Don't add such test run to report.
+      if (test.expectedStatus === 'skipped') return;
       const testCaseRun = new TestCaseRun(test, result, this.hooks);
       this.testCaseRuns.push(testCaseRun);
     });

@@ -62,6 +62,11 @@ Feature: rich feature
     But Action 6
     * Action 7
 
+  @skip
+  Scenario: Skipped scenario
+    Given Action 1
+    And Action 2
+
 	Scenario Outline: Check doubled
     Given Action <start>
     Then Action <end>

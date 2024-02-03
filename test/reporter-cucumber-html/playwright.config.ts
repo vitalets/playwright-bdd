@@ -10,6 +10,7 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   reporter: [
+    ['dot'],
     cucumberReporter('message', { outputFile: 'reports/message.ndjson' }),
     cucumberReporter('html', { outputFile: 'reports/report.html' }),
   ],
