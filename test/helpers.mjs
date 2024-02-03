@@ -21,10 +21,14 @@ export function getTestName(importMeta) {
 
 function execPlaywrightTestInternal(dir, cmd) {
   const cwd = path.join('test', dir);
-  const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
+  const cmdStr = getCmdStr(cmd);
   const env = Object.assign({}, process.env, cmd?.env);
-  const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
-  return stdout?.toString() || '';
+  const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env })?.toString() || '';
+  return stdout;
+}
+
+function getCmdStr(cmd) {
+  return (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
 }
 
 export function execPlaywrightTest(dir, cmd) {
@@ -47,12 +51,6 @@ export function execPlaywrightTest(dir, cmd) {
  * Runs Playwright test with expected error output.
  */
 export function execPlaywrightTestWithError(dir, error, cmd) {
-  error = error || 'Command failed:';
-  // if (!error) {
-  //   // Important to set error, otherwise we can't distinguish between expected error
-  //   // and some other error.
-  //   throw new Error(`You should set error for execPlaywrightTestWithError call.`);
-  // }
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
     console.log('STDOUT:', stdout);
@@ -60,6 +58,18 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
   } catch (e) {
     const stdout = e.stdout?.toString().trim() || '';
     const stderr = e.stderr?.toString().trim() || '';
+    if (!error) {
+      // if error is not set, check that e.message equals exactly command
+      // to distinguish from other unexpected errors
+      const expectedOutput = `Command failed: ${getCmdStr(cmd)}`;
+      if (e.message !== expectedOutput) {
+        console.log(`Command exited with incorrect error.`);
+        console.log(`Expected:\n${expectedOutput}`);
+        console.log(`Actual:\n${e.message}`);
+        process.exit(1);
+      }
+      return stdout;
+    }
     // e.message can include whole stderr
     e.message = e.message.replace(stderr, '').trim();
     const output = [e.message, stderr, stdout].filter(Boolean).join('\n');
