@@ -43,6 +43,10 @@ export class Feature {
   getScenarioOutline(title: string) {
     return new Scenario(this, `Scenario Outline:${title}`);
   }
+
+  getTags() {
+    return this.root.locator('> [aria-label="Tags"]').getByRole('listitem');
+  }
 }
 
 export class Scenario {

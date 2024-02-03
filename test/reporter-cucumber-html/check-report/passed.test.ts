@@ -52,6 +52,11 @@ test('Scenario: Scenario with all keywords', async ({ page }) => {
   ]);
 });
 
+test('Scenario: Skipped scenario', async ({ page }) => {
+  const scenario = getScenario(page, 'Skipped scenario');
+  await expect(scenario.root).not.toBeVisible();
+});
+
 test('Scenario Outline: Check doubled', async ({ page }) => {
   const scenario = getFeature(page).getScenarioOutline('Check doubled');
   await expect(scenario.getSteps()).toContainText(['GivenAction <start>', 'ThenAction <end>']);
