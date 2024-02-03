@@ -48,19 +48,20 @@ export type BDDConfig = BDDInputConfig &
   };
 
 export function defineBddConfig(inputConfig?: BDDInputConfig) {
-  const config = getConfig(inputConfig);
+  const isMainProcess = !process.env.TEST_WORKER_INDEX;
+  const configDir = getPlaywrightConfigDir({ resolveAndSave: isMainProcess });
+  const config = getConfig(configDir, inputConfig);
 
   // In main process store config in env to be accessible by workers
-  if (!process.env.TEST_WORKER_INDEX) {
+  if (isMainProcess) {
     saveConfigToEnv(config);
   }
 
   return config.outputDir;
 }
 
-function getConfig(inputConfig?: BDDInputConfig): BDDConfig {
+function getConfig(configDir: string, inputConfig?: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, inputConfig);
-  const configDir = getPlaywrightConfigDir();
   const featuresRoot = config.featuresRoot
     ? path.resolve(configDir, config.featuresRoot)
     : configDir;

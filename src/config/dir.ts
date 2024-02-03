@@ -9,16 +9,21 @@ import { resolveConfigFile } from '../playwright/loadConfig';
 import { getCliConfigPath } from '../cli/options';
 
 /**
- * Resolve playwright config dir considering cli flags.
+ * Returns Playwright config dir considering cli --config option.
  */
-export function getPlaywrightConfigDir() {
-  if (!process.env.PLAYWRIGHT_BDD_CONFIG_DIR) {
-    const cliConfigPath = getCliConfigPath();
-    const playwrightConfigFile = resolveConfigFile(cliConfigPath);
-    process.env.PLAYWRIGHT_BDD_CONFIG_DIR = playwrightConfigFile
-      ? path.dirname(playwrightConfigFile)
-      : process.cwd();
+export function getPlaywrightConfigDir({ resolveAndSave = false } = {}) {
+  let configDir = process.env.PLAYWRIGHT_BDD_CONFIG_DIR;
+
+  if (!configDir) {
+    if (resolveAndSave) {
+      const cliConfigPath = getCliConfigPath();
+      const playwrightConfigFile = resolveConfigFile(cliConfigPath);
+      configDir = playwrightConfigFile ? path.dirname(playwrightConfigFile) : process.cwd();
+      process.env.PLAYWRIGHT_BDD_CONFIG_DIR = configDir;
+    } else {
+      throw new Error(`Something went wrong: PLAYWRIGHT_BDD_CONFIG_DIR is not set.`);
+    }
   }
 
-  return process.env.PLAYWRIGHT_BDD_CONFIG_DIR;
+  return configDir;
 }
