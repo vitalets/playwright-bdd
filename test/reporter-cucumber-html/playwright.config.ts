@@ -9,14 +9,10 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  fullyParallel: true,
-  // reporter: [['null'], cucumberReporter('html', { outputFile: 'reports/report.html' })],
-  reporter: process.argv.includes('--shard')
-    ? 'blob'
-    : [
-        cucumberReporter('message', { outputFile: 'reports/message.ndjson' }),
-        cucumberReporter('html', { outputFile: 'reports/report.html' }),
-      ],
+  reporter: [
+    cucumberReporter('message', { outputFile: 'reports/message.ndjson' }),
+    cucumberReporter('html', { outputFile: 'reports/report.html' }),
+  ],
   use: {
     screenshot: 'only-on-failure',
   },
