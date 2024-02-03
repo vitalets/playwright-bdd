@@ -16,7 +16,7 @@
             "name": "a step",
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 1000000
             }
           }
         ],

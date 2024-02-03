@@ -16,6 +16,6 @@ blob-report
 /examples/playwright-bdd*.tgz
 /examples/package-lock.json
 /todo.txt
-/test/reporter-cucumber/**/report.ndjson
-/test/reporter-cucumber/**/report.json
+/test/**/report.ndjson
+/test/**/report.json
 /test/**/reports

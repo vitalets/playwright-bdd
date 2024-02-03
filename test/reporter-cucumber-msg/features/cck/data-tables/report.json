@@ -60,7 +60,7 @@
             "name": "it should be:",
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 1000000
             }
           }
         ],
