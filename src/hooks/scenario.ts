@@ -12,6 +12,8 @@ import { BddWorld } from '../run/bddWorld';
 import { KeyValue } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
+import { PlaywrightLocation, getLocationByOffset } from '../playwright/getLocationInFile';
+import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 
 type ScenarioHookOptions = {
   name?: string;
@@ -32,6 +34,7 @@ type ScenarioHook<Fixtures = object, World extends BddWorld = BddWorld> = {
   options: ScenarioHookOptions;
   fn: ScenarioHookFn<Fixtures, World>;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
+  location: PlaywrightLocation;
 };
 
 /**
@@ -67,6 +70,8 @@ export function scenarioHookFactory<
       type,
       options: getOptionsFromArgs(args) as ScenarioHookOptions,
       fn: getFnFromArgs(args) as ScenarioHook['fn'],
+      // offset = 3 b/c this call is 3 steps below the user's code
+      location: getLocationByOffset(3),
     });
   };
 }
@@ -94,11 +99,13 @@ export async function runScenarioHooks<
           getTimeoutMessage(hook),
         );
       };
-      if (hookName) {
-        await fixtures.$bddWorld.test.step(hookName, hookFn);
-      } else {
-        await hookFn();
-      }
+
+      await runStepWithCustomLocation(
+        fixtures.$bddWorld.test,
+        hookName || '',
+        hook.location,
+        hookFn,
+      );
     } catch (e) {
       if (type === 'before') throw e;
       if (!error) error = e;

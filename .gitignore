@@ -18,3 +18,4 @@ blob-report
 /todo.txt
 /test/**/report.*
 /test/**/reports
+/test/reporter-merge/features

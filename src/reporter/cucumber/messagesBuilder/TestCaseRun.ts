@@ -80,7 +80,9 @@ export class TestCaseRun {
 
   private fillExecutedHooks(hookType: HookType) {
     const rootStep = getHooksRootStep(this.result, hookType);
-    const pwStepsWithName = getPlaywrightStepsWithCategory(rootStep, 'test.step');
+    const pwStepsWithName = getPlaywrightStepsWithCategory(rootStep, 'test.step').filter((pwStep) =>
+      Boolean(pwStep.title),
+    );
     const pwStepsWithAttachment = getPlaywrightStepsWithCategory(rootStep, 'attach')
       // todo: maybe use pwStep.parent?.title !== 'fixture: $bddWorld'
       .filter((pwStep) => pwStep.title !== getAttachmentStepName('__bddData'))

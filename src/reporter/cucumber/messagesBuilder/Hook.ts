@@ -4,6 +4,8 @@
 import { randomUUID } from 'node:crypto';
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
+import { getPlaywrightConfigDir } from '../../../config/dir';
+import path from 'node:path';
 
 export type HookType = 'before' | 'after';
 
@@ -41,13 +43,15 @@ export class Hook {
     // created with Before() / After() functions.
     // Keep name empty for them to be consistent with Cucumber.
     const bddSystemFixtures = ['fixture: $before', 'fixture: $after'];
-    return bddSystemFixtures.includes(pwStep.title) ? undefined : pwStep.title;
+    if (!pwStep.title || bddSystemFixtures.includes(pwStep.title)) return undefined;
+    return pwStep.title;
   }
 
   private getSourceReference(pwStep: pw.TestStep): messages.SourceReference {
     const { file, line, column } = pwStep.location || {};
+    const uri = file ? path.relative(getPlaywrightConfigDir(), file) : undefined;
     return {
-      uri: file, // todo: relative
+      uri,
       location: {
         line: line || 0,
         column,
