@@ -9,16 +9,17 @@
  * 2. from these sub-step titles we extract attachment names
  * 3. find first entries with such names in result.attachments
  * 4. remove used entries from result.attachments
+ * See also: https://github.com/microsoft/playwright/issues/29323
  *
  * Automatic Playwright screenshots for failed tests:
- * - if error is in main steps or in before fixtures:
- *   Screenshot attachment is a normal attachment named 'screenshot'
- *   and having step with category: 'attach' in 'After Hooks' step.
+ * - if error is in main steps or in fixture before call of use():
+ *   * screenshot attachment is a normal attachment named 'screenshot'
+ *   * coresponding step with category: 'attach' is in 'After Hooks' step (since pw 1.35)
  *
- * - if error is in after fixtures:
+ * - if error is in fixtures after call of use():
  *   Screenshot attachment is NOT in result.attachments, there is no step with category: 'attach'.
  *   There is root step with category: 'pw:api' and title: 'page.screenshot'.
- *   Skipping this case for now.
+ *   It is known bug of Playwright: https://github.com/microsoft/playwright/issues/29325
  */
 import fs from 'node:fs';
 import * as pw from '@playwright/test/reporter';

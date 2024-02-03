@@ -4,6 +4,7 @@ import {
   TestDir,
   execPlaywrightTest,
   execPlaywrightTestWithError,
+  getPackageVersion,
   DEFAULT_CMD,
 } from '../helpers.mjs';
 
@@ -16,7 +17,16 @@ test(testDir.name, () => {
   checkHtmlReport();
 });
 
-test(`${testDir.name} (merge-reports)`, () => {
+// todo: move to separate test?
+// how to set paths to features and steps in that case?
+
+const pwVersion = getPackageVersion('@playwright/test');
+
+// merge-reports was added in pw 1.37
+// See: https://playwright.dev/docs/release-notes#version-137
+const skip = pwVersion < '1.37';
+
+test(`${testDir.name} (merge-reports)`, { skip }, () => {
   testDir.clearDir('reports');
   testDir.clearDir('blob-report');
 
