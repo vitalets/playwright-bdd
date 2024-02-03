@@ -13,7 +13,7 @@ import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { Hook, HookType } from './Hook';
 import { BddTestAttachment } from '../../../run/bddWorldInternal';
-import { GherkinDocumentWithPickles } from '../../../cucumber/loadFeatures';
+import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../cucumber/loadFeatures';
 import { stringifyLocation } from '../../../utils';
 
 type HookWithStep = {
@@ -25,7 +25,7 @@ export class TestCase {
   private beforeHooks = new Map</* internalId */ string, HookWithStep>();
   private afterHooks = new Map</* internalId */ string, HookWithStep>();
   private mainSteps: messages.TestStep[] = [];
-  private pickle?: messages.Pickle;
+  private pickle?: PickleWithLocation;
 
   constructor(
     public id: string,
@@ -56,13 +56,18 @@ export class TestCase {
       ...(this.mainSteps || []),
       ...Array.from(this.afterHooks.values()).map((hook) => hook.testStep),
     ];
-    if (!this.pickle) throw new Error(`Empty pickle`);
+
     const testCase: messages.TestCase = {
       id: this.id,
-      pickleId: this.pickle.id,
+      pickleId: this.getPickle().id,
       testSteps,
     };
     return { testCase };
+  }
+
+  getPickle() {
+    if (!this.pickle) throw new Error(`Empty pickle for testCase: ${this.id}`);
+    return this.pickle;
   }
 
   /**
@@ -113,11 +118,11 @@ export class TestCase {
 
   private findPickle({ uri, pickleLocation }: BddTestAttachment) {
     const doc = this.gherkinDocuments.find((doc) => doc.uri === uri);
-    if (!doc) throw new Error('gherkinDocument not found');
+    if (!doc) throw new Error('GherkinDocument not found');
     const pickle = doc.pickles.find((pickle) => {
       return stringifyLocation(pickle.location) === pickleLocation;
     });
-    if (!pickle) throw new Error('pickle not found');
+    if (!pickle) throw new Error('Pickle not found');
     return pickle;
   }
 }
