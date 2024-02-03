@@ -8,10 +8,12 @@ import { getPackageVersion } from '../../../utils';
 
 export class Meta {
   buildMessage() {
+    const playwrightBddVersion = getPackageVersion('playwright-bdd');
+    const playwrightVersion = getPackageVersion('@playwright/test');
     const meta: messages.Meta = {
       protocolVersion: messages.version,
       implementation: {
-        version: getPackageVersion('playwright-bdd'),
+        version: `${playwrightBddVersion} (playwright ${playwrightVersion})`,
         name: 'playwright-bdd',
       },
       cpu: {

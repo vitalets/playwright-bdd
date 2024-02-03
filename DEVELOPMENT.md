@@ -24,7 +24,11 @@ npm t
 ## Test on different Playwright version
 Install needed Playwright version (without saving to `package.json`):
 ```
-npm i --no-save @playwright/test@1.40 @playwright/experimental-ct-react@1.40
+npx cross-env-shell PW=1.39 'npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW'
+```
+OR
+```
+PW=1.39 npm run setpw
 ```
 
 Install corresponding browsers without clearing other versions:
@@ -48,7 +52,7 @@ npm run test
 ```
 
 ## Run particular test 
-Use this command (utilize autocomplete after typoing `test/`):
+Use the command below (use TAB after typing `test/` to autocomplete test path):
 ```
 npm run only -- test/<%test-dir%>
 ```
