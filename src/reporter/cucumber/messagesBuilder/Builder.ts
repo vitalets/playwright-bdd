@@ -72,6 +72,7 @@ export class MessagesBuilder {
   private async doBuildMessages() {
     await this.onEndPromise;
 
+    // order here is important
     this.createTestCaseRuns();
     await this.loadFeatures();
     this.createTestCases();
@@ -150,8 +151,11 @@ export class MessagesBuilder {
   }
 
   private addPickles() {
-    this.report.pickle = this.featuresLoader.gherkinQuery
-      .getPickles()
+    const allPickles = this.featuresLoader.gherkinQuery.getPickles();
+    const usedPickleIds = new Set<string>();
+    this.testCases.forEach((testCase) => usedPickleIds.add(testCase.getPickle().id));
+    this.report.pickle = allPickles
+      .filter((pickle) => usedPickleIds.has(pickle.id))
       .map((pickle) => ({ pickle }));
   }
 
