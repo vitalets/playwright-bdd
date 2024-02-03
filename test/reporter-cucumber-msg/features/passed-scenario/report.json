@@ -1,0 +1,34 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "a-feature;a-scenario",
+        "keyword": "Scenario",
+        "line": 2,
+        "name": "a scenario",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 3,
+            "name": "a step",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "a-feature",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "a feature",
+    "tags": [],
+    "uri": "features/passed-scenario/sample.feature"
+  }
+]
