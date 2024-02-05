@@ -7,13 +7,13 @@ test.beforeEach(async ({ page }) => {
 
 test('Scenario: Failing by step', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by step');
-  await expect(scenario.getSteps()).toContainText(['failing step', 'screenshot']);
+  await expect(scenario.getSteps()).toContainText(['Givenfailing step', 'screenshot']);
   await expect(scenario.getError()).toContainText('Timed out');
 });
 
 test('Scenario: Failing by background step', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by background step');
-  await expect(scenario.getSteps()).toContainText(['Action 1', 'screenshot']);
+  await expect(scenario.getSteps()).toContainText(['GivenAction 1', 'screenshot']);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
   await expect(scenario.getError()).not.toBeVisible();
 
@@ -29,7 +29,7 @@ test('Scenario: Failing by anonymous before hook', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by anonymous before hook');
   await expect(scenario.getSteps()).toContainText([
     'Hook failed: features/failed-steps.ts:', // prettier-ignore
-    'Action 1',
+    'GivenAction 1',
     'screenshot',
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
@@ -43,7 +43,7 @@ test('Scenario: Failing by named before hook', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by named before hook');
   await expect(scenario.getSteps()).toContainText([
     'Hook "failing named before hook" failed: features/failed-steps.ts:',
-    'Action 1',
+    'GivenAction 1',
     'screenshot',
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
@@ -57,8 +57,8 @@ test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingBeforeFixtureNoStep');
   await expect(scenario.getSteps()).toContainText([
     'Hook "fixture: failingBeforeFixtureNoStep" failed: features/fixtures.ts:',
-    'step that uses failingBeforeFixtureNoStep',
-    'Action 1',
+    'Givenstep that uses failingBeforeFixtureNoStep',
+    'WhenAction 1',
     'screenshot',
   ]);
   await expect(scenario.getAttachments()).toContainText([
@@ -74,12 +74,13 @@ test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingBeforeFixtureWithStep');
   await expect(scenario.getSteps()).toContainText([
     'Hook "step in failingBeforeFixtureWithStep" failed: features/fixtures.ts:',
-    'step that uses failingBeforeFixtureWithStep',
-    'Action 2',
+    'Givenstep that uses failingBeforeFixtureWithStep',
+    'WhenAction 2',
     'screenshot',
   ]);
   await expect(scenario.getAttachments()).toContainText([
-    'attachment in failingBeforeFixtureWithStep',
+    'attachment in step in failingBeforeFixtureWithStep',
+    'attachment in failingBeforeFixtureWithStep (before use)',
     'screenshot',
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
@@ -91,8 +92,8 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureNoStep');
   await expect(scenario.getSteps()).toContainText([
     'attachment in failingAfterFixtureNoStep (before use)',
-    'step that uses failingAfterFixtureNoStep',
-    'Action 3',
+    'Givenstep that uses failingAfterFixtureNoStep',
+    'WhenAction 3',
     'Hook "fixture: failingAfterFixtureNoStep" failed: features/fixtures.ts:',
     // there is no automatic screenshot here
     // see: https://github.com/microsoft/playwright/issues/29325
@@ -111,12 +112,13 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureWithStep');
   await expect(scenario.getSteps()).toContainText([
     'attachment in failingAfterFixtureWithStep (before use)',
-    'step that uses failingAfterFixtureWithStep',
-    'Action 4',
+    'Givenstep that uses failingAfterFixtureWithStep',
+    'WhenAction 4',
     'Hook "step in failingAfterFixtureWithStep" failed: features/fixtures.ts:',
   ]);
   await expect(scenario.getAttachments()).toContainText([
     'attachment in failingAfterFixtureWithStep (before use)',
+    'attachment in step in failingAfterFixtureWithStep',
     'attachment in failingAfterFixtureWithStep (after use)',
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(2);

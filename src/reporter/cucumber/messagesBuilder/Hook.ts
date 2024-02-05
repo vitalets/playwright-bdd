@@ -1,5 +1,6 @@
 /**
- * Manages hook.
+ * Hook that can be used in different test cases.
+ * Builds Cucumber's hook message.
  */
 import { randomUUID } from 'node:crypto';
 import * as pw from '@playwright/test/reporter';
@@ -42,8 +43,8 @@ export class Hook {
     // These fixture names are for anonymous hooks
     // created with Before() / After() functions.
     // Keep name empty for them to be consistent with Cucumber.
-    const bddSystemFixtures = ['fixture: $before', 'fixture: $after'];
-    if (!pwStep.title || bddSystemFixtures.includes(pwStep.title)) return undefined;
+    // const bddSystemFixtures = ['fixture: $before', 'fixture: $after'];
+    // if (!pwStep.title || bddSystemFixtures.includes(pwStep.title)) return undefined;
     return pwStep.title;
   }
 
