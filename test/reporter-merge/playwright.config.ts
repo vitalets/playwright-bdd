@@ -5,6 +5,7 @@ const testDir = defineBddConfig({
   importTestFrom: 'features/fixtures.ts',
   paths: ['features/*.feature'],
   require: ['features/*.ts'],
+  bddAttachments: true,
 });
 
 export default defineConfig({
