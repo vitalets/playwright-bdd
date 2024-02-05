@@ -2,7 +2,7 @@ import { TestInfo, test as base } from '@playwright/test';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadSteps } from '../cucumber/loadSteps';
 import { BddWorld, BddWorldFixtures, getWorldConstructor } from './bddWorld';
-import { extractCucumberConfig } from '../config';
+import { BDDConfig, extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
@@ -42,6 +42,7 @@ type BddFixturesWorker = {
     runConfiguration: IRunConfiguration;
     supportCodeLibrary: ISupportCodeLibrary;
     World: typeof BddWorld;
+    config: BDDConfig;
   };
   $workerHookFixtures: Record<string, unknown>;
   $beforeAll: void;
@@ -67,7 +68,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       appendDecoratorSteps(supportCodeLibrary);
       const World = getWorldConstructor(supportCodeLibrary);
 
-      await use({ runConfiguration, supportCodeLibrary, World });
+      await use({ runConfiguration, supportCodeLibrary, World, config });
     },
     { auto: true, scope: 'worker' },
   ],
@@ -80,7 +81,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     use,
     testInfo,
   ) => {
-    const { runConfiguration, supportCodeLibrary, World } = $cucumber;
+    const { runConfiguration, supportCodeLibrary, World, config } = $cucumber;
     const world = new World({
       testInfo,
       supportCodeLibrary,
@@ -95,8 +96,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     await world.init();
     await use(world);
     await world.destroy();
-    // todo: hide under config option
-    await world.$internal.bddData.attach($testMeta, $uri);
+    if (config.bddAttachments) await world.$internal.bddData.attach($testMeta, $uri);
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
