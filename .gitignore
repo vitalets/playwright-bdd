@@ -19,3 +19,4 @@ blob-report
 /test/**/report.*
 /test/**/reports
 /test/reporter-merge/features
+/test/reporter-cucumber-junit/features

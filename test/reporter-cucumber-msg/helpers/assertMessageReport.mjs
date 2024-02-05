@@ -3,7 +3,7 @@
  */
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { buildShape } from './shared.mjs';
+import { buildArrayShape } from './shared.mjs';
 
 // these paths are ignored in comparison.
 const getIgnorePaths = (isCCK) => [
@@ -37,8 +37,8 @@ export async function assertMessageReport({ expectedFile, actualFile, isCCK }) {
   const actualMessages = getMessagesFromFile(actualFile);
 
   const ignorePaths = getIgnorePaths(isCCK);
-  const expectedShape = buildShape(expectedMessages, { ignorePaths, valuePaths });
-  const actualShape = buildShape(actualMessages, { ignorePaths, valuePaths });
+  const expectedShape = buildArrayShape(expectedMessages, { ignorePaths, valuePaths });
+  const actualShape = buildArrayShape(actualMessages, { ignorePaths, valuePaths });
 
   expect(actualShape).toStrictEqual(expectedShape);
 }
