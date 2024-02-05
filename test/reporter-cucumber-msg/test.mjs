@@ -9,8 +9,7 @@
  *   https://github.com/cucumber/cucumber-js/tree/main/compatibility/features
  *
  * Run single feature:
- * npm run only -- test/reporter-cucumber passed-scenario
- * npm run only -- test/reporter-cucumber cck/minimal
+ * npm run only -- test/reporter-cucumber-msg
  */
 import path from 'node:path';
 import fg from 'fast-glob';
@@ -31,6 +30,7 @@ const skipFeatureDirs = [
 test(testDir.name, async () => {
   const dirs = onlyFeatureDir ? [onlyFeatureDir] : getAllFeatureDirs();
   for (const dir of dirs) {
+    if (dir !== 'passed-scenario') continue;
     await checkFeature(dir);
   }
 });

@@ -3,7 +3,7 @@
  */
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { buildShape } from './shared.mjs';
+import { buildArrayShape } from './shared.mjs';
 
 // these paths are ignored in comparison.
 const ignorePaths = [
@@ -29,8 +29,8 @@ export async function assertJsonReport({ expectedFile, actualFile }) {
     : getJsonFromFile(expectedFile);
   const actualJson = getJsonFromFile(actualFile);
 
-  const expectedShape = buildShape(expectedJson, { ignorePaths, valuePaths });
-  const actualShape = buildShape(actualJson, { ignorePaths, valuePaths });
+  const expectedShape = buildArrayShape(expectedJson, { ignorePaths, valuePaths });
+  const actualShape = buildArrayShape(actualJson, { ignorePaths, valuePaths });
 
   expect(actualShape).toStrictEqual(expectedShape);
 }

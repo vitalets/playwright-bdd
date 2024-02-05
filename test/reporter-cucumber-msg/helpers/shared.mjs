@@ -1,28 +1,49 @@
 import get from 'lodash.get';
 
+// todo: create a separate module? json-shape
+
 /**
  * Builds 'object shape' - an object with all paths of objects in all messages.
  * Used for validating reports.
  */
-export function buildShape(messages, { ignorePaths, valuePaths }) {
-  const obj = {};
-  messages.forEach((m) => {
-    getAllPaths(m).forEach((path) => {
+export function buildArrayShape(objects, { ignorePaths, valuePaths }) {
+  const shape = {};
+  objects.forEach((obj) => {
+    getAllPaths(obj).forEach((path) => {
       const pathStr = getPathStr(path);
-      const curVal = obj[pathStr];
       const isIgnorePath = hasPrefix(pathStr, ignorePaths);
       const isValuePath = hasPrefix(pathStr, valuePaths);
+      const curVal = shape[pathStr];
       if (isIgnorePath) return;
       if (isValuePath) {
-        const newVal = get(m, path);
-        obj[pathStr] = curVal ? curVal.concat([newVal]).sort() : [newVal];
+        const newVal = get(obj, path);
+        shape[pathStr] = curVal ? curVal.concat([newVal]).sort() : [newVal];
       } else {
-        obj[pathStr] = curVal ? curVal + 1 : 1;
+        shape[pathStr] = curVal ? curVal + 1 : 1;
       }
     });
   });
 
-  return obj;
+  return shape;
+}
+
+export function buildObjectShape(obj, { ignorePaths, valuePaths }) {
+  const shape = {};
+  getAllPaths(obj).forEach((path) => {
+    const pathStr = getPathStr(path);
+    const isIgnorePath = hasPrefix(pathStr, ignorePaths);
+    const isValuePath = hasPrefix(pathStr, valuePaths);
+    const curVal = shape[pathStr];
+    if (isIgnorePath) return;
+    if (isValuePath) {
+      const newVal = get(obj, path);
+      shape[pathStr] = curVal ? curVal.concat([newVal]).sort() : [newVal];
+    } else {
+      shape[pathStr] = curVal ? curVal + 1 : 1;
+    }
+  });
+
+  return shape;
 }
 
 /**
