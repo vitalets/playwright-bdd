@@ -13,7 +13,6 @@ import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from './StepInvoker';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
-import { AttachmentAdapter } from './AttachmentAdapter';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -82,7 +81,6 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     testInfo,
   ) => {
     const { runConfiguration, supportCodeLibrary, World } = $cucumber;
-    const attachmentAdapter = new AttachmentAdapter(testInfo);
     const world = new World({
       testInfo,
       supportCodeLibrary,
@@ -91,16 +89,14 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       $bddWorldFixtures,
       lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
-      log: attachmentAdapter.getLogFn(),
-      attach: attachmentAdapter.getAttachFn(),
+      log: () => {},
+      attach: async () => {},
     });
     await world.init();
     await use(world);
     await world.destroy();
-    // todo: wait attachments complete after step
-    await attachmentAdapter.waitAttachmentsComplete();
     // todo: hide under config option
-    await world.$internal.attachBddData($testMeta, $uri);
+    await world.$internal.bddData.attach($testMeta, $uri);
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),

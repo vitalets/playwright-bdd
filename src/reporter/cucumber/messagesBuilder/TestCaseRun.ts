@@ -4,7 +4,6 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { BddTestAttachment, BddTestAttachmentStep } from '../../../run/bddWorldInternal';
 import { stringifyLocation, toBoolean } from '../../../utils';
 import { Hook, HookType } from './Hook';
 import { TestCase } from './TestCase';
@@ -13,6 +12,12 @@ import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
 import { findDeepestErrorStep, getHooksRootStep, getPlaywrightStepsWithCategory } from './pwUtils';
 import { Attachments, getAttachmentStepName } from './Attachments';
+import {
+  BDD_DATA_ATTACHMENT_NAME,
+  BddDataAttachment,
+  BddDataStep,
+  getBddDataFromTestResult,
+} from '../../../run/attachments/BddData';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -27,13 +32,13 @@ type ExecutedHookInfo = {
 };
 
 type ExecutedStepInfo = {
-  bddDataStep: BddTestAttachmentStep;
+  bddDataStep: BddDataStep;
   pwStep: pw.TestStep;
 };
 
 export class TestCaseRun {
   id: string;
-  bddData: BddTestAttachment;
+  bddData: BddDataAttachment;
   _testCase?: TestCase;
   executedBeforeHooks = new Map</* internalId */ string, ExecutedHookInfo>();
   executedAfterHooks = new Map</* internalId */ string, ExecutedHookInfo>();
@@ -64,10 +69,17 @@ export class TestCaseRun {
   }
 
   private getBddData() {
-    const bddAttachment = this.result.attachments.find((a) => a.name === '__bddData');
-    const strData = bddAttachment?.body?.toString();
-    if (!strData) throw new Error('BDD data attachment is not found');
-    return JSON.parse(strData) as BddTestAttachment;
+    const bddData = getBddDataFromTestResult(this.result);
+    if (!bddData) {
+      const attachmentNames = this.result.attachments.map((a) => a.name);
+      throw new Error(
+        [
+          `BDD data attachment is not found for test: ${this.test.title}`,
+          `Available attachments: ${attachmentNames.join(', ')}`,
+        ].join('\n'),
+      );
+    }
+    return bddData;
   }
 
   private fillExecutedSteps() {
@@ -80,13 +92,14 @@ export class TestCaseRun {
 
   private fillExecutedHooks(hookType: HookType) {
     const rootStep = getHooksRootStep(this.result, hookType);
-    const pwStepsWithName = getPlaywrightStepsWithCategory(rootStep, 'test.step').filter((pwStep) =>
-      Boolean(pwStep.title),
-    );
+
+    const pwStepsWithName = getPlaywrightStepsWithCategory(rootStep, 'test.step')
+      .filter((pwStep) => Boolean(pwStep.title)); // prettier-ignore
+
     const pwStepsWithAttachment = getPlaywrightStepsWithCategory(rootStep, 'attach')
-      // todo: maybe use pwStep.parent?.title !== 'fixture: $bddWorld'
-      .filter((pwStep) => pwStep.title !== getAttachmentStepName('__bddData'))
+      .filter((pwStep) => !isBddDataAttachmentStep(pwStep))
       .map((pwStep) => pwStep.parent);
+
     const pwStepWithError = findDeepestErrorStep(rootStep);
     const hookSteps = new Set(
       [...pwStepsWithName, ...pwStepsWithAttachment, pwStepWithError].filter(toBoolean),
@@ -94,6 +107,7 @@ export class TestCaseRun {
 
     // exclude background steps, b/c they are in pickle, not in hooks.
     // Important to run this fn after this.fillExecutedSteps()
+    // as we assume steps are already populated
     if (hookType === 'before') {
       this.executedSteps.forEach((stepInfo) => hookSteps.delete(stepInfo.pwStep));
     }
@@ -159,7 +173,7 @@ export class TestCaseRun {
     this.messages.push({ testCaseFinished });
   }
 
-  private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddDataStep: BddTestAttachmentStep) {
+  private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddDataStep: BddDataStep) {
     const pwStep = possiblePwSteps.find((pwStep) => {
       return pwStep.location && stringifyLocation(pwStep.location) === bddDataStep.pwStepLocation;
     });
@@ -173,4 +187,8 @@ export class TestCaseRun {
     const topLevelSteps = this.result.steps.filter((step) => step.category === 'test.step');
     return [...bgSteps, ...topLevelSteps];
   }
+}
+
+function isBddDataAttachmentStep(pwStep: pw.TestStep) {
+  return pwStep.title === getAttachmentStepName(BDD_DATA_ATTACHMENT_NAME);
 }

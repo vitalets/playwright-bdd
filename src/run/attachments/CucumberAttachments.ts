@@ -1,17 +1,23 @@
 /**
  * Adapter for Cucumber's AttachmentManager.
- * Tracks calls to world.attach() and world.log()
- * to be able to wait all attachment promises finish.
+ * Allows to add attachments in Cucumber style world.attach() and world.log().
+ *
+ * As these methods can be synchronous and Playwright's testInfo.attach() is always async,
+ * we track all calls to world.attach() / world.log() and wait for
+ * all attachment promises to resolve at the step end.
  *
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/attachment_manager/index.ts
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L101
  */
 
 import { TestInfo } from '@playwright/test';
-import AttachmentManager, { IAttachment, ICreateAttachment } from '../cucumber/AttachmentManager';
+import AttachmentManager, {
+  IAttachment,
+  ICreateAttachment,
+} from '../../cucumber/AttachmentManager';
 
-export class AttachmentAdapter {
-  private attachmentManager: AttachmentManager;
+export class CucumberAttachments {
+  attachmentManager: AttachmentManager;
   private promises: Promise<void>[] = [];
 
   constructor(private testInfo: TestInfo) {

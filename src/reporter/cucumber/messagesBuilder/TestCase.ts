@@ -12,9 +12,9 @@
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { Hook, HookType } from './Hook';
-import { BddTestAttachment } from '../../../run/bddWorldInternal';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../cucumber/loadFeatures';
 import { stringifyLocation } from '../../../utils';
+import { BddDataAttachment } from '../../../run/attachments/BddData';
 
 type HookWithStep = {
   hook: Hook;
@@ -116,7 +116,7 @@ export class TestCase {
     });
   }
 
-  private findPickle({ uri, pickleLocation }: BddTestAttachment) {
+  private findPickle({ uri, pickleLocation }: BddDataAttachment) {
     const doc = this.gherkinDocuments.find((doc) => doc.uri === uri);
     if (!doc) throw new Error('GherkinDocument not found');
     const pickle = doc.pickles.find((pickle) => {
