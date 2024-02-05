@@ -5,27 +5,14 @@
 import * as pw from '@playwright/test/reporter';
 import { HookType } from './Hook';
 
-// eslint-disable-next-line complexity
-export function filterPlaywrightStepsDeep(
-  root: pw.TestResult | pw.TestStep | undefined,
-  fn: (step: pw.TestStep) => unknown,
-) {
-  const result: pw.TestStep[] = [];
-  const stack = root?.steps.slice() || [];
-  while (stack.length) {
-    const step = stack.shift();
-    if (step && fn(step)) result.push(step);
-    stack.unshift(...(step?.steps || []));
-  }
+// Playwright step categoires, that can be mapped to testStep / hook in Cucumber report
+export const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
 
-  return result;
-}
-
-export function getPlaywrightStepsWithCategory(
-  root: pw.TestResult | pw.TestStep | undefined,
-  category: 'test.step' | 'attach',
+export function getPlaywrightStepsWithCategories(
+  parent: pw.TestResult | pw.TestStep | undefined,
+  categories: string[],
 ) {
-  return filterPlaywrightStepsDeep(root, (step) => step.category === category);
+  return filterPlaywrightStepsDeep(parent, (step) => categories.includes(step.category));
 }
 
 export function getHooksRootStep(result: pw.TestResult, type: HookType) {
@@ -40,10 +27,26 @@ export function findDeepestErrorStep(root?: pw.TestStep) {
   let errorStep = root?.error ? root : null;
   while (errorStep) {
     const nextErrorStep = errorStep.steps.find((step) => {
-      return step.error && ['test.step', 'fixture', 'hook'].includes(step.category);
+      return step.error && MEANINGFUL_STEP_CATEGORIES.includes(step.category);
     });
     if (!nextErrorStep) break;
     errorStep = nextErrorStep;
   }
   return errorStep;
+}
+
+// eslint-disable-next-line complexity
+export function filterPlaywrightStepsDeep(
+  parent: pw.TestResult | pw.TestStep | undefined,
+  fn: (step: pw.TestStep) => unknown,
+) {
+  const result: pw.TestStep[] = [];
+  const stack = parent?.steps.slice() || [];
+  while (stack.length) {
+    const step = stack.shift();
+    if (step && fn(step)) result.push(step);
+    stack.unshift(...(step?.steps || []));
+  }
+
+  return result;
 }

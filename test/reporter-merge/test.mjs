@@ -17,7 +17,9 @@ const pwVersion = getPackageVersion('@playwright/test');
 // See: https://playwright.dev/docs/release-notes#version-137
 const skip = pwVersion < '1.37';
 
-test(testDir.name, { skip }, () => {
+// skip until figure out how to map attachments in merge-reports mode
+// See: https://github.com/microsoft/playwright/issues/29323#issuecomment-1927311800
+test.skip(testDir.name, { skip }, () => {
   testDir.clearDir('reports');
   testDir.clearDir('blob-report');
 

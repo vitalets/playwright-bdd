@@ -12,6 +12,7 @@ import * as messages from '@cucumber/messages';
 import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes';
 import { TestCaseRun } from './TestCaseRun';
 import { toCucumberTimestamp } from './timing';
+import { TestStepAttachments } from './TestStepAttachments';
 
 export type TestStepRunEnvelope = Pick<
   messages.Envelope,
@@ -28,10 +29,11 @@ export class TestStepRun {
   ) {}
 
   buildMessages(): TestStepRunEnvelope[] {
+    const stepAttachments = new TestStepAttachments(this.testCaseRun, this.testStep, this.pwStep);
     return [
-      this.addTestStepStarted(), // prettier-ignore
-      ...this.testCaseRun.attachments.buildMessages(this.testStep, this.pwStep),
-      this.addTestStepFinished(),
+      this.buildTestStepStarted(), // prettier-ignore
+      ...stepAttachments.buildMessages(),
+      this.buildTestStepFinished(),
     ];
   }
 
@@ -47,7 +49,7 @@ export class TestStepRun {
     return this.wasExecuted() ? this.pwStep.duration : 0;
   }
 
-  private addTestStepStarted() {
+  private buildTestStepStarted() {
     const testStepStarted: messages.TestStepStarted = {
       testCaseStartedId: this.testCaseRun.id,
       testStepId: this.testStep.id,
@@ -56,7 +58,7 @@ export class TestStepRun {
     return { testStepStarted };
   }
 
-  private addTestStepFinished() {
+  private buildTestStepFinished() {
     const error = this.pwStep?.error;
     const errorOutput = error ? formatError(error) : undefined;
     const testStepFinished: messages.TestStepFinished = {
