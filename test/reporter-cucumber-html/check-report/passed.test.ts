@@ -24,12 +24,12 @@ test('Scenario: Scenario with doc string', async ({ page }) => {
   await expect(scenario.getDocString()).toHaveText('some text');
 });
 
-test('Scenario: Scenario with different attachments', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with different attachments');
+test('Scenario: Scenario with attachments via testInfo', async ({ page }) => {
+  const scenario = getScenario(page, 'Scenario with attachments via testInfo');
   await expect(scenario.getSteps()).toContainText([
-    'attach text',
-    'attach image inline',
-    'attach image as file',
+    'attach text via testInfo',
+    'attach image inline via testInfo',
+    'attach image as file via testInfo',
   ]);
   await expect(scenario.getAttachments()).toHaveText([
     'text attachmentsome text', // no space between 'attachment' and 'some'

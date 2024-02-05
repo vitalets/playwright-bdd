@@ -48,10 +48,15 @@ Feature: rich feature
       some text
       ```
 
-  Scenario: Scenario with different attachments
-    Given attach text
-    And attach image inline
-    And attach image as file
+  Scenario: Scenario with attachments via testInfo
+    Given attach text via testInfo
+    And attach image inline via testInfo
+    And attach image as file via testInfo
+
+  Scenario: Scenario with attachments via Cucumber
+    Given attach log via Cucumber
+    Given attach text via Cucumber
+    And attach image via Cucumber
 
   Scenario: Scenario with all keywords
     Given Action 1

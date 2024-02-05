@@ -90,19 +90,11 @@ export async function runScenarioHooks<
     if (hook.type !== type) continue;
     if (hook.tagsExpression && !hook.tagsExpression.evaluate(fixtures.$tags)) continue;
 
-    const { timeout, name: hookName } = hook.options;
     try {
-      const hookFn = async () => {
-        await callWithTimeout(
-          () => hook.fn.call(fixtures.$bddWorld, fixtures),
-          timeout,
-          getTimeoutMessage(hook),
-        );
-      };
-
+      const hookFn = wrapHookFn(hook, fixtures);
       await runStepWithCustomLocation(
         fixtures.$bddWorld.test,
-        hookName || '',
+        hook.options.name || '',
         hook.location,
         hookFn,
       );
@@ -133,6 +125,25 @@ export function getScenarioHooksFixtures() {
   }
 
   return scenarioHooksFixtures;
+}
+
+/**
+ * Wraps hook fn with timeout and waiting Cucumber attachments to fulfill.
+ */
+function wrapHookFn(hook: ScenarioHook, fixtures: ScenarioHookBddFixtures<BddWorld>) {
+  const { timeout } = hook.options;
+  const { $bddWorld } = fixtures;
+  return async () => {
+    try {
+      await callWithTimeout(
+        () => hook.fn.call($bddWorld, fixtures),
+        timeout,
+        getTimeoutMessage(hook),
+      );
+    } finally {
+      await $bddWorld.$internal.cucumberAttachments.waitAttachmentsComplete();
+    }
+  };
 }
 
 function getOptionsFromArgs(args: unknown[]) {

@@ -92,7 +92,8 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
 
     return stdout;
   }
-  assert.fail(`Expected to exit with error: ${error}`);
+  console.log(`Expected to exit with error: ${error}`);
+  process.exit(1);
 }
 
 export function getPackageVersion(pkg) {

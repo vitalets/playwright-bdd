@@ -43,11 +43,15 @@ export class StepInvoker {
     const code = getStepCode(stepDefinition);
     const parameters = await this.getStepParameters(stepDefinition, text, argument || undefined);
 
-    this.world.$internal.registerStepStart(stepDefinition, text, location);
+    this.world.$internal.bddData.registerStep(stepDefinition, text, location);
 
-    return runStepWithCustomLocation(this.world.test, stepTitle, location, () =>
-      code.apply(this.world, parameters),
-    );
+    return runStepWithCustomLocation(this.world.test, stepTitle, location, async () => {
+      try {
+        await code.apply(this.world, parameters);
+      } finally {
+        await this.world.$internal.cucumberAttachments.waitAttachmentsComplete();
+      }
+    });
   }
 
   private getStepDefinition(text: string) {

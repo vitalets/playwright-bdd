@@ -4,7 +4,7 @@
  * Each step has 4 related entities:
  * 1. pickle step -> how it is defined in Gherkin
  * 2. pwStep -> TestStep in Playwright test results (will be missing, if step didn't run)
- * 3. bddDataStep -> step info from __bddData attachment (will be missing if step didn't run)
+ * 3. bddDataStep -> step info from bddData attachment (will be missing if step didn't run)
  * 4. messages.TestStep -> step info as a Cucumber message inside Cucumber's TestCase
  */
 import * as pw from '@playwright/test/reporter';

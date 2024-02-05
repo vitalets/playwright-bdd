@@ -24,8 +24,9 @@
 import fs from 'node:fs';
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { isGeneratedAttachmentName } from '../../../run/AttachmentAdapter';
+import { isGeneratedAttachmentName } from '../../../run/attachments/CucumberAttachments';
 import { TestCaseRun } from './TestCaseRun';
+import { BDD_DATA_ATTACHMENT_NAME } from '../../../run/attachments/BddData';
 
 type PwAttachment = pw.TestResult['attachments'][0];
 
@@ -39,7 +40,7 @@ export class Attachments {
   buildMessages(testStep: messages.TestStep, pwStep?: pw.TestStep) {
     if (!pwStep) return [];
     return this.extractStepAttachments(pwStep)
-      .filter((pwAttachment) => pwAttachment.name !== '__bddData')
+      .filter((pwAttachment) => pwAttachment.name !== BDD_DATA_ATTACHMENT_NAME)
       .map((pwAttachment) => {
         const attachment: messages.Attachment = {
           testCaseStartedId: this.testCaseRun.id,
