@@ -7,40 +7,35 @@ export const test = base.extend<{
   failingAfterFixtureWithStep: void;
 }>({
   failingBeforeFixtureNoStep: async ({}, use, testInfo) => {
-    await testInfo.attach('attachment in failingBeforeFixtureNoStep', { body: 'foo' });
+    await testInfo.attach('my attachment', { body: '|outside step' });
     await (async () => {
+      await testInfo.attach('my attachment', { body: '|in step' });
       throw new Error('error in failingBeforeFixtureNoStep');
     })();
     await use();
+    await testInfo.attach('my attachment', { body: 'should not attach' });
   },
   failingBeforeFixtureWithStep: async ({}, use, testInfo) => {
-    await testInfo.attach('attachment in failingBeforeFixtureWithStep (before use)', {
-      body: 'foo',
-    });
-    await test.step('step in failingBeforeFixtureWithStep', async () => {
-      await testInfo.attach('attachment in step in failingBeforeFixtureWithStep', { body: 'bar' });
+    await testInfo.attach('my attachment', { body: '|outside step' });
+    await test.step('my step', async () => {
+      await testInfo.attach('my attachment', { body: '|in step' });
       throw new Error('error in failingBeforeFixtureWithStep');
     });
     await use();
+    await testInfo.attach('my attachment', { body: 'should not attach' });
   },
   failingAfterFixtureNoStep: async ({}, use, testInfo) => {
-    await testInfo.attach('attachment in failingAfterFixtureNoStep (before use)', { body: 'foo' });
+    await testInfo.attach('my attachment', { body: '|before use' });
     await use();
-    await testInfo.attach('attachment in failingAfterFixtureNoStep (after use)', { body: 'bar' });
+    await testInfo.attach('my attachment', { body: '|after use' });
     throw new Error('error in failingAfterFixtureNoStep');
   },
   failingAfterFixtureWithStep: async ({}, use, testInfo) => {
-    await testInfo.attach('attachment in failingAfterFixtureWithStep (before use)', {
-      body: 'foo',
-    });
+    await testInfo.attach('my attachment', { body: '|outside step (before use)' });
     await use();
-    await testInfo.attach('attachment in failingAfterFixtureWithStep (after use)', {
-      body: 'bar',
-    });
+    await testInfo.attach('my attachment', { body: '|outside step (after use)' });
     await test.step('step in failingAfterFixtureWithStep', async () => {
-      await testInfo.attach('attachment in step in failingAfterFixtureWithStep', {
-        body: 'baz',
-      });
+      await testInfo.attach('my attachment', { body: '|in step' });
       throw new Error('error in failingAfterFixtureWithStep');
     });
   },

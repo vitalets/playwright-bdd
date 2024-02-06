@@ -61,8 +61,9 @@ test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
     'WhenAction 1',
     'screenshot',
   ]);
-  await expect(scenario.getAttachments()).toContainText([
-    'attachment in failingBeforeFixtureNoStep',
+  await expect(scenario.getAttachments()).toHaveText([
+    'my attachment|outside step',
+    'my attachment|in step',
     'screenshot',
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
@@ -73,14 +74,14 @@ test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
 test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingBeforeFixtureWithStep');
   await expect(scenario.getSteps()).toContainText([
-    'Hook "step in failingBeforeFixtureWithStep" failed: features/fixtures.ts:',
+    'Hook "my step" failed: features/fixtures.ts:',
     'Givenstep that uses failingBeforeFixtureWithStep',
     'WhenAction 2',
     'screenshot',
   ]);
-  await expect(scenario.getAttachments()).toContainText([
-    'attachment in step in failingBeforeFixtureWithStep',
-    'attachment in failingBeforeFixtureWithStep (before use)',
+  await expect(scenario.getAttachments()).toHaveText([
+    'my attachment|in step',
+    'my attachment|outside step',
     'screenshot',
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
@@ -91,16 +92,16 @@ test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
 test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureNoStep');
   await expect(scenario.getSteps()).toContainText([
-    'attachment in failingAfterFixtureNoStep (before use)',
+    'my attachment|before use',
     'Givenstep that uses failingAfterFixtureNoStep',
     'WhenAction 3',
     'Hook "fixture: failingAfterFixtureNoStep" failed: features/fixtures.ts:',
     // there is no automatic screenshot here
     // see: https://github.com/microsoft/playwright/issues/29325
   ]);
-  await expect(scenario.getAttachments()).toContainText([
-    'attachment in failingAfterFixtureNoStep (before use)',
-    'attachment in failingAfterFixtureNoStep (after use)',
+  await expect(scenario.getAttachments()).toHaveText([
+    'my attachment|before use',
+    'my attachment|after use',
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
@@ -111,15 +112,15 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
 test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureWithStep');
   await expect(scenario.getSteps()).toContainText([
-    'attachment in failingAfterFixtureWithStep (before use)',
+    'my attachment|outside step (before use)',
     'Givenstep that uses failingAfterFixtureWithStep',
     'WhenAction 4',
     'Hook "step in failingAfterFixtureWithStep" failed: features/fixtures.ts:',
   ]);
-  await expect(scenario.getAttachments()).toContainText([
-    'attachment in failingAfterFixtureWithStep (before use)',
-    'attachment in step in failingAfterFixtureWithStep',
-    'attachment in failingAfterFixtureWithStep (after use)',
+  await expect(scenario.getAttachments()).toHaveText([
+    'my attachment|outside step (before use)',
+    'my attachment|in step',
+    'my attachment|outside step (after use)',
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
