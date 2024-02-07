@@ -68,7 +68,7 @@ export class TestCaseRun {
       throw new Error(
         [
           `BDD data attachment is not found for test: ${this.test.title}`,
-          `Did you set bddAttachments: true in the Playwright config?`,
+          `Did you set enrichReporterData: true in the Playwright config?`,
           '',
         ].join('\n'),
       );
