@@ -1,6 +1,8 @@
 /**
- * To re-write expected.json with golden data, run the following:
- * GOLDEN=1 npm run only -- test/reporter-cucumber-junit
+ * Test of Cucumber junit report.
+ *
+ * Command to re-write expected shape with actual:
+ * cp test/reporter-cucumber-junit/reports/actualShape.json test/reporter-cucumber-junit/expectedShape.json
  */
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
@@ -29,19 +31,15 @@ const valuePaths = [
 ];
 
 async function checkJunitReport() {
-  const expectedShapeFile = testDir.getAbsPath('expected.json');
   const actualReportFile = testDir.getAbsPath('reports/report.xml');
+  const actualShapeFile = testDir.getAbsPath('reports/actualShape.json');
+  const expectedShapeFile = testDir.getAbsPath('expectedShape.json');
   const xml = fs.readFileSync(actualReportFile, 'utf8');
   const json = await xml2js.parseStringPromise(xml);
   const actualShape = buildObjectShape(json, { ignorePaths, valuePaths });
-  if (process.env.GOLDEN) {
-    const content = JSON.stringify(actualShape, null, 2);
-    fs.writeFileSync(expectedShapeFile, content);
-    console.log(`Created: ${expectedShapeFile}`);
-  } else {
-    const expectedShape = JSON.parse(fs.readFileSync(expectedShapeFile, 'utf8'));
-    expect(actualShape).toStrictEqual(expectedShape);
-  }
+  fs.writeFileSync(actualShapeFile, JSON.stringify(actualShape, null, 2));
+  const expectedShape = JSON.parse(fs.readFileSync(expectedShapeFile, 'utf8'));
+  expect(actualShape).toStrictEqual(expectedShape);
 }
 
 function copyFeatures() {

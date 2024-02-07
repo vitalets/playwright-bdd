@@ -45,13 +45,9 @@ export class StepInvoker {
 
     this.world.$internal.bddData.registerStep(stepDefinition, text, location);
 
-    return runStepWithCustomLocation(this.world.test, stepTitle, location, async () => {
-      try {
-        await code.apply(this.world, parameters);
-      } finally {
-        await this.world.$internal.cucumberAttachments.waitAttachmentsComplete();
-      }
-    });
+    return runStepWithCustomLocation(this.world.test, stepTitle, location, () =>
+      code.apply(this.world, parameters),
+    );
   }
 
   private getStepDefinition(text: string) {

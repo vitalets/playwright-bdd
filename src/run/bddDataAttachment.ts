@@ -2,15 +2,16 @@
  * Bdd data is a special attachment with test meta data, needed for Cucumber reporting.
  */
 import { StepMatchArgumentsList } from '@cucumber/messages';
-import { BddWorld } from '../bddWorld';
+import { BddWorld } from './bddWorld';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { PlaywrightLocation } from '../../playwright/getLocationInFile';
-import { createTestStep } from '../../cucumber/createTestStep';
-import { stringifyLocation } from '../../utils';
-import { TestMeta } from '../../gen/testMeta';
+import { PlaywrightLocation } from '../playwright/getLocationInFile';
+import { createTestStep } from '../cucumber/createTestStep';
+import { stringifyLocation } from '../utils';
+import { TestMeta } from '../gen/testMeta';
 import { TestResult } from '@playwright/test/reporter';
+import { PwAttachment } from '../playwright/types';
 
-export const BDD_DATA_ATTACHMENT_NAME = '__bddData';
+const BDD_DATA_ATTACHMENT_NAME = '__bddData';
 
 export type BddDataAttachment = {
   // feature file path relative to configDir
@@ -59,7 +60,11 @@ export class BddData {
 }
 
 export function getBddDataFromTestResult(result: TestResult) {
-  const attachment = result.attachments.find((a) => a.name === BDD_DATA_ATTACHMENT_NAME);
+  const attachment = result.attachments.find(isBddDataAttachment);
   const attachmentBody = attachment?.body?.toString();
   return attachmentBody ? (JSON.parse(attachmentBody) as BddDataAttachment) : undefined;
+}
+
+export function isBddDataAttachment(attachment: PwAttachment) {
+  return attachment.name === BDD_DATA_ATTACHMENT_NAME;
 }

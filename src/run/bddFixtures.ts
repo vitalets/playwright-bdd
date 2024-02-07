@@ -13,6 +13,7 @@ import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from './StepInvoker';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
+import { logger } from '../utils/logger';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -90,8 +91,8 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       $bddWorldFixtures,
       lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
-      log: () => {},
-      attach: async () => {},
+      log: () => logger.warn(`world.log() is noop, please use world.testInfo.attach()`),
+      attach: async () => logger.warn(`world.attach() is noop, please use world.testInfo.attach()`),
     });
     await world.init();
     await use(world);

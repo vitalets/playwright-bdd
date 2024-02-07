@@ -1,6 +1,6 @@
 {
-  "testsuite.testcase.#.system-out.#": 19,
-  "testsuite.testcase.#.$.time": 19,
+  "testsuite.testcase.#.system-out.#": 18,
+  "testsuite.testcase.#.$.time": 18,
   "testsuite.testcase.#.$.name": [
     "Check doubled",
     "Check doubled [1]",
@@ -17,16 +17,15 @@
     "Failing by named before hook",
     "Failing by step",
     "Scenario with all keywords",
-    "Scenario with attachments via Cucumber",
-    "Scenario with attachments via testInfo",
+    "Scenario with attachments",
     "Scenario with data table",
     "Scenario with doc string"
   ],
-  "testsuite.testcase.#.$.classname": 19,
+  "testsuite.testcase.#.$.classname": 18,
   "testsuite.testcase.#.failure.#.$.message": 8,
   "testsuite.testcase.#.failure.#.$.type": 8,
   "testsuite.testcase.#.failure.#._": 8,
-  "testsuite.$.tests": ["19"],
+  "testsuite.$.tests": ["18"],
   "testsuite.$.time": 1,
   "testsuite.$.name": ["My suite"],
   "testsuite.$.skipped": ["0"],

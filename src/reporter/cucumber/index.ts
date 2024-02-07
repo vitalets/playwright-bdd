@@ -2,7 +2,7 @@
  * Adapter to generate Cucumber reports from Playwright.
  */
 import EventEmitter from 'node:events';
-import { FullResult, Reporter, TestCase, TestResult, TestStep } from '@playwright/test/reporter';
+import { FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder';
 import { BaseReporterOptions } from './base';
 import { getPlaywrightConfigDir } from '../../config/dir';
@@ -55,14 +55,6 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> i
 
   printsToStdio() {
     return this.reporter.printsToStdio();
-  }
-
-  onStepBegin(test: TestCase, result: TestResult, step: TestStep) {
-    this.messagesBuilderRef.onStepBegin(test, result, step);
-  }
-
-  onStepEnd(test: TestCase, result: TestResult, step: TestStep) {
-    this.messagesBuilderRef.onStepEnd(test, result, step);
   }
 
   onTestEnd(test: TestCase, result: TestResult) {

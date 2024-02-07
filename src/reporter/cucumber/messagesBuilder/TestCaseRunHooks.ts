@@ -3,14 +3,8 @@
  */
 import * as pw from '@playwright/test/reporter';
 import { Hook, HookType } from './Hook';
-import {
-  MEANINGFUL_STEP_CATEGORIES,
-  findDeepestErrorStep,
-  getHooksRootStep,
-  getPlaywrightStepsWithCategories,
-} from './pwUtils';
+import { findDeepestErrorStep, getHooksRootStep, collectStepsDfs } from './pwUtils';
 import { ExecutedStepInfo, TestCaseRun } from './TestCaseRun';
-import { BDD_DATA_ATTACHMENT_NAME } from '../../../run/attachments/BddData';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 
 type ExecutedHookInfo = {
@@ -20,22 +14,24 @@ type ExecutedHookInfo = {
 
 export class TestCaseRunHooks {
   private rootStep?: pw.TestStep;
+  private candidateSteps: pw.TestStep[] = [];
   private hookSteps = new Set<pw.TestStep>();
   executedHooks = new Map</* internalId */ string, ExecutedHookInfo>();
 
   constructor(
     private testCaseRun: TestCaseRun,
     private hookType: HookType,
-  ) {
-    this.rootStep = getHooksRootStep(this.testCaseRun.result, hookType);
-  }
+  ) {}
 
   fill(mainSteps: ExecutedStepInfo[]) {
+    this.setRootStep();
+    this.setCandidateSteps();
     this.addStepsWithName();
     this.addStepsWithAttachment();
     this.addStepWithError();
     this.excludeBackgroundSteps(mainSteps);
-    this.createHooksInfo();
+    this.setExecutedHooks();
+    return this;
   }
 
   buildMessages() {
@@ -60,19 +56,30 @@ export class TestCaseRunHooks {
     return messages;
   }
 
+  private setRootStep() {
+    this.rootStep = getHooksRootStep(this.testCaseRun.result, this.hookType);
+  }
+
+  private setCandidateSteps() {
+    if (this.rootStep) this.candidateSteps.push(this.rootStep);
+    this.candidateSteps.push(...collectStepsDfs(this.rootStep));
+  }
+
   private addStepsWithName() {
-    getPlaywrightStepsWithCategories(this.rootStep, ['test.step'])
-      .filter((pwStep) => Boolean(pwStep.title))
-      .forEach((pwStep) => this.hookSteps.add(pwStep));
+    this.candidateSteps.forEach((pwStep) => {
+      if (pwStep.category === 'test.step' && pwStep.title) {
+        this.hookSteps.add(pwStep);
+      }
+    });
   }
 
   private addStepsWithAttachment() {
-    const candidates = getPlaywrightStepsWithCategories(this.rootStep, MEANINGFUL_STEP_CATEGORIES);
-    // add rootStep itself as it can contain screenshot
-    if (this.rootStep) candidates.push(this.rootStep);
-    candidates
-      .filter((pwStep) => this.hasAttachments(pwStep))
-      .forEach((pwStep) => this.hookSteps.add(pwStep));
+    const { attachmentMapper } = this.testCaseRun;
+    this.candidateSteps.forEach((pwStep) => {
+      if (attachmentMapper.getStepAttachments(pwStep).length > 0) {
+        this.hookSteps.add(pwStep);
+      }
+    });
   }
 
   private addStepWithError() {
@@ -80,7 +87,7 @@ export class TestCaseRunHooks {
     if (stepWithError) {
       this.hookSteps.add(stepWithError);
       // in Playwright error is inherited by all parent steps,
-      // but we wnat to show it once
+      // but we want to show it once (in the deepest step)
       this.hookSteps.forEach((step) => {
         if (step !== stepWithError) delete step.error;
       });
@@ -96,7 +103,7 @@ export class TestCaseRunHooks {
     }
   }
 
-  private createHooksInfo() {
+  private setExecutedHooks() {
     this.hookSteps.forEach((pwStep) => {
       const internalId = Hook.getInternalId(pwStep);
       const hook = this.testCaseRun.hooks.getOrCreate(
@@ -105,13 +112,5 @@ export class TestCaseRunHooks {
       );
       this.executedHooks.set(internalId, { hook, pwStep });
     });
-  }
-
-  private hasAttachments(pwStep: pw.TestStep) {
-    return (
-      this.testCaseRun.attachmentMapper
-        .getStepAttachments(pwStep)
-        .filter((a) => a.name !== BDD_DATA_ATTACHMENT_NAME).length > 0
-    );
   }
 }

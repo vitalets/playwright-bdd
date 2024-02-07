@@ -12,6 +12,7 @@ import {
   TestType,
 } from '@playwright/test';
 import { BddFixtures } from '../run/bddFixtures';
+import { TestResult } from '@playwright/test/reporter';
 
 export type KeyValue = { [key: string]: any };
 
@@ -31,3 +32,5 @@ export type CustomFixtures<T extends KeyValue> = Omit<
   Fixtures<T>,
   keyof (BuiltInFixtures & BddFixtures) | symbol | number
 >;
+
+export type PwAttachment = TestResult['attachments'][0];

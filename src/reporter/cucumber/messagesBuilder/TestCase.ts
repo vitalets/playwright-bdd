@@ -14,7 +14,7 @@ import { TestCaseRun } from './TestCaseRun';
 import { Hook, HookType } from './Hook';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../cucumber/loadFeatures';
 import { stringifyLocation } from '../../../utils';
-import { BddDataAttachment } from '../../../run/attachments/BddData';
+import { BddDataAttachment } from '../../../run/bddDataAttachment';
 
 type HookWithStep = {
   hook: Hook;

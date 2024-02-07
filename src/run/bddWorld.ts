@@ -3,7 +3,6 @@ import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { BddWorldInternal } from './bddWorldInternal';
-import { CucumberAttachments } from './attachments/CucumberAttachments';
 
 export type BddWorldFixtures = {
   page: Page;
@@ -35,11 +34,8 @@ export class BddWorld<
   $internal: BddWorldInternal;
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
-    const cucumberAttachments = new CucumberAttachments(options.testInfo);
-    options.log = cucumberAttachments.getLogFn();
-    options.attach = cucumberAttachments.getAttachFn();
     super(options);
-    this.$internal = new BddWorldInternal(this, cucumberAttachments);
+    this.$internal = new BddWorldInternal(this);
   }
 
   /**
