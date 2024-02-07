@@ -7,7 +7,7 @@ if (!featureDir) throw new Error(`Empty FEATURE_DIR`);
 const testDir = defineBddConfig({
   paths: [`features/${featureDir}`],
   require: [`features/${featureDir}/*.ts`],
-  bddAttachments: true,
+  enrichReporterData: true,
 });
 
 export default defineConfig({

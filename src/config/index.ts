@@ -29,7 +29,7 @@ type OwnConfig = {
   /** Parent directory for all feature files used to construct output paths */
   featuresRoot?: string;
   /** Add special BDD attachments for Cucumber reports */
-  bddAttachments?: boolean;
+  enrichReporterData?: boolean;
 };
 
 export const defaults: Required<
@@ -89,7 +89,7 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
     quotes: true,
     tags: true,
     featuresRoot: true,
-    bddAttachments: true,
+    enrichReporterData: true,
   };
   const keys = Object.keys(omitProps) as (keyof OwnConfig)[];
   const cucumberConfig = { ...config };
