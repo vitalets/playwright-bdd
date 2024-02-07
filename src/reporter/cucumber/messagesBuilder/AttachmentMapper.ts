@@ -18,7 +18,7 @@
  * map to attachments using names and order.
  * + works in merge-reports
  * + allows to map attachments in custom fixtures
- * - needs Playwright >= 1.35
+ * - needs Playwright >= 1.34
  *
  * This class implements approach 3.
  *
@@ -92,7 +92,9 @@ export class AttachmentMapper {
     const [foundAttachment] = allAttachments.splice(index, 1);
     if (isBddDataAttachment(foundAttachment)) return;
     const parentStep = attachmentStep.parent;
-    // parentStep is empty in PW <= 1.40 when testInfo.attach() promise
+    // step.parent is empty:
+    // - in PW = 1.34 for screenshot attachment
+    // - in PW <= 1.40 when testInfo.attach() promise
     // is awaited in the next async tick: 'attach' steps are on the top level
     const stepAttachments = parentStep
       ? this.stepAttachments.getOrCreate(parentStep, () => [])

@@ -1,5 +1,9 @@
 import { test, expect } from '@playwright/test';
 import { getFeature, getScenario, openReport } from './helpers';
+import { getPackageVersion } from '../../../src/utils';
+
+const pwVersion = getPackageVersion('@playwright/test');
+const isPW1_34 = pwVersion.startsWith('1.34.');
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);
@@ -91,18 +95,25 @@ test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
 
 test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureNoStep');
-  await expect(scenario.getSteps()).toContainText([
-    'my attachment|before use',
-    'Givenstep that uses failingAfterFixtureNoStep',
-    'WhenAction 3',
-    'Hook "fixture: failingAfterFixtureNoStep" failed: features/fixtures.ts:',
-    // there is no automatic screenshot here
-    // see: https://github.com/microsoft/playwright/issues/29325
-  ]);
-  await expect(scenario.getAttachments()).toHaveText([
-    'my attachment|before use',
-    'my attachment|after use',
-  ]);
+  // there is no automatic screenshot here in pw >= 1.35
+  // see: https://github.com/microsoft/playwright/issues/29325
+  const hasScreenshot = isPW1_34;
+  await expect(scenario.getSteps()).toContainText(
+    [
+      'my attachment|before use',
+      'Givenstep that uses failingAfterFixtureNoStep',
+      'WhenAction 3',
+      hasScreenshot ? 'screenshot' : '',
+      'Hook "fixture: failingAfterFixtureNoStep" failed: features/fixtures.ts:',
+    ].filter(Boolean),
+  );
+  await expect(scenario.getAttachments()).toHaveText(
+    [
+      'my attachment|before use', // prettier-ignore
+      hasScreenshot ? 'screenshot' : '',
+      'my attachment|after use',
+    ].filter(Boolean),
+  );
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
@@ -111,17 +122,26 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
 
 test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureWithStep');
-  await expect(scenario.getSteps()).toContainText([
-    'my attachment|outside step (before use)',
-    'Givenstep that uses failingAfterFixtureWithStep',
-    'WhenAction 4',
-    'Hook "step in failingAfterFixtureWithStep" failed: features/fixtures.ts:',
-  ]);
-  await expect(scenario.getAttachments()).toHaveText([
-    'my attachment|outside step (before use)',
-    'my attachment|in step',
-    'my attachment|outside step (after use)',
-  ]);
+  // there is no automatic screenshot here in pw >= 1.35
+  // see: https://github.com/microsoft/playwright/issues/29325
+  const hasScreenshot = isPW1_34;
+  await expect(scenario.getSteps()).toContainText(
+    [
+      'my attachment|outside step (before use)',
+      'Givenstep that uses failingAfterFixtureWithStep',
+      'WhenAction 4',
+      hasScreenshot ? 'screenshot' : '',
+      'Hook "step in failingAfterFixtureWithStep" failed: features/fixtures.ts:',
+    ].filter(Boolean),
+  );
+  await expect(scenario.getAttachments()).toHaveText(
+    [
+      'my attachment|outside step (before use)',
+      'my attachment|in step',
+      hasScreenshot ? 'screenshot' : '',
+      'my attachment|outside step (after use)',
+    ].filter(Boolean),
+  );
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
