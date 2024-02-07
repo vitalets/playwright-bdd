@@ -48,7 +48,7 @@
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",
     "docs": "docsify serve ./docs",
-    "setpw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
+    "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
     "release": "bash scripts/release.sh"
   },
   "dependencies": {

@@ -1,66 +1,118 @@
 /**
- * Maps test steps with attachments.
+ * Maps attachments to test steps.
+ *
+ * As there is no built-in method to map attachments with steps,
+ * I've considered several approches:
+ *
+ * 1. Track attachments count in onStepBegin/onStepEnd.
+ * + intuitive and simple
+ * - does not work in merge-reports, there attachments are populated only in onTestEnd.
  * See: https://github.com/microsoft/playwright/issues/29323
  *
- * Example:
- * onStepBegin fixture: foo
- *   attach a1
- *   onStepBegin test.step bar
- *     attach a2
- *   onStepEnd test.step bar
- *   attach a3
- * onStepEnd fixture: foo
+ * 2. Track attachments manually in own code and store attachment indexes
+ * for each step in __bddData system attachment.
+ * + works in merge-reports
+ * - impossible to map attachments in user's custom fixtures, as we don't wrap this code
  *
- * Output of this run:
- * fixture: foo -> attachment indexes [0,2]
- * test.step bar -> attachment indexes [1]
+ * 3. Check Playwright steps with category: 'attach', extract attachment names and
+ * map to attachments using names and order.
+ * + works in merge-reports
+ * + allows to map attachments in custom fixtures
+ * - needs Playwright >= 1.35
+ *
+ * This class implements approach 3.
+ *
+ * Example:
+ *
+ * Code:
+ * // fixture that creates 3 attachments
+ * myFixture: ({}, use, testInfo) => {
+ *   await testInfo.attach('my attachment', { body: 'foo' });
+ *   await test.step('my step', async () => {
+ *     await testInfo.attach('my attachment', { body: 'bar' })
+ *   });
+ *   await testInfo.attach('my attachment', { body: 'baz' });
+ * }
+ *
+ * Attachments:
+ *  my attachment, body = foo
+ *  my attachment, body = bar
+ *  my attachment, body = baz
+ *
+ * Steps tree:
+ * - fixture: myFixture
+ *   - attach "my attachment"
+ *   - my step
+ *     - attach "my attachment"
+ *   - attach "my attachment"
+ *
+ * Algorithm:
+ * 1. find all steps with category: 'attach' using deep-first search traversal
+ * 2. iterate these steps in the following manner:
+ *   2.1 take step and extract attachment name from step title
+ *   2.2 find attachment with the same name, searching from the beginning of array
+ *   2.3 map found attachment with step.parent
+ *   2.4 remove found attachment from attachments array
  */
 import * as pw from '@playwright/test/reporter';
 import { MapWithCreate } from '../../../utils/MapWithCreate';
-import { MEANINGFUL_STEP_CATEGORIES } from './pwUtils';
-
-type StepAttachmentsInfo = {
-  countOnStart: number;
-  attachments: pw.TestResult['attachments'];
-};
+import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
+import { PwAttachment } from '../../../playwright/types';
+import { isBddDataAttachment } from '../../../run/bddDataAttachment';
 
 export class AttachmentMapper {
-  private usedAttachmentIndexes = new MapWithCreate<pw.TestResult, Set<number>>();
-  private stepAttachments = new Map<pw.TestStep, StepAttachmentsInfo>();
+  private stepAttachments = new MapWithCreate<pw.TestStep, PwAttachment[]>();
+  private unusedAttachments: PwAttachment[] = [];
 
-  handleStepBegin(result: pw.TestResult, step: pw.TestStep) {
-    if (!shouldHandleStep(step)) return;
-    this.stepAttachments.set(step, {
-      countOnStart: result.attachments.length,
-      attachments: [],
-    });
-  }
-
-  handleStepEnd(result: pw.TestResult, step: pw.TestStep) {
-    if (!shouldHandleStep(step)) return;
-    const { countOnStart, attachments } = this.getStepAttachmentsInfo(step);
-    const usedIndexes = this.usedAttachmentIndexes.getOrCreate(result, () => new Set());
-    for (let i = countOnStart; i < result.attachments.length; i++) {
-      if (!usedIndexes.has(i)) {
-        usedIndexes.add(i);
-        attachments.push(result.attachments[i]);
-      }
-    }
+  constructor(private result: pw.TestResult) {
+    this.mapAttachments();
   }
 
   getStepAttachments(pwStep: pw.TestStep) {
-    return shouldHandleStep(pwStep) ? this.getStepAttachmentsInfo(pwStep).attachments : [];
+    return this.stepAttachments.get(pwStep) || [];
   }
 
-  private getStepAttachmentsInfo(pwStep: pw.TestStep) {
-    const stepAttachmentsInfo = this.stepAttachments.get(pwStep);
-    if (!stepAttachmentsInfo) {
-      throw new Error(`Something went wrong: empty step attachments info`);
+  private mapAttachments() {
+    const allAttachments = this.result.attachments.slice();
+    const attachmentSteps = collectStepsWithCategory(this.result, 'attach');
+    attachmentSteps.forEach((attachmentStep) => {
+      this.mapAttachment(attachmentStep, allAttachments);
+    });
+    this.unusedAttachments.push(...allAttachments);
+    this.mapUnusedAttachments();
+  }
+
+  private mapAttachment(attachmentStep: pw.TestStep, allAttachments: PwAttachment[]) {
+    const index = allAttachments.findIndex(
+      (a) => getAttachmentStepTitle(a.name) === attachmentStep.title,
+    );
+    if (index === -1) {
+      throw new Error(`Attachment not found for step: ${attachmentStep.title}`);
     }
-    return stepAttachmentsInfo;
+    const [foundAttachment] = allAttachments.splice(index, 1);
+    if (isBddDataAttachment(foundAttachment)) return;
+    const parentStep = attachmentStep.parent;
+    // parentStep is empty in PW <= 1.40 when testInfo.attach() promise
+    // is awaited in the next async tick: 'attach' steps are on the top level
+    const stepAttachments = parentStep
+      ? this.stepAttachments.getOrCreate(parentStep, () => [])
+      : this.unusedAttachments;
+    stepAttachments.push(foundAttachment);
+  }
+
+  private mapUnusedAttachments() {
+    if (!this.unusedAttachments.length) return;
+    // map unused attachments to the 'After Hooks' step
+    const afterHooksRoot = getHooksRootStep(this.result, 'after');
+    if (!afterHooksRoot) {
+      throw new Error(`Can not find after hooks root to attach unused attachments.`);
+    }
+    const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
+    stepAttachments.push(...this.unusedAttachments);
   }
 }
 
-function shouldHandleStep(pwStep: pw.TestStep) {
-  return MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
+// See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L413
+function getAttachmentStepTitle(attachmentName: string) {
+  return `attach "${attachmentName}"`;
 }

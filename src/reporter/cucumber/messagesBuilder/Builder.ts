@@ -13,7 +13,6 @@ import EventEmitter from 'node:events';
 import EventDataCollector from '../helpers/EventDataCollector';
 import { Hook } from './Hook';
 import { MapWithCreate } from '../../../utils/MapWithCreate';
-import { AttachmentMapper } from './AttachmentMapper';
 
 type ConcreteEnvelope<T extends keyof messages.Envelope> = Required<
   Pick<messages.Envelope, T>
@@ -43,21 +42,12 @@ export class MessagesBuilder {
   private onEndPromise: Promise<void>;
   private onEndPromiseResolve = () => {};
   private buildMessagesPromise?: Promise<void>;
-  private attachmentMapper = new AttachmentMapper();
 
   private eventDataCollectorEmitter = new EventEmitter();
   public eventDataCollector = new EventDataCollector(this.eventDataCollectorEmitter);
 
   constructor() {
     this.onEndPromise = new Promise((resolve) => (this.onEndPromiseResolve = resolve));
-  }
-
-  onStepBegin(test: pw.TestCase, result: pw.TestResult, step: pw.TestStep) {
-    this.attachmentMapper.handleStepBegin(result, step);
-  }
-
-  onStepEnd(test: pw.TestCase, result: pw.TestResult, step: pw.TestStep) {
-    this.attachmentMapper.handleStepEnd(result, step);
   }
 
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
@@ -139,7 +129,7 @@ export class MessagesBuilder {
       // and we don't have bddData attachment -> don't know feature uri.
       // Don't add such test run to report.
       if (test.expectedStatus === 'skipped') return;
-      const testCaseRun = new TestCaseRun(test, result, this.hooks, this.attachmentMapper);
+      const testCaseRun = new TestCaseRun(test, result, this.hooks);
       this.testCaseRuns.push(testCaseRun);
     });
   }

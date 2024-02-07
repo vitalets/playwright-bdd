@@ -134,15 +134,11 @@ function wrapHookFn(hook: ScenarioHook, fixtures: ScenarioHookBddFixtures<BddWor
   const { timeout } = hook.options;
   const { $bddWorld } = fixtures;
   return async () => {
-    try {
-      await callWithTimeout(
-        () => hook.fn.call($bddWorld, fixtures),
-        timeout,
-        getTimeoutMessage(hook),
-      );
-    } finally {
-      await $bddWorld.$internal.cucumberAttachments.waitAttachmentsComplete();
-    }
+    await callWithTimeout(
+      () => hook.fn.call($bddWorld, fixtures),
+      timeout,
+      getTimeoutMessage(hook),
+    );
   };
 }
 

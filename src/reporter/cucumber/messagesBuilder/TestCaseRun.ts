@@ -9,12 +9,12 @@ import { TestCase } from './TestCase';
 import { MapWithCreate } from '../../../utils/MapWithCreate';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { getHooksRootStep, getPlaywrightStepsWithCategories } from './pwUtils';
+import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
 import {
   BddDataAttachment,
   BddDataStep,
   getBddDataFromTestResult,
-} from '../../../run/attachments/BddData';
+} from '../../../run/bddDataAttachment';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 
@@ -34,27 +34,32 @@ export class TestCaseRun {
   id: string;
   bddData: BddDataAttachment;
   testCase?: TestCase;
-  private executedBeforeHooks = new TestCaseRunHooks(this, 'before');
-  private executedAfterHooks = new TestCaseRunHooks(this, 'after');
-  private executedSteps: ExecutedStepInfo[] = [];
+  attachmentMapper: AttachmentMapper;
+  private executedBeforeHooks: TestCaseRunHooks;
+  private executedAfterHooks: TestCaseRunHooks;
+  private executedSteps: ExecutedStepInfo[];
 
   // eslint-disable-next-line max-params
   constructor(
     public test: pw.TestCase,
     public result: pw.TestResult,
     public hooks: MapWithCreate<string, Hook>,
-    public attachmentMapper: AttachmentMapper,
   ) {
-    this.id = `${this.test.id}-run-${this.result.retry}`;
+    this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
-    this.fillExecutedSteps();
-    this.executedBeforeHooks.fill(this.executedSteps);
-    this.executedAfterHooks.fill(this.executedSteps);
+    this.attachmentMapper = new AttachmentMapper(this.result);
+    this.executedSteps = this.fillExecutedSteps();
+    this.executedBeforeHooks = this.fillExecutedHooks('before');
+    this.executedAfterHooks = this.fillExecutedHooks('after');
   }
 
   getTestCase() {
     if (!this.testCase) throw new Error(`TestCase is not set.`);
     return this.testCase;
+  }
+
+  private generateTestRunId() {
+    return `${this.test.id}-run-${this.result.retry}`;
   }
 
   private getBddData() {
@@ -73,10 +78,14 @@ export class TestCaseRun {
 
   private fillExecutedSteps() {
     const possiblePwSteps = this.getPossiblePlaywrightSteps();
-    this.bddData.steps.forEach((bddDataStep) => {
+    return this.bddData.steps.map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
-      this.executedSteps.push({ bddDataStep, pwStep });
+      return { bddDataStep, pwStep };
     });
+  }
+
+  private fillExecutedHooks(hookType: HookType) {
+    return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
   }
 
   buildMessages() {
@@ -130,13 +139,13 @@ export class TestCaseRun {
     const pwStep = possiblePwSteps.find((pwStep) => {
       return pwStep.location && stringifyLocation(pwStep.location) === bddDataStep.pwStepLocation;
     });
-    if (!pwStep) throw new Error('pwStep not found');
+    if (!pwStep) throw new Error('Playwright step not found for bdd step');
     return pwStep;
   }
 
   private getPossiblePlaywrightSteps() {
     const beforeHooksRoot = getHooksRootStep(this.result, 'before');
-    const bgSteps = getPlaywrightStepsWithCategories(beforeHooksRoot, ['test.step']);
+    const bgSteps = collectStepsWithCategory(beforeHooksRoot, 'test.step');
     const topLevelSteps = this.result.steps.filter((step) => step.category === 'test.step');
     return [...bgSteps, ...topLevelSteps];
   }

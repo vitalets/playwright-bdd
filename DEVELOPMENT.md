@@ -28,7 +28,7 @@ npx cross-env-shell PW=1.39 'npm i --no-save @playwright/test@$PW @playwright/ex
 ```
 OR
 ```
-PW=1.39 npm run setpw
+PW=1.39 npm run pw
 ```
 
 Install corresponding browsers without clearing other versions:
