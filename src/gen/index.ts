@@ -13,7 +13,7 @@ import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
 import { requireTransform } from '../playwright/transform';
-import { getPlaywrightConfigDir } from '../config/dir';
+import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';

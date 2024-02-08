@@ -4,7 +4,7 @@
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { FeaturesLoader } from '../../../cucumber/loadFeatures';
-import { getPlaywrightConfigDir } from '../../../config/dir';
+import { getPlaywrightConfigDir } from '../../../config/configDir';
 import { TestCaseRun, TestCaseRunEnvelope } from './TestCaseRun';
 import { TestCase } from './TestCase';
 import { Meta } from './Meta';

@@ -6,7 +6,7 @@ import { BDDConfig, extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
-import { getPlaywrightConfigDir } from '../config/dir';
+import { getPlaywrightConfigDir } from '../config/configDir';
 import { runScenarioHooks } from '../hooks/scenario';
 import { runWorkerHooks } from '../hooks/worker';
 import { IRunConfiguration } from '@cucumber/cucumber/api';

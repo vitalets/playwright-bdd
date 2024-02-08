@@ -5,7 +5,7 @@ import path from 'node:path';
 import { ImportTestFrom } from '../gen/formatter';
 import { IConfiguration } from '@cucumber/cucumber/api';
 import { saveConfigToEnv } from './env';
-import { getPlaywrightConfigDir } from './dir';
+import { getPlaywrightConfigDir } from './configDir';
 import { getPackageVersion } from '../utils';
 
 // todo: pick only relevant fields from cucumber config
