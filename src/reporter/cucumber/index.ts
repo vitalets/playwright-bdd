@@ -5,7 +5,7 @@ import EventEmitter from 'node:events';
 import { FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder';
 import { BaseReporterOptions } from './base';
-import { getPlaywrightConfigDir } from '../../config/dir';
+import { getPlaywrightConfigDir } from '../../config/configDir';
 import MessageReporter from './message';
 import HtmlReporter from './html';
 import JunitReporter from './junit';
