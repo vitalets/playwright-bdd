@@ -14,6 +14,7 @@ import { StepInvoker } from './StepInvoker';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
 import { logger } from '../utils/logger';
+import { getEnrichReporterData } from '../config/enrichReporterData';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -97,7 +98,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     await world.init();
     await use(world);
     await world.destroy();
-    if (config.enrichReporterData) {
+    if (getEnrichReporterData(config)) {
       await world.$internal.bddData.attach($testMeta, $uri);
     }
   },

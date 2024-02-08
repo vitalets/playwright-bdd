@@ -10,6 +10,7 @@ import MessageReporter from './message';
 import HtmlReporter from './html';
 import JunitReporter from './junit';
 import JsonReporter from './json';
+import { enableEnrichReporterData } from '../../config/enrichReporterData';
 
 /**
  * Helper function to define reporter in a type-safe way.
@@ -49,6 +50,7 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> i
   private reporter: InstanceType<BuiltinReporters[T]>;
 
   constructor(protected options: { $type: T } & CucumberReporterOptions<T>) {
+    enableEnrichReporterData();
     this.messagesBuilderRef = getMessagesBuilderRef();
     this.reporter = this.createCucumberReporter();
   }
