@@ -1,14 +1,15 @@
+/**
+ * Builds 'object shape' - an object with all possible paths as keys.
+ * Values by default is number of such paths in original object (or array of objects)
+ * Values can also be ignored or contain array of all possible values,
+ * depends on passed { ignorePaths, valuePaths }.
+ */
 import get from 'lodash.get';
 
-// todo: create a separate module? json-shape
-
-/**
- * Builds 'object shape' - an object with all paths of objects in all messages.
- * Used for validating reports.
- */
-export function buildArrayShape(objects, { ignorePaths, valuePaths }) {
+export function buildShape(obj, { ignorePaths, valuePaths }) {
   const shape = {};
-  objects.forEach((obj) => {
+  const arr = Array.isArray(obj) ? obj : [obj];
+  arr.forEach((obj) => {
     getAllPaths(obj).forEach((path) => {
       const pathStr = getPathStr(path);
       const isIgnorePath = hasPrefix(pathStr, ignorePaths);
@@ -22,25 +23,6 @@ export function buildArrayShape(objects, { ignorePaths, valuePaths }) {
         shape[pathStr] = curVal ? curVal + 1 : 1;
       }
     });
-  });
-
-  return shape;
-}
-
-export function buildObjectShape(obj, { ignorePaths, valuePaths }) {
-  const shape = {};
-  getAllPaths(obj).forEach((path) => {
-    const pathStr = getPathStr(path);
-    const isIgnorePath = hasPrefix(pathStr, ignorePaths);
-    const isValuePath = hasPrefix(pathStr, valuePaths);
-    const curVal = shape[pathStr];
-    if (isIgnorePath) return;
-    if (isValuePath) {
-      const newVal = get(obj, path);
-      shape[pathStr] = curVal ? curVal.concat([newVal]).sort() : [newVal];
-    } else {
-      shape[pathStr] = curVal ? curVal + 1 : 1;
-    }
   });
 
   return shape;

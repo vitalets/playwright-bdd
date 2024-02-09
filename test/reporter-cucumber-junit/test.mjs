@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestWithError } from '../helpers.mjs';
 import xml2js from 'xml2js';
-import { buildObjectShape } from '../reporter-cucumber-msg/helpers/shared.mjs';
+import { buildShape } from '../reporter-cucumber-msg/helpers/json-shape.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -36,7 +36,7 @@ async function checkJunitReport() {
   const expectedShapeFile = testDir.getAbsPath('expectedShape.json');
   const xml = fs.readFileSync(actualReportFile, 'utf8');
   const json = await xml2js.parseStringPromise(xml);
-  const actualShape = buildObjectShape(json, { ignorePaths, valuePaths });
+  const actualShape = buildShape(json, { ignorePaths, valuePaths });
   fs.writeFileSync(actualShapeFile, JSON.stringify(actualShape, null, 2));
   const expectedShape = JSON.parse(fs.readFileSync(expectedShapeFile, 'utf8'));
   expect(actualShape).toStrictEqual(expectedShape);
