@@ -5,18 +5,19 @@ const featureDir = process.env.FEATURE_DIR;
 if (!featureDir) throw new Error(`Empty FEATURE_DIR`);
 
 const testDir = defineBddConfig({
+  outputDir: `.features-gen/${featureDir}`,
   paths: [`features/${featureDir}`],
-  require: [`features/${featureDir}/*.ts`],
+  require: [`features/${featureDir}/common.steps.ts`, `features/${featureDir}/pw.steps.ts`],
 });
 
 export default defineConfig({
   testDir,
   reporter: [
     cucumberReporter('message', {
-      outputFile: `features/${featureDir}/report.ndjson`,
+      outputFile: `features/${featureDir}/reports/messages.ndjson`,
     }),
     cucumberReporter('json', {
-      outputFile: `features/${featureDir}/report.json`,
+      outputFile: `features/${featureDir}/reports/json-report.json`,
     }),
   ],
 });

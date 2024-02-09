@@ -19,7 +19,7 @@ export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
-function execPlaywrightTestInternal(dir, cmd) {
+export function execPlaywrightTestInternal(dir, cmd) {
   const cwd = path.join('test', dir);
   const cmdStr = getCmdStr(cmd);
   const env = Object.assign({}, process.env, cmd?.env);

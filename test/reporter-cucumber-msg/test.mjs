@@ -1,36 +1,20 @@
 /**
  * Runs Playwright for each dir in features/* and validates messages report.
- * Expected reports are taken from 2 places:
- * 1. Cucumber tests
- * - https://github.com/cucumber/cucumber-js/tree/main/features/fixtures/formatters
- * 2. Cucumber compatibility tests (CCK)
- * - https://github.com/cucumber/compatibility-kit
- * - for step definitions better to check Cucumber CCK suite:
- *   https://github.com/cucumber/cucumber-js/tree/main/compatibility/features
- *
- * Run single feature:
- * npm run only -- test/reporter-cucumber-msg
+ * FEATURE_DIR=cck/minimal npm run only -- test/reporter-cucumber-msg
  */
-import path from 'node:path';
 import fg from 'fast-glob';
-import { assertMessageReport } from './helpers/assertMessageReport.mjs';
-import { assertJsonReport } from './helpers/assertJsonReport.mjs';
+import fs from 'node:fs';
+import { expect } from '@playwright/test';
+import { test, TestDir, execPlaywrightTestInternal } from '../helpers.mjs';
+import { messageReportFields, jsonReportFields } from './fields.config.mjs';
+import { buildShape } from './helpers/json-shape.mjs';
 
-import { test, TestDir, execPlaywrightTest } from '../helpers.mjs';
+const onlyFeatureDir = process.env.FEATURE_DIR;
 
 const testDir = new TestDir(import.meta);
-
-const onlyFeatureDir = process.argv[2];
-
-const skipFeatureDirs = [
-  // skip b/c extra steps for hooks
-  'cck/attachments',
-];
-
 test(testDir.name, async () => {
   const dirs = onlyFeatureDir ? [onlyFeatureDir] : getAllFeatureDirs();
   for (const dir of dirs) {
-    if (dir !== 'passed-scenario') continue;
     await checkFeature(dir);
   }
 });
@@ -42,28 +26,20 @@ test(testDir.name, async () => {
  */
 async function checkFeature(featureDir) {
   const absFeatureDir = testDir.getAbsPath(`features/${featureDir}`);
-  const featureName = featureDir.split(path.sep).pop();
-  const isCCK = featureDir.startsWith('cck');
 
-  execPlaywrightTest(testDir.name, { env: { FEATURE_DIR: featureDir } });
-
-  const expectedFile = isCCK
-    ? `${absFeatureDir}/${featureName}.feature.ndjson`
-    : `${absFeatureDir}/${featureName}.message.json.js`;
-
-  await assertMessageReport({
-    expectedFile,
-    actualFile: `${absFeatureDir}/report.ndjson`,
-    isCCK,
-  });
-
-  if (!isCCK) {
-    await assertJsonReport({
-      expectedFile: `${absFeatureDir}/${featureName}.json.js`,
-      actualFile: `${absFeatureDir}/report.json`,
-      isCCK,
-    });
+  try {
+    execPlaywrightTestInternal(testDir.name, { env: { FEATURE_DIR: featureDir } });
+  } catch (e) {
+    // some features exit with error
   }
+
+  const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected/messages.ndjson`);
+  const actualMessages = getMessagesFromFile(`${absFeatureDir}/reports/messages.ndjson`);
+  assertShape(expectedMessages, actualMessages, messageReportFields, featureDir);
+
+  const expectedJson = getJsonFromFile(`${absFeatureDir}/expected/json-report.json`);
+  const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report.json`);
+  assertShape(expectedJson, actualJson, jsonReportFields, featureDir);
 }
 
 /**
@@ -73,8 +49,32 @@ function getAllFeatureDirs() {
   return fg
     .sync('**', {
       cwd: testDir.getAbsPath('features'),
-      deep: 2,
+      deep: 1,
       onlyDirectories: true,
     })
-    .filter((dir) => dir !== 'cck' && !skipFeatureDirs.includes(dir));
+    .filter((dir) => !dir.startsWith('_'));
+}
+
+/**
+ * Compares shapes of two objects/arrays.
+ */
+export function assertShape(expected, actual, fieldsConfig, featureDir) {
+  const expectedShape = buildShape(expected, fieldsConfig);
+  const actualShape = buildShape(actual, fieldsConfig);
+  expect(actualShape, featureDir).toStrictEqual(expectedShape);
+}
+
+/**
+ * Reads messages from ndjson file and returns as array.
+ */
+function getMessagesFromFile(file) {
+  return fs
+    .readFileSync(file, 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((line) => JSON.parse(line));
+}
+
+function getJsonFromFile(file) {
+  return JSON.parse(fs.readFileSync(file, 'utf8'));
 }
