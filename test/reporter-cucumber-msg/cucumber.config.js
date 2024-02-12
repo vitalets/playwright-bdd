@@ -4,8 +4,8 @@
  * to avoid automatic reauire by Cucumber inside playwright-bdd.
  *
  * Usage:
- * cd test/reporter-cucumber-msg
- * FEATURE_DIR=passed-scenario npx cucumber-js -c cucumber.config.js
+ * node test/reporter-cucumber-msg/helpers/run-c.mjs <featureDir>
+ * node test/reporter-cucumber-msg/helpers/run-c.mjs minimal
  */
 const featureDir = process.env.FEATURE_DIR;
 
