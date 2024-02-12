@@ -24,6 +24,7 @@ export const messageReportFields = {
     'pickle.name',
     'pickle.steps.#.text',
     'attachment.mediaType',
+    'testCaseStarted.attempt',
   ],
 };
 
