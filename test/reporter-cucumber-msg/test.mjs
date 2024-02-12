@@ -1,6 +1,8 @@
 /**
  * Runs Playwright for each dir in features/* and validates messages report.
- * FEATURE_DIR=cck/minimal npm run only -- test/reporter-cucumber-msg
+ *
+ * Run single feature:
+ * node test/reporter-cucumber-msg/run.mjs minimal
  */
 import fg from 'fast-glob';
 import fs from 'node:fs';
