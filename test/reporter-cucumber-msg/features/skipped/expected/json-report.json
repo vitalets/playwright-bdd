@@ -1,0 +1,87 @@
+[
+  {
+    "description": "  Hooks and step definitions are able to signal at runtime that the scenario should\n  be skipped by raising a particular kind of exception status (For example PENDING or SKIPPED).\n\n  This can be useful in certain situations e.g. the current environment doesn't have\n  the right conditions for running a particular scenario.",
+    "elements": [
+      {
+        "description": "",
+        "id": "skipping-scenarios;skipping-from-a-step-doesn't-affect-the-previous-steps",
+        "keyword": "Scenario",
+        "line": 13,
+        "name": "Skipping from a step doesn't affect the previous steps",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 14,
+            "name": "a step that does not skip",
+            "match": {
+              "location": "features/skipped/cucumber.steps.ts:7"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 161291
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 15,
+            "name": "I skip a step",
+            "match": {
+              "location": "features/skipped/cucumber.steps.ts:15"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 34250
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "skipping-scenarios;skipping-from-a-step-causes-the-rest-of-the-scenario-to-be-skipped",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "Skipping from a step causes the rest of the scenario to be skipped",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 18,
+            "name": "I skip a step",
+            "match": {
+              "location": "features/skipped/cucumber.steps.ts:15"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 14290
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 19,
+            "name": "a step that is skipped",
+            "match": {
+              "location": "features/skipped/cucumber.steps.ts:11"
+            },
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "skipping-scenarios",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Skipping scenarios",
+    "tags": [],
+    "uri": "features/skipped/skipped.feature"
+  }
+]
