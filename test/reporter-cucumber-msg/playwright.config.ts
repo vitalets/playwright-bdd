@@ -5,7 +5,7 @@ const featureDir = process.env.FEATURE_DIR;
 if (!featureDir) throw new Error(`Empty FEATURE_DIR`);
 
 const testDir = defineBddConfig({
-  outputDir: `.features-gen/${featureDir}`,
+  outputDir: `features/${featureDir}/.features-gen`,
   paths: [`features/${featureDir}`],
   require: [`features/${featureDir}/common.steps.ts`, `features/${featureDir}/pw.steps.ts`],
 });

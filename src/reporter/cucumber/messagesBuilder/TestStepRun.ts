@@ -60,19 +60,28 @@ export class TestStepRun {
 
   private buildTestStepFinished() {
     const error = this.pwStep?.error;
-    const errorOutput = error ? formatError(error) : undefined;
     const testStepFinished: messages.TestStepFinished = {
       testCaseStartedId: this.testCaseRun.id,
       testStepId: this.testStep.id,
       testStepResult: {
         duration: messages.TimeConversion.millisecondsToDuration(this.duration),
         status: this.getStatus(error),
-        message: errorOutput,
-        exception: error ? { message: errorOutput, type: 'Error' } : undefined,
+        message: error ? formatError(error) : undefined,
+        exception: error ? this.buildException(error) : undefined,
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };
     return { testStepFinished };
+  }
+
+  private buildException(error: pw.TestError): messages.Exception {
+    return {
+      type: 'Error',
+      message: error.message,
+      // Older versions of @cucumber/messages does not have stackTrace field
+      // todo: add direct dependency on @cucumber/messages
+      stackTrace: error.stack,
+    } as messages.Exception;
   }
 
   private getStatus(error?: pw.TestError): messages.TestStepResultStatus {

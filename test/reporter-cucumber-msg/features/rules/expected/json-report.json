@@ -1,0 +1,206 @@
+[
+  {
+    "description": "  You can place scenarios inside rules. This makes it possible to structure Gherkin documents\n  in the same way as [example maps](https://cucumber.io/blog/bdd/example-mapping-introduction/).\n\n  You can also use the Examples synonym for Scenario to make them even similar.",
+    "elements": [
+      {
+        "description": "",
+        "id": "usage-of-a-`rule`;a-sale-cannot-happen-if-the-customer-does-not-have-enough-money;not-enough-money",
+        "keyword": "Example",
+        "line": 9,
+        "name": "Not enough money",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 10,
+            "name": "the customer has 100 cents",
+            "match": {
+              "location": "features/rules/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 449333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 11,
+            "name": "there are chocolate bars in stock",
+            "match": {
+              "location": "features/rules/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48041
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 12,
+            "name": "the customer tries to buy a 125 cent chocolate bar",
+            "match": {
+              "location": "features/rules/common.steps.ts:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 34082
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 13,
+            "name": "the sale should not happen",
+            "match": {
+              "location": "features/rules/common.steps.ts:22"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 48417
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "usage-of-a-`rule`;a-sale-cannot-happen-if-the-customer-does-not-have-enough-money;enough-money",
+        "keyword": "Example",
+        "line": 16,
+        "name": "Enough money",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 17,
+            "name": "the customer has 100 cents",
+            "match": {
+              "location": "features/rules/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 20708
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 18,
+            "name": "there are chocolate bars in stock",
+            "match": {
+              "location": "features/rules/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 11042
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 19,
+            "name": "the customer tries to buy a 75 cent chocolate bar",
+            "match": {
+              "location": "features/rules/common.steps.ts:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18916
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 20,
+            "name": "the sale should happen",
+            "match": {
+              "location": "features/rules/common.steps.ts:26"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 24791
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "usage-of-a-`rule`;a-sale-cannot-happen-if-there-is-no-stock;no-chocolates-left",
+        "keyword": "Example",
+        "line": 25,
+        "name": "No chocolates left",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 26,
+            "name": "the customer has 100 cents",
+            "match": {
+              "location": "features/rules/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 19458
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 27,
+            "name": "there are no chocolate bars in stock",
+            "match": {
+              "location": "features/rules/common.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 30250
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 28,
+            "name": "the customer tries to buy a 1 cent chocolate bar",
+            "match": {
+              "location": "features/rules/common.steps.ts:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 95333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 29,
+            "name": "the sale should not happen",
+            "match": {
+              "location": "features/rules/common.steps.ts:22"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 24208
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@some-tag"
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "usage-of-a-`rule`",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Usage of a `Rule`",
+    "tags": [],
+    "uri": "features/rules/rules.feature"
+  }
+]

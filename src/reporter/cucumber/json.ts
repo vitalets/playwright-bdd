@@ -15,7 +15,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as messages from '@cucumber/messages';
-import { ISupportCodeLibrary } from '@cucumber/cucumber/api';
 import BaseReporter, { BaseReporterOptions } from './base';
 
 import * as GherkinDocumentParser from './helpers/GherkinDocumentParser';
@@ -25,6 +24,7 @@ import { ITestCaseAttempt } from './helpers/EventDataCollector';
 import { parseStepArgument } from '../../cucumber/stepArguments';
 import { durationToNanoseconds } from './helpers/durationHelpers';
 import { formatLocation } from './helpers/locationHelpers';
+import { ISupportCodeLibrary } from '../../cucumber/types';
 
 const {
   getGherkinExampleRuleMap,
@@ -359,7 +359,9 @@ export default class JsonReporter extends BaseReporter {
 
     return {
       name: tagData.name,
-      line: tag?.location?.line ?? -1,
-    };
+      // line is required by IJsonTag by in real Cucumber
+      // it is undefined if there is no location
+      line: tag?.location?.line,
+    } as IJsonTag;
   }
 }

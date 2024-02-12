@@ -19,7 +19,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 178542
+              "duration": 176624
             }
           },
           {
@@ -32,7 +32,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 25958
+              "duration": 26249
             }
           },
           {
@@ -45,7 +45,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 36874
+              "duration": 51667
             }
           }
         ],
@@ -74,7 +74,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 14958
+              "duration": 20333
             }
           },
           {
@@ -87,7 +87,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 11833
+              "duration": 16125
             }
           },
           {
@@ -100,7 +100,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 12540
+              "duration": 13625
             }
           }
         ],
@@ -129,7 +129,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 26083
+              "duration": 13917
             }
           },
           {
@@ -142,7 +142,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 18666
+              "duration": 13624
             }
           },
           {
@@ -155,7 +155,7 @@
             },
             "result": {
               "status": "failed",
-              "duration": 1340458,
+              "duration": 1825416,
               "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n-8 !== 0\n\n    + expected - actual\n\n    --8\n    +0\n\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/examples-tables/common.steps.ts:13:10)"
             }
           }
@@ -185,7 +185,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 32917
+              "duration": 31000
             }
           },
           {
@@ -198,7 +198,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 77833
+              "duration": 95624
             }
           },
           {
@@ -211,7 +211,7 @@
             },
             "result": {
               "status": "failed",
-              "duration": 250791,
+              "duration": 203750,
               "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n-1 !== 0\n\n    + expected - actual\n\n    --1\n    +0\n\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/examples-tables/common.steps.ts:13:10)"
             }
           }

@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 104958
+              "duration": 105875
             }
           },
           {
@@ -22,7 +22,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 13041
+              "duration": 13166
             }
           },
           {
@@ -35,7 +35,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 105333
+              "duration": 115166
             }
           },
           {
@@ -43,7 +43,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 13124
+              "duration": 12000
             }
           }
         ],
@@ -62,7 +62,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 6000
+              "duration": 6750
             }
           },
           {
@@ -70,7 +70,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 6415
+              "duration": 6625
             }
           },
           {
@@ -83,7 +83,7 @@
             },
             "result": {
               "status": "failed",
-              "duration": 36833,
+              "duration": 37666,
               "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:17:9)"
             }
           },
@@ -92,7 +92,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 9250
+              "duration": 10208
             }
           }
         ],
@@ -111,7 +111,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 9624
+              "duration": 10583
             }
           },
           {
@@ -119,7 +119,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 8500
+              "duration": 62417
             }
           },
           {
@@ -132,7 +132,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 76499
+              "duration": 69791
             }
           },
           {
@@ -140,7 +140,7 @@
             "hidden": true,
             "result": {
               "status": "failed",
-              "duration": 25833,
+              "duration": 36541,
               "error_message": "Error: Exception in conditional hook\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:25:9)"
             }
           },
@@ -149,7 +149,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 10708
+              "duration": 11457
             }
           }
         ],
@@ -173,7 +173,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 11667
+              "duration": 5584
             }
           },
           {
@@ -181,7 +181,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 11209
+              "duration": 8625
             }
           },
           {
@@ -194,7 +194,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 20915
+              "duration": 16541
             }
           },
           {
@@ -202,7 +202,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1064084
+              "duration": 1295833
             },
             "embeddings": [
               {
@@ -216,7 +216,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 4584
+              "duration": 5459
             }
           }
         ],

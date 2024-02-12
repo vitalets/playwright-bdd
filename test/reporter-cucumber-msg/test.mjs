@@ -16,6 +16,11 @@ import { messageReportFields, jsonReportFields } from './fields.config.mjs';
 import { buildShape } from './helpers/json-shape.mjs';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
+const skipDirs = [
+  // For skipped scenarios Playwright does not even run fixtures.
+  // We can't align here with Cucumber.
+  'skipped',
+];
 
 const testDir = new TestDir(import.meta);
 test(testDir.name, async () => {
@@ -61,7 +66,7 @@ function getAllFeatureDirs() {
       deep: 1,
       onlyDirectories: true,
     })
-    .filter((dir) => !dir.startsWith('_'));
+    .filter((dir) => !skipDirs.includes(dir));
 }
 
 /**
@@ -70,7 +75,13 @@ function getAllFeatureDirs() {
 export function assertShape(expected, actual, fieldsConfig, featureDir) {
   const expectedShape = buildShape(expected, fieldsConfig);
   const actualShape = buildShape(actual, fieldsConfig);
-  expect(actualShape, featureDir).toStrictEqual(expectedShape);
+  try {
+    expect(actualShape).toStrictEqual(expectedShape);
+  } catch (e) {
+    // for some reason Playwright's expect does not show custom message
+    console.log(`FAILED feature dir: ${featureDir}`);
+    throw e;
+  }
 }
 
 /**
