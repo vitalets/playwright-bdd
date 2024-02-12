@@ -3,11 +3,15 @@
  *
  * Run single feature:
  * node test/reporter-cucumber-msg/run.mjs minimal
+ *
+ * Or to debug:
+ * cd test/reporter-cucumber-msg
+ * FEATURE_DIR=minimal npx playwright test
  */
 import fg from 'fast-glob';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTestInternal } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../helpers.mjs';
 import { messageReportFields, jsonReportFields } from './fields.config.mjs';
 import { buildShape } from './helpers/json-shape.mjs';
 
@@ -32,7 +36,10 @@ async function checkFeature(featureDir) {
   try {
     execPlaywrightTestInternal(testDir.name, { env: { FEATURE_DIR: featureDir } });
   } catch (e) {
-    // some features exit with error
+    // some features normally exit with error
+    if (e.message.trim() !== `Command failed: ${DEFAULT_CMD}`) {
+      throw e;
+    }
   }
 
   const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected/messages.ndjson`);

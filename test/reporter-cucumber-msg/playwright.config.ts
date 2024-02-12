@@ -12,6 +12,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  retries: featureDir === 'retry' ? 2 : 0,
   reporter: [
     cucumberReporter('message', {
       outputFile: `features/${featureDir}/reports/messages.ndjson`,
