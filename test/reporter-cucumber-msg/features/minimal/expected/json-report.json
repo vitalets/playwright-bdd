@@ -15,11 +15,11 @@
             "line": 10,
             "name": "I have 42 cukes in my belly",
             "match": {
-              "location": "features/cck/minimal/common.steps.ts:3"
+              "location": "features/minimal/common.steps.ts:3"
             },
             "result": {
               "status": "passed",
-              "duration": 201541
+              "duration": 179000
             }
           }
         ],
@@ -32,6 +32,6 @@
     "keyword": "Feature",
     "name": "minimal",
     "tags": [],
-    "uri": "features/cck/minimal/minimal.feature"
+    "uri": "features/minimal/minimal.feature"
   }
 ]
