@@ -24,35 +24,31 @@ type TestNodeFlags = {
 export class TestNode {
   title: string;
   titlePath: string[];
-  ownTags: string[] = [];
-  tags: string[] = [];
+  ownTags: string[];
+  tags: string[];
   flags: TestNodeFlags = {};
 
   constructor(gherkinNode: GherkinNode, parent?: TestNode) {
-    this.initOwnTags(gherkinNode);
-    this.tags = removeDuplicates((parent?.tags || []).concat(this.ownTags));
     this.title = gherkinNode.name;
     this.titlePath = (parent?.titlePath || []).concat([this.title]);
+    this.ownTags = removeDuplicates(getTagNames(gherkinNode.tags));
+    this.tags = removeDuplicates((parent?.tags || []).concat(this.ownTags));
+    this.initFlags();
   }
 
   isSkipped() {
     return this.flags.skip || this.flags.fixme;
   }
 
-  private initOwnTags(gherkinNode: GherkinNode) {
-    const tagNames = removeDuplicates(getTagNames(gherkinNode.tags));
-    tagNames.forEach((tag) => {
-      if (isSpecialTag(tag)) {
-        this.setFlag(tag);
-      } else {
-        this.ownTags.push(tag);
-      }
+  private initFlags() {
+    this.ownTags.forEach((tag) => {
+      if (isSpecialTag(tag)) this.setFlag(tag);
     });
   }
 
   // eslint-disable-next-line complexity
   private setFlag(tag: SpecialTag) {
-    // in case of several system tags, @only takes precendence
+    // in case of several special tags, @only takes precendence
     if (tag === '@only') this.flags = { only: true };
     if (tag === '@skip' && !this.flags.only) this.flags.skip = true;
     if (tag === '@fixme' && !this.flags.only) this.flags.fixme = true;

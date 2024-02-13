@@ -6,32 +6,50 @@
         "description": "",
         "id": "minimal;cukes",
         "keyword": "Scenario",
-        "line": 9,
+        "line": 11,
         "name": "cukes",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 10,
+            "line": 12,
             "name": "I have 42 cukes in my belly",
             "match": {
               "location": "features/minimal/common.steps.ts:3"
             },
             "result": {
               "status": "passed",
-              "duration": 179000
+              "duration": 174540
             }
           }
         ],
-        "tags": [],
+        "tags": [
+          {
+            "name": "@foo",
+            "line": 1
+          },
+          {
+            "name": "@only",
+            "line": 10
+          },
+          {
+            "name": "@bar",
+            "line": 10
+          }
+        ],
         "type": "scenario"
       }
     ],
     "id": "minimal",
-    "line": 1,
+    "line": 2,
     "keyword": "Feature",
     "name": "minimal",
-    "tags": [],
+    "tags": [
+      {
+        "name": "@foo",
+        "line": 1
+      }
+    ],
     "uri": "features/minimal/minimal.feature"
   }
 ]
