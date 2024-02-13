@@ -2,7 +2,10 @@
  * Runs Playwright for each dir in features/* and validates messages report.
  *
  * Run single feature:
- * node test/reporter-cucumber-msg/run.mjs minimal
+ * node test/reporter-cucumber-msg/helpers/run-pw.mjs minimal
+ *
+ * Generate expected report by Cucumber:
+ * node test/reporter-cucumber-msg/helpers/run-c.mjs minimal
  *
  * Or to debug:
  * cd test/reporter-cucumber-msg

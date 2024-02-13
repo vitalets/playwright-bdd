@@ -116,8 +116,6 @@ Given('I do something', async ({ $tags }) => {
 });
 ```
 
-> Special tags `@only`, `@skip` and `@fixme` are excluded from `$tags` to avoid impact on test during debug
-
 The most powerful usage of `$tags` is in your custom fixtures.
 
 ##### Example 1

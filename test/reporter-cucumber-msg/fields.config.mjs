@@ -22,6 +22,7 @@ export const messageReportFields = {
   valuePaths: [
     'source.data', // prettier-ignore
     'pickle.name',
+    'pickle.tags.#.name',
     'pickle.steps.#.text',
     'attachment.mediaType',
     'testCaseStarted.attempt',
