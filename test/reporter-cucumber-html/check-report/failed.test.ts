@@ -130,8 +130,9 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
       'my attachment|outside step (before use)',
       'Givenstep that uses failingAfterFixtureWithStep',
       'WhenAction 4',
-      hasScreenshot ? 'screenshot' : '',
       'Hook "step in failingAfterFixtureWithStep" failed: features/fixtures.ts:',
+      hasScreenshot ? 'screenshot' : '',
+      'my attachment|outside step (after use)',
     ].filter(Boolean),
   );
   await expect(scenario.getAttachments()).toHaveText(
