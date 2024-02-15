@@ -18,10 +18,10 @@ export default class HtmlReporter extends BaseReporter {
   private htmlStream: CucumberHtmlStream;
 
   constructor(
-    baseOptions: BaseReporterOptions,
+    baseReporterOptions: BaseReporterOptions,
     protected options: HtmlReporterOptions = {},
   ) {
-    super(baseOptions);
+    super(baseReporterOptions);
     this.setOutputStream(this.options.outputFile);
     const packageRoot = resolvePackageRoot('@cucumber/html-formatter');
     this.htmlStream = new CucumberHtmlStream(

@@ -70,7 +70,9 @@ export interface IJsonStep {
 
 export interface IJsonTag {
   name: string;
-  line: number;
+  // In Cucumber line is not optional but actually it can contain undefined.
+  // It is b/c Cucumber is not in strict mode.
+  line?: number;
 }
 
 interface IBuildJsonFeatureOptions {
@@ -112,10 +114,10 @@ export default class JsonReporter extends BaseReporter {
   };
 
   constructor(
-    baseOptions: BaseReporterOptions,
+    baseReporterOptions: BaseReporterOptions,
     protected options: JsonReporterOptions = {},
   ) {
-    super(baseOptions);
+    super(baseReporterOptions);
     this.setOutputStream(this.options.outputFile);
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       if (doesHaveValue(envelope.testRunFinished)) {
@@ -359,9 +361,7 @@ export default class JsonReporter extends BaseReporter {
 
     return {
       name: tagData.name,
-      // line is required by IJsonTag by in real Cucumber
-      // it is undefined if there is no location
       line: tag?.location?.line,
-    } as IJsonTag;
+    };
   }
 }
