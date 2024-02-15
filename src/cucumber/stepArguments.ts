@@ -5,7 +5,7 @@ import util from 'node:util';
 import * as messages from '@cucumber/messages';
 import { doesHaveValue } from './valueChecker';
 
-export interface IPickleStepArgumentFunctionMap<T> {
+interface IPickleStepArgumentFunctionMap<T> {
   dataTable: (arg: messages.PickleTable) => T;
   docString: (arg: messages.PickleDocString) => T;
 }

@@ -10,7 +10,7 @@ import { TestCase } from './TestCase';
 import { Meta } from './Meta';
 import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
 import EventEmitter from 'node:events';
-import EventDataCollector from '../helpers/EventDataCollector';
+import EventDataCollector from '../../../cucumber/formatter/EventDataCollector';
 import { Hook } from './Hook';
 import { MapWithCreate } from '../../../utils/MapWithCreate';
 

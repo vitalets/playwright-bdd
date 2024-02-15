@@ -5,7 +5,7 @@
 import * as messages from '@cucumber/messages';
 import BaseReporter, { BaseReporterOptions } from './base';
 
-export type MessageReporterOptions = {
+type MessageReporterOptions = {
   outputFile?: string;
 };
 

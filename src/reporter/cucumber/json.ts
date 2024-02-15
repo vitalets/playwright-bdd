@@ -17,13 +17,13 @@
 import * as messages from '@cucumber/messages';
 import BaseReporter, { BaseReporterOptions } from './base';
 
-import * as GherkinDocumentParser from './helpers/GherkinDocumentParser';
-import * as PickleParser from './helpers/PickleParser';
+import * as GherkinDocumentParser from '../../cucumber/formatter/GherkinDocumentParser';
+import * as PickleParser from '../../cucumber/formatter/PickleParser';
 import { doesHaveValue, doesNotHaveValue } from '../../cucumber/valueChecker';
-import { ITestCaseAttempt } from './helpers/EventDataCollector';
+import { ITestCaseAttempt } from '../../cucumber/formatter/EventDataCollector';
 import { parseStepArgument } from '../../cucumber/stepArguments';
-import { durationToNanoseconds } from './helpers/durationHelpers';
-import { formatLocation } from './helpers/locationHelpers';
+import { durationToNanoseconds } from '../../cucumber/formatter/durationHelpers';
+import { formatLocation } from '../../cucumber/formatter/locationHelpers';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 
 const {
@@ -35,7 +35,7 @@ const {
 
 const { getScenarioDescription, getPickleStepMap, getStepKeyword } = PickleParser;
 
-export interface IJsonFeature {
+interface IJsonFeature {
   description: string;
   elements: IJsonScenario[];
   id: string;
@@ -46,7 +46,7 @@ export interface IJsonFeature {
   uri: string;
 }
 
-export interface IJsonScenario {
+interface IJsonScenario {
   description: string;
   id: string;
   keyword: string;
@@ -57,7 +57,7 @@ export interface IJsonScenario {
   type: string;
 }
 
-export interface IJsonStep {
+interface IJsonStep {
   arguments?: any; // TODO
   embeddings?: any; // TODO
   hidden?: boolean;
@@ -68,7 +68,7 @@ export interface IJsonStep {
   result?: any; // TODO
 }
 
-export interface IJsonTag {
+interface IJsonTag {
   name: string;
   // In Cucumber line is not optional but actually it can contain undefined.
   // It is b/c Cucumber is not in strict mode.
@@ -103,7 +103,7 @@ interface UriToTestCaseAttemptsMap {
   [uri: string]: ITestCaseAttempt[];
 }
 
-export type JsonReporterOptions = {
+type JsonReporterOptions = {
   outputFile?: string;
 };
 

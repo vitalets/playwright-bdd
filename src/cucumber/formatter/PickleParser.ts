@@ -2,19 +2,13 @@
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/helpers/pickle_parser.ts
  */
 import * as messages from '@cucumber/messages';
-import { getGherkinScenarioLocationMap } from './GherkinDocumentParser';
 
-export interface IGetPickleLocationRequest {
-  gherkinDocument: messages.GherkinDocument;
-  pickle: messages.Pickle;
-}
-
-export interface IGetStepKeywordRequest {
+interface IGetStepKeywordRequest {
   pickleStep: messages.PickleStep;
   gherkinStepMap: Record<string, messages.Step>;
 }
 
-export interface IGetScenarioDescriptionRequest {
+interface IGetScenarioDescriptionRequest {
   pickle: messages.Pickle;
   gherkinScenarioMap: Record<string, messages.Scenario>;
 }
@@ -35,12 +29,4 @@ export function getPickleStepMap(pickle: messages.Pickle): Record<string, messag
   const result: Record<string, messages.PickleStep> = {};
   pickle.steps.forEach((pickleStep) => (result[pickleStep.id] = pickleStep));
   return result;
-}
-
-export function getPickleLocation({
-  gherkinDocument,
-  pickle,
-}: IGetPickleLocationRequest): messages.Location {
-  const gherkinScenarioLocationMap = getGherkinScenarioLocationMap(gherkinDocument);
-  return gherkinScenarioLocationMap[pickle.astNodeIds[pickle.astNodeIds.length - 1]];
 }
