@@ -79,10 +79,10 @@ export default class JunitReporter extends BaseReporter {
   private readonly names: Record<string, string[]> = {};
 
   constructor(
-    baseOptions: BaseReporterOptions,
+    baseReporterOptions: BaseReporterOptions,
     protected options: JunitReporterOptions = {},
   ) {
-    super(baseOptions);
+    super(baseReporterOptions);
     this.setOutputStream(this.options.outputFile);
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       if (doesHaveValue(envelope.testRunFinished)) {

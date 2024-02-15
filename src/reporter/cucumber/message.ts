@@ -11,12 +11,12 @@ export type MessageReporterOptions = {
 
 export default class MessageReporter extends BaseReporter {
   constructor(
-    baseOptions: BaseReporterOptions,
+    baseReporterOptions: BaseReporterOptions,
     protected options: MessageReporterOptions = {},
   ) {
-    super(baseOptions);
+    super(baseReporterOptions);
     this.setOutputStream(this.options.outputFile);
-    baseOptions.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
+    this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       this.outputStream.write(JSON.stringify(envelope) + '\n');
     });
   }
