@@ -37,22 +37,6 @@ export function findDeepestErrorStep(root?: pw.TestStep) {
   return errorStep;
 }
 
-// eslint-disable-next-line complexity
-export function filterPlaywrightStepsDeep(
-  parent: pw.TestResult | pw.TestStep | undefined,
-  fn: (step: pw.TestStep) => unknown,
-) {
-  const result: pw.TestStep[] = [];
-  const stack = parent?.steps.slice() || [];
-  while (stack.length) {
-    const step = stack.shift();
-    if (step && fn(step)) result.push(step);
-    stack.unshift(...(step?.steps || []));
-  }
-
-  return result;
-}
-
 /**
  * Returns all steps in DFS order.
  * See: https://en.wikipedia.org/wiki/Depth-first_search

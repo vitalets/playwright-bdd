@@ -10,7 +10,7 @@ import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
 import BaseReporter, { BaseReporterOptions } from './base';
 
-export type HtmlReporterOptions = {
+type HtmlReporterOptions = {
   outputFile?: string;
 };
 

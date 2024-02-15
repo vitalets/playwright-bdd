@@ -1,7 +1,7 @@
 import path from 'node:path';
-import { doesHaveValue } from '../../../cucumber/valueChecker';
+import { doesHaveValue } from '../valueChecker';
 
-export interface ILineAndUri {
+interface ILineAndUri {
   line: number;
   uri: string;
 }

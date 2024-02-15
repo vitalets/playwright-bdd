@@ -4,7 +4,7 @@
 
 /* eslint-disable max-nested-callbacks */
 import * as messages from '@cucumber/messages';
-import { doesHaveValue } from '../../../cucumber/valueChecker';
+import { doesHaveValue } from '../valueChecker';
 
 export function getGherkinStepMap(
   gherkinDocument: messages.GherkinDocument,

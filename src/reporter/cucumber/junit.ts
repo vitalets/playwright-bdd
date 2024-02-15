@@ -19,11 +19,14 @@ import {
 } from '@cucumber/messages';
 import BaseReporter, { BaseReporterOptions } from './base';
 import { doesHaveValue, valueOrDefault } from '../../cucumber/valueChecker';
-import { ITestCaseAttempt } from './helpers/EventDataCollector';
-import { getGherkinExampleRuleMap, getGherkinStepMap } from './helpers/GherkinDocumentParser';
-import { getPickleStepMap, getStepKeyword } from './helpers/PickleParser';
+import { ITestCaseAttempt } from '../../cucumber/formatter/EventDataCollector';
+import {
+  getGherkinExampleRuleMap,
+  getGherkinStepMap,
+} from '../../cucumber/formatter/GherkinDocumentParser';
+import { getPickleStepMap, getStepKeyword } from '../../cucumber/formatter/PickleParser';
 
-export type JunitReporterOptions = {
+type JunitReporterOptions = {
   outputFile?: string;
   suiteName?: string;
 };

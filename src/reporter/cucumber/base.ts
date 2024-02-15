@@ -8,7 +8,7 @@ import fs from 'node:fs';
 import { Writable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import { EventEmitter } from 'node:events';
-import EventDataCollector from './helpers/EventDataCollector';
+import EventDataCollector from '../../cucumber/formatter/EventDataCollector';
 
 export type BaseReporterOptions = {
   cwd: string;

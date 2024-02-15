@@ -2,14 +2,11 @@
  * Timing utils.
  */
 import { TimeConversion } from '@cucumber/messages';
+
 export type TimeMeasured = {
   startTime: Date;
   duration: number;
 };
-
-export function getEndTime(entity: TimeMeasured) {
-  return new Date(entity.startTime.getTime() + entity.duration);
-}
 
 export function toCucumberTimestamp(time: number) {
   return TimeConversion.millisecondsSinceEpochToTimestamp(time);
@@ -29,4 +26,8 @@ export function calcMinMaxByArray(items: TimeMeasured[]) {
     startTime,
     duration: endTime.getTime() - startTime.getTime(),
   };
+}
+
+function getEndTime(entity: TimeMeasured) {
+  return new Date(entity.startTime.getTime() + entity.duration);
 }

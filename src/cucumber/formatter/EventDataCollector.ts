@@ -8,7 +8,7 @@
 
 import { EventEmitter } from 'node:events';
 import * as messages from '@cucumber/messages';
-import { doesHaveValue, doesNotHaveValue } from '../../../cucumber/valueChecker';
+import { doesHaveValue, doesNotHaveValue } from '../valueChecker';
 
 interface ITestCaseAttemptData {
   attempt: number;
@@ -41,10 +41,16 @@ export default class EventDataCollector {
     eventBroadcaster.on('envelope', this.parseEnvelope.bind(this));
   }
 
+  /**
+   * @public
+   */
   getGherkinDocument(uri: string): messages.GherkinDocument {
     return this.gherkinDocumentMap[uri];
   }
 
+  /**
+   * @public
+   */
   getPickle(pickleId: string): messages.Pickle {
     return this.pickleMap[pickleId];
   }
