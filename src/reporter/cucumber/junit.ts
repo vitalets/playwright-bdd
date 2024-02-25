@@ -17,7 +17,7 @@ import {
   TestStepResult,
   TestStepResultStatus,
 } from '@cucumber/messages';
-import BaseReporter, { BaseReporterOptions } from './base';
+import BaseReporter, { InternalOptions } from './base';
 import { doesHaveValue, valueOrDefault } from '../../cucumber/valueChecker';
 import { ITestCaseAttempt } from '../../cucumber/formatter/EventDataCollector';
 import {
@@ -82,11 +82,11 @@ export default class JunitReporter extends BaseReporter {
   private readonly names: Record<string, string[]> = {};
 
   constructor(
-    baseReporterOptions: BaseReporterOptions,
-    protected options: JunitReporterOptions = {},
+    internalOptions: InternalOptions,
+    protected userOptions: JunitReporterOptions = {},
   ) {
-    super(baseReporterOptions);
-    this.setOutputStream(this.options.outputFile);
+    super(internalOptions);
+    this.setOutputStream(this.userOptions.outputFile);
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       if (doesHaveValue(envelope.testRunFinished)) {
         this.onTestRunFinished();
@@ -95,7 +95,7 @@ export default class JunitReporter extends BaseReporter {
   }
 
   get suiteName() {
-    return valueOrDefault(this.options.suiteName, 'cucumber-js');
+    return valueOrDefault(this.userOptions.suiteName, 'cucumber-js');
   }
 
   private getTestCases() {

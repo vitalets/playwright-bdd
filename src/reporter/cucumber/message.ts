@@ -3,7 +3,7 @@
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/message_formatter.ts
  */
 import * as messages from '@cucumber/messages';
-import BaseReporter, { BaseReporterOptions } from './base';
+import BaseReporter, { InternalOptions } from './base';
 
 type MessageReporterOptions = {
   outputFile?: string;
@@ -11,11 +11,11 @@ type MessageReporterOptions = {
 
 export default class MessageReporter extends BaseReporter {
   constructor(
-    baseReporterOptions: BaseReporterOptions,
-    protected options: MessageReporterOptions = {},
+    internalOptions: InternalOptions,
+    protected userOptions: MessageReporterOptions = {},
   ) {
-    super(baseReporterOptions);
-    this.setOutputStream(this.options.outputFile);
+    super(internalOptions);
+    this.setOutputStream(this.userOptions.outputFile);
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       this.outputStream.write(JSON.stringify(envelope) + '\n');
     });

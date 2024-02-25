@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as messages from '@cucumber/messages';
-import BaseReporter, { BaseReporterOptions } from './base';
+import BaseReporter, { InternalOptions } from './base';
 
 import * as GherkinDocumentParser from '../../cucumber/formatter/GherkinDocumentParser';
 import * as PickleParser from '../../cucumber/formatter/PickleParser';
@@ -114,11 +114,11 @@ export default class JsonReporter extends BaseReporter {
   };
 
   constructor(
-    baseReporterOptions: BaseReporterOptions,
-    protected options: JsonReporterOptions = {},
+    internalOptions: InternalOptions,
+    protected userOptions: JsonReporterOptions = {},
   ) {
-    super(baseReporterOptions);
-    this.setOutputStream(this.options.outputFile);
+    super(internalOptions);
+    this.setOutputStream(this.userOptions.outputFile);
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       if (doesHaveValue(envelope.testRunFinished)) {
         this.onTestRunFinished();

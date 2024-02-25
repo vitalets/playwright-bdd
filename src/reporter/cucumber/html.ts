@@ -8,7 +8,7 @@ import { finished } from 'node:stream/promises';
 import CucumberHtmlStream from '@cucumber/html-formatter';
 import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
-import BaseReporter, { BaseReporterOptions } from './base';
+import BaseReporter, { InternalOptions } from './base';
 
 type HtmlReporterOptions = {
   outputFile?: string;
@@ -18,11 +18,11 @@ export default class HtmlReporter extends BaseReporter {
   private htmlStream: CucumberHtmlStream;
 
   constructor(
-    baseReporterOptions: BaseReporterOptions,
-    protected options: HtmlReporterOptions = {},
+    internalOptions: InternalOptions,
+    protected userOptions: HtmlReporterOptions = {},
   ) {
-    super(baseReporterOptions);
-    this.setOutputStream(this.options.outputFile);
+    super(internalOptions);
+    this.setOutputStream(this.userOptions.outputFile);
     const packageRoot = resolvePackageRoot('@cucumber/html-formatter');
     this.htmlStream = new CucumberHtmlStream(
       path.join(packageRoot, 'dist/main.css'),

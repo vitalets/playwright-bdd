@@ -1,32 +1,22 @@
 /**
- * Adapter to generate Cucumber reports from Playwright.
+ * Playwright reporter that generates different Cucumber reports.
  */
 import EventEmitter from 'node:events';
-import { FullResult, Reporter, TestCase, TestResult } from '@playwright/test/reporter';
+import {
+  FullResult,
+  Reporter as PlaywrightReporter,
+  TestCase,
+  TestResult,
+} from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder';
-import { BaseReporterOptions } from './base';
 import { getPlaywrightConfigDir } from '../../config/configDir';
+import { enableEnrichReporterData } from '../../config/enrichReporterData';
+import BaseReporter, { InternalOptions } from './base';
 import MessageReporter from './message';
 import HtmlReporter from './html';
 import JunitReporter from './junit';
 import JsonReporter from './json';
-import { enableEnrichReporterData } from '../../config/enrichReporterData';
-
-/**
- * Helper function to define reporter in a type-safe way.
- *
- * Examples:
- * reporter: [cucumberReporter('html')],
- * reporter: [cucumberReporter('html', { outputFile: 'cucumber-report.html' })],
- * // todo:
- * reporter: [cucumberReporter('./reporter.ts', { foo: 'bar' })],
- */
-export function cucumberReporter<T extends keyof BuiltinReporters>(
-  type: T,
-  options?: CucumberReporterOptions<T>,
-): [string, unknown] {
-  return ['playwright-bdd/reporter/cucumber', { $type: type, ...options }] as const;
-}
+import CustomReporter, { CustomReporterOptions } from './custom';
 
 const builtinReporters = {
   html: HtmlReporter,
@@ -35,21 +25,24 @@ const builtinReporters = {
   json: JsonReporter,
 } as const;
 
-type BuiltinReporters = typeof builtinReporters;
-type CucumberReporterOptions<T> = T extends keyof BuiltinReporters
+export type BuiltinReporters = typeof builtinReporters;
+export type CucumberReporterOptions<T> = T extends keyof BuiltinReporters
   ? ConstructorParameters<BuiltinReporters[T]>[1]
-  : Record<string, unknown>;
+  : CustomReporterOptions;
 
-/**
- * Adapter that receives Playwright reporter events
- * and passes them to Cucumber messages builder.
- * Then creates Cucumber reporter.
- */
-export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> implements Reporter {
+export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | string>
+  implements PlaywrightReporter
+{
   private messagesBuilderRef: MessagesBuilderRef;
-  private reporter: InstanceType<BuiltinReporters[T]>;
+  private type: T;
+  private userOptions: CucumberReporterOptions<T>;
+  private reporter: BaseReporter;
 
-  constructor(protected options: { $type: T } & CucumberReporterOptions<T>) {
+  constructor(fullOptions: { $type: T } & CucumberReporterOptions<T>) {
+    const { $type, ...userOptions } = fullOptions;
+    this.type = $type;
+    this.userOptions = userOptions as unknown as CucumberReporterOptions<T>;
+
     enableEnrichReporterData();
     this.messagesBuilderRef = getMessagesBuilderRef();
     this.reporter = this.createCucumberReporter();
@@ -66,6 +59,8 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> i
   async onEnd(result: FullResult) {
     this.messagesBuilderRef.onEnd(result);
 
+    await this.reporter.init();
+
     await this.messagesBuilderRef.builder.buildMessages();
     this.messagesBuilderRef.builder.emitMessages(this.reporter.eventBroadcaster);
 
@@ -73,18 +68,22 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters> i
   }
 
   private createCucumberReporter() {
-    const baseOptions: BaseReporterOptions = {
+    const internalOptions: InternalOptions = {
       cwd: getPlaywrightConfigDir(),
       eventBroadcaster: new EventEmitter(),
       eventDataCollector: this.messagesBuilderRef.builder.eventDataCollector,
     };
 
-    const ReporterConstructor = builtinReporters[this.options.$type];
-    if (!ReporterConstructor) {
-      // todo: support custom file as a reporter
-      throw new Error(`Unsupported cucumber reporter: ${this.options.$type}`);
+    if (isBuiltInReporter(this.type)) {
+      const BuiltInReporter = builtinReporters[this.type];
+      return new BuiltInReporter(internalOptions, this.userOptions);
+    } else {
+      const reporterPath = this.type;
+      return new CustomReporter(internalOptions, reporterPath, this.userOptions);
     }
-
-    return new ReporterConstructor(baseOptions, this.options) as InstanceType<BuiltinReporters[T]>;
   }
+}
+
+function isBuiltInReporter(type: keyof BuiltinReporters | string): type is keyof BuiltinReporters {
+  return type in builtinReporters;
 }

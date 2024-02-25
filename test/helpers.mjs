@@ -34,6 +34,7 @@ function getCmdStr(cmd) {
 export function execPlaywrightTest(dir, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
+    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
     return stdout;
   } catch (e) {
     // if playwright tests not passed -> output is in stdout
@@ -53,8 +54,10 @@ export function execPlaywrightTest(dir, cmd) {
 export function execPlaywrightTestWithError(dir, error, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
+    console.log(`Expected to exit with error: ${error}`);
     console.log('STDOUT:', stdout);
     // todo: how to log stderr here?
+    process.exit(1);
   } catch (e) {
     const stdout = e.stdout?.toString().trim() || '';
     const stderr = e.stderr?.toString().trim() || '';
@@ -92,8 +95,6 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
 
     return stdout;
   }
-  console.log(`Expected to exit with error: ${error}`);
-  process.exit(1);
 }
 
 export function getPackageVersion(pkg) {

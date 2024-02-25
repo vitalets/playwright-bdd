@@ -10,7 +10,7 @@ import { finished } from 'node:stream/promises';
 import { EventEmitter } from 'node:events';
 import EventDataCollector from '../../cucumber/formatter/EventDataCollector';
 
-export type BaseReporterOptions = {
+export type InternalOptions = {
   cwd: string;
   eventBroadcaster: EventEmitter;
   eventDataCollector: EventDataCollector;
@@ -19,22 +19,24 @@ export type BaseReporterOptions = {
 export default class BaseReporter {
   protected outputStream: Writable = process.stdout;
 
-  constructor(protected baseOptions: BaseReporterOptions) {}
+  constructor(protected internalOptions: InternalOptions) {}
 
   get eventBroadcaster() {
-    return this.baseOptions.eventBroadcaster;
+    return this.internalOptions.eventBroadcaster;
   }
 
   get eventDataCollector() {
-    return this.baseOptions.eventDataCollector;
+    return this.internalOptions.eventDataCollector;
   }
 
   printsToStdio() {
-    return this.outputStream === process.stdout;
+    return isStdout(this.outputStream);
   }
 
+  async init() {}
+
   async finished() {
-    if (!this.printsToStdio()) {
+    if (!isStdout(this.outputStream)) {
       this.outputStream.end();
       await finished(this.outputStream);
     }
@@ -42,8 +44,12 @@ export default class BaseReporter {
 
   protected setOutputStream(outputFile?: string) {
     if (!outputFile) return;
-    const absolutePath = path.resolve(this.baseOptions.cwd, outputFile);
+    const absolutePath = path.resolve(this.internalOptions.cwd, outputFile);
     fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
     this.outputStream = fs.createWriteStream(absolutePath);
   }
+}
+
+function isStdout(stream: Writable) {
+  return stream === process.stdout;
 }
