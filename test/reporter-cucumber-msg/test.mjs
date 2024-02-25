@@ -57,6 +57,11 @@ async function checkFeature(featureDir) {
   const expectedJson = getJsonFromFile(`${absFeatureDir}/expected/json-report.json`);
   const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report.json`);
   assertShape(expectedJson, actualJson, jsonReportFields, featureDir);
+
+  if (featureDir === 'attachments') {
+    const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report-no-attachments.json`);
+    expect(JSON.stringify(actualJson, null, 2)).not.toContain('embeddings');
+  }
 }
 
 /**

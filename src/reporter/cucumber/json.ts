@@ -105,6 +105,7 @@ interface UriToTestCaseAttemptsMap {
 
 type JsonReporterOptions = {
   outputFile?: string;
+  skipAttachments?: boolean | ('image/png' | 'video/webm' | string)[];
 };
 
 export default class JsonReporter extends BaseReporter {
@@ -308,8 +309,9 @@ export default class JsonReporter extends BaseReporter {
     if (status === messages.TestStepResultStatus.FAILED && doesHaveValue(message)) {
       data.result.error_message = message;
     }
-    if (testStepAttachments?.length > 0) {
-      data.embeddings = testStepAttachments.map((attachment) => ({
+    const allowedAttachments = this.getAllowedAttachments(testStepAttachments);
+    if (allowedAttachments && allowedAttachments.length > 0) {
+      data.embeddings = allowedAttachments.map((attachment) => ({
         data:
           attachment.contentEncoding === messages.AttachmentContentEncoding.IDENTITY
             ? Buffer.from(attachment.body).toString('base64')
@@ -363,5 +365,16 @@ export default class JsonReporter extends BaseReporter {
       name: tagData.name,
       line: tag?.location?.line,
     };
+  }
+
+  private getAllowedAttachments(testStepAttachments?: messages.Attachment[]) {
+    const { skipAttachments } = this.userOptions;
+    if (Array.isArray(skipAttachments)) {
+      return testStepAttachments?.filter((attachment) => {
+        return !skipAttachments.includes(attachment.mediaType);
+      });
+    } else {
+      return skipAttachments ? [] : testStepAttachments;
+    }
   }
 }

@@ -20,5 +20,13 @@ export default defineConfig({
     cucumberReporter('json', {
       outputFile: `features/${featureDir}/reports/json-report.json`,
     }),
-  ],
+    featureDir === 'attachments' ? jsonReporterNoAttachments() : null,
+  ].filter((r): r is NonNullable<typeof r> => Boolean(r)),
 });
+
+function jsonReporterNoAttachments() {
+  return cucumberReporter('json', {
+    outputFile: `features/${featureDir}/reports/json-report-no-attachments.json`,
+    skipAttachments: true,
+  });
+}
