@@ -1,11 +1,8 @@
-# Getting started
+# Write first BDD test
 
-> You can clone [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) to get ready-to-use project on your machine and quickly check how it works
+Follow the steps below to create and run first BDD test with `playwright-bdd`.
 
-> In this guide we use JavaScript for simplicity, but you can use TypeScript as well
-
-Follow the steps below to setup `playwright-bdd` project. 
-
+?> In this guide we use JavaScript for simplicity, but you can use TypeScript as well
 
 1. Create the following `playwright.config.js` in the project root:
    ```js
@@ -73,10 +70,14 @@ Follow the steps below to setup `playwright-bdd` project.
    npx playwright show-report
    ```
    <details>
-     <summary>Report</summary>
+     <summary>HTML report</summary>
      <img width="80%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/e327d97c-bc67-4ba2-8660-650f1c479c62"/>
    </details>
 
 5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
 
-> Don't forget to [git-ignore generated files](./recipes.md#ignoring-generated-files) 
+> Don't forget to [git-ignore generated files](./recipes.md#ignoring-generated-files)
+
+!> If your project runs as [ES Module](https://nodejs.org/api/esm.html), please check out [ESM configuration](./configuration/esm.md)
+
+?> You can also get pre-configured Playwright-bdd project by clonning [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)

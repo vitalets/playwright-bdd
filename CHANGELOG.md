@@ -3,6 +3,7 @@
 ## dev
 * support Cucumber reporters, [#9](https://github.com/vitalets/playwright-bdd/issues/9)
 * set minimal Playwright version to 1.34
+* improve docs, [#90](https://github.com/vitalets/playwright-bdd/issues/90)
 
 ## 5.8.0
 * support Playwright 1.42, [#96](https://github.com/vitalets/playwright-bdd/issues/96)

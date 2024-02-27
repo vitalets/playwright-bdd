@@ -34,7 +34,7 @@ test(testDir.name, { skip }, () => {
 function execShard1() {
   // first shard fails b/c it contains failing tests
   execPlaywrightTestWithError(testDir.name, '', {
-    cmd: `${DEFAULT_CMD} --shard 1/2`,
+    cmd: `${DEFAULT_CMD} --shard=1/2`,
     env: { PWTEST_BLOB_DO_NOT_REMOVE: '1' },
   });
 }

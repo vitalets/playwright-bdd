@@ -1,0 +1,52 @@
+[
+  {
+    "description": "  Cucumber doesn't execute this markdown, but @cucumber/react renders it\n  \n  * This is\n  * a bullet\n  * list",
+    "elements": [
+      {
+        "description": "",
+        "id": "minimal;cukes",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "cukes",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "I have 42 cukes in my belly",
+            "result": {
+              "status": "passed",
+              "duration": 2000000
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@foo",
+            "line": 1
+          },
+          {
+            "name": "@only",
+            "line": 10
+          },
+          {
+            "name": "@bar",
+            "line": 10
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "minimal",
+    "line": 2,
+    "keyword": "Feature",
+    "name": "minimal",
+    "tags": [
+      {
+        "name": "@foo",
+        "line": 1
+      }
+    ],
+    "uri": "features/minimal/minimal.feature"
+  }
+]

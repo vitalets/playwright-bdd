@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<testsuite failures="4" skipped="0" name="cucumber-js" time="0.004758075" tests="4">
+  <testcase classname="Playwright site" name="Check title" time="0.000913249">
+    <failure type="Error" message="foo"><![CDATA[Error: foo
+    at World.<anonymous> (/Users/vitalets/projects/bdd-playground/steps/cucumber-raw/index.ts:15:10)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)]]></failure>
+    <system-out><![CDATA[Given I open url "https://playwright.dev".................................failed
+When I click link "Get started"..........................................skipped
+Then I see in title "Playwright".........................................skipped]]></system-out>
+  </testcase>
+  <testcase classname="Playwright site" name="Check title 2" time="0.000599414">
+    <failure type="Error" message="foo"><![CDATA[Error: foo
+    at World.<anonymous> (/Users/vitalets/projects/bdd-playground/steps/cucumber-raw/index.ts:15:10)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)]]></failure>
+    <system-out><![CDATA[Given I open url "https://playwright.dev".................................failed
+When I click link "Get started"..........................................skipped
+Then I see in title "Playwright".........................................skipped]]></system-out>
+  </testcase>
+  <testcase classname="Playwright site" name="A Get started step is Playwright" time="0.002910996">
+    <failure type="Error" message="foo"><![CDATA[Error: foo
+    at World.<anonymous> (/Users/vitalets/projects/bdd-playground/steps/cucumber-raw/index.ts:15:10)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)]]></failure>
+    <system-out><![CDATA[Given I open url "https://playwright.dev".................................failed
+When I click link "Get started"..........................................skipped
+Then I see in title "Playwright".........................................skipped]]></system-out>
+  </testcase>
+  <testcase classname="Playwright site" name="A Get started step is Play" time="0.00033441600000000003">
+    <failure type="Error" message="foo"><![CDATA[Error: foo
+    at World.<anonymous> (/Users/vitalets/projects/bdd-playground/steps/cucumber-raw/index.ts:15:10)
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)]]></failure>
+    <system-out><![CDATA[Given I open url "https://playwright.dev".................................failed
+When I click link "Get started"..........................................skipped
+Then I see in title "Play"...............................................skipped]]></system-out>
+  </testcase>
+</testsuite>

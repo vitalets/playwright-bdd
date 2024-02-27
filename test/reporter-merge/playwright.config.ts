@@ -8,10 +8,12 @@ const testDir = defineBddConfig({
   enrichReporterData: true,
 });
 
+const isShardRun = process.argv.some((a) => a.startsWith('--shard'));
+
 export default defineConfig({
   testDir,
   fullyParallel: true,
-  reporter: process.argv.includes('--shard')
+  reporter: isShardRun
     ? 'blob'
     : [
         cucumberReporter('message', { outputFile: 'reports/message.ndjson' }),

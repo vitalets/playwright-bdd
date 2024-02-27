@@ -1,6 +1,6 @@
 # Installation
 
-Install from npm:
+Install `playwright-bdd` from npm:
 
 ```
 npm i -D playwright-bdd
@@ -11,10 +11,10 @@ For brand new projects they will be installed automatically with `playwright-bdd
 For existing projects you may need to update them to the latest verions:
 
 ```
-npm i -D @playwright/test @cucumber/cucumber
+npm i -D @playwright/test@latest @cucumber/cucumber@latest
 ```
 
-After installing/updating Playwright you need to [install browsers](https://playwright.dev/docs/browsers):
+After installing/updating major Playwright version you may need to [install browsers](https://playwright.dev/docs/browsers):
 
 ```
 npx playwright install
