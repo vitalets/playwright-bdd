@@ -1,5 +1,8 @@
 # Changelog
 
+## 5.8.0
+* support Playwright 1.42, [#96](https://github.com/vitalets/playwright-bdd/issues/96)
+
 ## 5.7.1
 * support Cucumber 10.2
 
