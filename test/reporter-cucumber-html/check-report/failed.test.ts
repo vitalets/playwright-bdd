@@ -1,3 +1,4 @@
+import { normalize } from 'node:path';
 import { test, expect } from '@playwright/test';
 import { getFeature, getScenario, openReport } from './helpers';
 import { getPackageVersion } from '../../../src/utils';
@@ -31,7 +32,7 @@ test('Scenario: Failing by background step', async ({ page }) => {
 test('Scenario: Failing by anonymous before hook', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by anonymous before hook');
   await expect(scenario.getSteps()).toContainText([
-    'Hook failed: features/failed-steps.ts:', // prettier-ignore
+    `Hook failed: ${normalize('features/failed-steps.ts')}:`, // prettier-ignore
     'GivenAction 1',
     'screenshot',
   ]);
@@ -45,7 +46,7 @@ test('Scenario: Failing by anonymous before hook', async ({ page }) => {
 test('Scenario: Failing by named before hook', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by named before hook');
   await expect(scenario.getSteps()).toContainText([
-    'Hook "failing named before hook" failed: features/failed-steps.ts:',
+    `Hook "failing named before hook" failed: ${normalize('features/failed-steps.ts')}:`,
     'GivenAction 1',
     'screenshot',
   ]);
@@ -59,7 +60,7 @@ test('Scenario: Failing by named before hook', async ({ page }) => {
 test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingBeforeFixtureNoStep');
   await expect(scenario.getSteps()).toContainText([
-    'Hook "fixture: failingBeforeFixtureNoStep" failed: features/fixtures.ts:',
+    `Hook "fixture: failingBeforeFixtureNoStep" failed: ${normalize('features/fixtures.ts')}:`,
     'Givenstep that uses failingBeforeFixtureNoStep',
     'WhenAction 1',
     'screenshot',
@@ -77,7 +78,7 @@ test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
 test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingBeforeFixtureWithStep');
   await expect(scenario.getSteps()).toContainText([
-    'Hook "my step" failed: features/fixtures.ts:',
+    `Hook "my step" failed: ${normalize('features/fixtures.ts')}:`,
     'Givenstep that uses failingBeforeFixtureWithStep',
     'WhenAction 2',
     'screenshot',
@@ -103,7 +104,7 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
       'Givenstep that uses failingAfterFixtureNoStep',
       'WhenAction 3',
       hasScreenshot ? 'screenshot' : '',
-      'Hook "fixture: failingAfterFixtureNoStep" failed: features/fixtures.ts:',
+      `Hook "fixture: failingAfterFixtureNoStep" failed: ${normalize('features/fixtures.ts')}:`,
     ].filter(Boolean),
   );
   await expect(scenario.getAttachments()).toHaveText(
@@ -129,7 +130,7 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
       'my attachment|outside step (before use)',
       'Givenstep that uses failingAfterFixtureWithStep',
       'WhenAction 4',
-      'Hook "step in failingAfterFixtureWithStep" failed: features/fixtures.ts:',
+      `Hook "step in failingAfterFixtureWithStep" failed: ${normalize('features/fixtures.ts')}:`,
       hasScreenshot ? 'screenshot' : '',
       'my attachment|outside step (after use)',
     ].filter(Boolean),

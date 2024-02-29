@@ -1,3 +1,4 @@
+import path from 'node:path';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTest } from '../helpers.mjs';
 
@@ -15,5 +16,5 @@ function checkCustomFormatter(outputFile) {
 }
 
 function checkPrettyFormatter(stdout) {
-  expect(stdout).toContain('Feature: a feature # features/sample.feature:1');
+  expect(stdout).toContain(`Feature: a feature # ${path.normalize('features/sample.feature')}:1`);
 }
