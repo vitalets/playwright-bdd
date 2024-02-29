@@ -3,7 +3,6 @@ import { getFeature, getScenario, openReport } from './helpers';
 import { getPackageVersion } from '../../../src/utils';
 
 const pwVersion = getPackageVersion('@playwright/test');
-const isPW1_34 = pwVersion.startsWith('1.34.');
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);
@@ -95,9 +94,9 @@ test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
 
 test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureNoStep');
-  // there is no automatic screenshot here in pw >= 1.35
+  // there is no automatic screenshot here in pw 1.35 - 1.41
   // see: https://github.com/microsoft/playwright/issues/29325
-  const hasScreenshot = isPW1_34;
+  const hasScreenshot = pwVersion < '1.35.0' || pwVersion >= '1.42.0';
   await expect(scenario.getSteps()).toContainText(
     [
       'my attachment|before use',
@@ -122,9 +121,9 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
 
 test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureWithStep');
-  // there is no automatic screenshot here in pw >= 1.35
+  // there is no automatic screenshot here in pw 1.35 - 1.41
   // see: https://github.com/microsoft/playwright/issues/29325
-  const hasScreenshot = isPW1_34;
+  const hasScreenshot = pwVersion < '1.35.0' || pwVersion >= '1.42.0';
   await expect(scenario.getSteps()).toContainText(
     [
       'my attachment|outside step (before use)',
