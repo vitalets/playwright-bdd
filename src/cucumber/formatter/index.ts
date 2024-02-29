@@ -6,11 +6,11 @@ import { ISupportCodeLibrary } from '../types';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
 
-export interface FormatRerunOptions {
+interface FormatRerunOptions {
   separator?: string;
 }
 
-export interface FormatOptions {
+interface FormatOptions {
   colorsEnabled?: boolean;
   rerun?: FormatRerunOptions;
   snippetInterface?: SnippetInterface;
@@ -19,9 +19,8 @@ export interface FormatOptions {
   [customKey: string]: unknown;
 }
 
-export type IFormatterStream = Writable;
-export type IFormatterLogFn = (buffer: string | Uint8Array) => void;
-export type IFormatterCleanupFn = () => Promise<unknown>;
+type IFormatterLogFn = (buffer: string | Uint8Array) => void;
+type IFormatterCleanupFn = () => Promise<unknown>;
 
 export interface IFormatterOptions {
   colorFns: IColorFns;

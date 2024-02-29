@@ -7,7 +7,7 @@ import { WriteStream } from 'node:tty';
 
 type SupportsColor = { level: chalk.Level } | false;
 
-export type IColorFn = (text: string) => string;
+type IColorFn = (text: string) => string;
 
 export interface IColorFns {
   forStatus: (status: TestStepResultStatus) => IColorFn;
