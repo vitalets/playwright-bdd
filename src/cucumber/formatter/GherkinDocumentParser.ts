@@ -61,13 +61,12 @@ export function getGherkinExampleRuleMap(
   const result: Record<string, messages.Rule> = {};
   gherkinDocument.feature?.children
     .filter((x) => x.rule != null)
-    .forEach(
-      (x) =>
-        x?.rule?.children
-          .filter((child) => doesHaveValue(child.scenario))
-          .forEach((child) => {
-            if (child?.scenario?.id && x.rule) result[child.scenario.id] = x.rule;
-          }),
+    .forEach((x) =>
+      x?.rule?.children
+        .filter((child) => doesHaveValue(child.scenario))
+        .forEach((child) => {
+          if (child?.scenario?.id && x.rule) result[child.scenario.id] = x.rule;
+        }),
     );
   return result;
 }
