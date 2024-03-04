@@ -64,7 +64,17 @@ export default class CustomReporter extends BaseReporter {
       log: this.outputStream.write.bind(this.outputStream),
       cleanup: async () => {},
       snippetBuilder: null as unknown as StepDefinitionSnippetBuilder,
-      supportCodeLibrary: null as unknown as ISupportCodeLibrary,
+      supportCodeLibrary: {
+        World: {},
+      } as unknown as ISupportCodeLibrary,
     };
   }
 }
+
+// const fakeSuportCodeLibrary = {
+//   parameterTypeRegistry: ParameterTypeRegistry;
+// stepDefinitions: StepDefinition[];
+// // eslint-disable-next-line @typescript-eslint/no-explicit-any
+// World: any;
+// originalCoordinates: ISupportCodeCoordinates;
+// }

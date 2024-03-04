@@ -64,3 +64,9 @@ export async function callWithTimeout<T>(fn: () => T, timeout?: number, timeoutM
 export function stringifyLocation({ line, column }: { line: number; column?: number }) {
   return `${line}:${column}`;
 }
+
+export function omit<T extends object, K extends keyof T>(obj: T, key: K) {
+  const res = { ...obj };
+  delete res[key];
+  return res as Omit<T, K>;
+}

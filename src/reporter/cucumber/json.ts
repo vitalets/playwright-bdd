@@ -16,7 +16,6 @@
 
 import * as messages from '@cucumber/messages';
 import BaseReporter, { InternalOptions } from './base';
-
 import * as GherkinDocumentParser from '../../cucumber/formatter/GherkinDocumentParser';
 import * as PickleParser from '../../cucumber/formatter/PickleParser';
 import { doesHaveValue, doesNotHaveValue } from '../../cucumber/valueChecker';
@@ -25,6 +24,7 @@ import { parseStepArgument } from '../../cucumber/stepArguments';
 import { durationToNanoseconds } from '../../cucumber/formatter/durationHelpers';
 import { formatLocation } from '../../cucumber/formatter/locationHelpers';
 import { ISupportCodeLibrary } from '../../cucumber/types';
+import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 
 const {
   getGherkinExampleRuleMap,
@@ -35,6 +35,13 @@ const {
 
 const { getScenarioDescription, getPickleStepMap, getStepKeyword } = PickleParser;
 
+type JsonReporterOptions = {
+  outputFile?: string;
+  skipAttachments?: boolean | ('image/png' | 'video/webm' | string)[];
+  addProjectToFeatureName?: boolean;
+  addMetadata?: 'object' | 'list';
+};
+
 interface IJsonFeature {
   description: string;
   elements: IJsonScenario[];
@@ -44,7 +51,12 @@ interface IJsonFeature {
   name: string;
   tags: IJsonTag[];
   uri: string;
+  // Custom metadata to have richer reports.
+  // For example, see: https://github.com/WasiqB/multiple-cucumber-html-reporter/tree/main?tab=readme-ov-file#custommetadata
+  metadata?: IJsonFeatureMetadata;
 }
+
+type IJsonFeatureMetadata = Record<string, string> | { name: string; value: string }[];
 
 interface IJsonScenario {
   description: string;
@@ -76,9 +88,10 @@ interface IJsonTag {
 }
 
 interface IBuildJsonFeatureOptions {
-  feature: messages.Feature;
+  gherkinDocument: messages.GherkinDocument;
   elements: IJsonScenario[];
-  uri: string;
+  // feature: messages.Feature;
+  // uri: string;
 }
 
 interface IBuildJsonScenarioOptions {
@@ -103,11 +116,6 @@ interface UriToTestCaseAttemptsMap {
   [uri: string]: ITestCaseAttempt[];
 }
 
-type JsonReporterOptions = {
-  outputFile?: string;
-  skipAttachments?: boolean | ('image/png' | 'video/webm' | string)[];
-};
-
 export default class JsonReporter extends BaseReporter {
   // for now omit step definitions
   private supportCodeLibrary: Pick<ISupportCodeLibrary, 'stepDefinitions'> = {
@@ -127,7 +135,7 @@ export default class JsonReporter extends BaseReporter {
     });
   }
 
-  convertNameToId(obj: messages.Feature | messages.Pickle): string {
+  convertNameToId(obj: { name: string }): string {
     return obj.name.replace(/ /g, '-').toLowerCase();
   }
 
@@ -204,26 +212,43 @@ export default class JsonReporter extends BaseReporter {
         });
       });
       return this.getFeatureData({
-        feature: gherkinDocument.feature!,
+        gherkinDocument,
         elements,
-        uri,
       });
     });
 
     this.outputStream.write(JSON.stringify(features, null, 2));
   }
 
-  getFeatureData({ feature, elements, uri }: IBuildJsonFeatureOptions): IJsonFeature {
+  getFeatureData({ gherkinDocument, elements }: IBuildJsonFeatureOptions): IJsonFeature {
+    const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
+    const feature = gherkinDocument.feature!;
+    const featureNameWithProject = meta.projectInfo.name
+      ? `[${meta.projectInfo.name}] ${feature.name}`
+      : feature.name;
     return {
       description: feature.description,
       elements,
-      id: this.convertNameToId(feature),
+      id: this.convertNameToId({ name: featureNameWithProject }),
       line: feature.location.line,
       keyword: feature.keyword,
-      name: feature.name,
+      name: this.userOptions.addProjectToFeatureName ? featureNameWithProject : feature.name,
       tags: this.getFeatureTags(feature),
-      uri,
+      uri: meta.originalUri,
+      metadata: this.getFeatureMetadata(gherkinDocument),
     };
+  }
+
+  getFeatureMetadata(gherkinDocument: messages.GherkinDocument): IJsonFeatureMetadata | undefined {
+    if (!this.userOptions.addMetadata) return;
+    const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
+    const metadata: Record<string, string> = {
+      Project: meta.projectInfo.name || '',
+      Browser: meta.projectInfo.browserName || '',
+    };
+    return this.userOptions.addMetadata === 'object'
+      ? metadata
+      : Object.keys(metadata).map((name) => ({ name, value: metadata[name] }));
   }
 
   getScenarioData({

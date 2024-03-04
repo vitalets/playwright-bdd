@@ -9,7 +9,7 @@ import { TestCase } from './TestCase';
 import { MapWithCreate } from '../../../utils/MapWithCreate';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
+import { ProjectInfo, collectStepsWithCategory, getHooksRootStep, getProjectInfo } from './pwUtils';
 import {
   BddDataAttachment,
   BddDataStep,
@@ -35,6 +35,7 @@ export class TestCaseRun {
   bddData: BddDataAttachment;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
+  projectInfo: ProjectInfo;
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
   private executedSteps: ExecutedStepInfo[];
@@ -48,6 +49,7 @@ export class TestCaseRun {
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
     this.attachmentMapper = new AttachmentMapper(this.result);
+    this.projectInfo = getProjectInfo(this.test);
     this.executedSteps = this.fillExecutedSteps();
     this.executedBeforeHooks = this.fillExecutedHooks('before');
     this.executedAfterHooks = this.fillExecutedHooks('after');

@@ -15,10 +15,13 @@ export function buildShape(obj, { ignorePaths, valuePaths }) {
       const isIgnorePath = hasPrefix(pathStr, ignorePaths);
       const isValuePath = hasPrefix(pathStr, valuePaths);
       const curVal = shape[pathStr];
-      if (isIgnorePath) return;
       if (isValuePath) {
         const newVal = get(obj, path);
-        shape[pathStr] = curVal ? curVal.concat([newVal]).sort() : [newVal];
+        shape[pathStr] = shape[pathStr] || {};
+        shape[pathStr][newVal] = shape[pathStr][newVal] || 0;
+        shape[pathStr][newVal]++;
+      } else if (isIgnorePath) {
+        return;
       } else {
         shape[pathStr] = curVal ? curVal + 1 : 1;
       }
@@ -62,5 +65,5 @@ function getAllPaths(o) {
 }
 
 function hasPrefix(str, arr) {
-  return arr?.filter(Boolean).some((prefix) => str.startsWith(prefix));
+  return arr?.filter(Boolean).some((prefix) => prefix === '*' || str.startsWith(prefix));
 }

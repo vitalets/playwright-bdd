@@ -26,11 +26,11 @@
             "line": 8,
             "name": "the following table is transposed:",
             "match": {
-              "location": "features/cck/data-tables/common.steps.ts:4"
+              "location": "features/data-tables/common.steps.ts:4"
             },
             "result": {
               "status": "passed",
-              "duration": 269291
+              "duration": 189666
             }
           },
           {
@@ -50,11 +50,11 @@
             "line": 11,
             "name": "it should be:",
             "match": {
-              "location": "features/cck/data-tables/common.steps.ts:8"
+              "location": "features/data-tables/common.steps.ts:8"
             },
             "result": {
               "status": "passed",
-              "duration": 365624
+              "duration": 291000
             }
           }
         ],
@@ -67,6 +67,6 @@
     "keyword": "Feature",
     "name": "Data Tables",
     "tags": [],
-    "uri": "features/cck/data-tables/data-tables.feature"
+    "uri": "features/data-tables/data-tables.feature"
   }
 ]

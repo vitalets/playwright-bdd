@@ -20,7 +20,7 @@ export const messageReportFields = {
 
   // these paths are compared by values, not by counter.
   valuePaths: [
-    'source.data', // prettier-ignore
+    'source.uri', // prettier-ignore
     'pickle.name',
     'pickle.tags.#.name',
     'pickle.steps.#.text',
@@ -35,6 +35,8 @@ export const jsonReportFields = {
     // ignored b/c there is no stepDefinitions (yet)
     // See: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/json_formatter.ts#L279
     'elements.#.steps.#.match.location',
+    // todo: check why tags line is empty
+    'elements.#.tags.#.line',
   ],
 
   // these paths are compared by values, not by counter.

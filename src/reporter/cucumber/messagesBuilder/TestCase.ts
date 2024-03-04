@@ -15,6 +15,7 @@ import { Hook, HookType } from './Hook';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../cucumber/loadFeatures';
 import { stringifyLocation } from '../../../utils';
 import { BddDataAttachment } from '../../../run/bddDataAttachment';
+import { ProjectInfo } from './pwUtils';
 
 type HookWithStep = {
   hook: Hook;
@@ -22,22 +23,34 @@ type HookWithStep = {
 };
 
 export class TestCase {
+  #projectInfo?: ProjectInfo;
+  #pickle?: PickleWithLocation;
   private beforeHooks = new Map</* internalId */ string, HookWithStep>();
   private afterHooks = new Map</* internalId */ string, HookWithStep>();
   private mainSteps: messages.TestStep[] = [];
-  private pickle?: PickleWithLocation;
 
   constructor(
     public id: string,
     private gherkinDocuments: GherkinDocumentWithPickles[],
   ) {}
 
+  get projectInfo() {
+    if (!this.#projectInfo) throw new Error(`Empty projectInfo for testCase: ${this.id}`);
+    return this.#projectInfo;
+  }
+
+  get pickle() {
+    if (!this.#pickle) throw new Error(`Empty pickle for testCase: ${this.id}`);
+    return this.#pickle;
+  }
+
   addRun(testCaseRun: TestCaseRun) {
+    this.#projectInfo = testCaseRun.projectInfo;
     this.addHooks(testCaseRun, 'before');
     this.addHooks(testCaseRun, 'after');
-    if (!this.pickle) {
-      this.pickle = this.findPickle(testCaseRun.bddData);
-      this.addStepsFromPickle(this.pickle);
+    if (!this.#pickle) {
+      this.#pickle = this.findPickle(testCaseRun.bddData);
+      this.addStepsFromPickle(this.#pickle);
     }
     this.addStepsArgumentsLists(testCaseRun);
   }
@@ -59,15 +72,10 @@ export class TestCase {
 
     const testCase: messages.TestCase = {
       id: this.id,
-      pickleId: this.getPickle().id,
+      pickleId: this.pickle.id,
       testSteps,
     };
     return { testCase };
-  }
-
-  getPickle() {
-    if (!this.pickle) throw new Error(`Empty pickle for testCase: ${this.id}`);
-    return this.pickle;
   }
 
   /**

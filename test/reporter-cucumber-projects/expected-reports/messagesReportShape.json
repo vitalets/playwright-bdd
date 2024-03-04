@@ -1,0 +1,22 @@
+{
+  "source.uri": {
+    "[project one copy]:features-one/sample.feature": 1,
+    "[project one]:features-one/sample.feature": 1,
+    "[project two]:features-two/sample.feature": 1
+  },
+  "gherkinDocument.uri": {
+    "[project one copy]:features-one/sample.feature": 1,
+    "[project one]:features-one/sample.feature": 1,
+    "[project two]:features-two/sample.feature": 1
+  },
+  "pickle.uri": {
+    "[project one copy]:features-one/sample.feature": 4,
+    "[project one]:features-one/sample.feature": 4,
+    "[project two]:features-two/sample.feature": 1
+  },
+  "testStepFinished.testStepResult.status": {
+    "FAILED": 1,
+    "PASSED": 17,
+    "SKIPPED": 1
+  }
+}

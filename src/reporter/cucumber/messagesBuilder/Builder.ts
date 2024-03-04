@@ -3,8 +3,6 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { FeaturesLoader } from '../../../cucumber/loadFeatures';
-import { getPlaywrightConfigDir } from '../../../config/configDir';
 import { TestCaseRun, TestCaseRunEnvelope } from './TestCaseRun';
 import { TestCase } from './TestCase';
 import { Meta } from './Meta';
@@ -13,10 +11,9 @@ import EventEmitter from 'node:events';
 import EventDataCollector from '../../../cucumber/formatter/EventDataCollector';
 import { Hook } from './Hook';
 import { MapWithCreate } from '../../../utils/MapWithCreate';
-
-type ConcreteEnvelope<T extends keyof messages.Envelope> = Required<
-  Pick<messages.Envelope, T>
-> | null;
+import { GherkinDocuments } from './GherkinDocuments';
+import { Pickles } from './Pickles';
+import { ConcreteEnvelope } from './types';
 
 export class MessagesBuilder {
   private report = {
@@ -37,7 +34,7 @@ export class MessagesBuilder {
   private testCaseRuns: TestCaseRun[] = [];
   private testCases = new MapWithCreate</* testId */ string, TestCase>();
   private hooks = new MapWithCreate</* internalId */ string, Hook>();
-  private featuresLoader = new FeaturesLoader();
+  private gherkinDocuments = new GherkinDocuments();
   private fullResultTiming?: TimeMeasured;
   private onEndPromise: Promise<void>;
   private onEndPromiseResolve = () => {};
@@ -78,8 +75,7 @@ export class MessagesBuilder {
     this.createTestCases();
 
     this.addMeta();
-    this.addSources();
-    this.addGherkinDocuments();
+    this.addSourcesAndDocuments();
     this.addPickles();
     this.addHooks();
     this.addTestRunStarted();
@@ -98,29 +94,23 @@ export class MessagesBuilder {
     });
   }
 
-  private getFeaturePaths() {
-    const featurePaths = new Set<string>();
-    this.testCaseRuns.forEach((testCaseRun) => featurePaths.add(testCaseRun.bddData.uri));
-    return [...featurePaths];
-  }
-
-  private async loadFeatures() {
-    const cwd = getPlaywrightConfigDir();
-    const featurePaths = this.getFeaturePaths();
-    await this.featuresLoader.load(featurePaths, { relativeTo: cwd });
-  }
-
   private createTestCases() {
-    const gherkinDocuments = this.featuresLoader.getDocumentsWithPickles();
     this.testCaseRuns.forEach((testCaseRun) => {
       const testId = testCaseRun.test.id;
+      const gherkinDocsForProject = this.gherkinDocuments.getDocumentsForProject(
+        testCaseRun.projectInfo,
+      );
       const testCase = this.testCases.getOrCreate(
         testId,
-        () => new TestCase(testId, gherkinDocuments),
+        () => new TestCase(testId, gherkinDocsForProject),
       );
       testCase.addRun(testCaseRun);
       testCaseRun.testCase = testCase;
     });
+  }
+
+  private async loadFeatures() {
+    await this.gherkinDocuments.load(this.testCaseRuns);
   }
 
   private createTestCaseRuns() {
@@ -138,25 +128,14 @@ export class MessagesBuilder {
     this.report.meta = new Meta().buildMessage();
   }
 
-  private addSources() {
-    this.report.source = this.featuresLoader.gherkinQuery
-      .getSources()
-      .map((source) => ({ source }));
-  }
-
-  private addGherkinDocuments() {
-    this.report.gherkinDocument = this.featuresLoader.gherkinQuery
-      .getGherkinDocuments()
-      .map((gherkinDocument) => ({ gherkinDocument }));
+  private addSourcesAndDocuments() {
+    const { sources, gherkinDocuments } = this.gherkinDocuments.buildMessages();
+    this.report.source = sources;
+    this.report.gherkinDocument = gherkinDocuments;
   }
 
   private addPickles() {
-    const allPickles = this.featuresLoader.gherkinQuery.getPickles();
-    const usedPickleIds = new Set<string>();
-    this.testCases.forEach((testCase) => usedPickleIds.add(testCase.getPickle().id));
-    this.report.pickle = allPickles
-      .filter((pickle) => usedPickleIds.has(pickle.id))
-      .map((pickle) => ({ pickle }));
+    this.report.pickle = new Pickles().buildMessages(this.testCases);
   }
 
   private addHooks() {

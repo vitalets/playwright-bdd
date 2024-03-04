@@ -12,11 +12,11 @@
  * FEATURE_DIR=minimal npx playwright test
  */
 import fg from 'fast-glob';
-import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../helpers.mjs';
 import { messageReportFields, jsonReportFields } from './fields.config.mjs';
 import { buildShape } from './helpers/json-shape.mjs';
+import { getMessagesFromFile, getJsonFromFile } from './helpers/read-file.mjs';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
 const skipDirs = [
@@ -90,19 +90,4 @@ export function assertShape(expected, actual, fieldsConfig, featureDir) {
     console.log(`FAILED feature dir: ${featureDir}`);
     throw e;
   }
-}
-
-/**
- * Reads messages from ndjson file and returns as array.
- */
-function getMessagesFromFile(file) {
-  return fs
-    .readFileSync(file, 'utf8')
-    .split('\n')
-    .filter(Boolean)
-    .map((line) => JSON.parse(line));
-}
-
-function getJsonFromFile(file) {
-  return JSON.parse(fs.readFileSync(file, 'utf8'));
 }

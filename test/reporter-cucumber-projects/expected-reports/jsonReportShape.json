@@ -1,0 +1,32 @@
+{
+  "id": {
+    "[project-one-copy]-feature-one": 1,
+    "[project-one]-feature-one": 1,
+    "[project-two]-feature-two": 1
+  },
+  "name": {
+    "[project one copy] feature one": 1,
+    "[project one] feature one": 1,
+    "[project two] feature two": 1
+  },
+  "uri": {
+    "features-one/sample.feature": 2,
+    "features-two/sample.feature": 1
+  },
+  "elements.#.steps.#.result.status": {
+    "failed": 1,
+    "passed": 17,
+    "skipped": 1
+  },
+  "metadata.#.name": {
+    "Browser": 3,
+    "Project": 3
+  },
+  "metadata.#.value": {
+    "": 2,
+    "project one copy": 1,
+    "project one": 1,
+    "project two": 1,
+    "chromium": 1
+  }
+}

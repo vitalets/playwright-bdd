@@ -77,10 +77,10 @@ export class TestStepRun {
   private buildException(error: pw.TestError): messages.Exception {
     return {
       type: 'Error',
-      message: error.message,
-      // Older versions of @cucumber/messages does not have stackTrace field
+      message: error.message ? stripAnsiEscapes(error.message) : undefined,
+      stackTrace: error.stack ? stripAnsiEscapes(error.stack) : undefined,
+      // Use type casting b/c older versions of @cucumber/messages don't have 'stackTrace' field
       // todo: add direct dependency on @cucumber/messages
-      stackTrace: error.stack,
     } as messages.Exception;
   }
 
