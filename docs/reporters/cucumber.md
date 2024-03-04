@@ -1,5 +1,7 @@
 # Cucumber reporters
 
+?> Cucumber reporters is a new feature, feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues)
+
 Playwright-bdd provides special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
 
 Currently, the following reporters are supported:
@@ -14,7 +16,7 @@ Currently, the following reporters are supported:
 Playwright can [automatically attach screenshot, video and trace](https://playwright.dev/docs/test-use-options#recording-options) to the test results.
 Playwright-bdd fully supports this feature and passes these attachments to Cucumber reports without any action from your side.
 
-<details><summary>Example</summary>
+<details><summary>Example report</summary>
 
 ![html report](./_media/html-report-attachments.png)
 
@@ -22,10 +24,42 @@ Playwright-bdd fully supports this feature and passes these attachments to Cucum
 
 #### Projects
 
+Cucumber formatters don't natively support Playwright's [projects concept](https://playwright.dev/docs/test-projects#introduction). Nevertheless, playwright-bdd allows to combine several Playwright project runs into a single Cucumber report.
 
-You can also utilize Playwright's `merge-reports` command to [combine Cucumber reports](#merge-reports) from several shards.
+The final output depends on the particular reporter. For example, in HTML reporter project name is prepended to the feature file path.
 
-?> Cucumber reporters is a new feature, feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues)
+<details><summary>Playwright config for testing in <b>Chrome</b> and <b>Firefox</b></summary>
+
+```ts
+import { defineConfig, devices } from '@playwright/test';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
+
+const testDir = defineBddConfig({
+  paths: ['features/*.feature'],
+  require: ['features/steps/*.ts'],
+}),
+
+export default defineConfig({
+  testDir,
+  reporter: [ cucumberReporter('html', { outputFile: 'reports/report.html' }) ],
+  projects: [
+    {
+      name: 'chromium',
+      use: { ...devices['Desktop Chrome'] },
+    },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
+  ],
+});
+```
+
+</details>
+
+Example report:
+
+![html report](./_media/html-report-projects.png)
 
 ## html
 
@@ -89,13 +123,25 @@ export default defineConfig({
 ##### Reporter options
 
 * **outputFile** `string` - path to output json file
-* **skipAttachments** `boolean | string[]` - allows to exclude attachments from report to have smaller file size. Can be boolean or array of content types to skip, e.g.:
+* **addProjectToFeatureName** `boolean` - if `true`, project name will be prepended to the feature name, recommended for multi-project run (default: `false`) 
+* **addMetadata** `none | list | object` - defines the shape of metadata to attach to feature element. Currently attached properties: `Project`, `Browser`. Useful for third-party reporters. Example of `list` metadata:
+    ```json
+      {
+        "keyword": "Feature",
+        "name": "feature one",
+        "uri": "features/sample.feature",
+        "metadata": [
+          { "name": "Project", "value": "my project" },
+          { "name": "Browser", "value": "firefox" }
+        ]
+      },
+    ```
+
+* **skipAttachments** `boolean | string[]` - allows to exclude attachments from report to have smaller file size. Can be boolean or array of content types to skip (default: `false`):
     ```js
     export default defineConfig({
-      // ...
       reporter: [
           cucumberReporter('json', { 
-            // ...
             skipAttachments: [ 'video/webm' ],
           }),
         ],
