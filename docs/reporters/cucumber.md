@@ -1,6 +1,6 @@
 # Cucumber reporters
 
-Playwright-bdd allows to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
+Playwright-bdd provides special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
 
 Currently, the following reporters are supported:
 
@@ -9,6 +9,19 @@ Currently, the following reporters are supported:
 * [junit](#junit)
 * [message](#message)
 * [custom](#custom)
+
+#### Automatic screenshots / videos / traces
+Playwright can [automatically attach screenshot, video and trace](https://playwright.dev/docs/test-use-options#recording-options) to the test results.
+Playwright-bdd fully supports this feature and passes these attachments to Cucumber reports without any action from your side.
+
+<details><summary>Example</summary>
+
+![html report](./_media/html-report-attachments.png)
+
+</details>
+
+#### Projects
+
 
 You can also utilize Playwright's `merge-reports` command to [combine Cucumber reports](#merge-reports) from several shards.
 

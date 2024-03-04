@@ -67,6 +67,10 @@ Feature: rich feature
     Given Action 1
     And Action 2
 
+  Scenario: match snapshot
+    When open page "https://example.com"
+    Then page title snapshot matches the golden one
+
 	Scenario Outline: Check doubled
     Given Action <start>
     Then Action <end>

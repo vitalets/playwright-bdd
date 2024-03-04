@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
+import { expect } from '@playwright/test';
 
 const { When, Then } = createBdd(test);
 
@@ -25,4 +26,12 @@ Then('attach image as file', async ({ $testInfo }) => {
     path: path.join(__dirname, 'cucumber.png'),
     contentType: 'image/png',
   });
+});
+
+When('open page {string}', async ({ page }, url: string) => {
+  await page.goto(url);
+});
+
+Then('page title snapshot matches the golden one', async ({ page }) => {
+  expect(await page.title()).toMatchSnapshot();
 });
