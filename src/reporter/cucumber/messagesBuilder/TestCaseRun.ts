@@ -6,7 +6,7 @@ import * as messages from '@cucumber/messages';
 import { stringifyLocation } from '../../../utils';
 import { Hook, HookType } from './Hook';
 import { TestCase } from './TestCase';
-import { MapWithCreate } from '../../../utils/MapWithCreate';
+import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
 import { ProjectInfo, collectStepsWithCategory, getHooksRootStep, getProjectInfo } from './pwUtils';
@@ -44,7 +44,7 @@ export class TestCaseRun {
   constructor(
     public test: pw.TestCase,
     public result: pw.TestResult,
-    public hooks: MapWithCreate<string, Hook>,
+    public hooks: AutofillMap<string, Hook>,
   ) {
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();

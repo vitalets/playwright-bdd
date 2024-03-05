@@ -2,7 +2,7 @@
  * Loads Gherkin documents from feature files and maps them to projects.
  */
 import * as messages from '@cucumber/messages';
-import { MapWithCreate } from '../../../utils/MapWithCreate';
+import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestCaseRun } from './TestCaseRun';
 import { FeaturesLoader, GherkinDocumentWithPickles } from '../../../cucumber/loadFeatures';
 import { getPlaywrightConfigDir } from '../../../config/configDir';
@@ -14,8 +14,8 @@ import { ProjectInfo } from './pwUtils';
 export class GherkinDocuments {
   private featuresLoader = new FeaturesLoader();
   private projects = new Map<ProjectInfo['id'], ProjectInfo>();
-  private projectsPerFeaturePath = new MapWithCreate</* uri */ string, Set<ProjectInfo['id']>>();
-  private gherkinDocumentsPerProject = new MapWithCreate<
+  private projectsPerFeaturePath = new AutofillMap</* uri */ string, Set<ProjectInfo['id']>>();
+  private gherkinDocumentsPerProject = new AutofillMap<
     ProjectInfo['id'],
     GherkinDocumentWithPickles[]
   >();

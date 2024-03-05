@@ -3,13 +3,13 @@
  */
 import * as messages from '@cucumber/messages';
 import { omit } from '../../../utils';
-import { MapWithCreate } from '../../../utils/MapWithCreate';
+import { AutofillMap } from '../../../utils/AutofillMap';
 import { getFeatureUriWithProject } from './GherkinDocuments';
 import { TestCase } from './TestCase';
 import { ConcreteEnvelope } from './types';
 
 export class Pickles {
-  buildMessages(testCases: MapWithCreate<string, TestCase>) {
+  buildMessages(testCases: AutofillMap<string, TestCase>) {
     const messages: ConcreteEnvelope<'pickle'>[] = [];
     testCases.forEach((testCase) => {
       messages.push(this.buildPickleMessage(testCase));

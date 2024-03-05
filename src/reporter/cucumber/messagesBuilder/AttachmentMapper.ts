@@ -55,13 +55,13 @@
  *   2.4 remove found attachment from attachments array
  */
 import * as pw from '@playwright/test/reporter';
-import { MapWithCreate } from '../../../utils/MapWithCreate';
+import { AutofillMap } from '../../../utils/AutofillMap';
 import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
 import { PwAttachment } from '../../../playwright/types';
 import { isBddDataAttachment } from '../../../run/bddDataAttachment';
 
 export class AttachmentMapper {
-  private stepAttachments = new MapWithCreate<pw.TestStep, PwAttachment[]>();
+  private stepAttachments = new AutofillMap<pw.TestStep, PwAttachment[]>();
   private unusedAttachments: PwAttachment[] = [];
 
   constructor(private result: pw.TestResult) {

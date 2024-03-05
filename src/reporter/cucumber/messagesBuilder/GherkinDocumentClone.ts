@@ -4,10 +4,10 @@
  */
 import { randomUUID } from 'node:crypto';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../cucumber/loadFeatures';
-import { MapWithCreate } from '../../../utils/MapWithCreate';
+import { AutofillMap } from '../../../utils/AutofillMap';
 
 export class GherkinDocumentClone {
-  private oldNewIds = new MapWithCreate<string, string>();
+  private oldNewIds = new AutofillMap<string, string>();
   constructor(private gherkinDocument: GherkinDocumentWithPickles) {}
 
   getClone() {
