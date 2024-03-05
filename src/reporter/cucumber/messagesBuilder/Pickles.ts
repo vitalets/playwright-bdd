@@ -20,7 +20,7 @@ export class Pickles {
   private buildPickleMessage(testCase: TestCase) {
     const pickle: messages.Pickle = {
       ...omit(testCase.pickle, 'location'),
-      uri: getFeatureUriWithProject(testCase.projectInfo, testCase.pickle.uri),
+      uri: getFeatureUriWithProject(testCase.project, testCase.pickle.uri),
     };
     return { pickle };
   }

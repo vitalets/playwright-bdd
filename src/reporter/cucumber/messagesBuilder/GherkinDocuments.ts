@@ -9,21 +9,16 @@ import { getPlaywrightConfigDir } from '../../../config/configDir';
 import { ConcreteEnvelope } from './types';
 import { GherkinDocumentClone } from './GherkinDocumentClone';
 import { GherkinDocumentMessage } from './GherkinDocument';
-import { ProjectInfo } from './pwUtils';
+import { PwProject } from './pwUtils';
 
 export class GherkinDocuments {
   private featuresLoader = new FeaturesLoader();
-  private projects = new Map<ProjectInfo['id'], ProjectInfo>();
-  private projectsPerFeaturePath = new AutofillMap</* uri */ string, Set<ProjectInfo['id']>>();
-  private gherkinDocumentsPerProject = new AutofillMap<
-    ProjectInfo['id'],
-    GherkinDocumentWithPickles[]
-  >();
+  private projectsPerFeaturePath = new AutofillMap</* uri */ string, Set<PwProject>>();
+  private gherkinDocumentsPerProject = new AutofillMap<PwProject, GherkinDocumentWithPickles[]>();
 
   constructor() {}
 
   async load(testCaseRuns: TestCaseRun[]) {
-    this.fillProjects(testCaseRuns);
     this.fillProjectsPerFeaturePath(testCaseRuns);
     const cwd = getPlaywrightConfigDir();
     const featurePaths = [...this.projectsPerFeaturePath.keys()];
@@ -31,69 +26,61 @@ export class GherkinDocuments {
     this.fillGherkinDocumentsPerProject();
   }
 
-  getDocumentsForProject(projectInfo: ProjectInfo) {
-    const docs = this.gherkinDocumentsPerProject.get(projectInfo.id);
-    if (!docs) throw new Error(`No gherkin docs for project ${projectInfo.name}`);
+  getDocumentsForProject(project: PwProject) {
+    const docs = this.gherkinDocumentsPerProject.get(project);
+    if (!docs) throw new Error(`No gherkin docs for project ${project?.name}`);
     return docs;
   }
 
   buildMessages() {
     const sources: ConcreteEnvelope<'source'>[] = [];
     const gherkinDocuments: ConcreteEnvelope<'gherkinDocument'>[] = [];
-    this.gherkinDocumentsPerProject.forEach((docs, projectId) => {
-      const projectInfo = this.projects.get(projectId)!;
+    this.gherkinDocumentsPerProject.forEach((docs, project) => {
       docs.forEach((doc) => {
-        sources.push(this.buildSourceMessage(projectInfo, doc));
-        gherkinDocuments.push(new GherkinDocumentMessage(projectInfo, doc).build());
+        sources.push(this.buildSourceMessage(project, doc));
+        gherkinDocuments.push(new GherkinDocumentMessage(project, doc).build());
       });
     });
     return { sources, gherkinDocuments };
   }
 
-  private fillProjects(testCaseRuns: TestCaseRun[]) {
-    testCaseRuns.forEach((testCaseRun) => {
-      const { projectInfo } = testCaseRun;
-      this.projects.set(projectInfo.id, projectInfo);
-    });
-  }
-
   private fillProjectsPerFeaturePath(testCaseRuns: TestCaseRun[]) {
     testCaseRuns.forEach((testCaseRun) => {
-      const projectIds = this.projectsPerFeaturePath.getOrCreate(
+      const projects = this.projectsPerFeaturePath.getOrCreate(
         testCaseRun.bddData.uri,
         () => new Set(),
       );
-      projectIds.add(testCaseRun.projectInfo.id);
+      projects.add(testCaseRun.project);
     });
   }
 
   private fillGherkinDocumentsPerProject() {
     this.featuresLoader.getDocumentsWithPickles().forEach((gherkinDocument) => {
       if (!gherkinDocument.uri) throw new Error(`Feature without uri`);
-      const projectIds = this.projectsPerFeaturePath.get(gherkinDocument.uri);
-      if (!projectIds) throw new Error(`Feature without projects`);
-      projectIds.forEach((projectId) => {
-        this.addGherkinDocumentToProject(projectId, gherkinDocument);
+      const projects = this.projectsPerFeaturePath.get(gherkinDocument.uri);
+      if (!projects) throw new Error(`Feature without projects`);
+      projects.forEach((project) => {
+        this.addGherkinDocumentToProject(project, gherkinDocument);
       });
     });
   }
 
   private addGherkinDocumentToProject(
-    projectId: string | undefined,
+    project: PwProject,
     gherkinDocument: GherkinDocumentWithPickles,
   ) {
-    const projectDocs = this.gherkinDocumentsPerProject.getOrCreate(projectId, () => []);
+    const projectDocs = this.gherkinDocumentsPerProject.getOrCreate(project, () => []);
     const clonedDocument = new GherkinDocumentClone(gherkinDocument).getClone();
     projectDocs.push(clonedDocument);
   }
 
-  private buildSourceMessage(projectInfo: ProjectInfo, doc: GherkinDocumentWithPickles) {
+  private buildSourceMessage(project: PwProject, doc: GherkinDocumentWithPickles) {
     if (!doc.uri) throw new Error(`Doc without uri`);
     const originalSource = this.featuresLoader.gherkinQuery.getSource(doc.uri);
     if (!originalSource) throw new Error(`No source`);
     const source: messages.Source = {
       ...originalSource,
-      uri: getFeatureUriWithProject(projectInfo, doc.uri),
+      uri: getFeatureUriWithProject(project, doc.uri),
     };
     return { source };
   }
@@ -106,9 +93,6 @@ export class GherkinDocuments {
  * Now result should not contain spaces as Cucumber HTML report uses it as uuid.
  * See: https://github.com/cucumber/react-components/issues/344
  */
-export function getFeatureUriWithProject<T extends string | undefined>(
-  projectInfo: ProjectInfo,
-  uri: T,
-) {
-  return projectInfo.name && uri ? `[${projectInfo.name}]:${uri}` : uri;
+export function getFeatureUriWithProject<T extends string | undefined>(project: PwProject, uri: T) {
+  return project?.name && uri ? `[${project.name}]:${uri}` : uri;
 }

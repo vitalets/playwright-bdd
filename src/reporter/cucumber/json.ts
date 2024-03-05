@@ -223,8 +223,8 @@ export default class JsonReporter extends BaseReporter {
   getFeatureData({ gherkinDocument, elements }: IBuildJsonFeatureOptions): IJsonFeature {
     const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
     const feature = gherkinDocument.feature!;
-    const featureNameWithProject = meta.projectInfo.name
-      ? `[${meta.projectInfo.name}] ${feature.name}`
+    const featureNameWithProject = meta.projectName
+      ? `[${meta.projectName}] ${feature.name}`
       : feature.name;
     return {
       description: feature.description,
@@ -243,8 +243,8 @@ export default class JsonReporter extends BaseReporter {
     if (!this.userOptions.addMetadata) return;
     const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
     const metadata: Record<string, string> = {
-      Project: meta.projectInfo.name || '',
-      Browser: meta.projectInfo.browserName || '',
+      Project: meta.projectName || '',
+      Browser: meta.browserName || '',
     };
     return this.userOptions.addMetadata === 'object'
       ? metadata

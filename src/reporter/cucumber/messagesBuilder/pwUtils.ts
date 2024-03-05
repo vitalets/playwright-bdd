@@ -4,6 +4,10 @@
 
 import * as pw from '@playwright/test/reporter';
 import { HookType } from './Hook';
+import { FullProject } from '@playwright/test';
+
+// Playwright project (undefined is for root project when no porjects defined)
+export type PwProject = FullProject | undefined;
 
 // Playwright step categoires, that can be mapped to testStep / hook in Cucumber report
 const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
@@ -49,23 +53,4 @@ export function collectStepsDfs(parent: pw.TestResult | pw.TestStep | undefined)
       return res;
     }, []) || []
   );
-}
-
-export type ProjectInfo = {
-  id: string | undefined;
-  name: string | undefined;
-  browserName: string | undefined;
-};
-
-export function getProjectInfo(test: pw.TestCase) {
-  const project = test.parent.project();
-  return {
-    // There is no project ID in Playwright, so generate it as JSON.stringify of project data.
-    // see: https://github.com/microsoft/playwright/issues/29783
-    id: JSON.stringify(project),
-    name: project?.name,
-    // browserName will be empty if not defined in project
-    // todo: get browser info from bddData
-    browserName: project?.use.browserName || project?.use.defaultBrowserType,
-  };
 }
