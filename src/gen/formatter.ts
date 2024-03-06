@@ -2,6 +2,7 @@
  * Helper to format Playwright test file.
  */
 
+import path from 'node:path';
 import { PickleStepArgument } from '@cucumber/messages';
 import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
@@ -21,10 +22,12 @@ export class Formatter {
     const file = importTestFrom?.file || 'playwright-bdd';
     let varName = importTestFrom?.varName || 'test';
     if (varName !== 'test') varName = `${varName} as test`;
+    // always use "/" for imports, see #91
+    const posixFilePath = file.split(path.sep).join(path.posix.sep);
     return [
       `/** Generated from: ${uri} */`, // prettier-ignore
       // this.quoted() is not possible for 'import from' as backticks not parsed
-      `import { ${varName} } from ${JSON.stringify(file)};`,
+      `import { ${varName} } from ${JSON.stringify(posixFilePath)};`,
       '',
     ];
   }
