@@ -24,6 +24,8 @@ When('I click link {string}', async ({ page }, name: string) => {
 });
 ```
 
+> Usually step functions are async, but it is not required
+
 ## Custom fixtures
 To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 
