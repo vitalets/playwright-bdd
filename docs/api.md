@@ -8,6 +8,27 @@ Defines BDD config inside Playwright config file.
 
 **Returns**: *string* - directory where test files will be generated
 
+### `cucumberReporter(reporter, options?)`
+Helper to output test results in various [Cucumber reporters](reporters/cucumber.md).
+
+**Params**
+  * `reporter` *string* - Cucumber reporter name (`html|json|junit|message`) or path to custom reporter file
+  * `options` *object* - Cucumber reporter options
+
+**Returns**: *array* - Playwright reporter tuple configuration
+
+Usage in `playwright.config.ts`:
+```ts
+import { cucumberReporter } from 'playwright-bdd';
+
+export default defineConfig({
+  reporter: [
+    cucumberReporter('html', { outputFile: `reports/report.html` }),
+  ],
+  // ...other options
+});
+```
+
 ### `createBdd(test?, WorldConstructor?)`
 
 Creates:
