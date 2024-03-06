@@ -3,7 +3,7 @@
 All you need is to describe a user story and provide step definitions.
 
 * For the user story you can just use general phrases defining the feature
-* For step definitions you can utilize [`bddgen export`](./cli.md#bddgen-export) that prints list of all steps
+* For step definitions you can utilize [`bddgen export`](cli.md#bddgen-export) that prints list of all steps
 
 **Example:**
 

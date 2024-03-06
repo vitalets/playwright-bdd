@@ -51,7 +51,7 @@ Follow the steps below to create and run first BDD test with `playwright-bdd`.
    });
    ```
 
-   > There are alternative ways of defining steps: [Decorators](./decorators.md) and [Cucumber-style syntax](./writing-steps.md#cucumber-style)
+   > There are alternative ways of defining steps: [Decorators](writing-steps/decorators.md) and [Cucumber-style syntax](writing-steps/cucumber-style.md)
 
 4. Generate and run tests:
 
@@ -76,8 +76,8 @@ Follow the steps below to create and run first BDD test with `playwright-bdd`.
 
 5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
 
-> Don't forget to [git-ignore generated files](./recipes.md#ignoring-generated-files)
+> Don't forget to [git-ignore generated files](guides/ignore-generated-files.md)
 
-!> If your project runs as [ES Module](https://nodejs.org/api/esm.html), please check out [ESM configuration](./configuration/esm.md)
+!> If your project runs as [ES Module](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md)
 
 ?> You can also get pre-configured Playwright-bdd project by clonning [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)

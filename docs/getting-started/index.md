@@ -10,4 +10,4 @@ This tutorial introduces you to the essentials of BDD testing with Playwright. I
 4. Implementing steps in JavaScript
 5. Running tests and getting HTML report
 
-Continue with [installation](./getting-started/installation.md).
+Continue with [installation](getting-started/installation.md).

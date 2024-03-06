@@ -17,5 +17,5 @@ export default defineConfig({
 });
 ```
 
-If you need more BDD-adopted reports, have a look on [Cucumber reporters](./reporters/cucumber.md).
+If you need more BDD-adopted reports, have a look on [Cucumber reporters](reporters/cucumber.md).
 

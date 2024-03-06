@@ -12,6 +12,10 @@ node scripts/no-only-in-features.mjs test/**/*.feature
 npm run prettier
 
 # skip tests for docs branch
-if [ "$GIT_BRANCH" == "docs" ]; then exit 0; fi
+if [ "$GIT_BRANCH" == "docs" ]; then 
+  npm run docs:validate
+else 
+  npm test
+fi
 
-npm test
+

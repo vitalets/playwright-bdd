@@ -18,6 +18,9 @@
         auto2top: true,
         loadSidebar: true,
         subMaxLevel: 3,
+        // There is paths inconsistency problem in docsify:
+        // https://github.com/docsifyjs/docsify/issues/1891
+        relativePath: false,
         pagination: {
           crossChapter: true,
         },
@@ -27,6 +30,7 @@
           '.*?/changelog':
             'https://raw.githubusercontent.com/vitalets/playwright-bdd/docs/CHANGELOG.md',
           '.*?/license': 'https://raw.githubusercontent.com/vitalets/playwright-bdd/docs/LICENSE',
+          '/.*/_sidebar.md': '/_sidebar.md',
         },
       };
     </script>

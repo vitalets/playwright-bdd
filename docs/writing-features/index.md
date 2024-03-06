@@ -27,7 +27,7 @@ After adding tags to your scenarios you can generate and run subset of tests usi
 ```
 npx bddgen --tags "@desktop and not @slow" && npx playwright test
 ```
-Also you can [access tags inside step definitions](./writing-steps.md#using-tags).
+Also you can [access tags inside step definitions](writing-steps/playwright-style.md#using-tags).
 
 ## Run single feature
 Use `@only` tag to run a single feature / scenario:
@@ -51,5 +51,5 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
-To conditionally skip scenario use [$test and $tags fixtures](./writing-steps.md#accessing-test-and-testinfo).
+To conditionally skip scenario use [$test and $tags fixtures](writing-steps/playwright-style.md#accessing-test-and-testinfo).
 

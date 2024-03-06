@@ -59,8 +59,8 @@ Given('I am an authorized user', async ({ auth }) => {
 });
 ```
 
-In [cucumber-style steps](./writing-steps.md#cucumber-style) you can access custom fixtures
-using [`this.useFixture()`](./writing-steps.md#custom-fixtures-1) method:
+In [cucumber-style steps](writing-steps/cucumber-style.md) you can access custom fixtures
+using [`this.useFixture()`](writing-steps/cucumber-style.md#custom-fixtures) method:
 ```ts
 Given('I am an authorized user', async function () {
   const auth = this.useFixture('auth');
@@ -77,7 +77,7 @@ The benefits of using `auth` fixture:
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-`playwright-bdd` supports worker-level `BeforeAll / AfterAll` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#beforeall--afterall). See the [API reference](./api.md#beforealloptions-hookfn) for the full specification.
+`playwright-bdd` supports worker-level `BeforeAll / AfterAll` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#beforeall--afterall). See the [API reference](api.md#beforealloptions-hookfn) for the full specification.
 
 Usage:
 ```ts
@@ -141,7 +141,7 @@ BeforeAll(async function ({ myWorkerFixture }) {
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-`playwright-bdd` supports scenario-level `Before / After` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#hooks). See the [API reference](./api.md#beforeoptions-hookfn) for the full specification.
+`playwright-bdd` supports scenario-level `Before / After` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#hooks). See the [API reference](api.md#beforeoptions-hookfn) for the full specification.
 
 Usage:
 ```ts
@@ -177,7 +177,7 @@ Before('@mobile and not @slow', async function () {
 ```
 
 Hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
-You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](./writing-steps.md#using-tags) and any built-in or custom fixtures. 
+You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/playwright-style.md#using-tags) and any built-in or custom fixtures. 
 
 > This behavior differs from Cucumber where `Before / After` accepts [another object](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/api_reference.md#afteroptions-fn) as a first argument.
 

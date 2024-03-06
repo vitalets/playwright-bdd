@@ -4,7 +4,7 @@
 Defines BDD config inside Playwright config file.
 
 **Params**
-  * `config` *object* - BDD [configuration](configuration.md)
+  * `config` *object* - BDD [configuration](configuration/index.md)
 
 **Returns**: *string* - directory where test files will be generated
 
@@ -68,7 +68,7 @@ Defines `Before` hook.
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo)
       - `$tags` *string[]* - list of tags for current scenario
-      - `$bddWorld` *object* - instance of [BddWorld](./writing-steps.md#world)
+      - `$bddWorld` *object* - instance of [BddWorld](writing-steps/cucumber-style.md#world)
       - any other built-in and custom fixtures
 
 ### `After(options?, hookFn)`
@@ -83,7 +83,7 @@ Defines `After` hook.
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo)
       - `$tags` *string[]* - list of tags for current scenario
-      - `$bddWorld` *object* - instance of [BddWorld](./writing-steps.md#world)
+      - `$bddWorld` *object* - instance of [BddWorld](writing-steps/cucumber-style.md#world)
       - any other built-in and custom fixtures
 
 ### `BeforeAll(options?, hookFn)`

@@ -3,7 +3,7 @@
 ### Why test files generation is needed?
 The main reason of generating Playwright test files from BDD scenarios - you can use all Playwright tooling out-of-box:
 
-  * run single test with [VS Code extension](./ide-integration.md#vs-code)
+  * run single test with [VS Code extension](guides/ide-integration.md#vs-code)
   * debug and set breakpoint on a particular BDD step
   * use `--ui` mode to watch changes 
   * do whatever you can with regular Playwright tests
@@ -13,7 +13,7 @@ Moreover, it provides more transparency on how Playwright **see** your BDD scena
 ### Is it possible to apply `test.use()` in a generated test file?
 Test files generation is a fully automatic process, no manual interceptions allowed.
 But instead of applying `test.use` (that has impact to all tests in a file)
-you can [utilize tags](./writing-steps.md#using-tags) with custom fixtures.
+you can [utilize tags](writing-steps/playwright-style.md#using-tags) with custom fixtures.
 That is more flexible approach and allows to selectively change settings for a particular scenario/test.
 
 ### Is it possible to run BDD tests with a single command? 
@@ -21,7 +21,7 @@ This approach was initially implemented: test files were generated during the fi
 
 1. It became really hard to decide when to generate test files because Playwright config is executed many times from different sources: workers, VS Code extension, UI mode, etc.
 
-2. Implementation of watch mode is tricky. It is impossible to just run `nodemon` with `playwright.config.ts`. Separate command for test generation allows to easily [support watch mode](./recipes.md#watch-mode) 
+2. Implementation of watch mode is tricky. It is impossible to just run `nodemon` with `playwright.config.ts`. Separate command for test generation allows to easily [support watch mode](guides/watch-mode.md) 
 
 3. Watching files in `--ui` mode leads to circullar dependency: a change in test files triggers test run which in turn re-imports config and once again triggers a change in test files
 

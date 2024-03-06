@@ -71,4 +71,4 @@ test.describe(`Localization`, () => {
 ```
 
 #### 3. Use config option
-You can set config option [examplesTitleFormat](./configuration.md#examplestitleformat) to define global template for examples title.
+You can set config option [examplesTitleFormat](configuration/options.md#examplestitleformat) to define global template for examples title.

@@ -4,7 +4,7 @@ Command line `bddgen`.
 ## `bddgen test` (or just `bddgen`)
 Generates Playwright test files from Gherkin documents (`.feature` files).
 This command is typically followed by `npx playwright test` to run generated tests. 
-It also assumes that there is `playwright.config.(ts|js)` with one or several calls of [`defineBddConfig()`](configuration.md#definebddconfigconfig).
+It also assumes that there is `playwright.config.(ts|js)` with one or several calls of [`defineBddConfig()`](configuration/index.md).
 
 Examples:
 
@@ -32,7 +32,7 @@ Examples:
 
 ## `bddgen export`
 Prints list of all found step definitions. 
-Useful for [generating BDD scenarios with ChatGPT](./writing-features.md#using-chatgpt).
+Useful for [generating BDD scenarios with ChatGPT](writing-features/chatgpt.md).
 ```
 $ npx bddgen export
 ```

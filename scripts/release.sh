@@ -3,6 +3,7 @@
 # Exit on any error
 set -euo pipefail
 
+npm run docs:validate
 npx publint
 npm run knip
 npm ci

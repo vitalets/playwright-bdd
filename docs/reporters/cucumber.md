@@ -12,11 +12,12 @@ Currently, the following reporters are supported:
 * [message](#message)
 * [custom](#custom)
 
-#### Automatic screenshots / videos / traces
-Playwright can [automatically attach screenshot, video and trace](https://playwright.dev/docs/test-use-options#recording-options) to the test results.
-Playwright-bdd fully supports this feature and passes these attachments to Cucumber reports without any action from your side.
+Navigate to the concrete reporter for the usage details.
 
-<details><summary>Example report</summary>
+#### Automatic screenshots / videos / traces
+Playwright-bdd fully supports [auto attaching screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options) to all Cucumber reports. No special action neede from your side.
+
+<details><summary>Example HTML report with auto-attchments</summary>
 
 ![html report](./_media/html-report-attachments.png)
 
@@ -24,11 +25,13 @@ Playwright-bdd fully supports this feature and passes these attachments to Cucum
 
 #### Projects
 
-Cucumber formatters don't natively support Playwright's [projects concept](https://playwright.dev/docs/test-projects#introduction). Nevertheless, playwright-bdd allows to combine several Playwright project runs into a single Cucumber report.
+Cucumber formatters don't natively support Playwright's [projects concept](https://playwright.dev/docs/test-projects#introduction). Nevertheless, playwright-bdd adopts Playwright test results and shows all projects in a single Cucumber report.
 
-The final output depends on the particular reporter. For example, in HTML reporter project name is prepended to the feature file path.
+The final output depends on the particular reporter. For example, in HTML reporter project name is prepended to the feature file path:
 
-<details><summary>Playwright config for testing in <b>Chrome</b> and <b>Firefox</b></summary>
+![html report](./_media/html-report-projects.png)
+
+<details><summary>Example <code>playwright.config.ts</code> with several projects:</summary>
 
 ```ts
 import { defineConfig, devices } from '@playwright/test';
@@ -56,10 +59,6 @@ export default defineConfig({
 ```
 
 </details>
-
-Example report:
-
-![html report](./_media/html-report-projects.png)
 
 ## html
 
@@ -116,7 +115,7 @@ export default defineConfig({
 
 <details><summary>Example of <code>report.json</code></summary>
 
-[json report](_media/json-report.json ':include')
+[json report](./_media/json-report.json ':include')
 
 </details>
 
@@ -180,7 +179,7 @@ export default defineConfig({
 
 <details><summary>Example of <code>report.xml</code></summary>
 
-[junit report](_media/junit-report.xml ':include')
+[junit report](./_media/junit-report.xml ':include')
 
 </details>
 
@@ -212,7 +211,7 @@ export default defineConfig({
 
 <details><summary>Example of <code>report.ndjson</code></summary>
 
-[message report](_media/message-report.ndjson ':include')
+[message report](./_media/message-report.ndjson ':include')
 
 </details>
 
@@ -265,6 +264,8 @@ export default defineConfig({
 ```
 
 All options passed to `cucumberReporter()` will be available as `options.parsedArgvOptions`.
+
+!> Please note that `options.snippetBuilder` and `options.supportCodeLibrary` are passed as fake objects for now
 
 ## Merge reports
 
