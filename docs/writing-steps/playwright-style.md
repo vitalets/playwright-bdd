@@ -26,10 +26,10 @@ When('I click link {string}', async ({ page }, name: string) => {
 
 > Usually step functions are async, but it is not required
 
-## Custom fixtures
-To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
+## Fixtures
+To use [fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 
-1. Define custom fixtures with `.extend()` and export `test` instance. For example, `fixtures.ts`:
+1. Define fixtures with `.extend()` and export `test` instance. For example, `fixtures.ts`:
     ```ts
     // Note: import base from playwright-bdd, not from @playwright/test!
     import { test as base } from 'playwright-bdd';
@@ -50,7 +50,7 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. Pass custom `test` function to `createBdd()` and use customs fixtures in step definitions. For example, `steps.ts`:
+2. Pass custom `test` function to `createBdd()` and use fixtures in step definitions. For example, `steps.ts`:
     ```ts
     import { createBdd } from 'playwright-bdd';
     import { test } from './fixtures';
@@ -116,13 +116,13 @@ Given('I do something', async ({ $tags }) => {
 The most powerful usage of `$tags` is in your custom fixtures.
 
 ##### Example 1
-Run scenarios with `@firefox` tag only in Firefox:
+Run scenario only in Firefox if it has `@firefox` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
 
 export const test = base.extend<{ firefoxOnly: void }>({
   firefoxOnly: [async ({ $tags }, use, testInfo) => {
-    if ($tags.includes('@firefox') && testInfo.project.name !== 'firefox') {
+    if ($tags.includes('@firefox')) {
       testInfo.skip();
     }
     await use();
@@ -131,18 +131,17 @@ export const test = base.extend<{ firefoxOnly: void }>({
 ```
 
 ##### Example 2
-Show tags in Playwright html-report:
+Overwrite locale to `fi` if test has a `@LocaleFi` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ addTags: void }>({
-  addTags: [async ({ $tags }, use, testInfo) => {
-    testInfo.annotations.push({
-      type: 'tags',
-      description: $tags.join(', '),
-    });
-    await use();
-  }, { auto: true }],
+export const test = base.extend({
+  locale: async ({ $tags, locale }, use) => {
+    if ($tags.includes('@LocaleFi')) {
+      locale = 'fi';
+    }
+    await use(locale);
+  },
 });
 ```
 
