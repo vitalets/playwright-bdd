@@ -125,7 +125,9 @@ export class TestDir {
   }
 
   getAbsPath(relativePath) {
-    return fileURLToPath(new URL(relativePath, this.importMeta.url));
+    return path.isAbsolute(relativePath)
+      ? relativePath
+      : fileURLToPath(new URL(relativePath, this.importMeta.url));
   }
 
   clearDir(relativePath) {
