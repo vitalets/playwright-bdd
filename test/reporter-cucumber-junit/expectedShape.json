@@ -1,5 +1,8 @@
 {
   "testsuite.testcase.#.system-out.#": 19,
+  "testsuite.testcase.#.failure.#.$.message": 9,
+  "testsuite.testcase.#.failure.#.$.type": 9,
+  "testsuite.testcase.#.failure.#._": 9,
   "testsuite.testcase.#.$.time": 19,
   "testsuite.testcase.#.$.name": {
     "match snapshot": 1,
@@ -9,23 +12,20 @@
     "Check doubled [2]": 1,
     "Check doubled [1]": 1,
     "Check doubled": 1,
-    "Scenario with doc string": 1,
     "Scenario with all keywords": 1,
+    "Scenario with doc string": 1,
+    "Failing by failingAfterFixtureWithStep": 1,
     "Scenario with attachments": 1,
     "Scenario with data table": 1,
-    "Failing by failingBeforeFixtureWithStep": 1,
-    "Failing by failingAfterFixtureWithStep": 1,
     "Failing by failingAfterFixtureNoStep": 1,
     "Failing by failingBeforeFixtureNoStep": 1,
+    "Failing by failingBeforeFixtureWithStep": 1,
     "Failing by step": 1,
     "Failing by named before hook": 1,
     "Failing by background step": 1,
     "Failing by anonymous before hook": 1
   },
   "testsuite.testcase.#.$.classname": 19,
-  "testsuite.testcase.#.failure.#.$.message": 8,
-  "testsuite.testcase.#.failure.#.$.type": 8,
-  "testsuite.testcase.#.failure.#._": 8,
   "testsuite.$.tests": {
     "19": 1
   },
@@ -37,6 +37,6 @@
     "0": 1
   },
   "testsuite.$.failures": {
-    "8": 1
+    "9": 1
   }
 }
