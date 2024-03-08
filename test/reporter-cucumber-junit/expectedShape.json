@@ -5,7 +5,7 @@
   "testsuite.testcase.#.failure.#._": 9,
   "testsuite.testcase.#.$.time": 19,
   "testsuite.testcase.#.$.name": {
-    "match snapshot": 1,
+    "failing match snapshot": 1,
     "Check doubled [5]": 1,
     "Check doubled [4]": 1,
     "Check doubled [3]": 1,

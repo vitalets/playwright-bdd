@@ -149,15 +149,15 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   await expect(scenario.getError()).toContainText('error in failingAfterFixtureWithStep');
 });
 
-test('Scenario: match snapshot', async ({ page }) => {
-  const scenario = getScenario(page, 'match snapshot');
+test('Scenario: failing match snapshot', async ({ page }) => {
+  const scenario = getScenario(page, 'failing match snapshot');
   await expect(scenario.getSteps()).toContainText([
     'Whenopen page "https://example.com"',
     'Thenpage title snapshot matches the golden one',
   ]);
   await expect(scenario.getAttachments()).toHaveText([
-    'rich-feature-match-snapshot-1-expected.txtbla-bla',
-    'rich-feature-match-snapshot-1-actual.txtExample Domain',
+    'rich-feature-failing-match-snapshot-1-expected.txtbla-bla',
+    'rich-feature-failing-match-snapshot-1-actual.txtExample Domain',
     'screenshot',
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(1);

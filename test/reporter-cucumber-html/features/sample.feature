@@ -35,7 +35,12 @@ Feature: rich feature
     Given step that uses failingAfterFixtureWithStep
     When Action 4
 
-  # Success scenarios
+  # if this scenario name changed, snapshot file names should also change
+  Scenario: failing match snapshot
+    When open page "https://example.com"
+    Then page title snapshot matches the golden one
+
+  # ----- Success scenarios ------
   Scenario: Scenario with data table
     When Step with data table
       | name  | value |              
@@ -66,10 +71,6 @@ Feature: rich feature
   Scenario: Skipped scenario
     Given Action 1
     And Action 2
-
-  Scenario: match snapshot
-    When open page "https://example.com"
-    Then page title snapshot matches the golden one
 
 	Scenario Outline: Check doubled
     Given Action <start>

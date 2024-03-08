@@ -46,4 +46,11 @@ function copyFeatures() {
   fs.cpSync('test/reporter-cucumber-html/features', testDir.getAbsPath('features'), {
     recursive: true,
   });
+  fs.cpSync(
+    'test/reporter-cucumber-html/.features-gen/features/sample.feature.spec.js-snapshots',
+    testDir.getAbsPath('.features-gen/features/sample.feature.spec.js-snapshots'),
+    {
+      recursive: true,
+    },
+  );
 }
