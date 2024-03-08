@@ -9,7 +9,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { PwProject, collectStepsWithCategory, getHooksRootStep } from './pwUtils';
+import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
 import {
   BddDataAttachment,
   BddDataStep,
@@ -17,6 +17,7 @@ import {
 } from '../../../run/bddDataAttachment';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
+import { ProjectInfo, getProjectInfo } from './Projects';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -35,7 +36,7 @@ export class TestCaseRun {
   bddData: BddDataAttachment;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
-  project: PwProject;
+  projectInfo: ProjectInfo;
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
   private executedSteps: ExecutedStepInfo[];
@@ -48,8 +49,8 @@ export class TestCaseRun {
   ) {
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
+    this.projectInfo = getProjectInfo(this.test);
     this.attachmentMapper = new AttachmentMapper(this.result);
-    this.project = this.test.parent.project();
     this.executedSteps = this.fillExecutedSteps();
     this.executedBeforeHooks = this.fillExecutedHooks('before');
     this.executedAfterHooks = this.fillExecutedHooks('after');

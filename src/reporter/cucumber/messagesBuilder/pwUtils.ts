@@ -4,10 +4,6 @@
 
 import * as pw from '@playwright/test/reporter';
 import { HookType } from './Hook';
-import { FullProject } from '@playwright/test';
-
-// Playwright project (undefined is for root project when no porjects defined)
-export type PwProject = FullProject | undefined;
 
 // Playwright step categoires, that can be mapped to testStep / hook in Cucumber report
 const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];

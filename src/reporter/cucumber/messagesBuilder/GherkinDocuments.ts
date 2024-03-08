@@ -9,12 +9,12 @@ import { getPlaywrightConfigDir } from '../../../config/configDir';
 import { ConcreteEnvelope } from './types';
 import { GherkinDocumentClone } from './GherkinDocumentClone';
 import { GherkinDocumentMessage } from './GherkinDocument';
-import { PwProject } from './pwUtils';
+import { ProjectInfo, getFeatureUriWithProject } from './Projects';
 
 export class GherkinDocuments {
   private featuresLoader = new FeaturesLoader();
-  private projectsPerFeaturePath = new AutofillMap</* uri */ string, Set<PwProject>>();
-  private gherkinDocumentsPerProject = new AutofillMap<PwProject, GherkinDocumentWithPickles[]>();
+  private projectsPerFeaturePath = new AutofillMap</* uri */ string, Set<ProjectInfo>>();
+  private gherkinDocumentsPerProject = new AutofillMap<ProjectInfo, GherkinDocumentWithPickles[]>();
 
   constructor() {}
 
@@ -26,9 +26,9 @@ export class GherkinDocuments {
     this.fillGherkinDocumentsPerProject();
   }
 
-  getDocumentsForProject(project: PwProject) {
-    const docs = this.gherkinDocumentsPerProject.get(project);
-    if (!docs) throw new Error(`No gherkin docs for project ${project?.name}`);
+  getDocumentsForProject(projectInfo: ProjectInfo) {
+    const docs = this.gherkinDocumentsPerProject.get(projectInfo);
+    if (!docs) throw new Error(`No gherkin docs for project ${projectInfo?.projectName}`);
     return docs;
   }
 
@@ -50,7 +50,7 @@ export class GherkinDocuments {
         testCaseRun.bddData.uri,
         () => new Set(),
       );
-      projects.add(testCaseRun.project);
+      projects.add(testCaseRun.projectInfo);
     });
   }
 
@@ -66,33 +66,22 @@ export class GherkinDocuments {
   }
 
   private addGherkinDocumentToProject(
-    project: PwProject,
+    projectInfo: ProjectInfo,
     gherkinDocument: GherkinDocumentWithPickles,
   ) {
-    const projectDocs = this.gherkinDocumentsPerProject.getOrCreate(project, () => []);
+    const projectDocs = this.gherkinDocumentsPerProject.getOrCreate(projectInfo, () => []);
     const clonedDocument = new GherkinDocumentClone(gherkinDocument).getClone();
     projectDocs.push(clonedDocument);
   }
 
-  private buildSourceMessage(project: PwProject, doc: GherkinDocumentWithPickles) {
+  private buildSourceMessage(projectInfo: ProjectInfo, doc: GherkinDocumentWithPickles) {
     if (!doc.uri) throw new Error(`Doc without uri`);
     const originalSource = this.featuresLoader.gherkinQuery.getSource(doc.uri);
     if (!originalSource) throw new Error(`No source`);
     const source: messages.Source = {
       ...originalSource,
-      uri: getFeatureUriWithProject(project, doc.uri),
+      uri: getFeatureUriWithProject(projectInfo, doc.uri),
     };
     return { source };
   }
-}
-
-/**
- * Returns URI prepended with project name.
- * It allows to separate PW projects runs of the same feature file.
- *
- * Now result should not contain spaces as Cucumber HTML report uses it as uuid.
- * See: https://github.com/cucumber/react-components/issues/344
- */
-export function getFeatureUriWithProject<T extends string | undefined>(project: PwProject, uri: T) {
-  return project?.name && uri ? `[${project.name}]:${uri}` : uri;
 }

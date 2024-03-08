@@ -6,8 +6,7 @@ import * as messages from '@cucumber/messages';
 import { GherkinDocumentWithPickles } from '../../../cucumber/loadFeatures';
 import { ConcreteEnvelope } from './types';
 import { omit } from '../../../utils';
-import { getFeatureUriWithProject } from './GherkinDocuments';
-import { PwProject } from './pwUtils';
+import { ProjectInfo, getFeatureUriWithProject } from './Projects';
 
 type GherkinDocumentMeta = {
   originalUri: string;
@@ -27,7 +26,7 @@ export class GherkinDocumentMessage {
   }
 
   constructor(
-    private project: PwProject,
+    private projectInfo: ProjectInfo,
     private gherkinDocument: GherkinDocumentWithPickles,
   ) {}
 
@@ -43,16 +42,14 @@ export class GherkinDocumentMessage {
   }
 
   private setUriWithProject(gherkinDocument: messages.GherkinDocument) {
-    gherkinDocument.uri = getFeatureUriWithProject(this.project, this.gherkinDocument.uri);
+    gherkinDocument.uri = getFeatureUriWithProject(this.projectInfo, this.gherkinDocument.uri);
   }
 
   private setMeta(gherkinDocument: messages.GherkinDocument) {
     (gherkinDocument as GherkinDocumentWithMeta)[gherkinDocumentMetaSymbol] = {
       originalUri: this.gherkinDocument.uri || '',
-      projectName: this.project?.name,
-      // browserName will be empty if not defined in project
-      // todo: get browser info from bddData
-      browserName: this.project?.use.browserName || this.project?.use.defaultBrowserType,
+      projectName: this.projectInfo?.projectName,
+      browserName: this.projectInfo?.browserName,
     };
   }
 }

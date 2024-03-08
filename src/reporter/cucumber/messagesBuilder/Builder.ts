@@ -98,7 +98,7 @@ export class MessagesBuilder {
     this.testCaseRuns.forEach((testCaseRun) => {
       const testId = testCaseRun.test.id;
       const gherkinDocsForProject = this.gherkinDocuments.getDocumentsForProject(
-        testCaseRun.project,
+        testCaseRun.projectInfo,
       );
       const testCase = this.testCases.getOrCreate(
         testId,
