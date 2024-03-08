@@ -6,6 +6,7 @@ import test from 'node:test';
 import fs from 'node:fs';
 import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
+import xml2js from 'xml2js';
 
 export { test };
 export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
@@ -71,27 +72,29 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
         console.log(`Actual:\n${e.message}`);
         process.exit(1);
       }
-      return stdout;
+    } else {
+      // e.message can include whole stderr
+      e.message = e.message.replace(stderr, '').trim();
+      const output = [e.message, stderr, stdout].filter(Boolean).join('\n');
+      const errors = Array.isArray(error) ? error : [error];
+      errors.forEach((error) => {
+        if (typeof error === 'string') {
+          assert(
+            output.includes(error),
+            [
+              `Expected output to include "${error}"`, // prettier-ignore
+              `ERROR: ${e.message}`,
+              `STDERR: ${stderr}`,
+              `STDOUT: ${stdout}`,
+            ].join('\n'),
+          );
+        } else {
+          assert.match(output, error);
+        }
+      });
     }
-    // e.message can include whole stderr
-    e.message = e.message.replace(stderr, '').trim();
-    const output = [e.message, stderr, stdout].filter(Boolean).join('\n');
-    const errors = Array.isArray(error) ? error : [error];
-    errors.forEach((error) => {
-      if (typeof error === 'string') {
-        assert(
-          output.includes(error),
-          [
-            `Expected output to include "${error}"`, // prettier-ignore
-            `ERROR: ${e.message}`,
-            `STDERR: ${stderr}`,
-            `STDOUT: ${stdout}`,
-          ].join('\n'),
-        );
-      } else {
-        assert.match(output, error);
-      }
-    });
+
+    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
 
     return stdout;
   }
@@ -168,4 +171,9 @@ export function expectFileExists(importMeta, relPath) {
 export function expectFileNotExists(importMeta, relPath) {
   const absPath = new URL(relPath, importMeta.url);
   assert(!fs.existsSync(absPath), `Expect file to not exist: ${relPath}`);
+}
+
+export async function getJsonFromXmlFile(file) {
+  const xml = fs.readFileSync(file, 'utf8');
+  return xml2js.parseStringPromise(xml);
 }

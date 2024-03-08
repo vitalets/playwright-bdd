@@ -25,6 +25,7 @@ import { durationToNanoseconds } from '../../cucumber/formatter/durationHelpers'
 import { formatLocation } from '../../cucumber/formatter/locationHelpers';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
+import { getFeatureNameWithProject } from './messagesBuilder/Projects';
 
 const {
   getGherkinExampleRuleMap,
@@ -223,9 +224,7 @@ export default class JsonReporter extends BaseReporter {
   getFeatureData({ gherkinDocument, elements }: IBuildJsonFeatureOptions): IJsonFeature {
     const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
     const feature = gherkinDocument.feature!;
-    const featureNameWithProject = meta.projectName
-      ? `[${meta.projectName}] ${feature.name}`
-      : feature.name;
+    const featureNameWithProject = getFeatureNameWithProject(meta.projectName, feature.name);
     return {
       description: feature.description,
       elements,

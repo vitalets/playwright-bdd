@@ -10,6 +10,10 @@ export default defineConfig({
       addProjectToFeatureName: true,
       addMetadata: 'list',
     }),
+    cucumberReporter('junit', {
+      outputFile: 'reports/report.xml',
+      suiteName: 'my suite',
+    }),
   ],
   projects: [
     {

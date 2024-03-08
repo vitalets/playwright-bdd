@@ -39,3 +39,10 @@ export function getFeatureUriWithProject<T extends string | undefined>(
 ) {
   return projectInfo?.projectName && uri ? `[${projectInfo.projectName}]:${uri}` : uri;
 }
+
+export function getFeatureNameWithProject(
+  projectName: ProjectInfo['projectName'],
+  featureName: string,
+) {
+  return projectName ? `[${projectName}] ${featureName}` : featureName;
+}

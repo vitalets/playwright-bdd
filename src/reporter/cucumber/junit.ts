@@ -1,16 +1,18 @@
 /**
  * Cucumber junit reporter.
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/junit_formatter.ts
+ * Junit spec(ish): https://github.com/testmoapp/junitxml
+ * See also: https://github.com/cucumber/cucumber-junit-xml-formatter
+ * See also: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/reporters/junit.ts
  */
 
-/* eslint-disable complexity, max-lines */
+/* eslint-disable complexity, max-lines, max-statements */
 
 import xmlbuilder from 'xmlbuilder';
 import * as messages from '@cucumber/messages';
 import {
   Attachment,
   Duration,
-  Feature,
   getWorstTestStepResult,
   Pickle,
   Rule,
@@ -25,10 +27,13 @@ import {
   getGherkinStepMap,
 } from '../../cucumber/formatter/GherkinDocumentParser';
 import { getPickleStepMap, getStepKeyword } from '../../cucumber/formatter/PickleParser';
+import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
+import { getFeatureNameWithProject } from './messagesBuilder/Projects';
 
 type JunitReporterOptions = {
   outputFile?: string;
   suiteName?: string;
+  addProjectToFeatureName?: boolean;
 };
 
 interface IJUnitTestSuite {
@@ -173,12 +178,15 @@ export default class JunitReporter extends BaseReporter {
     return name;
   }
 
-  private getTestCaseName(feature: Feature, rule: Rule | undefined, pickle: Pickle) {
-    const featureName = this.nameOrDefault(feature.name, 'feature');
+  private getTestCaseName(featureName: string, rule: Rule | undefined, pickle: Pickle) {
     const pickleName = this.nameOrDefault(pickle.name, 'scenario');
-    const testCaseName = rule
-      ? this.nameOrDefault(rule.name, 'rule') + ': ' + pickleName
-      : pickleName;
+    const testCaseName = [
+      featureName,
+      rule ? this.nameOrDefault(rule.name, 'rule') : '',
+      pickleName,
+    ]
+      .filter(Boolean)
+      .join(': ');
     if (!this.names[featureName]) {
       this.names[featureName] = [];
     }
@@ -216,6 +224,7 @@ export default class JunitReporter extends BaseReporter {
       if (!feature) {
         throw new Error(`Gherkin document without feature: ${gherkinDocument.uri}`);
       }
+      const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
       const gherkinExampleRuleMap = getGherkinExampleRuleMap(gherkinDocument);
       const rule = gherkinExampleRuleMap[pickle.astNodeIds[0]];
       const gherkinStepMap = getGherkinStepMap(gherkinDocument);
@@ -224,9 +233,13 @@ export default class JunitReporter extends BaseReporter {
       const steps = this.getTestSteps(testCaseAttempt, gherkinStepMap, pickleStepMap);
       const stepDuration = steps.reduce((total, step) => total + (step.time || 0), 0);
 
+      const featureName = this.nameOrDefault(feature.name, 'feature');
+      const featureNameWithProject = getFeatureNameWithProject(meta.projectName, featureName);
       return {
-        classname: this.nameOrDefault(feature.name, 'feature'),
-        name: this.getTestCaseName(feature, rule, pickle),
+        classname: this.userOptions.addProjectToFeatureName ? featureNameWithProject : featureName,
+        // always add project to testcase name
+        // see: https://github.com/microsoft/playwright/issues/23432
+        name: this.getTestCaseName(featureNameWithProject, rule, pickle),
         time: stepDuration,
         result: this.getTestCaseResult(steps),
         systemOutput: this.formatTestSteps(steps),
@@ -255,12 +268,13 @@ export default class JunitReporter extends BaseReporter {
 
   private buildXmlReport(testSuite: IJUnitTestSuite): string {
     const xmlReport = xmlbuilder
-      .create('testsuite', { invalidCharReplacement: '' })
+      .create('testsuite', { encoding: 'UTF-8', invalidCharReplacement: '' })
       .att('failures', testSuite.failures)
       .att('skipped', testSuite.skipped)
       .att('name', testSuite.name)
       .att('time', testSuite.time)
       .att('tests', testSuite.tests.length);
+
     testSuite.tests.forEach((test) => {
       const xmlTestCase = xmlReport.ele('testcase', {
         classname: test.classname,

@@ -5,6 +5,13 @@
  * depends on passed { ignorePaths, valuePaths }.
  */
 import get from 'lodash.get';
+import assert from 'node:assert/strict';
+
+export function assertShape(actualJson, expectedJson, { ignorePaths, valuePaths }) {
+  const actualShape = buildShape(actualJson, { ignorePaths, valuePaths });
+  const expectedShape = buildShape(expectedJson, { ignorePaths, valuePaths });
+  assert.deepEqual(actualShape, expectedShape);
+}
 
 export function buildShape(obj, { ignorePaths, valuePaths }) {
   const shape = {};

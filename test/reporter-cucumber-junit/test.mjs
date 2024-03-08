@@ -5,10 +5,8 @@
  * cp test/reporter-cucumber-junit/reports/actualShape.json test/reporter-cucumber-junit/expectedShape.json
  */
 import fs from 'node:fs';
-import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTestWithError } from '../helpers.mjs';
-import xml2js from 'xml2js';
-import { buildShape } from '../reporter-cucumber-msg/helpers/json-shape.mjs';
+import { test, TestDir, execPlaywrightTestWithError, getJsonFromXmlFile } from '../helpers.mjs';
+import { assertShape } from '../reporter-cucumber-msg/helpers/json-shape.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -18,28 +16,25 @@ test(testDir.name, async () => {
   copyFeatures(); // re-use features from reporter-cucumber-html
   execPlaywrightTestWithError(testDir.name);
 
-  await checkJunitReport();
+  await assertJunitReport();
 });
 
-const ignorePaths = [];
-const valuePaths = [
-  'testsuite.$.failures', // prettier-ignore
-  'testsuite.$.skipped',
-  'testsuite.$.name',
-  'testsuite.$.tests',
-  'testsuite.testcase.#.$.name',
-];
-
-async function checkJunitReport() {
-  const actualReportFile = testDir.getAbsPath('reports/report.xml');
-  const actualShapeFile = testDir.getAbsPath('reports/actualShape.json');
-  const expectedShapeFile = testDir.getAbsPath('expectedShape.json');
-  const xml = fs.readFileSync(actualReportFile, 'utf8');
-  const json = await xml2js.parseStringPromise(xml);
-  const actualShape = buildShape(json, { ignorePaths, valuePaths });
-  fs.writeFileSync(actualShapeFile, JSON.stringify(actualShape, null, 2));
-  const expectedShape = JSON.parse(fs.readFileSync(expectedShapeFile, 'utf8'));
-  expect(actualShape).toStrictEqual(expectedShape);
+async function assertJunitReport() {
+  const actualJson = await getJsonFromXmlFile(testDir.getAbsPath('reports/report.xml'));
+  const expectedJson = await getJsonFromXmlFile(
+    testDir.getAbsPath('expected-reports/junit-report.xml'),
+  );
+  assertShape(actualJson, expectedJson, {
+    valuePaths: [
+      'testsuite.testcase.#.$.name', // prettier-ignore
+      'testsuite.testcase.#.$.classname',
+      'testsuite.testcase.#.failure.#.$.type',
+      'testsuite.$.name',
+      'testsuite.$.tests',
+      'testsuite.$.skipped',
+      'testsuite.$.failures',
+    ],
+  });
 }
 
 function copyFeatures() {
