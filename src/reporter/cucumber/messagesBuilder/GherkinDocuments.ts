@@ -58,7 +58,7 @@ export class GherkinDocuments {
     this.featuresLoader.getDocumentsWithPickles().forEach((gherkinDocument) => {
       if (!gherkinDocument.uri) throw new Error(`Feature without uri`);
       const projects = this.projectsPerFeaturePath.get(gherkinDocument.uri);
-      if (!projects) throw new Error(`Feature without projects`);
+      if (!projects) throw new Error(`Feature without projects: ${gherkinDocument.uri}`);
       projects.forEach((project) => {
         this.addGherkinDocumentToProject(project, gherkinDocument);
       });

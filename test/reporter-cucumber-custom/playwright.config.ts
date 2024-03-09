@@ -9,7 +9,10 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   reporter: [
-    cucumberReporter('./custom-reporter.ts', { outputFile: 'reports/custom.ndjson', foo: 'bar' }),
+    cucumberReporter('./custom-reporter.ts', {
+      outputFile: 'reports/custom.ndjson',
+      foo: 'bar',
+    }),
     cucumberReporter('@cucumber/pretty-formatter', {
       colorsEnabled: true,
       theme: {
