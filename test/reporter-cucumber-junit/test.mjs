@@ -7,6 +7,7 @@
 import fs from 'node:fs';
 import { test, TestDir, execPlaywrightTestWithError, getJsonFromXmlFile } from '../helpers.mjs';
 import { assertShape } from '../reporter-cucumber-msg/helpers/json-shape.mjs';
+import { junitReportFields } from './junit-report.fields.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -24,17 +25,7 @@ async function assertJunitReport() {
   const expectedJson = await getJsonFromXmlFile(
     testDir.getAbsPath('expected-reports/junit-report.xml'),
   );
-  assertShape(actualJson, expectedJson, {
-    valuePaths: [
-      'testsuite.testcase.#.$.name', // prettier-ignore
-      'testsuite.testcase.#.$.classname',
-      'testsuite.testcase.#.failure.#.$.type',
-      'testsuite.$.name',
-      'testsuite.$.tests',
-      'testsuite.$.skipped',
-      'testsuite.$.failures',
-    ],
-  });
+  assertShape(actualJson, expectedJson, junitReportFields);
 }
 
 function copyFeatures() {

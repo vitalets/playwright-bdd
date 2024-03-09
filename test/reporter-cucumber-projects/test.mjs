@@ -4,6 +4,9 @@ import {
   getMessagesFromFile,
   getJsonFromFile,
 } from '../reporter-cucumber-msg/helpers/read-file.mjs';
+import { junitReportFields } from '../reporter-cucumber-junit/junit-report.fields.mjs';
+import { messageReportFields } from '../reporter-cucumber-msg/message-report.fields.mjs';
+import { jsonReportFields } from '../reporter-cucumber-msg/json-report.fields.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -20,30 +23,13 @@ function assertMessagesReport() {
   const expectedMessages = getMessagesFromFile(
     testDir.getAbsPath(`expected-reports/messages.ndjson`),
   );
-  assertShape(actualMessages, expectedMessages, {
-    valuePaths: [
-      'source.uri', // prettier-ignore
-      'gherkinDocument.uri',
-      'pickle.uri',
-      'testStepFinished.testStepResult.status',
-      'testRunFinished.success',
-    ],
-  });
+  assertShape(actualMessages, expectedMessages, messageReportFields);
 }
 
 function assertJsonReport() {
   const actualJson = getJsonFromFile(testDir.getAbsPath(`reports/report.json`));
   const expectedJson = getJsonFromFile(testDir.getAbsPath(`expected-reports/json-report.json`));
-  assertShape(actualJson, expectedJson, {
-    valuePaths: [
-      'id', // prettier-ignore
-      'name',
-      'uri',
-      'elements.#.steps.#.result.status',
-      'metadata.#.name',
-      'metadata.#.value',
-    ],
-  });
+  assertShape(actualJson, expectedJson, jsonReportFields);
 }
 
 async function assertJunitReport() {
@@ -51,15 +37,5 @@ async function assertJunitReport() {
   const expectedJson = await getJsonFromXmlFile(
     testDir.getAbsPath('expected-reports/junit-report.xml'),
   );
-  assertShape(actualJson, expectedJson, {
-    valuePaths: [
-      'testsuite.testcase.#.$.name', // prettier-ignore
-      'testsuite.testcase.#.$.classname',
-      'testsuite.testcase.#.failure.#.$.type',
-      'testsuite.$.name',
-      'testsuite.$.tests',
-      'testsuite.$.skipped',
-      'testsuite.$.failures',
-    ],
-  });
+  assertShape(actualJson, expectedJson, junitReportFields);
 }

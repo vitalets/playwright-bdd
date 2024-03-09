@@ -7,13 +7,13 @@
 import get from 'lodash.get';
 import assert from 'node:assert/strict';
 
-export function assertShape(actualJson, expectedJson, { ignorePaths, valuePaths }) {
-  const actualShape = buildShape(actualJson, { ignorePaths, valuePaths });
+export function assertShape(actualJson, expectedJson, { ignorePaths, valuePaths, transform }) {
+  const actualShape = buildShape(actualJson, { ignorePaths, valuePaths, transform });
   const expectedShape = buildShape(expectedJson, { ignorePaths, valuePaths });
   assert.deepEqual(actualShape, expectedShape);
 }
 
-export function buildShape(obj, { ignorePaths, valuePaths }) {
+export function buildShape(obj, { ignorePaths, valuePaths, transform }) {
   const shape = {};
   const arr = Array.isArray(obj) ? obj : [obj];
   arr.forEach((obj) => {
@@ -21,16 +21,17 @@ export function buildShape(obj, { ignorePaths, valuePaths }) {
       const pathStr = getPathStr(path);
       const isIgnorePath = hasPrefix(pathStr, ignorePaths);
       const isValuePath = hasPrefix(pathStr, valuePaths);
-      const curVal = shape[pathStr];
       if (isValuePath) {
-        const newVal = get(obj, path);
+        const rawVal = get(obj, path);
+        const val = transform ? transform(pathStr, rawVal) : rawVal;
         shape[pathStr] = shape[pathStr] || {};
-        shape[pathStr][newVal] = shape[pathStr][newVal] || 0;
-        shape[pathStr][newVal]++;
+        shape[pathStr][val] = shape[pathStr][val] || 0;
+        shape[pathStr][val]++;
       } else if (isIgnorePath) {
         return;
       } else {
-        shape[pathStr] = curVal ? curVal + 1 : 1;
+        shape[pathStr] = shape[pathStr] || 0;
+        shape[pathStr]++;
       }
     });
   });

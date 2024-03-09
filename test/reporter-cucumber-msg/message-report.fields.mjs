@@ -1,8 +1,8 @@
 /**
- * Fields config for comparison.
+ * Fields config for MESSAGE report shape comparison
  */
+import { toPosixPath } from '../helpers.mjs';
 
-// fields config for MESSAGE report shape comparison
 export const messageReportFields = {
   ignorePaths: [
     // in playwright-bdd we add only named hooks, so ignore hook.name from comparison
@@ -18,31 +18,19 @@ export const messageReportFields = {
     'attachment.fileName',
   ],
 
-  // these paths are compared by values, not by counter.
+  // these paths are compared by values, not by total counter.
   valuePaths: [
     'source.uri', // prettier-ignore
-    'pickle.name',
+    'gherkinDocument.uri',
+    'pickle.uri',
+    'pickle.name', // prettier-ignore
     'pickle.tags.#.name',
     'pickle.steps.#.text',
     'attachment.mediaType',
     'testCaseStarted.attempt',
-  ],
-};
-
-// fields config for JSON report shape comparison
-export const jsonReportFields = {
-  ignorePaths: [
-    // ignored b/c there is no stepDefinitions (yet)
-    // See: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/json_formatter.ts#L279
-    'elements.#.steps.#.match.location',
-    // todo: check why tags line is empty
-    'elements.#.tags.#.line',
+    'testStepFinished.testStepResult.status',
+    'testRunFinished.success',
   ],
 
-  // these paths are compared by values, not by counter.
-  valuePaths: [
-    'name', // prettier-ignore
-    'elements.#.steps.#.result.status',
-    'elements.#.steps.#.name',
-  ],
+  transform: (key, value) => (key.endsWith('uri') ? toPosixPath(value) : value),
 };

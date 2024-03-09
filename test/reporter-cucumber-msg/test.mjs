@@ -14,7 +14,8 @@
 import fg from 'fast-glob';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../helpers.mjs';
-import { messageReportFields, jsonReportFields } from './fields.config.mjs';
+import { messageReportFields } from './message-report.fields.mjs';
+import { jsonReportFields } from './json-report.fields.mjs';
 import { buildShape } from './helpers/json-shape.mjs';
 import { getMessagesFromFile, getJsonFromFile } from './helpers/read-file.mjs';
 
