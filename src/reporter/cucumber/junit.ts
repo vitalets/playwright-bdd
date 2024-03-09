@@ -28,12 +28,11 @@ import {
 } from '../../cucumber/formatter/GherkinDocumentParser';
 import { getPickleStepMap, getStepKeyword } from '../../cucumber/formatter/PickleParser';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
-import { getFeatureNameWithProject } from './messagesBuilder/Projects';
+import { getFeatureNameWithProject, TITLE_SEPARATOR } from './messagesBuilder/Projects';
 
 type JunitReporterOptions = {
   outputFile?: string;
   suiteName?: string;
-  addProjectToFeatureName?: boolean;
 };
 
 interface IJUnitTestSuite {
@@ -186,7 +185,7 @@ export default class JunitReporter extends BaseReporter {
       pickleName,
     ]
       .filter(Boolean)
-      .join(': ');
+      .join(TITLE_SEPARATOR);
     if (!this.names[featureName]) {
       this.names[featureName] = [];
     }
@@ -236,7 +235,7 @@ export default class JunitReporter extends BaseReporter {
       const featureName = this.nameOrDefault(feature.name, 'feature');
       const featureNameWithProject = getFeatureNameWithProject(meta.projectName, featureName);
       return {
-        classname: this.userOptions.addProjectToFeatureName ? featureNameWithProject : featureName,
+        classname: featureName,
         // always add project to testcase name
         // see: https://github.com/microsoft/playwright/issues/23432
         name: this.getTestCaseName(featureNameWithProject, rule, pickle),

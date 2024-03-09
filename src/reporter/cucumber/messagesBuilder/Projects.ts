@@ -11,6 +11,9 @@ export type ProjectInfo = {
   browserName?: string;
 };
 
+// title separator used in Playwright
+export const TITLE_SEPARATOR = ' › ';
+
 const projectsMap = new AutofillMap<string | undefined, ProjectInfo>();
 
 export function getProjectInfo(test: pw.TestCase) {
@@ -44,5 +47,5 @@ export function getFeatureNameWithProject(
   projectName: ProjectInfo['projectName'],
   featureName: string,
 ) {
-  return projectName ? `[${projectName}] ${featureName}` : featureName;
+  return projectName ? `${projectName}${TITLE_SEPARATOR}${featureName}` : featureName;
 }
