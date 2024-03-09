@@ -23,7 +23,7 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { extractTemplateParams, template, toPosixPath } from '../utils';
+import { extractTemplateParams, template } from '../utils';
 import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
@@ -139,7 +139,7 @@ export class TestFile {
   private getFeatureUri() {
     const { uri } = this.gherkinDocument;
     if (!uri) throw new Error(`Document without uri: ${this.gherkinDocument.feature?.name}`);
-    return toPosixPath(uri);
+    return uri;
   }
 
   private getRelativeImportTestFrom() {
