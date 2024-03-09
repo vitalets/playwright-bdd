@@ -18,9 +18,11 @@ This package offers **an alternative way**: convert BDD scenarios into Playwrigh
 Such approach brings all the benefits of Playwright runner:
 
 * Automatic [browser initialization and cleanup](https://playwright.dev/docs/library#key-differences)
-* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
-* Out-of-box [screenshot testing](https://playwright.dev/docs/test-snapshots)
+* Auto-capture of [screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options)
 * Parallelization with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
+* [Auto-waiting](https://playwright.dev/docs/actionability)
+* Out-of-box [visual comparison testing](https://playwright.dev/docs/test-snapshots)
+* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## Documentation
