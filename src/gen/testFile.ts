@@ -23,7 +23,7 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { findStepDefinition } from '../cucumber/loadSteps';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { extractTemplateParams, template } from '../utils';
+import { extractTemplateParams, template, toPosixPath } from '../utils';
 import { TestPoms, buildFixtureTag } from './testPoms';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
@@ -69,10 +69,12 @@ export class TestFile {
   private hasCucumberStyle = false;
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
+  public featureUri: string;
 
   constructor(private options: TestFileOptions) {
     this.formatter = new Formatter(options.config);
     this.testMetaBuilder = new TestMetaBuilder();
+    this.featureUri = this.getFeatureUri();
   }
 
   get gherkinDocument() {
@@ -81,12 +83,6 @@ export class TestFile {
 
   get pickles() {
     return this.gherkinDocument.pickles;
-  }
-
-  get sourceFile() {
-    const { uri } = this.gherkinDocument;
-    if (!uri) throw new Error(`Document without uri`);
-    return uri;
   }
 
   get content() {
@@ -131,13 +127,19 @@ export class TestFile {
 
   private getFileHeader() {
     const importTestFrom = this.getRelativeImportTestFrom();
-    return this.formatter.fileHeader(this.sourceFile, importTestFrom);
+    return this.formatter.fileHeader(this.featureUri, importTestFrom);
   }
 
   private loadI18nKeywords() {
     if (!this.isEnglish) {
       this.i18nKeywordsMap = getKeywordsMap(this.language);
     }
+  }
+
+  private getFeatureUri() {
+    const { uri } = this.gherkinDocument;
+    if (!uri) throw new Error(`Document without uri: ${this.gherkinDocument.feature?.name}`);
+    return toPosixPath(uri);
   }
 
   private getRelativeImportTestFrom() {
@@ -152,7 +154,7 @@ export class TestFile {
   }
 
   private getTechnicalSection() {
-    return this.formatter.technicalSection(this.testMetaBuilder, this.sourceFile, [
+    return this.formatter.technicalSection(this.testMetaBuilder, this.featureUri, [
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
@@ -315,7 +317,7 @@ export class TestFile {
     const stepDefinition = findStepDefinition(
       this.options.supportCodeLibrary,
       pickleStep.text,
-      this.sourceFile,
+      this.featureUri,
     );
     const keywordType = getStepKeywordType({
       keyword: step.keyword,
@@ -436,7 +438,7 @@ export class TestFile {
         : '.';
 
       exit(
-        `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
+        `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.featureUri}.`,
         `Please refactor your Page Object classes${suggestedTagsStr}`,
       );
     }

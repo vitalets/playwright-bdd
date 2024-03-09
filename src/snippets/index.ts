@@ -81,7 +81,7 @@ export class Snippets {
     });
     const { line, column } = undefinedStep.step.location;
     const snippetWithLocation = [
-      `// ${index}. Missing step definition for "${file.sourceFile}:${line}:${column}"`,
+      `// ${index}. Missing step definition for "${file.featureUri}:${line}:${column}"`,
       snippet,
     ].join('\n');
 

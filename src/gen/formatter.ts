@@ -18,16 +18,15 @@ export type ImportTestFrom = {
 export class Formatter {
   constructor(private config: BDDConfig) {}
 
-  fileHeader(uri: string, importTestFrom?: ImportTestFrom) {
-    const file = importTestFrom?.file || 'playwright-bdd';
+  fileHeader(featureUri: string, importTestFrom?: ImportTestFrom) {
+    // always use "/" for imports, see #91
+    const importTestFromFile = toPosixPath(importTestFrom?.file || 'playwright-bdd');
     let varName = importTestFrom?.varName || 'test';
     if (varName !== 'test') varName = `${varName} as test`;
-    // always use "/" for imports, see #91
-    const posixFilePath = toPosixPath(file);
     return [
-      `/** Generated from: ${uri} */`, // prettier-ignore
+      `/** Generated from: ${featureUri} */`, // prettier-ignore
       // this.quoted() is not possible for 'import from' as backticks not parsed
-      `import { ${varName} } from ${JSON.stringify(posixFilePath)};`,
+      `import { ${varName} } from ${JSON.stringify(importTestFromFile)};`,
       '',
     ];
   }
@@ -70,7 +69,7 @@ export class Formatter {
     return `// missing step: ${keyword}(${this.quoted(text)});`;
   }
 
-  technicalSection(testMetaBuilder: TestMetaBuilder, sourceFile: string, fixtures: string[]) {
+  technicalSection(testMetaBuilder: TestMetaBuilder, featureUri: string, fixtures: string[]) {
     return [
       '// == technical section ==', // prettier-ignore
       '',
@@ -78,7 +77,7 @@ export class Formatter {
       ...[
         '$test: ({}, use) => use(test),',
         '$testMetaMap: ({}, use) => use(testMetaMap),',
-        `$uri: ({}, use) => use(${this.quoted(toPosixPath(sourceFile))}),`,
+        `$uri: ({}, use) => use(${this.quoted(featureUri)}),`,
         ...fixtures,
       ].map(indent),
       '});',
