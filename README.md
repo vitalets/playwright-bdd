@@ -17,7 +17,7 @@ You can use CucumberJS runner with [Playwright as a library](https://medium.com/
 This package offers **an alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
 Such approach brings all the benefits of Playwright runner:
 
-* Automatic browser initialization and cleanup
+* Automatic [browser initialization and cleanup](https://playwright.dev/docs/library#key-differences)
 * Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
 * Out-of-box [screenshot testing](https://playwright.dev/docs/test-snapshots)
 * Parallelization with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
