@@ -9,7 +9,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 
 > Inspired by the issue in the Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
-> 🔥 Check out [decorators syntax](https://vitalets.github.io/playwright-bdd/#/decorators) to define BDD steps right inside Page Object Models
+> 🔥 Playwright-bdd **v6** is out! Check out [Cucumber reporters](https://vitalets.github.io/playwright-bdd/#/reporters/cucumber) and share your feedback 
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
