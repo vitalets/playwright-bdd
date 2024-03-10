@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.0.1
 * fix Cucumber reporters for non-default language
 
 ## 6.0.0
