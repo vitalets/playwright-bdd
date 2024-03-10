@@ -16,7 +16,7 @@ import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../helpers.mjs';
 import { messageReportFields } from './message-report.fields.mjs';
 import { jsonReportFields } from './json-report.fields.mjs';
-import { buildShape } from './helpers/json-shape.mjs';
+import { assertShape } from './helpers/json-shape.mjs';
 import { getMessagesFromFile, getJsonFromFile } from './helpers/read-file.mjs';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
@@ -51,18 +51,25 @@ async function checkFeature(featureDir) {
     }
   }
 
-  const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected/messages.ndjson`);
-  const actualMessages = getMessagesFromFile(`${absFeatureDir}/reports/messages.ndjson`);
-  assertShape(expectedMessages, actualMessages, messageReportFields, featureDir);
-
-  const expectedJson = getJsonFromFile(`${absFeatureDir}/expected/json-report.json`);
-  const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report.json`);
-  assertShape(expectedJson, actualJson, jsonReportFields, featureDir);
+  assertMessagesReport(absFeatureDir);
+  assertJsonReport(absFeatureDir);
 
   if (featureDir === 'attachments') {
     const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report-no-attachments.json`);
     expect(JSON.stringify(actualJson, null, 2)).not.toContain('embeddings');
   }
+}
+
+function assertMessagesReport(absFeatureDir) {
+  const actualMessages = getMessagesFromFile(`${absFeatureDir}/reports/messages.ndjson`);
+  const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected/messages.ndjson`);
+  assertShape(actualMessages, expectedMessages, messageReportFields);
+}
+
+function assertJsonReport(absFeatureDir) {
+  const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report.json`);
+  const expectedJson = getJsonFromFile(`${absFeatureDir}/expected/json-report.json`);
+  assertShape(actualJson, expectedJson, jsonReportFields);
 }
 
 /**
@@ -76,19 +83,4 @@ function getAllFeatureDirs() {
       onlyDirectories: true,
     })
     .filter((dir) => !skipDirs.includes(dir));
-}
-
-/**
- * Compares shapes of two objects/arrays.
- */
-export function assertShape(expected, actual, fieldsConfig, featureDir) {
-  const expectedShape = buildShape(expected, fieldsConfig);
-  const actualShape = buildShape(actual, fieldsConfig);
-  try {
-    expect(actualShape).toStrictEqual(expectedShape);
-  } catch (e) {
-    // for some reason Playwright's expect does not show custom message
-    console.log(`FAILED feature dir: ${featureDir}`);
-    throw e;
-  }
 }

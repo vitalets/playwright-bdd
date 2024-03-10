@@ -13,7 +13,7 @@ export function assertShape(actualJson, expectedJson, { ignorePaths, valuePaths,
   assert.deepEqual(actualShape, expectedShape);
 }
 
-export function buildShape(obj, { ignorePaths, valuePaths, transform }) {
+function buildShape(obj, { ignorePaths, valuePaths, transform }) {
   const shape = {};
   const arr = Array.isArray(obj) ? obj : [obj];
   arr.forEach((obj) => {
