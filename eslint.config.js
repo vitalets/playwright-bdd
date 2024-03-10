@@ -63,7 +63,7 @@ module.exports = [
     },
   },
   {
-    files: ['test/**/only-skip-fixme.feature.spec.js'],
+    files: ['test/**/only-skip-fixme.feature.spec.js', 'test/**/minimal.feature.spec.js'],
     plugins: {
       playwright,
     },

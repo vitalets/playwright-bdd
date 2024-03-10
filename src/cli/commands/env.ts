@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import { Command } from 'commander';
 import { ConfigOption, configOption } from '../options';
 import path from 'node:path';
@@ -22,19 +21,8 @@ export const envCommand = new Command('env')
   });
 
 function showPackageVersion(packageName: string) {
-  const version =
-    packageName === 'playwright-bdd' ? getOwnVersion() : getPackageVersion(packageName);
+  const version = getPackageVersion(packageName);
   logger.log(`${packageName}: v${version}`);
-}
-
-/**
- * Getting own version by relative path instead of using getPackageVersion(),
- * to aneble using directly from /dist in tests.
- */
-export function getOwnVersion() {
-  const packageJsonPath = path.resolve(__dirname, '..', '..', '..', `package.json`);
-  const pkg = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  return pkg.version;
 }
 
 function showPlaywrightConfigPath(cliConfigPath?: string) {

@@ -1,12 +1,14 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   language: 'ru',
-  paths: ['*.feature'],
-  require: ['steps.ts'],
+  paths: ['features/*.feature'],
+  require: ['steps/*.ts'],
+  featuresRoot: 'features',
 });
 
 export default defineConfig({
   testDir,
+  reporter: [cucumberReporter('html', { outputFile: 'reports/report.html' })],
 });

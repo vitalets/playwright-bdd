@@ -1,0 +1,239 @@
+[
+  {
+    "description": "  Hooks are special steps that run before or after each scenario's steps.\n\n  They can also conditionally target specific scenarios, using tag expressions",
+    "elements": [
+      {
+        "description": "",
+        "id": "hooks;no-tags-and-a-passed-step",
+        "keyword": "Scenario",
+        "line": 6,
+        "name": "No tags and a passed step",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 105875
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 13166
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 7,
+            "name": "a step passes",
+            "match": {
+              "location": "features/hooks/cucumber.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 115166
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 12000
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "hooks;no-tags-and-a-failed-step",
+        "keyword": "Scenario",
+        "line": 9,
+        "name": "No tags and a failed step",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 6750
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 6625
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 10,
+            "name": "a step fails",
+            "match": {
+              "location": "features/hooks/cucumber.steps.ts:16"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 37666,
+              "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:17:9)"
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 10208
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "hooks;with-a-tag,-a-failure-in-the-hook-and-a-passed-step",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "With a tag, a failure in the hook and a passed step",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 10583
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 62417
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 18,
+            "name": "a step passes",
+            "match": {
+              "location": "features/hooks/cucumber.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 69791
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "failed",
+              "duration": 36541,
+              "error_message": "Error: Exception in conditional hook\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:25:9)"
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 11457
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@some-tag",
+            "line": 16
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "hooks;with-an-tag,-an-valid-attachment-in-the-hook-and-a-passed-step",
+        "keyword": "Scenario",
+        "line": 21,
+        "name": "With an tag, an valid attachment in the hook and a passed step",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 5584
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 8625
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 22,
+            "name": "a step passes",
+            "match": {
+              "location": "features/hooks/cucumber.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16541
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1295833
+            },
+            "embeddings": [
+              {
+                "data": "PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIGNsYXNzPSJtbC0zIG1sLW1kLTAiIHZpZXdCb3g9IjAgMCA0MC41OSA0Ni4zMSIgd2lkdGg9IjQwLjU5IiBoZWlnaHQ9IjQ2LjMxIj4KICAgIDxnPgogICAgICAgIDxwYXRoIGZpbGw9IiMyM2Q5NmMiIGZpbGwtcnVsZT0iZXZlbm9kZCIgZD0iTTMwLjI4MyAzLjY0NXEtLjUyOC0uMzE3LTEuMDgtLjU5M2ExNi4xNjQgMTYuMTY0IDAgMDAtMS4xNTQtLjUxOGMtLjEyNC0uMDUyLS4yNDctLjEtLjM3Mi0uMTQ5LS4zNDMtLjEyNy0uNjg5LS4yNjgtMS4wNDItLjM3MWExOS40MjcgMTkuNDI3IDAgMTAtOS43OTIgMzcuNTF2NS41NmMxMS42NzYtMS43NTMgMjIuMDE2LTEwLjk3OSAyMi43ODctMjMuMDkzLjQ1OS03LjI4OS0zLjE5My0xNC43My05LjM0Ny0xOC4zNDZ6Ii8+CiAgICAgICAgPHBhdGggZmlsbD0iIzE3MzY0NyIgZD0iTTE1Ljc4NyA0Ni4zMDd2LTUuOTM1QTIwLjQ3MiAyMC40NzIgMCAxMTI2Ljk1OSAxLjAxNWMuMjc0LjA4LjU1Ny4xODcuODMyLjI5MWwuMjQ4LjA5M2MuMTY1LjA2NC4yOTEuMTEzLjQxNy4xNjcuMzQ4LjEzNy43MzkuMzEzIDEuMjA4LjU0M3EuNTg5LjI5NSAxLjE1My42MzNjNi4zOTMgMy43NTYgMTAuMzU0IDExLjUxOCA5Ljg1NyAxOS4zMTYtLjc2MyAxMi0xMC43MjIgMjIuMTIyLTIzLjY3OSAyNC4wNjd6bTQuOC00NC4yMTRoLS4wMjZhMTguMzY2IDE4LjM2NiAwIDAwLTMuNTI0IDM2LjQwOGwuODUuMTY1djUuMThjMTEuMzkyLTIuMjI0IDIwLjAwOS0xMS4yNzIgMjAuNjg2LTIxLjkyMi40NDgtNy4wMzMtMy4xLTE0LjAxOC04LjgzLTE3LjM4M2wtLjAwOC0uMDA1QTE0LjY5MSAxNC42OTEgMCAwMDI3LjY1NCAzLjVhNS43NCA1Ljc0IDAgMDAtLjM0NC0uMTM4bC0uMjctLjFhOS40OSA5LjQ5IDAgMDAtLjcwOC0uMjQ5IDE4LjQyNSAxOC40MjUgMCAwMC01Ljc0My0uOTJ6Ii8+CiAgICAgICAgPHBhdGggZmlsbD0iIzE3MzY0NyIgZmlsbC1ydWxlPSJldmVub2RkIiBkPSJNMTYuNjY2IDEwLjU4YTEuOCAxLjggMCAwMTEuNTgzLjYwOCA0LjE4NCA0LjE4NCAwIDAxLjcyOCAxLjEwN2MuNjQ1IDEuNDIyIDEuMDI3IDMuNDYxLjIzIDQuNjA1YTYuMzM0IDYuMzM0IDAgMDEtMy45ODEtMy4wODcgMy4yMzYgMy4yMzYgMCAwMS0uMzQ3LTEuMzM5IDEuOTU3IDEuOTU3IDAgMDExLjc4Ny0xLjg5NHptLTUuNjgzIDguMDI1YTcuNzQyIDcuNzQyIDAgMDAxLjIxOC43MzcgNS43ODkgNS43ODkgMCAwMDQuODgzLS4xMzggNi4xMTYgNi4xMTYgMCAwMC0zLjM0NS0zLjQ1IDMuNjY0IDMuNjY0IDAgMDAtMS40NDItLjMyMSAxLjg4NCAxLjg4NCAwIDAwLS4zMTkgMCAxLjc2NiAxLjc2NiAwIDAwLS45OTUgMy4xNzJ6bTYuMSAzLjQzM2MtLjc3Ny0uNTE4LTIuMzc5LS4zMDktMy4zMTItLjI5MmE0LjQxNiA0LjQxNiAwIDAwLTEuNjY2LjM1MiAzLjUgMy41IDAgMDAtMS4yMTguNzM4IDEuODE3IDEuODE3IDAgMDAxLjQwOSAzLjE3MSAzLjMgMy4zIDAgMDAxLjQ0Mi0uMzIxYzEuNDM2LS42MiAzLjE0MS0yLjMyIDMuMzQ2LTMuNjQ4em0yLjYxIDJhNi41NTYgNi41NTYgMCAwMC0zLjcyNCAzLjUwNiAzLjA5MSAzLjA5MSAwIDAwLS4zMjEgMS4zMTQgMS45MDcgMS45MDcgMCAwMDMuMyAxLjM0NiA3LjQyMiA3LjQyMiAwIDAwLjctMS4yMThjLjYyMS0xLjMzMy44NjYtMy43Mi4wNDYtNC45NDh6bTIuNTU3LTcuMTY3YTUuOTQxIDUuOTQxIDAgMDAzLjctMy4xNjcgMy4yNDMgMy4yNDMgMCAwMC4zMTktMS4zNDYgMS45MTUgMS45MTUgMCAwMC0xLjc5NC0xLjk1NCAxLjgzMiAxLjgzMiAwIDAwLTEuNi42NDEgNy4zODIgNy4zODIgMCAwMC0uNzA1IDEuMjE4Yy0uNjIgMS40MzQtLjg0MiAzLjQ4LjA4MSA0LjYwM3ptNC4yMDggMTIuMTE1YTMuMjQ0IDMuMjQ0IDAgMDAtLjMyMS0xLjM0NSA1Ljg2OSA1Ljg2OSAwIDAwLTMuNTU0LTMuMjY5IDUuMzg2IDUuMzg2IDAgMDAtLjIyNiA0LjcxMSA0LjE0NyA0LjE0NyAwIDAwLjcgMS4xMjFjMS4xMzMgMS4yMyAzLjUwNS4zMiAzLjQwMi0xLjIxOHptNC4yLTYuMjhhNy40NjYgNy40NjYgMCAwMC0xLjIxNy0uNyA0LjQyNSA0LjQyNSAwIDAwLTEuNjY2LS4zNTIgNi40IDYuNCAwIDAwLTMuMTg4LjU1NSA1Ljk1OSA1Ljk1OSAwIDAwMy4zMTYgMy4zODYgMy42NzIgMy42NzIgMCAwMDEuNDQyLjMyIDEuOCAxLjggMCAwMDEuMzEtMy4yMDl6Ii8+CiAgICA8L2c+Cjwvc3ZnPg==",
+                "mime_type": "image/svg+xml"
+              }
+            ]
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 5459
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@with-attachment",
+            "line": 20
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "hooks",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Hooks",
+    "tags": [],
+    "uri": "features/hooks/hooks.feature"
+  }
+]

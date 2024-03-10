@@ -1,7 +1,7 @@
 {
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright runner and CucumberJS",
-  "version": "5.7.1",
+  "version": "6.0.1",
   "type": "commonjs",
   "bin": {
     "bddgen": "./dist/cli/index.js"
@@ -9,7 +9,9 @@
   "main": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
-    "./decorators": "./dist/decorators.js"
+    "./decorators": "./dist/decorators.js",
+    "./reporter/cucumber": "./dist/reporter/cucumber/index.js",
+    "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
@@ -18,6 +20,9 @@
       ],
       "decorators": [
         "./dist/decorators.d.ts"
+      ],
+      "cucumber-reporter": [
+        "./dist/reporter/cucumber/index.d.ts"
       ]
     }
   },
@@ -37,47 +42,57 @@
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
-    "only": "node test/setup.mjs && node --test --test-only test/**/test.mjs",
-    "only:d": "TEST_DEBUG=1 npm run only",
+    "only": "node test/setup.mjs && node --test",
+    "only:d": "node test/setup.mjs && TEST_DEBUG=1 node --test",
     "build": "bash scripts/build.sh",
     "examples": "ts-node scripts/examples.ts",
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",
     "docs": "docsify serve ./docs",
+    "docs:validate": "ts-node scripts/validate-docs.ts",
+    "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
     "release": "bash scripts/release.sh"
   },
   "dependencies": {
     "commander": "^11.1.0",
-    "fast-glob": "^3.3.2"
+    "fast-glob": "^3.3.2",
+    "supports-color": "8.1.1"
   },
   "devDependencies": {
-    "@cucumber/cucumber": "^9.2.0",
-    "@eslint/js": "8.56.0",
+    "@cucumber/compatibility-kit": "15.0.0",
+    "@cucumber/cucumber": "10.3.1",
+    "@cucumber/pretty-formatter": "1.0.0",
+    "@eslint/js": "8.57.0",
     "@playwright/experimental-ct-react": "1.36",
     "@playwright/test": "1.36",
     "@types/node": "^18.15.0",
-    "@types/react": "18.2.47",
-    "@types/react-dom": "18.2.18",
-    "@typescript-eslint/eslint-plugin": "6.18.0",
-    "@typescript-eslint/parser": "6.18.0",
+    "@types/react": "18.2.64",
+    "@types/react-dom": "18.2.21",
+    "@types/supports-color": "8.1.3",
+    "@typescript-eslint/eslint-plugin": "7.1.1",
+    "@typescript-eslint/parser": "7.1.1",
     "cross-env": "^7.0.3",
-    "eslint": "8.56.0",
-    "eslint-plugin-playwright": "0.21.0",
-    "globals": "13.24.0",
-    "knip": "3.12.0",
-    "lint-staged": "^15.2.0",
-    "np": "^9.1.0",
+    "eslint": "8.57.0",
+    "eslint-plugin-playwright": "1.5.2",
+    "globals": "14.0.0",
+    "knip": "5.0.3",
+    "lint-staged": "15.2.2",
+    "lodash.get": "4.4.2",
+    "marked": "12.0.1",
+    "np": "10.0.0",
     "npm-run-all": "^4.1.5",
-    "prettier": "3.1.1",
+    "prettier": "3.2.5",
     "publint": "0.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "slugify": "1.6.6",
     "ts-node": "^10.9.2",
-    "typescript": "^5.3.3"
+    "typescript": "5.4.2",
+    "xml2js": "0.6.2"
   },
   "peerDependencies": {
     "@cucumber/cucumber": ">=9",
-    "@playwright/test": ">=1.33"
+    "@playwright/test": ">=1.34"
   },
   "repository": {
     "type": "git",

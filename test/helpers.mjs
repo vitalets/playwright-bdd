@@ -1,11 +1,12 @@
 import { execSync } from 'node:child_process';
+// use assert instead of Playwright's expect to have less verbose output
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import test from 'node:test';
 import fs from 'node:fs';
 import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
-import { expect } from '@playwright/test';
+import xml2js from 'xml2js';
 
 export { test };
 export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
@@ -19,59 +20,84 @@ export function getTestName(importMeta) {
   return importMeta.url.split('/').slice(-2)[0];
 }
 
-function execPlaywrightTestInternal(dir, cmd) {
+export function execPlaywrightTestInternal(dir, cmd) {
   const cwd = path.join('test', dir);
-  const cmdStr = (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
+  const cmdStr = getCmdStr(cmd);
   const env = Object.assign({}, process.env, cmd?.env);
-  try {
-    const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env });
-    if (process.env.TEST_DEBUG) {
-      console.log('STDOUT:', stdout?.toString());
-    }
-    return stdout?.toString() || '';
-  } catch (e) {
-    if (process.env.TEST_DEBUG) {
-      console.log('STDOUT:', e.stdout?.toString());
-      console.log('STDERR:', e.stderr?.toString());
-    }
-    throw e;
-  }
+  const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env })?.toString() || '';
+  return stdout;
+}
+
+function getCmdStr(cmd) {
+  return (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
 }
 
 export function execPlaywrightTest(dir, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
+    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
     return stdout;
   } catch (e) {
     // if playwright tests not passed -> output is in stdout
     // if playwright cmd exits -> output is in stderr
     // if test.mjs not passed -> output is in stderr
     // That's why always print stdout + stderr
+    console.log('STDERR:', e.stderr?.toString());
+    console.log('STDOUT:', e.stdout?.toString());
     console.log(e.message);
-    console.log(e.stdout?.toString());
-    console.log(e.stderr?.toString());
     process.exit(1);
   }
 }
 
+/**
+ * Runs Playwright test with expected error output.
+ */
 export function execPlaywrightTestWithError(dir, error, cmd) {
   try {
-    execPlaywrightTestInternal(dir, cmd);
+    const stdout = execPlaywrightTestInternal(dir, cmd);
+    console.log(`Expected to exit with error: ${error}`);
+    console.log('STDOUT:', stdout);
+    // todo: how to log stderr here?
+    process.exit(1);
   } catch (e) {
-    const stdout = e.stdout.toString().trim();
-    const stderr = e.stderr.toString().trim();
-    const errors = Array.isArray(error) ? error : [error];
-    errors.forEach((error) => {
-      if (typeof error === 'string') {
-        expect(stderr).toContain(error);
-      } else {
-        expect(stderr).toMatch(error);
+    const stdout = e.stdout?.toString().trim() || '';
+    const stderr = e.stderr?.toString().trim() || '';
+    if (!error) {
+      // if error is not set, check that e.message equals exactly command
+      // to distinguish from other unexpected errors
+      const expectedOutput = `Command failed: ${getCmdStr(cmd)}`;
+      if (e.message !== expectedOutput) {
+        console.log(`Command exited with incorrect error.`);
+        console.log(`Expected:\n${expectedOutput}`);
+        console.log(`Actual:\n${e.message}`);
+        process.exit(1);
       }
-    });
+    } else {
+      // e.message can include whole stderr
+      e.message = e.message.replace(stderr, '').trim();
+      const output = [e.message, stderr, stdout].filter(Boolean).join('\n');
+      const errors = Array.isArray(error) ? error : [error];
+      errors.forEach((error) => {
+        if (typeof error === 'string') {
+          assert(
+            output.includes(error),
+            [
+              `Expected output to include "${error}"`, // prettier-ignore
+              `ERROR: ${e.message}`,
+              `STDERR: ${stderr}`,
+              `STDOUT: ${stdout}`,
+            ].join('\n'),
+          );
+        } else {
+          assert.match(output, error);
+        }
+      });
+    }
+
+    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
 
     return stdout;
   }
-  assert.fail(`Expected to exit with error.`);
 }
 
 export function getPackageVersion(pkg) {
@@ -86,6 +112,9 @@ export function ensureNodeVersion(version) {
   }
 }
 
+/**
+ * Class to manage files inside current test dir.
+ */
 export class TestDir {
   constructor(importMeta) {
     this.importMeta = importMeta;
@@ -99,7 +128,9 @@ export class TestDir {
   }
 
   getAbsPath(relativePath) {
-    return new URL(relativePath, this.importMeta.url);
+    return path.isAbsolute(relativePath)
+      ? relativePath
+      : fileURLToPath(new URL(relativePath, this.importMeta.url));
   }
 
   clearDir(relativePath) {
@@ -118,7 +149,7 @@ export class TestDir {
   }
 
   getAllFiles(relativePath) {
-    const absPath = fileURLToPath(this.getAbsPath(relativePath));
+    const absPath = this.getAbsPath(relativePath);
     return fg.sync(path.join(absPath, '**')).map((file) => path.relative(absPath, file));
   }
 }
@@ -134,10 +165,23 @@ export function clearDir(relativePath, importMeta) {
 
 export function expectFileExists(importMeta, relPath) {
   const absPath = new URL(relPath, importMeta.url);
-  assert(fs.existsSync(absPath), `Missing file: ${relPath}`);
+  assert(fs.existsSync(absPath), `Expected file to exist: ${relPath}`);
 }
 
 export function expectFileNotExists(importMeta, relPath) {
   const absPath = new URL(relPath, importMeta.url);
   assert(!fs.existsSync(absPath), `Expect file to not exist: ${relPath}`);
+}
+
+export async function getJsonFromXmlFile(file) {
+  const xml = fs.readFileSync(file, 'utf8');
+  return xml2js.parseStringPromise(xml);
+}
+
+/**
+ * Returns path with "/" separator on all platforms.
+ * See: https://stackoverflow.com/questions/53799385/how-can-i-convert-a-windows-path-to-posix-path-using-node-path
+ */
+export function toPosixPath(somePath) {
+  return somePath.split(path.sep).join(path.posix.sep);
 }

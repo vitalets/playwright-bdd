@@ -1,0 +1,6 @@
+{
+  "type": "module",
+  "scripts": {
+    "test": "npx cross-env NODE_OPTIONS=\"--loader=ts-node/esm --no-warnings\" bddgen && npx playwright test"
+  }
+}

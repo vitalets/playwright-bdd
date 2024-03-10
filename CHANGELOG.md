@@ -1,5 +1,18 @@
 # Changelog
 
+## 6.0.1
+* fix Cucumber reporters for non-default language
+
+## 6.0.0
+* support Cucumber reporters 🎉, [#9](https://github.com/vitalets/playwright-bdd/issues/9)
+* update minimal Playwright version to 1.34
+* refactor docs navigation, add sidebar groups
+* improve docs per users' feedback, [#90](https://github.com/vitalets/playwright-bdd/issues/90), [#93](https://github.com/vitalets/playwright-bdd/issues/93)
+* make imports in the generated files use `/` on win, [#91](https://github.com/vitalets/playwright-bdd/issues/91)
+
+## 5.8.0
+* support Playwright 1.42, [#96](https://github.com/vitalets/playwright-bdd/issues/96)
+
 ## 5.7.1
 * support Cucumber 10.2
 

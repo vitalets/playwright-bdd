@@ -1,3 +1,12 @@
-import { test, getTestName, execPlaywrightTest } from '../helpers.mjs';
+import { expect } from '@playwright/test';
+import { test, TestDir, execPlaywrightTest } from '../helpers.mjs';
 
-test(getTestName(import.meta), (t) => execPlaywrightTest(t.name));
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => {
+  execPlaywrightTest(testDir.name);
+
+  expect(
+    testDir.getFileContents('.features-gen/features/scenario-simple.feature.spec.js'),
+  ).toContain('import { test } from "../../steps/fixtures.ts";');
+});

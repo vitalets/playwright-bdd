@@ -2,16 +2,19 @@ import { TestInfo, test as base } from '@playwright/test';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { loadSteps } from '../cucumber/loadSteps';
 import { BddWorld, BddWorldFixtures, getWorldConstructor } from './bddWorld';
-import { extractCucumberConfig } from '../config';
+import { BDDConfig, extractCucumberConfig } from '../config';
 import { getConfigFromEnv } from '../config/env';
 import { TestTypeCommon } from '../playwright/types';
 import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
-import { getPlaywrightConfigDir } from '../config/dir';
+import { getPlaywrightConfigDir } from '../config/configDir';
 import { runScenarioHooks } from '../hooks/scenario';
 import { runWorkerHooks } from '../hooks/worker';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from './StepInvoker';
 import { ISupportCodeLibrary } from '../cucumber/types';
+import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
+import { logger } from '../utils/logger';
+import { getEnrichReporterData } from '../config/enrichReporterData';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -25,8 +28,11 @@ export type BddFixtures = {
   Then: StepInvoker['invoke'];
   And: StepInvoker['invoke'];
   But: StepInvoker['invoke'];
+  $testMetaMap: TestMetaMap;
+  $testMeta: TestMeta;
   $tags: string[];
   $test: TestTypeCommon;
+  $uri: string;
   $scenarioHookFixtures: Record<string, unknown>;
   $before: void;
   $after: void;
@@ -38,6 +44,7 @@ type BddFixturesWorker = {
     runConfiguration: IRunConfiguration;
     supportCodeLibrary: ISupportCodeLibrary;
     World: typeof BddWorld;
+    config: BDDConfig;
   };
   $workerHookFixtures: Record<string, unknown>;
   $beforeAll: void;
@@ -63,15 +70,20 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       appendDecoratorSteps(supportCodeLibrary);
       const World = getWorldConstructor(supportCodeLibrary);
 
-      await use({ runConfiguration, supportCodeLibrary, World });
+      await use({ runConfiguration, supportCodeLibrary, World, config });
     },
     { auto: true, scope: 'worker' },
   ],
+  // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
-  $bddWorld: async ({ $tags, $test, $bddWorldFixtures, $cucumber, $lang }, use, testInfo) => {
-    const { runConfiguration, supportCodeLibrary, World } = $cucumber;
+  $bddWorld: async (
+    { $tags, $test, $bddWorldFixtures, $cucumber, $lang, $testMeta, $uri },
+    use,
+    testInfo,
+  ) => {
+    const { runConfiguration, supportCodeLibrary, World, config } = $cucumber;
     const world = new World({
       testInfo,
       supportCodeLibrary,
@@ -80,12 +92,15 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       $bddWorldFixtures,
       lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
-      log: () => {},
-      attach: async () => {}, // eslint-disable-line @typescript-eslint/no-empty-function
+      log: () => logger.warn(`world.log() is noop, please use world.testInfo.attach()`),
+      attach: async () => logger.warn(`world.attach() is noop, please use world.testInfo.attach()`),
     });
     await world.init();
     await use(world);
     await world.destroy();
+    if (getEnrichReporterData(config)) {
+      await world.$internal.bddData.attach($testMeta, $uri);
+    }
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
@@ -94,10 +109,20 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
   But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
 
-  // init $tags with empty array, can be owerwritten in test file
-  $tags: ({}, use) => use([]),
-  // init $test with base test, but it will be always overwritten in test file
+  // init $testMetaMap with empty object, will be overwritten in each test file
+  $testMetaMap: ({}, use) => use({}),
+
+  // concrete test meta
+  $testMeta: ({ $testMetaMap }, use, testInfo) => use(getTestMeta($testMetaMap, testInfo)),
+
+  // concrete test tags
+  $tags: ({ $testMeta }, use) => use($testMeta.tags || []),
+
+  // init $test with base test, but it will be overwritten in test file
   $test: ({}, use) => use(base),
+
+  // feature file uri, relative to configDir, will be overwritten in test file
+  $uri: ({}, use) => use(''),
 
   // can be owerwritten in test file if there are scenario hooks
   $scenarioHookFixtures: ({}, use) => use({}),

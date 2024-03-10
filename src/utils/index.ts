@@ -33,7 +33,7 @@ export function extractTemplateParams(t: string) {
   return [...t.matchAll(/<(.+?)>/g)].map((m) => m[1]);
 }
 
-export function removeDuplicates(arr: string[]) {
+export function removeDuplicates<T>(arr: T[]) {
   return [...new Set(arr)];
 }
 
@@ -59,4 +59,22 @@ export async function callWithTimeout<T>(fn: () => T, timeout?: number, timeoutM
       throw new Error(timeoutMsg || `Function timeout (${timeout} ms)`);
     }),
   ]).finally(() => ac.abort());
+}
+
+export function stringifyLocation({ line, column }: { line: number; column?: number }) {
+  return `${line}:${column}`;
+}
+
+export function omit<T extends object, K extends keyof T>(obj: T, key: K) {
+  const res = { ...obj };
+  delete res[key];
+  return res as Omit<T, K>;
+}
+
+/**
+ * Returns path with "/" separator on all platforms.
+ * See: https://stackoverflow.com/questions/53799385/how-can-i-convert-a-windows-path-to-posix-path-using-node-path
+ */
+export function toPosixPath(somePath: string) {
+  return somePath.split(path.sep).join(path.posix.sep);
 }

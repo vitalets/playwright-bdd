@@ -4,10 +4,10 @@
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
-> 🔥 Check out [decorators syntax](./decorators.md) to define BDD steps right inside Page Object Models
+> 🔥 Check out [decorators syntax](writing-steps/decorators.md) to define BDD steps right inside Page Object Models
 
 ## Quick start
-Jump to [installation guide](installation.md) or read below about `playwright-bdd` architecture.
+Jump to [getting started](getting-started/index.md) or read below about `playwright-bdd` architecture.
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
@@ -73,4 +73,4 @@ Then('I see in title {string}', async ({ page }, text) => {
 });  
 ```
 
-Proceed to [installation guide](installation.md) to try it in action!
+To try it in action proceed to [installation guide](getting-started/installation.md).

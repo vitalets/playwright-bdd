@@ -1,18 +1,16 @@
 /**
- * Generate test code.
+ * Generate Playwright test file for feature.
  */
 
 /* eslint-disable max-lines, max-params */
 
 import {
-  GherkinDocument,
   FeatureChild,
   RuleChild,
   Scenario,
   Background,
   Step,
   PickleStep,
-  Pickle,
   Feature,
   Rule,
   Examples,
@@ -38,10 +36,11 @@ import { hasScenarioHooks, getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { ISupportCodeLibrary } from '../cucumber/types';
+import { TestMetaBuilder } from './testMeta';
+import { GherkinDocumentWithPickles } from '../cucumber/loadFeatures';
 
 type TestFileOptions = {
-  doc: GherkinDocument;
-  pickles: Pickle[];
+  gherkinDocument: GherkinDocumentWithPickles;
   supportCodeLibrary: ISupportCodeLibrary;
   outputPath: string;
   config: BDDConfig;
@@ -66,19 +65,24 @@ export class TestFile {
   private lines: string[] = [];
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
+  private testMetaBuilder: TestMetaBuilder;
   private hasCucumberStyle = false;
-  public testNodes: TestNode[] = [];
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
+  public featureUri: string;
 
   constructor(private options: TestFileOptions) {
     this.formatter = new Formatter(options.config);
+    this.testMetaBuilder = new TestMetaBuilder();
+    this.featureUri = this.getFeatureUri();
   }
 
-  get sourceFile() {
-    const { uri } = this.options.doc;
-    if (!uri) throw new Error(`Document without uri`);
-    return uri;
+  get gherkinDocument() {
+    return this.options.gherkinDocument;
+  }
+
+  get pickles() {
+    return this.gherkinDocument.pickles;
   }
 
   get content() {
@@ -86,7 +90,7 @@ export class TestFile {
   }
 
   get language() {
-    return this.options.doc.feature?.language || LANG_EN;
+    return this.gherkinDocument.feature?.language || LANG_EN;
   }
 
   get isEnglish() {
@@ -101,12 +105,16 @@ export class TestFile {
     return this.options.outputPath;
   }
 
+  get testCount() {
+    return this.testMetaBuilder.testCount;
+  }
+
   build() {
     this.loadI18nKeywords();
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
       ...this.getRootSuite(),
-      ...this.getFileFixtures(),
+      ...this.getTechnicalSection(),
     ];
     return this;
   }
@@ -119,13 +127,19 @@ export class TestFile {
 
   private getFileHeader() {
     const importTestFrom = this.getRelativeImportTestFrom();
-    return this.formatter.fileHeader(this.sourceFile, importTestFrom);
+    return this.formatter.fileHeader(this.featureUri, importTestFrom);
   }
 
   private loadI18nKeywords() {
     if (!this.isEnglish) {
       this.i18nKeywordsMap = getKeywordsMap(this.language);
     }
+  }
+
+  private getFeatureUri() {
+    const { uri } = this.gherkinDocument;
+    if (!uri) throw new Error(`Document without uri: ${this.gherkinDocument.feature?.name}`);
+    return uri;
   }
 
   private getRelativeImportTestFrom() {
@@ -139,19 +153,17 @@ export class TestFile {
     };
   }
 
-  private getFileFixtures() {
-    return this.formatter.useFixtures([
-      ...this.formatter.testFixture(),
+  private getTechnicalSection() {
+    return this.formatter.technicalSection(this.testMetaBuilder, this.featureUri, [
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
-      ...this.formatter.tagsFixture(this.testNodes),
     ]);
   }
 
   private getRootSuite() {
-    const { feature } = this.options.doc;
+    const { feature } = this.gherkinDocument;
     if (!feature) throw new Error(`Document without feature.`);
     return this.getSuite(feature);
   }
@@ -226,8 +238,9 @@ export class TestFile {
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
+    const pickle = this.findPickle(scenario, exampleRow);
+    this.testMetaBuilder.registerTest(node, pickle);
     if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
-    this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
   }
@@ -238,8 +251,9 @@ export class TestFile {
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
+    const pickle = this.findPickle(scenario);
+    this.testMetaBuilder.registerTest(node, pickle);
     if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
-    this.testNodes.push(node);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);
   }
@@ -299,11 +313,11 @@ export class TestFile {
     previousKeywordType: KeywordType | undefined,
     outlineExampleRowId?: string,
   ) {
-    const pickleStep = this.getPickleStep(step, outlineExampleRowId);
+    const pickleStep = this.findPickleStep(step, outlineExampleRowId);
     const stepDefinition = findStepDefinition(
       this.options.supportCodeLibrary,
       pickleStep.text,
-      this.sourceFile,
+      this.featureUri,
     );
     const keywordType = getStepKeywordType({
       keyword: step.keyword,
@@ -349,11 +363,41 @@ export class TestFile {
     };
   }
 
-  private getPickleStep(step: Step, outlineExampleRowId?: string) {
-    for (const pickle of this.options.pickles) {
+  /**
+   * Returns pickle for scenario.
+   * Pickle is executable entity including background and steps with example values.
+   */
+  private findPickle(scenario: Scenario, exampleRow?: TableRow) {
+    const pickle = this.pickles.find((pickle) => {
+      const hasScenarioId = pickle.astNodeIds.includes(scenario.id);
+      const hasExampleRowId = !exampleRow || pickle.astNodeIds.includes(exampleRow.id);
+      return hasScenarioId && hasExampleRowId;
+    });
+
+    if (!pickle) {
+      throw new Error(`Pickle not found for scenario: ${scenario.name}`);
+    }
+
+    return pickle;
+  }
+
+  /**
+   * Returns pickleStep for ast step.
+   * PickleStep contains step text with inserted example values.
+   *
+   * Note:
+   * When searching for pickleStep iterate all pickles in a file
+   * b/c for background steps there is no own pickle.
+   * This can be optimized: pass optional 'pickle' parameter
+   * and search only inside it if it exists.
+   * But this increases code complexity, and performance impact seems to be minimal
+   * b/c number of pickles inside feature file is not very big.
+   */
+  private findPickleStep(step: Step, exampleRowId?: string) {
+    for (const pickle of this.pickles) {
       const pickleStep = pickle.steps.find(({ astNodeIds }) => {
         const hasStepId = astNodeIds.includes(step.id);
-        const hasRowId = !outlineExampleRowId || astNodeIds.includes(outlineExampleRowId);
+        const hasRowId = !exampleRowId || astNodeIds.includes(exampleRowId);
         return hasStepId && hasRowId;
       });
       if (pickleStep) return pickleStep;
@@ -394,7 +438,7 @@ export class TestFile {
         : '.';
 
       exit(
-        `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.sourceFile}.`,
+        `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.featureUri}.`,
         `Please refactor your Page Object classes${suggestedTagsStr}`,
       );
     }
@@ -436,7 +480,7 @@ export class TestFile {
   private getExamplesTitleFormatFromComment(examples: Examples) {
     const { line } = examples.location;
     const titleFormatCommentLine = line - 1;
-    const comment = this.options.doc.comments.find((c) => {
+    const comment = this.gherkinDocument.comments.find((c) => {
       return c.location.line === titleFormatCommentLine;
     });
     const commentText = comment?.text?.trim();

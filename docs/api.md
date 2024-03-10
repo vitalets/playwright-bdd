@@ -4,9 +4,30 @@
 Defines BDD config inside Playwright config file.
 
 **Params**
-  * `config` *object* - BDD [configuration](configuration.md)
+  * `config` *object* - BDD [configuration](configuration/index.md)
 
 **Returns**: *string* - directory where test files will be generated
+
+### `cucumberReporter(reporter, options?)`
+Helper to output test results in various [Cucumber reporters](reporters/cucumber.md).
+
+**Params**
+  * `reporter` *string* - Cucumber reporter name (`html|json|junit|message`) or path to custom reporter file
+  * `options` *object* - Cucumber reporter options
+
+**Returns**: *array* - Playwright reporter tuple configuration
+
+Usage in `playwright.config.ts`:
+```ts
+import { cucumberReporter } from 'playwright-bdd';
+
+export default defineConfig({
+  reporter: [
+    cucumberReporter('html', { outputFile: `reports/report.html` }),
+  ],
+  // ...other options
+});
+```
 
 ### `createBdd(test?, WorldConstructor?)`
 
@@ -68,7 +89,7 @@ Defines `Before` hook.
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo)
       - `$tags` *string[]* - list of tags for current scenario
-      - `$bddWorld` *object* - instance of [BddWorld](./writing-steps.md#world)
+      - `$bddWorld` *object* - instance of [BddWorld](writing-steps/cucumber-style.md#world)
       - any other built-in and custom fixtures
 
 ### `After(options?, hookFn)`
@@ -83,7 +104,7 @@ Defines `After` hook.
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo)
       - `$tags` *string[]* - list of tags for current scenario
-      - `$bddWorld` *object* - instance of [BddWorld](./writing-steps.md#world)
+      - `$bddWorld` *object* - instance of [BddWorld](writing-steps/cucumber-style.md#world)
       - any other built-in and custom fixtures
 
 ### `BeforeAll(options?, hookFn)`

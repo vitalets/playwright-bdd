@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   importTestFrom: 'steps/fixtures.ts',
@@ -8,6 +8,6 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  reporter: 'html',
+  reporter: [cucumberReporter('html', { outputFile: 'cucumber-report/report.html' })],
   timeout: 10 * 1000,
 });

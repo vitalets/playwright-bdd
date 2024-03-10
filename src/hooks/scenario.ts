@@ -12,6 +12,8 @@ import { BddWorld } from '../run/bddWorld';
 import { KeyValue } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
+import { PlaywrightLocation, getLocationByOffset } from '../playwright/getLocationInFile';
+import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 
 type ScenarioHookOptions = {
   name?: string;
@@ -32,6 +34,7 @@ type ScenarioHook<Fixtures = object, World extends BddWorld = BddWorld> = {
   options: ScenarioHookOptions;
   fn: ScenarioHookFn<Fixtures, World>;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
+  location: PlaywrightLocation;
 };
 
 /**
@@ -67,6 +70,8 @@ export function scenarioHookFactory<
       type,
       options: getOptionsFromArgs(args) as ScenarioHookOptions,
       fn: getFnFromArgs(args) as ScenarioHook['fn'],
+      // offset = 3 b/c this call is 3 steps below the user's code
+      location: getLocationByOffset(3),
     });
   };
 }
@@ -75,7 +80,7 @@ export function hasScenarioHooks() {
   return scenarioHooks.length > 0;
 }
 
-// eslint-disable-next-line complexity
+// eslint-disable-next-line complexity, max-statements
 export async function runScenarioHooks<
   World extends BddWorld,
   Fixtures extends ScenarioHookBddFixtures<World>,
@@ -85,12 +90,13 @@ export async function runScenarioHooks<
     if (hook.type !== type) continue;
     if (hook.tagsExpression && !hook.tagsExpression.evaluate(fixtures.$tags)) continue;
 
-    const { timeout } = hook.options;
     try {
-      await callWithTimeout(
-        () => hook.fn.call(fixtures.$bddWorld, fixtures),
-        timeout,
-        `${type} hook timeout (${timeout} ms)`,
+      const hookFn = wrapHookFn(hook, fixtures);
+      await runStepWithCustomLocation(
+        fixtures.$bddWorld.test,
+        hook.options.name || '',
+        hook.location,
+        hookFn,
       );
     } catch (e) {
       if (type === 'before') throw e;
@@ -121,6 +127,21 @@ export function getScenarioHooksFixtures() {
   return scenarioHooksFixtures;
 }
 
+/**
+ * Wraps hook fn with timeout and waiting Cucumber attachments to fulfill.
+ */
+function wrapHookFn(hook: ScenarioHook, fixtures: ScenarioHookBddFixtures<BddWorld>) {
+  const { timeout } = hook.options;
+  const { $bddWorld } = fixtures;
+  return async () => {
+    await callWithTimeout(
+      () => hook.fn.call($bddWorld, fixtures),
+      timeout,
+      getTimeoutMessage(hook),
+    );
+  };
+}
+
 function getOptionsFromArgs(args: unknown[]) {
   if (typeof args[0] === 'string') return { tags: args[0] };
   if (typeof args[0] === 'object') return args[0];
@@ -145,4 +166,9 @@ function addHook(hook: ScenarioHook) {
     // 'after' hooks run in reverse order
     scenarioHooks.unshift(hook);
   }
+}
+
+function getTimeoutMessage(hook: ScenarioHook) {
+  const { timeout, name: hookName } = hook.options;
+  return `${hook.type} hook ${hookName ? `"${hookName}" ` : ''}timeout (${timeout} ms)`;
 }

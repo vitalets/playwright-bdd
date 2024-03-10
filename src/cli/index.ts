@@ -2,14 +2,15 @@
 
 import { Command } from 'commander';
 import { testCommand } from './commands/test';
-import { envCommand, getOwnVersion } from './commands/env';
+import { envCommand } from './commands/env';
 import { exportCommand } from './commands/export';
+import { getPackageVersion } from '../utils';
 
 const program = new Command();
 
 program
   .name('bddgen')
-  .description(`Playwright-bdd CLI v${getOwnVersion()}`)
+  .description(`Playwright-bdd CLI v${getPackageVersion('playwright-bdd')}`)
   .addCommand(testCommand, { isDefault: true })
   .addCommand(exportCommand)
   .addCommand(envCommand)

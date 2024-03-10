@@ -1,0 +1,37 @@
+[
+  {
+    "description": "  Cucumber xml formatters should be able to handle xml cdata elements",
+    "elements": [
+      {
+        "description": "",
+        "id": "cdata;cdata",
+        "keyword": "Scenario",
+        "line": 4,
+        "name": "cdata",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 5,
+            "name": "I have 42 <![CDATA[cukes]]> in my belly",
+            "match": {
+              "location": "features/cdata/common.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 399583
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "cdata",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "cdata",
+    "tags": [],
+    "uri": "features/cdata/cdata.feature"
+  }
+]

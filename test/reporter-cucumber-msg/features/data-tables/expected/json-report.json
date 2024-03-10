@@ -1,0 +1,72 @@
+[
+  {
+    "description": "  Data Tables can be placed underneath a step and will be passed as the last\n  argument to the step definition.\n\n  They can be used to represent richer data structures, and can be transformed to other data-types.",
+    "elements": [
+      {
+        "description": "",
+        "id": "data-tables;transposed-table",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "transposed table",
+        "steps": [
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": ["a", "b"]
+                  },
+                  {
+                    "cells": ["1", "2"]
+                  }
+                ]
+              }
+            ],
+            "keyword": "When ",
+            "line": 8,
+            "name": "the following table is transposed:",
+            "match": {
+              "location": "features/data-tables/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 189666
+            }
+          },
+          {
+            "arguments": [
+              {
+                "rows": [
+                  {
+                    "cells": ["a", "1"]
+                  },
+                  {
+                    "cells": ["b", "2"]
+                  }
+                ]
+              }
+            ],
+            "keyword": "Then ",
+            "line": 11,
+            "name": "it should be:",
+            "match": {
+              "location": "features/data-tables/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 291000
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "data-tables",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Data Tables",
+    "tags": [],
+    "uri": "features/data-tables/data-tables.feature"
+  }
+]

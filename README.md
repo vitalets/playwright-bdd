@@ -2,6 +2,7 @@
 [![lint](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml)
 [![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
 [![npm version](https://img.shields.io/npm/v/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
+[![npm downloads](https://img.shields.io/npm/dw/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
 [![license](https://img.shields.io/npm/l/playwright-bdd)](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
@@ -16,10 +17,12 @@ You can use CucumberJS runner with [Playwright as a library](https://medium.com/
 This package offers **an alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
 Such approach brings all the benefits of Playwright runner:
 
-* Automatic browser initialization and cleanup
-* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
-* Out-of-box [screenshot testing](https://playwright.dev/docs/test-snapshots)
+* Automatic [browser initialization and cleanup](https://playwright.dev/docs/library#key-differences)
+* Auto-capture of [screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options)
 * Parallelization with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
+* [Auto-waiting](https://playwright.dev/docs/actionability)
+* Out-of-box [visual comparison testing](https://playwright.dev/docs/test-snapshots)
+* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## Documentation
@@ -35,7 +38,7 @@ Feel free to share your feedback in [issues](https://github.com/vitalets/playwri
 Inspect the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
 
 ## Contributing
-Review the [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for contributing.
+Your contributions are welcome! Review [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for the details.
 
 ## Sponsors
 Great thanks to the sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)

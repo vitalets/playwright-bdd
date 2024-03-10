@@ -1,0 +1,140 @@
+/**
+ * Groups Cucumber messages for easier access.
+ * Based on Cucumber, with some changes due to strictNullChecks errors.
+ * See: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/helpers/event_data_collector.ts
+ */
+
+/* eslint-disable complexity */
+
+import { EventEmitter } from 'node:events';
+import * as messages from '@cucumber/messages';
+import { doesHaveValue, doesNotHaveValue } from '../valueChecker';
+
+interface ITestCaseAttemptData {
+  attempt: number;
+  willBeRetried: boolean;
+  testCaseId: string;
+  stepAttachments: Record<string, messages.Attachment[]>;
+  stepResults: Record<string, messages.TestStepResult>;
+  worstTestStepResult: messages.TestStepResult;
+}
+
+export interface ITestCaseAttempt {
+  attempt: number;
+  willBeRetried: boolean;
+  gherkinDocument: messages.GherkinDocument;
+  pickle: messages.Pickle;
+  stepAttachments: Record<string, messages.Attachment[]>;
+  stepResults: Record<string, messages.TestStepResult>;
+  testCase: messages.TestCase;
+  worstTestStepResult: messages.TestStepResult;
+}
+
+export default class EventDataCollector {
+  private gherkinDocumentMap: Record<string, messages.GherkinDocument> = {};
+  private pickleMap: Record<string, messages.Pickle> = {};
+  private testCaseMap: Record<string, messages.TestCase> = {};
+  private testCaseAttemptDataMap: Record<string, ITestCaseAttemptData> = {};
+  readonly undefinedParameterTypes: messages.UndefinedParameterType[] = [];
+
+  constructor(eventBroadcaster: EventEmitter) {
+    eventBroadcaster.on('envelope', this.parseEnvelope.bind(this));
+  }
+
+  /**
+   * @public
+   */
+  getGherkinDocument(uri: string): messages.GherkinDocument {
+    return this.gherkinDocumentMap[uri];
+  }
+
+  /**
+   * @public
+   */
+  getPickle(pickleId: string): messages.Pickle {
+    return this.pickleMap[pickleId];
+  }
+
+  getTestCaseAttempts(): ITestCaseAttempt[] {
+    return Object.keys(this.testCaseAttemptDataMap).map((testCaseStartedId) => {
+      return this.getTestCaseAttempt(testCaseStartedId);
+    });
+  }
+
+  getTestCaseAttempt(testCaseStartedId: string): ITestCaseAttempt {
+    const testCaseAttemptData = this.testCaseAttemptDataMap[testCaseStartedId];
+    const testCase = this.testCaseMap[testCaseAttemptData.testCaseId];
+    const pickle = this.pickleMap[testCase.pickleId];
+    return {
+      gherkinDocument: this.gherkinDocumentMap[pickle.uri],
+      pickle,
+      testCase,
+      attempt: testCaseAttemptData.attempt,
+      willBeRetried: testCaseAttemptData.willBeRetried,
+      stepAttachments: testCaseAttemptData.stepAttachments,
+      stepResults: testCaseAttemptData.stepResults,
+      worstTestStepResult: testCaseAttemptData.worstTestStepResult,
+    };
+  }
+
+  parseEnvelope(envelope: messages.Envelope): void {
+    if (doesHaveValue(envelope.gherkinDocument?.uri)) {
+      this.gherkinDocumentMap[envelope.gherkinDocument.uri] = envelope.gherkinDocument;
+    } else if (doesHaveValue(envelope.pickle)) {
+      this.pickleMap[envelope.pickle.id] = envelope.pickle;
+    } else if (doesHaveValue(envelope.undefinedParameterType)) {
+      this.undefinedParameterTypes.push(envelope.undefinedParameterType);
+    } else if (doesHaveValue(envelope.testCase)) {
+      this.testCaseMap[envelope.testCase.id] = envelope.testCase;
+    } else if (doesHaveValue(envelope.testCaseStarted)) {
+      this.initTestCaseAttempt(envelope.testCaseStarted);
+    } else if (doesHaveValue(envelope.attachment)) {
+      this.storeAttachment(envelope.attachment);
+    } else if (doesHaveValue(envelope.testStepFinished)) {
+      this.storeTestStepResult(envelope.testStepFinished);
+    } else if (doesHaveValue(envelope.testCaseFinished)) {
+      this.storeTestCaseResult(envelope.testCaseFinished);
+    }
+  }
+
+  private initTestCaseAttempt(testCaseStarted: messages.TestCaseStarted): void {
+    this.testCaseAttemptDataMap[testCaseStarted.id] = {
+      attempt: testCaseStarted.attempt,
+      willBeRetried: false,
+      testCaseId: testCaseStarted.testCaseId,
+      stepAttachments: {},
+      stepResults: {},
+      worstTestStepResult: {
+        duration: { seconds: 0, nanos: 0 },
+        status: messages.TestStepResultStatus.UNKNOWN,
+      },
+    };
+  }
+
+  storeAttachment(attachment: messages.Attachment): void {
+    const { testCaseStartedId, testStepId } = attachment;
+    // TODO: we shouldn't have to check if these properties have values - they are non-nullable
+    if (doesHaveValue(testCaseStartedId) && doesHaveValue(testStepId)) {
+      const { stepAttachments } = this.testCaseAttemptDataMap[testCaseStartedId];
+      if (doesNotHaveValue(stepAttachments[testStepId])) {
+        stepAttachments[testStepId] = [];
+      }
+      stepAttachments[testStepId].push(attachment);
+    }
+  }
+
+  storeTestStepResult({
+    testCaseStartedId,
+    testStepId,
+    testStepResult,
+  }: messages.TestStepFinished): void {
+    this.testCaseAttemptDataMap[testCaseStartedId].stepResults[testStepId] = testStepResult;
+  }
+
+  storeTestCaseResult({ testCaseStartedId, willBeRetried }: messages.TestCaseFinished): void {
+    const stepResults = Object.values(this.testCaseAttemptDataMap[testCaseStartedId].stepResults);
+    this.testCaseAttemptDataMap[testCaseStartedId].worstTestStepResult =
+      messages.getWorstTestStepResult(stepResults);
+    this.testCaseAttemptDataMap[testCaseStartedId].willBeRetried = willBeRetried;
+  }
+}

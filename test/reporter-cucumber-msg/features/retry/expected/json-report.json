@@ -1,0 +1,110 @@
+[
+  {
+    "description": "  Some Cucumber implementations support a Retry mechanism, where test cases that fail\n  can be retried up to a limited number of attempts in the same test run.\n\n  Non-passing statuses other than FAILED won't trigger a retry, as they are not\n  going to pass however many times we attempt them.",
+    "elements": [
+      {
+        "description": "",
+        "id": "retry;test-cases-that-pass-aren't-retried",
+        "keyword": "Scenario",
+        "line": 8,
+        "name": "Test cases that pass aren't retried",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "a step that always passes",
+            "match": {
+              "location": "features/retry/cucumber.steps.ts:3"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 134916
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "retry;test-cases-that-fail-are-retried-if-within-the---retry-limit",
+        "keyword": "Scenario",
+        "line": 11,
+        "name": "Test cases that fail are retried if within the --retry limit",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "a step that passes the second time",
+            "match": {
+              "location": "features/retry/cucumber.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 24291
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "retry;test-cases-that-fail-will-continue-to-retry-up-to-the---retry-limit",
+        "keyword": "Scenario",
+        "line": 14,
+        "name": "Test cases that fail will continue to retry up to the --retry limit",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 15,
+            "name": "a step that passes the third time",
+            "match": {
+              "location": "features/retry/cucumber.steps.ts:16"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 18708
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "retry;test-cases-won't-retry-after-failing-more-than-the---retry-limit",
+        "keyword": "Scenario",
+        "line": 17,
+        "name": "Test cases won't retry after failing more than the --retry limit",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 18,
+            "name": "a step that always fails",
+            "match": {
+              "location": "features/retry/cucumber.steps.ts:23"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 19458,
+              "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/retry/cucumber.steps.ts:24:9)"
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "retry",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Retry",
+    "tags": [],
+    "uri": "features/retry/retry.feature"
+  }
+]

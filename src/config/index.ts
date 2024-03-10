@@ -5,7 +5,7 @@ import path from 'node:path';
 import { ImportTestFrom } from '../gen/formatter';
 import { IConfiguration } from '@cucumber/cucumber/api';
 import { saveConfigToEnv } from './env';
-import { getPlaywrightConfigDir } from './dir';
+import { getPlaywrightConfigDir } from './configDir';
 import { getPackageVersion } from '../utils';
 
 // todo: pick only relevant fields from cucumber config
@@ -28,6 +28,8 @@ type OwnConfig = {
   tags?: string;
   /** Parent directory for all feature files used to construct output paths */
   featuresRoot?: string;
+  /** Add special BDD attachments for Cucumber reports */
+  enrichReporterData?: boolean;
 };
 
 export const defaults: Required<
@@ -48,19 +50,20 @@ export type BDDConfig = BDDInputConfig &
   };
 
 export function defineBddConfig(inputConfig?: BDDInputConfig) {
-  const config = getConfig(inputConfig);
+  const isMainProcess = !process.env.TEST_WORKER_INDEX;
+  const configDir = getPlaywrightConfigDir({ resolveAndSave: isMainProcess });
+  const config = getConfig(configDir, inputConfig);
 
   // In main process store config in env to be accessible by workers
-  if (!process.env.TEST_WORKER_INDEX) {
+  if (isMainProcess) {
     saveConfigToEnv(config);
   }
 
   return config.outputDir;
 }
 
-function getConfig(inputConfig?: BDDInputConfig): BDDConfig {
+function getConfig(configDir: string, inputConfig?: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, inputConfig);
-  const configDir = getPlaywrightConfigDir();
   const featuresRoot = config.featuresRoot
     ? path.resolve(configDir, config.featuresRoot)
     : configDir;
@@ -86,6 +89,7 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
     quotes: true,
     tags: true,
     featuresRoot: true,
+    enrichReporterData: true,
   };
   const keys = Object.keys(omitProps) as (keyof OwnConfig)[];
   const cucumberConfig = { ...config };

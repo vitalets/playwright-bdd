@@ -1,9 +1,10 @@
 /**
  * Build and run examples
  * npm run examples
- * npm run examples -- playwright-style
+ * npm run examples -- basic
  * npm run examples -- cucumber-style
  * npm run examples -- decorators
+ * npm run examples -- esm
  */
 
 import path from 'node:path';
@@ -11,7 +12,7 @@ import { execSync } from 'node:child_process';
 import { buildAndInstallPlaywrightBdd } from './helpers';
 
 const dir = process.argv[2];
-const dirs = dir ? [dir] : ['playwright-style', 'cucumber-style', 'decorators'];
+const dirs = dir ? [dir] : ['basic', 'cucumber-style', 'decorators', 'esm'];
 
 buildAndInstallPlaywrightBdd();
 runExamples();

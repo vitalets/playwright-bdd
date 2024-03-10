@@ -1,0 +1,235 @@
+[
+  {
+    "description": "  Sometimes it can be desirable to run the same scenario multiple times with\n  different data each time - this can be done by placing an Examples table underneath\n  a Scenario, and use <placeholders> in the Scenario which match the table headers.",
+    "elements": [
+      {
+        "description": "",
+        "id": "examples-tables;eating-cucumbers",
+        "keyword": "Scenario Outline",
+        "line": 14,
+        "name": "Eating cucumbers",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "there are 12 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 176624
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I eat 5 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 26249
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I should have 7 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 51667
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@passing",
+            "line": 11
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "examples-tables;eating-cucumbers",
+        "keyword": "Scenario Outline",
+        "line": 15,
+        "name": "Eating cucumbers",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "there are 20 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 20333
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I eat 5 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 16125
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I should have 15 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:12"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13625
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@passing",
+            "line": 11
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "examples-tables;eating-cucumbers",
+        "keyword": "Scenario Outline",
+        "line": 20,
+        "name": "Eating cucumbers",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "there are 12 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13917
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I eat 20 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 13624
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I should have 0 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:12"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 1825416,
+              "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n-8 !== 0\n\n    + expected - actual\n\n    --8\n    +0\n\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/examples-tables/common.steps.ts:13:10)"
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@failing",
+            "line": 17
+          }
+        ],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "examples-tables;eating-cucumbers",
+        "keyword": "Scenario Outline",
+        "line": 21,
+        "name": "Eating cucumbers",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 7,
+            "name": "there are 0 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:4"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 31000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "When ",
+            "line": 8,
+            "name": "I eat 1 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:8"
+            },
+            "result": {
+              "status": "passed",
+              "duration": 95624
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Then ",
+            "line": 9,
+            "name": "I should have 0 cucumbers",
+            "match": {
+              "location": "features/examples-tables/common.steps.ts:12"
+            },
+            "result": {
+              "status": "failed",
+              "duration": 203750,
+              "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n-1 !== 0\n\n    + expected - actual\n\n    --1\n    +0\n\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/examples-tables/common.steps.ts:13:10)"
+            }
+          }
+        ],
+        "tags": [
+          {
+            "name": "@failing",
+            "line": 17
+          }
+        ],
+        "type": "scenario"
+      }
+    ],
+    "id": "examples-tables",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "Examples Tables",
+    "tags": [],
+    "uri": "features/examples-tables/examples-tables.feature"
+  }
+]

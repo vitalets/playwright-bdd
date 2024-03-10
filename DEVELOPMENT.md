@@ -24,7 +24,11 @@ npm t
 ## Test on different Playwright version
 Install needed Playwright version (without saving to `package.json`):
 ```
-npm i --no-save @playwright/test@1.40 @playwright/experimental-ct-react@1.40
+npx cross-env-shell PW=1.39 'npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW'
+```
+OR
+```
+PW=1.39 npm run pw
 ```
 
 Install corresponding browsers without clearing other versions:
@@ -48,12 +52,11 @@ npm run test
 ```
 
 ## Run particular test 
-1. Replace `test(...)` with `test.only(...)` in `test/*/test.mjs`
-2. Run only this test:
-    ```
-    npm run only
-    ```
-3. Run only this test in **debug mode** showing `STDOUT` and `STDERR`:
-    ```
-    npm run only:d
-    ```
+Use the command below (use TAB after typing `test/` to autocomplete test path):
+```
+npm run only -- test/<%test-dir%>
+```
+Example:
+```
+npm run only -- test/reporter-cucumber-html
+```
