@@ -76,7 +76,7 @@ To use [fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in st
     +import { test } from "./fixtures.ts";  
     ```
 
-See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/playwright-style).
+See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic).
 
 ## Accessing `test` and `testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:
