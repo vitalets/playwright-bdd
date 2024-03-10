@@ -56,7 +56,7 @@ test.describe('Playwright site', () => {
 ```
 
 ### Phase 2: Run tests
-CLI commmand `npx playwright test` runs generated test files with Playwright runner.
+CLI command `npx playwright test` runs generated test files with Playwright runner.
 Playwright-bdd makes Playwright API available in step definitions (`page`, `browser`, etc):
 
 ```js

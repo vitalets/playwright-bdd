@@ -87,7 +87,7 @@ When('I open todo page', async function () {
 ```
 
 For **TypeScript** you can pass `typeof test` as a second generic parameter to `BddWorld`
-to get propper typing:
+to get proper typing:
 
 ```ts
 type MyWorld = BddWorld<object, typeof test>;

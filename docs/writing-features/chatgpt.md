@@ -64,7 +64,7 @@ Strictly use only the following step definitions:
 {steps list from bddgen export}
 ```
 
-> Feel free to imporve that template and share the results
+> Feel free to improve that template and share the results
 
 Filled prompt for Todo app:
 ```

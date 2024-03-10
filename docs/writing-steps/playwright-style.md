@@ -1,5 +1,5 @@
 # Playwright-style steps
-Playwright-style allows you to write step definitions like a regular playwright tests.
+Playwright-style allows you to write step definitions like regular Playwright tests.
 You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
 
 Playwright-style highlights:
