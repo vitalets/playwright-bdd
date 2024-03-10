@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.0.0
 * support Cucumber reporters 🎉, [#9](https://github.com/vitalets/playwright-bdd/issues/9)
 * update minimal Playwright version to 1.34
 * refactor docs navigation, add sidebar groups
