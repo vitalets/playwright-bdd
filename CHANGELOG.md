@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* fix Cucumber reporters for non-default language
+
 ## 6.0.0
 * support Cucumber reporters 🎉, [#9](https://github.com/vitalets/playwright-bdd/issues/9)
 * update minimal Playwright version to 1.34

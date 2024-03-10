@@ -10,6 +10,8 @@ import { ConcreteEnvelope } from './types';
 import { GherkinDocumentClone } from './GherkinDocumentClone';
 import { GherkinDocumentMessage } from './GherkinDocument';
 import { ProjectInfo, getFeatureUriWithProject } from './Projects';
+import { getEnvConfigs } from '../../../config/env';
+import { LANG_EN } from '../../../config/lang';
 
 export class GherkinDocuments {
   private featuresLoader = new FeaturesLoader();
@@ -22,7 +24,10 @@ export class GherkinDocuments {
     this.fillProjectsPerFeaturePath(testCaseRuns);
     const cwd = getPlaywrightConfigDir();
     const featurePaths = [...this.projectsPerFeaturePath.keys()];
-    await this.featuresLoader.load(featurePaths, { relativeTo: cwd });
+    await this.featuresLoader.load(featurePaths, {
+      relativeTo: cwd,
+      defaultDialect: this.getFeaturesLang(),
+    });
     this.fillGherkinDocumentsPerProject();
   }
 
@@ -83,5 +88,23 @@ export class GherkinDocuments {
       uri: getFeatureUriWithProject(projectInfo, doc.uri),
     };
     return { source };
+  }
+
+  private getFeaturesLang() {
+    const langsSet = new Set<string>();
+    const envConfigs = getEnvConfigs();
+    Object.values(envConfigs).forEach((config) => {
+      langsSet.add(config.language || LANG_EN);
+    });
+    const langs = [...langsSet];
+    if (langs.length > 1) {
+      throw new Error(
+        [
+          `Multi-language features are not supported yet.`,
+          `Detected languages: ${langs.join(', ')}`,
+        ].join(' '),
+      );
+    }
+    return langs[0];
   }
 }
