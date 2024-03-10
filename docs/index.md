@@ -4,7 +4,7 @@
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
-> 🔥 Check out [decorators syntax](writing-steps/decorators.md) to define BDD steps right inside Page Object Models
+> 🔥 Playwright-bdd **v6** is out! Check out [Cucumber reporters](reporters/cucumber.md) and share your feedback 
 
 ## Quick start
 Jump to [getting started](getting-started/index.md) or read below about `playwright-bdd` architecture.
@@ -15,10 +15,12 @@ You can use CucumberJS runner with [Playwright as a library](https://medium.com/
 This package offers **alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
 Such approach brings all the benefits of Playwright runner:
 
-* Automatic browser initialization and cleanup
-* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
-* Out-of-box [screenshot testing](https://playwright.dev/docs/test-snapshots)
+* Automatic [browser initialization and cleanup](https://playwright.dev/docs/library#key-differences)
+* Auto-capture of [screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options)
 * Parallelization with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
+* [Auto-waiting](https://playwright.dev/docs/actionability)
+* Out-of-box [visual comparison testing](https://playwright.dev/docs/test-snapshots)
+* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
 ## How playwright-bdd works
