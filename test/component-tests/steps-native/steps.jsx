@@ -35,3 +35,7 @@ When('I press the button', async ({ page }) => {
 Then('the recorded number of times the button was pressed is {int}', async ({ world }, arg) => {
   expect(world.clickedTimes).toBe(arg);
 });
+
+// Given('Mounted Image component', async ({ mount }) => {
+//   await mount(<Image />);
+// });

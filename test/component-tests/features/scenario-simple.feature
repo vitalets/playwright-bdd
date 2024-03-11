@@ -11,3 +11,7 @@ Feature: component-tests
         Then the recorded number of times the button was pressed is 1
         When I press the button
         Then the recorded number of times the button was pressed is 2
+
+    # See: https://github.com/vitalets/playwright-bdd/issues/79
+    # Scenario: Mount component with png asset
+    #     Given Mounted Image component

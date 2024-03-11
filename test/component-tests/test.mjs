@@ -4,6 +4,8 @@ const pwVersion = getPackageVersion('@playwright/test');
 
 test(getTestName(import.meta), (t) => {
   execPlaywrightTest(t.name, {
-    NATIVE_MERGE_TESTS: pwVersion >= '1.39.0',
+    env: {
+      NATIVE_MERGE_TESTS: pwVersion >= '1.39.0',
+    },
   });
 });
