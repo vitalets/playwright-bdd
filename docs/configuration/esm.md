@@ -18,4 +18,4 @@ And use [`ts-node/esm`](https://github.com/TypeStrong/ts-node#native-ecmascript-
 NODE_OPTIONS='--loader ts-node/esm --no-warnings' npx bddgen && npx playwright test
 ```
 
-More details on ESM in [Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/esm.md).
+You can check out a fully working ESM project in [this example](https://github.com/vitalets/playwright-bdd/tree/main/examples/esm).
