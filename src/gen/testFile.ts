@@ -110,6 +110,7 @@ export class TestFile {
   }
 
   build() {
+    if (!this.pickles.length) return this;
     this.loadI18nKeywords();
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
