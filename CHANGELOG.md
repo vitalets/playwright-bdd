@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.0.2
 * fix spec generation for feature file with background without scenarios, [#104](https://github.com/vitalets/playwright-bdd/issues/104)
 
 ## 6.0.1
