@@ -26,6 +26,8 @@ When('I click link {string}', async ({ page }, name: string) => {
 
 > Usually step functions are async, but it is not required
 
+?> Calling `const { Given, When, Then } = createBdd()` at the top of each step file is totally ok, because it returns lightweight wrappers without heavy operations
+
 ## Fixtures
 To use [fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 

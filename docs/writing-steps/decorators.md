@@ -103,3 +103,6 @@ Feature: Some feature
     Scenario: Adding todos
       When I add todo "foo"   # <- will use AdminTodoPage
 ```
+
+## Limitations
+* Currently [custom parameter types](https://github.com/cucumber/cucumber-expressions?tab=readme-ov-file#custom-parameter-types) are not supported in decorator steps. Vote and track [#112](https://github.com/vitalets/playwright-bdd/issues/112) for the progress on that.
