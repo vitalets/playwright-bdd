@@ -1,7 +1,21 @@
 # Debugging
 
-You can debug tests as usual with `--debug` flag:
+Playwright-bdd outputs regular Playwright test files. You can use any of [Playwright debugging methods](https://playwright.dev/docs/debug) for BDD tests.
+
+#### Run tests with `--debug` flag
+This command opens browser and allows step-by-step evaluation:
 ```
 npx bddgen && npx playwright test --debug
 ```
-See more info on debugging in [Playwright docs](https://playwright.dev/docs/debug).
+
+Example screenshot:
+
+![debug-flag](./_media/debug-flag.png)
+
+#### Run tests with `--ui` flag
+This command runs BDD tests in UI mode:
+```
+npx bddgen && npx playwright test --ui
+```
+
+> For UI mode details see also [watch mode](watch-mode.md)
