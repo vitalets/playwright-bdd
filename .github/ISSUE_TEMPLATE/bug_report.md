@@ -20,7 +20,12 @@ assignees: ''
 <!-- What did you expect? -->
 
 **Isolated demo**
-<!-- It's very helpful if you try to reproduce your behavior on the reference repo [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example). Feel free to make a pull request and post link here. -->
+<!-- Please try to reproduce the bug on the reference repo. It is very helpful for maintainers and drastically increases the response time:
+ 1. fork the repo https://github.com/vitalets/playwright-bdd-example
+ 2. change code to reproduce bug
+ 3. commit, push and create a pull-request to highllight the difference
+ 4. post link here
+-->
 
 **Environment**
 <!-- Please run `npx bddgen env` and post output here -->
