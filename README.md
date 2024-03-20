@@ -30,7 +30,7 @@ Such approach brings all the benefits of Playwright runner:
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 
 ## Example
-Clone and play with [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) repo.
+Fork and play with [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) repo.
 
 ## Feedback
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
