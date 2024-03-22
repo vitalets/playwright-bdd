@@ -5,7 +5,7 @@
 import * as pw from '@playwright/test/reporter';
 import { HookType } from './Hook';
 
-// Playwright step categoires, that can be mapped to testStep / hook in Cucumber report
+// Playwright step categoires, that can be mapped to testStep / hook in Cucumber messages
 const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
 
 export function collectStepsWithCategory(
@@ -17,24 +17,39 @@ export function collectStepsWithCategory(
   return steps.filter((step) => categories.includes(step.category));
 }
 
-export function getHooksRootStep(result: pw.TestResult, type: HookType) {
+export function getHooksRootPwStep(result: pw.TestResult, type: HookType) {
   const rootStepTitle = type === 'before' ? 'Before Hooks' : 'After Hooks';
   return result.steps.find((step) => step.category === 'hook' && step.title === rootStepTitle);
 }
 
+export function findDeepestStepWithError(root?: pw.TestStep) {
+  if (!root) return;
+  return findDeepestStepWith(root, (pwStep) => {
+    return Boolean(pwStep.error) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
+  });
+}
+
+export function findDeepestStepWithTimeout(root?: pw.TestStep) {
+  if (!root) return;
+  return findDeepestStepWith(root, (pwStep) => {
+    return isTimeoutPwStep(pwStep) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
+  });
+}
+
 /**
- * Drills down to the deepest error step.
+ * Finds the deepest step that satisfies predicate function.
  */
-export function findDeepestErrorStep(root?: pw.TestStep) {
-  let errorStep = root?.error ? root : null;
-  while (errorStep) {
-    const nextErrorStep = errorStep.steps.find((step) => {
-      return step.error && MEANINGFUL_STEP_CATEGORIES.includes(step.category);
-    });
-    if (!nextErrorStep) break;
-    errorStep = nextErrorStep;
+export function findDeepestStepWith(
+  root: pw.TestStep,
+  predicate: (pwStep: pw.TestStep) => boolean,
+) {
+  let currentStep = predicate(root) ? root : undefined;
+  while (currentStep) {
+    const nextStep = currentStep.steps.find((pwStep) => predicate(pwStep));
+    if (!nextStep) break;
+    currentStep = nextStep;
   }
-  return errorStep;
+  return currentStep;
 }
 
 /**
@@ -49,4 +64,8 @@ export function collectStepsDfs(parent: pw.TestResult | pw.TestStep | undefined)
       return res;
     }, []) || []
   );
+}
+
+export function isTimeoutPwStep(pwStep: pw.TestStep) {
+  return pwStep.duration === -1;
 }

@@ -59,7 +59,7 @@ export class TestStepRun {
   }
 
   private buildTestStepFinished() {
-    const error = this.pwStep?.error;
+    const error = this.getStepError();
     const testStepFinished: messages.TestStepFinished = {
       testCaseStartedId: this.testCaseRun.id,
       testStepId: this.testStep.id,
@@ -86,12 +86,23 @@ export class TestStepRun {
 
   private getStatus(error?: pw.TestError): messages.TestStepResultStatus {
     switch (true) {
-      case !this.wasExecuted():
-        return messages.TestStepResultStatus.SKIPPED;
       case Boolean(error):
         return messages.TestStepResultStatus.FAILED;
+      case !this.wasExecuted():
+        return messages.TestStepResultStatus.SKIPPED;
       default:
         return messages.TestStepResultStatus.PASSED;
+    }
+  }
+
+  // eslint-disable-next-line complexity
+  private getStepError() {
+    if (!this.pwStep) return;
+    if (this.testCaseRun.errorSteps.has(this.pwStep)) {
+      return this.pwStep.error;
+    }
+    if (this.testCaseRun.isTimeouted() && this.pwStep === this.testCaseRun.timeoutedStep) {
+      return this.testCaseRun.result.error;
     }
   }
 }

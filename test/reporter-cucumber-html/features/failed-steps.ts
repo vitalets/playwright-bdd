@@ -36,3 +36,16 @@ Given('failing step', async ({ page }) => {
   await page.goto('https://example.com');
   await expect(page.getByText('missing string')).toBeVisible();
 });
+
+Given('timeouted step', async ({ page, $test }) => {
+  $test.setTimeout(1);
+  await page.waitForTimeout(100);
+});
+
+Given('step that uses timeouted before fixture', async ({ timeoutedBeforeFixture }) => {
+  timeoutedBeforeFixture;
+});
+
+Given('step that uses timeouted after fixture', async ({ timeoutedAfterFixture }) => {
+  timeoutedAfterFixture;
+});

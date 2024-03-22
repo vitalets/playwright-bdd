@@ -17,9 +17,14 @@ blob-report
 /examples/package-lock.json
 /examples/**/cucumber-report
 /todo.txt
+
 /test/**/report.*
 /test/**/reports
+
 /test/reporter-merge/features
+/test/reporter-merge/check-report
 /test/reporter-merge/.features-gen/features/sample.feature.spec.js-snapshots
+
 /test/reporter-cucumber-junit/features
+/test/reporter-cucumber-junit/check-report
 /test/reporter-cucumber-junit/.features-gen/features/sample.feature.spec.js-snapshots

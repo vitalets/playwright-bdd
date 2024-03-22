@@ -9,7 +9,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
+import { collectStepsWithCategory, getHooksRootPwStep } from './pwUtils';
 import {
   BddDataAttachment,
   BddDataStep,
@@ -37,6 +37,8 @@ export class TestCaseRun {
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
+  errorSteps = new Set<pw.TestStep>();
+  timeoutedStep?: pw.TestStep;
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
   private executedSteps: ExecutedStepInfo[];
@@ -54,11 +56,17 @@ export class TestCaseRun {
     this.executedSteps = this.fillExecutedSteps();
     this.executedBeforeHooks = this.fillExecutedHooks('before');
     this.executedAfterHooks = this.fillExecutedHooks('after');
+    // console.log(11, this.result.steps[0]);
+    // console.log(22, this.getBddData());
   }
 
   getTestCase() {
     if (!this.testCase) throw new Error(`TestCase is not set.`);
     return this.testCase;
+  }
+
+  isTimeouted() {
+    return this.result.status === 'timedOut';
   }
 
   private generateTestRunId() {
@@ -83,6 +91,7 @@ export class TestCaseRun {
     const possiblePwSteps = this.getPossiblePlaywrightSteps();
     return this.bddData.steps.map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
+      if (pwStep.error) this.errorSteps.add(pwStep);
       return { bddDataStep, pwStep };
     });
   }
@@ -147,7 +156,7 @@ export class TestCaseRun {
   }
 
   private getPossiblePlaywrightSteps() {
-    const beforeHooksRoot = getHooksRootStep(this.result, 'before');
+    const beforeHooksRoot = getHooksRootPwStep(this.result, 'before');
     const bgSteps = collectStepsWithCategory(beforeHooksRoot, 'test.step');
     const topLevelSteps = this.result.steps.filter((step) => step.category === 'test.step');
     return [...bgSteps, ...topLevelSteps];

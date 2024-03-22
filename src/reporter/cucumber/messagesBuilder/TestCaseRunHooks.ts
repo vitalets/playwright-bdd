@@ -3,7 +3,12 @@
  */
 import * as pw from '@playwright/test/reporter';
 import { Hook, HookType } from './Hook';
-import { findDeepestErrorStep, getHooksRootStep, collectStepsDfs } from './pwUtils';
+import {
+  getHooksRootPwStep,
+  collectStepsDfs,
+  findDeepestStepWithError,
+  findDeepestStepWithTimeout,
+} from './pwUtils';
 import { ExecutedStepInfo, TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 
@@ -13,7 +18,7 @@ type ExecutedHookInfo = {
 };
 
 export class TestCaseRunHooks {
-  private rootStep?: pw.TestStep;
+  private rootPwStep?: pw.TestStep;
   private candidateSteps: pw.TestStep[] = [];
   private hookSteps = new Set<pw.TestStep>();
   executedHooks = new Map</* internalId */ string, ExecutedHookInfo>();
@@ -27,8 +32,9 @@ export class TestCaseRunHooks {
     this.setRootStep();
     this.setCandidateSteps();
     this.addStepsWithName();
-    this.addStepsWithAttachment();
+    this.addStepWithTimeout();
     this.addStepWithError();
+    this.addStepsWithAttachment();
     this.excludeBackgroundSteps(mainSteps);
     this.setExecutedHooks();
     return this;
@@ -57,12 +63,12 @@ export class TestCaseRunHooks {
   }
 
   private setRootStep() {
-    this.rootStep = getHooksRootStep(this.testCaseRun.result, this.hookType);
+    this.rootPwStep = getHooksRootPwStep(this.testCaseRun.result, this.hookType);
   }
 
   private setCandidateSteps() {
-    if (this.rootStep) this.candidateSteps.push(this.rootStep);
-    this.candidateSteps.push(...collectStepsDfs(this.rootStep));
+    if (this.rootPwStep) this.candidateSteps.push(this.rootPwStep);
+    this.candidateSteps.push(...collectStepsDfs(this.rootPwStep));
   }
 
   private addStepsWithName() {
@@ -83,14 +89,26 @@ export class TestCaseRunHooks {
   }
 
   private addStepWithError() {
-    const stepWithError = findDeepestErrorStep(this.rootStep);
+    const stepWithError = findDeepestStepWithError(this.rootPwStep);
     if (stepWithError) {
       this.hookSteps.add(stepWithError);
       // in Playwright error is inherited by all parent steps,
       // but we want to show it once (in the deepest step)
-      this.hookSteps.forEach((step) => {
-        if (step !== stepWithError) delete step.error;
-      });
+      this.testCaseRun.errorSteps.add(stepWithError);
+    }
+  }
+
+  private addStepWithTimeout() {
+    if (!this.testCaseRun.isTimeouted()) return;
+    if (this.testCaseRun.timeoutedStep) return;
+    if (this.hookType === 'before') {
+      const timeoutedStep = findDeepestStepWithTimeout(this.rootPwStep);
+      if (timeoutedStep) {
+        this.hookSteps.add(timeoutedStep);
+        this.testCaseRun.timeoutedStep = timeoutedStep;
+      }
+    } else {
+      // timeouted after hooks don't have duration = -1
     }
   }
 

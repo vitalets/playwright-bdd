@@ -55,14 +55,14 @@ function mergeReports() {
 
 function checkHtmlReport() {
   expect(testDir.isFileExists('reports/report.html')).toEqual(true);
-  execPlaywrightTest(
-    testDir.name,
-    'npx playwright test --config ../reporter-cucumber-html/check-report',
-  );
+  execPlaywrightTest(testDir.name, 'npx playwright test --config ./check-report');
 }
 
 function copyFeatures() {
   fs.cpSync('test/reporter-cucumber-html/features', testDir.getAbsPath('features'), {
+    recursive: true,
+  });
+  fs.cpSync('test/reporter-cucumber-html/check-report', testDir.getAbsPath('check-report'), {
     recursive: true,
   });
   fs.cpSync(

@@ -56,7 +56,7 @@
  */
 import * as pw from '@playwright/test/reporter';
 import { AutofillMap } from '../../../utils/AutofillMap';
-import { collectStepsWithCategory, getHooksRootStep } from './pwUtils';
+import { collectStepsWithCategory, getHooksRootPwStep } from './pwUtils';
 import { PwAttachment } from '../../../playwright/types';
 import { isBddDataAttachment } from '../../../run/bddDataAttachment';
 
@@ -105,7 +105,7 @@ export class AttachmentMapper {
   private mapUnusedAttachments() {
     if (!this.unusedAttachments.length) return;
     // map unused attachments to the 'After Hooks' step
-    const afterHooksRoot = getHooksRootStep(this.result, 'after');
+    const afterHooksRoot = getHooksRootPwStep(this.result, 'after');
     if (!afterHooksRoot) {
       throw new Error(`Can not find after hooks root to attach unused attachments.`);
     }

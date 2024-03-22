@@ -5,6 +5,9 @@ export const test = base.extend<{
   failingBeforeFixtureWithStep: void;
   failingAfterFixtureNoStep: void;
   failingAfterFixtureWithStep: void;
+  setTestTimeout: void;
+  timeoutedBeforeFixture: void;
+  timeoutedAfterFixture: void;
 }>({
   failingBeforeFixtureNoStep: async ({}, use, testInfo) => {
     await testInfo.attach('my attachment', { body: '|outside step' });
@@ -38,5 +41,23 @@ export const test = base.extend<{
       await testInfo.attach('my attachment', { body: '|in step' });
       throw new Error('error in failingAfterFixtureWithStep');
     });
+  },
+  setTestTimeout: [
+    async ({}, use, testInfo) => {
+      if (testInfo.title === 'timeout in before fixture') {
+        testInfo.setTimeout(500);
+      }
+      await use();
+    },
+    { auto: true },
+  ],
+  timeoutedBeforeFixture: async ({}, use, testInfo) => {
+    await new Promise((r) => setTimeout(r, testInfo.timeout + 100));
+    await use();
+  },
+  timeoutedAfterFixture: async ({}, use, testInfo) => {
+    testInfo.setTimeout(50);
+    await use();
+    await new Promise((r) => setTimeout(r, 100));
   },
 });

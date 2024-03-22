@@ -165,3 +165,22 @@ test('Scenario: failing match snapshot', async ({ page }) => {
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
   await expect(scenario.getError()).toContainText('Snapshot comparison failed');
 });
+
+test('Scenario: timeout in before fixture', async ({ page }) => {
+  const scenario = getScenario(page, 'timeout in before fixture');
+  await expect(scenario.getSteps()).toContainText([
+    // here can be different error messages
+    /Hook "fixture: (.+)" failed/,
+    'screenshot',
+    'GivenAction 0',
+    'Givenstep that uses timeouted before fixture',
+    'WhenAction 1',
+  ]);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getSteps('skipped')).toHaveCount(3);
+  await expect(scenario.getError()).toContainText(
+    // here can be two different error messages
+    // eslint-disable-next-line max-len
+    /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
+  );
+});
