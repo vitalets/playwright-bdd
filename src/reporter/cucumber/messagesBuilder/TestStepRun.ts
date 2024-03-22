@@ -102,7 +102,9 @@ export class TestStepRun {
       return this.pwStep.error;
     }
     if (this.testCaseRun.isTimeouted() && this.pwStep === this.testCaseRun.timeoutedStep) {
-      return this.testCaseRun.result.error;
+      return {
+        message: this.testCaseRun.result.errors?.map((e) => e.message).join('\n\n'),
+      };
     }
   }
 }

@@ -184,3 +184,19 @@ test('Scenario: timeout in before fixture', async ({ page }) => {
     /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
   );
 });
+
+test('Scenario: timeout in step', async ({ page }) => {
+  const scenario = getScenario(page, 'timeout in step');
+  await expect(scenario.getSteps()).toContainText([
+    'GivenAction 0',
+    'Giventimeouted step',
+    'WhenAction 1',
+    'screenshot',
+  ]);
+  await expect(scenario.getSteps('passed')).toHaveCount(1);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getSteps('skipped')).toHaveCount(1);
+  await expect(scenario.getError()).toContainText(/Test timeout of \d+ms exceeded/);
+  await expect(scenario.getError()).toContainText('Pending operations');
+  await expect(scenario.getError()).toContainText('page.waitForTimeout');
+});

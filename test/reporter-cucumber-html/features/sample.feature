@@ -45,10 +45,10 @@ Feature: rich feature
     Given step that uses timeouted before fixture
     When Action 1
 
-  # Scenario: timeout in step
-  #   Given Action 0
-  #   Given timeouted step
-  #   When Action 1
+  Scenario: timeout in step
+    Given Action 0
+    Given timeouted step
+    When Action 1
 
   # Scenario: timeout in after fixture
   #   Given Action 0

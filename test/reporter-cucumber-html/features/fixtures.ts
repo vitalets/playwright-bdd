@@ -44,7 +44,7 @@ export const test = base.extend<{
   },
   setTestTimeout: [
     async ({}, use, testInfo) => {
-      if (testInfo.title === 'timeout in before fixture') {
+      if (testInfo.title.includes('timeout')) {
         testInfo.setTimeout(500);
       }
       await use();
@@ -56,8 +56,7 @@ export const test = base.extend<{
     await use();
   },
   timeoutedAfterFixture: async ({}, use, testInfo) => {
-    testInfo.setTimeout(50);
     await use();
-    await new Promise((r) => setTimeout(r, 100));
+    await new Promise((r) => setTimeout(r, testInfo.timeout + 100));
   },
 });

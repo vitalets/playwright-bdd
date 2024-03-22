@@ -9,7 +9,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { collectStepsWithCategory, getHooksRootPwStep } from './pwUtils';
+import { collectStepsWithCategory, getHooksRootPwStep, isTimeoutPwStep } from './pwUtils';
 import {
   BddDataAttachment,
   BddDataStep,
@@ -49,6 +49,7 @@ export class TestCaseRun {
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
+    // console.error(11, this.result);
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
     this.projectInfo = getProjectInfo(this.test);
@@ -56,8 +57,6 @@ export class TestCaseRun {
     this.executedSteps = this.fillExecutedSteps();
     this.executedBeforeHooks = this.fillExecutedHooks('before');
     this.executedAfterHooks = this.fillExecutedHooks('after');
-    // console.log(11, this.result.steps[0]);
-    // console.log(22, this.getBddData());
   }
 
   getTestCase() {
@@ -92,6 +91,7 @@ export class TestCaseRun {
     return this.bddData.steps.map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
       if (pwStep.error) this.errorSteps.add(pwStep);
+      if (!this.timeoutedStep && isTimeoutPwStep(pwStep)) this.timeoutedStep = pwStep;
       return { bddDataStep, pwStep };
     });
   }
