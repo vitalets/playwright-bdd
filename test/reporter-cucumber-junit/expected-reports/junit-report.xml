@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite failures="11" skipped="0" name="My suite" time="3.8129999999999997" tests="21">
-  <testcase classname="rich feature" name="rich feature › Failing by background step" time="0.7000000000000001">
+<testsuite failures="11" skipped="0" name="My suite" time="-0.35399999999999987" tests="18">
+  <testcase classname="rich feature" name="rich feature › Failing by background step" time="0.091">
     <failure type="Error" message="expect(received).toEqual(expected) // deep equality&#xA;&#xA;Expected: false&#xA;Received: true"><![CDATA[expect(received).toEqual(expected) // deep equality
 
 Expected: false
@@ -17,30 +17,7 @@ Received: true
     <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............failed
 Given Action 1...........................................................skipped]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by named before hook" time="0.756">
-    <failure type="Error" message="Timed out 1ms waiting for expect(received).toHaveTitle(expected)&#xA;&#xA;Expected string: &quot;Some title1&quot;&#xA;Received string: &quot;&quot;&#xA;Call log:&#xA;  - expect.toHaveTitle with timeout 1ms&#xA;  - waiting for locator(':root')&#xA;  -   locator resolved to &lt;html>…&lt;/html>&#xA;  -   unexpected value &quot;&quot;&#xA;"><![CDATA[Timed out 1ms waiting for expect(received).toHaveTitle(expected)
-
-Expected string: "Some title1"
-Received string: ""
-Call log:
-  - expect.toHaveTitle with timeout 1ms
-  - waiting for locator(':root')
-  -   locator resolved to <html>…</html>
-  -   unexpected value ""
-
-   at ../features/failed-steps.ts:8
-
-   6 |
-   7 | Before({ name: 'failing named before hook', tags: '@failing-named-hook' }, async ({ page }) => {
->  8 |   await expect(page).toHaveTitle('Some title1');
-     |                      ^
-   9 | });
-  10 |
-  11 | Before({ tags: '@failing-anonymous-hook' }, async ({ page }) => {]]></failure>
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step".............skipped
-Given Action 1...........................................................skipped]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by anonymous before hook" time="0.802">
+  <testcase classname="rich feature" name="rich feature › Failing by anonymous before hook" time="0.14400000000000002">
     <failure type="Error" message="Timed out 1ms waiting for expect(received).toHaveTitle(expected)&#xA;&#xA;Expected string: &quot;Some title2&quot;&#xA;Received string: &quot;&quot;&#xA;Call log:&#xA;  - expect.toHaveTitle with timeout 1ms&#xA;  - waiting for locator(':root')&#xA;  -   locator resolved to &lt;html>…&lt;/html>&#xA;  -   unexpected value &quot;&quot;&#xA;"><![CDATA[Timed out 1ms waiting for expect(received).toHaveTitle(expected)
 
 Expected string: "Some title2"
@@ -63,7 +40,30 @@ Call log:
     <system-out><![CDATA[Given step failing for scenario "Failing by background step".............skipped
 Given Action 1...........................................................skipped]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by step" time="1.02">
+  <testcase classname="rich feature" name="rich feature › Failing by named before hook" time="0.11299999999999999">
+    <failure type="Error" message="Timed out 1ms waiting for expect(received).toHaveTitle(expected)&#xA;&#xA;Expected string: &quot;Some title1&quot;&#xA;Received string: &quot;&quot;&#xA;Call log:&#xA;  - expect.toHaveTitle with timeout 1ms&#xA;  - waiting for locator(':root')&#xA;  -   locator resolved to &lt;html>…&lt;/html>&#xA;  -   unexpected value &quot;&quot;&#xA;"><![CDATA[Timed out 1ms waiting for expect(received).toHaveTitle(expected)
+
+Expected string: "Some title1"
+Received string: ""
+Call log:
+  - expect.toHaveTitle with timeout 1ms
+  - waiting for locator(':root')
+  -   locator resolved to <html>…</html>
+  -   unexpected value ""
+
+   at ../features/failed-steps.ts:8
+
+   6 |
+   7 | Before({ name: 'failing named before hook', tags: '@failing-named-hook' }, async ({ page }) => {
+>  8 |   await expect(page).toHaveTitle('Some title1');
+     |                      ^
+   9 | });
+  10 |
+  11 | Before({ tags: '@failing-anonymous-hook' }, async ({ page }) => {]]></failure>
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step".............skipped
+Given Action 1...........................................................skipped]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Failing by step" time="0.977">
     <failure type="Error" message="Timed out 1ms waiting for expect(received).toBeVisible()&#xA;Call log:&#xA;  - expect.toBeVisible with timeout 1ms&#xA;  - waiting for getByText('missing string')&#xA;"><![CDATA[Timed out 1ms waiting for expect(received).toBeVisible()
 Call log:
   - expect.toBeVisible with timeout 1ms
@@ -81,22 +81,7 @@ Call log:
     <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
 Given failing step........................................................failed]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by failingBeforeFixtureNoStep" time="0.15">
-    <failure type="Error" message="error in failingBeforeFixtureNoStep"><![CDATA[error in failingBeforeFixtureNoStep
-   at ../features/fixtures.ts:16
-
-  14 |     await (async () => {
-  15 |       await testInfo.attach('my attachment', { body: '|in step' });
-> 16 |       throw new Error('error in failingBeforeFixtureNoStep');
-     |             ^
-  17 |     })();
-  18 |     await use();
-  19 |     await testInfo.attach('my attachment', { body: 'should not attach' });]]></failure>
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given step that uses failingBeforeFixtureNoStep..........................skipped
-When Action 1............................................................skipped]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by failingAfterFixtureNoStep" time="0.006">
+  <testcase classname="rich feature" name="rich feature › Failing by failingAfterFixtureNoStep" time="0.002">
     <failure type="Error" message="error in failingAfterFixtureNoStep"><![CDATA[error in failingAfterFixtureNoStep
    at ../features/fixtures.ts:34
 
@@ -111,7 +96,22 @@ When Action 1............................................................skipped
 Given step that uses failingAfterFixtureNoStep............................passed
 When Action 3.............................................................passed]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by failingBeforeFixtureWithStep" time="0.111">
+  <testcase classname="rich feature" name="rich feature › Failing by failingBeforeFixtureNoStep" time="0.088">
+    <failure type="Error" message="error in failingBeforeFixtureNoStep"><![CDATA[error in failingBeforeFixtureNoStep
+   at ../features/fixtures.ts:16
+
+  14 |     await (async () => {
+  15 |       await testInfo.attach('my attachment', { body: '|in step' });
+> 16 |       throw new Error('error in failingBeforeFixtureNoStep');
+     |             ^
+  17 |     })();
+  18 |     await use();
+  19 |     await testInfo.attach('my attachment', { body: 'should not attach' });]]></failure>
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Given step that uses failingBeforeFixtureNoStep..........................skipped
+When Action 1............................................................skipped]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Failing by failingBeforeFixtureWithStep" time="0.101">
     <failure type="Error" message="error in failingBeforeFixtureWithStep"><![CDATA[error in failingBeforeFixtureWithStep
    at ../features/fixtures.ts:25
 
@@ -126,7 +126,7 @@ When Action 3.............................................................passed
 Given step that uses failingBeforeFixtureWithStep........................skipped
 When Action 2............................................................skipped]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Failing by failingAfterFixtureWithStep" time="0.010000000000000002">
+  <testcase classname="rich feature" name="rich feature › Failing by failingAfterFixtureWithStep" time="0.004">
     <failure type="Error" message="error in failingAfterFixtureWithStep"><![CDATA[error in failingAfterFixtureWithStep
    at ../features/fixtures.ts:42
 
@@ -141,22 +141,10 @@ When Action 2............................................................skipped
 Given step that uses failingAfterFixtureWithStep..........................passed
 When Action 4.............................................................passed]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › timeout in before fixture" time="-0.9989999999999999">
-    <failure type="Error" message="Test timeout of 500ms exceeded while running &quot;beforeEach&quot; hook.&#xA;&#xA;Pending operations:&#xA;  - page.screenshot&#xA;"><![CDATA[Test timeout of 500ms exceeded while running "beforeEach" hook.
+  <testcase classname="rich feature" name="rich feature › timeout in step" time="-0.8959999999999999">
+    <failure type="Error" message="Test timeout of 500ms exceeded.&#xA;&#xA;Pending operations:&#xA;  - page.waitForTimeout at features/failed-steps.ts:41:14&#xA;"><![CDATA[Test timeout of 500ms exceeded.
 
 Pending operations:
-  - page.screenshot
-]]></failure>
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 0...........................................................skipped
-Given step that uses timeouted before fixture............................skipped
-When Action 1............................................................skipped]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › timeout in step" time="-0.9999999999999999">
-    <failure type="Error" message="Test timeout of 500ms exceeded while running &quot;beforeEach&quot; hook.&#xA;&#xA;Pending operations:&#xA;  - page.screenshot&#xA;  - page.waitForTimeout at features/failed-steps.ts:41:14&#xA;"><![CDATA[Test timeout of 500ms exceeded while running "beforeEach" hook.
-
-Pending operations:
-  - page.screenshot
   - page.waitForTimeout at features/failed-steps.ts:41:14
 ]]></failure>
     <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
@@ -164,11 +152,18 @@ Given Action 0............................................................passed
 Given timeouted step......................................................failed
 When Action 1............................................................skipped]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Scenario with data table" time="0.002">
+  <testcase classname="rich feature" name="rich feature › timeout in before fixture" time="-2.001">
+    <failure type="Error" message="Test timeout of 500ms exceeded while setting up &quot;timeoutedBeforeFixture&quot;."><![CDATA[Test timeout of 500ms exceeded while setting up "timeoutedBeforeFixture".]]></failure>
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Given Action 0...........................................................skipped
+Given step that uses timeouted before fixture............................skipped
+When Action 1............................................................skipped]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Scenario with data table" time="0.001">
     <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
 When Step with data table.................................................passed]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Scenario with all keywords" time="0.005">
+  <testcase classname="rich feature" name="rich feature › Scenario with all keywords" time="0">
     <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
 Given Action 1............................................................passed
 And Action 2..............................................................passed
@@ -178,47 +173,7 @@ Then Action 5.............................................................passed
 But Action 6..............................................................passed
 * Action 7................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="rich feature" name="rich feature › Check doubled" time="0">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 2............................................................passed
-Then Action 4.............................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Check doubled [1]" time="0.001">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 3............................................................passed
-Then Action 6.............................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Check doubled [2]" time="0.001">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 4............................................................passed
-Then Action 8.............................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Scenario with attachments" time="0.017">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given attach text.........................................................passed
-And attach image inline...................................................passed
-And attach image as file..................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Scenario with doc string" time="0.001">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Then Step with doc string.................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Check doubled [3]" time="0">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 5............................................................passed
-Then Action 10............................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Check doubled [4]" time="0">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 6............................................................passed
-Then Action 12............................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › Check doubled [5]" time="0">
-    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
-Given Action 10...........................................................passed
-Then Action 20............................................................passed]]></system-out>
-  </testcase>
-  <testcase classname="rich feature" name="rich feature › failing match snapshot" time="2.23">
+  <testcase classname="rich feature" name="rich feature › failing match snapshot" time="1.012">
     <failure type="Error" message="Snapshot comparison failed:&#xA;&#xA;  bla-blaExample Domain&#xA;&#xA;Expected: /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/.features-gen/features/sample.feature.spec.js-snapshots/rich-feature-failing-match-snapshot-1-darwin.txt&#xA;Received: /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/test-results/features-sample.feature-rich-feature-failing-match-snapshot/rich-feature-failing-match-snapshot-1-actual.txt"><![CDATA[Snapshot comparison failed:
 
   bla-blaExample Domain
@@ -236,5 +191,30 @@ Received: /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/t
     <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
 When open page "https://example.com"......................................passed
 Then page title snapshot matches the golden one...........................failed]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Check doubled" time="0.001">
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Given Action 2............................................................passed
+Then Action 4.............................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Scenario with doc string" time="0.002">
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Then Step with doc string.................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Scenario with attachments" time="0.006">
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Given attach text.........................................................passed
+And attach image inline...................................................passed
+And attach image as file..................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Check doubled [1]" time="0">
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Given Action 10...........................................................passed
+Then Action 20............................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="rich feature" name="rich feature › Check doubled [2]" time="0.001">
+    <system-out><![CDATA[Given step failing for scenario "Failing by background step"..............passed
+Given Action 3............................................................passed
+Then Action 6.............................................................passed]]></system-out>
   </testcase>
 </testsuite>

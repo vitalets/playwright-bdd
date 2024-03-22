@@ -4,7 +4,6 @@ Feature: rich feature
   Background:
     Given step failing for scenario "Failing by background step"
 
-  # keep failing scenarios first to run in a first shard
   Scenario: Failing by step
     Given failing step
 
@@ -97,15 +96,10 @@ Feature: rich feature
     Given Action <start>
     Then Action <end>
 
-  # we add more rows to have more success tests than failed
-  # it's important to ensure that second shard tests always pass
 	Examples:
 		| start | end  |
 		|    2  |   4  |
 		|    3  |   6  |
-		|    4  |   8  |
-		|    5  |   10 |
-		|    6  |   12 |
 
 	Examples:
 		| start  | end |
