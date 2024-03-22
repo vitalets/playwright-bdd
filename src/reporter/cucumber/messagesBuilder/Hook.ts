@@ -53,10 +53,12 @@ export class Hook {
     const uri = file ? path.relative(getPlaywrightConfigDir(), file) : undefined;
     return {
       uri,
-      location: {
-        line: line || 0,
-        column,
-      },
+      location: line
+        ? {
+            line,
+            column,
+          }
+        : undefined,
     };
   }
 }

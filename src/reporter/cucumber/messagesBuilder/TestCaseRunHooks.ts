@@ -101,14 +101,16 @@ export class TestCaseRunHooks {
   private addStepWithTimeout() {
     if (!this.testCaseRun.isTimeouted()) return;
     if (this.testCaseRun.timeoutedStep) return;
-    if (this.hookType === 'before') {
-      const timeoutedStep = findDeepestStepWithTimeout(this.rootPwStep);
-      if (timeoutedStep) {
-        this.hookSteps.add(timeoutedStep);
-        this.testCaseRun.timeoutedStep = timeoutedStep;
-      }
-    } else {
-      // timeouted after hooks don't have duration = -1
+    const timeoutedStep =
+      this.hookType === 'before'
+        ? findDeepestStepWithTimeout(this.rootPwStep)
+        : // Timeouted after hooks don't have duration = -1,
+          // so there is no way to find which exactly fixture timed out.
+          // We mark root 'After Hooks' step as timeouted.
+          this.rootPwStep;
+    if (timeoutedStep) {
+      this.hookSteps.add(timeoutedStep);
+      this.testCaseRun.timeoutedStep = timeoutedStep;
     }
   }
 

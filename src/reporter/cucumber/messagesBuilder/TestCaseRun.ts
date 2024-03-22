@@ -50,6 +50,10 @@ export class TestCaseRun {
     public hooks: AutofillMap<string, Hook>,
   ) {
     // console.error(11, this.result);
+    // console.error(
+    //   22,
+    //   this.result.steps[4].steps.find((s) => s.title.includes('timeoutedAfterFixture')),
+    // );
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
     this.projectInfo = getProjectInfo(this.test);

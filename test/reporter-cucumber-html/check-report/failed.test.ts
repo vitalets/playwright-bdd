@@ -200,3 +200,19 @@ test('Scenario: timeout in step', async ({ page }) => {
   await expect(scenario.getError()).toContainText('Pending operations');
   await expect(scenario.getError()).toContainText('page.waitForTimeout');
 });
+
+test('Scenario: timeout in after fixture', async ({ page }) => {
+  const scenario = getScenario(page, 'timeout in after fixture');
+  await expect(scenario.getSteps()).toContainText([
+    'GivenAction 0',
+    'Givenstep that uses timeouted after fixture',
+    'WhenAction 1',
+    'Hook "After Hooks" failed: Unknown location',
+  ]);
+  await expect(scenario.getSteps('passed')).toHaveCount(3);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getError()).toContainText('Test finished within timeout');
+  await expect(scenario.getError()).toContainText(
+    'but tearing down "timeoutedAfterFixture" ran out of time',
+  );
+});
