@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.0.3
 * fix timeouts in Cucumber reporters, [#107](https://github.com/vitalets/playwright-bdd/issues/107)
 
 ## 6.0.2
