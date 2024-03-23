@@ -45,7 +45,9 @@ export const test = base.extend<{
   setTestTimeout: [
     async ({}, use, testInfo) => {
       if (testInfo.title.includes('timeout')) {
-        testInfo.setTimeout(600);
+        // Increase timeout on CI.
+        // Otherwise we get "test timeout" during initialization and it breaks tests
+        testInfo.setTimeout(process.env.CI ? 1000 : 500);
       }
       await use();
     },
