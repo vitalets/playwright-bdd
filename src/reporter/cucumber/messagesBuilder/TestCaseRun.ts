@@ -9,7 +9,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { collectStepsWithCategory, getHooksRootPwStep, isTimeoutPwStep } from './pwUtils';
+import { collectStepsWithCategory, isEmptyDuration } from './pwStepUtils';
 import {
   BddDataAttachment,
   BddDataStep,
@@ -28,7 +28,8 @@ export type TestCaseRunEnvelope = TestStepRunEnvelope &
 
 export type ExecutedStepInfo = {
   bddDataStep: BddDataStep;
-  pwStep: pw.TestStep;
+  // pwStep can be missing even for executted steps when there is test timeout
+  pwStep?: pw.TestStep;
 };
 
 export class TestCaseRun {
@@ -37,6 +38,8 @@ export class TestCaseRun {
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
+  // collect steps with error and show only these errors in report.
+  // it allows to not show the same error on parent steps
   errorSteps = new Set<pw.TestStep>();
   timeoutedStep?: pw.TestStep;
   private executedBeforeHooks: TestCaseRunHooks;
@@ -49,11 +52,6 @@ export class TestCaseRun {
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
-    // console.error(11, this.result);
-    // console.error(
-    //   22,
-    //   this.result.steps[4].steps.find((s) => s.title.includes('timeoutedAfterFixture')),
-    // );
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
     this.projectInfo = getProjectInfo(this.test);
@@ -91,17 +89,25 @@ export class TestCaseRun {
   }
 
   private fillExecutedSteps() {
-    const possiblePwSteps = this.getPossiblePlaywrightSteps();
+    const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
     return this.bddData.steps.map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
-      if (pwStep.error) this.errorSteps.add(pwStep);
-      if (!this.timeoutedStep && isTimeoutPwStep(pwStep)) this.timeoutedStep = pwStep;
+      if (pwStep?.error) this.errorSteps.add(pwStep);
+      this.handleTimeoutedStep(pwStep);
       return { bddDataStep, pwStep };
     });
   }
 
   private fillExecutedHooks(hookType: HookType) {
     return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
+  }
+
+  // eslint-disable-next-line complexity
+  private handleTimeoutedStep(pwStep?: pw.TestStep) {
+    if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
+    if (isEmptyDuration(pwStep) || pwStep.error) {
+      this.timeoutedStep = pwStep;
+    }
   }
 
   buildMessages() {
@@ -152,17 +158,16 @@ export class TestCaseRun {
   }
 
   private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddDataStep: BddDataStep) {
-    const pwStep = possiblePwSteps.find((pwStep) => {
+    return possiblePwSteps.find((pwStep) => {
       return pwStep.location && stringifyLocation(pwStep.location) === bddDataStep.pwStepLocation;
     });
-    if (!pwStep) throw new Error('Playwright step not found for bdd step');
-    return pwStep;
   }
 
-  private getPossiblePlaywrightSteps() {
-    const beforeHooksRoot = getHooksRootPwStep(this.result, 'before');
-    const bgSteps = collectStepsWithCategory(beforeHooksRoot, 'test.step');
-    const topLevelSteps = this.result.steps.filter((step) => step.category === 'test.step');
-    return [...bgSteps, ...topLevelSteps];
+  private getPossiblePlaywrightBddSteps() {
+    // Before we collected only top-level steps and steps from before hooks (as they are background)
+    // But it's more reliable to just collect all test.step items b/c some Playwright versions
+    // move steps to fixtures (see: https://github.com/microsoft/playwright/issues/30075)
+    // Collecting all test.step items should be ok, as later we anyway map them by location.
+    return collectStepsWithCategory(this.result, 'test.step');
   }
 }

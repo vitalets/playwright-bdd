@@ -7,8 +7,8 @@ import {
   getHooksRootPwStep,
   collectStepsDfs,
   findDeepestStepWithError,
-  findDeepestStepWithTimeout,
-} from './pwUtils';
+  findDeepestStepWithEmptyDuration,
+} from './pwStepUtils';
 import { ExecutedStepInfo, TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 
@@ -35,7 +35,7 @@ export class TestCaseRunHooks {
     this.addStepWithTimeout();
     this.addStepWithError();
     this.addStepsWithAttachment();
-    this.excludeBackgroundSteps(mainSteps);
+    this.excludeMainSteps(mainSteps);
     this.setExecutedHooks();
     return this;
   }
@@ -103,7 +103,9 @@ export class TestCaseRunHooks {
     if (this.testCaseRun.timeoutedStep) return;
     const timeoutedStep =
       this.hookType === 'before'
-        ? findDeepestStepWithTimeout(this.rootPwStep)
+        ? // Timeouted steps have duration = -1 in PW <= 1.39 and no error field.
+          // In PW > 1.39 timeouted tests have '.error' populated
+          findDeepestStepWithEmptyDuration(this.rootPwStep)
         : // Timeouted after hooks don't have duration = -1,
           // so there is no way to find which exactly fixture timed out.
           // We mark root 'After Hooks' step as timeouted.
@@ -114,13 +116,16 @@ export class TestCaseRunHooks {
     }
   }
 
-  private excludeBackgroundSteps(mainSteps: ExecutedStepInfo[]) {
-    // exclude background steps, b/c they are in pickle, not in hooks.
+  private excludeMainSteps(mainSteps: ExecutedStepInfo[]) {
+    // - exclude background steps, b/c they are in pickle and should not in hooks.
+    // - exclude other test.step items that are bdd steps and should not be in hooks.
     // Important to run this fn after this.fillExecutedSteps()
     // as we assume steps are already populated
-    if (this.hookType === 'before') {
-      mainSteps.forEach((stepInfo) => this.hookSteps.delete(stepInfo.pwStep));
-    }
+    mainSteps.forEach((stepInfo) => {
+      if (stepInfo.pwStep) {
+        this.hookSteps.delete(stepInfo.pwStep);
+      }
+    });
   }
 
   private setExecutedHooks() {

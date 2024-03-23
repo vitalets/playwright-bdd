@@ -29,10 +29,10 @@ export function findDeepestStepWithError(root?: pw.TestStep) {
   });
 }
 
-export function findDeepestStepWithTimeout(root?: pw.TestStep) {
+export function findDeepestStepWithEmptyDuration(root?: pw.TestStep) {
   if (!root) return;
   return findDeepestStepWith(root, (pwStep) => {
-    return isTimeoutPwStep(pwStep) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
+    return isEmptyDuration(pwStep) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
   });
 }
 
@@ -66,6 +66,6 @@ export function collectStepsDfs(parent: pw.TestResult | pw.TestStep | undefined)
   );
 }
 
-export function isTimeoutPwStep(pwStep: pw.TestStep) {
+export function isEmptyDuration(pwStep: pw.TestStep) {
   return pwStep.duration === -1;
 }

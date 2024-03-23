@@ -28,22 +28,26 @@ export class StepInvoker {
    * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L299
    */
   async invoke(
-    text: string,
+    stepText: string,
     argument?: PickleStepArgument | null,
     stepFixtures?: Fixtures<TestTypeCommon>,
   ) {
     this.world.$internal.currentStepFixtures = stepFixtures || {};
-    const stepDefinition = this.getStepDefinition(text);
+    const stepDefinition = this.getStepDefinition(stepText);
 
     // Get location of step call in generated test file.
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getLocationInFile(this.world.testInfo.file);
 
-    const stepTitle = this.getStepTitle(text);
+    const stepTitle = this.getStepTitle(stepText);
     const code = getStepCode(stepDefinition);
-    const parameters = await this.getStepParameters(stepDefinition, text, argument || undefined);
+    const parameters = await this.getStepParameters(
+      stepDefinition,
+      stepText,
+      argument || undefined,
+    );
 
-    this.world.$internal.bddData.registerStep(stepDefinition, text, location);
+    this.world.$internal.bddData.registerStep(stepDefinition, stepText, location);
 
     await runStepWithCustomLocation(this.world.test, stepTitle, location, () =>
       code.apply(this.world, parameters),

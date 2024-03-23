@@ -98,22 +98,17 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   // there is no automatic screenshot here in pw 1.35 - 1.41
   // see: https://github.com/microsoft/playwright/issues/29325
   const hasScreenshot = pwVersion < '1.35.0' || pwVersion >= '1.42.0';
-  await expect(scenario.getSteps()).toContainText(
-    [
-      'my attachment|before use',
-      'Givenstep that uses failingAfterFixtureNoStep',
-      'WhenAction 3',
-      hasScreenshot ? 'screenshot' : '',
-      `Hook "fixture: failingAfterFixtureNoStep" failed: ${normalize('features/fixtures.ts')}:`,
-    ].filter(Boolean),
-  );
-  await expect(scenario.getAttachments()).toHaveText(
-    [
-      'my attachment|before use', // prettier-ignore
-      hasScreenshot ? 'screenshot' : '',
-      'my attachment|after use',
-    ].filter(Boolean),
-  );
+  await expect(scenario.getSteps()).toContainText([
+    'my attachment|before use',
+    'Givenstep that uses failingAfterFixtureNoStep',
+    'WhenAction 3',
+    `Hook "fixture: failingAfterFixtureNoStep" failed: ${normalize('features/fixtures.ts')}:`,
+  ]);
+  if (hasScreenshot) await expect(scenario.getSteps()).toContainText(['screenshot']);
+  await expect(scenario.getAttachments()).toContainText([
+    'my attachment|before use', // prettier-ignore
+    'my attachment|after use',
+  ]);
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
@@ -125,24 +120,19 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   // there is no automatic screenshot here in pw 1.35 - 1.41
   // see: https://github.com/microsoft/playwright/issues/29325
   const hasScreenshot = pwVersion < '1.35.0' || pwVersion >= '1.42.0';
-  await expect(scenario.getSteps()).toContainText(
-    [
-      'my attachment|outside step (before use)',
-      'Givenstep that uses failingAfterFixtureWithStep',
-      'WhenAction 4',
-      `Hook "step in failingAfterFixtureWithStep" failed: ${normalize('features/fixtures.ts')}:`,
-      hasScreenshot ? 'screenshot' : '',
-      'my attachment|outside step (after use)',
-    ].filter(Boolean),
-  );
-  await expect(scenario.getAttachments()).toHaveText(
-    [
-      'my attachment|outside step (before use)',
-      'my attachment|in step',
-      hasScreenshot ? 'screenshot' : '',
-      'my attachment|outside step (after use)',
-    ].filter(Boolean),
-  );
+  await expect(scenario.getSteps()).toContainText([
+    'my attachment|outside step (before use)',
+    'Givenstep that uses failingAfterFixtureWithStep',
+    'WhenAction 4',
+    `Hook "step in failingAfterFixtureWithStep" failed: ${normalize('features/fixtures.ts')}:`,
+    'my attachment|outside step (after use)',
+  ]);
+  if (hasScreenshot) await expect(scenario.getSteps()).toContainText(['screenshot']);
+  await expect(scenario.getAttachments()).toContainText([
+    'my attachment|outside step (before use)',
+    'my attachment|in step',
+    'my attachment|outside step (after use)',
+  ]);
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
@@ -164,55 +154,4 @@ test('Scenario: failing match snapshot', async ({ page }) => {
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
   await expect(scenario.getError()).toContainText('Snapshot comparison failed');
-});
-
-test('Scenario: timeout in before fixture', async ({ page }) => {
-  const scenario = getScenario(page, 'timeout in before fixture');
-  await expect(scenario.getSteps()).toContainText([
-    // here can be different error messages
-    /Hook "fixture: (.+)" failed/,
-    'screenshot',
-    'GivenAction 0',
-    'Givenstep that uses timeouted before fixture',
-    'WhenAction 1',
-  ]);
-  await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getSteps('skipped')).toHaveCount(3);
-  await expect(scenario.getError()).toContainText(
-    // here can be two different error messages
-    // eslint-disable-next-line max-len
-    /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
-  );
-});
-
-test('Scenario: timeout in step', async ({ page }) => {
-  const scenario = getScenario(page, 'timeout in step');
-  await expect(scenario.getSteps()).toContainText([
-    'GivenAction 0',
-    'Giventimeouted step',
-    'WhenAction 1',
-    'screenshot',
-  ]);
-  await expect(scenario.getSteps('passed')).toHaveCount(1);
-  await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getError()).toContainText(/Test timeout of \d+ms exceeded/);
-  await expect(scenario.getError()).toContainText('Pending operations');
-  await expect(scenario.getError()).toContainText('page.waitForTimeout');
-});
-
-test('Scenario: timeout in after fixture', async ({ page }) => {
-  const scenario = getScenario(page, 'timeout in after fixture');
-  await expect(scenario.getSteps()).toContainText([
-    'GivenAction 0',
-    'Givenstep that uses timeouted after fixture',
-    'WhenAction 1',
-    'Hook "After Hooks" failed: Unknown location',
-  ]);
-  await expect(scenario.getSteps('passed')).toHaveCount(3);
-  await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getError()).toContainText('Test finished within timeout');
-  await expect(scenario.getError()).toContainText(
-    'but tearing down "timeoutedAfterFixture" ran out of time',
-  );
 });

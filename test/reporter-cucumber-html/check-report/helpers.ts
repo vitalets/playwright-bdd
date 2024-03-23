@@ -57,7 +57,7 @@ export class Scenario {
     public feature: Feature,
     public title: string,
   ) {
-    this.header = this.page.getByRole('heading', { name: title });
+    this.header = this.page.getByRole('heading', { name: title, exact: true });
     this.root = feature.root.locator('section').filter({ has: this.header });
   }
 

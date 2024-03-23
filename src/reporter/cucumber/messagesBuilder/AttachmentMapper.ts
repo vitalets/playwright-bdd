@@ -56,7 +56,7 @@
  */
 import * as pw from '@playwright/test/reporter';
 import { AutofillMap } from '../../../utils/AutofillMap';
-import { collectStepsWithCategory, getHooksRootPwStep } from './pwUtils';
+import { collectStepsWithCategory, getHooksRootPwStep } from './pwStepUtils';
 import { PwAttachment } from '../../../playwright/types';
 import { isBddDataAttachment } from '../../../run/bddDataAttachment';
 

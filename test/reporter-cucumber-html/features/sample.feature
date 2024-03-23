@@ -54,11 +54,11 @@ Feature: rich feature
     Given step that uses timeouted after fixture
     When Action 1
 
-  # Scenario: timeout in step and in after fixture
-  #   Given Action 0
-  #   Given timeouted step
-  #   When Action 1
-  #   Given step that uses timeouted after fixture
+  Scenario: timeout in step and in after fixture
+    Given Action 0
+    Given timeouted step
+    When Action 1
+    Given step that uses timeouted after fixture
 
   # ----- Success scenarios ------
   Scenario: Scenario with data table
