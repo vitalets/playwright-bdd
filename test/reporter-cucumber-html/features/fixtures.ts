@@ -45,7 +45,7 @@ export const test = base.extend<{
   setTestTimeout: [
     async ({}, use, testInfo) => {
       if (testInfo.title.includes('timeout')) {
-        testInfo.setTimeout(500);
+        testInfo.setTimeout(600);
       }
       await use();
     },

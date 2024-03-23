@@ -79,7 +79,7 @@ export class Scenario {
   }
 
   getError() {
-    return this.getSteps().locator('div > pre');
+    return this.getSteps().locator('div > pre').first();
   }
 
   getTags() {

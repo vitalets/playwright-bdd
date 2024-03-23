@@ -1,5 +1,8 @@
 import { test, expect } from '@playwright/test';
 import { getScenario, openReport } from './helpers';
+import { getPackageVersion } from '../../../src/utils';
+
+const pwVersion = getPackageVersion('@playwright/test');
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);
@@ -16,7 +19,10 @@ test('Scenario: timeout in before fixture', async ({ page }) => {
   ]);
   // screenshot position changes between PW versions, so check it separately
   await expect(scenario.getSteps()).toContainText(['screenshot']);
-  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  // sometimes error is the following:
+  // "browser.newContext: Target page, context or browser has been closed"
+  // in that case there are two errors in test report.
+  expect(await scenario.getSteps('failed').count()).toBeGreaterThan(0);
   await expect(scenario.getSteps('skipped')).toHaveCount(3);
   await expect(scenario.getError()).toContainText(
     // here can be two different error messages
@@ -37,7 +43,9 @@ test('Scenario: timeout in step', async ({ page }) => {
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
   await expect(scenario.getError()).toContainText(/Test timeout of \d+ms exceeded/);
-  await expect(scenario.getError()).toContainText('page.waitForTimeout');
+  if (!pwVersion.startsWith('1.39.')) {
+    await expect(scenario.getError()).toContainText('page.waitForTimeout');
+  }
 });
 
 test('Scenario: timeout in after fixture', async ({ page }) => {

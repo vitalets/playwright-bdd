@@ -5,6 +5,7 @@ const testDir = new TestDir(import.meta);
 
 test(testDir.name, () => {
   testDir.clearDir('reports');
+  testDir.clearDir('test-results');
   execPlaywrightTestWithError(testDir.name);
   checkHtmlReport();
 });
