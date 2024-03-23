@@ -6,6 +6,7 @@ import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { PwAttachment } from '../../../playwright/types';
+import path from 'node:path';
 
 export class TestStepAttachments {
   constructor(
@@ -36,9 +37,30 @@ export class TestStepAttachments {
     return { attachment };
   }
 
-  private getAttachmentBodyBase64(pwAttachment: { path?: string; body?: Buffer }) {
-    return pwAttachment.path
-      ? fs.readFileSync(pwAttachment.path, 'base64')
-      : pwAttachment.body!.toString('base64');
+  private getAttachmentBodyBase64(pwAttachment: PwAttachment) {
+    if (pwAttachment.path) {
+      if (fs.existsSync(pwAttachment.path)) {
+        return fs.readFileSync(pwAttachment.path, 'base64');
+      }
+      throw createMissingAttachmentError(pwAttachment.path);
+    }
+    if (pwAttachment.body) {
+      return pwAttachment.body!.toString('base64');
+    }
+    throw new Error(`Playwright attachment without path and body`);
   }
+}
+
+function createMissingAttachmentError(attachmentPath: string) {
+  const attachmentDir = path.join(path.dirname(attachmentPath));
+  const attachmentDirExists = fs.existsSync(attachmentDir);
+  const files = attachmentDirExists ? fs.readdirSync(attachmentDir) : [];
+  const errorMsg = [
+    `Attachment file is not found:`,
+    attachmentPath,
+    `Attachment dir ${attachmentDirExists ? 'exists' : 'does not exist'}.`,
+    ...(attachmentDirExists ? [`Available files (${files.length}):`, ...files] : []),
+    '',
+  ].join('\n');
+  return new Error(errorMsg);
 }
