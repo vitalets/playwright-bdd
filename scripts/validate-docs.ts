@@ -29,6 +29,7 @@ const errors = files.map(validateFile).flat().filter(Boolean);
 logger.log(`Validating docs: ${files.length} files...`);
 errors.forEach((error) => logger.log(error));
 logger.log(`Invalid links: ${errors.length}`);
+if (errors.length) process.exitCode = 1;
 
 function fillFileInfo(relPath: string) {
   const fileInfo: FileInfo = {

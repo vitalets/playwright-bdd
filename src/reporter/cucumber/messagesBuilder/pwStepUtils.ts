@@ -39,10 +39,7 @@ export function findDeepestStepWithEmptyDuration(root?: pw.TestStep) {
 /**
  * Finds the deepest step that satisfies predicate function.
  */
-export function findDeepestStepWith(
-  root: pw.TestStep,
-  predicate: (pwStep: pw.TestStep) => boolean,
-) {
+function findDeepestStepWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep) => boolean) {
   let currentStep = predicate(root) ? root : undefined;
   while (currentStep) {
     const nextStep = currentStep.steps.find((pwStep) => predicate(pwStep));
