@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* fix timeouts in Cucumber reporters, [#107](https://github.com/vitalets/playwright-bdd/issues/107)
+
 ## 6.0.2
 * fix spec generation for feature file with background without scenarios, [#104](https://github.com/vitalets/playwright-bdd/issues/104)
 
