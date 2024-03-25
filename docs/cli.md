@@ -45,6 +45,10 @@ List of all steps found by config: playwright.config.ts
 * When I remove todo {string}
 * Then visible todos count is {int}
 ```
+To run it with custom Playwright config use `--config` option:
+```
+npx bddgen export --config path/to/playwright.config.ts
+```
 
 ## `bddgen env`
 Displays info about current environment:
