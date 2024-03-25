@@ -27,6 +27,6 @@ export function buildAndInstallPlaywrightBdd({ isCI = false } = {}) {
 }
 
 function runCmd(cmd: string) {
-  console.log(`Running: cwd`); // eslint-disable-line no-console
+  console.log(`Running: ${cmd}`); // eslint-disable-line no-console
   execSync(cmd, { stdio: 'inherit' });
 }
