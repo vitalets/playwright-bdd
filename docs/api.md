@@ -50,6 +50,8 @@ Defines `Given` step implementation.
     - `fixtures` *object* - Playwright fixtures
     - `...args` *array* - arguments captured from step pattern  
 
+**Returns**: *function* - a function to call this step from other steps.
+
 ### `When(pattern, fn)`
 Defines `When` step implementation.
 
@@ -58,6 +60,8 @@ Defines `When` step implementation.
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures
     - `...args` *array* - arguments captured from step pattern  
+
+**Returns**: *function* - a function to call this step from other steps.
 
 ### `Then(pattern, fn)`
 Defines `Then` step implementation.
@@ -68,6 +72,8 @@ Defines `Then` step implementation.
     - `fixtures` *object* - Playwright fixtures
     - `...args` *array* - arguments captured from step pattern  
 
+**Returns**: *function* - a function to call this step from other steps.
+
 ### `Step(pattern, fn)`
 Defines universal step implementation.
 
@@ -76,6 +82,8 @@ Defines universal step implementation.
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures
     - `...args` *array* - arguments captured from step pattern  
+
+**Returns**: *function* - a function to call this step from other steps.
 
 ### `Before(options?, hookFn)`
 Defines `Before` hook.

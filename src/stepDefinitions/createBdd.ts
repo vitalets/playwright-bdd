@@ -19,6 +19,7 @@ import { exit } from '../utils/exit';
 import { BddWorld } from '../run/bddWorld';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
+import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -46,22 +47,26 @@ export function createBdd<
 
 type StepFunctionFixturesArg<T extends KeyValue, W extends KeyValue> = FixturesArg<T, W> &
   BddAutoInjectFixtures;
-type StepFunction<T extends KeyValue, W extends KeyValue> = (
+type StepFunction<T extends KeyValue, W extends KeyValue, Args extends any[]> = (
   fixtures: StepFunctionFixturesArg<T, W>,
-  ...args: any[]
+  ...args: Args
 ) => unknown;
 
 function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
   keyword: GherkinStepKeyword,
   hasCustomTest: boolean,
 ) {
-  return (pattern: DefineStepPattern, fn: StepFunction<T, W>) => {
+  return <Args extends any[]>(pattern: DefineStepPattern, fn: StepFunction<T, W, Args>) => {
     defineStep({
       keyword,
       pattern,
       fn,
       hasCustomTest,
     });
+    return (fixtures: Partial<StepFunctionFixturesArg<T, W>>, ...args: Args) => {
+      assertStepIsCalledWithRequiredFixtures(pattern, fn, fixtures);
+      return fn(fixtures as StepFunctionFixturesArg<T, W>, ...args);
+    };
   };
 }
 
@@ -74,5 +79,28 @@ function isCustomTest(customTest?: TestTypeCommon | null) {
 function assertTestHasBddFixtures(customTest: TestTypeCommon) {
   if (!isTestContainsSubtest(customTest, baseBddTest)) {
     exit(`createBdd() should use 'test' extended from "playwright-bdd"`);
+  }
+}
+
+function assertStepIsCalledWithRequiredFixtures<
+  T extends KeyValue,
+  W extends KeyValue,
+  Args extends any[],
+>(
+  pattern: DefineStepPattern,
+  fn: StepFunction<T, W, Args>,
+  fixtures: Partial<StepFunctionFixturesArg<T, W>>,
+) {
+  const fixtureNames = fixtureParameterNames(fn);
+  const missingFixtures = fixtureNames.filter(
+    (fixtureName) => !Object.prototype.hasOwnProperty.call(fixtures, fixtureName),
+  );
+  if (missingFixtures.length) {
+    throw new Error(
+      [
+        `Invocation of step "${pattern}" from another step does not pass all required fixtures.`,
+        `Missings fixtures: ${missingFixtures.join(', ')}`,
+      ].join(' '),
+    );
   }
 }

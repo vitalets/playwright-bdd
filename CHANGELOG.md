@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* feature: call step from step, [#110](https://github.com/vitalets/playwright-bdd/issues/110)
+
 ## 6.0.3
 * fix timeouts in Cucumber reporters, [#107](https://github.com/vitalets/playwright-bdd/issues/107)
 
