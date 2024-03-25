@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { createBdd } from '../../../dist/index.js';
+import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures.js';
 
 const { Given } = createBdd(test);

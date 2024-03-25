@@ -47,7 +47,7 @@ export const test = base.extend<{
       if (testInfo.title.includes('timeout')) {
         // Don't decreese this timeout.
         // Otherwise we get "test timeout" during initialization and it breaks tests
-        testInfo.setTimeout(1000);
+        testInfo.setTimeout(1500);
       }
       await use();
     },
