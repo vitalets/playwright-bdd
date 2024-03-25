@@ -11,14 +11,13 @@ const generatedTar = `playwright-bdd-${pkg.version}.tgz`;
 export function buildAndInstallPlaywrightBdd({ isCI = false } = {}) {
   try {
     runCmd('npm run build');
-    runCmd('npm pack');
+    runCmd('npm pack --loglevel=error');
     if (isCI) {
       // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
       fs.rmSync('node_modules', { recursive: true });
-      // on CI install globally, b/c install from tar.gz locally does not setup .bin
-      // see: https://stackoverflow.com/questions/72368342/is-there-a-way-to-get-npm-install-to-install-bin-executables-in-the-local-node
-      runCmd(`npm install --global --omit=dev ${generatedTar}`);
-      runCmd(`npm install --no-save @playwright/test @cucumber/cucumber`);
+      // running npm install <tarball> with --no-save does not create .bin
+      runCmd(`npm install --omit=dev ${generatedTar}`);
+      runCmd(`npm install @playwright/test @cucumber/cucumber`);
     } else {
       runCmd(`npm install --no-save ${generatedTar}`);
     }
@@ -28,5 +27,6 @@ export function buildAndInstallPlaywrightBdd({ isCI = false } = {}) {
 }
 
 function runCmd(cmd: string) {
+  console.log(`Running: cwd`); // eslint-disable-line no-console
   execSync(cmd, { stdio: 'inherit' });
 }
