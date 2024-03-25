@@ -20,7 +20,7 @@
  * If test uses steps from classes A and C, but @fixture tag is D:
  * -> error, b/c A has 2 possible fixtures.
  */
-import { PomNode, getPomNodeByFixtureName } from '../stepDefinitions/decorators/class';
+import { PomNode, getPomNodeByFixtureName } from '../steps/decorators/class';
 import { exit } from '../utils/exit';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';

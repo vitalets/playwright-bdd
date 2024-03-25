@@ -11,13 +11,13 @@ import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
 import { extractCucumberConfig, BDDConfig } from '../config';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
-import { appendDecoratorSteps } from '../stepDefinitions/decorators/steps';
+import { appendDecoratorSteps } from '../steps/decorators/steps';
 import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
-import { hasCustomTest } from '../stepDefinitions/createBdd';
+import { hasCustomTest } from '../steps/createBdd';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
 

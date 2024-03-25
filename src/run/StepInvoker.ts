@@ -9,7 +9,7 @@ import { findStepDefinition } from '../cucumber/loadSteps';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
-import { getStepCode } from '../stepDefinitions/defineStep';
+import { getStepCode } from '../steps/defineStep';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { isEnglish } from '../config/lang';
 

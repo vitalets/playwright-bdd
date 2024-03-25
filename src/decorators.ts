@@ -1,5 +1,5 @@
-import { Fixture } from './stepDefinitions/decorators/class';
-import { createStepDecorator } from './stepDefinitions/decorators/steps';
+import { Fixture } from './steps/decorators/class';
+import { createStepDecorator } from './steps/decorators/steps';
 
 export { Fixture };
 export const Given = createStepDecorator('Given');

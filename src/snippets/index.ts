@@ -9,7 +9,7 @@ import { TestFile, UndefinedStep } from '../gen/testFile';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
 import { logger } from '../utils/logger';
-import { getStepConfig, isDecorator, isPlaywrightStyle } from '../stepDefinitions/stepConfig';
+import { getStepConfig, isDecorator, isPlaywrightStyle } from '../steps/stepConfig';
 import { ISupportCodeLibrary } from '../cucumber/types';
 
 export class Snippets {
