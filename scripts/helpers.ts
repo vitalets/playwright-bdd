@@ -8,12 +8,22 @@ import pkg from '../package.json';
 
 const generatedTar = `playwright-bdd-${pkg.version}.tgz`;
 
-export function buildAndInstallPlaywrightBdd() {
+export function buildAndInstallPlaywrightBdd({ removeNodeModules = false } = {}) {
   try {
-    execSync('npm run build', { stdio: 'inherit' });
-    execSync('npm pack', { stdio: 'inherit' });
-    execSync(`npm install --no-save ${generatedTar}`, { stdio: 'inherit' });
+    runCmd('npm run build');
+    runCmd('npm pack');
+    if (removeNodeModules) {
+      fs.rmSync('node_modules', { recursive: true });
+    }
+    runCmd(`npm install --omit=dev --no-save ${generatedTar}`);
+    if (removeNodeModules) {
+      runCmd(`npm install --no-save @playwright/test @cucumber/cucumber`);
+    }
   } finally {
     fs.rmSync(generatedTar, { force: true });
   }
+}
+
+function runCmd(cmd: string) {
+  execSync(cmd, { stdio: 'inherit' });
 }

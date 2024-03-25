@@ -1,10 +1,10 @@
 /**
  * Build and run examples
  * npm run examples
- * npm run examples -- basic
- * npm run examples -- cucumber-style
- * npm run examples -- decorators
- * npm run examples -- esm
+ * npm run examples basic
+ * npm run examples cucumber-style
+ * npm run examples decorators
+ * npm run examples esm
  */
 
 import path from 'node:path';
@@ -14,7 +14,10 @@ import { buildAndInstallPlaywrightBdd } from './helpers';
 const dir = process.argv[2];
 const dirs = dir ? [dir] : ['basic', 'cucumber-style', 'decorators', 'esm'];
 
-buildAndInstallPlaywrightBdd();
+buildAndInstallPlaywrightBdd({
+  // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
+  removeNodeModules: Boolean(process.env.CI),
+});
 runExamples();
 
 function runExamples() {
