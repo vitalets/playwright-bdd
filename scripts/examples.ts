@@ -15,8 +15,7 @@ const dir = process.argv[2];
 const dirs = dir ? [dir] : ['basic', 'cucumber-style', 'decorators', 'esm'];
 
 buildAndInstallPlaywrightBdd({
-  // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
-  removeNodeModules: Boolean(process.env.CI),
+  isCI: Boolean(process.env.CI),
 });
 runExamples();
 
