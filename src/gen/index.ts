@@ -55,6 +55,17 @@ export class TestFilesGenerator {
     return this.supportCodeLibrary.stepDefinitions;
   }
 
+  // todo: combine with extractSteps
+  async extractUnusedSteps() {
+    await this.loadCucumberConfig();
+    await Promise.all([this.loadFeatures(), this.loadSteps()]);
+    this.buildFiles();
+    return this.supportCodeLibrary.stepDefinitions.filter((stepDefinition) => {
+      const isUsed = this.files.some((file) => file.usedStepDefinitions.has(stepDefinition));
+      return !isUsed;
+    });
+  }
+
   private async loadCucumberConfig() {
     const environment = { cwd: getPlaywrightConfigDir() };
     const { runConfiguration } = await loadCucumberConfig(
@@ -69,11 +80,14 @@ export class TestFilesGenerator {
 
   private async loadFeatures() {
     const cwd = getPlaywrightConfigDir();
-    const { paths, defaultDialect } = this.runConfiguration.sources;
-    this.logger.log(`Loading features from: ${paths.join(', ')}`);
+    const { defaultDialect } = this.runConfiguration.sources;
     const { featurePaths } = await resovleFeaturePaths(this.runConfiguration, { cwd });
-    await this.featuresLoader.load(featurePaths, { relativeTo: cwd, defaultDialect });
-    this.handleParseErrors();
+    this.logger.log(`Loading features from paths (${featurePaths.length}):`);
+    featurePaths.forEach((featurePath) => this.logger.log(featurePath));
+    if (featurePaths.length) {
+      await this.featuresLoader.load(featurePaths, { relativeTo: cwd, defaultDialect });
+      this.handleParseErrors();
+    }
     this.logger.log(`Loaded features: ${this.featuresLoader.getDocumentsCount()}`);
   }
 

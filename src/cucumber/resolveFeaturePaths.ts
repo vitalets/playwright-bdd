@@ -22,7 +22,7 @@ import { resolvePackageRoot } from '../utils';
 export async function resovleFeaturePaths(
   runConfiguration: IRunConfiguration,
   environment: IRunEnvironment = {},
-) {
+): Promise<{ featurePaths: string[]; unexpandedFeaturePaths: string[] }> {
   const { cwd, stderr, debug } = mergeEnvironment(environment);
   const logger: ILogger = new ConsoleLogger(stderr, debug);
   const cucumberRoot = resolvePackageRoot('@cucumber/cucumber');

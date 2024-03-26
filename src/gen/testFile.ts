@@ -70,6 +70,7 @@ export class TestFile {
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
   public featureUri: string;
+  public usedStepDefinitions = new Set<StepDefinition>();
 
   constructor(private options: TestFileOptions) {
     this.formatter = new Formatter(options.config);
@@ -331,6 +332,8 @@ export class TestFile {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
       return this.getMissingStep(enKeyword, keywordType, pickleStep);
     }
+
+    this.usedStepDefinitions.add(stepDefinition);
 
     // for cucumber-style stepConfig is undefined
     const stepConfig = getStepConfig(stepDefinition);

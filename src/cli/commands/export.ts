@@ -11,17 +11,24 @@ import { TestFilesGenerator } from '../../gen';
 
 const logger = new Logger({ verbose: true });
 
+type Opts = ConfigOption & {
+  unusedSteps?: boolean;
+};
+
 export const exportCommand = new Command('export')
-  .description('Prints all step definitions')
+  .description('Prints step definitions')
   .addOption(configOption)
-  .action(async (opts: ConfigOption) => {
+  .option('--unused-steps', 'Output only unused steps')
+  .action(async (opts: Opts) => {
     const { resolvedConfigFile } = await loadPlaywrightConfig(opts.config);
-    logger.log(
-      `List of all steps found by config: ${path.relative(process.cwd(), resolvedConfigFile)}\n`,
-    );
+    logger.log(`Using config: ${path.relative(process.cwd(), resolvedConfigFile)}`);
     const configs = Object.values(getEnvConfigs());
     assertConfigsCount(configs);
-    await showStepsForConfigs(configs);
+    if (opts.unusedSteps) {
+      await showUnusedStepsForConfigs(configs);
+    } else {
+      await showStepsForConfigs(configs);
+    }
   });
 
 async function showStepsForConfigs(configs: BDDConfig[]) {
@@ -35,6 +42,20 @@ async function showStepsForConfigs(configs: BDDConfig[]) {
 
   await Promise.all(tasks);
 
+  logger.log(`List of all steps (${steps.size}):`);
+  steps.forEach((stepText) => logger.log(stepText));
+}
+
+async function showUnusedStepsForConfigs(configs: BDDConfig[]) {
+  const steps = new Set<string>();
+  const tasks = configs.map(async (config) => {
+    const stepDefinitions = await new TestFilesGenerator(config).extractUnusedSteps();
+    stepDefinitions.forEach((s) => steps.add(`* ${getStepText(s)}`));
+  });
+
+  await Promise.all(tasks);
+
+  logger.log(`List of unused steps (${steps.size}):`);
   steps.forEach((stepText) => logger.log(stepText));
 }
 

@@ -6,7 +6,8 @@ const testDir = new TestDir(import.meta);
 
 test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name, `${BDDGEN_CMD} --verbose`);
-  expect(stdout).toContain('Loading features from: features/*.feature');
+  expect(stdout).toContain('Loading features from paths (1):');
+  expect(stdout).toContain(path.normalize('cli-option-verbose/features/sample.feature'));
   expect(stdout).toContain('Loading steps from: steps.ts');
   expect(stdout).toContain('Clearing output dir:');
   expect(stdout).toContain(

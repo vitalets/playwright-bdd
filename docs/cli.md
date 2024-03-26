@@ -38,17 +38,17 @@ $ npx bddgen export
 ```
 Example output:
 ```
-List of all steps found by config: playwright.config.ts
+Using config: playwright.config.ts
+List of all steps (4):
 
 * Given I am on todo page
 * When I add todo {string}
 * When I remove todo {string}
 * Then visible todos count is {int}
 ```
-To run it with custom Playwright config use `--config` option:
-```
-npx bddgen export --config path/to/playwright.config.ts
-```
+#### Options
+* `--config` - path to Playwright config
+* `--unused-step` - output only unused steps
 
 ## `bddgen env`
 Displays info about current environment:
