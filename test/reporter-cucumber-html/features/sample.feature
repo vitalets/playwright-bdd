@@ -72,11 +72,11 @@ Feature: rich feature
       ```
       some text
       ```
-
   Scenario: Scenario with attachments
     Given attach text
     And attach image inline
     And attach image as file
+    And attach stdout
 
   Scenario: Scenario with all keywords
     Given Action 1

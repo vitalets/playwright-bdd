@@ -80,6 +80,8 @@ export class AttachmentMapper {
     });
     this.unusedAttachments.push(...allAttachments);
     this.mapUnusedAttachments();
+    this.mapStdoutAttachments('stdout');
+    this.mapStdoutAttachments('stderr');
   }
 
   private mapAttachment(attachmentStep: pw.TestStep, allAttachments: PwAttachment[]) {
@@ -105,12 +107,30 @@ export class AttachmentMapper {
   private mapUnusedAttachments() {
     if (!this.unusedAttachments.length) return;
     // map unused attachments to the 'After Hooks' step
-    const afterHooksRoot = getHooksRootPwStep(this.result, 'after');
-    if (!afterHooksRoot) {
-      throw new Error(`Can not find after hooks root to attach unused attachments.`);
-    }
+    const afterHooksRoot = this.getAfterHooksRoot();
     const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
     stepAttachments.push(...this.unusedAttachments);
+  }
+
+  private mapStdoutAttachments(name: 'stdout' | 'stderr') {
+    // map stdout / stderr to the 'After Hooks' step
+    if (!this.result[name]?.length) return;
+    const body = this.result[name].join('');
+    const afterHooksRoot = this.getAfterHooksRoot();
+    const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
+    stepAttachments.push({
+      name,
+      contentType: 'text/plain',
+      body: Buffer.from(body),
+    });
+  }
+
+  private getAfterHooksRoot() {
+    const afterHooksRoot = getHooksRootPwStep(this.result, 'after');
+    if (!afterHooksRoot) {
+      throw new Error(`Can not find after hooks root.`);
+    }
+    return afterHooksRoot;
   }
 }
 

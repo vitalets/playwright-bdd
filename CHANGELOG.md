@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* feature: show stdout / stderr in Cucumber reports, [#116](https://github.com/vitalets/playwright-bdd/issues/116)
 * feature: call step from step, [#110](https://github.com/vitalets/playwright-bdd/issues/110)
 
 ## 6.0.3
