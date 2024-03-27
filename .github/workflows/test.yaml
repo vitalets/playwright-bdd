@@ -22,7 +22,8 @@ jobs:
             const { versions } = JSON.parse(info);
             return versions
               .filter((v) => v.match(/\.0$/) && v >= minimalVersion)
-              .map((v) => v.replace(/\.0$/, ''));
+              .map((v) => v.replace(/\.0$/, ''))
+              .concat([ 'beta' ]);
     outputs:
       versions: ${{ steps.get-versions.outputs.result }}
 
