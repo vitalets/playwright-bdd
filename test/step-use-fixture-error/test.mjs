@@ -1,23 +1,19 @@
-import { test, TestDir, execPlaywrightTestWithError } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTestWithError, DEFAULT_CMD } from '../helpers.mjs';
 
 const testDir = new TestDir(import.meta);
 
-test(`error: useFixture with variable`, () => {
+test(`${testDir.name} (variable)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     `this.useFixture() can accept only static string as an argument`,
-    {
-      env: { STEPS: 'steps.ts' },
-    },
+    `${DEFAULT_CMD} --project=variable`,
   );
 });
 
-test(`error: useFixture with template literal`, () => {
+test(`${testDir.name} (template-literal)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     `this.useFixture() can accept only static string as an argument`,
-    {
-      env: { STEPS: 'steps2.ts' },
-    },
+    `${DEFAULT_CMD} --project=template-literal`,
   );
 });
