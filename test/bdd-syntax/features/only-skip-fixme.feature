@@ -1,5 +1,3 @@
-# This file is excluded from playwright run because it contains .only
-# Generated file is tested with only-skip-fixme-test.feature
 @only
 Feature: only-skip-fixme
 
@@ -11,9 +9,10 @@ Feature: only-skip-fixme
   Scenario: Only several tags
       Given State 0    
 
+  # @skip has precendence over feature level @only
   @skip
   Scenario: Skip
-      Given State 1  
+      Given Skipped step
 
   # in case of several system tags, @only takes precendence
   @only @skip
@@ -22,7 +21,7 @@ Feature: only-skip-fixme
 
   @fixme
   Scenario: Fixme
-      Given State 3
+      Given Skipped step
 
   @only
 	Scenario Outline: Check doubled
@@ -41,6 +40,7 @@ Feature: only-skip-fixme
 
   @skip
 	Scenario Outline: Skipped scenario outline
+    Given Skipped step
     Given State <value>
 
 	Examples:

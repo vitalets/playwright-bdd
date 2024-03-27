@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { resolvePackageRoot } from '../utils';
+import { getPackageVersion, resolvePackageRoot } from '../utils';
 
 // cache playwright root
 let playwrightRoot = '';
+
+export const playwrightVersion = getPackageVersion('@playwright/test');
 
 /**
  * Requires Playwright's internal module that is not exported via package.exports.

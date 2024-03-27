@@ -7,11 +7,14 @@ import fs from 'node:fs';
 import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
 import xml2js from 'xml2js';
+import { expect } from '@playwright/test';
 
 export { test };
 export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
 export const PLAYWRIGHT_CMD = 'npx playwright test';
 export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
+
+export const playwrightVersion = getPackageVersion('@playwright/test');
 
 /**
  * Test name = test dir from 'test/<xxx>/test.mjs'
@@ -151,6 +154,22 @@ export class TestDir {
   getAllFiles(relativePath) {
     const absPath = this.getAbsPath(relativePath);
     return fg.sync(path.join(absPath, '**')).map((file) => path.relative(absPath, file));
+  }
+
+  expectFileContains(relativePath, substr) {
+    const substrList = Array.isArray(substr) ? substr : [substr];
+    const fileContents = this.getFileContents(relativePath);
+    substrList.forEach((substr) => {
+      expect(fileContents).toContain(substr);
+    });
+  }
+
+  expectFileNotExist(relativePath) {
+    assert.equal(
+      this.isFileExists(relativePath),
+      false,
+      `Expected file does not exist: ${relativePath}`,
+    );
   }
 }
 

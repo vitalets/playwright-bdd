@@ -87,3 +87,5 @@ Then<BddWorld & Record<string, string>>(
 Then<BddWorld>('Tags are {string}', async function (tags: string) {
   expect(this.tags.join(' ')).toEqual(tags);
 });
+
+Then<BddWorld>('Skipped step', () => {});

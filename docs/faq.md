@@ -13,7 +13,7 @@ Moreover, it provides more transparency on how Playwright **see** your BDD scena
 ### Is it possible to apply `test.use()` in a generated test file?
 Test files generation is a fully automatic process, no manual interceptions allowed.
 But instead of applying `test.use` (that has impact to all tests in a file)
-you can [utilize tags](writing-steps/playwright-style.md#using-tags) with custom fixtures.
+you can [utilize tags](writing-steps/playwright-style.md#tags) with custom fixtures.
 That is more flexible approach and allows to selectively change settings for a particular scenario/test.
 
 ### Is it possible to run BDD tests with a single command? 

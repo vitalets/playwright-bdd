@@ -27,7 +27,10 @@ After adding tags to your scenarios you can generate and run subset of tests usi
 ```
 npx bddgen --tags "@desktop and not @slow" && npx playwright test
 ```
-Also you can [access tags inside step definitions](writing-steps/playwright-style.md#using-tags).
+
+?> Since Playwright **1.42** Cucumber tags are mapped to [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests)
+
+Also you can [access tags inside step definitions](writing-steps/playwright-style.md#tags).
 
 ## Run single feature
 Use `@only` tag to run a single feature / scenario:

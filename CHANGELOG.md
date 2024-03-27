@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* feature: support new Playwright tags [#98](https://github.com/vitalets/playwright-bdd/issues/98)
 * feature: add option `--unused-steps` to `bddgen export`, [#113](https://github.com/vitalets/playwright-bdd/issues/113)
 * feature: show stdout / stderr in Cucumber reports, [#116](https://github.com/vitalets/playwright-bdd/issues/116)
 * feature: call step from step, [#110](https://github.com/vitalets/playwright-bdd/issues/110)

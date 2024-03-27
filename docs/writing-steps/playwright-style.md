@@ -96,8 +96,8 @@ Given('I do something', async ({ browserName, $test }) => {
 });
 ```
 
-## Using tags
-You can access [Cucumber tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tags) in step definitions by special `$tags` fixture:
+## Tags
+You can access tags in step definitions by special `$tags` fixture:
 
 ```gherkin
 @slow
@@ -119,14 +119,20 @@ The most powerful usage of `$tags` is in your custom fixtures.
 
 ##### Example 1
 Run scenario only in Firefox if it has `@firefox` tag:
+```gherkin
+Feature: some feature
+    
+    @firefox
+    Scenario: Runs only in Firefox
+      ...
+```
+Custom fixture:
 ```ts
 import { test as base } from 'playwright-bdd';
 
 export const test = base.extend<{ firefoxOnly: void }>({
   firefoxOnly: [async ({ $tags }, use, testInfo) => {
-    if ($tags.includes('@firefox')) {
-      testInfo.skip();
-    }
+    if ($tags.includes('@firefox')) testInfo.skip();
     await use();
   }, { auto: true }],
 });
@@ -160,22 +166,6 @@ export const test = base.extend({
     await use(viewport);
   }
 });
-```
-
-### Playwright tags
-Please note, that **Cucumber tags are not automatically appended to the test title** for Playwright. 
-This is done intentionally to keep test titles unchanged. Waiting for Playwright tags API, see [microsoft/playwright#23180](https://github.com/microsoft/playwright/issues/23180).
-
-If you need [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests) you can manually append them to feature/scenario name:
-```gherkin
-Feature: Playwright site @desktop
-    
-    Scenario: Check title @slow
-      ...
-```
-And then run with Playwright option [`--grep`](https://playwright.dev/docs/test-annotations#tag-tests):
-```
-npx bddgen && npx playwright test --grep @desktop
 ```
 
 ## Using `DataTables`

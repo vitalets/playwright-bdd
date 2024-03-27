@@ -9,6 +9,9 @@ import { TestNode } from './testNode';
 import { BddWorldFixtures } from '../run/bddWorld';
 import { TestMetaBuilder } from './testMeta';
 import { toPosixPath } from '../utils';
+import { playwrightVersion } from '../playwright/utils';
+
+const supportsTags = playwrightVersion >= '1.42.0';
 
 export type ImportTestFrom = {
   file: string;
@@ -51,7 +54,11 @@ export class Formatter {
   test(node: TestNode, fixtures: Set<string>, children: string[]) {
     const fixturesStr = [...fixtures].join(', ');
     const title = this.quoted(node.title);
-    const firstLine = `test${this.getSubFn(node)}(${title}, async ({ ${fixturesStr} }) => {`;
+    const tags =
+      supportsTags && node.tags.length
+        ? `{ tag: [${node.tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
+        : '';
+    const firstLine = `test${this.getSubFn(node)}(${title}, ${tags}async ({ ${fixturesStr} }) => {`;
     if (!children.length) return [`${firstLine}});`, ''];
     return [firstLine, ...children.map(indent), `});`, ''];
   }

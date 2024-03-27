@@ -177,7 +177,7 @@ Before('@mobile and not @slow', async function () {
 ```
 
 Hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
-You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/playwright-style.md#using-tags) and any built-in or custom fixtures. 
+You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/playwright-style.md#tags) and any built-in or custom fixtures. 
 
 > This behavior differs from Cucumber where `Before / After` accepts [another object](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/api_reference.md#afteroptions-fn) as a first argument.
 
