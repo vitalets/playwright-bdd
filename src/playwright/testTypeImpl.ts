@@ -2,10 +2,11 @@
  * Helpers to deal with Playwright test internal stuff.
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/testType.ts
  */
-import { test, Fixtures } from '@playwright/test';
+import { test, Fixtures, TestInfo } from '@playwright/test';
 import { Location } from '@playwright/test/reporter';
 import { getSymbolByName } from '../utils';
 import { TestTypeCommon } from './types';
+import { playwrightVersion } from './utils';
 
 type FixturesWithLocation = {
   fixtures: Fixtures;
@@ -26,6 +27,14 @@ function getTestImpl(test: TestTypeCommon) {
   return test[testTypeSymbol] as any;
 }
 
+// Partial copy of Playwright's TestStepInternal
+// See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L32
+interface TestStepInternal {
+  title: string;
+  category: 'hook' | 'fixture' | 'test.step' | string;
+  location?: Location;
+}
+
 /**
  * Run step with location pointing to Given, When, Then call.
  */
@@ -36,13 +45,41 @@ export async function runStepWithCustomLocation(
   location: Location,
   body: () => unknown,
 ) {
-  const testInfo = test.info();
+  // Since PW 1.43 testInfo._runAsStep was replaced with a more complex logic.
+  // To run step with a custom location, we hijack testInfo._addStep()
+  // so that it appends location for the bdd step calls.
+  // Finally we call test.step(), that internally invokes testInfo._addStep().
+  // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/common/testType.ts#L262
+  // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/worker/testInfo.ts#L247
+  if (playwrightVersion >= '1.43.0') {
+    const testInfo = test.info() as TestInfo & {
+      _addStep: (data: TestStepInternal) => unknown;
+      bddStepLocations: Map<string, Location>;
+    };
 
-  // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/common/testType.ts#L221
-  // @ts-expect-error _runAsStep is hidden from public
-  return testInfo._runAsStep({ category: 'test.step', title: stepText, location }, async () => {
-    return await body();
-  });
+    if (!testInfo.bddStepLocations) {
+      testInfo.bddStepLocations = new Map();
+      const origAddStep = testInfo._addStep;
+      testInfo._addStep = function (data: TestStepInternal) {
+        if (data.category === 'test.step' && this.bddStepLocations.has(data.title)) {
+          data.location = this.bddStepLocations.get(data.title);
+        }
+        return origAddStep.call(this, data);
+      };
+    }
+
+    testInfo.bddStepLocations.set(stepText, location);
+    return test.step(stepText, body);
+  } else {
+    const testInfo = test.info() as TestInfo & {
+      // testInfo._runAsStep is not public
+      // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/common/testType.ts#L221
+      _runAsStep: (data: TestStepInternal, fn: () => unknown) => unknown;
+    };
+    return testInfo._runAsStep({ category: 'test.step', title: stepText, location }, async () => {
+      return await body();
+    });
+  }
 }
 
 /**
