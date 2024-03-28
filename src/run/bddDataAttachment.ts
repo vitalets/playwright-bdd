@@ -4,12 +4,11 @@
 import { StepMatchArgumentsList } from '@cucumber/messages';
 import { BddWorld } from './bddWorld';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { PlaywrightLocation } from '../playwright/getLocationInFile';
 import { createTestStep } from '../cucumber/createTestStep';
 import { stringifyLocation } from '../utils';
 import { TestMeta } from '../gen/testMeta';
 import { TestResult } from '@playwright/test/reporter';
-import { PwAttachment } from '../playwright/types';
+import { PlaywrightLocation, PwAttachment } from '../playwright/types';
 
 const BDD_DATA_ATTACHMENT_NAME = '__bddData';
 

@@ -12,7 +12,7 @@ import {
   TestType,
 } from '@playwright/test';
 import { BddFixtures } from '../run/bddFixtures';
-import { TestResult } from '@playwright/test/reporter';
+import { TestResult, Location as PlaywrightLocation } from '@playwright/test/reporter';
 
 export type KeyValue = { [key: string]: any };
 
@@ -33,3 +33,8 @@ export type CustomFixtures<T extends KeyValue> = Omit<
 >;
 
 export type PwAttachment = TestResult['attachments'][0];
+
+// cucumber has also Location type, but:
+// - it does not contain file
+// - column is optional
+export { PlaywrightLocation };

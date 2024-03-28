@@ -9,10 +9,10 @@
 import { TestInfo } from '@playwright/test';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { BddWorld } from '../run/bddWorld';
-import { KeyValue } from '../playwright/types';
+import { KeyValue, PlaywrightLocation } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
-import { PlaywrightLocation, getLocationByOffset } from '../playwright/getLocationInFile';
+import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 
 type ScenarioHookOptions = {

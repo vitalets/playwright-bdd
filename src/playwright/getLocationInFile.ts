@@ -1,12 +1,6 @@
 import url from 'url';
 import { requirePlaywrightModule } from './utils';
-
-// cucumber has also Location type, but it does not contain file and column is optional.
-export interface PlaywrightLocation {
-  file: string;
-  line: number;
-  column: number;
-}
+import { PlaywrightLocation } from './types';
 
 /**
  * Finds first frame in the callstack that matches provided file.
