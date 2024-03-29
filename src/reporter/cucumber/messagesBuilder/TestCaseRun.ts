@@ -78,10 +78,11 @@ export class TestCaseRun {
   private getBddData() {
     const bddData = getBddDataFromTestResult(this.result);
     if (!bddData) {
+      const attachmentNames = this.result.attachments.map((a) => a.name);
       throw new Error(
         [
-          `BDD data attachment is not found for test: ${this.test.title}`,
-          `Did you set enrichReporterData: true in the Playwright config?`,
+          `BDD data attachment is not found for test "${this.test.title}".`,
+          `Existing attachments (${attachmentNames.length}): ${attachmentNames.join(', ')}`,
           '',
         ].join('\n'),
       );
