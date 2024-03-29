@@ -9,7 +9,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { collectStepsWithCategory, isEmptyDuration } from './pwStepUtils';
+import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import {
   BddDataAttachment,
   BddDataStep,
@@ -52,6 +52,7 @@ export class TestCaseRun {
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
+    // console.error(11, this.result);
     this.id = this.generateTestRunId();
     this.bddData = this.getBddData();
     this.projectInfo = getProjectInfo(this.test);
@@ -92,8 +93,8 @@ export class TestCaseRun {
     const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
     return this.bddData.steps.map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
-      if (pwStep?.error) this.errorSteps.add(pwStep);
-      this.handleTimeoutedStep(pwStep);
+      this.registerErrorStep(pwStep);
+      this.registerTimeoutedStep(pwStep);
       return { bddDataStep, pwStep };
     });
   }
@@ -102,10 +103,15 @@ export class TestCaseRun {
     return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
   }
 
+  registerErrorStep(pwStep?: pw.TestStep) {
+    if (pwStep?.error) this.errorSteps.add(pwStep);
+  }
+
   // eslint-disable-next-line complexity
-  private handleTimeoutedStep(pwStep?: pw.TestStep) {
+  registerTimeoutedStep(pwStep?: pw.TestStep) {
     if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
-    if (isEmptyDuration(pwStep) || pwStep.error) {
+    const { error } = pwStep;
+    if (isUnknownDuration(pwStep) || this.result.errors.some((e) => e.message === error?.message)) {
       this.timeoutedStep = pwStep;
     }
   }

@@ -72,13 +72,15 @@ Feature: rich feature
       ```
       some text
       ```
+
   Scenario: Scenario with attachments
     Given attach text
     And attach image inline
     And attach image as file
     And attach stdout
 
-  Scenario: Scenario with all keywords
+  @success-before-hook @success-after-hook
+  Scenario: Scenario with all keywords and success hooks
     Given Action 1
     And Action 2
     When Action 3

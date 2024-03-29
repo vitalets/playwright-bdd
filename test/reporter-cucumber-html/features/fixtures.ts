@@ -42,17 +42,6 @@ export const test = base.extend<{
       throw new Error('error in failingAfterFixtureWithStep');
     });
   },
-  setTestTimeout: [
-    async ({}, use, testInfo) => {
-      if (testInfo.title.includes('timeout')) {
-        // Don't decreese this timeout.
-        // Otherwise we get "test timeout" during initialization and it breaks tests
-        testInfo.setTimeout(2000);
-      }
-      await use();
-    },
-    { auto: true },
-  ],
   timeoutedBeforeFixture: async ({}, use, testInfo) => {
     await new Promise((r) => setTimeout(r, testInfo.timeout + 100));
     await use();

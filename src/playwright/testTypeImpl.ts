@@ -49,26 +49,22 @@ export async function runStepWithCustomLocation(
   // To run step with a custom location, we hijack testInfo._addStep()
   // so that it appends location for the bdd step calls.
   // Finally we call test.step(), that internally invokes testInfo._addStep().
+  // See: https://github.com/microsoft/playwright/issues/30160
   // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/common/testType.ts#L262
   // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/worker/testInfo.ts#L247
-  if (playwrightVersion >= '1.43.0') {
+  if (playwrightVersion >= '1.39.0') {
     const testInfo = test.info() as TestInfo & {
       _addStep: (data: TestStepInternal) => unknown;
-      bddStepLocations: Map<string, Location>;
     };
 
-    if (!testInfo.bddStepLocations) {
-      testInfo.bddStepLocations = new Map();
-      const origAddStep = testInfo._addStep;
-      testInfo._addStep = function (data: TestStepInternal) {
-        if (data.category === 'test.step' && this.bddStepLocations.has(data.title)) {
-          data.location = this.bddStepLocations.get(data.title);
-        }
-        return origAddStep.call(this, data);
-      };
-    }
+    // here we rely on that testInfo._addStep is called synchronously in test.step()
+    const origAddStep = testInfo._addStep;
+    testInfo._addStep = function (data: TestStepInternal) {
+      data.location = location;
+      testInfo._addStep = origAddStep;
+      return origAddStep.call(this, data);
+    };
 
-    testInfo.bddStepLocations.set(stepText, location);
     return test.step(stepText, body);
   } else {
     const testInfo = test.info() as TestInfo & {

@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
-const { Given, Before } = createBdd(test);
+const { Given, Before, After } = createBdd(test);
 
 Before({ name: 'failing named before hook', tags: '@failing-named-hook' }, async ({ page }) => {
   await expect(page).toHaveTitle('Some title1');
@@ -48,3 +48,7 @@ Given('step that uses timeouted before fixture', async ({ timeoutedBeforeFixture
 Given('step that uses timeouted after fixture', async ({ timeoutedAfterFixture }) => {
   timeoutedAfterFixture;
 });
+
+Before({ name: 'success before hook', tags: '@success-before-hook' }, async ({}) => {});
+
+After({ name: 'success after hook', tags: '@success-after-hook' }, async ({}) => {});

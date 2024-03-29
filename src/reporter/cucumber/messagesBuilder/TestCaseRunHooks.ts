@@ -7,7 +7,7 @@ import {
   getHooksRootPwStep,
   collectStepsDfs,
   findDeepestStepWithError,
-  findDeepestStepWithEmptyDuration,
+  findDeepestStepWithUnknownDuration,
 } from './pwStepUtils';
 import { ExecutedStepInfo, TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
@@ -32,8 +32,8 @@ export class TestCaseRunHooks {
     this.setRootStep();
     this.setCandidateSteps();
     this.addStepsWithName();
-    this.addStepWithTimeout();
     this.addStepWithError();
+    this.addStepWithTimeout();
     this.addStepsWithAttachment();
     this.excludeMainSteps(mainSteps);
     this.setExecutedHooks();
@@ -94,7 +94,8 @@ export class TestCaseRunHooks {
       this.hookSteps.add(stepWithError);
       // in Playwright error is inherited by all parent steps,
       // but we want to show it once (in the deepest step)
-      this.testCaseRun.errorSteps.add(stepWithError);
+      this.testCaseRun.registerErrorStep(stepWithError);
+      this.testCaseRun.registerTimeoutedStep(stepWithError);
     }
   }
 
@@ -104,8 +105,8 @@ export class TestCaseRunHooks {
     const timeoutedStep =
       this.hookType === 'before'
         ? // Timeouted steps have duration = -1 in PW <= 1.39 and no error field.
-          // In PW > 1.39 timeouted tests have '.error' populated
-          findDeepestStepWithEmptyDuration(this.rootPwStep)
+          // In PW > 1.39 timeouted steps have '.error' populated
+          findDeepestStepWithUnknownDuration(this.rootPwStep)
         : // Timeouted after hooks don't have duration = -1,
           // so there is no way to find which exactly fixture timed out.
           // We mark root 'After Hooks' step as timeouted.

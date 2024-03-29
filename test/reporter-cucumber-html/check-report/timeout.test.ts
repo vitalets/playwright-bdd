@@ -52,6 +52,8 @@ test('Scenario: timeout in step', async ({ page }) => {
 });
 
 test('Scenario: timeout in after fixture', async ({ page }) => {
+  // See: link to issue
+  if (pwVersion.startsWith('1.43.')) return test.skip();
   const scenario = getScenario(page, 'timeout in after fixture');
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',

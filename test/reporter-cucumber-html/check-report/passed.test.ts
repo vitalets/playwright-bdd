@@ -39,10 +39,11 @@ test('Scenario: Scenario with attachments', async ({ page }) => {
   ]);
 });
 
-test('Scenario: Scenario with all keywords', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with all keywords');
+test('Scenario: Scenario with all keywords and success hooks', async ({ page }) => {
+  const scenario = getScenario(page, 'Scenario with all keywords and success hooks');
   await expect(scenario.getSteps('passed')).toHaveCount(7);
-  await expect(scenario.getSteps()).toContainText([
+  await expect(scenario.getSteps()).toHaveText([
+    '', // before hook
     'GivenAction 1',
     'AndAction 2',
     'WhenAction 3',
@@ -50,6 +51,7 @@ test('Scenario: Scenario with all keywords', async ({ page }) => {
     'ThenAction 5',
     'ButAction 6',
     '*Action 7',
+    '', // after hook
   ]);
 });
 
