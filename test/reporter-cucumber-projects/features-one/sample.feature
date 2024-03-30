@@ -9,7 +9,7 @@ Feature: feature one
       Given State <start>
       And State <end>
       
-      Examples: sdfsdf
+      Examples:
         | start | end |
         |    2  |   4 |
         |    3  |   6 |
