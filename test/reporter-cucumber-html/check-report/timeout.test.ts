@@ -24,11 +24,11 @@ test('Scenario: timeout in before fixture', async ({ page }) => {
   // in that case there are two errors in test report.
   expect(await scenario.getSteps('failed').count()).toBeGreaterThan(0);
   await expect(scenario.getSteps('skipped')).toHaveCount(3);
-  await expect(scenario.getError()).toContainText(
+  await expect(scenario.getErrors()).toContainText([
     // here can be two different error messages
     // eslint-disable-next-line max-len
     /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
-  );
+  ]);
 });
 
 test('Scenario: timeout in step', async ({ page }) => {
@@ -45,9 +45,9 @@ test('Scenario: timeout in step', async ({ page }) => {
   expect(await scenario.getSteps('passed').count()).toBeGreaterThan(0);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getError()).toContainText(/Test timeout of \d+ms exceeded/);
+  await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
   if (!pwVersion.startsWith('1.39.')) {
-    await expect(scenario.getError()).toContainText('page.waitForTimeout');
+    await expect(scenario.getErrors()).toContainText(['page.waitForTimeout']);
   }
 });
 
@@ -64,10 +64,10 @@ test('Scenario: timeout in after fixture', async ({ page }) => {
   await expect(scenario.getSteps()).toContainText(['screenshot']);
   await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getError()).toContainText('Test finished within timeout');
-  await expect(scenario.getError()).toContainText(
+  await expect(scenario.getErrors()).toContainText(['Test finished within timeout']);
+  await expect(scenario.getErrors()).toContainText([
     'but tearing down "timeoutedAfterFixture" ran out of time',
-  );
+  ]);
 });
 
 test('Scenario: timeout in step and in after fixture', async ({ page }) => {
@@ -81,5 +81,5 @@ test('Scenario: timeout in step and in after fixture', async ({ page }) => {
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getError()).toContainText(/Test timeout of \d+ms exceeded/);
+  await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
 });

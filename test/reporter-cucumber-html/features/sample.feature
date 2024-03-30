@@ -59,6 +59,12 @@ Feature: rich feature
     Given timeouted step
     When Action 1
     Given step that uses timeouted after fixture
+  
+  Scenario: soft assertions
+    Given failing soft assertion "foo"
+    And Action 1
+    And failing soft assertion "bar"
+    And Action 2
 
   # ----- Success scenarios ------
   Scenario: Scenario with data table

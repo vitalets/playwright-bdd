@@ -78,8 +78,12 @@ export class Scenario {
     return this.root.locator('details');
   }
 
-  getError() {
-    return this.getSteps().locator('div > pre').first();
+  getErrors() {
+    return this.getSteps()
+      .locator('div > pre')
+      .filter({
+        hasText: /error|timeout/i,
+      });
   }
 
   getTags() {

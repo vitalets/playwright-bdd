@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
 
 test('header info', async ({ page }) => {
   // after changing this counts you should also update test/reporter-cucumber-junit
-  let failed = 13;
+  let failed = 14;
   let passed = 7;
 
   // See: link to issue

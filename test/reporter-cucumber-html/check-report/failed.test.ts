@@ -12,21 +12,21 @@ test.beforeEach(async ({ page }) => {
 test('Scenario: Failing by step', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by step');
   await expect(scenario.getSteps()).toContainText(['Givenfailing step', 'screenshot']);
-  await expect(scenario.getError()).toContainText('Timed out');
+  await expect(scenario.getErrors()).toContainText(['Timed out']);
 });
 
 test('Scenario: Failing by background step', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by background step');
   await expect(scenario.getSteps()).toContainText(['GivenAction 1', 'screenshot']);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getError()).not.toBeVisible();
+  await expect(scenario.getErrors()).not.toBeVisible();
 
   const background = getFeature(page).getBackground();
   await expect(background.getSteps()).toContainText([
     'step failing for scenario "Failing by background step"',
   ]);
   await expect(background.getSteps('failed')).toHaveCount(1);
-  await expect(background.getError()).toContainText('expect(true).toEqual(false)');
+  await expect(background.getErrors()).toContainText(['expect(true).toEqual(false)']);
 });
 
 test('Scenario: Failing by anonymous before hook', async ({ page }) => {
@@ -39,8 +39,8 @@ test('Scenario: Failing by anonymous before hook', async ({ page }) => {
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
   await expect(scenario.getTags()).toContainText(['@failing-anonymous-hook']);
-  await expect(scenario.getError()).toContainText('Timed out');
-  await expect(scenario.getError()).toContainText(`Before({ tags: '@failing-anonymous-hook' }`);
+  await expect(scenario.getErrors()).toContainText(['Timed out']);
+  await expect(scenario.getErrors()).toContainText([`Before({ tags: '@failing-anonymous-hook' }`]);
 });
 
 test('Scenario: Failing by named before hook', async ({ page }) => {
@@ -53,8 +53,8 @@ test('Scenario: Failing by named before hook', async ({ page }) => {
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
   await expect(scenario.getTags()).toContainText(['@failing-named-hook']);
-  await expect(scenario.getError()).toContainText('Timed out');
-  await expect(scenario.getError()).toContainText(`Before({ name: 'failing named before hook'`);
+  await expect(scenario.getErrors()).toContainText(['Timed out']);
+  await expect(scenario.getErrors()).toContainText([`Before({ name: 'failing named before hook'`]);
 });
 
 test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
@@ -72,7 +72,7 @@ test('Scenario: Failing by failingBeforeFixtureNoStep', async ({ page }) => {
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(2);
-  await expect(scenario.getError()).toContainText('error in failingBeforeFixtureNoStep');
+  await expect(scenario.getErrors()).toContainText(['error in failingBeforeFixtureNoStep']);
 });
 
 test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
@@ -90,7 +90,7 @@ test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(2);
-  await expect(scenario.getError()).toContainText('error in failingBeforeFixtureWithStep');
+  await expect(scenario.getErrors()).toContainText(['error in failingBeforeFixtureWithStep']);
 });
 
 test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
@@ -112,7 +112,7 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  await expect(scenario.getError()).toContainText('error in failingAfterFixtureNoStep');
+  await expect(scenario.getErrors()).toContainText(['error in failingAfterFixtureNoStep']);
 });
 
 test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
@@ -136,7 +136,7 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  await expect(scenario.getError()).toContainText('error in failingAfterFixtureWithStep');
+  await expect(scenario.getErrors()).toContainText(['error in failingAfterFixtureWithStep']);
 });
 
 test('Scenario: failing match snapshot', async ({ page }) => {
@@ -153,5 +153,23 @@ test('Scenario: failing match snapshot', async ({ page }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(1);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  await expect(scenario.getError()).toContainText('Snapshot comparison failed');
+  await expect(scenario.getErrors()).toContainText(['Snapshot comparison failed']);
+});
+
+test('Scenario: soft assertions', async ({ page }) => {
+  const scenario = getScenario(page, 'soft assertions');
+  await expect(scenario.getSteps()).toHaveText([
+    /Givenfailing soft assertion "foo"/,
+    'AndAction 1',
+    /Andfailing soft assertion "bar"/,
+    'AndAction 2',
+    'screenshot',
+  ]);
+  await expect(scenario.getSteps('passed')).toHaveCount(2);
+  await expect(scenario.getSteps('failed')).toHaveCount(2);
+  await expect(scenario.getSteps('skipped')).toHaveCount(0);
+  await expect(scenario.getErrors()).toContainText([
+    'Expected: "foo" Received: "xxx"',
+    'Expected: "bar" Received: "xxx"',
+  ]);
 });

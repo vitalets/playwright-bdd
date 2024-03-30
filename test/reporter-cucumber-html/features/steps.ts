@@ -37,6 +37,10 @@ When('open page {string}', async ({ page }, url: string) => {
   await page.goto(url);
 });
 
+When('failing soft assertion {string}', async ({}, msg: string) => {
+  expect.soft('xxx').toEqual(msg);
+});
+
 Then('page title snapshot matches the golden one', async ({ page }) => {
   expect(await page.title()).toMatchSnapshot();
 });
