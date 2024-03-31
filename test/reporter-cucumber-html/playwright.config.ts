@@ -11,8 +11,8 @@ export default defineConfig({
   testDir,
   reporter: [
     ['dot'],
-    cucumberReporter('message', { outputFile: 'reports/message.ndjson' }),
-    cucumberReporter('html', { outputFile: 'reports/report.html' }),
+    cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
+    cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
   ],
   use: {
     screenshot: 'only-on-failure',

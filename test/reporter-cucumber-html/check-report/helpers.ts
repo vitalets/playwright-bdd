@@ -2,7 +2,7 @@ import { pathToFileURL } from 'node:url';
 import { Locator, Page } from '@playwright/test';
 
 export async function openReport(page: Page) {
-  await page.goto(pathToFileURL('reports/report.html').href);
+  await page.goto(pathToFileURL('actual-reports/report.html').href);
 }
 
 export function getFeature(page: Page) {

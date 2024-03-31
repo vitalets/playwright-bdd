@@ -53,7 +53,7 @@ function mergeReports() {
 }
 
 function checkHtmlReport() {
-  expect(testDir.isFileExists('reports/report.html')).toEqual(true);
+  expect(testDir.isFileExists('actual-reports/report.html')).toEqual(true);
   execPlaywrightTest(testDir.name, 'npx playwright test --config ./check-report');
 }
 

@@ -42,6 +42,7 @@
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
+    "test:smoke": "node test/setup.mjs && node --test $(node test/smoke.mjs)",
     "only": "node test/setup.mjs && node --test",
     "only:d": "node test/setup.mjs && TEST_DEBUG=1 node --test",
     "build": "bash scripts/build.sh",
