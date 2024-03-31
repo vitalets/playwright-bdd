@@ -9,6 +9,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  fullyParallel: true,
   reporter: [
     ['dot'],
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),

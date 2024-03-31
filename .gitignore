@@ -21,6 +21,6 @@ blob-report
 /test/**/report.*
 /test/**/actual-reports
 
-/test/reporter-merge/features
-/test/reporter-merge/check-report
-/test/reporter-merge/.features-gen/features/sample.feature.spec.js-snapshots
+/test/reporter-cucumber-merge/features
+/test/reporter-cucumber-merge/check-report
+/test/reporter-cucumber-merge/.features-gen/features/sample.feature.spec.js-snapshots

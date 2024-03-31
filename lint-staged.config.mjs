@@ -9,6 +9,7 @@ export default {
       // run tests only on smoke dirs + changed test dirs
       const testDirs = [...new Set([...getSmokeTestDirs(), ...extractTestDirs(changedFiles)])];
       return `npm run only ${testDirs.join(' ')}`;
+      // return `npm test`;
     },
   ],
   '**/*.feature': 'node scripts/no-only-in-features.mjs',
