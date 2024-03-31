@@ -15,10 +15,10 @@ export default defineConfig({
   retries: featureDir === 'retry' ? 2 : 0,
   reporter: [
     cucumberReporter('message', {
-      outputFile: `features/${featureDir}/reports/messages.ndjson`,
+      outputFile: `features/${featureDir}/actual-reports/messages.ndjson`,
     }),
     cucumberReporter('json', {
-      outputFile: `features/${featureDir}/reports/json-report.json`,
+      outputFile: `features/${featureDir}/actual-reports/json-report.json`,
     }),
     featureDir === 'attachments' ? jsonReporterNoAttachments() : null,
   ].filter((r): r is NonNullable<typeof r> => Boolean(r)),
@@ -26,7 +26,7 @@ export default defineConfig({
 
 function jsonReporterNoAttachments() {
   return cucumberReporter('json', {
-    outputFile: `features/${featureDir}/reports/json-report-no-attachments.json`,
+    outputFile: `features/${featureDir}/actual-reports/json-report-no-attachments.json`,
     skipAttachments: true,
   });
 }

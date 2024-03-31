@@ -18,8 +18,8 @@ module.exports = {
     requireModule: ['ts-node/register'],
     retry: featureDir === 'retry' ? 2 : 0,
     format: [
-      ['message', `features/${featureDir}/expected/messages.ndjson`],
-      ['json', `features/${featureDir}/expected/json-report.json`],
+      ['message', `features/${featureDir}/expected-reports/messages.ndjson`],
+      ['json', `features/${featureDir}/expected-reports/json-report.json`],
     ],
   },
 };

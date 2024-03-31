@@ -55,20 +55,22 @@ async function checkFeature(featureDir) {
   assertJsonReport(absFeatureDir);
 
   if (featureDir === 'attachments') {
-    const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report-no-attachments.json`);
+    const actualJson = getJsonFromFile(
+      `${absFeatureDir}/actual-reports/json-report-no-attachments.json`,
+    );
     expect(JSON.stringify(actualJson, null, 2)).not.toContain('embeddings');
   }
 }
 
 function assertMessagesReport(absFeatureDir) {
-  const actualMessages = getMessagesFromFile(`${absFeatureDir}/reports/messages.ndjson`);
-  const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected/messages.ndjson`);
+  const actualMessages = getMessagesFromFile(`${absFeatureDir}/actual-reports/messages.ndjson`);
+  const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected-reports/messages.ndjson`);
   assertShape(actualMessages, expectedMessages, messageReportFields);
 }
 
 function assertJsonReport(absFeatureDir) {
-  const actualJson = getJsonFromFile(`${absFeatureDir}/reports/json-report.json`);
-  const expectedJson = getJsonFromFile(`${absFeatureDir}/expected/json-report.json`);
+  const actualJson = getJsonFromFile(`${absFeatureDir}/actual-reports/json-report.json`);
+  const expectedJson = getJsonFromFile(`${absFeatureDir}/expected-reports/json-report.json`);
   assertShape(actualJson, expectedJson, jsonReportFields);
 }
 

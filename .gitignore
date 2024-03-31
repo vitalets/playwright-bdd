@@ -19,7 +19,6 @@ blob-report
 /todo.txt
 
 /test/**/report.*
-/test/**/reports
 /test/**/actual-reports
 
 /test/reporter-merge/features

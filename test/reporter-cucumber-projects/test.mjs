@@ -19,7 +19,7 @@ test(testDir.name, async () => {
 });
 
 function assertMessagesReport() {
-  const actualMessages = getMessagesFromFile(testDir.getAbsPath(`reports/messages.ndjson`));
+  const actualMessages = getMessagesFromFile(testDir.getAbsPath(`actual-reports/messages.ndjson`));
   const expectedMessages = getMessagesFromFile(
     testDir.getAbsPath(`expected-reports/messages.ndjson`),
   );
@@ -27,13 +27,13 @@ function assertMessagesReport() {
 }
 
 function assertJsonReport() {
-  const actualJson = getJsonFromFile(testDir.getAbsPath(`reports/report.json`));
+  const actualJson = getJsonFromFile(testDir.getAbsPath(`actual-reports/report.json`));
   const expectedJson = getJsonFromFile(testDir.getAbsPath(`expected-reports/json-report.json`));
   assertShape(actualJson, expectedJson, jsonReportFields);
 }
 
 async function assertJunitReport() {
-  const actualJson = await getJsonFromXmlFile(testDir.getAbsPath('reports/report.xml'));
+  const actualJson = await getJsonFromXmlFile(testDir.getAbsPath('actual-reports/report.xml'));
   const expectedJson = await getJsonFromXmlFile(
     testDir.getAbsPath('expected-reports/junit-report.xml'),
   );

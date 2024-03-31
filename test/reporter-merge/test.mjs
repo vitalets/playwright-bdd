@@ -20,7 +20,7 @@ const skip = pwVersion < '1.37';
 // skip until figure out how to map attachments in merge-reports mode
 // See: https://github.com/microsoft/playwright/issues/29323#issuecomment-1927311800
 test(testDir.name, { skip }, () => {
-  testDir.clearDir('reports');
+  testDir.clearDir('actual-reports');
   testDir.clearDir('blob-report');
 
   copyFeatures(); // uses features from reporter-cucumber-html

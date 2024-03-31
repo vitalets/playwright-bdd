@@ -10,7 +10,7 @@ export default defineConfig({
   testDir,
   reporter: [
     cucumberReporter('./custom-reporter.ts', {
-      outputFile: 'reports/custom.ndjson',
+      outputFile: 'actual-reports/custom.ndjson',
       foo: 'bar',
     }),
     cucumberReporter('@cucumber/pretty-formatter', {

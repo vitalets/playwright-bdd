@@ -12,7 +12,7 @@ import { execSync } from 'node:child_process';
 const featureDir = process.argv[2];
 if (!featureDir) throw new Error(`Empty <featureDir>`);
 
-console.log(`Generating: features/${featureDir}/expected/messages.ndjson`);
+console.log(`Generating: features/${featureDir}/expected-reports/messages.ndjson`);
 
 try {
   execSync(`npx cucumber-js -c cucumber.config.js`, {

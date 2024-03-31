@@ -82,7 +82,7 @@ export class Scenario {
     return this.getSteps()
       .locator('div > pre')
       .filter({
-        hasText: /error|timeout/i,
+        hasText: /error|timeout|expected/i,
       });
   }
 
