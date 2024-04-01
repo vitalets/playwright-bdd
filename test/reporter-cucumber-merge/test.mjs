@@ -1,5 +1,4 @@
 import fs from 'node:fs';
-import { expect } from '@playwright/test';
 import {
   test,
   TestDir,
@@ -53,7 +52,7 @@ function mergeReports() {
 }
 
 function checkHtmlReport() {
-  expect(testDir.isFileExists('actual-reports/report.html')).toEqual(true);
+  testDir.expectFileNotEmpty('actual-reports/report.html');
   execPlaywrightTest(testDir.name, 'npx playwright test --config ./check-report');
 }
 

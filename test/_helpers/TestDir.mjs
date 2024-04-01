@@ -58,6 +58,14 @@ export class TestDir {
     assert.equal(this.isFileExists(relativePath), true, `Expected file to exist: ${relativePath}`);
   }
 
+  expectFileNotEmpty(relativePath) {
+    this.expectFileExists(relativePath);
+    assert(
+      this.getFileContents(relativePath).trim().length > 0,
+      `Expected non-empty file: ${relativePath}`,
+    );
+  }
+
   expectFileNotExist(relativePath) {
     assert.equal(
       this.isFileExists(relativePath),

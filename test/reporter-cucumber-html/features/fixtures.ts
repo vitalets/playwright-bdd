@@ -42,6 +42,16 @@ export const test = base.extend<{
       throw new Error('error in failingAfterFixtureWithStep');
     });
   },
+  setTestTimeout: [
+    async ({}, use, testInfo) => {
+      // set timeout for timeouted tests
+      // dont' set this timeout globally as sometimes
+      // it's not enough to make automatic screenshot
+      if (testInfo.title.includes('timeout')) testInfo.setTimeout(1500);
+      await use();
+    },
+    { auto: true },
+  ],
   timeoutedBeforeFixture: async ({}, use, testInfo) => {
     await new Promise((r) => setTimeout(r, testInfo.timeout + 100));
     await use();
