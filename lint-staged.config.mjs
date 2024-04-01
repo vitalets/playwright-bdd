@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { getSmokeTestDirs } from './test/smoke.mjs';
+import { getSmokeTestDirs } from './scripts/smoke-tests.mjs';
 
 export default {
   '**/*.{js,mjs,ts}': [
