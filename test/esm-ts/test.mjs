@@ -1,6 +1,6 @@
 import { normalize } from 'node:path';
 import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest, getPackageVersion } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, getPackageVersion } from '../_helpers/index.mjs';
 
 // Skip on CI for Win as it fails with error:
 // TypeError: Invalid module "..\\..\\steps\\fixtures.js" is not a valid package name

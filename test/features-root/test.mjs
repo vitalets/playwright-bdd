@@ -1,5 +1,11 @@
 import { expect } from '@playwright/test';
-import { test, execPlaywrightTest, TestDir, BDDGEN_CMD, PLAYWRIGHT_CMD } from '../helpers.mjs';
+import {
+  test,
+  execPlaywrightTest,
+  TestDir,
+  BDDGEN_CMD,
+  PLAYWRIGHT_CMD,
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 

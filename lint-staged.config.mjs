@@ -12,7 +12,7 @@ export default {
       const finalTestDirs =
         changedTestDirs.length === changedFiles.length
           ? changedTestDirs
-          : [...new Set([...getSmokeTestDirs(), changedTestDirs])];
+          : [...new Set(changedTestDirs.concat(getSmokeTestDirs()))];
       return `npm run only ${finalTestDirs.join(' ')}`;
     },
   ],
@@ -25,7 +25,7 @@ function extractTestDirs(absPaths) {
   const testDirs = absPaths
     .map((file) => path.relative(process.cwd(), file))
     .map((file) => file.split(path.sep))
-    .filter((parts) => parts[0] === 'test' && parts.length > 2)
+    .filter((parts) => parts[0] === 'test' && parts.length > 2 && parts[1] !== '_helpers')
     .map((parts) => path.join(parts[0], parts[1]));
   return [...new Set(testDirs)];
 }

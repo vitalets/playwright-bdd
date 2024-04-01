@@ -1,4 +1,4 @@
-import { test, getTestName, execPlaywrightTest, getPackageVersion } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, getPackageVersion } from '../_helpers/index.mjs';
 
 const pwVersion = getPackageVersion('@playwright/test');
 

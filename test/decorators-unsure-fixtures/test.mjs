@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { test, TestDir, execPlaywrightTestWithError } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 

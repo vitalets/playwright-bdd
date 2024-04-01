@@ -1,6 +1,6 @@
 import path from 'node:path';
 import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTest } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 

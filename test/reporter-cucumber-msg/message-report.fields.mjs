@@ -1,7 +1,7 @@
 /**
  * Fields config for MESSAGE report shape comparison
  */
-import { toPosixPath } from '../helpers.mjs';
+import { toPosixPath } from '../_helpers/index.mjs';
 
 export const messageReportFields = {
   ignorePaths: [

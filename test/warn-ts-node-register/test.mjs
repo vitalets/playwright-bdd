@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest } from '../_helpers/index.mjs';
 
 test(getTestName(import.meta), (t) => {
   const stdout = execPlaywrightTest(t.name);

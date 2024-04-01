@@ -13,7 +13,7 @@
  */
 import fg from 'fast-glob';
 import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../_helpers/index.mjs';
 import { messageReportFields } from './message-report.fields.mjs';
 import { jsonReportFields } from './json-report.fields.mjs';
 import { assertShape } from './helpers/json-shape.mjs';

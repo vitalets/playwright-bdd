@@ -1,4 +1,4 @@
-import { test, TestDir, execPlaywrightTestWithError, DEFAULT_CMD } from '../helpers.mjs';
+import { test, TestDir, execPlaywrightTestWithError, DEFAULT_CMD } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 

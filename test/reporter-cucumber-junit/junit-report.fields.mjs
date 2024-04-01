@@ -1,7 +1,7 @@
 /**
  * Fields config for JUNIT report shape comparison
  */
-import { toPosixPath } from '../helpers.mjs';
+import { toPosixPath } from '../_helpers/index.mjs';
 
 export const junitReportFields = {
   ignorePaths: [],

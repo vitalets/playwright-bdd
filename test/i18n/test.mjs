@@ -1,4 +1,4 @@
-import { test, getTestName, execPlaywrightTest, TestDir, BDDGEN_CMD } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, TestDir, BDDGEN_CMD } from '../_helpers/index.mjs';
 import { expect } from '@playwright/test';
 
 const testDir = new TestDir(import.meta);

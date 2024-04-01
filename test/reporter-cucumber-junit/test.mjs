@@ -1,7 +1,12 @@
 /**
  * Test of Cucumber junit report.
  */
-import { test, TestDir, execPlaywrightTestWithError, getJsonFromXmlFile } from '../helpers.mjs';
+import {
+  test,
+  TestDir,
+  execPlaywrightTestWithError,
+  getJsonFromXmlFile,
+} from '../_helpers/index.mjs';
 import { assertShape } from '../reporter-cucumber-msg/helpers/json-shape.mjs';
 import { junitReportFields } from './junit-report.fields.mjs';
 

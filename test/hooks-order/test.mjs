@@ -5,7 +5,7 @@ import {
   execPlaywrightTest,
   DEFAULT_CMD,
   execPlaywrightTestWithError,
-} from '../helpers.mjs';
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 

@@ -2,7 +2,7 @@
  * Test setup
  */
 import { execSync } from 'node:child_process';
-import { ensureNodeVersion, getPackageVersion } from './helpers.mjs';
+import { ensureNodeVersion, getPackageVersion } from './_helpers/index.mjs';
 
 !process.env.CI && ensureNodeVersion(20);
 showVersion('@playwright/test');

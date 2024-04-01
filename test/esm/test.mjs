@@ -1,4 +1,4 @@
-import { test, getTestName, execPlaywrightTest } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest } from '../_helpers/index.mjs';
 
 // Skip on CI for Win as it fails with error:
 // TypeError: Invalid module "..\\..\\steps\\fixtures.js" is not a valid package name

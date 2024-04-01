@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest, BDDGEN_CMD } from '../helpers.mjs';
+import { test, getTestName, execPlaywrightTest, BDDGEN_CMD } from '../_helpers/index.mjs';
 
 test(getTestName(import.meta), (t) => {
   const stdout = execPlaywrightTest(t.name, `${BDDGEN_CMD} env`);
