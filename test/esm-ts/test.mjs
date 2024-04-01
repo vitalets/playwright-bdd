@@ -2,14 +2,9 @@ import { normalize } from 'node:path';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTest, playwrightVersion } from '../_helpers/index.mjs';
 
-// Skip on CI for Win as it fails with error:
-// TypeError: Invalid module "..\\..\\steps\\fixtures.js" is not a valid package name
-// todo: investigate
-const skip = process.env.CI && process.platform === 'win32';
-
 const testDir = new TestDir(import.meta);
 
-test(testDir.name, { skip }, () => {
+test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name, {
     env: { NODE_OPTIONS: '--loader ts-node/esm --no-warnings' },
   });
