@@ -5,17 +5,13 @@ set -euo pipefail
 
 if [[ -n "${SKIP_PRE_PUSH-}" ]]; then exit 0; fi
 
-GIT_BRANCH=`git rev-parse --abbrev-ref HEAD`
-
 npm run lint
 node scripts/no-only-in-features.mjs test/**/*.feature
 npm run prettier
+npm run docs:validate
 
-# skip tests for docs branch
-if [ "$GIT_BRANCH" == "docs" ]; then 
-  npm run docs:validate
-else 
-  npm test
-fi
+# dont run tests on pre-push as we run on pre-commit and on ci
+# npm test
+
 
 
