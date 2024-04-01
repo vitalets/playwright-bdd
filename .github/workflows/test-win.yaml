@@ -26,12 +26,12 @@ jobs:
           # don't use 'npm t' here as it doesn't expand filename wildcards
           node test/setup.mjs
           node --test test/**/test.mjs
-          # this command gets all test files in powershell
-          # node --test $(Get-ChildItem -Path test -Recurse -Include test.mjs).FullName
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
-          path: test/**/test-results/
-          retention-days: 10
+          path: |
+            test/**/test-results/
+            test/**/actual-reports/
+          retention-days: 1
           if-no-files-found: ignore
