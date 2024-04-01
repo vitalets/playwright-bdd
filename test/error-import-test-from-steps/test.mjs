@@ -1,7 +1,9 @@
-import { test, getTestName, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) =>
-  execPlaywrightTestWithError(t.name, [
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () =>
+  execPlaywrightTestWithError(testDir.name, [
     `Option "importTestFrom" should point to a separate file`,
     /Given, When, Then\)$/, // no other text after error
   ]),

@@ -6,19 +6,13 @@ import path from 'node:path';
 import test from 'node:test';
 import fs from 'node:fs';
 import xml2js from 'xml2js';
+import { expect } from '@playwright/test';
 
 export * from './runPlaywright.mjs';
 export * from './TestDir.mjs';
 
-export { test };
+export { test, expect };
 export const playwrightVersion = getPackageVersion('@playwright/test');
-
-/**
- * Test name = test dir from 'test/<xxx>/test.mjs'
- */
-export function getTestName(importMeta) {
-  return importMeta.url.split('/').slice(-2)[0];
-}
 
 export function getPackageVersion(pkg) {
   const { version } = JSON.parse(fs.readFileSync(`node_modules/${pkg}/package.json`, 'utf8'));

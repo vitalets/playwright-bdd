@@ -1,8 +1,10 @@
-import { test, getTestName, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) =>
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () =>
   execPlaywrightTestWithError(
-    t.name,
+    testDir.name,
     `When using custom "test" function in createBdd() you should`,
   ),
 );

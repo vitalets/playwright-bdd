@@ -1,8 +1,10 @@
 import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) => {
-  const stdout = execPlaywrightTest(t.name);
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => {
+  const stdout = execPlaywrightTest(testDir.name);
   expect(stdout).toContain(
     `WARNING: usage of requireModule: ['ts-node/register'] is not recommended`,
   );

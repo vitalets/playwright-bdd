@@ -1,3 +1,5 @@
-import { test, getTestName, execPlaywrightTest } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) => execPlaywrightTest(t.name));
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => execPlaywrightTest(testDir.name));

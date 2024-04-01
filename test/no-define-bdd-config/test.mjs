@@ -1,3 +1,5 @@
-import { test, getTestName, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) => execPlaywrightTestWithError(t.name, `No BDD configs found`));
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => execPlaywrightTestWithError(testDir.name, `No BDD configs found`));

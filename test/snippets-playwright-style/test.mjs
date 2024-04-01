@@ -1,7 +1,9 @@
-import { test, getTestName, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) =>
-  execPlaywrightTestWithError(t.name, [
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () =>
+  execPlaywrightTestWithError(testDir.name, [
     `import { createBdd } from 'playwright-bdd';`,
     `const { Given, When, Then } = createBdd();`,
     `// 1. Missing step definition for "one.feature:4:9"`,

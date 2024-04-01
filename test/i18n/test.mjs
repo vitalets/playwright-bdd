@@ -1,8 +1,8 @@
-import { test, getTestName, execPlaywrightTest, TestDir, BDDGEN_CMD } from '../_helpers/index.mjs';
-import { expect } from '@playwright/test';
+import { test, TestDir, execPlaywrightTest, BDDGEN_CMD, expect } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
-test(getTestName(import.meta), (t) => execPlaywrightTest(t.name));
+
+test(testDir.name, () => execPlaywrightTest(testDir.name));
 
 test(testDir.name + '-generate-scenario-outlines', () => {
   const outputDir = testDir.getAbsPath('.features-gen');

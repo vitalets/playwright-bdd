@@ -1,8 +1,9 @@
-import { expect } from '@playwright/test';
-import { test, getTestName, execPlaywrightTest, BDDGEN_CMD } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest, BDDGEN_CMD, expect } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) => {
-  const stdout = execPlaywrightTest(t.name, `${BDDGEN_CMD} env`);
+const testDir = new TestDir(import.meta);
+
+test(testDir.meta, () => {
+  const stdout = execPlaywrightTest(testDir.name, `${BDDGEN_CMD} env`);
   expect(stdout).toContain('platform:');
   expect(stdout).toContain('playwright-bdd:');
   expect(stdout).toContain('@playwright/test: v1.');

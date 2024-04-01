@@ -1,5 +1,7 @@
-import { test, getTestName, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) =>
-  execPlaywrightTestWithError(t.name, `please manually provide different "outputDir" option`),
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () =>
+  execPlaywrightTestWithError(testDir.name, `please manually provide different "outputDir" option`),
 );

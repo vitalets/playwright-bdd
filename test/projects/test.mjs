@@ -1,6 +1,8 @@
-import { test, getTestName, execPlaywrightTest, DEFAULT_CMD } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest, DEFAULT_CMD } from '../_helpers/index.mjs';
 
-test(getTestName(import.meta), (t) => {
-  execPlaywrightTest(t.name);
-  execPlaywrightTest(t.name, `${DEFAULT_CMD} --project=project-two`);
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, () => {
+  execPlaywrightTest(testDir.name);
+  execPlaywrightTest(testDir.name, `${DEFAULT_CMD} --project=project-two`);
 });

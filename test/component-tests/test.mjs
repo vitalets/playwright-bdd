@@ -1,11 +1,11 @@
-import { test, getTestName, execPlaywrightTest, getPackageVersion } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest, playwrightVersion } from '../_helpers/index.mjs';
 
-const pwVersion = getPackageVersion('@playwright/test');
+const testDir = new TestDir(import.meta);
 
-test(getTestName(import.meta), (t) => {
-  execPlaywrightTest(t.name, {
+test(testDir.name, () => {
+  execPlaywrightTest(testDir.name, {
     env: {
-      NATIVE_MERGE_TESTS: pwVersion >= '1.39.0' ? '1' : '',
+      NATIVE_MERGE_TESTS: playwrightVersion >= '1.39.0' ? '1' : '',
     },
   });
 });
