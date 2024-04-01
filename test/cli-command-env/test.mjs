@@ -2,7 +2,7 @@ import { test, TestDir, execPlaywrightTest, BDDGEN_CMD, expect } from '../_helpe
 
 const testDir = new TestDir(import.meta);
 
-test(testDir.meta, () => {
+test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name, `${BDDGEN_CMD} env`);
   expect(stdout).toContain('platform:');
   expect(stdout).toContain('playwright-bdd:');
