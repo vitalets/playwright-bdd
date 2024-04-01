@@ -6,10 +6,14 @@ export default {
     'eslint --fix --no-warn-ignored',
     'prettier --write --ignore-unknown',
     (changedFiles) => {
-      // run tests only on smoke dirs + changed test dirs
-      const testDirs = [...new Set([...getSmokeTestDirs(), ...extractTestDirs(changedFiles)])];
-      return `npm run only ${testDirs.join(' ')}`;
-      // return `npm test`;
+      const changedTestDirs = extractTestDirs(changedFiles);
+      // if changes only in test/* - run only these tests
+      // otherwise run on smoke dirs + changed test dirs
+      const finalTestDirs =
+        changedTestDirs.length === changedFiles.length
+          ? changedTestDirs
+          : [...new Set([...getSmokeTestDirs(), changedTestDirs])];
+      return `npm run only ${finalTestDirs.join(' ')}`;
     },
   ],
   '**/*.feature': 'node scripts/no-only-in-features.mjs',
