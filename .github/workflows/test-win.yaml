@@ -27,7 +27,7 @@ jobs:
           node test/setup.mjs
           node --test test/**/test.mjs
       - uses: actions/upload-artifact@v4
-        if: always()
+        if: failure()
         with:
           name: test-results-${{ matrix.cucumberVersion }}
           path: |
