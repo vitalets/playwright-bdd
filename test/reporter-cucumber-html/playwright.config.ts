@@ -19,7 +19,7 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   // don't decrease this timeout as it's important for timeout tests
-  timeout: 1500,
+  timeout: process.env.CI && process.platform === 'win32' ? 2000 : 1500,
   expect: {
     timeout: 1,
   },
