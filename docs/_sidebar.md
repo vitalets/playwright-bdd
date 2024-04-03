@@ -8,6 +8,7 @@
   - [ESM](configuration/esm.md)
 
 * [**Writing features**](writing-features/index.md)
+  - [Special tags](writing-features/special-tags.md)
   - [Customize examples title](writing-features/customize-examples-title.md)
   - [Use ChatGPT](writing-features/chatgpt.md)
 
