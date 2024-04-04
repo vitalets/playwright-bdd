@@ -35,7 +35,7 @@ export class Formatter {
     ];
   }
 
-  suite(node: TestNode, children: string[]) {
+  describe(node: TestNode, children: string[]) {
     const firstLine = `test.${this.getFunction('describe', node)}(${this.quoted(node.title)}, () => {`;
     if (!children.length) return [`${firstLine}});`, ''];
     return [

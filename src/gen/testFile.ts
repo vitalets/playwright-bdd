@@ -175,10 +175,10 @@ export class TestFile {
    */
   private getSuite(feature: Feature | Rule, parent?: TestNode) {
     const node = new TestNode(feature, parent);
-    if (node.isSkipped()) return this.formatter.suite(node, []);
+    if (node.isSkipped()) return this.formatter.describe(node, []);
     const lines: string[] = [];
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
-    return this.formatter.suite(node, lines);
+    return this.formatter.describe(node, lines);
   }
 
   private getSuiteChild(child: FeatureChild | RuleChild, parent: TestNode) {
@@ -208,7 +208,7 @@ export class TestFile {
    */
   private getOutlineSuite(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
-    if (node.isSkipped()) return this.formatter.suite(node, []);
+    if (node.isSkipped()) return this.formatter.describe(node, []);
     const lines: string[] = [];
     let exampleIndex = 0;
     scenario.examples.forEach((examples) => {
@@ -224,7 +224,7 @@ export class TestFile {
         lines.push(...testLines);
       });
     });
-    return this.formatter.suite(node, lines);
+    return this.formatter.describe(node, lines);
   }
 
   /**
