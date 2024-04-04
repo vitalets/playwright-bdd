@@ -38,3 +38,9 @@ export type PwAttachment = TestResult['attachments'][0];
 // - it does not contain file
 // - column is optional
 export { PlaywrightLocation };
+
+export type DescribeConfigureOptions = {
+  mode?: 'default' | 'parallel' | 'serial';
+  retries?: number;
+  timeout?: number;
+};

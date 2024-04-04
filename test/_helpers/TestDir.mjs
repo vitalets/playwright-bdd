@@ -54,6 +54,14 @@ export class TestDir {
     });
   }
 
+  expectFileNotContain(relativePath, substr) {
+    const substrList = Array.isArray(substr) ? substr : [substr];
+    const fileContents = this.getFileContents(relativePath);
+    substrList.forEach((substr) => {
+      expect(fileContents).not.toContain(substr);
+    });
+  }
+
   expectFileExists(relativePath) {
     assert.equal(this.isFileExists(relativePath), true, `Expected file to exist: ${relativePath}`);
   }

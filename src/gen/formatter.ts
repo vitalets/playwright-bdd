@@ -10,6 +10,7 @@ import { BddWorldFixtures } from '../run/bddWorld';
 import { TestMetaBuilder } from './testMeta';
 import { toPosixPath } from '../utils';
 import { playwrightVersion } from '../playwright/utils';
+import { DescribeConfigureOptions } from '../playwright/types';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -35,9 +36,16 @@ export class Formatter {
   }
 
   suite(node: TestNode, children: string[]) {
-    const firstLine = `test.describe${this.getSubFn(node)}(${this.quoted(node.title)}, () => {`;
+    const firstLine = `test.${this.getFunction('describe', node)}(${this.quoted(node.title)}, () => {`;
     if (!children.length) return [`${firstLine}});`, ''];
-    return [firstLine, '', ...children.map(indent), `});`, ''];
+    return [
+      firstLine, // prettier-ignore
+      ...this.describeConfigure(node).map(indent),
+      '',
+      ...children.map(indent),
+      `});`,
+      '',
+    ];
   }
 
   beforeEach(fixtures: Set<string>, children: string[]) {
@@ -54,13 +62,27 @@ export class Formatter {
   test(node: TestNode, fixtures: Set<string>, children: string[]) {
     const fixturesStr = [...fixtures].join(', ');
     const title = this.quoted(node.title);
-    const tags =
-      supportsTags && node.tags.length
-        ? `{ tag: [${node.tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
-        : '';
-    const firstLine = `test${this.getSubFn(node)}(${title}, ${tags}async ({ ${fixturesStr} }) => {`;
+    const tags = this.testTags(node);
+    const firstLine = `${this.getFunction('test', node)}(${title}, ${tags}async ({ ${fixturesStr} }) => {`;
     if (!children.length) return [`${firstLine}});`, ''];
-    return [firstLine, ...children.map(indent), `});`, ''];
+    const lines = [
+      firstLine, // prettier-ignore
+      ...children.map(indent),
+      `});`,
+      '',
+    ];
+    // wrap test into anonymous describe in case of retries / timeout tags
+    const specialTagsConfigure = this.describeConfigure(node);
+    return specialTagsConfigure.length
+      ? [
+          'test.describe(() => {', // prettier-ignore
+          ...specialTagsConfigure.map(indent),
+          '',
+          ...lines.map(indent),
+          `});`,
+          '',
+        ]
+      : lines;
   }
 
   // eslint-disable-next-line max-params
@@ -126,11 +148,36 @@ export class Formatter {
     return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
   }
 
-  private getSubFn(node: TestNode) {
-    if (node.flags.only) return '.only';
-    if (node.flags.skip) return '.skip';
-    if (node.flags.fixme) return '.fixme';
-    return '';
+  // eslint-disable-next-line complexity
+  private getFunction(baseFn: 'test' | 'describe', node: TestNode) {
+    if (node.specialTags.only) return `${baseFn}.only`;
+    // describe.fail is not supported
+    if (baseFn === 'test' && node.specialTags.fail) return `${baseFn}.fail`;
+    if (node.specialTags.skip) return `${baseFn}.skip`;
+    if (node.specialTags.fixme) return `${baseFn}.fixme`;
+    return baseFn;
+  }
+
+  private describeConfigure(node: TestNode) {
+    const options: DescribeConfigureOptions = {};
+    const { retries, timeout, mode } = node.specialTags;
+    if (retries !== undefined) options.retries = retries;
+    if (timeout !== undefined) options.timeout = timeout;
+    if (mode !== undefined) options.mode = mode;
+    return Object.keys(options).length
+      ? [`test.describe.configure(${JSON.stringify(options)});`]
+      : [];
+  }
+
+  private testTags(node: TestNode) {
+    return supportsTags && node.tags.length
+      ? `{ tag: [${node.tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
+      : '';
+  }
+
+  private testTimeout(node: TestNode) {
+    const { timeout } = node.specialTags;
+    return timeout !== undefined ? [`test.setTimeout(${timeout});`] : [];
   }
 
   /**

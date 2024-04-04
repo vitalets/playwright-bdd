@@ -89,3 +89,6 @@ Then<BddWorld>('Tags are {string}', async function (tags: string) {
 });
 
 Then<BddWorld>('Skipped step', () => {});
+Then<BddWorld>('failed step', () => {
+  expect(1).toEqual(2);
+});

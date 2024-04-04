@@ -1,11 +1,12 @@
 # Changelog
 
 ## dev
-* feature: support new Playwright tags [#98](https://github.com/vitalets/playwright-bdd/issues/98)
-* feature: add option `--unused-steps` to `bddgen export`, [#113](https://github.com/vitalets/playwright-bdd/issues/113)
-* feature: show stdout / stderr in Cucumber reports, [#116](https://github.com/vitalets/playwright-bdd/issues/116)
-* feature: call step from step, [#110](https://github.com/vitalets/playwright-bdd/issues/110)
-* bug: getting testInfo._runAsStep is not a function after updating to Canary playwright, [#119](https://github.com/vitalets/playwright-bdd/issues/119)
+* feature: add new special tags ([#123](https://github.com/vitalets/playwright-bdd/issues/123), [#126](https://github.com/vitalets/playwright-bdd/issues/126))
+* feature: support new Playwright tags ([#98](https://github.com/vitalets/playwright-bdd/issues/98))
+* feature: add option `--unused-steps` to `bddgen export` ([#113](https://github.com/vitalets/playwright-bdd/issues/113))
+* feature: show stdout / stderr in Cucumber reports ([#116](https://github.com/vitalets/playwright-bdd/issues/116))
+* feature: call step from step ([#110](https://github.com/vitalets/playwright-bdd/issues/110))
+* bug: getting testInfo._runAsStep is not a function after updating to Canary playwright ([#119](https://github.com/vitalets/playwright-bdd/issues/119))
 
 ## 6.0.3
 * fix timeouts in Cucumber reporters, [#107](https://github.com/vitalets/playwright-bdd/issues/107)
