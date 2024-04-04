@@ -14,13 +14,13 @@ export default defineConfig({
       }),
     },
     {
-      name: 'fail',
+      name: 'error',
       testDir: defineBddConfig({
-        outputDir: '.features-gen/fail',
+        outputDir: '.features-gen/error',
         paths: ['features/*.feature'],
         require: ['steps/index.ts'],
         importTestFrom: 'steps/fixtures.ts',
-        tags: '@fail',
+        tags: '@error',
       }),
     },
   ],

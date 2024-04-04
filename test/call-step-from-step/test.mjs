@@ -16,6 +16,6 @@ test(`${testDir.name} (invalid invocation)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     ['Missings fixtures: todos, $testInfo'],
-    `${DEFAULT_CMD} --project fail`,
+    `${DEFAULT_CMD} --project error`,
   );
 });

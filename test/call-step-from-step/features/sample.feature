@@ -10,7 +10,7 @@ Feature: call step from step
         | create todos - bar  |
         | create todos - baz  |
 
-    @fail
+    @error
     Scenario: incorrect invocation
         When I incorrectly create 2 todos "bar" and "baz"
      
