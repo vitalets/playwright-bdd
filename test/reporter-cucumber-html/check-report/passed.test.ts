@@ -49,7 +49,7 @@ test('Scenario: Scenario with attachments', async ({ page }) => {
     'text attachmentsome text', // no space between 'attachment' and 'some'
     'image attachment inline',
     'image attachment as file',
-    'stdoutsome logs',
+    'stdout123 some logs',
   ]);
 });
 

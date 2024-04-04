@@ -59,6 +59,7 @@ import { AutofillMap } from '../../../utils/AutofillMap';
 import { collectStepsWithCategory, getHooksRootPwStep } from './pwStepUtils';
 import { PwAttachment } from '../../../playwright/types';
 import { isBddDataAttachment } from '../../../run/bddDataAttachment';
+import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes';
 
 export class AttachmentMapper {
   private stepAttachments = new AutofillMap<pw.TestStep, PwAttachment[]>();
@@ -115,7 +116,9 @@ export class AttachmentMapper {
   private mapStdoutAttachments(name: 'stdout' | 'stderr') {
     // map stdout / stderr to the 'After Hooks' step
     if (!this.result[name]?.length) return;
-    const body = this.result[name].join('');
+    const body = this.result[name]
+      .map((s) => (typeof s === 'string' ? stripAnsiEscapes(s) : s))
+      .join('');
     const afterHooksRoot = this.getAfterHooksRoot();
     const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
     stepAttachments.push({

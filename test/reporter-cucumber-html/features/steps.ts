@@ -29,7 +29,7 @@ Then('attach image as file', async ({ $testInfo }) => {
 });
 
 Then('attach stdout', async () => {
-  console.log('some logs'); // eslint-disable-line no-console
+  console.log(123, 'some logs'); // eslint-disable-line no-console
   // don't test console.error b/c it poisons the output
 });
 
