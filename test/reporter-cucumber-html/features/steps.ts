@@ -41,6 +41,12 @@ When('failing soft assertion {string}', async ({}, msg: string) => {
   expect.soft('xxx').toEqual(msg);
 });
 
+When('fails until retry {int}', async ({ $testInfo }, retry: number) => {
+  if ($testInfo.retry < retry) {
+    expect(1).toEqual(2);
+  }
+});
+
 Then('page title snapshot matches the golden one', async ({ page }) => {
   expect(await page.title()).toMatchSnapshot();
 });

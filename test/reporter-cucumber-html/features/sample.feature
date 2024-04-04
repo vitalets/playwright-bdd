@@ -56,7 +56,7 @@ Feature: rich feature
     Given Action 0
     Given step that uses timeouted after fixture
     When Action 1
-    
+
   @timeout:1500
   Scenario: timeout in step and in after fixture
     Given Action 0
@@ -71,6 +71,12 @@ Feature: rich feature
     And Action 2
 
   # ----- Success scenarios ------
+  @retries:1
+  Scenario: Scenario with retries
+    Given Action 1
+    And fails until retry 1
+    And Action 2
+
   Scenario: Scenario with data table
     When Step with data table
       | name  | value |              

@@ -5,6 +5,20 @@ test.beforeEach(async ({ page }) => {
   await openReport(page);
 });
 
+// Cucumber html-formatter does not show failed retries
+// See: https://github.com/cucumber/react-components/issues/75
+test('Scenario: Scenario with retries', async ({ page }) => {
+  const scenario = getScenario(page, 'Scenario with retries');
+  await expect(scenario.getSteps()).toHaveText([
+    'GivenAction 1',
+    'Andfails until retry 1',
+    'AndAction 2',
+    '', // empty step b/c we have 'After Hooks' hook added to the testCase b/c of screenshot in failed attempt
+  ]);
+  await expect(scenario.getSteps()).toHaveCount(4);
+  await expect(scenario.getSteps('passed')).toHaveCount(3);
+});
+
 test('Scenario: Scenario with data table', async ({ page }) => {
   const scenario = getScenario(page, 'Scenario with data table');
   await expect(scenario.getSteps()).toContainText(['Step with data table']);

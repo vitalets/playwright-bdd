@@ -37,6 +37,10 @@ export class TestStepRun {
     ];
   }
 
+  private isHook() {
+    return Boolean(this.testStep.hookId);
+  }
+
   private wasExecuted(): this is { pwStep: pw.TestStep } {
     return Boolean(this.pwStep);
   }
@@ -88,7 +92,10 @@ export class TestStepRun {
     switch (true) {
       case Boolean(error):
         return messages.TestStepResultStatus.FAILED;
-      case !this.wasExecuted():
+      // For hooks that were not executted we return PASSED, not SKIPPED.
+      // Because these hooks can be from another run attempt of this testCase.
+      // If marked as skipped, the whole run is marked as skipped in reporter.
+      case !this.isHook() && !this.wasExecuted():
         return messages.TestStepResultStatus.SKIPPED;
       default:
         return messages.TestStepResultStatus.PASSED;

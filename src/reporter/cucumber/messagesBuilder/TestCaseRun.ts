@@ -72,7 +72,7 @@ export class TestCaseRun {
   }
 
   private generateTestRunId() {
-    return `${this.test.id}-run-${this.result.retry}`;
+    return `${this.test.id}-attempt-${this.result.retry}`;
   }
 
   private getBddData() {

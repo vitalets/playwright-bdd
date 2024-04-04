@@ -11,7 +11,7 @@ test.beforeEach(async ({ page }) => {
 test('header info', async ({ page }) => {
   // after changing this counts you should also update test/reporter-cucumber-junit
   let failed = 14;
-  let passed = 7;
+  let passed = 8;
 
   // See: link to issue
   if (pwVersion.startsWith('1.43.')) {
