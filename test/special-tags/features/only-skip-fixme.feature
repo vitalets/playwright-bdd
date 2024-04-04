@@ -3,45 +3,45 @@ Feature: only-skip-fixme
 
   @only
   Scenario: Only
-      Given State 0
+      Given success step 1
 
   @foo @only
   Scenario: Only several tags
-      Given State 0    
+      Given success step 1
 
   # @skip has precendence over feature level @only
   @skip
   Scenario: Skip
-      Given Skipped step
+      Given skipped step
 
   # in case of several system tags, @only takes precendence
   @only @skip
   Scenario: Skip with only
-      Given State 2 
+      Given success step 2
 
   @fixme
   Scenario: Fixme
-      Given Skipped step
+      Given skipped step
 
   @only
 	Scenario Outline: Check doubled
-    Then Doubled <start> equals <end>
+    Then success step <value>
 
   @only
 	Examples:
-		| start | end |
-		|    2  |   4 |
-		|    3  |   6 |
+		| value |
+		|   2   |
+		|   3   |
 
   @skip
 	Examples:
-		| start | end |
-		|    4  |   8 |   
+		| value |
+		|   4   |
 
   @skip
 	Scenario Outline: Skipped scenario outline
-    Given Skipped step
-    Given State <value>
+    Given skipped step
+    Given success step <value>
 
 	Examples:
 		| value |

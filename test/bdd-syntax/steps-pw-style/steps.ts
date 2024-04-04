@@ -80,8 +80,3 @@ Step('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string)
   expect($tags.join(' ')).toEqual(tags);
   expect(tagsFromCustomFixture.join(' ')).toEqual(tags);
 });
-
-Step('Skipped step', () => {});
-Step('failed step', () => {
-  expect(1).toEqual(2);
-});

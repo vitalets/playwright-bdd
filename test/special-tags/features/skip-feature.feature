@@ -2,4 +2,4 @@
 Feature: skip-feature
 
   Scenario: some scenario
-      Given State 0
+      Given success step 1
