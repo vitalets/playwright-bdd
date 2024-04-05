@@ -12,6 +12,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [
     ['dot'],
+    ['blob'],
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
   ],

@@ -33,5 +33,6 @@ jobs:
           path: |
             test/**/test-results/
             test/**/actual-reports/
+            test/**/blob-report/
           retention-days: 1
           if-no-files-found: ignore
