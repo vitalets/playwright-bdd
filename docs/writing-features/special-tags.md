@@ -26,6 +26,16 @@ Feature: Playwright site
 
 To conditionally skip scenario use [$test and $tags fixtures](writing-steps/playwright-style.md#accessing-test-and-testinfo).
 
+## @fail
+Use `@fail` tag to mark feature / scenario as [failing](https://playwright.dev/docs/api/class-test#test-fail):
+```gherkin
+Feature: Playwright site
+    
+    @fail
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+```
+
 ## @timeout:N
 Use `@timeout:N` tag to set scenario timeout:
 ```gherkin
