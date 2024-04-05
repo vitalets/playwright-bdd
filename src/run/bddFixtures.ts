@@ -15,6 +15,7 @@ import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
 import { logger } from '../utils/logger';
 import { getEnrichReporterData } from '../config/enrichReporterData';
+import { BddDataManager } from './bddData';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -95,12 +96,12 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       log: () => logger.warn(`world.log() is noop, please use world.testInfo.attach()`),
       attach: async () => logger.warn(`world.attach() is noop, please use world.testInfo.attach()`),
     });
+    if (getEnrichReporterData(config)) {
+      world.$internal.bddDataManager = new BddDataManager(testInfo, $testMeta, $uri);
+    }
     await world.init();
     await use(world);
     await world.destroy();
-    if (getEnrichReporterData(config)) {
-      await world.$internal.bddData.attach($testMeta, $uri);
-    }
   },
 
   Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),

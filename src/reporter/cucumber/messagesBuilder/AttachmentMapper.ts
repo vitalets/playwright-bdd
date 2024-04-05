@@ -58,7 +58,6 @@ import * as pw from '@playwright/test/reporter';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { collectStepsWithCategory, getHooksRootPwStep } from './pwStepUtils';
 import { PwAttachment } from '../../../playwright/types';
-import { isBddDataAttachment } from '../../../run/bddDataAttachment';
 import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes';
 
 export class AttachmentMapper {
@@ -93,7 +92,6 @@ export class AttachmentMapper {
       throw new Error(`Attachment not found for step: ${attachmentStep.title}`);
     }
     const [foundAttachment] = allAttachments.splice(index, 1);
-    if (isBddDataAttachment(foundAttachment)) return;
     const parentStep = attachmentStep.parent;
     // step.parent is empty:
     // - in PW = 1.34 for screenshot attachment

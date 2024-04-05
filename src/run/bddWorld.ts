@@ -30,16 +30,16 @@ export class BddWorld<
   ParametersType = any,
   TestType extends TestTypeCommon = TestTypeCommon,
 > extends CucumberWorld<ParametersType> {
-  // special property to hold internal bdd related methods, must be public.
+  // special namespace to hold internal bdd related methods, must be public.
   $internal: BddWorldInternal;
 
   constructor(public options: BddWorldOptions<ParametersType, TestType>) {
     super(options);
-    this.$internal = new BddWorldInternal(this);
+    this.$internal = new BddWorldInternal();
   }
 
   /**
-   * Use particular fixture in cucumber-style steps.
+   * Use custom fixture in cucumber-style steps.
    *
    * Note: TS does not support partial generic inference,
    * that's why we can't use this.useFixture<typeof test>('xxx');

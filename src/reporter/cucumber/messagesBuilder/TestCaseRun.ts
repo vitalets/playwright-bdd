@@ -10,14 +10,11 @@ import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
 import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
-import {
-  BddDataAttachment,
-  BddDataStep,
-  getBddDataFromTestResult,
-} from '../../../run/bddDataAttachment';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
+import { BddData, BddDataStep } from '../../../run/bddData/types';
+import { getBddDataFromTest } from '../../../run/bddData';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -34,7 +31,7 @@ export type ExecutedStepInfo = {
 
 export class TestCaseRun {
   id: string;
-  bddData: BddDataAttachment;
+  bddData: BddData;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
@@ -52,9 +49,8 @@ export class TestCaseRun {
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
-    // console.error(11, this.result);
     this.id = this.generateTestRunId();
-    this.bddData = this.getBddData();
+    this.bddData = this.extractBddData();
     this.projectInfo = getProjectInfo(this.test);
     this.attachmentMapper = new AttachmentMapper(this.result);
     this.executedSteps = this.fillExecutedSteps();
@@ -75,18 +71,13 @@ export class TestCaseRun {
     return `${this.test.id}-attempt-${this.result.retry}`;
   }
 
-  private getBddData() {
-    const bddData = getBddDataFromTestResult(this.result);
+  private extractBddData() {
+    const { bddData, annotationIndex } = getBddDataFromTest(this.test);
     if (!bddData) {
-      const attachmentNames = this.result.attachments.map((a) => a.name);
-      throw new Error(
-        [
-          `BDD data attachment is not found for test "${this.test.title}".`,
-          `Existing attachments (${attachmentNames.length}): ${attachmentNames.join(', ')}`,
-          '',
-        ].join('\n'),
-      );
+      throw new Error(`__bddData annotation is not found for test "${this.test.title}".`);
     }
+    // remove __bddData annotation from test (mutate)
+    this.test.annotations.splice(annotationIndex, 1);
     return bddData;
   }
 

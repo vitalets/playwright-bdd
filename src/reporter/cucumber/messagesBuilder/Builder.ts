@@ -48,7 +48,15 @@ export class MessagesBuilder {
   }
 
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
-    this.onTestEnds.push({ test, result });
+    // For skipped tests Playwright doesn't run fixtures
+    // and we don't have bddData attachment -> don't know feature uri.
+    // Don't add such test run to report.
+    if (test.expectedStatus === 'skipped') return;
+
+    // Important to create TestCaseRun here,
+    // b/c test properties can change after retries (e.g. annotations)
+    const testCaseRun = new TestCaseRun(test, result, this.hooks);
+    this.testCaseRuns.push(testCaseRun);
   }
 
   onEnd(fullResult: pw.FullResult) {
@@ -70,7 +78,7 @@ export class MessagesBuilder {
     await this.onEndPromise;
 
     // order here is important
-    this.createTestCaseRuns();
+    // this.createTestCaseRuns();
     await this.loadFeatures();
     this.createTestCases();
 
@@ -113,16 +121,16 @@ export class MessagesBuilder {
     await this.gherkinDocuments.load(this.testCaseRuns);
   }
 
-  private createTestCaseRuns() {
-    this.onTestEnds.forEach(({ test, result }) => {
-      // For skipped tests Playwright doesn't run fixtures
-      // and we don't have bddData attachment -> don't know feature uri.
-      // Don't add such test run to report.
-      if (test.expectedStatus === 'skipped') return;
-      const testCaseRun = new TestCaseRun(test, result, this.hooks);
-      this.testCaseRuns.push(testCaseRun);
-    });
-  }
+  // private createTestCaseRuns() {
+  //   this.onTestEnds.forEach(({ test, result }) => {
+  //     // For skipped tests Playwright doesn't run fixtures
+  //     // and we don't have bddData attachment -> don't know feature uri.
+  //     // Don't add such test run to report.
+  //     if (test.expectedStatus === 'skipped') return;
+  //     const testCaseRun = new TestCaseRun(test, result, this.hooks);
+  //     this.testCaseRuns.push(testCaseRun);
+  //   });
+  // }
 
   private addMeta() {
     this.report.meta = new Meta().buildMessage();

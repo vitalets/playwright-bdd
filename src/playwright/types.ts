@@ -9,10 +9,11 @@ import {
   PlaywrightTestOptions,
   PlaywrightWorkerArgs,
   PlaywrightWorkerOptions,
+  TestInfo,
   TestType,
 } from '@playwright/test';
 import { BddFixtures } from '../run/bddFixtures';
-import { TestResult, Location as PlaywrightLocation } from '@playwright/test/reporter';
+import { Location as PlaywrightLocation } from '@playwright/test/reporter';
 
 export type KeyValue = { [key: string]: any };
 
@@ -32,7 +33,8 @@ export type CustomFixtures<T extends KeyValue> = Omit<
   keyof (BuiltInFixtures & BddFixtures) | symbol | number
 >;
 
-export type PwAttachment = TestResult['attachments'][0];
+export type PwAttachment = TestInfo['attachments'][0];
+export type PwAnnotation = TestInfo['annotations'][0];
 
 // cucumber has also Location type, but:
 // - it does not contain file
