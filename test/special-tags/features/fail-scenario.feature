@@ -2,4 +2,4 @@ Feature: fail scenario
 
   @fail
   Scenario: failed scenario
-      Given failed step
+    Given failed step

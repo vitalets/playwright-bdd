@@ -1,5 +1,5 @@
 @fixture:todoPage
-Feature: incorrect feature tag 
+Feature: incorrect feature tag
 
-    Scenario: step not from todoPage
-      Given AdminTodoPage: step
+  Scenario: step not from todoPage
+    Given AdminTodoPage: step

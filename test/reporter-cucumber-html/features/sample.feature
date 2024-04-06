@@ -63,7 +63,7 @@ Feature: rich feature
     Given timeouted step
     When Action 1
     Given step that uses timeouted after fixture
-  
+
   Scenario: soft assertions
     Given failing soft assertion "foo"
     And Action 1
@@ -79,9 +79,9 @@ Feature: rich feature
 
   Scenario: Scenario with data table
     When Step with data table
-      | name  | value |              
-      | foo   | bar   |
-      | x     | 42    |
+      | name | value |
+      | foo  | bar   |
+      | x    | 42    |
 
   Scenario: Scenario with doc string
     Then Step with doc string
@@ -95,7 +95,8 @@ Feature: rich feature
     And attach image as file
     And attach stdout
 
-  @success-before-hook @success-after-hook
+  @success-before-hook
+  @success-after-hook
   Scenario: Scenario with all keywords and success hooks
     Given Action 1
     And Action 2
@@ -110,16 +111,15 @@ Feature: rich feature
     Given Action 1
     And Action 2
 
-	Scenario Outline: Check doubled
+  Scenario Outline: Check doubled
     Given Action <start>
     Then Action <end>
 
-	Examples:
-		| start | end  |
-		|    2  |   4  |
-		|    3  |   6  |
+    Examples:
+      | start | end |
+      | 2     | 4   |
+      | 3     | 6   |
 
-	Examples:
-		| start  | end |
-		|    10  |   20 |
- 
+    Examples:
+      | start | end |
+      | 10    | 20  |

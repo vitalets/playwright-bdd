@@ -6,4 +6,5 @@ module.exports = {
   semi: true,
   trailingComma: 'all',
   bracketSpacing: true,
+  plugins: ['prettier-plugin-gherkin'],
 };

@@ -22,10 +22,10 @@ Feature: Attachments
     When text with ANSI escapes is logged
 
   Scenario: Log JSON
-     When the following string is attached as "application/json":
-       ```
-       {"message": "The <b>big</b> question", "foo": "bar"}
-       ```
+    When the following string is attached as "application/json":
+      ```
+      { "message": "The <b>big</b> question", "foo": "bar" }
+      ```
 
   Scenario: Byte arrays are base64-encoded regardless of media type
     When an array with 10 bytes is attached as "text/plain"

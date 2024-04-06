@@ -3,7 +3,7 @@ Feature: rule
   Background:
     Given Set context prop "foo" = "bar"
 
-  Rule: Rule 1 
+  Rule: Rule 1
 
     Background:
       Given Set context prop "xxx" = "1"

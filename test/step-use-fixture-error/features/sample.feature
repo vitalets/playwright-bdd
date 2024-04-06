@@ -1,4 +1,4 @@
 Feature: feature
 
-    Scenario: scenario
-      Given State 1
+  Scenario: scenario
+    Given State 1

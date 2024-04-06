@@ -17,5 +17,6 @@ Feature: Retry
   Scenario: Test cases won't retry after failing more than the --retry limit
     Given a step that always fails
 
-  # Scenario: Test cases won't retry when the status is UNDEFINED
-  #   Given a non-existent step
+
+# Scenario: Test cases won't retry when the status is UNDEFINED
+#   Given a non-existent step

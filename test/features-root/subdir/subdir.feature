@@ -1,3 +1,4 @@
 Feature: subdir feature
-    Scenario: some scenario
-      Given subdir step
+
+  Scenario: some scenario
+    Given subdir step

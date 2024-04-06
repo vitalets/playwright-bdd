@@ -1,3 +1,4 @@
 Feature: root feature
-    Scenario: some scenario
-      Given root step
+
+  Scenario: some scenario
+    Given root step

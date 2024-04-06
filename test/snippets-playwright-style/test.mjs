@@ -1,4 +1,4 @@
-import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, normalize, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -6,8 +6,8 @@ test(testDir.name, () =>
   execPlaywrightTestWithError(testDir.name, [
     `import { createBdd } from 'playwright-bdd';`,
     `const { Given, When, Then } = createBdd();`,
-    `// 1. Missing step definition for "one.feature:4:9"`,
-    `// 10. Missing step definition for "one.feature:23:9"`,
+    `// 1. Missing step definition for "${normalize('features/one.feature:4:5')}"`,
+    `// 10. Missing step definition for "${normalize('features/one.feature:23:5')}"`,
     `Given('Step without parameters', async ({}) => {`,
     `Given('Step with one string parameter {string}', async ({}, arg: string) => {`,
     `Given('Step with two string parameters {string} and {string}', async ({}, arg: string, arg1: string) => {`,

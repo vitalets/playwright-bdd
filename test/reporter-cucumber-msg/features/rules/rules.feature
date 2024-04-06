@@ -5,6 +5,7 @@ Feature: Usage of a `Rule`
   You can also use the Examples synonym for Scenario to make them even similar.
 
   Rule: A sale cannot happen if the customer does not have enough money
+
     # Unhappy path
     Example: Not enough money
       Given the customer has 100 cents
@@ -21,6 +22,7 @@ Feature: Usage of a `Rule`
 
   @some-tag
   Rule: a sale cannot happen if there is no stock
+
     # Unhappy path
     Example: No chocolates left
       Given the customer has 100 cents

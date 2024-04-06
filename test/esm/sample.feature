@@ -1,4 +1,4 @@
 Feature: esm
-    Scenario: Simple scenario
-      Given State 1
 
+  Scenario: Simple scenario
+    Given State 1

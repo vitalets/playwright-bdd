@@ -1,3 +1,4 @@
 Feature: project one
-    Scenario: scenario of project one
-      Given State 1
+
+  Scenario: scenario of project one
+    Given State 1

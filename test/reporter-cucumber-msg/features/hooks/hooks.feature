@@ -12,7 +12,6 @@ Feature: Hooks
   # commented b/c playwright-bdd does not provide report with missing steps
   # Scenario: No tags and a undefined step
   #   When a step does not exist
-
   @some-tag
   Scenario: With a tag, a failure in the hook and a passed step
     When a step passes

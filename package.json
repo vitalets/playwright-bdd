@@ -83,6 +83,7 @@
     "np": "10.0.2",
     "npm-run-all": "^4.1.5",
     "prettier": "3.2.5",
+    "prettier-plugin-gherkin": "2.2.1",
     "publint": "0.2.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

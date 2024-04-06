@@ -1,5 +1,4 @@
 Feature: unique steps
 
-    Scenario: scenario 1
-        Given unique step
-      
+  Scenario: scenario 1
+    Given unique step
