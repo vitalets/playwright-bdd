@@ -11,12 +11,13 @@ test.beforeEach(async ({ page }) => {
 test('Scenario: timeout in before fixture', async ({ page }) => {
   const scenario = getScenario(page, 'timeout in before fixture');
   await expect(scenario.getSteps()).toContainText([
-    // here can be different error messages
-    /Hook "fixture: (.+)" failed/,
     'GivenAction 0',
     'Givenstep that uses timeouted before fixture',
     'WhenAction 1',
   ]);
+  // 1. position of error message sometimes appears in After Hooks, so check it separately
+  // 2. here can be different error messages
+  await expect(scenario.getSteps()).toContainText([/Hook "fixture: (.+)" failed/]);
   // screenshot position changes between PW versions, so check it separately
   await expect(scenario.getSteps()).toContainText(['screenshot']);
   // sometimes error is the following:
