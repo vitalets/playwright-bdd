@@ -5,9 +5,9 @@ const testDir = new TestDir(import.meta);
 test(testDir.name, () =>
   execPlaywrightTestWithError(testDir.name, [
     `import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';`,
-    `// 1. Missing step definition for "sample.feature:5:7"`,
+    `// 1. Missing step definition for "sample.feature:5:5"`,
     `@When('I add todo {string}')`,
-    `// 2. Missing step definition for "sample.feature:7:7"`,
+    `// 2. Missing step definition for "sample.feature:7:5"`,
     `@Then('visible todos count is {int}')`,
     `Missing step definitions (2)`,
   ]),
