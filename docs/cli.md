@@ -48,7 +48,7 @@ List of all steps (4):
 ```
 #### Options
 * `--config` - path to Playwright config
-* `--unused-step` - output only unused steps
+* `--unused-steps` - output only unused steps
 
 ## `bddgen env`
 Displays info about current environment:
