@@ -13,22 +13,24 @@ const testDir = defineBddConfig({
 });
 
 export default defineConfig({
+  testDir,
   projects: [
     {
       name: 'chromium',
-      testDir,
       use: { ...devices['Desktop Chrome'] },
     },
     {
       name: 'firefox',
-      testDir,
       use: { ...devices['Desktop Firefox'] },
     },
   ],
 });
 ```
 
-If projects use **different feature files**, you should use separate `defineBddConfig()` calls inside each project. Please provide different `outputDir` for each project, otherwise generated files will overwrite each other:
+If projects use **different feature files**, you should use separate `defineBddConfig()` calls inside each project.
+
+> Please provide different `outputDir` for each project, otherwise generated files will overwrite each other
+
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
@@ -52,6 +54,38 @@ export default defineConfig({
         paths: ['project-two/*.feature'],
         require: ['project-two/steps/*.ts'],
       }),
+    },
+  ],
+});
+```
+
+#### Authentication project
+
+When using [separate project for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
+
+```ts
+import { defineConfig } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
+
+const testDir = defineBddConfig({
+  paths: ['features/*.feature'],
+  require: ['steps/*.ts'],
+});
+
+export default defineConfig({
+  testDir,
+  projects: [
+    {
+      name: 'setup',
+      testDir: './setup-steps', // <-- set testDir for setup project
+      testMatch: /setup\.ts/,
+    },
+    {
+      name: 'chromium',
+      dependencies: ['setup'],
+      use: {
+        storageState: 'playwright/.auth/user.json',
+      },      
     },
   ],
 });
