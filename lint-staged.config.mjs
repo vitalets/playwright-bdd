@@ -1,31 +1,40 @@
 import path from 'node:path';
+import micromatch from 'micromatch';
 import { getSmokeTestDirs } from './scripts/smoke-tests.mjs';
 
 export default {
-  '**/*.{js,mjs,ts}': [
-    'eslint --fix --no-warn-ignored',
-    'prettier --write --ignore-unknown',
-    (changedFiles) => {
-      const changedTestDirs = extractTestDirs(changedFiles);
-      // if changes only in test/* - run only these tests
-      // otherwise run on smoke dirs + changed test dirs
-      const finalTestDirs =
-        changedTestDirs.length === changedFiles.length
-          ? changedTestDirs
-          : [...new Set(changedTestDirs.concat(getSmokeTestDirs()))];
-      return `npm run only ${finalTestDirs.join(' ')}`;
-    },
-  ],
+  '**': (changedFiles) => {
+    return [
+      ...eslint(changedFiles), // prettier-ignore
+      ...prettier(changedFiles),
+      ...test(changedFiles),
+    ];
+  },
   '**/*.feature': 'node scripts/no-only-in-features.mjs',
   'docs/**': () => 'npm run docs:validate',
-  '!**/*.{js,mjs,ts,feature}': 'prettier --write --ignore-unknown',
 };
 
-function extractTestDirs(absPaths) {
-  const testDirs = absPaths
-    .map((file) => path.relative(process.cwd(), file))
-    .map((file) => file.split(path.sep))
-    .filter((parts) => parts[0] === 'test' && parts.length > 2 && parts[1] !== '_helpers')
-    .map((parts) => path.join(parts[0], parts[1]));
-  return [...new Set(testDirs)];
+function eslint(changedFiles) {
+  const jsFiles = micromatch(changedFiles, '**/*.{js,mjs,ts}');
+  return jsFiles.length ? [`eslint --fix --no-warn-ignored ${jsFiles.join(' ')}`] : [];
+}
+
+function prettier(changedFiles) {
+  return changedFiles.length ? [`prettier --write --ignore-unknown ${changedFiles.join(' ')}`] : [];
+}
+
+function test(changedFiles) {
+  const testFiles = micromatch(changedFiles, 'test/**');
+  const testDirFiles = micromatch(testFiles, ['test/*/**', '!test/_helpers/**']);
+  const testHelpersChanged = testDirFiles.length !== testFiles.length;
+  const srcFiles = micromatch(changedFiles, 'src/**/*.{js,mjs,ts}');
+  const packageFiles = micromatch(changedFiles, 'package*.json');
+  const testDirs = testDirFiles.map((file) => file.split(path.sep).slice(0, 2));
+  // if changes only in test/* -> run only these tests
+  // if changes in src|package.json -> run tests on test dirs + smoke test dirs
+  if (testHelpersChanged || srcFiles.length || packageFiles.length) {
+    testDirs.push(...getSmokeTestDirs());
+  }
+  const uniqueTestDirs = [...new Set(testDirs)];
+  return uniqueTestDirs.length ? [`npm run only ${uniqueTestDirs.join(' ')}`] : [];
 }
