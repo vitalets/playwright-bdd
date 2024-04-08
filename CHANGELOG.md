@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.1.1
 * fix: support stacktrace for Cucumber 10.4
 
 ## 6.1.0
