@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* fix: support stacktrace for Cucumber 10.4
+
 ## 6.1.0
 * feature: add new special tags ([#123](https://github.com/vitalets/playwright-bdd/issues/123), [#126](https://github.com/vitalets/playwright-bdd/issues/126))
 * feature: support new Playwright tags ([#98](https://github.com/vitalets/playwright-bdd/issues/98))

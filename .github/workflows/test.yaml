@@ -42,6 +42,8 @@ jobs:
           - playwrightVersion: '1.38'
             cucumberVersion: '10.1'
           - playwrightVersion: '1.39'
+            cucumberVersion: '10.3'
+          - playwrightVersion: '1.40'
             cucumberVersion: '10'
     steps:
       - uses: actions/checkout@v4

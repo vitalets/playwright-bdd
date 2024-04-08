@@ -70,22 +70,14 @@ export class TestStepRun {
       testStepResult: {
         duration: messages.TimeConversion.millisecondsToDuration(this.duration),
         status: this.getStatus(error),
-        message: error ? formatError(error) : undefined,
-        exception: error ? this.buildException(error) : undefined,
+        // 'message' is deprecated since cucumber 10.4 in favor of 'exception' field
+        // See: https://github.com/cucumber/react-components/pull/345
+        message: error ? buildErrorMessage(error) : undefined,
+        exception: error ? buildException(error) : undefined,
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };
     return { testStepFinished };
-  }
-
-  private buildException(error: pw.TestError): messages.Exception {
-    return {
-      type: 'Error',
-      message: error.message ? stripAnsiEscapes(error.message) : undefined,
-      stackTrace: error.stack ? stripAnsiEscapes(error.stack) : undefined,
-      // Use type casting b/c older versions of @cucumber/messages don't have 'stackTrace' field
-      // todo: add direct dependency on @cucumber/messages
-    } as messages.Exception;
   }
 
   private getStatus(error?: pw.TestError): messages.TestStepResultStatus {
@@ -116,6 +108,24 @@ export class TestStepRun {
   }
 }
 
-function formatError(error: pw.TestError) {
+function buildErrorMessage(error: pw.TestError) {
   return stripAnsiEscapes([error.message, error.snippet].filter(Boolean).join('\n'));
+}
+
+function buildException(error: pw.TestError): messages.Exception {
+  return {
+    type: 'Error',
+    message: buildErrorMessage(error),
+    // todo: extract only trace?
+    stackTrace: error.stack ? extractStackTrace(stripAnsiEscapes(error.stack)) : undefined,
+    // Use type casting b/c older versions of @cucumber/messages don't have 'stackTrace' field
+    // todo: add direct dependency on @cucumber/messages
+  } as messages.Exception;
+}
+
+function extractStackTrace(errorStack: string) {
+  return errorStack
+    .split('\n')
+    .filter((line) => line.match(/^\s+at .*/))
+    .join('\n');
 }
