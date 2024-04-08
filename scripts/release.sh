@@ -11,4 +11,4 @@ npm run lint
 npm run prettier
 npx npm test # 'npm run build' is called inside
 npm run examples
-SKIP_PRE_PUSH=1 npx np --yolo --no-release-draft --no-tests --any-branch
+SKIP_GIT_HOOKS=1 npx np --yolo --no-release-draft --any-branch
