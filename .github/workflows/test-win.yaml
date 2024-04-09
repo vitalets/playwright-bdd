@@ -2,7 +2,7 @@ name: test-win
 
 on:
   push:
-    branches: [main]
+    branches: [main, beta]
   pull_request:
     branches: [main, beta]
   schedule:
