@@ -77,7 +77,7 @@ The benefits of using `auth` fixture:
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-`playwright-bdd` supports worker-level `BeforeAll / AfterAll` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#beforeall--afterall). See the [API reference](api.md#beforealloptions-hookfn) for the full specification.
+`playwright-bdd` supports worker-level `BeforeAll / AfterAll` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#beforeall--afterall). Notice that these hooks are imported from `createBdd()`, not from `@cucumber/cucumber`.
 
 Usage:
 ```ts
@@ -116,9 +116,11 @@ Imagine you have defined custom worker fixture `myWorkerFixture`:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{}, { myWorkerFixture: string }>({
-  myWorkerFixture: [async ({ page }, use) => {
-    await use('myWorkerFixture');
+export const test = base.extend<{}, { myWorkerFixture: MyWorkerFixture }>({
+  myWorkerFixture: [async ({ browser }, use) => {
+    const fixture = new MyWorkerFixture(browser);
+    await fixture.setup();
+    await use(fixture);
   }, { scope: 'worker' }]
 });
 ```
@@ -141,7 +143,7 @@ BeforeAll(async function ({ myWorkerFixture }) {
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-`playwright-bdd` supports scenario-level `Before / After` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#hooks). See the [API reference](api.md#beforeoptions-hookfn) for the full specification.
+`playwright-bdd` supports scenario-level `Before / After` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#hooks). Notice that these hooks are imported from `createBdd()`, not from `@cucumber/cucumber`.
 
 Usage:
 ```ts
@@ -187,9 +189,10 @@ Imagine you have defined custom fixture `myFixture`:
 ```ts
 import { test as base } from 'playwright-bdd';
 
-export const test = base.extend<{ myFixture: string }>({
+export const test = base.extend<{ myFixture: MyFixture }>({
   myFixture: async ({ page }, use) => {
-    await use('myFixture');
+    const fixture = new MyFixture(page);
+    await use(fixture);
   }
 });
 ```
@@ -206,7 +209,7 @@ Before(async function ({ myFixture }) {
 });
 ```
 
-> Note that you can access built-in fixtures via `this` as well, e.g. `this.testInfo`.
+> Note that you can access built-in fixtures via `this` context, e.g. `this.testInfo`.
 
 ### Custom World
 
