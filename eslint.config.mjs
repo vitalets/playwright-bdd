@@ -1,10 +1,10 @@
-const globals = require('globals');
-const js = require('@eslint/js');
-const tsParser = require('@typescript-eslint/parser');
-const tsPlugin = require('@typescript-eslint/eslint-plugin');
-const playwright = require('eslint-plugin-playwright');
+import globals from 'globals';
+import js from '@eslint/js';
+import tsParser from '@typescript-eslint/parser';
+import tsPlugin from '@typescript-eslint/eslint-plugin';
+import playwright from 'eslint-plugin-playwright';
 
-module.exports = [
+export default [
   {
     ignores: ['examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/.cache'],
   },
@@ -43,7 +43,6 @@ module.exports = [
         'error',
         { anonymous: 'always', named: 'never', asyncArrow: 'always' },
       ],
-      '@typescript-eslint/no-unused-vars': 'error',
       '@typescript-eslint/triple-slash-reference': 0,
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-undef': 0,
