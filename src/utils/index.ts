@@ -71,10 +71,6 @@ export function omit<T extends object, K extends keyof T>(obj: T, key: K) {
   return res as Omit<T, K>;
 }
 
-/**
- * Returns path with "/" separator on all platforms.
- * See: https://stackoverflow.com/questions/53799385/how-can-i-convert-a-windows-path-to-posix-path-using-node-path
- */
-export function toPosixPath(somePath: string) {
-  return somePath.split(path.sep).join(path.posix.sep);
+export function toArray<T>(value: T | T[]) {
+  return Array.isArray(value) ? value : [value];
 }

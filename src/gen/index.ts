@@ -20,6 +20,7 @@ import { exit, withExitHandler } from '../utils/exit';
 import { hasCustomTest } from '../steps/createBdd';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
+import { loadStepsOwn } from '../cucumber/loadStepsOwn';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -95,7 +96,9 @@ export class TestFilesGenerator {
     const { requirePaths, importPaths } = this.runConfiguration.support;
     this.logger.log(`Loading steps from: ${requirePaths.concat(importPaths).join(', ')}`);
     const environment = { cwd: getPlaywrightConfigDir() };
-    this.supportCodeLibrary = await loadSteps(this.runConfiguration, environment);
+    this.supportCodeLibrary = this.config.steps
+      ? await loadStepsOwn(environment.cwd, this.config.steps)
+      : await loadSteps(this.runConfiguration, environment);
     await this.loadDecoratorSteps();
     this.logger.log(`Loaded steps: ${this.supportCodeLibrary.stepDefinitions.length}`);
   }

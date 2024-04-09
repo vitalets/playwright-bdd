@@ -8,9 +8,9 @@ import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
 import { BddWorldFixtures } from '../run/bddWorld';
 import { TestMetaBuilder } from './testMeta';
-import { toPosixPath } from '../utils';
 import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
+import { toPosixPath } from '../utils/paths';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 

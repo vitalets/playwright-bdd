@@ -29,7 +29,7 @@ function test(changedFiles) {
   const testHelpersChanged = testDirFiles.length !== testFiles.length;
   const srcFiles = micromatch(changedFiles, 'src/**/*.{js,mjs,ts}');
   const packageFiles = micromatch(changedFiles, 'package*.json');
-  const testDirs = testDirFiles.map((file) => file.split(path.sep).slice(0, 2));
+  const testDirs = testDirFiles.map((file) => file.split(path.sep).slice(0, 2).join(path.sep));
   // if changes only in test/* -> run only these tests
   // if changes in src|package.json -> run tests on test dirs + smoke test dirs
   if (testHelpersChanged || srcFiles.length || packageFiles.length) {

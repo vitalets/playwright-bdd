@@ -16,6 +16,7 @@ import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
 import { logger } from '../utils/logger';
 import { getEnrichReporterData } from '../config/enrichReporterData';
 import { BddDataManager } from './bddData';
+import { loadStepsOwn } from '../cucumber/loadStepsOwn';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -67,8 +68,11 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
         environment,
       );
 
-      const supportCodeLibrary = await loadSteps(runConfiguration, environment);
+      const supportCodeLibrary = config.steps
+        ? await loadStepsOwn(environment.cwd, config.steps)
+        : await loadSteps(runConfiguration, environment);
       appendDecoratorSteps(supportCodeLibrary);
+
       const World = getWorldConstructor(supportCodeLibrary);
 
       await use({ runConfiguration, supportCodeLibrary, World, config });

@@ -110,3 +110,15 @@ Verbose output.
 - Default: `undefined`
 
 If this option is enabled, playwright-bdd will add special attachments with BDD data, required for Cucumber reports. It gets enabled automatically, when you use `cucmberReporter()` helper. But for scenarios with [reports merging](reporters/cucumber.md#merge-reports), you need to manually set `enrichReporterData: true` when generating **blob** report.
+
+## steps
+
+?> Experimental
+
+- Type: `string | string[]`
+- Default: `undefined`
+
+Paths to search for step definitions. Can be directory or glob pattern.
+Example: `steps/**/*.ts`.
+If you don't specify file extension, by default the following extensions are appended to the pattern: `*.{js,mjs,cjs,ts,mts,cts}`.
+This option will eventually replace Cucumber options `require`, `requireModule`, and `import`. 

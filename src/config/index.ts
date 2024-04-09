@@ -30,6 +30,13 @@ type OwnConfig = {
   featuresRoot?: string;
   /** Add special BDD attachments for Cucumber reports */
   enrichReporterData?: boolean;
+  /**
+   * Step definition patterns, e.g. 'steps/*.{ts,js}'.
+   * Always use forward slash.
+   * Will replace Cucumber's 'require' / 'import'
+   * @experimental
+   */
+  steps?: string | string[];
 };
 
 export const defaults: Required<
@@ -68,6 +75,10 @@ function getConfig(configDir: string, inputConfig?: BDDInputConfig): BDDConfig {
     ? path.resolve(configDir, config.featuresRoot)
     : configDir;
 
+  if (config.steps && (config.require || config.import)) {
+    throw new Error(`Config option 'steps' can't be used together with 'require' or 'import'`);
+  }
+
   return {
     ...config,
     // important to resolve outputDir as it is used as unique key for input configs
@@ -90,6 +101,7 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
     tags: true,
     featuresRoot: true,
     enrichReporterData: true,
+    steps: true,
   };
   const keys = Object.keys(omitProps) as (keyof OwnConfig)[];
   const cucumberConfig = { ...config };
