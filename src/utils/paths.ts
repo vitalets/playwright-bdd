@@ -22,6 +22,7 @@ export async function resolveFiles(cwd: string, patterns: string[], extension: s
 /**
  * Appends file extension(s) to pattern.
  * Example: 'path/to/dir' -> 'path/to/dir/** /*.{js,ts}'
+ * @public
  */
 export function finalizePattern(pattern: string, extension: string) {
   // On Windows convert path to forward slash.
