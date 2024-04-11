@@ -12,7 +12,7 @@ import {
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { BddAutoInjectFixtures, test as baseBddTest } from '../run/bddFixtures';
+import { test as baseBddTest } from '../run/bddFixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { defineStep } from './defineStep';
 import { exit } from '../utils/exit';
@@ -20,6 +20,7 @@ import { BddWorld } from '../run/bddWorld';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
+import { BddAutoInjectFixtures } from '../run/bddFixtures/autoInject';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 

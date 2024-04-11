@@ -3,7 +3,7 @@ import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { BddWorldInternal } from './bddWorldInternal';
-import { StepFixture } from './bddFixtures';
+import { StepFixture } from './bddFixtures/types';
 
 export type BddWorldFixtures = {
   page: Page;

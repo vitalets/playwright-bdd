@@ -8,7 +8,7 @@ import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_k
 import { CucumberStepFunction, StepConfig } from './stepConfig';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { exit } from '../utils/exit';
-import { getBddAutoInjectsFixtures } from '../run/bddFixtures';
+import { getBddAutoInjectsFixtures } from '../run/bddFixtures/autoInject';
 
 /**
  * Defines step by config.

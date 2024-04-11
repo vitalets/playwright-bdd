@@ -1,61 +1,21 @@
-import { TestInfo, test as base } from '@playwright/test';
-import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
-import { loadSteps } from '../cucumber/loadSteps';
-import { BddWorld, BddWorldFixtures, getWorldConstructor } from './bddWorld';
-import { BDDConfig, extractCucumberConfig } from '../config';
-import { getConfigFromEnv } from '../config/env';
-import { TestTypeCommon } from '../playwright/types';
-import { appendDecoratorSteps } from '../steps/decorators/steps';
-import { getPlaywrightConfigDir } from '../config/configDir';
-import { runScenarioHooks } from '../hooks/scenario';
-import { runWorkerHooks } from '../hooks/worker';
-import { IRunConfiguration } from '@cucumber/cucumber/api';
-import { StepInvoker } from './StepInvoker';
-import { ISupportCodeLibrary } from '../cucumber/types';
-import { TestMeta, TestMetaMap, getTestMeta } from '../gen/testMeta';
-import { logger } from '../utils/logger';
-import { getEnrichReporterData } from '../config/enrichReporterData';
-import { BddDataManager } from './bddData';
+import { test as base } from '@playwright/test';
+import { loadConfig as loadCucumberConfig } from '../../cucumber/loadConfig';
+import { loadSteps } from '../../cucumber/loadSteps';
+import { BddWorldFixtures, getWorldConstructor } from '../bddWorld';
+import { extractCucumberConfig } from '../../config';
+import { getConfigFromEnv } from '../../config/env';
+import { appendDecoratorSteps } from '../../steps/decorators/steps';
+import { getPlaywrightConfigDir } from '../../config/configDir';
+import { runScenarioHooks } from '../../hooks/scenario';
+import { runWorkerHooks } from '../../hooks/worker';
+import { StepInvoker } from '../StepInvoker';
+import { getTestMeta } from '../../gen/testMeta';
+import { logger } from '../../utils/logger';
+import { getEnrichReporterData } from '../../config/enrichReporterData';
+import { BddDataManager } from '../bddData';
+import { BddFixtures, BddFixturesWorker } from './types';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
-
-export type StepFixture = {
-  title: string;
-};
-
-export type BddFixtures = {
-  // fixtures injected into BddWorld:
-  // empty object for pw-style, builtin fixtures for cucumber-style
-  $bddWorldFixtures: BddWorldFixtures;
-  $bddWorld: BddWorld;
-  Given: StepInvoker['invoke'];
-  When: StepInvoker['invoke'];
-  Then: StepInvoker['invoke'];
-  And: StepInvoker['invoke'];
-  But: StepInvoker['invoke'];
-  $testMetaMap: TestMetaMap;
-  $testMeta: TestMeta;
-  $tags: string[];
-  $test: TestTypeCommon;
-  $step: StepFixture;
-  $uri: string;
-  $scenarioHookFixtures: Record<string, unknown>;
-  $before: void;
-  $after: void;
-  $lang: string;
-};
-
-type BddFixturesWorker = {
-  $cucumber: {
-    runConfiguration: IRunConfiguration;
-    supportCodeLibrary: ISupportCodeLibrary;
-    World: typeof BddWorld;
-    config: BDDConfig;
-  };
-  $workerHookFixtures: Record<string, unknown>;
-  $beforeAll: void;
-  $afterAll: void;
-};
 
 export const test = base.extend<BddFixtures, BddFixturesWorker>({
   // load cucumber once per worker (auto-fixture)
@@ -179,32 +139,3 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     { auto: true, scope: 'worker' },
   ],
 });
-
-// Auto-inject-fixtures are automatically injected into every step call
-// without explicitly passing them in the last argument of Given() / When() / Then()
-export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags' | '$step'> & {
-  $testInfo: TestInfo;
-};
-
-const BDD_AUTO_INJECT_FIXTURES: Record<keyof BddAutoInjectFixtures, null> = {
-  $tags: null,
-  $test: null,
-  $step: null,
-  $testInfo: null,
-};
-
-export function isBddAutoInjectFixture(name: string) {
-  return Object.prototype.hasOwnProperty.call(
-    BDD_AUTO_INJECT_FIXTURES,
-    name as keyof BddAutoInjectFixtures,
-  );
-}
-
-export function getBddAutoInjectsFixtures(bddWorld: BddWorld): BddAutoInjectFixtures {
-  return {
-    $testInfo: bddWorld.testInfo,
-    $tags: bddWorld.tags,
-    $test: bddWorld.test,
-    $step: bddWorld.step,
-  };
-}

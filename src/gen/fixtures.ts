@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-types */
 
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
-import { isBddAutoInjectFixture } from '../run/bddFixtures';
+import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { exit } from '../utils/exit';
 
 const bodyFixturesSymbol = Symbol('bodyFixtures');
