@@ -16,10 +16,10 @@ import { getBddAutoInjectsFixtures } from '../run/bddFixtures/autoInject';
  */
 export function defineStep(stepConfig: StepConfig) {
   const { keyword, pattern } = stepConfig;
-  const cucumberDefineStepFn = getCucumberDefineStepFn(keyword);
-  const code = buildCucumberStepCode(stepConfig);
+  const cucumberDefineStep = getCucumberDefineStepFn(keyword);
+  const code = buildCucumberStepFn(stepConfig);
   try {
-    cucumberDefineStepFn(pattern, code);
+    cucumberDefineStep(pattern, code);
   } catch (e) {
     // todo: detect that this is import from test file
     // and skip/delay registering cucumber steps until cucumber is loaded
@@ -35,7 +35,7 @@ export function defineStep(stepConfig: StepConfig) {
   }
 }
 
-export function buildCucumberStepCode(stepConfig: StepConfig) {
+export function buildCucumberStepFn(stepConfig: StepConfig) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const code: CucumberStepFunction = function (...args: any[]) {
     // build the first argument (fixtures) for step fn

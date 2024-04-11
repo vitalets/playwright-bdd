@@ -8,7 +8,7 @@ import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_b
 import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { StepConfig } from '../stepConfig';
-import { buildCucumberStepCode } from '../defineStep';
+import { buildCucumberStepFn } from '../defineStep';
 import { PomNode } from './class';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
@@ -59,7 +59,7 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
       const fixture = getFirstNonAutoInjectFixture(fixturesArg, stepConfig);
       return fn.call(fixture, ...args);
     };
-    const code = buildCucumberStepCode(stepConfig);
+    const code = buildCucumberStepFn(stepConfig);
     const stepDefinition = buildStepDefinition(
       {
         keyword,
