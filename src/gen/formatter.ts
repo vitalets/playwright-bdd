@@ -117,6 +117,9 @@ export class Formatter {
     ];
   }
 
+  /**
+   * These fixtures are added only in Cucumber-style
+   */
   bddWorldFixtures() {
     const fixturesObj: Record<keyof BddWorldFixtures, null> = {
       page: null,

@@ -48,6 +48,7 @@ export class StepInvoker {
     );
 
     this.world.$internal.bddDataManager?.registerStep(stepDefinition, stepText, location);
+    this.world.step.title = stepText;
 
     await runStepWithCustomLocation(this.world.test, stepTitle, location, () =>
       code.apply(this.world, parameters),

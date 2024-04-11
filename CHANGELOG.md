@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* feature: add `$step` fixture ([#133](https://github.com/vitalets/playwright-bdd/issues/133))
+
 ## 6.1.1
 * fix: support stacktrace for Cucumber 10.4
 

@@ -8,6 +8,7 @@ import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_k
 import { CucumberStepFunction, StepConfig } from './stepConfig';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { exit } from '../utils/exit';
+import { getBddAutoInjectsFixtures } from '../run/bddFixtures';
 
 /**
  * Defines step by config.
@@ -38,12 +39,11 @@ export function buildCucumberStepCode(stepConfig: StepConfig) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const code: CucumberStepFunction = function (...args: any[]) {
     // build the first argument (fixtures) for step fn
-    const fixturesArg = Object.assign({}, this.$internal.currentStepFixtures, {
-      $testInfo: this.testInfo,
-      $test: this.test,
-      $tags: this.tags,
-    });
-
+    const fixturesArg = Object.assign(
+      {},
+      this.$internal.currentStepFixtures,
+      getBddAutoInjectsFixtures(this),
+    );
     return stepConfig.fn.call(this, fixturesArg, ...args);
   };
 

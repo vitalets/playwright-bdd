@@ -19,6 +19,10 @@ import { BddDataManager } from './bddData';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
+export type StepFixture = {
+  title: string;
+};
+
 export type BddFixtures = {
   // fixtures injected into BddWorld:
   // empty object for pw-style, builtin fixtures for cucumber-style
@@ -33,6 +37,7 @@ export type BddFixtures = {
   $testMeta: TestMeta;
   $tags: string[];
   $test: TestTypeCommon;
+  $step: StepFixture;
   $uri: string;
   $scenarioHookFixtures: Record<string, unknown>;
   $before: void;
@@ -80,7 +85,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
   $bddWorld: async (
-    { $tags, $test, $bddWorldFixtures, $cucumber, $lang, $testMeta, $uri },
+    { $tags, $test, $step, $bddWorldFixtures, $cucumber, $lang, $testMeta, $uri },
     use,
     testInfo,
   ) => {
@@ -90,6 +95,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       supportCodeLibrary,
       $tags,
       $test,
+      $step,
       $bddWorldFixtures,
       lang: $lang,
       parameters: runConfiguration.runtime.worldParameters || {},
@@ -121,6 +127,8 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
 
   // init $test with base test, but it will be overwritten in test file
   $test: ({}, use) => use(base),
+
+  $step: ({}, use) => use({ title: '' }),
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: ({}, use) => use(''),
@@ -172,13 +180,31 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   ],
 });
 
-/** these fixtures automatically injected into every step call */
-export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags'> & {
+// Auto-inject-fixtures are automatically injected into every step call
+// without explicitly passing them in the last argument of Given() / When() / Then()
+export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags' | '$step'> & {
   $testInfo: TestInfo;
 };
 
-const BDD_AUTO_INJECT_FIXTURES: (keyof BddAutoInjectFixtures)[] = ['$testInfo', '$test', '$tags'];
+const BDD_AUTO_INJECT_FIXTURES: Record<keyof BddAutoInjectFixtures, null> = {
+  $tags: null,
+  $test: null,
+  $step: null,
+  $testInfo: null,
+};
 
 export function isBddAutoInjectFixture(name: string) {
-  return BDD_AUTO_INJECT_FIXTURES.includes(name as keyof BddAutoInjectFixtures);
+  return Object.prototype.hasOwnProperty.call(
+    BDD_AUTO_INJECT_FIXTURES,
+    name as keyof BddAutoInjectFixtures,
+  );
+}
+
+export function getBddAutoInjectsFixtures(bddWorld: BddWorld): BddAutoInjectFixtures {
+  return {
+    $testInfo: bddWorld.testInfo,
+    $tags: bddWorld.tags,
+    $test: bddWorld.test,
+    $step: bddWorld.step,
+  };
 }

@@ -6,7 +6,7 @@ Playwright-style highlights:
 
 * use `Given`, `When`, `Then` from `createBdd()` call (see example below)
 * use arrow functions for step definitions
-* don't use `World` and `before/after` hooks (use fixtures instead)
+* don't use `World` / `this` inside steps
 
 Example:
 
@@ -26,7 +26,7 @@ When('I click link {string}', async ({ page }, name: string) => {
 
 > Usually step functions are async, but it is not required
 
-?> Calling `const { Given, When, Then } = createBdd()` at the top of each step file is totally ok, because it returns lightweight wrappers without heavy operations
+?> Calling `const { Given, When, Then } = createBdd()` at the top of each step file is normal, because it returns lightweight wrappers without heavy operations
 
 ## Fixtures
 To use [fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
@@ -93,6 +93,26 @@ Example - skip test for `firefox`:
 Given('I do something', async ({ browserName, $test }) => { 
   if (browserName === 'firefox') $test.skip();
   // ...
+});
+```
+
+## Accessing `$step`
+You can access current step info by special `$step` fixture.
+Currently, it contains only step title, but can be extended in the future.
+
+One of the use-cases - additional matching in the step title.
+Imagine you have a step that checks element visibility: 
+`Then('element with text {string} should( not) be displayed', ...)`.
+As optional matches are [not a part](https://github.com/cucumber/cucumber-expressions/issues/125) of Cucumber expression result,
+the easiest way to check for `( not)` is to use step title: 
+```ts
+Then('element with text {string} should( not) be displayed', async ({ page, $step }, text: string) => {
+  const negate = /should not/.test($step.title);
+  if (negate) {
+    await expect(page.getByText(text)).toBeHidden();
+  } else {
+    await expect(page.getByText(text)).toBeVisible();
+  }
 });
 ```
 
