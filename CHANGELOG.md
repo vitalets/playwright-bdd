@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* feature: add `$step` fixture ([#133](https://github.com/vitalets/playwright-bdd/issues/133))
 * feature: add experimental support of `steps` option (related to [#94](https://github.com/vitalets/playwright-bdd/issues/94))
 
 ## 6.1.1

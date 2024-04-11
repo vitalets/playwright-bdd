@@ -3,6 +3,7 @@ import { World as CucumberWorld, IWorldOptions } from '@cucumber/cucumber';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { BddWorldInternal } from './bddWorldInternal';
+import { StepFixture } from './bddFixtures/types';
 
 export type BddWorldFixtures = {
   page: Page;
@@ -21,6 +22,7 @@ export type BddWorldOptions<
   supportCodeLibrary: ISupportCodeLibrary;
   $tags: string[];
   $test: TestType;
+  $step: StepFixture;
   $bddWorldFixtures: BddWorldFixtures;
   lang: string;
 };
@@ -88,6 +90,10 @@ export class BddWorld<
 
   get test() {
     return this.options.$test;
+  }
+
+  get step() {
+    return this.options.$step;
   }
 
   async init() {

@@ -22,22 +22,11 @@ Then('empty fixtures with int param {int}', ({}, n: number) => {
   expect(typeof n).toEqual('number');
 });
 
-Then(
-  '$testInfo is available as a fixture and its title equals to {string}',
-  async ({ $testInfo }, title: string) => {
-    expect($testInfo).toBeDefined();
-    expect($testInfo.title).toEqual(title);
-  },
-);
-
-Then(
-  '$test is available as a fixture and test.info\\().title equals to {string}',
-  async ({ $test }, title: string) => {
-    expect($test).toBeDefined();
-    expect($test.skip).toBeDefined();
-    expect($test.info().title).toEqual(title);
-  },
-);
+Then('bdd-fixtures should be defined', async ({ $test, $step, $testInfo }) => {
+  expect($testInfo.title).toEqual('playwright-bdd built-in fixtures');
+  expect($test.info().title).toEqual('playwright-bdd built-in fixtures');
+  expect($step.title).toEqual('bdd-fixtures should be defined');
+});
 
 When('testScopedFixture set prop to {string}', async ({ testScopedFixture }, value: string) => {
   testScopedFixture.prop = value;

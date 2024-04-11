@@ -97,6 +97,14 @@ Quotes style in generated test files.
 
 [Tags expression](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions) to filter scenarios for generation. Can be also defined by CLI option `--tags`.
 
+Example:
+```ts
+const testDir = defineBddConfig({
+  tags: '@desktop and not @slow',
+  // ...
+});
+```
+
 ## verbose
 
 - Type: `boolean`

@@ -1,4 +1,4 @@
-Feature: custom fixtures
+Feature: custom fixtures 1
 
   Scenario: test-scoped fixture scenario 1
     Then testScopedFixture prop equals to "initial value"

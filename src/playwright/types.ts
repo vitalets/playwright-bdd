@@ -12,8 +12,9 @@ import {
   TestInfo,
   TestType,
 } from '@playwright/test';
-import { BddFixtures } from '../run/bddFixtures';
+
 import { Location as PlaywrightLocation } from '@playwright/test/reporter';
+import { BddFixtures } from '../run/bddFixtures/types';
 
 export type KeyValue = { [key: string]: any };
 
