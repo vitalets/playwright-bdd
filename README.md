@@ -39,7 +39,7 @@ Feel free to share your feedback in [issues](https://github.com/vitalets/playwri
 Inspect the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
 
 ## Contributing
-Your contributions are welcome! Review [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for the details.
+Your contributions are welcome! Review [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for playwright-bdd local setup and development.
 
 ## Sponsors
 Great thanks to the sponsors for supporting playwright-bdd project ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
