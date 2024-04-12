@@ -18,7 +18,9 @@ function noDuplicates(): Project {
     testDir: defineBddConfig({
       outputDir: `.features-gen/no-duplicates`,
       paths: ['features/*.feature'],
-      require: ['steps/steps.ts'],
+      // with require step locations are invalid
+      // require: ['steps/steps.ts'],
+      steps: ['steps/steps.ts'],
       tags: '@no-duplicates',
     }),
   };
@@ -30,7 +32,9 @@ function duplicateRegularSteps(): Project {
     testDir: defineBddConfig({
       outputDir: `.features-gen/regular`,
       paths: ['features/*.feature'],
-      require: ['steps/steps.ts'],
+      // with require step locations are invalid
+      // require: ['steps/steps.ts'],
+      steps: ['steps/steps.ts'],
       tags: '@duplicate-regular-steps',
     }),
   };
