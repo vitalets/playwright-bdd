@@ -5,7 +5,7 @@
 import { BddWorld } from './bddWorld';
 import { ITestCaseHookParameter } from '@cucumber/cucumber';
 import { PickleStep, PickleStepArgument } from '@cucumber/messages';
-import { findStepDefinition } from '../cucumber/loadSteps';
+import { findStepDefinition } from '../cucumber/findStep';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';

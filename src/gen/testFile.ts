@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { findStepDefinition } from '../cucumber/loadSteps';
+import { findStepDefinition } from '../cucumber/findStep';
 import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { extractTemplateParams, template } from '../utils';
