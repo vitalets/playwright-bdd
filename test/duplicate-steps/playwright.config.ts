@@ -1,25 +1,49 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig, Project } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
+
+const PROJECTS = (process.env.PROJECTS || '').split(',');
 
 export default defineConfig({
   projects: [
-    {
-      name: 'no duplicate steps',
-      testDir: defineBddConfig({
-        outputDir: `.features-gen/one`,
-        paths: ['features/one.feature'],
-        importTestFrom: 'steps/fixtures.ts',
-      }),
-    },
-    {
-      // important to have duplicate steps in the second project
-      // that runs in a worker process
-      name: 'duplicates',
-      testDir: defineBddConfig({
-        outputDir: `.features-gen/two`,
-        paths: ['features/two.feature'],
-        importTestFrom: 'steps/fixtures.ts',
-      }),
-    },
+    ...(PROJECTS.includes('no-duplicates') ? [noDuplicates()] : []),
+    ...(PROJECTS.includes('duplicate-regular-steps') ? [duplicateRegularSteps()] : []),
+    ...(PROJECTS.includes('duplicate-decorator-steps') ? [duplicateDecoratorSteps()] : []),
   ],
 });
+
+function noDuplicates(): Project {
+  return {
+    // this project must be first and is needed to run the second project in a worker
+    name: 'no-duplicates',
+    testDir: defineBddConfig({
+      outputDir: `.features-gen/no-duplicates`,
+      paths: ['features/*.feature'],
+      require: ['steps/steps.ts'],
+      tags: '@no-duplicates',
+    }),
+  };
+}
+
+function duplicateRegularSteps(): Project {
+  return {
+    name: 'duplicate-regular-steps',
+    testDir: defineBddConfig({
+      outputDir: `.features-gen/regular`,
+      paths: ['features/*.feature'],
+      require: ['steps/steps.ts'],
+      tags: '@duplicate-regular-steps',
+    }),
+  };
+}
+
+function duplicateDecoratorSteps(): Project {
+  return {
+    name: 'duplicate-decorator-steps',
+    testDir: defineBddConfig({
+      outputDir: `.features-gen/decorator`,
+      paths: ['features/*.feature'],
+      importTestFrom: 'steps/fixtures.ts',
+      tags: '@duplicate-decorator-steps',
+    }),
+  };
+}

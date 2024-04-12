@@ -1,7 +1,9 @@
 import { IRunConfiguration, IRunEnvironment, loadSupport } from '@cucumber/cucumber/api';
 import { installTransform } from '../playwright/transform';
 import { exit } from '../utils/exit';
-import { ISupportCodeLibrary } from './types';
+import { ISupportCodeLibrary, StepDefinition } from './types';
+import { getStepConfig } from '../steps/stepConfig';
+import path from 'node:path';
 
 const cache = new Map<string, Promise<ISupportCodeLibrary>>();
 
@@ -35,24 +37,40 @@ export async function loadSteps(
 export function findStepDefinition(
   supportCodeLibrary: ISupportCodeLibrary,
   stepText: string,
-  file: string,
+  featureFile: string,
 ) {
   const matchedSteps = supportCodeLibrary.stepDefinitions.filter((step) => {
     return step.matchesStepName(stepText);
   });
   if (matchedSteps.length === 0) return;
-  if (matchedSteps.length > 1)
-    exit(
-      [
-        `Multiple step definitions matched for text: "${stepText}" (${file})`,
-        // todo: print location of every step definition (as in cucumber)
-        ...matchedSteps.map((s) => `  ${s.pattern}`),
-      ].join('\n'),
-    );
+  if (matchedSteps.length > 1) {
+    exit(formtDuplicateStepsError(stepText, featureFile, matchedSteps));
+  }
 
   return matchedSteps[0];
 }
 
 export function hasTsNodeRegister(runConfiguration: IRunConfiguration) {
   return runConfiguration.support.requireModules.includes('ts-node/register');
+}
+
+function formtDuplicateStepsError(
+  stepText: string,
+  featureFile: string,
+  matchedSteps: StepDefinition[],
+) {
+  const stepLines = matchedSteps.map(formatDuplicateStep);
+  return [
+    `Multiple step definitions matched for text: "${stepText}" (${featureFile})`,
+    ...stepLines,
+  ].join('\n');
+}
+
+function formatDuplicateStep(step: StepDefinition) {
+  const { pattern } = step;
+  const patternText = typeof pattern === 'string' ? pattern : pattern.source;
+  const { location } = getStepConfig(step) || {};
+  const file = location ? path.relative(process.cwd(), location.file) : '';
+  const locationStr = location ? ` - ${file}:${location.line}` : '';
+  return `  ${patternText}${locationStr}`;
 }

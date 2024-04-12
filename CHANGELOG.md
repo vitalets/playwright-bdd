@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* feature: show step locations in unused export and in duplicate steps error ([#113](https://github.com/vitalets/playwright-bdd/issues/113))
 * feature: add `$step` fixture ([#133](https://github.com/vitalets/playwright-bdd/issues/133))
 * feature: add experimental support of `steps` option (related to [#94](https://github.com/vitalets/playwright-bdd/issues/94))
 

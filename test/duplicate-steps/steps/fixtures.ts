@@ -1,10 +1,6 @@
 import { test as base } from 'playwright-bdd';
 import { TodoPage } from './TodoPage';
 
-type Fixtures = {
-  todoPage: TodoPage;
-};
-
-export const test = base.extend<Fixtures>({
+export const test = base.extend<{ todoPage: TodoPage }>({
   todoPage: ({}, use) => use(new TodoPage()),
 });

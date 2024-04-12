@@ -7,6 +7,8 @@
 import type { ParameterTypeRegistry } from '@cucumber/cucumber-expressions';
 import type StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 
+export { StepDefinition };
+
 export interface ISupportCodeLibrary {
   parameterTypeRegistry: ParameterTypeRegistry;
   stepDefinitions: StepDefinition[];

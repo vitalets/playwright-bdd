@@ -4,12 +4,12 @@ import { test } from './fixtures';
 export
 @Fixture<typeof test>('todoPage')
 class TodoPage {
-  @Given('unique step')
+  @Given('duplicate decorator step')
   async step1() {}
 
-  @Given('duplicate step')
+  @Given('duplicate decorator step')
   async step2() {}
 
-  @Given('duplicate step')
+  @Given(/duplicate decorator step/)
   async step3() {}
 }
