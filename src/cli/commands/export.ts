@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { Command } from 'commander';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import Table from 'cli-table3';
 import { ConfigOption, configOption } from '../options';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { Logger } from '../../utils/logger';
@@ -8,6 +9,7 @@ import { getEnvConfigs } from '../../config/env';
 import { assertConfigsCount } from './test';
 import { BDDConfig } from '../../config';
 import { TestFilesGenerator } from '../../gen';
+import { getStepConfig } from '../../steps/stepConfig';
 
 const logger = new Logger({ verbose: true });
 
@@ -37,7 +39,7 @@ async function showStepsForConfigs(configs: BDDConfig[]) {
   const steps = new Set<string>();
   const tasks = configs.map(async (config) => {
     const stepDefinitions = await new TestFilesGenerator(config).extractSteps();
-    stepDefinitions.forEach((s) => steps.add(`* ${getStepText(s)}`));
+    stepDefinitions.forEach((s) => steps.add(`* ${formatStepText(s)}`));
   });
 
   await Promise.all(tasks);
@@ -47,21 +49,39 @@ async function showStepsForConfigs(configs: BDDConfig[]) {
 }
 
 async function showUnusedStepsForConfigs(configs: BDDConfig[]) {
-  const steps = new Set<string>();
+  const steps = new Set<StepDefinition>();
   const tasks = configs.map(async (config) => {
     const stepDefinitions = await new TestFilesGenerator(config).extractUnusedSteps();
-    stepDefinitions.forEach((s) => steps.add(`* ${getStepText(s)}`));
+    stepDefinitions.forEach((step) => steps.add(step));
   });
 
   await Promise.all(tasks);
 
-  logger.log(`List of unused steps (${steps.size}):`);
-  steps.forEach((stepText) => logger.log(stepText));
+  logger.log(`Unused steps (${steps.size}):`);
+  logger.log(formatUnusedStepsTable(steps));
 }
 
-function getStepText({ pattern, keyword }: StepDefinition) {
+function formatUnusedStepsTable(steps: Set<StepDefinition>) {
+  const table = new Table({
+    head: ['Pattern / Text', /*'Duration', */ 'Location'],
+    style: { border: [], head: [] }, // disable colors
+  });
+  steps.forEach((step) => {
+    table.push([formatStepText(step), formatStepLocation(step)]);
+  });
+  return table.toString();
+}
+
+function formatStepText({ pattern, keyword }: StepDefinition) {
   // for Unknown return When as it looks the most suitable
   const keywordText = keyword === 'Unknown' ? 'When' : keyword;
   const patternText = typeof pattern === 'string' ? pattern : pattern.source;
   return `${keywordText} ${patternText}`;
+}
+
+function formatStepLocation(step: StepDefinition) {
+  const { location } = getStepConfig(step) || {};
+  if (!location) return '';
+  const relativeFile = path.relative(process.cwd(), location.file);
+  return `${relativeFile}:${location.line}`;
 }

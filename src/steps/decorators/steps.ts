@@ -12,6 +12,7 @@ import { buildCucumberStepFn } from '../defineStep';
 import { PomNode } from './class';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
+import { getLocationByOffset } from '../../playwright/getLocationInFile';
 
 // initially we sotre step data inside method,
 // and then extract it in @Fixture decorator call
@@ -26,11 +27,13 @@ const decoratedSteps = new Set<StepConfig>();
  */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
   return (pattern: DefineStepPattern) => {
+    const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
     return (method: Function, _context: ClassMethodDecoratorContext) => {
       saveStepConfigToMethod(method, {
         keyword,
         pattern,
+        location,
         fn: method,
         hasCustomTest: true,
       });
@@ -60,14 +63,15 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
       return fn.call(fixture, ...args);
     };
     const code = buildCucumberStepFn(stepConfig);
+    const { file: uri, line } = stepConfig.location;
     const stepDefinition = buildStepDefinition(
       {
         keyword,
         pattern,
         code,
-        line: 0, // not used in playwright-bdd
+        uri,
+        line,
         options: {}, // not used in playwright-bdd
-        uri: '', // not used in playwright-bdd
       },
       supportCodeLibrary,
     );

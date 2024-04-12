@@ -16,16 +16,19 @@ import { PlaywrightLocation } from './types';
  *
  * Returned value: { file: 'file-3.js', line: 5, column: 6 }
  */
-export function getLocationInFile(filePath: string) {
-  const filePathUrl = url.pathToFileURL(filePath).toString();
+export function getLocationInFile(absFilePath: string) {
+  const absFileUrl = url.pathToFileURL(absFilePath).toString();
   return getLocationBy((stackFrames) => {
     return stackFrames.find((frame) => {
       const frameFile = frame.getFileName();
-      return frameFile === filePath || frameFile === filePathUrl;
+      return frameFile === absFilePath || frameFile === absFileUrl;
     });
   });
 }
 
+/**
+ * Returns location of function call <offset> stack frames upper.
+ */
 export function getLocationByOffset(offset: number) {
   return getLocationBy((stackFrames) => stackFrames[offset]);
 }
@@ -42,7 +45,7 @@ function getLocationBy(findFrame: (stackFrame: NodeJS.CallSite[]) => NodeJS.Call
   const { sourceMapSupport } = requirePlaywrightModule('lib/utilsBundle.js');
   const oldPrepareStackTrace = Error.prepareStackTrace;
   // modify prepareStackTrace to return Location object instead of string
-  Error.prepareStackTrace = (error, stackFrames) => {
+  Error.prepareStackTrace = (_error, stackFrames) => {
     const foundFrame = findFrame(stackFrames);
     if (!foundFrame) return { file: '', line: 0, column: 0 };
     const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(foundFrame);

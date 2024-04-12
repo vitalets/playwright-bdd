@@ -21,6 +21,7 @@ import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { BddAutoInjectFixtures } from '../run/bddFixtures/autoInject';
+import { getLocationByOffset } from '../playwright/getLocationInFile';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -63,6 +64,7 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
       pattern,
       fn,
       hasCustomTest,
+      location: getLocationByOffset(3),
     });
     return (fixtures: Partial<StepFunctionFixturesArg<T, W>>, ...args: Args) => {
       assertStepIsCalledWithRequiredFixtures(pattern, fn, fixtures);

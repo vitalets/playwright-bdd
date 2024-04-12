@@ -10,6 +10,7 @@ import {
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { BddWorld } from '../run/bddWorld';
 import { PomNode } from './decorators/class';
+import { PlaywrightLocation } from '../playwright/types';
 
 export type StepConfig = {
   keyword: GherkinStepKeyword;
@@ -17,6 +18,7 @@ export type StepConfig = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   fn: Function;
   hasCustomTest: boolean;
+  location: PlaywrightLocation;
   pomNode?: PomNode; // for decorator steps
 };
 

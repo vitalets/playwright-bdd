@@ -55,6 +55,7 @@
     "release": "bash scripts/release.sh"
   },
   "dependencies": {
+    "cli-table3": "0.6.4",
     "commander": "^11.1.0",
     "fast-glob": "^3.3.2",
     "supports-color": "8.1.1"
