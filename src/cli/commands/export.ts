@@ -10,6 +10,7 @@ import { assertConfigsCount } from './test';
 import { BDDConfig } from '../../config';
 import { TestFilesGenerator } from '../../gen';
 import { getStepConfig } from '../../steps/stepConfig';
+import { relativeToCwd } from '../../utils/paths';
 
 const logger = new Logger({ verbose: true });
 
@@ -82,6 +83,5 @@ function formatStepText({ pattern, keyword }: StepDefinition) {
 function formatStepLocation(step: StepDefinition) {
   const { location } = getStepConfig(step) || {};
   if (!location) return '';
-  const relativeFile = path.relative(process.cwd(), location.file);
-  return `${relativeFile}:${location.line}`;
+  return `${relativeToCwd(location.file)}:${location.line}`;
 }

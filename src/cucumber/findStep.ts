@@ -1,7 +1,7 @@
-import path from 'node:path';
 import { exit } from '../utils/exit';
 import { ISupportCodeLibrary, StepDefinition } from './types';
 import { getStepConfig } from '../steps/stepConfig';
+import { relativeToCwd } from '../utils/paths';
 
 /**
  * Finds step definition by step text.
@@ -42,7 +42,7 @@ function formatDuplicateStep(step: StepDefinition) {
   const { pattern } = step;
   const patternText = typeof pattern === 'string' ? pattern : pattern.source;
   const { location } = getStepConfig(step) || {};
-  const file = location ? path.relative(process.cwd(), location.file) : '';
+  const file = location ? relativeToCwd(location.file) : '';
   const locationStr = location ? ` - ${file}:${location.line}` : '';
   return `  ${patternText}${locationStr}`;
 }

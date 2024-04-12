@@ -10,6 +10,13 @@ export function toPosixPath(somePath: string) {
 }
 
 /**
+ * Returns path relative to cwd.
+ */
+export function relativeToCwd(absPath: string) {
+  return path.relative(process.cwd(), absPath);
+}
+
+/**
  * Resolves patterns to list of files.
  * Extension can be a list: {js,ts}
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/paths/paths.ts

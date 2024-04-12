@@ -1,9 +1,9 @@
 import { Command } from 'commander';
 import { ConfigOption, configOption } from '../options';
-import path from 'node:path';
 import { Logger } from '../../utils/logger';
 import { getPackageVersion } from '../../utils';
 import { resolveConfigFile } from '../../playwright/loadConfig';
+import { relativeToCwd } from '../../utils/paths';
 
 const logger = new Logger({ verbose: true });
 
@@ -27,6 +27,5 @@ function showPackageVersion(packageName: string) {
 
 function showPlaywrightConfigPath(cliConfigPath?: string) {
   const resolvedConfigFile = resolveConfigFile(cliConfigPath);
-  const relPath = path.relative(process.cwd(), resolvedConfigFile);
-  logger.log(`Playwright config file: ${relPath}`);
+  logger.log(`Playwright config file: ${relativeToCwd(resolvedConfigFile)}`);
 }

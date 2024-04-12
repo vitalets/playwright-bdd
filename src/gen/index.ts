@@ -21,6 +21,7 @@ import { hasCustomTest } from '../steps/createBdd';
 import { ISupportCodeLibrary } from '../cucumber/types';
 import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
 import { loadStepsOwn } from '../cucumber/loadStepsOwn';
+import { relativeToCwd } from '../utils/paths';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -83,18 +84,17 @@ export class TestFilesGenerator {
     const cwd = getPlaywrightConfigDir();
     const { defaultDialect } = this.runConfiguration.sources;
     const { featurePaths } = await resovleFeaturePaths(this.runConfiguration, { cwd });
-    this.logger.log(`Loading features from paths (${featurePaths.length}):`);
-    featurePaths.forEach((featurePath) => this.logger.log(featurePath));
+    this.logger.log(`Loading features: ${featurePaths.length}`);
+    featurePaths.forEach((featurePath) => this.logger.log(`  ${relativeToCwd(featurePath)}`));
     if (featurePaths.length) {
       await this.featuresLoader.load(featurePaths, { relativeTo: cwd, defaultDialect });
       this.handleParseErrors();
     }
-    this.logger.log(`Loaded features: ${this.featuresLoader.getDocumentsCount()}`);
   }
 
   private async loadSteps() {
     const { requirePaths, importPaths } = this.runConfiguration.support;
-    this.logger.log(`Loading steps from: ${requirePaths.concat(importPaths).join(', ')}`);
+    this.logger.log(`Loading steps: ${requirePaths.concat(importPaths).join(', ')}`);
     const environment = { cwd: getPlaywrightConfigDir() };
     this.supportCodeLibrary = this.config.steps
       ? await loadStepsOwn(environment.cwd, this.config.steps)
@@ -165,17 +165,17 @@ export class TestFilesGenerator {
   }
 
   private async saveFiles() {
+    this.logger.log(`Generating Playwright tests: ${this.files.length}`);
     this.files.forEach((file) => {
       file.save();
-      this.logger.log(`Generated: ${path.relative(process.cwd(), file.outputPath)}`);
+      this.logger.log(`  ${relativeToCwd(file.outputPath)}`);
     });
-    this.logger.log(`Generated files: ${this.files.length}`);
   }
 
   private async clearOutputDir() {
     const pattern = `${fg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
     const testFiles = await fg(pattern);
-    this.logger.log(`Clearing output dir: ${testFiles.length} file(s)`);
+    this.logger.log(`Clearing output dir: ${relativeToCwd(pattern)}`);
     const tasks = testFiles.map((testFile) => fs.rm(testFile));
     await Promise.all(tasks);
   }
