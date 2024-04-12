@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.2.0
 * feature: add `--version` cli flag ([#134](https://github.com/vitalets/playwright-bdd/issues/134))
 * feature: show step locations in unused export and in duplicate steps error ([#113](https://github.com/vitalets/playwright-bdd/issues/113))
 * feature: add `$step` fixture ([#133](https://github.com/vitalets/playwright-bdd/issues/133))
