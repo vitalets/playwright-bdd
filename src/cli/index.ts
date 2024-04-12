@@ -7,10 +7,11 @@ import { exportCommand } from './commands/export';
 import { getPackageVersion } from '../utils';
 
 const program = new Command();
-
+const version = getPackageVersion('playwright-bdd');
 program
   .name('bddgen')
-  .description(`Playwright-bdd CLI v${getPackageVersion('playwright-bdd')}`)
+  .description(`Playwright-bdd CLI v${version}`)
+  .version(version)
   .addCommand(testCommand, { isDefault: true })
   .addCommand(exportCommand)
   .addCommand(envCommand)
