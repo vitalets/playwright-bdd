@@ -1,5 +1,5 @@
 import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTest, BDDGEN_CMD } from '../_helpers/index.mjs';
+import { test, TestDir, normalize, execPlaywrightTest, BDDGEN_CMD } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -27,9 +27,9 @@ test(`${testDir.name} (unused steps)`, () => {
   expect(stdout).toContain('Given TodoPage: step');
 
   // locations
-  expect(stdout).toContain('steps/steps.ts:9');
-  expect(stdout).toContain('steps/steps.ts:17');
-  expect(stdout).toContain('steps/steps2.ts:5');
-  expect(stdout).toContain('steps/steps2.ts:10');
-  expect(stdout).toContain('steps/TodoPage.ts:7');
+  expect(stdout).toContain(normalize('steps/steps.ts:9'));
+  expect(stdout).toContain(normalize('steps/steps.ts:17'));
+  expect(stdout).toContain(normalize('steps/steps2.ts:5'));
+  expect(stdout).toContain(normalize('steps/steps2.ts:10'));
+  expect(stdout).toContain(normalize('steps/TodoPage.ts:7'));
 });
