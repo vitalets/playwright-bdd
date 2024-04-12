@@ -1,5 +1,8 @@
 Feature: report location
 
+  Background:
+    Given background step
+
   Scenario: Scenario 1
     Given I am on home page
     And Action 1

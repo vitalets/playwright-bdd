@@ -3,6 +3,7 @@ import { test } from './fixtures';
 
 const { Given, When, Before } = createBdd(test);
 
+Given('background step', async () => {});
 Given('I am on home page', async ({ myPage }) => {
   await myPage.open();
 });

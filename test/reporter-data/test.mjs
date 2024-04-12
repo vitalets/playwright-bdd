@@ -12,16 +12,17 @@ test(testDir.name, () => {
 
 function checkStepLocations(stdout) {
   expect(stdout).toContain(
-    `Given I am on home page ${normalize('.features-gen/features/sample.feature.spec.js')}:7:11`,
+    `Given I am on home page ${normalize('.features-gen/features/sample.feature.spec.js')}:11:11`,
   );
   expect(stdout).toContain(
     `page.goto(https://example.com) ${normalize('features/fixtures.ts')}:8:21`,
   );
-  expect(stdout).toContain(`hook 1 ${normalize('features/steps.ts')}:13:1`);
+  expect(stdout).toContain(`hook 1 ${normalize('features/steps.ts')}:14:1`);
 }
 
 function checkStepTitles(stdout) {
   // prepended keywords
+  expect(stdout).toContain(`Given background step`);
   expect(stdout).toContain(`And Action 1`);
   expect(stdout).toContain(`When Action 2`);
   expect(stdout).toContain(`And Action 3`);
@@ -30,6 +31,7 @@ function checkStepTitles(stdout) {
   expect(stdout).toContain(`And Action 6`);
 
   // for non-en lang keywords are not prepended
+  expect(stdout).toContain(`Состояние 0`);
   expect(stdout).toContain(`Состояние 1`);
   expect(stdout).not.toContain(`Пусть Состояние 1`);
 }
