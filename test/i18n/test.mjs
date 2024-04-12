@@ -1,14 +1,9 @@
-import { test, TestDir, execPlaywrightTest, BDDGEN_CMD, expect } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest, expect } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
-test(testDir.name, () => execPlaywrightTest(testDir.name));
-
-test(testDir.name + '-generate-scenario-outlines', () => {
-  const outputDir = testDir.getAbsPath('.features-gen');
-  testDir.clearDir(outputDir);
-
-  execPlaywrightTest(testDir.name, `${BDDGEN_CMD} --tags "@outline"`);
+test(testDir.name, () => {
+  execPlaywrightTest(testDir.name);
 
   checkGeneratedSpecFile();
   checkHtmlReport();
