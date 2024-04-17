@@ -1,24 +1,34 @@
 /**
- * Track PomNodes used in the particular test.
+ * Tracks PomNodes used in the particular scenario.
  * To select correct fixture for decorator steps.
  *
  * Idea: try to use the deepest child fixture for parent steps.
  *
- * Example inheritance tree:
+ * Example of POM inheritance tree:
  *      A
  *     / \
  *    B   C
- *   / \   \
- *  D   E   F
  *
- * If test uses steps from classes A and D:
- * -> resolved fixture will be D, even for steps from A.
+ * Cases:
+ * If test uses steps from classes A and B:
+ * -> resolved fixture will be B, even for steps from A.
  *
- * If test uses steps from classes A, D and C:
- * -> error, b/c A has 2 possible fixtures.
+ * If test uses steps from classes B and C:
+ * -> resolved fixtures will be B and C
  *
- * If test uses steps from classes A and C, but @fixture tag is D:
- * -> error, b/c A has 2 possible fixtures.
+ * If test uses steps from classes A, B and C:
+ * NEW (statelessPoms = true): -> resolved fixtures will be A, B and C, each used for own steps (see #102)
+ * OLD (statelessPoms = false): -> error, b/c A has 2 possible fixtures.
+ *
+ * @fixture:xxx tag can provide a hint, which fixture to use in ambiguous situations
+ * (especially for Background steps).
+ *
+ * If test uses steps from classes A, B and C; and has tag @fixture:C
+ * NEW (statelessPoms = true): -> resolved fixtures will be B and C (C used for steps from A)
+ * OLD (statelessPoms = false): -> error, b/c A has 2 possible fixtures.
+ *
+ * If test uses steps from classes A and B, and has @fixture:C
+ * -> actually @fixture tag has no effect, resolved fixture will be A and B (warning?)
  */
 import { PomNode, getPomNodeByFixtureName } from '../steps/decorators/class';
 import { exit } from '../utils/exit';
@@ -39,22 +49,28 @@ export class TestPoms {
   // map of poms used in test
   private usedPoms = new Map<PomNode, UsedPom>();
 
-  constructor(private title: string) {}
+  constructor(private testTitle: string) {}
 
-  addByStep(pomNode?: PomNode) {
-    this.addUsedPom(pomNode, { byTag: false });
+  addPom(pomNode: PomNode | undefined, { byTag = false } = {}) {
+    if (!pomNode) return;
+    const usedPom = this.usedPoms.get(pomNode);
+    if (usedPom) {
+      if (byTag && !usedPom.byTag) usedPom.byTag = true;
+    } else {
+      this.usedPoms.set(pomNode, { byTag });
+    }
   }
 
-  addByFixtureName(fixtureName: string) {
+  addPomByFixtureName(fixtureName: string) {
     const pomNode = getPomNodeByFixtureName(fixtureName);
-    this.addUsedPom(pomNode, { byTag: false });
+    this.addPom(pomNode, { byTag: false });
   }
 
-  addByTag(tag: string) {
+  addPomByTag(tag: string) {
     const fixtureName = extractFixtureName(tag);
     if (fixtureName) {
       const pomNode = getPomNodeByFixtureName(fixtureName);
-      this.addUsedPom(pomNode, { byTag: true });
+      this.addPom(pomNode, { byTag: true });
     }
   }
 
@@ -74,6 +90,7 @@ export class TestPoms {
    */
   getResolvedFixtures(pomNode: PomNode) {
     const usedPom = this.usedPoms.get(pomNode);
+    // already resolved
     if (usedPom?.fixtures) return usedPom.fixtures;
 
     // Recursively resolve children fixtures, used in test.
@@ -83,6 +100,8 @@ export class TestPoms {
 
     if (!usedPom) return childFixtures;
 
+    // if there are deeper poms (child fixtures), use them as fixtures for current pom
+    // else set fixtures to self
     if (childFixtures.length) {
       this.verifyChildFixtures(pomNode, usedPom, childFixtures);
       usedPom.fixtures = childFixtures;
@@ -91,16 +110,6 @@ export class TestPoms {
     }
 
     return usedPom.fixtures;
-  }
-
-  private addUsedPom(pomNode: PomNode | undefined, { byTag }: { byTag: boolean }) {
-    if (!pomNode) return;
-    const usedPom = this.usedPoms.get(pomNode);
-    if (usedPom) {
-      if (byTag && !usedPom.byTag) usedPom.byTag = true;
-    } else {
-      this.usedPoms.set(pomNode, { byTag });
-    }
   }
 
   /**
@@ -113,7 +122,7 @@ export class TestPoms {
     const childFixturesBySteps = childFixtures.filter((f) => !f.byTag);
     if (childFixturesBySteps.length) {
       exit(
-        `Scenario "${this.title}" contains ${childFixturesBySteps.length} step(s)`,
+        `Scenario "${this.testTitle}" contains ${childFixturesBySteps.length} step(s)`,
         `not compatible with required fixture "${pomNode.fixtureName}"`,
       );
     }

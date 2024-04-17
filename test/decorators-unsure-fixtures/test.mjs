@@ -1,5 +1,4 @@
-import path from 'node:path';
-import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, normalize, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -7,10 +6,11 @@ test(testDir.name + ' (guess)', () =>
   execPlaywrightTestWithError(
     testDir.name,
     [
-      `Can't guess fixture for decorator step "BasePage: step" in file: ${path.normalize(
+      `Can't guess fixture for decorator step "BasePage: step" in file: ${normalize(
         'features/guess.feature',
       )}`,
-      `Please refactor your Page Object classes or set one of the following tags: @fixture:todoPage, @fixture:todoPage2`,
+      `Possible fixtures: 2 (todoPage, todoPage2)`,
+      `Please refactor your Page Object classes`,
     ],
     {
       env: { FEATURE: 'guess.feature' },
