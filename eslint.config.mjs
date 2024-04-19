@@ -62,7 +62,7 @@ export default [
     },
   },
   {
-    files: ['test/**/only-skip-fixme.feature.spec.js', 'test/**/minimal.feature.spec.js'],
+    files: ['test/special-tag-only/**'],
     plugins: {
       playwright,
     },

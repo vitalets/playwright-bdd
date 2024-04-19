@@ -5,35 +5,26 @@ const testDir = new TestDir(import.meta);
 test(testDir.name, () => {
   execPlaywrightTest(testDir.name);
 
-  checkOnlySkip();
+  checkSkipScenario();
+  checkSkipFeature();
   checkFailTag();
   checkTimeoutTag();
   checkSlowTag();
   checkRetriesTag();
   checkModeTag();
-  checkSkippedFeature();
 });
 
-function checkOnlySkip() {
-  const generatedFile = `.features-gen/only-skip-fixme.feature.spec.js`;
-  testDir.expectFileContains(generatedFile, [
-    'test.describe.only("only-skip-fixme"',
-    'test.only("Only"',
-    'test.only("Only several tags"',
-    'test.only("Skip with only"',
-    'test.describe.only("Check doubled"',
-    'test.only("Example #1"',
-    'test.only("Example #2"',
-    // skipped
-    'test.skip("Skip"',
-    'test.fixme("Fixme"',
-    'test.skip("Example #3"',
-    'test.describe.skip("Skipped scenario outline"',
+function checkSkipScenario() {
+  testDir.expectFileContains(`.features-gen/skip-scenario.feature.spec.js`, [
+    'test.skip("skipped scenario", async ({  }) => {});',
+    'test.fixme("fixme scenario", async ({  }) => {});',
+    'test.describe.skip("skipped scenario outline", () => {});',
+    'test("Example #1", async ({ Given }) => {',
+    'test.skip("Example #2", async ({  }) => {});',
   ]);
-  testDir.expectFileNotContain(generatedFile, ['Skipped step']);
 }
 
-function checkSkippedFeature() {
+function checkSkipFeature() {
   testDir.expectFileNotExist(`.features-gen/skip-feature.feature.spec.js`);
 }
 

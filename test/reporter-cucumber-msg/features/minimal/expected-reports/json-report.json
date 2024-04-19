@@ -1,25 +1,25 @@
 [
   {
-    "description": "  Cucumber doesn't execute this markdown, but @cucumber/react renders it\n  \n  * This is\n  * a bullet\n  * list",
+    "description": "  Cucumber doesn't execute this markdown, but @cucumber/react renders it\n\n  * This is\n  * a bullet\n  * list",
     "elements": [
       {
         "description": "",
         "id": "minimal;cukes",
         "keyword": "Scenario",
-        "line": 11,
+        "line": 10,
         "name": "cukes",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 12,
+            "line": 11,
             "name": "I have 42 cukes in my belly",
             "match": {
               "location": "features/minimal/common.steps.ts:3"
             },
             "result": {
               "status": "passed",
-              "duration": 174540
+              "duration": 238958
             }
           }
         ],
@@ -29,12 +29,8 @@
             "line": 1
           },
           {
-            "name": "@only",
-            "line": 10
-          },
-          {
             "name": "@bar",
-            "line": 10
+            "line": 9
           }
         ],
         "type": "scenario"

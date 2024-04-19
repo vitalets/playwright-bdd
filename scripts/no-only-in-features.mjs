@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 
 const files = process.argv.slice(2);
-const skipFiles = ['only-skip-fixme.feature', 'minimal.feature'];
+const skipFiles = ['only-feature.feature', 'only-scenario.feature'];
 
 files.forEach((filePath) => {
   if (skipFiles.some((skipFile) => filePath.endsWith(skipFile))) return;

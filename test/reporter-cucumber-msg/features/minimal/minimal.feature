@@ -6,7 +6,6 @@ Feature: minimal
   * a bullet
   * list
 
-  @only
   @bar
   Scenario: cukes
     Given I have 42 cukes in my belly
