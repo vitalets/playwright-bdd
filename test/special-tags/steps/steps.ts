@@ -5,6 +5,6 @@ const { Given, When } = createBdd();
 
 Given('success step {int}', async () => {});
 
-When('failed step', () => {
-  expect(1).toEqual(2);
+When('{string} step', ({}, type: 'failing' | 'passing') => {
+  if (type === 'failing') expect(1).toEqual(2);
 });
