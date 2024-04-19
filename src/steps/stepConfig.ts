@@ -9,8 +9,8 @@ import {
 } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { BddWorld } from '../run/bddWorld';
-import { PomNode } from './decorators/class';
 import { PlaywrightLocation } from '../playwright/types';
+import { PomNode } from './decorators/pomGraph';
 
 export type StepConfig = {
   keyword: GherkinStepKeyword;

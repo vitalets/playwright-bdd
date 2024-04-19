@@ -9,7 +9,7 @@ import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { StepConfig } from '../stepConfig';
 import { buildCucumberStepFn } from '../defineStep';
-import { PomNode } from './class';
+import { PomNode } from './pomGraph';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';

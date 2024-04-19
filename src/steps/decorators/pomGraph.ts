@@ -1,20 +1,14 @@
 /**
- * Class level @Fixture decorator.
+ * Tree-structure of all POM classes.
+ * Allows to guess correct fixture for decorator steps.
  */
 
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { CustomFixtures, KeyValue } from '../../playwright/types';
 import { linkStepsWithPomNode } from './steps';
 import { exit } from '../../utils/exit';
 
 type PomClass = Function;
-
-/**
- * Graph of POM class inheritance.
- * Allows to guess correct fixture by step text.
- */
-const pomGraph = new Map<PomClass, PomNode>();
 
 // POM class with inherited children POMs: representation of classes inheritance.
 export type PomNode = {
@@ -23,17 +17,9 @@ export type PomNode = {
   children: Set<PomNode>;
 };
 
-/**
- * @Fixture decorator.
- */
-export function Fixture<T extends KeyValue>(fixtureName: keyof CustomFixtures<T>) {
-  // context parameter is required for decorator by TS even though it's not used
-  return (Ctor: Function, _context: ClassDecoratorContext) => {
-    createPomNode(Ctor, fixtureName);
-  };
-}
+const pomGraph = new Map<PomClass, PomNode>();
 
-function createPomNode(Ctor: PomClass, fixtureName: string) {
+export function createPomNode(Ctor: PomClass, fixtureName: string) {
   const pomNode: PomNode = {
     fixtureName,
     className: Ctor.name,

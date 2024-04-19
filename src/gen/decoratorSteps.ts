@@ -5,9 +5,9 @@
  * Then fixtures are guessed and slots are filled with decorator steps lines.
  */
 import { PickleStep } from '@cucumber/messages';
-import { PomNode } from '../steps/decorators/class';
 import { TestPoms, UsedFixture } from './testPoms';
 import { exit } from '../utils/exit';
+import { PomNode } from '../steps/decorators/pomGraph';
 
 type DecoratorStepsOptions = {
   statefulPoms?: boolean;

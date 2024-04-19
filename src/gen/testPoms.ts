@@ -30,7 +30,7 @@
  * If test uses steps from classes A and B, and has @fixture:C
  * -> actually @fixture tag has no effect, resolved fixture will be A and B (warning?)
  */
-import { PomNode, getPomNodeByFixtureName } from '../steps/decorators/class';
+import { PomNode, getPomNodeByFixtureName } from '../steps/decorators/pomGraph';
 import { exit } from '../utils/exit';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';
