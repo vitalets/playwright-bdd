@@ -1,19 +1,22 @@
 import { test as base } from 'playwright-bdd';
-import { TodoPage, AdminTodoPage, TodoPageOnlyFixture } from './TodoPage';
-import { TodoPage2, AdminTodoPage2 } from './TodoPage2';
+import { AdminPage, AdminPage2, AdminPage3, IntermediatePage, TodoPage, TodoPage2 } from './poms';
 
 type Fixtures = {
+  usedFixtures: string[];
   todoPage: TodoPage;
   todoPage2: TodoPage2;
-  todoPageOnlyFixture: TodoPageOnlyFixture;
-  adminTodoPage: AdminTodoPage;
-  adminTodoPage2: AdminTodoPage2;
+  adminPage: AdminPage;
+  adminPage2: AdminPage2;
+  adminPage3: AdminPage3;
+  intermediatePage: IntermediatePage;
 };
 
 export const test = base.extend<Fixtures>({
-  todoPage: ({}, use) => use(new TodoPage()),
-  todoPage2: ({}, use) => use(new TodoPage2()),
-  todoPageOnlyFixture: ({}, use) => use(new TodoPageOnlyFixture()),
-  adminTodoPage: ({}, use) => use(new AdminTodoPage()),
-  adminTodoPage2: ({}, use) => use(new AdminTodoPage2()),
+  usedFixtures: ({}, use) => use([]),
+  todoPage: ({ usedFixtures }, use) => use(new TodoPage(usedFixtures)),
+  todoPage2: ({ usedFixtures }, use) => use(new TodoPage2(usedFixtures)),
+  adminPage: ({ usedFixtures }, use) => use(new AdminPage(usedFixtures)),
+  adminPage2: ({ usedFixtures }, use) => use(new AdminPage2(usedFixtures)),
+  adminPage3: ({ usedFixtures }, use) => use(new AdminPage3(usedFixtures)),
+  intermediatePage: ({ usedFixtures }, use) => use(new IntermediatePage(usedFixtures)),
 });

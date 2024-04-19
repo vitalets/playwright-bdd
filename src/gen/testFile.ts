@@ -256,6 +256,7 @@ export class TestFile {
   private getSteps(scenario: Scenario | Background, tags?: string[], outlineExampleRowId?: string) {
     const testFixtureNames = new Set<string>();
     const decoratorSteps = new DecoratorSteps({
+      statefulPoms: this.config.statefulPoms,
       featureUri: this.featureUri,
       testTitle: scenario.name || 'Background',
       testFixtureNames,
@@ -286,6 +287,10 @@ export class TestFile {
     });
 
     // fill decorator step slots in second pass (to guess fixtures)
+    // TODO: for background steps we can delay resolving fixtures
+    // until all scenarios steps are processed. After that we know all used fixtures,
+    // and can guess background fixtures more precisely.
+    // But for statefulPoms=false (that is default) it is not very important.
     decoratorSteps.resolveFixtureNames();
     decoratorSteps.forEach(({ index, keyword, pickleStep, fixtureName }) => {
       testFixtureNames.add(fixtureName);

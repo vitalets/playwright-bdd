@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* relax rules for guessing fixtures in decorator steps, introduce new config option `statefulPoms` for more strict checks ([#102](https://github.com/vitalets/playwright-bdd/issues/102))
+
 ## 6.2.0
 * feature: add `--version` cli flag ([#134](https://github.com/vitalets/playwright-bdd/issues/134))
 * feature: show step locations in unused export and in duplicate steps error ([#113](https://github.com/vitalets/playwright-bdd/issues/113))

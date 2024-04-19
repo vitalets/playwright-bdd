@@ -30,6 +30,8 @@ type OwnConfig = {
   featuresRoot?: string;
   /** Add special BDD attachments for Cucumber reports */
   enrichReporterData?: boolean;
+  /** Set to true if your POMs have a state */
+  statefulPoms?: boolean;
   /**
    * Step definition patterns, e.g. 'steps/*.{ts,js}'.
    * Always use forward slash.
@@ -102,6 +104,7 @@ export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
     featuresRoot: true,
     enrichReporterData: true,
     steps: true,
+    statefulPoms: true,
   };
   const keys = Object.keys(omitProps) as (keyof OwnConfig)[];
   const cucumberConfig = { ...config };

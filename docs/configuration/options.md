@@ -119,6 +119,33 @@ Verbose output.
 
 If this option is enabled, playwright-bdd will add special attachments with BDD data, required for Cucumber reports. It gets enabled automatically, when you use `cucmberReporter()` helper. But for scenarios with [reports merging](reporters/cucumber.md#merge-reports), you need to manually set `enrichReporterData: true` when generating **blob** report.
 
+## statefulPoms
+
+- Type: `boolean`
+- Default: `false`
+
+Set this option to `true` if you use decorator steps and your Page Object Models have state. This enables more strict guessing of fixtures in scenarios.
+
+**Example**
+
+Imagine you have the following POMs structure:
+```
+       BasePage
+      /        \
+TodoPage         TodoPage2
+```
+And the following scenario:
+```gherkin
+Scenario: scenario 1
+  Given step from BasePage
+  When step from TodoPage
+  Then step from TodoPage2
+```
+What POM should we use for the 1st step: `BasePage`, `TodoPage` or `TodoPage2`?
+
+* If there is no state in POMs (`statefulPoms: false`): we will use `BasePage`
+* If there is state in POMs (`statefulPoms: true`): this scenario produces error, b/c for `TodoPage` / `TodoPage` it can be important to call previous steps
+
 ## steps
 
 ?> Experimental

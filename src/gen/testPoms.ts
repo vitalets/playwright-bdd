@@ -17,15 +17,15 @@
  * -> resolved fixtures will be B and C
  *
  * If test uses steps from classes A, B and C:
- * NEW (statelessPoms = true): -> resolved fixtures will be A, B and C, each used for own steps (see #102)
- * OLD (statelessPoms = false): -> error, b/c A has 2 possible fixtures.
+ * NEW (statefulPoms = false): -> resolved fixtures will be A, B and C, each used for own steps (see #102)
+ * OLD (statefulPoms = true): -> error, b/c A has 2 possible fixtures.
  *
  * @fixture:xxx tag can provide a hint, which fixture to use in ambiguous situations
  * (especially for Background steps).
  *
  * If test uses steps from classes A, B and C; and has tag @fixture:C
- * NEW (statelessPoms = true): -> resolved fixtures will be B and C (C used for steps from A)
- * OLD (statelessPoms = false): -> error, b/c A has 2 possible fixtures.
+ * NEW (statefulPoms = false): -> resolved fixtures will be B and C (C used for steps from A)
+ * OLD (statefulPoms = true): -> error, b/c A has 2 possible fixtures.
  *
  * If test uses steps from classes A and B, and has @fixture:C
  * -> actually @fixture tag has no effect, resolved fixture will be A and B (warning?)
@@ -35,7 +35,7 @@ import { exit } from '../utils/exit';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';
 
-type UsedFixture = {
+export type UsedFixture = {
   name: string;
   byTag: boolean;
 };
@@ -51,8 +51,7 @@ export class TestPoms {
 
   constructor(private testTitle: string) {}
 
-  addPom(pomNode: PomNode | undefined, { byTag = false } = {}) {
-    if (!pomNode) return;
+  registerPomNode(pomNode: PomNode, { byTag = false } = {}) {
     const usedPom = this.usedPoms.get(pomNode);
     if (usedPom) {
       if (byTag && !usedPom.byTag) usedPom.byTag = true;
@@ -61,17 +60,16 @@ export class TestPoms {
     }
   }
 
-  addPomByFixtureName(fixtureName: string) {
+  registerPomNodeByFixtureName(fixtureName: string) {
     const pomNode = getPomNodeByFixtureName(fixtureName);
-    this.addPom(pomNode, { byTag: false });
+    if (pomNode) this.registerPomNode(pomNode, { byTag: false });
   }
 
-  addPomByTag(tag: string) {
+  registerPomNodeByTag(tag: string) {
     const fixtureName = extractFixtureName(tag);
-    if (fixtureName) {
-      const pomNode = getPomNodeByFixtureName(fixtureName);
-      this.addPom(pomNode, { byTag: true });
-    }
+    if (!fixtureName) return;
+    const pomNode = getPomNodeByFixtureName(fixtureName);
+    if (pomNode) this.registerPomNode(pomNode, { byTag: true });
   }
 
   /**
@@ -86,27 +84,38 @@ export class TestPoms {
   }
 
   /**
-   * Returns fixtures suitable for particular pomNode (actually for step)
+   * Returns fixtures suitable for particular pomNode (actually for step).
+   * Filter out pomNodes with empty fixture names (as they are not marked with @Fixture decorator)
    */
+  // eslint-disable-next-line complexity
   getResolvedFixtures(pomNode: PomNode) {
     const usedPom = this.usedPoms.get(pomNode);
-    // already resolved
+    // fixtures already resolved
     if (usedPom?.fixtures) return usedPom.fixtures;
 
-    // Recursively resolve children fixtures, used in test.
+    // Recursively resolve children fixtures, used in test
     let childFixtures: UsedFixture[] = [...pomNode.children]
       .map((child) => this.getResolvedFixtures(child))
-      .flat();
+      .flat()
+      .filter((f) => Boolean(f.name));
 
+    const taggedFixtures = childFixtures.filter((f) => f.byTag);
+    if (taggedFixtures.length) childFixtures = taggedFixtures;
+
+    // this pomNode is not used in steps, we just return child fixtures
+    // b/c no place to save child fixtures
     if (!usedPom) return childFixtures;
 
     // if there are deeper poms (child fixtures), use them as fixtures for current pom
-    // else set fixtures to self
+    // else use self as fixtures list
     if (childFixtures.length) {
-      this.verifyChildFixtures(pomNode, usedPom, childFixtures);
+      // commented for now, simplify
+      // this.verifyChildFixtures(pomNode, usedPom, childFixtures);
       usedPom.fixtures = childFixtures;
     } else {
-      usedPom.fixtures = [{ name: pomNode.fixtureName, byTag: usedPom.byTag }];
+      usedPom.fixtures = pomNode.fixtureName
+        ? [{ name: pomNode.fixtureName, byTag: usedPom.byTag }]
+        : [];
     }
 
     return usedPom.fixtures;

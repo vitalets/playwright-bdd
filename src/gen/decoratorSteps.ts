@@ -6,10 +6,11 @@
  */
 import { PickleStep } from '@cucumber/messages';
 import { PomNode } from '../steps/decorators/class';
-import { TestPoms } from './testPoms';
+import { TestPoms, UsedFixture } from './testPoms';
 import { exit } from '../utils/exit';
 
 type DecoratorStepsOptions = {
+  statefulPoms?: boolean;
   featureUri: string;
   testTitle: string;
   testFixtureNames: Set<string>;
@@ -41,32 +42,60 @@ export class DecoratorSteps {
   }
 
   resolveFixtureNames() {
-    this.steps.forEach((step) => this.testPoms.addPom(step.pomNode));
+    this.steps.forEach((step) => this.testPoms.registerPomNode(step.pomNode));
     this.options.testFixtureNames.forEach((fixtureName) =>
-      this.testPoms.addPomByFixtureName(fixtureName),
+      this.testPoms.registerPomNodeByFixtureName(fixtureName),
     );
-    this.options.testTags?.forEach((tag) => this.testPoms.addPomByTag(tag));
+    this.options.testTags?.forEach((tag) => this.testPoms.registerPomNodeByTag(tag));
     this.testPoms.resolveFixtures();
     this.steps.forEach((step) => {
       step.fixtureName = this.getFixtureName(step);
     });
   }
 
+  // eslint-disable-next-line complexity
   private getFixtureName(decoratorStep: DecoratorStepInfo) {
     const { pomNode, pickleStep } = decoratorStep;
     const resolvedFixtures = this.testPoms.getResolvedFixtures(pomNode);
 
-    if (resolvedFixtures.length !== 1) {
-      const possibleFixturesNames = resolvedFixtures.length
-        ? ` (${resolvedFixtures.map((f) => f.name).join(', ')})`
-        : '';
-      exit(
-        `Can't guess fixture for decorator step "${pickleStep.text}" in file: ${this.options.featureUri}.`,
-        `Possible fixtures: ${resolvedFixtures.length}${possibleFixturesNames}.`,
-        `Please refactor your Page Object classes.`,
-      );
+    if (resolvedFixtures.length === 0) {
+      return this.exitEmptyFixture(pickleStep);
+    }
+
+    if (resolvedFixtures.length > 1) {
+      if (this.options.statefulPoms) {
+        return this.exitAmbiguousFixture(pickleStep, resolvedFixtures);
+      } else {
+        // tagged fixture has priority
+        const firstTaggedFixture = resolvedFixtures.find((f) => f.byTag);
+        const firstFixtureWithName =
+          firstTaggedFixture?.name || pomNode.fixtureName || resolvedFixtures[0].name;
+        return firstFixtureWithName || this.exitEmptyFixture(pickleStep);
+      }
     }
 
     return resolvedFixtures[0].name;
+  }
+
+  private exitEmptyFixture(pickleStep: PickleStep) {
+    exit(
+      `No fixtures found for decorator step "${pickleStep.text}"`,
+      `in "${this.options.testTitle}" (${this.options.featureUri}).`,
+      `Please add @Fixture decorator to the class.`,
+    );
+    // return string to make ts happy
+    return '';
+  }
+
+  private exitAmbiguousFixture(pickleStep: PickleStep, resolvedFixtures: UsedFixture[]) {
+    const possibleFixturesNames = resolvedFixtures.map((f) => f.name).join(', ');
+    exit(
+      `Several fixtures found for decorator step "${pickleStep.text}"`,
+      `in "${this.options.testTitle}" (${this.options.featureUri}).`,
+      `Possible fixtures: ${possibleFixturesNames}`,
+      `Please refactor your Page Object classes.`,
+    );
+    // return string to make ts happy
+    return '';
   }
 }
