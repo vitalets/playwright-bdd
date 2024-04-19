@@ -41,7 +41,8 @@ export class Formatter {
     return [
       firstLine, // prettier-ignore
       ...this.describeConfigure(node).map(indent),
-      ...this.describeFail(node).map(indent),
+      ...this.markAsSlow(node).map(indent),
+      ...this.markAsFailed(node).map(indent),
       '',
       ...children.map(indent),
       `});`,
@@ -68,6 +69,8 @@ export class Formatter {
     if (!children.length) return [`${firstLine}});`, ''];
     const lines = [
       firstLine, // prettier-ignore
+      ...this.markAsSlow(node).map(indent),
+      ...this.markAsFailed(node).map(indent),
       ...children.map(indent),
       `});`,
       '',
@@ -75,14 +78,11 @@ export class Formatter {
     // wrap test into anonymous describe in case of retries / timeout tags
     const specialTagsConfigure = this.describeConfigure(node);
     return specialTagsConfigure.length
-      ? [
-          'test.describe(() => {', // prettier-ignore
+      ? this.wrapInAnonymousDescribe([
           ...specialTagsConfigure.map(indent),
           '',
           ...lines.map(indent),
-          `});`,
-          '',
-        ]
+        ])
       : lines;
   }
 
@@ -155,8 +155,6 @@ export class Formatter {
   // eslint-disable-next-line complexity
   private getFunction(baseFn: 'test' | 'describe', node: TestNode) {
     if (node.specialTags.only) return `${baseFn}.only`;
-    // describe.fail is not supported
-    if (baseFn === 'test' && node.specialTags.fail) return `${baseFn}.fail`;
     if (node.specialTags.skip) return `${baseFn}.skip`;
     if (node.specialTags.fixme) return `${baseFn}.fixme`;
     return baseFn;
@@ -173,11 +171,21 @@ export class Formatter {
       : [];
   }
 
-  /**
-   * describe.fail is not supported, render test.fail() in the body instead.
-   */
-  private describeFail(node: TestNode) {
+  private wrapInAnonymousDescribe(lines: string[]) {
+    return [
+      'test.describe(() => {', // prettier-ignore
+      ...lines,
+      `});`,
+      '',
+    ];
+  }
+
+  private markAsFailed(node: TestNode) {
     return node.specialTags.fail ? [`test.fail();`] : [];
+  }
+
+  private markAsSlow(node: TestNode) {
+    return node.specialTags.slow ? [`test.slow();`] : [];
   }
 
   private testTags(node: TestNode) {

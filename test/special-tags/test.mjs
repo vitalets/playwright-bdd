@@ -8,6 +8,7 @@ test(testDir.name, () => {
   checkOnlySkip();
   checkFailTag();
   checkTimeoutTag();
+  checkSlowTag();
   checkRetriesTag();
   checkModeTag();
   checkSkippedFeature();
@@ -38,12 +39,13 @@ function checkSkippedFeature() {
 
 function checkFailTag() {
   testDir.expectFileContains(`.features-gen/fail-feature.feature.spec.js`, [
-    'test.fail();',
+    `${' '.repeat(2)}test.fail();`,
     'test("failed scenario 1"',
     'test("failed scenario 2"',
   ]);
   testDir.expectFileContains(`.features-gen/fail-scenario.feature.spec.js`, [
-    'test.fail("failed scenario"',
+    `${' '.repeat(4)}test.fail();`,
+    'test("failed scenario"',
   ]);
 }
 
@@ -62,6 +64,13 @@ function checkTimeoutTag() {
     `${' '.repeat(2)}test.describe(() => {`,
     `${' '.repeat(4)}test.describe.configure({"timeout":4000});`,
     `${' '.repeat(4)}test.describe.configure({"timeout":3000});`,
+  ]);
+}
+
+function checkSlowTag() {
+  testDir.expectFileContains(`.features-gen/slow.feature.spec.js`, [
+    `${' '.repeat(2)}test.slow();`,
+    `${' '.repeat(4)}test.slow();`,
   ]);
 }
 

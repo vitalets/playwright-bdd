@@ -36,6 +36,16 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
+## @slow
+Use `@slow` tag to mark feature / scenario as [slow](https://playwright.dev/docs/api/class-test#test-slow) (timeout x 3):
+```gherkin
+Feature: Playwright site
+    
+    @slow
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+```
+
 ## @timeout:N
 Use `@timeout:N` tag to set scenario timeout:
 ```gherkin

@@ -9,6 +9,7 @@ export class SpecialTags {
   skip?: boolean;
   fixme?: boolean;
   fail?: boolean;
+  slow?: boolean;
 
   retries?: number;
   timeout?: number;
@@ -22,16 +23,16 @@ export class SpecialTags {
   }
 
   private extractFlags() {
+    if (this.ownTags.includes(`@slow`)) this.slow = true;
+    if (this.ownTags.includes(`@fail`)) this.fail = true;
     // order is important
-    const flags = ['only', 'fail', 'skip', 'fixme'] as const;
-    for (const flag of flags) {
+    const executionFlags = ['only', 'skip', 'fixme'] as const;
+    for (const flag of executionFlags) {
       if (this.ownTags.includes(`@${flag}`)) {
         this[flag] = true;
         return;
       }
     }
-
-    // todo: allow @fail together with @only for describe (not test)
   }
 
   private extractRetries() {
