@@ -41,6 +41,7 @@ export class Formatter {
     return [
       firstLine, // prettier-ignore
       ...this.describeConfigure(node).map(indent),
+      ...this.describeFail(node).map(indent),
       '',
       ...children.map(indent),
       `});`,
@@ -170,6 +171,13 @@ export class Formatter {
     return Object.keys(options).length
       ? [`test.describe.configure(${JSON.stringify(options)});`]
       : [];
+  }
+
+  /**
+   * describe.fail is not supported, render test.fail() in the body instead.
+   */
+  private describeFail(node: TestNode) {
+    return node.specialTags.fail ? [`test.fail();`] : [];
   }
 
   private testTags(node: TestNode) {

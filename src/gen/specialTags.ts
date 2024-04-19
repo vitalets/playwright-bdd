@@ -14,10 +14,7 @@ export class SpecialTags {
   timeout?: number;
   mode?: DescribeConfigureOptions['mode'];
 
-  constructor(
-    private ownTags: string[],
-    private allTags: string[],
-  ) {
+  constructor(private ownTags: string[]) {
     this.extractFlags();
     this.extractRetries();
     this.extractTimeout();
@@ -34,10 +31,7 @@ export class SpecialTags {
       }
     }
 
-    // describe.fail is not supported, so mark all nested tests as failed instead
-    if (this.allTags.includes(`@fail`)) {
-      this.fail = true;
-    }
+    // todo: allow @fail together with @only for describe (not test)
   }
 
   private extractRetries() {

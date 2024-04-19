@@ -25,7 +25,7 @@ export class TestNode {
     this.titlePath = (parent?.titlePath || []).concat([this.title]);
     this.ownTags = removeDuplicates(getTagNames(gherkinNode.tags));
     this.tags = removeDuplicates((parent?.tags || []).concat(this.ownTags));
-    this.specialTags = new SpecialTags(this.ownTags, this.tags);
+    this.specialTags = new SpecialTags(this.ownTags);
   }
 
   isSkipped() {

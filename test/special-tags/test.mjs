@@ -38,8 +38,9 @@ function checkSkippedFeature() {
 
 function checkFailTag() {
   testDir.expectFileContains(`.features-gen/fail-feature.feature.spec.js`, [
-    'test.fail("failed scenario 1"',
-    'test.fail("failed scenario 2"',
+    'test.fail();',
+    'test("failed scenario 1"',
+    'test("failed scenario 2"',
   ]);
   testDir.expectFileContains(`.features-gen/fail-scenario.feature.spec.js`, [
     'test.fail("failed scenario"',
