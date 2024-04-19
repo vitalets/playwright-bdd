@@ -64,9 +64,9 @@ function checkRetriesTag() {
 function checkTimeoutTag() {
   testDir.expectFileContains(`.features-gen/timeout.feature.spec.js`, [
     `${' '.repeat(2)}test.describe.configure({"timeout":5000});`,
-    `${' '.repeat(2)}test.describe(() => {`,
-    `${' '.repeat(4)}test.describe.configure({"timeout":4000});`,
+    `${' '.repeat(4)}test.setTimeout(4000);`,
     `${' '.repeat(4)}test.describe.configure({"timeout":3000});`,
+    `${' '.repeat(6)}test.setTimeout(2000);`,
   ]);
 }
 

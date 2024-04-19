@@ -69,17 +69,18 @@ export class Formatter {
     if (!children.length) return [`${firstLine}});`, ''];
     const lines = [
       firstLine, // prettier-ignore
+      ...this.testTimeout(node).map(indent),
       ...this.markAsSlow(node).map(indent),
       ...this.markAsFailed(node).map(indent),
       ...children.map(indent),
       `});`,
       '',
     ];
-    // wrap test into anonymous describe in case of retries / timeout tags
-    const specialTagsConfigure = this.describeConfigure(node);
-    return specialTagsConfigure.length
+    // Wrap test into anonymous describe in case of retries
+    // See: https://github.com/microsoft/playwright/issues/10825
+    return node.specialTags.retries
       ? this.wrapInAnonymousDescribe([
-          ...specialTagsConfigure.map(indent),
+          ...this.describeConfigure(node).map(indent),
           '',
           ...lines.map(indent),
         ])

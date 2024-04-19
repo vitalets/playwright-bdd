@@ -9,7 +9,11 @@ Feature: timeout tag
   Scenario Outline: scenario 2
     Given success step <start>
 
+    @timeout:2000
     Examples:
       | start |
       | 2     |
+
+    Examples:
+      | start |
       | 3     |
