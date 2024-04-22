@@ -11,8 +11,8 @@ test(testDir.name, () => {
 
 function checkOnlyFeature() {
   testDir.expectFileContains('.features-gen/only-feature.feature.spec.js', [
-    'test.describe.only("only feature", () => {',
-    'test.skip("skipped scenario", async ({  }) => {});',
+    'test.describe.only("only feature",',
+    'test.skip("skipped scenario",',
   ]);
 }
 
