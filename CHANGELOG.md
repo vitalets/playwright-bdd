@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.3.0
 * improvement: set scenario timeout via `test.setTimeout` instead of anonymous describe ([#139](https://github.com/vitalets/playwright-bdd/issues/139))
 * feature: add `@slow` special tag ([#138](https://github.com/vitalets/playwright-bdd/issues/138))
 * improvement: relax rules for guessing fixtures in decorator steps, introduce new config option `statefulPoms` for more strict checks ([#102](https://github.com/vitalets/playwright-bdd/issues/102))
