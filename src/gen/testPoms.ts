@@ -141,7 +141,3 @@ export class TestPoms {
 function extractFixtureName(tag: string) {
   return tag.startsWith(FIXTURE_TAG_PREFIX) ? tag.replace(FIXTURE_TAG_PREFIX, '') : '';
 }
-
-export function buildFixtureTag(fixtureName: string) {
-  return `${FIXTURE_TAG_PREFIX}${fixtureName}`;
-}
