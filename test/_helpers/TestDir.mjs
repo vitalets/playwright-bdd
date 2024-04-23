@@ -54,6 +54,15 @@ export class TestDir {
     });
   }
 
+  expectFileContainsCounts(relativePath, expectedCounts) {
+    const fileContents = this.getFileContents(relativePath);
+    const actualCounts = {};
+    Object.keys(expectedCounts).forEach((key) => {
+      actualCounts[key] = fileContents.split(key).length - 1;
+    });
+    expect(actualCounts).toEqual(expectedCounts);
+  }
+
   expectFileNotContain(relativePath, substr) {
     const substrList = Array.isArray(substr) ? substr : [substr];
     const fileContents = this.getFileContents(relativePath);

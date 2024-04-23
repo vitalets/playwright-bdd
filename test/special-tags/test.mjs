@@ -15,13 +15,17 @@ test(testDir.name, () => {
 });
 
 function checkSkipScenario() {
-  testDir.expectFileContains(`.features-gen/skip-scenario.feature.spec.js`, [
-    'test.skip("skipped scenario", async ({  }) => {});',
-    'test.fixme("fixme scenario", async ({  }) => {});',
-    'test.describe.skip("skipped scenario outline", () => {});',
-    'test("Example #1", async ({ Given }) => {',
-    'test.skip("Example #2", async ({  }) => {});',
+  const specFile = `.features-gen/skip-scenario.feature.spec.js`;
+  testDir.expectFileContains(specFile, [
+    'test.skip("skipped scenario",',
+    'test.fixme("fixme scenario",',
+    'test.describe.skip("skipped scenario outline",',
+    'test("Example #1",',
+    'test.skip("Example #2",',
   ]);
+  testDir.expectFileContainsCounts(specFile, {
+    '}) => {});': 3,
+  });
 }
 
 function checkSkipFeature() {
