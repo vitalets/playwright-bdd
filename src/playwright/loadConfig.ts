@@ -16,9 +16,17 @@ export async function loadConfig(cliConfigPath?: string) {
 }
 
 export function resolveConfigFile(cliConfigPath?: string): string {
-  const { resolveConfigFile } = requirePlaywrightModule('lib/common/configLoader.js');
-  const configFileOrDirectory = getConfigFilePath(cliConfigPath);
-  return resolveConfigFile(configFileOrDirectory) || '';
+  const { resolveConfigFile, resolveConfigLocation } = requirePlaywrightModule(
+    'lib/common/configLoader.js',
+  );
+  // Since Playwright 1.44 configLoader.js exports resolveConfigLocation()
+  // See: https://github.com/microsoft/playwright/pull/30275
+  if (typeof resolveConfigLocation === 'function') {
+    return resolveConfigLocation(cliConfigPath).resolvedConfigFile || '';
+  } else {
+    const configFileOrDirectory = getConfigFilePath(cliConfigPath);
+    return resolveConfigFile(configFileOrDirectory) || '';
+  }
 }
 
 function getConfigFilePath(cliConfigPath?: string) {

@@ -13,7 +13,7 @@ test('header info', async ({ page }) => {
   let failed = 14;
   let passed = 8;
 
-  // See: link to issue
+  // See: timeout in after fixture
   if (pwVersion.startsWith('1.43.')) {
     failed--;
     passed++;

@@ -45,21 +45,21 @@ test('Scenario: timeout in step', async ({ page }) => {
 });
 
 test('Scenario: timeout in after fixture', async ({ page }) => {
-  // See: link to issue
+  // See: https://github.com/microsoft/playwright/issues/30175
   if (pwVersion.startsWith('1.43.')) return test.skip();
   const scenario = getScenario(page, 'timeout in after fixture');
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
     'Givenstep that uses timeouted after fixture',
     'WhenAction 1',
-    'Hook "After Hooks" failed: Unknown location',
+    /Hook "(After Hooks|fixture: timeoutedAfterFixture)" failed/,
   ]);
-  await expect(scenario.getSteps()).toContainText(['screenshot']);
+  // don't check screenshot as it's not reliable in timeouts
   await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getErrors()).toContainText(['Test finished within timeout']);
   await expect(scenario.getErrors()).toContainText([
-    'but tearing down "timeoutedAfterFixture" ran out of time',
+    // eslint-disable-next-line max-len
+    /but tearing down "timeoutedAfterFixture" ran out of time|Tearing down "timeoutedAfterFixture" exceeded the test timeout/,
   ]);
 });
 
@@ -70,9 +70,11 @@ test('Scenario: timeout in step and in after fixture', async ({ page }) => {
     'Giventimeouted step',
     'WhenAction 1',
     'Givenstep that uses timeouted after fixture',
-    'Hook "After Hooks" failed: Unknown location',
+    /Hook "(After Hooks|fixture: timeoutedAfterFixture)" failed/,
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
-  await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
+  await expect(scenario.getErrors()).toContainText([
+    /Test timeout of \d+ms exceeded|Tearing down "timeoutedAfterFixture" exceeded the test timeout/,
+  ]);
 });

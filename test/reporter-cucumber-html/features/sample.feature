@@ -39,25 +39,21 @@ Feature: rich feature
     When open page "https://example.com"
     Then page title snapshot matches the golden one
 
-  @timeout:1500
   Scenario: timeout in before fixture
     Given Action 0
     Given step that uses timeouted before fixture
     When Action 1
 
-  @timeout:1500
   Scenario: timeout in step
     Given Action 0
     Given timeouted step
     When Action 1
 
-  @timeout:1500
   Scenario: timeout in after fixture
     Given Action 0
     Given step that uses timeouted after fixture
     When Action 1
 
-  @timeout:1500
   Scenario: timeout in step and in after fixture
     Given Action 0
     Given timeouted step

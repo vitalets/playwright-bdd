@@ -11,7 +11,7 @@ export default defineConfig({
   testDir,
   fullyParallel: true,
   reporter: [
-    ['dot'],
+    ['line'],
     ['blob'],
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
@@ -19,6 +19,8 @@ export default defineConfig({
   use: {
     screenshot: 'only-on-failure',
   },
+  // don't reduce test timeout as it produces unreliable errors
+  timeout: 1500,
   expect: {
     timeout: 1,
   },
