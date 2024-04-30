@@ -5,7 +5,7 @@ Feature: timeout tag
   Scenario: scenario 1
     Given success step 1
 
-  @timeout:3000
+  @timeout:3_000
   Scenario Outline: scenario 2
     Given success step <start>
 

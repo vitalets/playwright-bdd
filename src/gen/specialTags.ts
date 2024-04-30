@@ -47,9 +47,9 @@ export class SpecialTags {
 
   private extractTimeout() {
     for (const tag of this.ownTags.reverse()) {
-      const match = tag.match(/@timeout:(\d+)/i);
+      const match = tag.match(/@timeout:([\d_]+)/i);
       if (match) {
-        this.timeout = Number(match[1]);
+        this.timeout = Number(match[1].replace(/_/g, ''));
         return;
       }
     }
