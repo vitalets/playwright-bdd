@@ -93,7 +93,7 @@ export class TestFilesGenerator {
   }
 
   private async loadSteps() {
-    const { requirePaths, importPaths } = this.runConfiguration.support;
+    const { requirePaths = [], importPaths = [] } = this.runConfiguration.support;
     this.logger.log(`Loading steps: ${requirePaths.concat(importPaths).join(', ')}`);
     const environment = { cwd: getPlaywrightConfigDir() };
     this.supportCodeLibrary = this.config.steps

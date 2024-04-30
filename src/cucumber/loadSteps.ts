@@ -15,9 +15,10 @@ export async function loadSteps(
     // use Playwright's built-in hook to compile TypeScript steps
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     const uninstall = !hasTsNodeRegister(runConfiguration) ? installTransform() : () => {};
-    lib = loadSupport(runConfiguration, environment).finally(() =>
-      uninstall(),
-    ) as Promise<ISupportCodeLibrary>;
+    lib = loadSupport(runConfiguration, environment).finally(
+      () => uninstall(),
+      // we use unknown here b/c Cucumber hides internal props from public type
+    ) as unknown as Promise<ISupportCodeLibrary>;
     cache.set(cacheKey, lib);
   }
 
@@ -25,5 +26,5 @@ export async function loadSteps(
 }
 
 export function hasTsNodeRegister(runConfiguration: IRunConfiguration) {
-  return runConfiguration.support.requireModules.includes('ts-node/register');
+  return runConfiguration.support.requireModules?.includes('ts-node/register');
 }

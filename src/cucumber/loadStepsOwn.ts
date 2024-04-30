@@ -19,7 +19,8 @@ export async function loadStepsOwn(
     requireModules: [],
     requirePaths: [],
     importPaths: [],
-  });
+    loaders: [], // for cucumber 10.6
+  } as Parameters<typeof supportCodeLibraryBuilder.reset>[2]);
 
   const stepFiles = await resolveFiles(cwd, toArray(stepPaths), '{js,mjs,cjs,ts,mts,cts}');
   const { requireOrImport } = requireTransform();
