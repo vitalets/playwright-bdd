@@ -22,6 +22,8 @@ export default defineConfig({
   use: {
     screenshot: 'only-on-failure',
   },
+  // don't reduce test timeout as it produces unreliable errors
+  timeout: 1500,
   expect: {
     timeout: 1,
   },

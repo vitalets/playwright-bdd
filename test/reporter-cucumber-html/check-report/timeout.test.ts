@@ -1,8 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { getScenario, openReport } from './helpers';
-import { getPackageVersion } from '../../../src/utils';
-
-const pwVersion = getPackageVersion('@playwright/test');
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);
@@ -45,8 +42,6 @@ test('Scenario: timeout in step', async ({ page }) => {
 });
 
 test('Scenario: timeout in after fixture', async ({ page }) => {
-  // See: https://github.com/microsoft/playwright/issues/30175
-  if (pwVersion.startsWith('1.43.')) return test.skip();
   const scenario = getScenario(page, 'timeout in after fixture');
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
