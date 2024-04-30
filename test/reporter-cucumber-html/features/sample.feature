@@ -4,6 +4,8 @@ Feature: rich feature
   Background:
     Given step failing for scenario "Failing by background step"
 
+  # - Increased timeout b/c this test opens page
+  @timeout:10_000
   Scenario: Failing by step
     Given failing step
 
@@ -34,9 +36,9 @@ Feature: rich feature
     Given step that uses failingAfterFixtureWithStep
     When Action 4
 
-  # if this scenario name changed, snapshot file names should also change
-  # increase timeout b/c this test opens page
-  @timeout:10000
+  # - If this scenario name changed, snapshot file names should also change
+  # - Increased timeout b/c this test opens page
+  @timeout:10_000
   Scenario: failing match snapshot
     When open page "https://example.com"
     Then page title snapshot matches the golden one
