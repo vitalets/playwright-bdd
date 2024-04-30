@@ -35,6 +35,8 @@ Feature: rich feature
     When Action 4
 
   # if this scenario name changed, snapshot file names should also change
+  # increase timeout b/c this test opens page
+  @timeout:10000
   Scenario: failing match snapshot
     When open page "https://example.com"
     Then page title snapshot matches the golden one
