@@ -19,6 +19,7 @@ Example of PLAYWRIGHT_BDD_CONFIGS:
 } 
 */
 
+import path from 'node:path';
 import { BDDConfig } from '.';
 import { exit } from '../utils/exit';
 
@@ -46,13 +47,14 @@ export function saveConfigToEnv(config: BDDConfig) {
   saveEnvConfigs(envConfigs);
 }
 
-export function getConfigFromEnv(testDir: string) {
+export function getConfigFromEnv(testDir: string, { throws = true } = {}) {
+  testDir = path.normalize(testDir);
   const envConfigs = getEnvConfigs();
   const config = envConfigs[testDir];
-  if (!config) {
+  if (!config && throws) {
     exit(
-      `Config not found for testDir: "${testDir}".`,
-      `Available dirs: ${Object.keys(envConfigs).join('\n')}`,
+      `BDD config not found for testDir: "${testDir}".`,
+      `Available testDirs:\n${Object.keys(envConfigs).join('\n')}`,
     );
   }
 
@@ -67,9 +69,7 @@ export function getEnvConfigs() {
 }
 
 export function hasBddConfig(testDir?: string) {
-  if (!testDir) return false;
-  const envConfigs = getEnvConfigs();
-  return Boolean(envConfigs[testDir]);
+  return Boolean(testDir && getConfigFromEnv(testDir, { throws: false }));
 }
 
 function saveEnvConfigs(envConfigs: EnvConfigs) {
