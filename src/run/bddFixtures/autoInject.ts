@@ -25,7 +25,7 @@ export function isBddAutoInjectFixture(name: string) {
   );
 }
 
-export function getBddAutoInjectsFixtures(bddWorld: BddWorld): BddAutoInjectFixtures {
+export function getBddAutoInjectFixtures(bddWorld: BddWorld): BddAutoInjectFixtures {
   return {
     $testInfo: bddWorld.testInfo,
     $tags: bddWorld.tags,
