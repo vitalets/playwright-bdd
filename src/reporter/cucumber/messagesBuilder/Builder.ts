@@ -14,6 +14,7 @@ import { AutofillMap } from '../../../utils/AutofillMap';
 import { GherkinDocuments } from './GherkinDocuments';
 import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
+import { hasBddConfig } from '../../../config/env';
 
 export class MessagesBuilder {
   private report = {
@@ -48,6 +49,9 @@ export class MessagesBuilder {
   }
 
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
+    // Skip tests of non-bdd projects
+    if (!hasBddConfig(test.parent.project()?.testDir)) return;
+
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.
     // Don't add such test run to report.

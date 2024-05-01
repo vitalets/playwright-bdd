@@ -3,12 +3,29 @@
  * For passing configs to playwright workers and bddgen.
  */
 
-import path from 'node:path';
+/*
+Example of PLAYWRIGHT_BDD_CONFIGS:
+{
+  '/Users/foo/bar/.features-gen/one': {
+    outputDir: '/Users/foo/bar/.features-gen/one',
+    paths: [ 'features-one/*.feature' ],
+    ...
+  },
+  '/Users/foo/bar/.features-gen/two': {
+    outputDir: '/Users/foo/bar/.features-gen/two',
+    paths: [ 'features-two/*.feature' ],
+    ...
+  },  
+} 
+*/
+
 import { BDDConfig } from '.';
 import { exit } from '../utils/exit';
 
 type OutputDir = string;
 type EnvConfigs = Record<OutputDir, BDDConfig>;
+
+let envConfigsCache: EnvConfigs;
 
 export function saveConfigToEnv(config: BDDConfig) {
   const envConfigs = getEnvConfigs();
@@ -29,13 +46,12 @@ export function saveConfigToEnv(config: BDDConfig) {
   saveEnvConfigs(envConfigs);
 }
 
-export function getConfigFromEnv(outputDir: string) {
+export function getConfigFromEnv(testDir: string) {
   const envConfigs = getEnvConfigs();
-  outputDir = path.resolve(outputDir);
-  const config = envConfigs[outputDir];
+  const config = envConfigs[testDir];
   if (!config) {
     exit(
-      `Config not found for outputDir: "${outputDir}".`,
+      `Config not found for testDir: "${testDir}".`,
       `Available dirs: ${Object.keys(envConfigs).join('\n')}`,
     );
   }
@@ -44,10 +60,20 @@ export function getConfigFromEnv(outputDir: string) {
 }
 
 export function getEnvConfigs() {
-  return JSON.parse(process.env.PLAYWRIGHT_BDD_CONFIGS || '{}') as EnvConfigs;
+  if (!envConfigsCache) {
+    envConfigsCache = JSON.parse(process.env.PLAYWRIGHT_BDD_CONFIGS || '{}');
+  }
+  return envConfigsCache;
+}
+
+export function hasBddConfig(testDir?: string) {
+  if (!testDir) return false;
+  const envConfigs = getEnvConfigs();
+  return Boolean(envConfigs[testDir]);
 }
 
 function saveEnvConfigs(envConfigs: EnvConfigs) {
+  envConfigsCache = envConfigs;
   process.env.PLAYWRIGHT_BDD_CONFIGS = JSON.stringify(envConfigs);
 }
 

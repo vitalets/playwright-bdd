@@ -3,6 +3,7 @@
 ## dev
 * feature: support _ in @timeout tag
 * fix: support Playwright 1.44 and Cucumber 10.6
+* fix: Cucumber reporter doesn't work for non BDD projects ([#143](https://github.com/vitalets/playwright-bdd/issues/143))
 
 ## 6.3.0
 * improvement: set scenario timeout via `test.setTimeout` instead of anonymous describe ([#139](https://github.com/vitalets/playwright-bdd/issues/139))

@@ -17,6 +17,12 @@ export default defineConfig({
   ],
   projects: [
     {
+      // see: https://github.com/vitalets/playwright-bdd/issues/143
+      name: 'non-bdd-project',
+      testMatch: /setup\.ts/,
+      testDir: 'setup',
+    },
+    {
       name: 'project one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
