@@ -1,10 +1,10 @@
 import { BddWorld, BddWorldFixtures } from '../bddWorld';
-import { BDDConfig } from '../../config';
 import { TestTypeCommon } from '../../playwright/types';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { StepInvoker } from '../StepInvoker';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { TestMeta, TestMetaMap } from '../../gen/testMeta';
+import { BDDConfig } from '../../config/types';
 
 export type StepFixture = {
   title: string;

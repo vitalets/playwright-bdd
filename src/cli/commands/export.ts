@@ -7,10 +7,10 @@ import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig'
 import { Logger } from '../../utils/logger';
 import { getEnvConfigs } from '../../config/env';
 import { assertConfigsCount } from './test';
-import { BDDConfig } from '../../config';
 import { TestFilesGenerator } from '../../gen';
 import { getStepConfig } from '../../steps/stepConfig';
 import { relativeToCwd } from '../../utils/paths';
+import { BDDConfig } from '../../config/types';
 
 const logger = new Logger({ verbose: true });
 

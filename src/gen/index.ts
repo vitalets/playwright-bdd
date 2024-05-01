@@ -8,7 +8,7 @@ import { TestFile } from './testFile';
 import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
 import { FeaturesLoader } from '../cucumber/loadFeatures';
 import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
-import { extractCucumberConfig, BDDConfig } from '../config';
+import { extractCucumberConfig } from '../config';
 import { Snippets } from '../snippets';
 import { IRunConfiguration } from '@cucumber/cucumber/api';
 import { appendDecoratorSteps } from '../steps/decorators/steps';
@@ -22,6 +22,7 @@ import { ISupportCodeLibrary } from '../cucumber/types';
 import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
 import { loadStepsOwn } from '../cucumber/loadStepsOwn';
 import { relativeToCwd } from '../utils/paths';
+import { BDDConfig } from '../config/types';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 

@@ -5,9 +5,10 @@ import { Command } from 'commander';
 import { TestFilesGenerator } from '../../gen';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { getEnvConfigs } from '../../config/env';
-import { BDDConfig, defaults } from '../../config';
 import { ConfigOption, configOption } from '../options';
 import { exit } from '../../utils/exit';
+import { BDDConfig } from '../../config/types';
+import { defaults } from '../../config/defaults';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 

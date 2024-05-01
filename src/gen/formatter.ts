@@ -3,7 +3,6 @@
  */
 
 import { PickleStepArgument } from '@cucumber/messages';
-import { BDDConfig } from '../config';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
 import { BddWorldFixtures } from '../run/bddWorld';
@@ -11,6 +10,7 @@ import { TestMetaBuilder } from './testMeta';
 import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
+import { BDDConfig } from '../config/types';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 

@@ -20,8 +20,8 @@ Example of PLAYWRIGHT_BDD_CONFIGS:
 */
 
 import path from 'node:path';
-import { BDDConfig } from '.';
 import { exit } from '../utils/exit';
+import { BDDConfig } from './types';
 
 type OutputDir = string;
 type EnvConfigs = Record<OutputDir, BDDConfig>;

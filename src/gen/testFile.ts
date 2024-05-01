@@ -21,7 +21,6 @@ import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { findStepDefinition } from '../cucumber/findStep';
-import { BDDConfig } from '../config';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { extractTemplateParams, template } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
@@ -36,6 +35,7 @@ import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMetaBuilder } from './testMeta';
 import { GherkinDocumentWithPickles } from '../cucumber/loadFeatures';
 import { DecoratorSteps } from './decoratorSteps';
+import { BDDConfig } from '../config/types';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;

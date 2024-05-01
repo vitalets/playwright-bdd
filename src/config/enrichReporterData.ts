@@ -6,7 +6,7 @@
  * For auto-configuration we use a separate env variable,
  * b/c when resolving config reporter file is not executed yet.
  */
-import { BDDConfig } from '.';
+import { BDDConfig } from './types';
 
 export function enableEnrichReporterData() {
   process.env.PLAYWRIGHT_BDD_ENRICH_REPORTER_DATA = '1';
