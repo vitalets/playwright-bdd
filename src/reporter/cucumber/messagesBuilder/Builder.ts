@@ -30,6 +30,7 @@ export class MessagesBuilder {
     testRunFinished: null as ConcreteEnvelope<'testRunFinished'>,
   };
 
+  private fullConfig!: pw.FullConfig;
   private fullResult!: pw.FullResult;
   private onTestEnds: { test: pw.TestCase; result: pw.TestResult }[] = [];
   private testCaseRuns: TestCaseRun[] = [];
@@ -48,9 +49,14 @@ export class MessagesBuilder {
     this.onEndPromise = new Promise((resolve) => (this.onEndPromiseResolve = resolve));
   }
 
+  onBegin(config: pw.FullConfig) {
+    this.fullConfig = config;
+  }
+
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
     // Skip tests of non-bdd projects
-    if (!hasBddConfig(test.parent.project()?.testDir)) return;
+    const testDir = test.parent.project()?.testDir || this.fullConfig.rootDir;
+    if (!hasBddConfig(testDir)) return;
 
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.

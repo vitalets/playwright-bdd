@@ -3,6 +3,7 @@ import fg from 'fast-glob';
 
 /**
  * Returns path with "/" separator on all platforms.
+ * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/utils/fileUtils.ts#L56
  * See: https://stackoverflow.com/questions/53799385/how-can-i-convert-a-windows-path-to-posix-path-using-node-path
  */
 export function toPosixPath(somePath: string) {

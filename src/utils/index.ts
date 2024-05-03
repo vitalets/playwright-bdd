@@ -74,3 +74,7 @@ export function omit<T extends object, K extends keyof T>(obj: T, key: K) {
 export function toArray<T>(value: T | T[]) {
   return Array.isArray(value) ? value : [value];
 }
+
+export function trimTrailingSlash(s: string) {
+  return s.replace(/[/\\]+$/, '');
+}

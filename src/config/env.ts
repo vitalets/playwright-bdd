@@ -19,7 +19,7 @@ Example of PLAYWRIGHT_BDD_CONFIGS:
 } 
 */
 
-import path from 'node:path';
+import { trimTrailingSlash } from '../utils';
 import { exit } from '../utils/exit';
 import { BDDConfig } from './types';
 
@@ -30,7 +30,8 @@ let envConfigsCache: EnvConfigs;
 
 export function saveConfigToEnv(config: BDDConfig) {
   const envConfigs = getEnvConfigs();
-  const existingConfig = envConfigs[config.outputDir];
+  const configKey = getConfigKey(config.outputDir);
+  const existingConfig = envConfigs[configKey];
   if (existingConfig) {
     // Playwright config can be evaluated several times.
     // Throw error only if different calls of defineBddConfig() use the same outputDir.
@@ -43,17 +44,17 @@ export function saveConfigToEnv(config: BDDConfig) {
     }
     return;
   }
-  envConfigs[config.outputDir] = config;
+  envConfigs[configKey] = config;
   saveEnvConfigs(envConfigs);
 }
 
 export function getConfigFromEnv(testDir: string, { throws = true } = {}) {
-  testDir = path.normalize(testDir);
+  const configKey = getConfigKey(testDir);
   const envConfigs = getEnvConfigs();
-  const config = envConfigs[testDir];
+  const config = envConfigs[configKey];
   if (!config && throws) {
     exit(
-      `BDD config not found for testDir: "${testDir}".`,
+      `BDD config not found for testDir: "${configKey}".`,
       `Available testDirs:\n${Object.keys(envConfigs).join('\n')}`,
     );
   }
@@ -70,6 +71,10 @@ export function getEnvConfigs() {
 
 export function hasBddConfig(testDir?: string) {
   return Boolean(testDir && getConfigFromEnv(testDir, { throws: false }));
+}
+
+function getConfigKey(testDir: string) {
+  return trimTrailingSlash(testDir);
 }
 
 function saveEnvConfigs(envConfigs: EnvConfigs) {

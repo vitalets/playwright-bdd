@@ -17,6 +17,9 @@ export function getMessagesBuilderRef() {
   const isFirstRef = ++referenceCount === 1;
   return {
     builder: instance,
+    onBegin(config: pw.FullConfig) {
+      isFirstRef && this.builder.onBegin(config);
+    },
     onTestEnd(test: pw.TestCase, result: pw.TestResult) {
       isFirstRef && this.builder.onTestEnd(test, result);
     },

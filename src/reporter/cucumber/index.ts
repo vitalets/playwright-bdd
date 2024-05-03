@@ -3,6 +3,7 @@
  */
 import EventEmitter from 'node:events';
 import {
+  FullConfig,
   FullResult,
   Reporter as PlaywrightReporter,
   TestCase,
@@ -46,6 +47,10 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
     enableEnrichReporterData();
     this.messagesBuilderRef = getMessagesBuilderRef();
     this.reporter = this.createCucumberReporter();
+  }
+
+  onBegin(config: FullConfig) {
+    this.messagesBuilderRef.onBegin(config);
   }
 
   printsToStdio() {
