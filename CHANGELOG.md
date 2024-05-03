@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.3.1
 * feature: support _ in @timeout tag
 * fix: support Playwright 1.44 and Cucumber 10.6
 * fix: Cucumber reporter doesn't work for non BDD projects ([#143](https://github.com/vitalets/playwright-bdd/issues/143))
