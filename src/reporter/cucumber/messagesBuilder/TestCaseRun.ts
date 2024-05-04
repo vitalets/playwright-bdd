@@ -72,12 +72,12 @@ export class TestCaseRun {
   }
 
   private extractBddData() {
-    const { bddData, annotationIndex } = getBddDataFromTest(this.test);
+    const { bddData } = getBddDataFromTest(this.test);
     if (!bddData) {
       throw new Error(`__bddData annotation is not found for test "${this.test.title}".`);
     }
     // remove __bddData annotation from test (mutate)
-    this.test.annotations.splice(annotationIndex, 1);
+    // this.test.annotations.splice(annotationIndex, 1);
     return bddData;
   }
 

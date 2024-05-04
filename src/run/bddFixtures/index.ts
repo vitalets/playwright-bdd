@@ -67,7 +67,6 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       attach: async () => logger.warn(`world.attach() is noop, please use world.testInfo.attach()`),
     });
     if (getEnrichReporterData(config)) {
-      console.error('getEnrichReporterData: true');
       world.$internal.bddDataManager = new BddDataManager(testInfo, $testMeta, $uri);
     }
     await world.init();

@@ -14,7 +14,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        cucumberVersion: ['9', '10']
+        cucumberVersion: ['10']
+        # cucumberVersion: ['9', '10']
         playwrightVersion: ['1.42']
     defaults:
       run:

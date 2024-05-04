@@ -56,7 +56,6 @@ export class BddDataManager {
       },
       { create },
     );
-    console.error('annotations updated', this.testInfo.annotations);
   }
 }
 
