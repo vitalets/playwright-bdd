@@ -2,7 +2,7 @@ name: test-win
 
 on:
   push:
-    branches: [main, beta]
+    branches: [main, beta, test-win]
   pull_request:
     branches: [main, beta]
   schedule:
@@ -15,6 +15,7 @@ jobs:
     strategy:
       matrix:
         cucumberVersion: ['9', '10']
+        playwrightVersion: ['1.42']
     defaults:
       run:
         shell: bash
@@ -25,7 +26,11 @@ jobs:
           node-version: 20
           cache: 'npm'
       - run: npm ci
-      - run: npm install @cucumber/cucumber@${{ matrix.cucumberVersion }}
+      - run: >
+          npm install
+          @playwright/test@${{ matrix.playwrightVersion }}
+          @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
+          @cucumber/cucumber@${{ matrix.cucumberVersion }}
       - run: npx playwright install --with-deps chromium
       - name: run tests
         run: |
