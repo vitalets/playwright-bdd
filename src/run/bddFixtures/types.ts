@@ -30,6 +30,7 @@ export type BddFixtures = {
   $before: void;
   $after: void;
   $lang: string;
+  $applySpecialTags: void;
 };
 
 export type BddFixturesWorker = {

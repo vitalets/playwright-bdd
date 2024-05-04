@@ -1,6 +1,7 @@
 # Changelog
 
-## 6.3.2
+## dev
+* refactor: apply `@timeout` and `@slow` in runtime
 * bug: fix cucumber reporters on Win
 
 ## 6.3.1

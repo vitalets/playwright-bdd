@@ -15,6 +15,7 @@ import { getEnrichReporterData } from '../../config/enrichReporterData';
 import { BddDataManager } from '../bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
 import { loadStepsOwn } from '../../cucumber/loadStepsOwn';
+import { SpecialTags } from '../../specialTags';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -43,6 +44,17 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       await use({ runConfiguration, supportCodeLibrary, World, config });
     },
     { auto: true, scope: 'worker' },
+  ],
+  // apply timeout and slow from special tags in runtime instead of generating in test body
+  // to have cleaner test body and track fixtures in timeout calculation.
+  $applySpecialTags: [
+    async ({ $testMeta }, use, testInfo) => {
+      const specialTags = new SpecialTags($testMeta.ownTags, $testMeta.tags);
+      if (specialTags.timeout !== undefined) testInfo.setTimeout(specialTags.timeout);
+      if (specialTags.slow !== undefined) testInfo.slow();
+      await use();
+    },
+    { auto: true },
   ],
   // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),

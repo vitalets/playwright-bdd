@@ -22,6 +22,7 @@ export type TestMetaMap = Record<string, TestMeta>;
 export type TestMeta = {
   pickleLocation: string;
   tags?: string[];
+  ownTags?: string[];
 };
 
 export class TestMetaBuilder {
@@ -35,6 +36,8 @@ export class TestMetaBuilder {
     const testMeta: TestMeta = {
       pickleLocation: stringifyLocation(pickle.location),
       tags: node.tags.length ? node.tags : undefined,
+      // todo: avoid duplication of tags and ownTags
+      ownTags: node.ownTags.length ? node.ownTags : undefined,
     };
     this.tests.push({ node, testMeta });
   }

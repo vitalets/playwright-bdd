@@ -15,7 +15,10 @@ export class SpecialTags {
   timeout?: number;
   mode?: DescribeConfigureOptions['mode'];
 
-  constructor(private ownTags: string[]) {
+  constructor(
+    private ownTags: string[] = [],
+    private tags: string[] = [],
+  ) {
     this.extractFlags();
     this.extractRetries();
     this.extractTimeout();
@@ -23,7 +26,10 @@ export class SpecialTags {
   }
 
   private extractFlags() {
-    if (this.ownTags.includes(`@slow`)) this.slow = true;
+    // for slow we use this.tags (not this.ownTags),
+    // b/c each test.slow() call multiplies timeout
+    // that is not now tags are assumed to work
+    if (this.tags.includes(`@slow`)) this.slow = true;
     if (this.ownTags.includes(`@fail`)) this.fail = true;
     // order is important
     const executionFlags = ['only', 'skip', 'fixme'] as const;

@@ -6,7 +6,7 @@
 
 import { Tag } from '@cucumber/messages';
 import { removeDuplicates } from '../utils';
-import { SpecialTags } from './specialTags';
+import { SpecialTags } from '../specialTags';
 
 interface GherkinNode {
   name: string;

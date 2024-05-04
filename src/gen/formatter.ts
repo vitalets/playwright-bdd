@@ -41,8 +41,9 @@ export class Formatter {
     return [
       firstLine, // prettier-ignore
       ...this.describeConfigure(node).map(indent),
-      ...this.markAsSlow(node).map(indent),
-      ...this.markAsFailed(node).map(indent),
+      ...this.markAsFailing(node).map(indent),
+      // we dont render test.slow() here, b/c each test.slow() call multilies timeout
+      // that is not now tags are assumed to work
       '',
       ...children.map(indent),
       `});`,
@@ -69,9 +70,10 @@ export class Formatter {
     if (!children.length) return [`${firstLine}});`, ''];
     const lines = [
       firstLine, // prettier-ignore
-      ...this.testTimeout(node).map(indent),
-      ...this.markAsSlow(node).map(indent),
-      ...this.markAsFailed(node).map(indent),
+      // We use test.fail() in the test body instead of test.fail('...', () => { ... })
+      // It allows to apply .only() / .skip() on failing tests.
+      // See: https://github.com/microsoft/playwright/issues/30662
+      ...this.markAsFailing(node).map(indent),
       ...children.map(indent),
       `});`,
       '',
@@ -181,23 +183,14 @@ export class Formatter {
     ];
   }
 
-  private markAsFailed(node: TestNode) {
+  private markAsFailing(node: TestNode) {
     return node.specialTags.fail ? [`test.fail();`] : [];
-  }
-
-  private markAsSlow(node: TestNode) {
-    return node.specialTags.slow ? [`test.slow();`] : [];
   }
 
   private testTags(node: TestNode) {
     return supportsTags && node.tags.length
       ? `{ tag: [${node.tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
       : '';
-  }
-
-  private testTimeout(node: TestNode) {
-    const { timeout } = node.specialTags;
-    return timeout !== undefined ? [`test.setTimeout(${timeout});`] : [];
   }
 
   /**
