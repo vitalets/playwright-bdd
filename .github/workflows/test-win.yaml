@@ -14,8 +14,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        cucumberVersion: ['10']
-        # cucumberVersion: ['9', '10']
+        cucumberVersion: ['9', '10']
         playwrightVersion: ['1.42']
     defaults:
       run:
@@ -37,9 +36,9 @@ jobs:
         run: |
           # don't use 'npm t' here as it doesn't expand filename wildcards
           node test/setup.mjs
-          # temp: run single test
-          # node --test test/**/test.mjs
-          node --test test/reporter-cucumber-html/test.mjs
+          node --test test/**/test.mjs
+          # run particular test
+          # node --test test/reporter-cucumber-html/test.mjs
       - uses: actions/upload-artifact@v4
         if: failure()
         with:

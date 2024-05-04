@@ -1,5 +1,8 @@
 # Changelog
 
+## 6.3.2
+* bug: fix cucumber reporters on Win
+
 ## 6.3.1
 * feature: support _ in @timeout tag
 * fix: support Playwright 1.44 and Cucumber 10.6

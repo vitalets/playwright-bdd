@@ -76,7 +76,10 @@ export class TestCaseRun {
     if (!bddData) {
       throw new Error(`__bddData annotation is not found for test "${this.test.title}".`);
     }
-    // remove __bddData annotation from test (mutate)
+    // We could delete __bddData annotation here to hide it from other reporters,
+    // but it leads to errors on Win.
+    // Better way is to get some official way to pass custom data to reporters,
+    // see: https://github.com/microsoft/playwright/issues/30179
     // this.test.annotations.splice(annotationIndex, 1);
     return bddData;
   }
