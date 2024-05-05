@@ -7,6 +7,7 @@ import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_k
 import {
   BuiltInFixtures,
   BuiltInFixturesWorker,
+  CustomFixtures,
   FixturesArg,
   KeyValue,
   TestTypeCommon,
@@ -30,18 +31,32 @@ import { getLocationByOffset } from '../playwright/getLocationInFile';
 // todo: https://github.com/vitalets/playwright-bdd/issues/46
 export let hasCustomTest = false;
 
+type CreateBddOptions<WorldFixture> = {
+  worldFixture?: WorldFixture;
+};
+
 export function createBdd<
   T extends KeyValue = BuiltInFixtures,
   W extends KeyValue = BuiltInFixturesWorker,
   World extends BddWorld = BddWorld,
->(customTest?: TestType<T, W> | null, _CustomWorld?: new (...args: any[]) => World) {
+  WorldFixture extends keyof CustomFixtures<T> | undefined = undefined,
+>(
+  customTest?: TestType<T, W> | null,
+  options?: CreateBddOptions<WorldFixture> | (new (...args: any[]) => World),
+) {
+  type FinalWorld = WorldFixture extends keyof CustomFixtures<T>
+    ? CustomFixtures<T>[WorldFixture]
+    : World;
+  if (options instanceof BddWorld) {
+    // warning
+  }
   if (!hasCustomTest) hasCustomTest = isCustomTest(customTest);
   const Given = defineStepCtor<T, W>('Given', hasCustomTest);
   const When = defineStepCtor<T, W>('When', hasCustomTest);
   const Then = defineStepCtor<T, W>('Then', hasCustomTest);
   const Step = defineStepCtor<T, W>('Unknown', hasCustomTest);
-  const Before = scenarioHookFactory<T, W, World>('before');
-  const After = scenarioHookFactory<T, W, World>('after');
+  const Before = scenarioHookFactory<T, W, FinalWorld>('before');
+  const After = scenarioHookFactory<T, W, FinalWorld>('after');
   const BeforeAll = workerHookFactory<W>('beforeAll');
   const AfterAll = workerHookFactory<W>('afterAll');
   return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
