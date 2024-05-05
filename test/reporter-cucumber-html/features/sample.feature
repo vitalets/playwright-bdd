@@ -43,26 +43,22 @@ Feature: rich feature
     When open page "https://example.com"
     Then page title snapshot matches the golden one
 
-  # don't reduce test timeout as it produces unreliable errors
-  @timeout:1500
   Scenario: timeout in before fixture
     Given Action 0
     Given step that uses timeouted before fixture
     When Action 1
 
-  @timeout:1500
   Scenario: timeout in step
     Given Action 0
     Given timeouted step
     When Action 1
 
-  @timeout:1500
+  # see: https://github.com/microsoft/playwright/issues/30175
   Scenario: timeout in after fixture
     Given Action 0
     Given step that uses timeouted after fixture
     When Action 1
 
-  @timeout:1500
   Scenario: timeout in step and in after fixture
     Given Action 0
     Given timeouted step

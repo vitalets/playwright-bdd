@@ -37,8 +37,8 @@ Given('failing step', async ({ page }) => {
   await expect(page.getByText('missing string')).toBeVisible();
 });
 
-Given('timeouted step', async ({ page, $testInfo }) => {
-  await page.waitForTimeout($testInfo.timeout + 100);
+Given('timeouted step', async ({ $testInfo }) => {
+  await new Promise((r) => setTimeout(r, $testInfo.timeout + 100));
 });
 
 Given('step that uses timeouted before fixture', async ({ timeoutedBeforeFixture }) => {
