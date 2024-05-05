@@ -36,9 +36,9 @@ jobs:
         run: |
           # don't use 'npm t' here as it doesn't expand filename wildcards
           node test/setup.mjs
-          # node --test test/**/test.mjs
+          node --test test/**/test.mjs
           # run particular test
-          node --test test/reporter-cucumber-html/test.mjs
+          # node --test test/reporter-cucumber-html/test.mjs
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
