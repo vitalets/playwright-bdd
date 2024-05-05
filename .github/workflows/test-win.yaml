@@ -47,5 +47,6 @@ jobs:
             test/**/test-results/
             test/**/actual-reports/
             test/**/blob-report/
+            test/**/.features-gen/
           retention-days: 1
           if-no-files-found: ignore
