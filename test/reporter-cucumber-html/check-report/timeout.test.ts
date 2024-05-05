@@ -14,7 +14,7 @@ test('Scenario: timeout in before fixture', async ({ page }) => {
   ]);
   // 1. position of error message sometimes appears in After Hooks, so check it separately
   // 2. here can be different error messages
-  await expect(scenario.getSteps()).toContainText([/Hook "fixture: (.+)" failed/]);
+  await expect(scenario.getSteps()).toContainText([/Hook "(.+)" failed/]);
   // screenshot position changes between PW versions, so check it separately
   await expect(scenario.getSteps()).toContainText(['screenshot']);
   // sometimes error is the following:
@@ -23,7 +23,7 @@ test('Scenario: timeout in before fixture', async ({ page }) => {
   expect(await scenario.getSteps('failed').count()).toBeGreaterThan(0);
   await expect(scenario.getSteps('skipped')).toHaveCount(3);
   await expect(scenario.getErrors()).toContainText([
-    // here can be two different error messages
+    // here can be different error messages
     // eslint-disable-next-line max-len
     /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
   ]);
