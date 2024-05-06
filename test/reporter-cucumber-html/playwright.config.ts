@@ -21,7 +21,7 @@ export default defineConfig({
   },
   // don't reduce test timeout as it produces unreliable errors
   // if define this timeout as @timeout tag, timeout in after fixture does not work
-  timeout: 3000,
+  timeout: process.platform === 'win32' ? 2000 : 1000,
   expect: {
     timeout: 1,
   },
