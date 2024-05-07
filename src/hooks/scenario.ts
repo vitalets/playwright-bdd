@@ -78,8 +78,8 @@ export function scenarioHookFactory<
   };
 }
 
-export function hasScenarioHooks() {
-  return scenarioHooks.length > 0;
+export function hasScenarioHooksWithWorldFromCucumber() {
+  return scenarioHooks.filter((hook) => !hook.useWorldFromFixtures).length > 0;
 }
 
 // eslint-disable-next-line complexity, max-statements

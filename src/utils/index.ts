@@ -78,3 +78,7 @@ export function toArray<T>(value: T | T[]) {
 export function trimTrailingSlash(s: string) {
   return s.replace(/[/\\]+$/, '');
 }
+
+export function toBoolean<T>(value: T): value is NonNullable<T> {
+  return Boolean(value);
+}
