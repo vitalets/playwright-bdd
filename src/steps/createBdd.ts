@@ -46,6 +46,12 @@ export function createBdd<
   customTest?: TestType<T, W> | null,
   options?: CreateBddOptions<WorldFixture> | (new (...args: any[]) => World),
 ) {
+  // important to define FinalWorld on top level, otherwise it's tricky
+  // to pass correct world type to hooks
+  type FinalWorld = WorldFixture extends keyof CustomFixtures<T>
+    ? CustomFixtures<T>[WorldFixture]
+    : World;
+
   if (options instanceof BddWorld) {
     // warning
   }
@@ -56,7 +62,6 @@ export function createBdd<
   // new cucumber-style
   if (options && 'worldFixture' in options && options.worldFixture) {
     type NonNullableWorldFixture = typeof options.worldFixture;
-    type NewStyleWorld = CustomFixtures<T>[NonNullableWorldFixture];
     const Given = defineStepCtorNewStyle<T, NonNullableWorldFixture>('Given', options.worldFixture);
     const When = defineStepCtorNewStyle<T, NonNullableWorldFixture>('When', options.worldFixture);
     const Then = defineStepCtorNewStyle<T, NonNullableWorldFixture>('Then', options.worldFixture);
@@ -64,10 +69,10 @@ export function createBdd<
       'Unknown',
       options.worldFixture,
     );
-    const Before = scenarioHookFactory<T, W, NewStyleWorld>('before', {
-      useWorldFromFixtures: true,
+    const Before = scenarioHookFactory<T, W, FinalWorld>('before', {
+      useWorldFixture: true,
     });
-    const After = scenarioHookFactory<T, W, NewStyleWorld>('after', { useWorldFromFixtures: true });
+    const After = scenarioHookFactory<T, W, FinalWorld>('after', { useWorldFixture: true });
     return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
   }
 
@@ -75,8 +80,8 @@ export function createBdd<
   const When = defineStepCtor<T, W>('When', hasCustomTest);
   const Then = defineStepCtor<T, W>('Then', hasCustomTest);
   const Step = defineStepCtor<T, W>('Unknown', hasCustomTest);
-  const Before = scenarioHookFactory<T, W, World>('before');
-  const After = scenarioHookFactory<T, W, World>('after');
+  const Before = scenarioHookFactory<T, W, FinalWorld>('before');
+  const After = scenarioHookFactory<T, W, FinalWorld>('after');
   return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
 }
 

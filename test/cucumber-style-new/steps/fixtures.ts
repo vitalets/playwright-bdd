@@ -5,4 +5,6 @@ export const test = base.extend<{ world: World }>({
   world: async ({}, use) => use(new World()),
 });
 
-export const { Given, Before } = createBdd(test, { worldFixture: 'world' });
+export const { Before, After, Given, When, Then } = createBdd(test, {
+  worldFixture: 'world',
+});

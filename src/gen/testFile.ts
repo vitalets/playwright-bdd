@@ -22,7 +22,7 @@ import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { findStepDefinition } from '../cucumber/findStep';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
-import { extractTemplateParams, template, toBoolean } from '../utils';
+import { extractTemplateParams, template } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import {
@@ -507,22 +507,23 @@ export class TestFile {
   }
 
   private getWorldFixtureName() {
-    const worldFixtureNames = [...this.usedStepDefinitions]
-      .map((stepDefinition) => {
-        return getStepConfig(stepDefinition)?.worldFixture;
-      })
-      .filter(toBoolean);
+    const worldFixtureNames = new Set<string>();
 
-    if (worldFixtureNames.length > 1) {
+    this.usedStepDefinitions.forEach((stepDefinition) => {
+      const worldFixture = getStepConfig(stepDefinition)?.worldFixture;
+      if (worldFixture) worldFixtureNames.add(worldFixture);
+    });
+
+    if (worldFixtureNames.size > 1) {
       throw new Error(
         [
           `All steps in a feature file should have the same worldFixture.`,
-          `Found fixtures: ${worldFixtureNames.join(', ')}`,
+          `Found fixtures: ${[...worldFixtureNames].join(', ')}`,
           `File: ${this.featureUri}`,
         ].join('\n'),
       );
     }
 
-    return worldFixtureNames[0];
+    return [...worldFixtureNames][0];
   }
 }
