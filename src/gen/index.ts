@@ -23,6 +23,7 @@ import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
 import { loadStepsOwn } from '../cucumber/loadStepsOwn';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
+import { appendNewCucumberStyleSteps } from '../steps/newCucumberStyleSteps';
 
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 
@@ -101,6 +102,7 @@ export class TestFilesGenerator {
       ? await loadStepsOwn(environment.cwd, this.config.steps)
       : await loadSteps(this.runConfiguration, environment);
     await this.loadDecoratorSteps();
+    appendNewCucumberStyleSteps(this.supportCodeLibrary);
     this.logger.log(`Loaded steps: ${this.supportCodeLibrary.stepDefinitions.length}`);
   }
 

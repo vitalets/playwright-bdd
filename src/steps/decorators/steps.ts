@@ -27,6 +27,7 @@ const decoratedSteps = new Set<StepConfig>();
  */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
   return (pattern: DefineStepPattern) => {
+    // offset = 3 b/c this call is 3 steps below the user's code
     const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
     return (method: Function, _context: ClassMethodDecoratorContext) => {

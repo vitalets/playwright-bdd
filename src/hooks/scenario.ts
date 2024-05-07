@@ -35,6 +35,7 @@ type ScenarioHook<Fixtures = object, World extends BddWorld = BddWorld> = {
   fn: ScenarioHookFn<Fixtures, World>;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
   location: PlaywrightLocation;
+  useWorldFromFixtures: boolean; // new cucumber-style steps
 };
 
 /**
@@ -60,7 +61,7 @@ export function scenarioHookFactory<
   TestFixtures extends KeyValue,
   WorkerFixtures extends KeyValue,
   World,
->(type: ScenarioHook['type']) {
+>(type: ScenarioHook['type'], { useWorldFromFixtures = false } = {}) {
   type Args = ScenarioHookDefinitionArgs<
     TestFixtures & WorkerFixtures & ScenarioHookBddFixtures<World>,
     World
@@ -72,6 +73,7 @@ export function scenarioHookFactory<
       fn: getFnFromArgs(args) as ScenarioHook['fn'],
       // offset = 3 b/c this call is 3 steps below the user's code
       location: getLocationByOffset(3),
+      useWorldFromFixtures,
     });
   };
 }
@@ -133,6 +135,7 @@ export function getScenarioHooksFixtures() {
 function wrapHookFn(hook: ScenarioHook, fixtures: ScenarioHookBddFixtures<BddWorld>) {
   const { timeout } = hook.options;
   const { $bddWorld } = fixtures;
+
   return async () => {
     await callWithTimeout(
       () => hook.fn.call($bddWorld, fixtures),

@@ -47,6 +47,7 @@ export function buildCucumberStepFn(stepConfig: StepConfig) {
     return stepConfig.fn.call(this, fixturesArg, ...args);
   };
 
+  // attach stepConfig to fn for easier access later 
   code.stepConfig = stepConfig;
 
   return code;

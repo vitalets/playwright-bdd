@@ -20,6 +20,7 @@ export type StepConfig = {
   hasCustomTest: boolean;
   location: PlaywrightLocation;
   pomNode?: PomNode; // for decorator steps
+  worldFixture?: string // for new cucumber-style steps
 };
 
 // attach stepConfig to Cucumber step function

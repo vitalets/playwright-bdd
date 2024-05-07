@@ -23,6 +23,7 @@ import { workerHookFactory } from '../hooks/worker';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { BddAutoInjectFixtures } from '../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
+import { defineStepCtorNewStyle } from './newCucumberStyleSteps';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -35,6 +36,7 @@ type CreateBddOptions<WorldFixture> = {
   worldFixture?: WorldFixture;
 };
 
+// eslint-disable-next-line max-statements, complexity
 export function createBdd<
   T extends KeyValue = BuiltInFixtures,
   W extends KeyValue = BuiltInFixturesWorker,
@@ -44,21 +46,37 @@ export function createBdd<
   customTest?: TestType<T, W> | null,
   options?: CreateBddOptions<WorldFixture> | (new (...args: any[]) => World),
 ) {
-  type FinalWorld = WorldFixture extends keyof CustomFixtures<T>
-    ? CustomFixtures<T>[WorldFixture]
-    : World;
   if (options instanceof BddWorld) {
     // warning
   }
   if (!hasCustomTest) hasCustomTest = isCustomTest(customTest);
+  const BeforeAll = workerHookFactory<W>('beforeAll');
+  const AfterAll = workerHookFactory<W>('afterAll');
+
+  // new cucumber-style
+  if (options && 'worldFixture' in options && options.worldFixture) {
+    type NonNullableWorldFixture = typeof options.worldFixture;
+    type NewStyleWorld = CustomFixtures<T>[NonNullableWorldFixture];
+    const Given = defineStepCtorNewStyle<T, NonNullableWorldFixture>('Given', options.worldFixture);
+    const When = defineStepCtorNewStyle<T, NonNullableWorldFixture>('When', options.worldFixture);
+    const Then = defineStepCtorNewStyle<T, NonNullableWorldFixture>('Then', options.worldFixture);
+    const Step = defineStepCtorNewStyle<T, NonNullableWorldFixture>(
+      'Unknown',
+      options.worldFixture,
+    );
+    const Before = scenarioHookFactory<T, W, NewStyleWorld>('before', {
+      useWorldFromFixtures: true,
+    });
+    const After = scenarioHookFactory<T, W, NewStyleWorld>('after', { useWorldFromFixtures: true });
+    return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
+  }
+
   const Given = defineStepCtor<T, W>('Given', hasCustomTest);
   const When = defineStepCtor<T, W>('When', hasCustomTest);
   const Then = defineStepCtor<T, W>('Then', hasCustomTest);
   const Step = defineStepCtor<T, W>('Unknown', hasCustomTest);
-  const Before = scenarioHookFactory<T, W, FinalWorld>('before');
-  const After = scenarioHookFactory<T, W, FinalWorld>('after');
-  const BeforeAll = workerHookFactory<W>('beforeAll');
-  const AfterAll = workerHookFactory<W>('afterAll');
+  const Before = scenarioHookFactory<T, W, World>('before');
+  const After = scenarioHookFactory<T, W, World>('after');
   return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
 }
 
@@ -81,6 +99,8 @@ function defineStepCtor<T extends KeyValue, W extends KeyValue = {}>(
       hasCustomTest,
       location: getLocationByOffset(3),
     });
+    // returns function to be able to call this step from other steps
+    // see: https://github.com/vitalets/playwright-bdd/issues/110
     return (fixtures: Partial<StepFunctionFixturesArg<T, W>>, ...args: Args) => {
       assertStepIsCalledWithRequiredFixtures(pattern, fn, fixtures);
       return fn(fixtures as StepFunctionFixturesArg<T, W>, ...args);

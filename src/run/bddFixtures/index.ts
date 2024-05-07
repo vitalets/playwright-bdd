@@ -16,6 +16,7 @@ import { BddDataManager } from '../bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
 import { loadStepsOwn } from '../../cucumber/loadStepsOwn';
 import { SpecialTags } from '../../specialTags';
+import { appendNewCucumberStyleSteps } from '../../steps/newCucumberStyleSteps';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -38,6 +39,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
         ? await loadStepsOwn(environment.cwd, config.steps)
         : await loadSteps(runConfiguration, environment);
       appendDecoratorSteps(supportCodeLibrary);
+      appendNewCucumberStyleSteps(supportCodeLibrary);
 
       const World = getWorldConstructor(supportCodeLibrary);
 
@@ -61,7 +63,17 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
   $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
   $bddWorld: async (
-    { $tags, $test, $step, $bddWorldFixtures, $cucumber, $lang, $testMeta, $uri },
+    {
+      $tags,
+      $test,
+      $step,
+      $bddWorldFixtures,
+      $cucumber,
+      $lang,
+      $testMeta,
+      $uri,
+      $newCucumberStyleWorld,
+    },
     use,
     testInfo,
   ) => {
@@ -81,6 +93,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     if (getEnrichReporterData(config)) {
       world.$internal.bddDataManager = new BddDataManager(testInfo, $testMeta, $uri);
     }
+    world.$internal.newCucumberStyleWorld = $newCucumberStyleWorld;
     await world.init();
     await use(world);
     await world.destroy();
@@ -91,6 +104,9 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   Then: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Then').invoke),
   And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
   But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
+
+  // new Cucumber style world, can be overwritten in test files
+  $newCucumberStyleWorld: ({}, use: (arg: unknown) => unknown) => use(null),
 
   // init $testMetaMap with empty object, will be overwritten in each test file
   $testMetaMap: ({}, use) => use({}),

@@ -1,7 +1,8 @@
-import { test as base } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 import { World } from './world';
 
-export const test = base.extend<{ someFixture: string; world: World }>({
-  someFixture: async ({}, use) => use('foo'),
-  world: async ({ someFixture }, use) => use(new World(someFixture)),
+export const test = base.extend<{ world: World }>({
+  world: async ({}, use) => use(new World()),
 });
+
+export const { Given, Before } = createBdd(test, { worldFixture: 'world' });
