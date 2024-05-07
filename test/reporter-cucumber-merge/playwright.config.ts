@@ -1,5 +1,6 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
+import { testTimeout } from '../reporter-cucumber-html/timeout';
 
 const testDir = defineBddConfig({
   importTestFrom: 'features/fixtures.ts',
@@ -22,8 +23,7 @@ export default defineConfig({
   use: {
     screenshot: 'only-on-failure',
   },
-  // don't reduce test timeout as it produces unreliable errors
-  timeout: process.platform === 'win32' ? 3000 : 1000,
+  timeout: testTimeout,
   expect: {
     timeout: 1,
   },
