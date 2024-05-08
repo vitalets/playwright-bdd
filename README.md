@@ -18,13 +18,20 @@ You can use CucumberJS runner with [Playwright as a library](https://medium.com/
 This package offers **an alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
 Such approach brings all the benefits of Playwright runner:
 
-* Automatic [browser initialization and cleanup](https://playwright.dev/docs/library#key-differences)
-* Auto-capture of [screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options)
-* Parallelization with [sharding](https://timdeschryver.dev/blog/using-playwright-test-shards-in-combination-with-a-job-matrix-to-improve-your-ci-speed#after)
-* [Auto-waiting](https://playwright.dev/docs/actionability)
-* Out-of-box [visual comparison testing](https://playwright.dev/docs/test-snapshots)
-* Power of [Playwright fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures)
+* Automatic browser initialization and cleanup
+* Auto-capture of screenshots, videos and traces
+* Parallelization with sharding
+* Auto-waiting of page elements
+* Out-of-box visual comparison testing
+* Power of Playwright fixtures
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
+
+## Playwright-bdd extras
+Some features were developed in `playwright-bdd` on top of Playwright and BDD approach:
+
+* [define steps as decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) in the existing Page Object Models
+* [use special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags) to easily modify test expected state, timeout and retries
+* call step from [other steps](https://vitalets.github.io/playwright-bdd/#/writing-steps/playwright-style?id=call-step-from-step) to reduce codebase
 
 ## Documentation
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).

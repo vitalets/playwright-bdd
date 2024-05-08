@@ -22,6 +22,7 @@ export type ImportTestFrom = {
 export class Formatter {
   constructor(private config: BDDConfig) {}
 
+  // eslint-disable-next-line complexity
   fileHeader(featureUri: string, importTestFrom?: ImportTestFrom) {
     // always use "/" for imports, see #91
     const importTestFromFile = toPosixPath(importTestFrom?.file || 'playwright-bdd');
@@ -159,7 +160,6 @@ export class Formatter {
     return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
   }
 
-  // eslint-disable-next-line complexity
   private getFunction(baseFn: 'test' | 'describe', node: TestNode) {
     if (node.specialTags.only) return `${baseFn}.only`;
     if (node.specialTags.skip) return `${baseFn}.skip`;

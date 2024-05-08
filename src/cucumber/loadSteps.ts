@@ -13,7 +13,6 @@ export async function loadSteps(
 
   if (!lib) {
     // use Playwright's built-in hook to compile TypeScript steps
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
     const uninstall = !hasTsNodeRegister(runConfiguration) ? installTransform() : () => {};
     lib = loadSupport(runConfiguration, environment).finally(
       () => uninstall(),

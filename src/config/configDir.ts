@@ -11,6 +11,7 @@ import { getCliConfigPath } from '../cli/options';
 /**
  * Returns Playwright config dir considering cli --config option.
  */
+// eslint-disable-next-line complexity
 export function getPlaywrightConfigDir({ resolveAndSave = false } = {}) {
   let configDir = process.env.PLAYWRIGHT_BDD_CONFIG_DIR;
 

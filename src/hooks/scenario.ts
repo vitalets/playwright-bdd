@@ -87,7 +87,7 @@ export function hasScenarioHooksWithWorldFromCucumber() {
   return scenarioHooks.filter((hook) => !hook.useWorldFixture).length > 0;
 }
 
-// eslint-disable-next-line complexity, max-statements
+// eslint-disable-next-line complexity
 export async function runScenarioHooks<
   World extends BddWorld,
   Fixtures extends ScenarioHookBddFixtures<World>,

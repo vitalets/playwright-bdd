@@ -25,8 +25,6 @@ import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { appendNewCucumberStyleSteps } from '../steps/newCucumberStyleSteps';
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
-
 export class TestFilesGenerator {
   // all these props are exist
   private runConfiguration!: IRunConfiguration;

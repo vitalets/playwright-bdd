@@ -44,7 +44,7 @@ export function exit(...messages: string[]) {
   if (isMainThread) {
     // use console.error() here instead of logger.error() to have less stack
     // for flushing messages to stderr.
-    // eslint-disable-next-line no-console, max-depth
+    // eslint-disable-next-line no-console
     if (messages.length) console.error('Error:', ...messages);
     process.exit(1);
   } else {

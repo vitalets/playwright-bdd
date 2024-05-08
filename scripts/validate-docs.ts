@@ -10,7 +10,6 @@ import path from 'node:path';
 import { marked, Tokens } from 'marked';
 import slugify from 'slugify';
 
-// eslint-disable-next-line no-console
 const logger = console;
 
 type FileInfo = {

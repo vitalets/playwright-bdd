@@ -51,6 +51,7 @@ export class TestPoms {
 
   constructor(private testTitle: string) {}
 
+  // eslint-disable-next-line complexity
   registerPomNode(pomNode: PomNode, { byTag = false } = {}) {
     const usedPom = this.usedPoms.get(pomNode);
     if (usedPom) {

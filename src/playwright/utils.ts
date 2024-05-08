@@ -14,7 +14,6 @@ export const playwrightVersion = getPackageVersion('@playwright/test');
  */
 export function requirePlaywrightModule(modulePath: string) {
   const absPath = path.isAbsolute(modulePath) ? modulePath : getPlaywrightModulePath(modulePath);
-  // eslint-disable-next-line @typescript-eslint/no-var-requires
   return require(absPath);
 }
 
@@ -38,6 +37,7 @@ function getPlaywrightRoot() {
 /**
  * Create or update annotation with provided type.
  */
+// eslint-disable-next-line complexity
 export function updateAnnotation(
   testInfo: TestInfo,
   annotation: PwAnnotation,
