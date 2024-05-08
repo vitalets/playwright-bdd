@@ -1,7 +1,6 @@
 import globals from 'globals';
 import js from '@eslint/js';
-import tsParser from '@typescript-eslint/parser';
-import tsPlugin from '@typescript-eslint/eslint-plugin';
+import tseslint from 'typescript-eslint';
 import playwright from 'eslint-plugin-playwright';
 
 export default [
@@ -9,6 +8,7 @@ export default [
     ignores: ['examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/.cache'],
   },
   js.configs.recommended,
+  ...tseslint.configs.recommended,
   {
     languageOptions: {
       globals: globals.node,
@@ -16,17 +16,17 @@ export default [
   },
   {
     files: ['**/*.ts'],
-    languageOptions: {
-      parser: tsParser,
-      parserOptions: {
-        project: './tsconfig.json',
-      },
-    },
-    plugins: {
-      '@typescript-eslint': tsPlugin,
-    },
+    // languageOptions: {
+    //   parser: tsParser,
+    //   parserOptions: {
+    //     project: './tsconfig.json',
+    //   },
+    // },
+    // plugins: {
+    //   '@typescript-eslint': tsPlugin,
+    // },
     rules: {
-      ...tsPlugin.configs.recommended.rules,
+      // ...tsPlugin.configs.recommended.rules,
       // ...tsPlugin.configs['recommended-requiring-type-checking'].rules,
       'no-console': 'error',
 
@@ -68,6 +68,12 @@ export default [
     },
     rules: {
       'playwright/no-focused-test': 0,
+    },
+  },
+  {
+    files: ['test/cjs/**'],
+    rules: {
+      '@typescript-eslint/no-var-requires': 0,
     },
   },
 ];

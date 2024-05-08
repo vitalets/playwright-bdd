@@ -7,8 +7,8 @@ test.beforeEach(async ({ page }) => {
 
 test('header info', async ({ page }) => {
   // after changing this counts you should also update test/reporter-cucumber-junit
-  let failed = 14;
-  let passed = 8;
+  const failed = 14;
+  const passed = 8;
 
   await expect(page.getByText(/\d+ failed/)).toHaveText(`${failed} failed`);
   await expect(page.getByText(/\d+ passed/)).toHaveText(`${passed} passed`);

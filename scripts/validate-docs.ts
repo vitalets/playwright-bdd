@@ -80,7 +80,7 @@ function validateLink(fileInfo: FileInfo, token: Tokens.Link, files: FileInfo[])
 
 function parseTokenHref(tokenHref: string) {
   // handling case [xxx](file.json ':include')
-  let [pathname, hash] = tokenHref.split(' ')[0].split('#');
+  const [pathname, hash] = tokenHref.split(' ')[0].split('#');
   return { pathname, hash };
 }
 
