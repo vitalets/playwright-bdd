@@ -312,7 +312,7 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
-  // eslint-disable-next-line max-statements, complexity
+  // eslint-disable-next-line max-statements
   private getStep(
     step: Step,
     previousKeywordType: KeywordType | undefined,
@@ -418,6 +418,7 @@ export class TestFile {
     return enKeyword;
   }
 
+  // eslint-disable-next-line complexity
   private getStepFixtureNames(stepDefinition: StepDefinition) {
     const stepConfig = getStepConfig(stepDefinition);
     if (isDefinedViaCucumber(stepConfig)) {
