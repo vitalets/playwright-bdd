@@ -26,12 +26,12 @@ Such approach brings all the benefits of Playwright runner:
 * Power of Playwright fixtures
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
-## Playwright-bdd extras
-Some features were developed in `playwright-bdd` on top of Playwright and BDD approach:
+## Extras
+Some features were developed in `playwright-bdd` on top of Playwright and BDD approaches:
 
-* [define steps as decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) in the existing Page Object Models
-* [use special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags) to easily modify test expected state, timeout and retries
-* call step from [other steps](https://vitalets.github.io/playwright-bdd/#/writing-steps/playwright-style?id=call-step-from-step) to reduce codebase
+* [steps as decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators)
+* [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
+* [call step from step](https://vitalets.github.io/playwright-bdd/#/writing-steps/playwright-style?id=call-step-from-step)
 
 ## Documentation
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
