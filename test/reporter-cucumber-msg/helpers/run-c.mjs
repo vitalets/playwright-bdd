@@ -23,6 +23,6 @@ try {
       FEATURE_DIR: featureDir,
     },
   });
-} catch (e) {
+} catch {
   // error is also expected
 }

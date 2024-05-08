@@ -43,7 +43,6 @@ export class TestCaseRun {
   private executedAfterHooks: TestCaseRunHooks;
   private executedSteps: ExecutedStepInfo[];
 
-  // eslint-disable-next-line max-params
   constructor(
     public test: pw.TestCase,
     public result: pw.TestResult,

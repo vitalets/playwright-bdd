@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { getPlaywrightModulePath, requirePlaywrightModule } from './utils';
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable max-params */
 
 /**

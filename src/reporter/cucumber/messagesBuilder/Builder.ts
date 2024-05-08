@@ -83,7 +83,6 @@ export class MessagesBuilder {
     return this.buildMessagesPromise;
   }
 
-  // eslint-disable-next-line max-statements
   private async doBuildMessages() {
     await this.onEndPromise;
 

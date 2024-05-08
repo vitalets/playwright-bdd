@@ -220,7 +220,6 @@ export class TestFile {
   /**
    * Generate test from Examples row of Scenario Outline
    */
-  // eslint-disable-next-line max-params
   private getOutlineTest(
     scenario: Scenario,
     examples: Examples,
