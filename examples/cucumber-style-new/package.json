@@ -1,0 +1,5 @@
+{
+  "scripts": {
+    "test": "npx bddgen && npx playwright test"
+  }
+}
