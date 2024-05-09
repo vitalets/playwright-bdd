@@ -8,8 +8,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/success',
         paths: ['features/*.feature'],
-        require: ['steps/index.ts'],
-        importTestFrom: 'steps/fixtures.ts',
+        require: ['steps-pw-style/index.ts'],
+        importTestFrom: 'steps-pw-style/fixtures.ts',
         tags: '@success',
       }),
     },
@@ -18,8 +18,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/error',
         paths: ['features/*.feature'],
-        require: ['steps/index.ts'],
-        importTestFrom: 'steps/fixtures.ts',
+        require: ['steps-pw-style/index.ts'],
+        importTestFrom: 'steps-pw-style/fixtures.ts',
         tags: '@error',
       }),
     },
