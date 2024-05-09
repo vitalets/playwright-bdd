@@ -10,18 +10,12 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { ExecSyncOptions, execSync } from 'node:child_process';
+import fg from 'fast-glob';
 import pkg from '../package.json';
 
 const isCI = Boolean(process.env.CI);
 const dir = process.argv[2];
-const dirs = dir
-  ? [dir]
-  : [
-      'basic', // prettier-ignore
-      'cucumber-style',
-      'decorators',
-      'esm',
-    ];
+const dirs = dir ? [dir] : getExampleDirs();
 const generatedTar = `playwright-bdd-${pkg.version}.tgz`;
 
 buildAndInstallPlaywrightBdd();
@@ -50,4 +44,14 @@ function buildAndInstallPlaywrightBdd() {
 function runCmd(cmd: string, opts: ExecSyncOptions = {}) {
   console.log(`Running: ${cmd}`); // eslint-disable-line no-console
   execSync(cmd, { ...opts, stdio: 'inherit' });
+}
+
+function getExampleDirs() {
+  return fg
+    .sync('**', {
+      cwd: 'examples',
+      deep: 1,
+      onlyDirectories: true,
+    })
+    .filter((dir) => dir !== 'node_modules');
 }
