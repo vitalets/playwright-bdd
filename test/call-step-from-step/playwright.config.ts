@@ -4,9 +4,9 @@ import { defineBddConfig } from 'playwright-bdd';
 export default defineConfig({
   projects: [
     {
-      name: 'success',
+      name: 'pw-style-success',
       testDir: defineBddConfig({
-        outputDir: '.features-gen/success',
+        outputDir: '.features-gen/pw-style-success',
         paths: ['features/*.feature'],
         require: ['steps-pw-style/index.ts'],
         importTestFrom: 'steps-pw-style/fixtures.ts',
@@ -14,13 +14,23 @@ export default defineConfig({
       }),
     },
     {
-      name: 'error',
+      name: 'pw-style-invalid-invocation',
       testDir: defineBddConfig({
-        outputDir: '.features-gen/error',
+        outputDir: '.features-gen/pw-style-invalid-invocation',
         paths: ['features/*.feature'],
         require: ['steps-pw-style/index.ts'],
         importTestFrom: 'steps-pw-style/fixtures.ts',
         tags: '@error',
+      }),
+    },
+    {
+      name: 'cucumber-style-success',
+      testDir: defineBddConfig({
+        outputDir: '.features-gen/cucumber-style-success',
+        paths: ['features/*.feature'],
+        require: ['steps-cucumber-style/index.ts'],
+        importTestFrom: 'steps-cucumber-style/fixtures.ts',
+        tags: '@success',
       }),
     },
   ],
