@@ -23,7 +23,7 @@ import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
 import { loadStepsOwn } from '../cucumber/loadStepsOwn';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
-import { appendNewCucumberStyleSteps } from '../steps/newCucumberStyleSteps';
+import { appendNewCucumberStyleSteps } from '../steps/cucumberStyle';
 
 export class TestFilesGenerator {
   // all these props are exist

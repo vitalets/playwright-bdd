@@ -1,6 +1,6 @@
 Feature: cucumber-style new
 
   Scenario: scenario 1
-    Given step 1
-    When step 2
-    Then step 3
+    Given step with string "xxx"
+    When step with number 123
+    Then step without params

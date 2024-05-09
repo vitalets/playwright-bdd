@@ -10,26 +10,23 @@
  * The goal of this is to allow usage of cucumber-style without explicitly importing
  * Give/When/Then from cucumber.
  */
-import { ISupportCodeLibrary } from '../cucumber/types';
-import { CucumberStepFunction, StepConfig } from './stepConfig';
-import { buildStepDefinition } from '../cucumber/buildStepDefinition';
+import { ISupportCodeLibrary } from '../../cucumber/types';
+import { CucumberStepFunction, StepConfig } from '../stepConfig';
+import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import { CustomFixtures, KeyValue } from '../playwright/types';
 import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { getLocationByOffset } from '../playwright/getLocationInFile';
+import { getLocationByOffset } from '../../playwright/getLocationInFile';
 
 const stepConfigs: StepConfig[] = [];
 
-export function defineStepCtorNewStyle<
-  T extends KeyValue,
-  WorldFixture extends keyof CustomFixtures<T>,
->(keyword: GherkinStepKeyword, worldFixture: WorldFixture) {
-  type World = CustomFixtures<T>[WorldFixture];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  return <Args extends any[]>(
-    pattern: DefineStepPattern,
-    fn: (this: World, ...args: Args) => unknown,
-  ) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
+
+export function cucumberStepCtor<StepFn extends StepConfig['fn']>(
+  keyword: GherkinStepKeyword,
+  worldFixture: string,
+) {
+  return (pattern: DefineStepPattern, fn: StepFn) => {
     stepConfigs.push({
       keyword,
       pattern,

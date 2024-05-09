@@ -9,14 +9,14 @@ After(function () {
   expect(this.foo).toEqual(42);
 });
 
-Given('step 1', function () {
+Given('step with string {string}', function (_s: string) {
   expect(this.foo).toEqual(42);
 });
 
-When('step 2', function () {
+When('step with number {int}', async function (_n: number) {
   expect(this.foo).toEqual(42);
 });
 
-Then('step 3', function () {
+Then('step without params', async function () {
   expect(this.foo).toEqual(42);
 });

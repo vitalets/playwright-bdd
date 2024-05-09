@@ -15,8 +15,8 @@ import { PomNode } from './decorators/pomGraph';
 export type StepConfig = {
   keyword: GherkinStepKeyword;
   pattern: DefineStepPattern;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  fn: Function;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fn: (...args: any[]) => unknown;
   hasCustomTest: boolean;
   location: PlaywrightLocation;
   pomNode?: PomNode; // for decorator steps

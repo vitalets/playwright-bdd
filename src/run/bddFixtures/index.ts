@@ -16,7 +16,7 @@ import { BddDataManager } from '../bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
 import { loadStepsOwn } from '../../cucumber/loadStepsOwn';
 import { SpecialTags } from '../../specialTags';
-import { appendNewCucumberStyleSteps } from '../../steps/newCucumberStyleSteps';
+import { appendNewCucumberStyleSteps } from '../../steps/cucumberStyle';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
