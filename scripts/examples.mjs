@@ -33,8 +33,9 @@ function buildAndInstallPlaywrightBdd() {
   try {
     runCmd('npm run build');
     runCmd('npm pack --loglevel=error');
-    // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
-    isCI && fs.rmSync('node_modules', { recursive: true });
+    // todo: on CI remove node_modules to check that playwright-bdd brings all needed dependencies
+    // isCI && fs.rmSync('node_modules', { recursive: true });
+    // isCI && runCmd(`npm install @playwright/test @cucumber/cucumber cross-env ts-node`, { cwd: 'examples' });
     runCmd(`npm install --no-save ../${generatedTar}`, { cwd: 'examples' });
     isCI && runCmd(`npx playwright install --with-deps chromium`, { cwd: 'examples' });
   } finally {
