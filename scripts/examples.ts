@@ -34,8 +34,9 @@ function buildAndInstallPlaywrightBdd() {
     runCmd('npm run build');
     runCmd('npm pack --loglevel=error');
     // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
-    if (isCI) fs.rmSync('node_modules', { recursive: true });
+    isCI && fs.rmSync('node_modules', { recursive: true });
     runCmd(`npm install --no-save ../${generatedTar}`, { cwd: 'examples' });
+    isCI && runCmd(`npx playwright install --with-deps chromium`, { cwd: 'examples' });
   } finally {
     fs.rmSync(generatedTar, { force: true });
   }
