@@ -9,10 +9,10 @@
 
 import path from 'node:path';
 import fs from 'node:fs';
-import { ExecSyncOptions, execSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import fg from 'fast-glob';
-import pkg from '../package.json';
 
+const pkg = JSON.parse(fs.readFileSync('./package.json'));
 const isCI = Boolean(process.env.CI);
 const dir = process.argv[2];
 const dirs = dir ? [dir] : getExampleDirs();
@@ -42,7 +42,7 @@ function buildAndInstallPlaywrightBdd() {
   }
 }
 
-function runCmd(cmd: string, opts: ExecSyncOptions = {}) {
+function runCmd(cmd, opts = {}) {
   console.log(`Running: ${cmd}`); // eslint-disable-line no-console
   execSync(cmd, { ...opts, stdio: 'inherit' });
 }
