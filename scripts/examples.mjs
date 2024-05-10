@@ -9,10 +9,10 @@
 
 import path from 'node:path';
 import fs from 'node:fs';
-import { ExecSyncOptions, execSync } from 'node:child_process';
+import { execSync } from 'node:child_process';
 import fg from 'fast-glob';
-import pkg from '../package.json';
 
+const pkg = JSON.parse(fs.readFileSync('./package.json'));
 const isCI = Boolean(process.env.CI);
 const dir = process.argv[2];
 const dirs = dir ? [dir] : getExampleDirs();
@@ -34,14 +34,15 @@ function buildAndInstallPlaywrightBdd() {
     runCmd('npm run build');
     runCmd('npm pack --loglevel=error');
     // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
-    if (isCI) fs.rmSync('node_modules', { recursive: true });
+    isCI && fs.rmSync('node_modules', { recursive: true });
     runCmd(`npm install --no-save ../${generatedTar}`, { cwd: 'examples' });
+    isCI && runCmd(`npx playwright install --with-deps chromium`, { cwd: 'examples' });
   } finally {
     fs.rmSync(generatedTar, { force: true });
   }
 }
 
-function runCmd(cmd: string, opts: ExecSyncOptions = {}) {
+function runCmd(cmd, opts = {}) {
   console.log(`Running: ${cmd}`); // eslint-disable-line no-console
   execSync(cmd, { ...opts, stdio: 'inherit' });
 }

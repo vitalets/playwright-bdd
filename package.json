@@ -46,7 +46,7 @@
     "only": "node test/setup.mjs && node --test",
     "only:d": "node test/setup.mjs && TEST_DEBUG=1 node --test",
     "build": "bash scripts/build.sh",
-    "examples": "ts-node scripts/examples.ts",
+    "examples": "node scripts/examples.mjs",
     "help": "ts-node src/cli -h",
     "env": "ts-node src/cli env",
     "docs": "docsify serve ./docs",
