@@ -29,9 +29,9 @@ Such approach brings all the benefits of Playwright runner:
 ## Extras
 Some features were developed in `playwright-bdd` on top of Playwright and BDD approaches:
 
-* [steps as decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators)
-* [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
-* [call step from step](https://vitalets.github.io/playwright-bdd/#/writing-steps/playwright-style?id=call-step-from-step)
+* [Decorator steps](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators)
+* [Special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
+* [Calling step from step](https://vitalets.github.io/playwright-bdd/#/writing-steps/playwright-style?id=call-step-from-step)
 
 ## Documentation
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
