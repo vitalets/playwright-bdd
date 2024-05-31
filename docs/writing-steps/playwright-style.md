@@ -3,10 +3,10 @@ Playwright-style allows you to write step definitions like regular Playwright te
 You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
 
 Playwright-style highlights:
-
+ 
 * use `Given`, `When`, `Then` from `createBdd()` call (see example below)
-* use arrow functions for step definitions
-* don't use `World` / `this` inside steps
+* use arrow functions for step definitions, Playwright fixtures passed as first argument
+* don't use `World` / `this`
 
 Example:
 
@@ -24,63 +24,51 @@ When('I click link {string}', async ({ page }, name: string) => {
 });
 ```
 
-> Usually step functions are async, but it is not required
+> Usually step functions are async, but they can synchronous as well
 
-?> Calling `const { Given, When, Then } = createBdd()` at the top of each step file is normal, because it returns lightweight wrappers without heavy operations
+?> Calling `const { Given, When, Then } = createBdd()` at the top of each step file is normal, because it returns light-weight wrappers without heavy operations
 
 ## Fixtures
-To use [fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
+To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 
-1. Define fixtures with `.extend()` and export `test` instance. For example, `fixtures.ts`:
+1. Import test as base from `playwright-bdd` and extend it with fixtures:
     ```ts
+    // fixtures.ts
     // Note: import base from playwright-bdd, not from @playwright/test!
     import { test as base } from 'playwright-bdd';
 
-    // custom fixture
-    class MyPage {
-      constructor(public page: Page) {}
-
-      async openLink(name: string) {
-        await this.page.getByRole('link', { name }).click();
-      }
-    }
-
-    // export custom test function
-    export const test = base.extend<{ myPage: MyPage }>({
-      myPage: async ({ page }, use) => {
-        await use(new MyPage(page));
+    export const test = base.extend<{ myFixture: MyFixture }>({
+      myFixture: async ({ page }, use) => {
+        await use(new MyFixture(page));
       }
     });
     ```
-2. Pass custom `test` function to `createBdd()` and use fixtures in step definitions. For example, `steps.ts`:
+2. Pass custom `test` as a first argument to `createBdd()`:
     ```ts
+    // steps.ts
     import { createBdd } from 'playwright-bdd';
     import { test } from './fixtures';
 
     const { Given, When, Then } = createBdd(test);
 
-    Given('I open url {string}', async ({ myPage }, url: string) => { ... });
-    When('I click link {string}', async ({ myPage }, name: string) => { ... });
-    Then('I see in title {string}', async ({ myPage }, text: string) => { ... });
+    Given('I open url {string}', async ({ myFixture }, url: string) => { 
+      // ... 
+    });
     ```
 
-3. Set config option `importTestFrom` which points to file exporting custom `test` function. 
-   For example: 
+3. Set config option `importTestFrom` which points to file exporting custom `test` function: 
     ```js
+    // playwright.config.ts
+
     const testDir = defineBddConfig({
       importTestFrom: './fixtures.ts',
       // ...
     });
     ```
-   Generated files, before and after: 
-    ```diff
-    -import { test } from "playwright-bdd";  
-    +import { test } from "./fixtures.ts";  
-    ```
 
 See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic).
 
-## Accessing `test` and `testInfo`
+## Accessing `$test` and `$testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:
 
   * increase test timeout

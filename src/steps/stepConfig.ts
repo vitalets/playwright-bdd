@@ -15,11 +15,12 @@ import { PomNode } from './decorators/pomGraph';
 export type StepConfig = {
   keyword: GherkinStepKeyword;
   pattern: DefineStepPattern;
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  fn: Function;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  fn: (...args: any[]) => unknown;
   hasCustomTest: boolean;
   location: PlaywrightLocation;
   pomNode?: PomNode; // for decorator steps
+  worldFixture?: string; // for new cucumber-style steps
 };
 
 // attach stepConfig to Cucumber step function
@@ -32,6 +33,9 @@ export function getStepConfig(step: StepDefinition) {
   return (step.code as CucumberStepFunction).stepConfig;
 }
 
+/**
+ * Decorator steps have pom node.
+ */
 export function isDecorator(
   stepConfig?: StepConfig,
 ): stepConfig is StepConfig & { pomNode: PomNode } {
@@ -39,9 +43,17 @@ export function isDecorator(
 }
 
 /**
- * Cucumber-style steps don't have stepConfig
- * b/c they created directly via cucumber's Given, When, Then.
+ * Step is defined via Given/When/Then from @cucumber/cucumber.
  */
-export function isPlaywrightStyle(stepConfig?: StepConfig): stepConfig is StepConfig {
-  return Boolean(stepConfig);
+export function isDefinedViaCucumber(stepConfig?: StepConfig): stepConfig is undefined {
+  return !stepConfig;
+}
+
+/**
+ * New cucumber-style steps have worldFixture in step config.
+ */
+export function isUsingWorldFixture(
+  stepConfig?: StepConfig,
+): stepConfig is StepConfig & { worldFixture: string } {
+  return Boolean(stepConfig?.worldFixture);
 }

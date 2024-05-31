@@ -6,5 +6,6 @@ import { BddDataManager } from './bddData';
 
 export class BddWorldInternal {
   currentStepFixtures: Fixtures<TestTypeCommon> = {};
+  newCucumberStyleWorld: unknown = null;
   bddDataManager?: BddDataManager;
 }

@@ -5,10 +5,10 @@ import {
   defineStep as CucumberDefineStep,
 } from '@cucumber/cucumber';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import { CucumberStepFunction, StepConfig } from './stepConfig';
+import { CucumberStepFunction, StepConfig } from '../stepConfig';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { exit } from '../utils/exit';
-import { getBddAutoInjectFixtures } from '../run/bddFixtures/autoInject';
+import { exit } from '../../utils/exit';
+import { getBddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
 
 /**
  * Defines step by config.
@@ -47,6 +47,7 @@ export function buildCucumberStepFn(stepConfig: StepConfig) {
     return stepConfig.fn.call(this, fixturesArg, ...args);
   };
 
+  // attach stepConfig to fn for easier access later
   code.stepConfig = stepConfig;
 
   return code;

@@ -8,14 +8,18 @@ import {
 
 const testDir = new TestDir(import.meta);
 
-test(`${testDir.name} (success)`, () => {
-  execPlaywrightTest(testDir.name, `${DEFAULT_CMD} --project success`);
+test(`${testDir.name} (pw-style-success)`, () => {
+  execPlaywrightTest(testDir.name, `${DEFAULT_CMD} --project pw-style-success`);
 });
 
-test(`${testDir.name} (invalid invocation)`, () => {
+test(`${testDir.name} (cucumber-style-success)`, () => {
+  execPlaywrightTest(testDir.name, `${DEFAULT_CMD} --project cucumber-style-success`);
+});
+
+test(`${testDir.name} (pw-style-invalid-invocation)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     ['Missings fixtures: todos, $testInfo'],
-    `${DEFAULT_CMD} --project error`,
+    `${DEFAULT_CMD} --project pw-style-invalid-invocation`,
   );
 });

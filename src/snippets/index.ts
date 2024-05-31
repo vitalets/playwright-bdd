@@ -9,7 +9,7 @@ import { TestFile, UndefinedStep } from '../gen/testFile';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
 import { logger } from '../utils/logger';
-import { getStepConfig, isDecorator, isPlaywrightStyle } from '../steps/stepConfig';
+import { getStepConfig, isDecorator, isDefinedViaCucumber } from '../steps/stepConfig';
 import { ISupportCodeLibrary } from '../cucumber/types';
 
 export class Snippets {
@@ -41,17 +41,16 @@ export class Snippets {
 
   private getSnippetSyntax() {
     const snippetSyntax = this.runConfiguration.formats.options.snippetSyntax as string | undefined;
-    if (!snippetSyntax && this.isPlaywrightStyle()) {
-      this.bddBuiltInSyntax = true;
-      const filePath = this.isDecorators()
-        ? require.resolve('./snippetSyntaxDecorators.js')
-        : this.isTypeScript()
-          ? require.resolve('./snippetSyntaxTs.js')
-          : require.resolve('./snippetSyntax.js');
-      return pathToFileURL(filePath).toString();
-    } else {
-      return snippetSyntax;
-    }
+
+    if (snippetSyntax || this.hasStepsDefinedViaCucumber()) return snippetSyntax;
+
+    this.bddBuiltInSyntax = true;
+    const filePath = this.hasDecorators()
+      ? require.resolve('./snippetSyntaxDecorators.js')
+      : this.isTypeScript()
+        ? require.resolve('./snippetSyntaxTs.js')
+        : require.resolve('./snippetSyntax.js');
+    return pathToFileURL(filePath).toString();
   }
 
   private getSnippets() {
@@ -95,14 +94,14 @@ export class Snippets {
     );
   }
 
-  private isPlaywrightStyle() {
+  private hasStepsDefinedViaCucumber() {
     const { stepDefinitions } = this.supportCodeLibrary;
-    return stepDefinitions.length > 0
-      ? stepDefinitions.some((step) => isPlaywrightStyle(getStepConfig(step)))
-      : true;
+    return stepDefinitions.some((step) => {
+      return isDefinedViaCucumber(getStepConfig(step));
+    });
   }
 
-  private isDecorators() {
+  private hasDecorators() {
     const { stepDefinitions } = this.supportCodeLibrary;
     const decoratorSteps = stepDefinitions.filter((step) => isDecorator(getStepConfig(step)));
     return decoratorSteps.length > stepDefinitions.length / 2;
@@ -111,7 +110,7 @@ export class Snippets {
   private printHeader() {
     const lines = [`Missing steps found. Use snippets below:`];
     if (this.bddBuiltInSyntax) {
-      if (this.isDecorators()) {
+      if (this.hasDecorators()) {
         lines.push(`import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';\n`);
       } else {
         lines.push(
@@ -140,7 +139,7 @@ export class Snippets {
   private printWarningOnZeroScannedFiles() {
     const { requirePaths, importPaths } = this.supportCodeLibrary.originalCoordinates;
     const scannedFilesCount = requirePaths.length + importPaths.length;
-    if (scannedFilesCount === 0 && !this.isDecorators()) {
+    if (scannedFilesCount === 0 && !this.hasDecorators()) {
       logger.error(`Note that 0 step definition files found, check the config.`);
     }
   }

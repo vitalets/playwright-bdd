@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* feature: new cucumber-style syntax with world fixture
+
 ## 6.4.0
 * refactor: apply `@timeout` and `@slow` in runtime
 * bug: fix cucumber reporters on Win

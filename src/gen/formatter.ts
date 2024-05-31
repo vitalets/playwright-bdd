@@ -152,6 +152,10 @@ export class Formatter {
     ];
   }
 
+  newCucumberStyleWorldFixture(worldFixture: string) {
+    return [`$newCucumberStyleWorld: ({ ${worldFixture} }, use) => use(${worldFixture}),`];
+  }
+
   langFixture(lang: string) {
     return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
   }

@@ -25,10 +25,15 @@ import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatte
 import { extractTemplateParams, template } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
-import { getStepConfig, isDecorator, isPlaywrightStyle } from '../steps/stepConfig';
+import {
+  getStepConfig,
+  isDecorator,
+  isDefinedViaCucumber,
+  isUsingWorldFixture,
+} from '../steps/stepConfig';
 import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtures';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { hasScenarioHooks, getScenarioHooksFixtures } from '../hooks/scenario';
+import { getScenarioHooksFixtures, hasScenarioHooksWithWorldFromCucumber } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { ISupportCodeLibrary } from '../cucumber/types';
@@ -56,7 +61,6 @@ export class TestFile {
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
   private testMetaBuilder: TestMetaBuilder;
-  private hasCucumberStyle = false;
   public hasCustomTest = false;
   public undefinedSteps: UndefinedStep[] = [];
   public featureUri: string;
@@ -146,11 +150,15 @@ export class TestFile {
   }
 
   private getTechnicalSection() {
+    const worldFixtureName = this.getWorldFixtureName();
     return this.formatter.technicalSection(this.testMetaBuilder, this.featureUri, [
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
-      ...(hasScenarioHooks() || this.hasCucumberStyle ? this.formatter.bddWorldFixtures() : []),
+      ...(hasScenarioHooksWithWorldFromCucumber() || this.hasStepsDefinedViaCucumber()
+        ? this.formatter.bddWorldFixtures()
+        : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
+      ...(worldFixtureName ? this.formatter.newCucumberStyleWorldFixture(worldFixtureName) : []),
     ]);
   }
 
@@ -304,7 +312,7 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
-  // eslint-disable-next-line max-statements, complexity
+  // eslint-disable-next-line max-statements
   private getStep(
     step: Step,
     previousKeywordType: KeywordType | undefined,
@@ -330,11 +338,9 @@ export class TestFile {
 
     this.usedStepDefinitions.add(stepDefinition);
 
-    // for cucumber-style stepConfig is undefined
+    // for old cucumber-style stepConfig is undefined
     const stepConfig = getStepConfig(stepDefinition);
     if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
-
-    if (!isPlaywrightStyle(stepConfig)) this.hasCucumberStyle = true;
 
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)
@@ -412,14 +418,20 @@ export class TestFile {
     return enKeyword;
   }
 
+  // eslint-disable-next-line complexity
   private getStepFixtureNames(stepDefinition: StepDefinition) {
     const stepConfig = getStepConfig(stepDefinition);
-    if (isPlaywrightStyle(stepConfig)) {
-      // for decorator steps fixtureNames are defined later in second pass
-      return isDecorator(stepConfig) ? [] : extractFixtureNames(stepConfig.fn);
-    } else {
+    if (isDefinedViaCucumber(stepConfig)) {
       return extractFixtureNamesFromFnBodyMemo(stepDefinition.code);
     }
+    // for decorator steps fixtureNames are defined later in second pass
+    if (isDecorator(stepConfig)) return [];
+    // for new cucumber-style there is no fixtures arg
+    if (isUsingWorldFixture(stepConfig)) return [];
+    if (stepConfig?.fn) {
+      return extractFixtureNames(stepConfig.fn);
+    }
+    return [];
   }
 
   private getOutlineTestTitle(
@@ -486,5 +498,32 @@ export class TestFile {
 
   private getEnglishKeyword(keyword: string) {
     return this.i18nKeywordsMap ? this.i18nKeywordsMap.get(keyword) : keyword;
+  }
+
+  private hasStepsDefinedViaCucumber() {
+    return [...this.usedStepDefinitions].some((stepDefinition) => {
+      return isDefinedViaCucumber(getStepConfig(stepDefinition));
+    });
+  }
+
+  private getWorldFixtureName() {
+    const worldFixtureNames = new Set<string>();
+
+    this.usedStepDefinitions.forEach((stepDefinition) => {
+      const worldFixture = getStepConfig(stepDefinition)?.worldFixture;
+      if (worldFixture) worldFixtureNames.add(worldFixture);
+    });
+
+    if (worldFixtureNames.size > 1) {
+      throw new Error(
+        [
+          `All steps in a feature file should have the same worldFixture.`,
+          `Found fixtures: ${[...worldFixtureNames].join(', ')}`,
+          `File: ${this.featureUri}`,
+        ].join('\n'),
+      );
+    }
+
+    return [...worldFixtureNames][0];
   }
 }

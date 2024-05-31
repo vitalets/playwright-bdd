@@ -8,7 +8,7 @@ import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_b
 import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { StepConfig } from '../stepConfig';
-import { buildCucumberStepFn } from '../defineStep';
+import { buildCucumberStepFn } from '../playwrightStyle/defineStep';
 import { PomNode } from './pomGraph';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
@@ -27,9 +27,10 @@ const decoratedSteps = new Set<StepConfig>();
  */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
   return (pattern: DefineStepPattern) => {
+    // offset = 3 b/c this call is 3 steps below the user's code
     const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
-    return (method: Function, _context: ClassMethodDecoratorContext) => {
+    return (method: StepConfig['fn'], _context: ClassMethodDecoratorContext) => {
       saveStepConfigToMethod(method, {
         keyword,
         pattern,
@@ -101,8 +102,8 @@ function getFirstNonAutoInjectFixture(
   return fixturesArg[fixtureNames[0]];
 }
 
-function saveStepConfigToMethod(method: Function, stepConfig: StepConfig) {
-  (method as DecoratedMethod)[decoratedStepSymbol] = stepConfig;
+function saveStepConfigToMethod(method: StepConfig['fn'], stepConfig: StepConfig) {
+  (method as unknown as DecoratedMethod)[decoratedStepSymbol] = stepConfig;
 }
 
 function getStepConfigFromMethod(descriptor: PropertyDescriptor) {

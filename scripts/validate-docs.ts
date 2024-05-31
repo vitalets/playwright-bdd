@@ -10,6 +10,9 @@ import path from 'node:path';
 import { marked, Tokens } from 'marked';
 import slugify from 'slugify';
 
+// without this '$' is translated to 'dollar'
+slugify.extend({ $: '' });
+
 const logger = console;
 
 type FileInfo = {

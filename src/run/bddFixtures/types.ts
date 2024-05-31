@@ -31,6 +31,7 @@ export type BddFixtures = {
   $after: void;
   $lang: string;
   $applySpecialTags: void;
+  $newCucumberStyleWorld: unknown;
 };
 
 export type BddFixturesWorker = {

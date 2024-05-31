@@ -59,15 +59,6 @@ Given('I am an authorized user', async ({ auth }) => {
 });
 ```
 
-In [cucumber-style steps](writing-steps/cucumber-style.md) you can access custom fixtures
-using [`this.useFixture()`](writing-steps/cucumber-style.md#custom-fixtures) method:
-```ts
-Given('I am an authorized user', async function () {
-  const auth = this.useFixture('auth');
-  console.log('step for authorized user', auth.username);
-});
-```
-
 The benefits of using `auth` fixture:
 - no extra tags
 - automatically skipped when authorization is not needed
@@ -212,6 +203,8 @@ Before(async function ({ myFixture }) {
 > Note that you can access built-in fixtures via `this` context, e.g. `this.testInfo`.
 
 ### Custom World
+
+!> This is legacy feature and will be removed in the future versions on ``playwright-bdd`.
 
 If you use custom World you can pass it as a second argument to `createBdd()`.
 Then produced `Before / After` hooks will get `this` properly typed for TypeScript.
