@@ -3,10 +3,10 @@ Playwright-style allows you to write step definitions like regular Playwright te
 You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
 
 Playwright-style highlights:
-
+ 
 * use `Given`, `When`, `Then` from `createBdd()` call (see example below)
-* use arrow functions for step definitions
-* use Playwright fixtures instead of `World` / `this`
+* use arrow functions for step definitions, Playwright fixtures passed as first argument
+* don't use `World` / `this`
 
 Example:
 
@@ -31,8 +31,9 @@ When('I click link {string}', async ({ page }, name: string) => {
 ## Fixtures
 To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
 
-1. Import test as base from `playwright-bdd` and extend it with fixtures. Example of `fixtures.ts`:
+1. Import test as base from `playwright-bdd` and extend it with fixtures:
     ```ts
+    // fixtures.ts
     // Note: import base from playwright-bdd, not from @playwright/test!
     import { test as base } from 'playwright-bdd';
 
@@ -42,8 +43,9 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. Pass custom `test` as a first argument to `createBdd()`. Example of `steps.ts`:
+2. Pass custom `test` as a first argument to `createBdd()`:
     ```ts
+    // steps.ts
     import { createBdd } from 'playwright-bdd';
     import { test } from './fixtures';
 
@@ -54,9 +56,10 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
     });
     ```
 
-3. Set config option `importTestFrom` which points to file exporting custom `test` function. 
-   Example of `playwright.config.ts`: 
+3. Set config option `importTestFrom` which points to file exporting custom `test` function: 
     ```js
+    // playwright.config.ts
+
     const testDir = defineBddConfig({
       importTestFrom: './fixtures.ts',
       // ...

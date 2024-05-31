@@ -40,7 +40,7 @@ export const test = base.extend<{ world: World }>({
 });
 ```
 
-3. Export `Given / When / Then` functions via `createBdd()` (notice `worldFixture` parameter):
+3. Export `Given / When / Then` functions via `createBdd()`. Parameter `worldFixture` is **required** for Cucumber-style:
 
 ```ts
 // fixtures.ts
@@ -54,7 +54,7 @@ export const test = base.extend<{ world: World }>({
 export const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
 ```
 
-4. Use these `Given / When / Then` to define steps, world instance is accessible as `this`:
+4. Use these `Given / When / Then` functions to define steps, world instance is accessible as `this`:
 
 ```ts
 // steps.ts
