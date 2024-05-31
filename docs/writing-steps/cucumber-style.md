@@ -66,3 +66,19 @@ Given('I am on home page', async function () {
 ```
 
 See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
+
+
+### Is there default world?
+No. You define entire World youself, providing only necessary fixtures.
+It's good for performance as well.
+
+In the simplest case you can create a world with only `page` property:
+```js
+import { test as base } from 'playwright-bdd';
+
+export const test = base.extend({
+  world: ({ page }, use) => use({ page }),
+});
+
+export const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
+```
