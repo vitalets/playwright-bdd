@@ -1,9 +1,8 @@
 {
   "compilerOptions": {
     "target": "es2021",
-    "module": "ESNext",
+    "module": "nodenext",
     "strict": true,
-    "moduleResolution": "node",
     "esModuleInterop": true
   },
   "include": ["**/*.ts"]

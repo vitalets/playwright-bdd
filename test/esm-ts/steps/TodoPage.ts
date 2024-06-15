@@ -1,5 +1,5 @@
 import { Fixture, Given } from 'playwright-bdd/decorators';
-import type { test } from './fixtures';
+import type { test } from './fixtures.js';
 
 export
 @Fixture<typeof test>('todoPage')
