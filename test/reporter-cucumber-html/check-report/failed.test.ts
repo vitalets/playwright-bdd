@@ -5,6 +5,11 @@ import { getPackageVersion } from '../../../src/utils';
 
 const pwVersion = getPackageVersion('@playwright/test');
 
+// Automatic screenshot for failing fixtures teardown depends on pw version.
+// see: https://github.com/microsoft/playwright/issues/29325
+const hasAutoScreenshotFixtureTeardown =
+  pwVersion < '1.35.0' || (pwVersion >= '1.42.0' && pwVersion < '1.45.0');
+
 test.beforeEach(async ({ page }) => {
   await openReport(page);
 });
@@ -95,16 +100,15 @@ test('Scenario: Failing by failingBeforeFixtureWithStep', async ({ page }) => {
 
 test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureNoStep');
-  // there is no automatic screenshot here in pw 1.35 - 1.41
-  // see: https://github.com/microsoft/playwright/issues/29325
-  const hasScreenshot = pwVersion < '1.35.0' || pwVersion >= '1.42.0';
   await expect(scenario.getSteps()).toContainText([
     'my attachment|before use',
     'Givenstep that uses failingAfterFixtureNoStep',
     'WhenAction 3',
     `Hook "fixture: failingAfterFixtureNoStep" failed: ${normalize('features/fixtures.ts')}:`,
   ]);
-  if (hasScreenshot) await expect(scenario.getSteps()).toContainText(['screenshot']);
+  if (hasAutoScreenshotFixtureTeardown) {
+    await expect(scenario.getSteps()).toContainText(['screenshot']);
+  }
   await expect(scenario.getAttachments()).toContainText([
     'my attachment|before use', // prettier-ignore
     'my attachment|after use',
@@ -117,9 +121,6 @@ test('Scenario: Failing by failingAfterFixtureNoStep', async ({ page }) => {
 
 test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by failingAfterFixtureWithStep');
-  // there is no automatic screenshot here in pw 1.35 - 1.41
-  // see: https://github.com/microsoft/playwright/issues/29325
-  const hasScreenshot = pwVersion < '1.35.0' || pwVersion >= '1.42.0';
   await expect(scenario.getSteps()).toContainText([
     'my attachment|outside step (before use)',
     'Givenstep that uses failingAfterFixtureWithStep',
@@ -127,7 +128,9 @@ test('Scenario: Failing by failingAfterFixtureWithStep', async ({ page }) => {
     `Hook "step in failingAfterFixtureWithStep" failed: ${normalize('features/fixtures.ts')}:`,
     'my attachment|outside step (after use)',
   ]);
-  if (hasScreenshot) await expect(scenario.getSteps()).toContainText(['screenshot']);
+  if (hasAutoScreenshotFixtureTeardown) {
+    await expect(scenario.getSteps()).toContainText(['screenshot']);
+  }
   await expect(scenario.getAttachments()).toContainText([
     'my attachment|outside step (before use)',
     'my attachment|in step',
