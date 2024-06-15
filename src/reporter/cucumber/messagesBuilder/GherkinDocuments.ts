@@ -1,6 +1,7 @@
 /**
  * Loads Gherkin documents from feature files and maps them to projects.
  */
+import path from 'node:path';
 import * as messages from '@cucumber/messages';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestCaseRun } from './TestCaseRun';
@@ -23,7 +24,9 @@ export class GherkinDocuments {
   async load(testCaseRuns: TestCaseRun[]) {
     this.fillProjectsPerFeaturePath(testCaseRuns);
     const cwd = getPlaywrightConfigDir();
-    const featurePaths = [...this.projectsPerFeaturePath.keys()];
+    const featurePaths = [...this.projectsPerFeaturePath.keys()].map((featurePath) =>
+      path.resolve(cwd, featurePath),
+    );
     await this.featuresLoader.load(featurePaths, {
       relativeTo: cwd,
       defaultDialect: this.getFeaturesLang(),

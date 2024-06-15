@@ -15,6 +15,7 @@ test(testDir.name, () => {
     testDir.name,
     `${BDDGEN_CMD} -c subdir && ${PLAYWRIGHT_CMD} -c subdir`,
   );
-  expect(testDir.isFileExists('subdir/.features-gen/sample.feature.spec.js')).toEqual(true);
   expect(stdout).toContain('1 passed');
+  testDir.expectFileExists('subdir/.features-gen/sample.feature.spec.js');
+  testDir.expectFileNotEmpty('subdir/actual-reports/report.html');
 });

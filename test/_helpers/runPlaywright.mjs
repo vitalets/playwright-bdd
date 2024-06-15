@@ -13,6 +13,8 @@ export function execPlaywrightTest(dir, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
     if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
+    // no way to get stderr here.
+    // see: https://stackoverflow.com/questions/57484453/how-to-get-err-stderr-from-execsync
     return stdout;
   } catch (e) {
     // if playwright tests not passed -> output is in stdout
@@ -34,7 +36,6 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
     const stdout = execPlaywrightTestInternal(dir, cmd);
     console.log(`Expected to exit with error: ${error}`);
     console.log('STDOUT:', stdout);
-    // todo: how to log stderr here?
     process.exit(1);
   } catch (e) {
     const stdout = e.stdout?.toString().trim() || '';

@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* bug: Cucumber reporter accesses non-existent file ([#161](https://github.com/vitalets/playwright-bdd/issues/161))
+
 ## 6.5.0
 * feature: added new cucumber-style approach
 

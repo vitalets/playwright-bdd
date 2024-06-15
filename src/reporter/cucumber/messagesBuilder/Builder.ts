@@ -87,7 +87,6 @@ export class MessagesBuilder {
     await this.onEndPromise;
 
     // order here is important
-    // this.createTestCaseRuns();
     await this.loadFeatures();
     this.createTestCases();
 
