@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 6.5.1
 * chore: improve esm example, ([#164](https://github.com/vitalets/playwright-bdd/issues/164))
 * bug: Cucumber reporter accesses non-existent file ([#161](https://github.com/vitalets/playwright-bdd/issues/161))
 
