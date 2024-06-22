@@ -74,7 +74,7 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
         line,
         options: {}, // not used in playwright-bdd
       },
-      supportCodeLibrary,
+      supportCodeLibrary.parameterTypeRegistry,
     );
     supportCodeLibrary.stepDefinitions.push(stepDefinition);
   });
