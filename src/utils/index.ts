@@ -78,3 +78,7 @@ export function toArray<T>(value: T | T[]) {
 export function trimTrailingSlash(s: string) {
   return s.replace(/[/\\]+$/, '');
 }
+
+export function defaultBoolean(value: unknown, defaultValue: boolean) {
+  return typeof value === 'boolean' ? value : defaultValue;
+}

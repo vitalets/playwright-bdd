@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { doesHaveValue } from '../valueChecker';
 
-interface ILineAndUri {
+export interface ILineAndUri {
   line: number;
   uri: string;
 }
