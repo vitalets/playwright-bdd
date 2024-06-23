@@ -3,7 +3,7 @@
  */
 import path from 'node:path';
 import { ImportTestFrom } from '../gen/formatter';
-import { saveConfigToEnv } from './env';
+import { getEnvConfigs, saveConfigToEnv } from './env';
 import { getPlaywrightConfigDir } from './configDir';
 import { getPackageVersion } from '../utils';
 import { BDDConfig, BDDInputConfig, CucumberConfig, OwnConfig } from './types';
@@ -93,4 +93,21 @@ function stripPublishQuiet(cucumberConfig: CucumberConfig) {
   if (!/^9\.[0123]\./.test(cucumberVersion)) {
     delete cucumberConfig.publishQuiet;
   }
+}
+
+let _hasStepsOption: boolean | null = null;
+// eslint-disable-next-line complexity
+export function hasStepsOption() {
+  if (_hasStepsOption === null) {
+    for (const envConfig of Object.values(getEnvConfigs())) {
+      // eslint-disable-next-line max-depth
+      if (envConfig.steps) _hasStepsOption = true;
+      // eslint-disable-next-line max-depth
+      if (!envConfig.steps && _hasStepsOption) {
+        throw new Error(`'steps' option can be enabled across all BDD configs.`);
+      }
+    }
+  }
+
+  return _hasStepsOption;
 }

@@ -9,15 +9,23 @@ import { CucumberStepFunction, StepConfig } from '../stepConfig';
 import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { exit } from '../../utils/exit';
 import { getBddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
+import { registerStepDefinitionOwn } from '../registry';
+import { hasStepsOption } from '../../config';
 
 /**
  * Defines step by config.
  * Calls cucumber's Given(), When(), Then() under the hood.
  */
 export function defineStep(stepConfig: StepConfig) {
+  const code = buildCucumberStepFn(stepConfig);
+
+  if (hasStepsOption()) {
+    registerStepDefinitionOwn(stepConfig, code);
+    return;
+  }
+
   const { keyword, pattern } = stepConfig;
   const cucumberDefineStep = getCucumberDefineStepFn(keyword);
-  const code = buildCucumberStepFn(stepConfig);
   try {
     cucumberDefineStep(pattern, code);
   } catch (e) {

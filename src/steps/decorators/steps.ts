@@ -13,6 +13,8 @@ import { PomNode } from './pomGraph';
 import { ISupportCodeLibrary } from '../../cucumber/types';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
+import { registerStepDefinitionOwn } from '../registry';
+import { hasStepsOption } from '../../config';
 
 // initially we sotre step data inside method,
 // and then extract it in @Fixture decorator call
@@ -64,6 +66,12 @@ export function appendDecoratorSteps(supportCodeLibrary: ISupportCodeLibrary) {
       return fn.call(fixture, ...args);
     };
     const code = buildCucumberStepFn(stepConfig);
+
+    if (hasStepsOption()) {
+      registerStepDefinitionOwn(stepConfig, code);
+      return;
+    }
+
     const { file: uri, line } = stepConfig.location;
     const stepDefinition = buildStepDefinition(
       {

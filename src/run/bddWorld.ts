@@ -107,9 +107,10 @@ export class BddWorld<
 
 export function getWorldConstructor(supportCodeLibrary: ISupportCodeLibrary) {
   // setWorldConstructor was not called
-  if (supportCodeLibrary.World === CucumberWorld) {
+  if (supportCodeLibrary.World === CucumberWorld || !supportCodeLibrary.World) {
     return BddWorld;
   }
+
   if (!Object.prototype.isPrototypeOf.call(BddWorld, supportCodeLibrary.World)) {
     throw new Error(`CustomWorld should inherit from playwright-bdd World`);
   }

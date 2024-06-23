@@ -2,7 +2,7 @@
  * Custom parameter types registry.
  * Placeholder unit full refuse of cucumber.
  */
-import { ParameterType, RegExps } from '@cucumber/cucumber-expressions';
+import { ParameterType } from '@cucumber/cucumber-expressions';
 import { SourcedParameterTypeRegistry } from '../cucumber/SourcedParameterTypeRegistry';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { booleanDefault } from '../utils';
@@ -11,8 +11,8 @@ export const parameterTypeRegistry = new SourcedParameterTypeRegistry();
 
 export interface IParameterTypeDefinition<T> {
   name: string;
-  regexp: RegExps;
-  transformer?: (...match: string[]) => T;
+  regexp: readonly RegExp[] | readonly string[] | RegExp | string;
+  transformer: (...match: string[]) => T;
   useForSnippets?: boolean;
   preferForRegexpMatch?: boolean;
 }

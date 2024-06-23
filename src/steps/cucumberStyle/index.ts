@@ -16,6 +16,8 @@ import { buildStepDefinition } from '../../cucumber/buildStepDefinition';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
+import { registerStepDefinitionOwn } from '../registry';
+import { hasStepsOption } from '../../config';
 
 const stepConfigs: StepConfig[] = [];
 
@@ -49,6 +51,12 @@ export function appendNewCucumberStyleSteps(supportCodeLibrary: ISupportCodeLibr
   stepConfigs.forEach((stepConfig) => {
     const { keyword, pattern } = stepConfig;
     const code = buildCucumberStepFnWithNewStyleWorld(stepConfig);
+
+    if (hasStepsOption()) {
+      registerStepDefinitionOwn(stepConfig, code);
+      return;
+    }
+
     const { file: uri, line } = stepConfig.location;
     const stepDefinition = buildStepDefinition(
       {
