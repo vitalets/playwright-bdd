@@ -5,7 +5,7 @@
 import { ParameterType, RegExps } from '@cucumber/cucumber-expressions';
 import { SourcedParameterTypeRegistry } from '../cucumber/SourcedParameterTypeRegistry';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
-import { defaultBoolean } from '../utils';
+import { booleanDefault } from '../utils';
 
 export const parameterTypeRegistry = new SourcedParameterTypeRegistry();
 
@@ -23,9 +23,10 @@ export function defineParameterType<T>(options: IParameterTypeDefinition<T>) {
     options.regexp,
     null,
     options.transformer,
-    defaultBoolean(options.useForSnippets, true),
-    defaultBoolean(options.preferForRegexpMatch, false),
+    booleanDefault(options.useForSnippets, true),
+    booleanDefault(options.preferForRegexpMatch, false),
   );
+  // todo: check offset
   const { file: uri, line } = getLocationByOffset(1);
   parameterTypeRegistry.defineSourcedParameterType(parameterType, {
     uri,

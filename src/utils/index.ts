@@ -79,6 +79,6 @@ export function trimTrailingSlash(s: string) {
   return s.replace(/[/\\]+$/, '');
 }
 
-export function defaultBoolean(value: unknown, defaultValue: boolean) {
+export function booleanDefault(value: unknown, defaultValue: boolean) {
   return typeof value === 'boolean' ? value : defaultValue;
 }
