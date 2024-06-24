@@ -34,7 +34,10 @@ export function createBdd<
   T extends KeyValue = BuiltInFixtures,
   W extends KeyValue = BuiltInFixturesWorker,
   CustomWorld extends BddWorld = BddWorld,
-  WorldFixtureName extends keyof CustomFixtures<T> | undefined = undefined,
+  // important to set default value to empty string, not null or undefined
+  // otherwise it breaks TS non-strict mode
+  // see: https://github.com/vitalets/playwright-bdd/issues/163
+  WorldFixtureName extends keyof CustomFixtures<T> | '' = '',
 >(
   customTest?: TestType<T, W> | null,
   options?: CreateBddOptions<WorldFixtureName> | (new (...args: any[]) => CustomWorld),

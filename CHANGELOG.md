@@ -1,5 +1,8 @@
 # Changelog
 
+## 6.5.2
+* bugfix: createBdd returns Cucumber-Style Typing when using Playwright-Style, ([#163](https://github.com/vitalets/playwright-bdd/issues/163))
+
 ## 6.5.1
 * chore: improve esm example, ([#164](https://github.com/vitalets/playwright-bdd/issues/164))
 * bug: Cucumber reporter accesses non-existent file ([#161](https://github.com/vitalets/playwright-bdd/issues/161))
