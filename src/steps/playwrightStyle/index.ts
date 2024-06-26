@@ -4,12 +4,12 @@
 import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { FixturesArg, KeyValue } from '../../playwright/types';
-import { defineStep } from './defineStep';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { BddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { StepConfig } from '../stepConfig';
 import { ParametersExceptFirst } from '../../utils/types';
+import { registerStepDefinition } from '../registry';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   fixtures: FixturesArg<T, W> & BddAutoInjectFixtures,
@@ -21,7 +21,7 @@ export function playwrightStepCtor<StepFn extends StepConfig['fn']>(
   hasCustomTest: boolean,
 ) {
   return (pattern: DefineStepPattern, fn: StepFn) => {
-    defineStep({
+    registerStepDefinition({
       keyword,
       pattern,
       fn,

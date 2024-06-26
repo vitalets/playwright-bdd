@@ -1,49 +1,25 @@
 import { test as base } from '@playwright/test';
-import { loadConfig as loadCucumberConfig } from '../../cucumber/loadConfig';
-import { loadSteps } from '../../cucumber/loadSteps';
-import { BddWorldFixtures, getWorldConstructor } from '../bddWorld';
-import { extractCucumberConfig } from '../../config';
 import { getConfigFromEnv } from '../../config/env';
-import { appendDecoratorSteps } from '../../steps/decorators/steps';
 import { getPlaywrightConfigDir } from '../../config/configDir';
 import { runScenarioHooks } from '../../hooks/scenario';
 import { runWorkerHooks } from '../../hooks/worker';
-import { StepInvoker } from '../StepInvoker';
+import { createStepInvoker } from '../StepInvoker';
 import { getTestMeta } from '../../gen/testMeta';
-import { logger } from '../../utils/logger';
 import { getEnrichReporterData } from '../../config/enrichReporterData';
 import { BddDataManager } from '../bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
-import { loadStepsOwn } from '../../cucumber/loadStepsOwn';
+import { resolveAndLoadSteps } from '../../cucumber/loadStepsOwn';
 import { SpecialTags } from '../../specialTags';
-import { appendNewCucumberStyleSteps } from '../../steps/cucumberStyle';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 export const test = base.extend<BddFixtures, BddFixturesWorker>({
-  // load cucumber once per worker (auto-fixture)
-  // todo: maybe remove caching in cucumber/loadConfig.ts and cucumber/loadSteps.ts
-  // as we call it once per worker. Check generation phase.
-  $cucumber: [
+  $bddContextWorker: [
     async ({}, use, workerInfo) => {
       const config = getConfigFromEnv(workerInfo.project.testDir);
-      const environment = { cwd: getPlaywrightConfigDir() };
-      const { runConfiguration } = await loadCucumberConfig(
-        {
-          provided: extractCucumberConfig(config),
-        },
-        environment,
-      );
-
-      const supportCodeLibrary = config.steps
-        ? await loadStepsOwn(environment.cwd, config.steps)
-        : await loadSteps(runConfiguration, environment);
-      appendDecoratorSteps(supportCodeLibrary);
-      appendNewCucumberStyleSteps(supportCodeLibrary);
-
-      const World = getWorldConstructor(supportCodeLibrary);
-
-      await use({ runConfiguration, supportCodeLibrary, World, config });
+      const cwd = getPlaywrightConfigDir();
+      await resolveAndLoadSteps(cwd, config.steps);
+      await use({ config });
     },
     { auto: true, scope: 'worker' },
   ],
@@ -60,53 +36,37 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   ],
   // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),
-  // init $bddWorldFixtures with empty object, will be owerwritten in test file for cucumber-style
-  $bddWorldFixtures: ({}, use) => use({} as BddWorldFixtures),
-  $bddWorld: async (
-    {
-      $tags,
-      $test,
-      $step,
-      $bddWorldFixtures,
-      $cucumber,
-      $lang,
-      $testMeta,
-      $uri,
-      $newCucumberStyleWorld,
-    },
+  $bddContext: async (
+    { $tags, $test, $step, $bddContextWorker, $lang, $testMeta, $uri, $world },
     use,
     testInfo,
   ) => {
-    const { runConfiguration, supportCodeLibrary, World, config } = $cucumber;
-    const world = new World({
+    const { config } = $bddContextWorker;
+
+    const bddDataManager = getEnrichReporterData(config)
+      ? new BddDataManager(testInfo, $testMeta, $uri)
+      : undefined;
+
+    await use({
+      config,
       testInfo,
-      supportCodeLibrary,
-      $tags,
-      $test,
-      $step,
-      $bddWorldFixtures,
+      test: $test,
       lang: $lang,
-      parameters: runConfiguration.runtime.worldParameters || {},
-      log: () => logger.warn(`world.log() is noop, please use world.testInfo.attach()`),
-      attach: async () => logger.warn(`world.attach() is noop, please use world.testInfo.attach()`),
+      tags: $tags,
+      step: $step,
+      world: $world,
+      bddDataManager,
     });
-    if (getEnrichReporterData(config)) {
-      world.$internal.bddDataManager = new BddDataManager(testInfo, $testMeta, $uri);
-    }
-    world.$internal.newCucumberStyleWorld = $newCucumberStyleWorld;
-    await world.init();
-    await use(world);
-    await world.destroy();
   },
 
-  Given: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Given').invoke),
-  When: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'When').invoke),
-  Then: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'Then').invoke),
-  And: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'And').invoke),
-  But: ({ $bddWorld }, use) => use(new StepInvoker($bddWorld, 'But').invoke),
+  Given: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'Given')),
+  When: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'When')),
+  Then: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'Then')),
+  And: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'And')),
+  But: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'But')),
 
-  // new Cucumber style world, can be overwritten in test files
-  $newCucumberStyleWorld: ({}, use: (arg: unknown) => unknown) => use(null),
+  // Cucumber style world: null by default, can be overwritten in test files for cucumber style
+  $world: ({}, use: (arg: unknown) => unknown) => use(null),
 
   // init $testMetaMap with empty object, will be overwritten in each test file
   $testMetaMap: ({}, use) => use({}),
@@ -133,19 +93,29 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     // 2. $after: to call after hooks in case of errors in before hooks
     async (
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      { $scenarioHookFixtures, $bddWorld, $tags, $beforeAll, $afterAll, $after },
+      { $scenarioHookFixtures, $bddContext, $tags, $beforeAll, $afterAll, $after },
       use,
       $testInfo,
     ) => {
-      await runScenarioHooks('before', { $bddWorld, $tags, $testInfo, ...$scenarioHookFixtures });
+      await runScenarioHooks('before', {
+        $bddContext,
+        $tags,
+        $testInfo,
+        ...$scenarioHookFixtures,
+      });
       await use();
     },
     { auto: true },
   ],
   $after: [
-    async ({ $scenarioHookFixtures, $bddWorld, $tags }, use, $testInfo) => {
+    async ({ $scenarioHookFixtures, $bddContext, $tags }, use, $testInfo) => {
       await use();
-      await runScenarioHooks('after', { $bddWorld, $tags, $testInfo, ...$scenarioHookFixtures });
+      await runScenarioHooks('after', {
+        $bddContext,
+        $tags,
+        $testInfo,
+        ...$scenarioHookFixtures,
+      });
     },
     { auto: true },
   ],
@@ -155,9 +125,9 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
   $beforeAll: [
     // Important unused dependencies:
     // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
-    // 2. $cucumber: to load hooks before this fixtures
+    // 2. $bddContextWorker: to load hooks before this fixtures
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async ({ $workerHookFixtures, $cucumber }, use, $workerInfo) => {
+    async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
       await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
       await use();
     },

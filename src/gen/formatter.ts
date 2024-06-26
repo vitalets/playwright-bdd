@@ -5,7 +5,6 @@
 import { PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
-import { BddWorldFixtures } from '../run/bddWorld';
 import { TestMetaBuilder } from './testMeta';
 import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
@@ -122,21 +121,6 @@ export class Formatter {
     ];
   }
 
-  /**
-   * These fixtures are added only in Cucumber-style
-   */
-  bddWorldFixtures() {
-    const fixturesObj: Record<keyof BddWorldFixtures, null> = {
-      page: null,
-      context: null,
-      browser: null,
-      browserName: null,
-      request: null,
-    };
-    const fixtures = Object.keys(fixturesObj).join(', ');
-    return [`$bddWorldFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
-  }
-
   scenarioHookFixtures(fixtureNames: string[]) {
     if (!fixtureNames.length) return [];
     const fixtures = fixtureNames.join(', ');
@@ -152,8 +136,8 @@ export class Formatter {
     ];
   }
 
-  newCucumberStyleWorldFixture(worldFixture: string) {
-    return [`$newCucumberStyleWorld: ({ ${worldFixture} }, use) => use(${worldFixture}),`];
+  setWorldFixture(worldFixtureName: string) {
+    return [`$world: ({ ${worldFixtureName} }, use) => use(${worldFixtureName}),`];
   }
 
   langFixture(lang: string) {

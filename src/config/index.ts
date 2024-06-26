@@ -3,10 +3,9 @@
  */
 import path from 'node:path';
 import { ImportTestFrom } from '../gen/formatter';
-import { getEnvConfigs, saveConfigToEnv } from './env';
+import { saveConfigToEnv } from './env';
 import { getPlaywrightConfigDir } from './configDir';
-import { getPackageVersion } from '../utils';
-import { BDDConfig, BDDInputConfig, CucumberConfig, OwnConfig } from './types';
+import { BDDConfig, BDDInputConfig } from './types';
 import { defaults } from './defaults';
 
 export function defineBddConfig(inputConfig?: BDDInputConfig) {
@@ -22,48 +21,30 @@ export function defineBddConfig(inputConfig?: BDDInputConfig) {
   return config.outputDir;
 }
 
+// eslint-disable-next-line complexity
 function getConfig(configDir: string, inputConfig?: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, inputConfig);
+
+  const features = config.features || config.paths;
+  if (!features) throw new Error(`Please provide 'features' option in defineBddConfig()`);
+
+  // Currently steps can be empty: e.g. when decorator steps loaded via importTestFrom
+  // After removing importTestFrom we should throw error for missing steps as well.
+  const steps = config.steps || config.require || config.import || [];
+
   const featuresRoot = config.featuresRoot
     ? path.resolve(configDir, config.featuresRoot)
     : configDir;
 
-  if (config.steps && (config.require || config.import)) {
-    throw new Error(`Config option 'steps' can't be used together with 'require' or 'import'`);
-  }
-
   return {
     ...config,
+    features,
+    steps,
     // important to resolve outputDir as it is used as unique key for input configs
     outputDir: path.resolve(configDir, config.outputDir),
     importTestFrom: resolveImportTestFrom(configDir, config.importTestFrom),
     featuresRoot,
   };
-}
-
-export function extractCucumberConfig(config: BDDConfig): CucumberConfig {
-  // todo: find more strict way to omit own config fields
-  // see: https://bobbyhadz.com/blog/typescript-object-remove-property
-  const omitProps: Record<keyof OwnConfig, true> = {
-    outputDir: true,
-    importTestFrom: true,
-    verbose: true,
-    skip: true,
-    examplesTitleFormat: true,
-    quotes: true,
-    tags: true,
-    featuresRoot: true,
-    enrichReporterData: true,
-    steps: true,
-    statefulPoms: true,
-  };
-  const keys = Object.keys(omitProps) as (keyof OwnConfig)[];
-  const cucumberConfig = { ...config };
-  keys.forEach((key) => delete cucumberConfig[key]);
-
-  stripPublishQuiet(cucumberConfig);
-
-  return cucumberConfig;
 }
 
 function resolveImportTestFrom(
@@ -81,33 +62,4 @@ function resolveImportTestFrom(
       varName,
     };
   }
-}
-
-function stripPublishQuiet(cucumberConfig: CucumberConfig) {
-  const cucumberVersion = getPackageVersion('@cucumber/cucumber');
-  // Playwright-bdd supports Cucumber from v9+
-  // publishQuiet was deprecated in Cucumber 9.4.0.
-  // See: https://github.com/cucumber/cucumber-js/pull/2311
-  // Remove publishQuite from Cucumber config to hide deprecation warning.
-  // See: https://github.com/vitalets/playwright-bdd/pull/47
-  if (!/^9\.[0123]\./.test(cucumberVersion)) {
-    delete cucumberConfig.publishQuiet;
-  }
-}
-
-let _hasStepsOption: boolean | null = null;
-// eslint-disable-next-line complexity
-export function hasStepsOption() {
-  if (_hasStepsOption === null) {
-    for (const envConfig of Object.values(getEnvConfigs())) {
-      // eslint-disable-next-line max-depth
-      if (envConfig.steps) _hasStepsOption = true;
-      // eslint-disable-next-line max-depth
-      if (!envConfig.steps && _hasStepsOption) {
-        throw new Error(`'steps' option can be enabled across all BDD configs.`);
-      }
-    }
-  }
-
-  return _hasStepsOption;
 }

@@ -5,21 +5,20 @@ const { Given, Before, BeforeAll, After, AfterAll } = createBdd();
 
 const calls: string[] = [];
 
-Before(async function ({ $bddWorld, $tags, $testInfo, page }) {
-  track(`Before 1 ${this.testInfo.title}`);
-  expect($bddWorld).toEqual(this);
+Before(async function ({ $tags, $testInfo, page }) {
+  track(`Before 1 ${$testInfo.title}`);
   expect($tags).toEqual([]);
   expect($testInfo.title).toBeDefined();
   expect(page).toBeDefined();
 });
-Before(async ({ $bddWorld }) => {
-  track(`Before 2 ${$bddWorld.testInfo.title}`);
+Before(async ({ $testInfo }) => {
+  track(`Before 2 ${$testInfo.title}`);
 });
-After(async function () {
-  track(`After 1 ${this.testInfo.title}`);
+After(async function ({ $testInfo }) {
+  track(`After 1 ${$testInfo.title}`);
 });
-After(async ({ $bddWorld, page }) => {
-  track(`After 2 ${$bddWorld.testInfo.title}`);
+After(async ({ $testInfo, page }) => {
+  track(`After 2 ${$testInfo.title}`);
   expect(page).toBeDefined();
 });
 

@@ -2,26 +2,76 @@
  * Own step definitions registry.
  */
 
-import { buildStepDefinition } from '../cucumber/buildStepDefinition';
-import { StepDefinition } from '../cucumber/types';
+import { CucumberExpression, RegularExpression } from '@cucumber/cucumber-expressions';
+import { Expression } from '@cucumber/cucumber-expressions';
 import { parameterTypeRegistry } from './parameterTypes';
-import { CucumberStepFunction, StepConfig } from './stepConfig';
+import { StepConfig } from './stepConfig';
+import { GherkinStepKeyword } from '../cucumber/types';
+import { relativeToCwd } from '../utils/paths';
+import { exit } from '../utils/exit';
+
+export type StepDefinition = {
+  keyword: GherkinStepKeyword;
+  pattern: string | RegExp;
+  patternString: string;
+  expression: Expression;
+  code: Function; // eslint-disable-line @typescript-eslint/ban-types
+  line: number;
+  uri: string;
+  // initial step config
+  // todo: merge into step definition in the future
+  stepConfig: StepConfig;
+};
 
 export const stepDefinitions: StepDefinition[] = [];
 
-export function registerStepDefinitionOwn(stepConfig: StepConfig, code: CucumberStepFunction) {
+export function registerStepDefinition(stepConfig: StepConfig) {
   const { keyword, pattern } = stepConfig;
   const { file: uri, line } = stepConfig.location;
-  const stepDefinition = buildStepDefinition(
-    {
-      keyword,
-      pattern,
-      code,
-      uri,
-      line,
-      options: {},
-    },
-    parameterTypeRegistry,
-  );
-  stepDefinitions.push(stepDefinition);
+
+  // todo: handle error.undefinedParameterTypeName as it's done in cucumber?
+  const expression =
+    typeof pattern === 'string'
+      ? new CucumberExpression(pattern, parameterTypeRegistry)
+      : new RegularExpression(pattern, parameterTypeRegistry);
+
+  stepDefinitions.push({
+    keyword,
+    pattern,
+    patternString: typeof pattern === 'string' ? pattern : pattern.source,
+    expression,
+    code: stepConfig.fn,
+    uri,
+    line,
+    stepConfig,
+  });
+}
+
+// todo: dont call exit here, call it upper
+export function findStepDefinition(stepText: string, featureFile: string) {
+  const matchedSteps = stepDefinitions.filter((step) => {
+    return Boolean(step.expression.match(stepText));
+  });
+  if (matchedSteps.length === 0) return;
+  if (matchedSteps.length > 1) {
+    exit(formatDuplicateStepsError(stepText, featureFile, matchedSteps));
+  }
+
+  return matchedSteps[0];
+}
+
+function formatDuplicateStepsError(
+  stepText: string,
+  featureFile: string,
+  matchedSteps: StepDefinition[],
+) {
+  const stepLines = matchedSteps.map((step) => {
+    const file = step.uri ? relativeToCwd(step.uri) : '';
+    return `  ${step.patternString} - ${file}:${step.line}`;
+  });
+
+  return [
+    `Multiple step definitions matched for text: "${stepText}" (${featureFile})`,
+    ...stepLines,
+  ].join('\n');
 }

@@ -1,7 +1,6 @@
-import { When } from '@cucumber/cucumber';
-import { BddWorld } from 'playwright-bdd';
+import { When } from '../fixtures';
 
-When<BddWorld>(
+When(
   'the string {string} is attached as {string}',
   async function (text: string, mediaType: string) {
     await this.testInfo.attach('attachment', { body: text, contentType: mediaType });

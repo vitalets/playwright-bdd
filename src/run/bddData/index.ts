@@ -6,7 +6,6 @@
  * to be asynchronously attached in teardown phase that may not run.
  * See: https://github.com/microsoft/playwright/issues/30175
  */
-import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { TestInfo } from '@playwright/test';
 import { createTestStep } from '../../cucumber/createTestStep';
 import { stringifyLocation } from '../../utils';
@@ -15,6 +14,7 @@ import { TestCase } from '@playwright/test/reporter';
 import { PlaywrightLocation, PwAnnotation } from '../../playwright/types';
 import { BddData } from './types';
 import { updateAnnotation } from '../../playwright/utils';
+import { StepDefinition } from '../../steps/registry';
 
 const BDD_DATA_ANNOTATION_NAME = '__bddData';
 

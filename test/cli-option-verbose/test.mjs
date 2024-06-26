@@ -12,7 +12,7 @@ const testDir = new TestDir(import.meta);
 test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name, `${BDDGEN_CMD} --verbose`);
 
-  expect(stdout).toContain('Loading features: 1');
+  expect(stdout).toContain('Loading features: 1 (features/*.feature)');
   expect(stdout).toContain(normalize('features/sample.feature'));
 
   expect(stdout).toContain('Loading steps: steps.ts');

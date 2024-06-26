@@ -5,31 +5,21 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
-import { loadConfig as loadCucumberConfig } from '../cucumber/loadConfig';
-import { FeaturesLoader } from '../cucumber/loadFeatures';
-import { hasTsNodeRegister, loadSteps } from '../cucumber/loadSteps';
-import { extractCucumberConfig } from '../config';
-import { Snippets } from '../snippets';
-import { IRunConfiguration } from '@cucumber/cucumber/api';
-import { appendDecoratorSteps } from '../steps/decorators/steps';
+import { FeaturesLoader, resolveFeatureFiles } from '../cucumber/loadFeatures';
+// import { Snippets } from '../snippets';
 import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
 import { hasCustomTest } from '../steps/createBdd';
-import { ISupportCodeLibrary } from '../cucumber/types';
-import { resovleFeaturePaths } from '../cucumber/resolveFeaturePaths';
-import { loadStepsOwn } from '../cucumber/loadStepsOwn';
+import { resolveAndLoadSteps } from '../cucumber/loadStepsOwn';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
-import { appendNewCucumberStyleSteps } from '../steps/cucumberStyle';
+import { stepDefinitions } from '../steps/registry';
 
 export class TestFilesGenerator {
-  // all these props are exist
-  private runConfiguration!: IRunConfiguration;
   private featuresLoader = new FeaturesLoader();
-  private supportCodeLibrary!: ISupportCodeLibrary;
   private files: TestFile[] = [];
   private tagsExpression?: ReturnType<typeof parseTagsExpression>;
   private logger: Logger;
@@ -41,7 +31,6 @@ export class TestFilesGenerator {
 
   async generate() {
     await withExitHandler(async () => {
-      await this.loadCucumberConfig();
       await Promise.all([this.loadFeatures(), this.loadSteps()]);
       this.buildFiles();
       await this.checkUndefinedSteps();
@@ -52,65 +41,46 @@ export class TestFilesGenerator {
   }
 
   async extractSteps() {
-    await this.loadCucumberConfig();
     await this.loadSteps();
-    return this.supportCodeLibrary.stepDefinitions;
+    return stepDefinitions;
   }
 
   // todo: combine with extractSteps
   async extractUnusedSteps() {
-    await this.loadCucumberConfig();
     await Promise.all([this.loadFeatures(), this.loadSteps()]);
     this.buildFiles();
-    return this.supportCodeLibrary.stepDefinitions.filter((stepDefinition) => {
+    return stepDefinitions.filter((stepDefinition) => {
       const isUsed = this.files.some((file) => file.usedStepDefinitions.has(stepDefinition));
       return !isUsed;
     });
   }
 
-  private async loadCucumberConfig() {
-    const environment = { cwd: getPlaywrightConfigDir() };
-    const { runConfiguration } = await loadCucumberConfig(
-      {
-        provided: extractCucumberConfig(this.config),
-      },
-      environment,
-    );
-    this.runConfiguration = runConfiguration;
-    this.warnForTsNodeRegister();
-  }
-
   private async loadFeatures() {
     const cwd = getPlaywrightConfigDir();
-    const { defaultDialect } = this.runConfiguration.sources;
-    const { featurePaths } = await resovleFeaturePaths(this.runConfiguration, { cwd });
-    this.logger.log(`Loading features: ${featurePaths.length}`);
-    featurePaths.forEach((featurePath) => this.logger.log(`  ${relativeToCwd(featurePath)}`));
-    if (featurePaths.length) {
-      await this.featuresLoader.load(featurePaths, { relativeTo: cwd, defaultDialect });
-      this.handleParseErrors();
-    }
+    const featureFiles = await resolveFeatureFiles(cwd, this.config.features);
+    this.logger.log(`Loading features: ${featureFiles.length} (${this.config.features})`);
+    featureFiles.forEach((featureFile) => this.logger.log(`  ${relativeToCwd(featureFile)}`));
+    await this.featuresLoader.load(featureFiles, {
+      relativeTo: cwd,
+      defaultDialect: this.config.language,
+    });
+    this.handleFeatureParseErrors();
   }
 
   private async loadSteps() {
-    const { requirePaths = [], importPaths = [] } = this.runConfiguration.support;
-    this.logger.log(`Loading steps: ${requirePaths.concat(importPaths).join(', ')}`);
-    const environment = { cwd: getPlaywrightConfigDir() };
-    this.supportCodeLibrary = this.config.steps
-      ? await loadStepsOwn(environment.cwd, this.config.steps)
-      : await loadSteps(this.runConfiguration, environment);
-    await this.loadDecoratorSteps();
-    appendNewCucumberStyleSteps(this.supportCodeLibrary);
-    this.logger.log(`Loaded steps: ${this.supportCodeLibrary.stepDefinitions.length}`);
+    const cwd = getPlaywrightConfigDir();
+    this.logger.log(`Loading steps: ${this.config.steps}`);
+    await resolveAndLoadSteps(cwd, this.config.steps);
+    await this.loadDecoratorStepsViaImportTestFrom();
+    this.logger.log(`Loaded steps: ${stepDefinitions.length}`);
   }
 
-  private async loadDecoratorSteps() {
+  private async loadDecoratorStepsViaImportTestFrom() {
     const { importTestFrom } = this.config;
     if (importTestFrom) {
       // require importTestFrom for case when it is not required by step definitions
       // possible re-require but it's not a problem as it is cached by Node.js
       await requireTransform().requireOrImport(importTestFrom.file);
-      appendDecoratorSteps(this.supportCodeLibrary);
     }
   }
 
@@ -120,7 +90,6 @@ export class TestFilesGenerator {
       .map((gherkinDocument) => {
         return new TestFile({
           gherkinDocument,
-          supportCodeLibrary: this.supportCodeLibrary,
           // doc.uri is always relative to cwd (coming after cucumber handling)
           // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
           outputPath: this.getSpecPathByFeaturePath(gherkinDocument.uri!),
@@ -148,12 +117,24 @@ export class TestFilesGenerator {
   }
 
   private async checkUndefinedSteps() {
-    const undefinedSteps = this.files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
-    if (undefinedSteps > 0) {
-      const snippets = new Snippets(this.files, this.runConfiguration, this.supportCodeLibrary);
-      await snippets.print();
+    const lines: string[] = [];
+    this.files.forEach((file) => {
+      if (!file.undefinedSteps.length) return;
+      lines.push(`* ${file.featureUri}`);
+      file.undefinedSteps.forEach((step) => lines.push(` - ${step.pickleStep.text}`));
+    });
+    if (lines.length) {
+      lines.unshift(`Undefined steps found!`);
       exit();
     }
+    // temporary simplify snippets
+    // todo: just print snippets without dynamically loading external files
+    // const undefinedSteps = this.files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
+    // if (undefinedSteps > 0) {
+    //   const snippets = new Snippets(this.files, this.supportCodeLibrary);
+    //   await snippets.print();
+    //   exit();
+    // }
   }
 
   private checkImportTestFrom() {
@@ -181,17 +162,7 @@ export class TestFilesGenerator {
     await Promise.all(tasks);
   }
 
-  private warnForTsNodeRegister() {
-    if (hasTsNodeRegister(this.runConfiguration)) {
-      this.logger.warn(
-        `WARNING: usage of requireModule: ['ts-node/register'] is not recommended for playwright-bdd.`,
-        `Remove this option from defineBddConfig() and`,
-        `Playwright's built-in loader will be used to compile TypeScript step definitions.`,
-      );
-    }
-  }
-
-  private handleParseErrors() {
+  private handleFeatureParseErrors() {
     const { parseErrors } = this.featuresLoader;
     if (parseErrors.length) {
       const message = parseErrors

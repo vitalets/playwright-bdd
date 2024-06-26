@@ -27,7 +27,7 @@ function checkResults(outDir) {
 function checkImportTestPath(outDir) {
   testDir.expectFileContains(`${outDir}/scenario-simple.feature.spec.js`, [
     outDir.includes('cucumber-style')
-      ? 'import { test } from "playwright-bdd";'
+      ? 'import { test } from "../../../steps-cucumber-style/fixtures.ts";'
       : 'import { test } from "../../../steps-pw-style/fixtures.ts";',
   ]);
 }

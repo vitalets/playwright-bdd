@@ -1,14 +1,15 @@
 /**
- * Auto-inject fixtures are automatically injected into every step call.
+ * Auto-inject fixtures are automatically injected into every step call
+ * without explicitly passing them in the last argument of Given() / When() / Then().
+ * It just reduces generated files visually.
  */
 
 import { TestInfo } from '@playwright/test';
-import { BddFixtures } from './types';
-import { BddWorld } from '../bddWorld';
+import { BddContext, BddFixtures } from './types';
 
-// without explicitly passing them in the last argument of Given() / When() / Then()
 export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags' | '$step'> & {
   $testInfo: TestInfo;
+  $bddContext: BddContext;
 };
 
 const BDD_AUTO_INJECT_FIXTURES: Record<keyof BddAutoInjectFixtures, null> = {
@@ -16,6 +17,7 @@ const BDD_AUTO_INJECT_FIXTURES: Record<keyof BddAutoInjectFixtures, null> = {
   $test: null,
   $step: null,
   $testInfo: null,
+  $bddContext: null,
 };
 
 export function isBddAutoInjectFixture(name: string) {
@@ -25,11 +27,12 @@ export function isBddAutoInjectFixture(name: string) {
   );
 }
 
-export function getBddAutoInjectFixtures(bddWorld: BddWorld): BddAutoInjectFixtures {
+export function getBddAutoInjectFixtures(bddContext: BddContext): BddAutoInjectFixtures {
   return {
-    $testInfo: bddWorld.testInfo,
-    $tags: bddWorld.tags,
-    $test: bddWorld.test,
-    $step: bddWorld.step,
+    $testInfo: bddContext.testInfo,
+    $tags: bddContext.tags,
+    $test: bddContext.test,
+    $step: bddContext.step,
+    $bddContext: bddContext,
   };
 }

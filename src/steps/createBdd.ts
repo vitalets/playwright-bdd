@@ -12,7 +12,6 @@ import { TestType } from '@playwright/test';
 import { test as baseBddTest } from '../run/bddFixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
-import { BddWorld } from '../run/bddWorld';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './cucumberStyle';
@@ -33,21 +32,17 @@ type CreateBddOptions<WorldFixtureName> = {
 export function createBdd<
   T extends KeyValue = BuiltInFixtures,
   W extends KeyValue = BuiltInFixturesWorker,
-  CustomWorld extends BddWorld = BddWorld,
   // important to set default value to empty string, not null or undefined
   // otherwise it breaks TS non-strict mode
   // see: https://github.com/vitalets/playwright-bdd/issues/163
   WorldFixtureName extends keyof CustomFixtures<T> | '' = '',
->(
-  customTest?: TestType<T, W> | null,
-  options?: CreateBddOptions<WorldFixtureName> | (new (...args: any[]) => CustomWorld),
-) {
+>(customTest?: TestType<T, W> | null, options?: CreateBddOptions<WorldFixtureName>) {
   // TypeScript does not narrow generic types by control flow
   // see: https://github.com/microsoft/TypeScript/issues/33912
   // So, we define return types separately using conditional types
   type World = WorldFixtureName extends keyof CustomFixtures<T>
     ? CustomFixtures<T>[WorldFixtureName]
-    : CustomWorld;
+    : null;
 
   type StepFn = WorldFixtureName extends keyof CustomFixtures<T>
     ? CucumberStyleStepFn<World>
@@ -57,16 +52,14 @@ export function createBdd<
     ? ReturnType<typeof cucumberStepCtor<StepFn>>
     : ReturnType<typeof playwrightStepCtor<StepFn>>;
 
-  if (options instanceof BddWorld) {
-    // todo: deprecation warning
-  }
-
   if (!hasCustomTest) hasCustomTest = isCustomTest(customTest);
 
   const BeforeAll = workerHookFactory<W>('beforeAll');
   const AfterAll = workerHookFactory<W>('afterAll');
+  const Before = scenarioHookFactory<T, W, World>('before');
+  const After = scenarioHookFactory<T, W, World>('after');
 
-  // new cucumber-style
+  // cucumber-style
   if (options && 'worldFixture' in options && options.worldFixture) {
     if (!hasCustomTest) {
       exit(`When using worldFixture, you should provide custom test to createBdd()`);
@@ -75,8 +68,6 @@ export function createBdd<
     const When = cucumberStepCtor('When', options.worldFixture) as StepCtor;
     const Then = cucumberStepCtor('Then', options.worldFixture) as StepCtor;
     const Step = cucumberStepCtor('Unknown', options.worldFixture) as StepCtor;
-    const Before = scenarioHookFactory<T, W, World>('before', { useWorldFixture: true });
-    const After = scenarioHookFactory<T, W, World>('after', { useWorldFixture: true });
     return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
   }
 
@@ -84,8 +75,6 @@ export function createBdd<
   const When = playwrightStepCtor('When', hasCustomTest) as StepCtor;
   const Then = playwrightStepCtor('Then', hasCustomTest) as StepCtor;
   const Step = playwrightStepCtor('Unknown', hasCustomTest) as StepCtor;
-  const Before = scenarioHookFactory<T, W, World>('before');
-  const After = scenarioHookFactory<T, W, World>('after');
   return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
 }
 

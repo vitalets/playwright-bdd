@@ -5,8 +5,8 @@
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/assemble_test_cases.ts#L93
  */
 
-import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import { Group, TestStep } from '@cucumber/messages';
+import { StepDefinition } from '../steps/registry';
 
 export function createTestStep(stepDefinition: StepDefinition, stepText: string): TestStep {
   const result = stepDefinition.expression.match(stepText);

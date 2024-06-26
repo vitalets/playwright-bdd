@@ -20,37 +20,29 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { findStepDefinition } from '../cucumber/findStep';
 import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { extractTemplateParams, template } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
-import {
-  getStepConfig,
-  isDecorator,
-  isDefinedViaCucumber,
-  isUsingWorldFixture,
-} from '../steps/stepConfig';
-import { extractFixtureNames, extractFixtureNamesFromFnBodyMemo } from './fixtures';
-import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { getScenarioHooksFixtures, hasScenarioHooksWithWorldFromCucumber } from '../hooks/scenario';
+import { isDecorator, isUsingWorldFixture } from '../steps/stepConfig';
+import { extractFixtureNames } from './fixtures';
+import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
-import { ISupportCodeLibrary } from '../cucumber/types';
 import { TestMetaBuilder } from './testMeta';
 import { GherkinDocumentWithPickles } from '../cucumber/loadFeatures';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
+import { StepDefinition, findStepDefinition } from '../steps/registry';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
-  supportCodeLibrary: ISupportCodeLibrary;
   outputPath: string;
   config: BDDConfig;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
 };
 
-export type UndefinedStep = {
+type UndefinedStep = {
   keywordType: KeywordType;
   step: Step;
   pickleStep: PickleStep;
@@ -153,12 +145,9 @@ export class TestFile {
     const worldFixtureName = this.getWorldFixtureName();
     return this.formatter.technicalSection(this.testMetaBuilder, this.featureUri, [
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
-      ...(hasScenarioHooksWithWorldFromCucumber() || this.hasStepsDefinedViaCucumber()
-        ? this.formatter.bddWorldFixtures()
-        : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
-      ...(worldFixtureName ? this.formatter.newCucumberStyleWorldFixture(worldFixtureName) : []),
+      ...(worldFixtureName ? this.formatter.setWorldFixture(worldFixtureName) : []),
     ]);
   }
 
@@ -319,11 +308,7 @@ export class TestFile {
     outlineExampleRowId?: string,
   ) {
     const pickleStep = this.findPickleStep(step, outlineExampleRowId);
-    const stepDefinition = findStepDefinition(
-      this.options.supportCodeLibrary,
-      pickleStep.text,
-      this.featureUri,
-    );
+    const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
     const keywordType = getStepKeywordType({
       keyword: step.keyword,
       language: this.language,
@@ -338,9 +323,8 @@ export class TestFile {
 
     this.usedStepDefinitions.add(stepDefinition);
 
-    // for old cucumber-style stepConfig is undefined
-    const stepConfig = getStepConfig(stepDefinition);
-    if (stepConfig?.hasCustomTest) this.hasCustomTest = true;
+    const stepConfig = stepDefinition.stepConfig;
+    if (stepConfig.hasCustomTest) this.hasCustomTest = true;
 
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)
@@ -419,19 +403,12 @@ export class TestFile {
   }
 
   // eslint-disable-next-line complexity
-  private getStepFixtureNames(stepDefinition: StepDefinition) {
-    const stepConfig = getStepConfig(stepDefinition);
-    if (isDefinedViaCucumber(stepConfig)) {
-      return extractFixtureNamesFromFnBodyMemo(stepDefinition.code);
-    }
+  private getStepFixtureNames({ stepConfig }: StepDefinition) {
     // for decorator steps fixtureNames are defined later in second pass
     if (isDecorator(stepConfig)) return [];
-    // for new cucumber-style there is no fixtures arg
+    // for cucumber-style there is no fixtures arg
     if (isUsingWorldFixture(stepConfig)) return [];
-    if (stepConfig?.fn) {
-      return extractFixtureNames(stepConfig.fn);
-    }
-    return [];
+    return extractFixtureNames(stepConfig.fn);
   }
 
   private getOutlineTestTitle(
@@ -500,17 +477,17 @@ export class TestFile {
     return this.i18nKeywordsMap ? this.i18nKeywordsMap.get(keyword) : keyword;
   }
 
-  private hasStepsDefinedViaCucumber() {
-    return [...this.usedStepDefinitions].some((stepDefinition) => {
-      return isDefinedViaCucumber(getStepConfig(stepDefinition));
-    });
-  }
+  // private hasStepsDefinedViaCucumber() {
+  //   return [...this.usedStepDefinitions].some((stepDefinition) => {
+  //     return isDefinedViaCucumber(getStepConfig(stepDefinition));
+  //   });
+  // }
 
   private getWorldFixtureName() {
     const worldFixtureNames = new Set<string>();
 
     this.usedStepDefinitions.forEach((stepDefinition) => {
-      const worldFixture = getStepConfig(stepDefinition)?.worldFixture;
+      const { worldFixture } = stepDefinition.stepConfig;
       if (worldFixture) worldFixtureNames.add(worldFixture);
     });
 

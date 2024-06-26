@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
-import { DataTable, When, Then } from '@cucumber/cucumber';
+import { DataTable } from 'playwright-bdd';
+import { When, Then } from '../fixtures';
 
 When('the following table is transposed:', function (table: DataTable) {
   this.transposed = table.transpose();

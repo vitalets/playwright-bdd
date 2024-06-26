@@ -1,8 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { DataTable, defineParameterType } from '@cucumber/cucumber';
-import { createBdd } from 'playwright-bdd';
+import { createBdd, DataTable, defineParameterType } from 'playwright-bdd';
 import { test } from './fixtures';
 
 const { Given, When, Then, Step } = createBdd(test);

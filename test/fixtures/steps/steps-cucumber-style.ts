@@ -1,26 +1,21 @@
 import { expect } from '@playwright/test';
-import { When, Then } from '@cucumber/cucumber';
-import { BddWorld } from 'playwright-bdd';
+import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
-type MyWorld = BddWorld<object, typeof test>;
+const { When, Then } = createBdd(test, { worldFixture: 'world' });
 
-When<MyWorld>('testScopedFixture set prop to {string}', async function (value: string) {
-  const testScopedFixture = this.useFixture('testScopedFixture');
-  testScopedFixture.prop = value;
+When('testScopedFixture set prop to {string}', async function (value: string) {
+  this.testScopedFixture.prop = value;
 });
 
-Then<MyWorld>('testScopedFixture prop equals to {string}', async function (value: string) {
-  const testScopedFixture = this.useFixture('testScopedFixture');
-  expect(testScopedFixture.prop).toEqual(value);
+Then('testScopedFixture prop equals to {string}', async function (value: string) {
+  expect(this.testScopedFixture.prop).toEqual(value);
 });
 
-When<MyWorld>('workerScopedFixture set prop to {string}', async function (value: string) {
-  const workerScopedFixture = this.useFixture('workerScopedFixture');
-  workerScopedFixture.prop = value;
+When('workerScopedFixture set prop to {string}', async function (value: string) {
+  this.workerScopedFixture.prop = value;
 });
 
-Then<MyWorld>('workerScopedFixture prop equals to {string}', async function (value: string) {
-  const workerScopedFixture = this.useFixture('workerScopedFixture');
-  expect(workerScopedFixture.prop).toEqual(value);
+Then('workerScopedFixture prop equals to {string}', async function (value: string) {
+  expect(this.workerScopedFixture.prop).toEqual(value);
 });

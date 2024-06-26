@@ -5,17 +5,17 @@ const { Given, Before, BeforeAll, After, AfterAll } = createBdd();
 
 const calls: string[] = [];
 
-Before({ timeout: 5 }, async function () {
-  await track(`Before 1 ${this.testInfo.title}`);
+Before({ timeout: 5 }, async function ({ $testInfo }) {
+  await track(`Before 1 ${$testInfo.title}`);
 });
-Before(async ({ $bddWorld }) => {
-  await track(`Before 2 ${$bddWorld.testInfo.title}`);
+Before(async ({ $testInfo }) => {
+  await track(`Before 2 ${$testInfo.title}`);
 });
-After(async function () {
-  await track(`After 1 ${this.testInfo.title}`);
+After(async function ({ $testInfo }) {
+  await track(`After 1 ${$testInfo.title}`);
 });
-After({ timeout: 5 }, async ({ $bddWorld }) => {
-  await track(`After 2 ${$bddWorld.testInfo.title}`);
+After({ timeout: 5 }, async ({ $testInfo }) => {
+  await track(`After 2 ${$testInfo.title}`);
 });
 
 BeforeAll({ timeout: 5 }, async function ({ $workerInfo }) {

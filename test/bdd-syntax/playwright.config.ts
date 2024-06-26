@@ -20,6 +20,7 @@ export default defineConfig({
         outputDir: '.features-gen/cucumber-style',
         paths: ['features'],
         require: ['steps-cucumber-style/steps.ts'],
+        importTestFrom: 'steps-cucumber-style/fixtures.ts',
       }),
     },
   ],

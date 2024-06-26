@@ -5,10 +5,11 @@
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/support_code_library_builder/types.ts#L153
  */
 import type { ParameterTypeRegistry } from '@cucumber/cucumber-expressions';
-import type StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
+import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 
-export { StepDefinition };
+export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 
+// keep this type for Cucumber formatters
 export interface ISupportCodeLibrary {
   parameterTypeRegistry: ParameterTypeRegistry;
   stepDefinitions: StepDefinition[];

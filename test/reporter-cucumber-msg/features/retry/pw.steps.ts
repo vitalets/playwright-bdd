@@ -1,4 +1,4 @@
-import { Given } from '@cucumber/cucumber';
+import { Given } from '../fixtures';
 
 Given('a step that always passes', function () {
   // no-op

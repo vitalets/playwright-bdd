@@ -7,7 +7,9 @@ if (!featureDir) throw new Error(`Empty FEATURE_DIR`);
 const testDir = defineBddConfig({
   outputDir: `features/${featureDir}/.features-gen`,
   paths: [`features/${featureDir}`],
+  // there are also cucumber.steps.ts that are used to generate golden reports
   require: [`features/${featureDir}/common.steps.ts`, `features/${featureDir}/pw.steps.ts`],
+  importTestFrom: 'features/fixtures',
 });
 
 export default defineConfig({

@@ -1,7 +1,4 @@
-import { Given } from '@cucumber/cucumber';
-import { createBdd } from 'playwright-bdd';
-
-const { Before } = createBdd();
+import { Given, Before } from '../fixtures';
 
 Before({ tags: '@skip' }, function () {
   this.testInfo.skip();

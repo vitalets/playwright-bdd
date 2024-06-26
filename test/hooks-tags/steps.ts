@@ -5,19 +5,19 @@ const { Given, Before, After, AfterAll } = createBdd();
 
 const calls: string[] = [];
 
-Before('@bar', async function () {
-  track(`Before @bar ${this.testInfo.title}`);
-  expect(this.tags).toEqual(['@foo', '@bar']);
+Before('@bar', async function ({ $testInfo, $tags }) {
+  track(`Before @bar ${$testInfo.title}`);
+  expect($tags).toEqual(['@foo', '@bar']);
 });
-Before({ tags: '@foo and not @bar' }, async ({ $bddWorld }) => {
-  track(`Before @foo and not @bar ${$bddWorld.testInfo.title}`);
+Before({ tags: '@foo and not @bar' }, async ({ $testInfo }) => {
+  track(`Before @foo and not @bar ${$testInfo.title}`);
 });
-After('@bar', async function () {
-  track(`After @bar ${this.testInfo.title}`);
-  expect(this.tags).toEqual(['@foo', '@bar']);
+After('@bar', async function ({ $testInfo, $tags }) {
+  track(`After @bar ${$testInfo.title}`);
+  expect($tags).toEqual(['@foo', '@bar']);
 });
-After({ tags: '@foo and not @bar' }, async ({ $bddWorld }) => {
-  track(`After @foo and not @bar ${$bddWorld.testInfo.title}`);
+After({ tags: '@foo and not @bar' }, async ({ $testInfo }) => {
+  track(`After @foo and not @bar ${$testInfo.title}`);
 });
 
 AfterAll(() => {

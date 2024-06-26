@@ -8,6 +8,8 @@
 import { GherkinStreams, IGherkinStreamOptions } from '@cucumber/gherkin-streams';
 import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
 import { Envelope, ParseError, Pickle, GherkinDocument, Location } from '@cucumber/messages';
+import { resolveFiles } from '../utils/paths';
+import { toArray } from '../utils';
 
 export type GherkinDocumentWithPickles = GherkinDocument & {
   pickles: PickleWithLocation[];
@@ -17,23 +19,27 @@ export type PickleWithLocation = Pickle & {
   location: Location;
 };
 
+export function resolveFeatureFiles(cwd: string, patterns: string | string[]) {
+  return resolveFiles(cwd, toArray(patterns), 'feature');
+}
+
 export class FeaturesLoader {
   gherkinQuery = new GherkinQuery();
   parseErrors: ParseError[] = [];
 
   /**
    * Loads and parses feature files.
-   * - featurePaths should be absolute.
+   * - featureFiles should be absolute.
    *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/GherkinStreams.ts#L36
    * - if options.relativeTo is provided, uri in gherkin documents will be relative to it.
    *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/SourceMessageStream.ts#L31
    * - options.defaultDialect is 'en' by default.
    *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/makeGherkinOptions.ts#L5
    */
-  async load(featurePaths: string[], options: IGherkinStreamOptions) {
+  async load(featureFiles: string[], options: IGherkinStreamOptions) {
     this.gherkinQuery = new GherkinQuery();
     this.parseErrors = [];
-    await gherkinFromPaths(featurePaths, options, (envelope) => {
+    await gherkinFromPaths(featureFiles, options, (envelope) => {
       this.gherkinQuery.update(envelope);
       if (envelope.parseError) {
         this.parseErrors.push(envelope.parseError);

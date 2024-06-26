@@ -7,6 +7,10 @@ const config: KnipConfig = {
     'src/index.ts',
     'src/decorators.ts',
     'src/reporter/cucumber/index.ts',
+    // temporary ignore unused files in src/cucumber dir
+    'src/cucumber/**/*.ts',
+    // temporary ignore unused files in src/snippets dir
+    'src/snippets/**/*.ts',
   ],
   project: ['src/**/*.ts'],
   ignore: ['**/*.d.ts'],

@@ -1,25 +1,21 @@
-import { BddWorld, BddWorldFixtures } from '../bddWorld';
 import { TestTypeCommon } from '../../playwright/types';
-import { IRunConfiguration } from '@cucumber/cucumber/api';
-import { StepInvoker } from '../StepInvoker';
-import { ISupportCodeLibrary } from '../../cucumber/types';
+import { StepKeywordFixture } from '../StepInvoker';
 import { TestMeta, TestMetaMap } from '../../gen/testMeta';
 import { BDDConfig } from '../../config/types';
+import { TestInfo } from '@playwright/test';
+import { BddDataManager } from '../bddData';
 
-export type StepFixture = {
+type StepFixture = {
   title: string;
 };
 
 export type BddFixtures = {
-  // fixtures injected into BddWorld:
-  // empty object for pw-style, builtin fixtures for cucumber-style
-  $bddWorldFixtures: BddWorldFixtures;
-  $bddWorld: BddWorld;
-  Given: StepInvoker['invoke'];
-  When: StepInvoker['invoke'];
-  Then: StepInvoker['invoke'];
-  And: StepInvoker['invoke'];
-  But: StepInvoker['invoke'];
+  $bddContext: BddContext;
+  Given: StepKeywordFixture;
+  When: StepKeywordFixture;
+  Then: StepKeywordFixture;
+  And: StepKeywordFixture;
+  But: StepKeywordFixture;
   $testMetaMap: TestMetaMap;
   $testMeta: TestMeta;
   $tags: string[];
@@ -31,17 +27,27 @@ export type BddFixtures = {
   $after: void;
   $lang: string;
   $applySpecialTags: void;
-  $newCucumberStyleWorld: unknown;
+  $world: unknown;
 };
 
 export type BddFixturesWorker = {
-  $cucumber: {
-    runConfiguration: IRunConfiguration;
-    supportCodeLibrary: ISupportCodeLibrary;
-    World: typeof BddWorld;
-    config: BDDConfig;
-  };
+  $bddContextWorker: BddContextWorker;
   $workerHookFixtures: Record<string, unknown>;
   $beforeAll: void;
   $afterAll: void;
+};
+
+export type BddContext = BddContextWorker & {
+  test: TestTypeCommon;
+  testInfo: TestInfo;
+  lang: string;
+  tags: string[];
+  step: StepFixture;
+  // currentStepFixtures: Fixtures<TestTypeCommon>;
+  world: unknown;
+  bddDataManager?: BddDataManager;
+};
+
+type BddContextWorker = {
+  config: BDDConfig;
 };

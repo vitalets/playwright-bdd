@@ -1,6 +1,4 @@
-import { createBdd } from 'playwright-bdd';
-
-const { When, Before, After } = createBdd();
+import { When, Before, After } from '../fixtures';
 
 // add name to all hooks, b/c in playwright-bdd we add to report only named hooks
 

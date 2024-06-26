@@ -37,7 +37,7 @@ test(testDir.name, async () => {
 /**
  * Checks feature.
  * featureDir - path to feature dir inside ./features,
- * e.g. 'passed-scenario' or 'cck/minimal'
+ * e.g. 'minimal'
  */
 async function checkFeature(featureDir) {
   const absFeatureDir = testDir.getAbsPath(`features/${featureDir}`);

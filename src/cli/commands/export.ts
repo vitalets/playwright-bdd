@@ -1,6 +1,5 @@
 import path from 'node:path';
 import { Command } from 'commander';
-import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
 import Table from 'cli-table3';
 import { ConfigOption, configOption } from '../options';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
@@ -8,9 +7,9 @@ import { Logger } from '../../utils/logger';
 import { getEnvConfigs } from '../../config/env';
 import { assertConfigsCount } from './test';
 import { TestFilesGenerator } from '../../gen';
-import { getStepConfig } from '../../steps/stepConfig';
 import { relativeToCwd } from '../../utils/paths';
 import { BDDConfig } from '../../config/types';
+import { StepDefinition } from '../../steps/registry';
 
 const logger = new Logger({ verbose: true });
 
@@ -81,7 +80,5 @@ function formatStepText({ pattern, keyword }: StepDefinition) {
 }
 
 function formatStepLocation(step: StepDefinition) {
-  const { location } = getStepConfig(step) || {};
-  if (!location) return '';
-  return `${relativeToCwd(location.file)}:${location.line}`;
+  return `${relativeToCwd(step.uri)}:${step.line}`;
 }

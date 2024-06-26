@@ -2,19 +2,13 @@
  * Playwright-bdd's step config.
  */
 
-import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import {
-  DefineStepPattern,
-  TestStepFunction,
-} from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import StepDefinition from '@cucumber/cucumber/lib/models/step_definition';
-import { BddWorld } from '../run/bddWorld';
 import { PlaywrightLocation } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
+import { GherkinStepKeyword } from '../cucumber/types';
 
 export type StepConfig = {
   keyword: GherkinStepKeyword;
-  pattern: DefineStepPattern;
+  pattern: string | RegExp;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: (...args: any[]) => unknown;
   hasCustomTest: boolean;
@@ -23,15 +17,15 @@ export type StepConfig = {
   worldFixture?: string; // for new cucumber-style steps
 };
 
-// attach stepConfig to Cucumber step function
-// to keep type of StepDefinition itself unchanged
-export type CucumberStepFunction = TestStepFunction<BddWorld> & {
-  stepConfig?: StepConfig;
-};
+// // attach stepConfig to Cucumber step function
+// // to keep type of StepDefinition itself unchanged
+// export type CucumberStepFunction = TestStepFunction<BddWorld> & {
+//   stepConfig?: StepConfig;
+// };
 
-export function getStepConfig(step: StepDefinition) {
-  return (step.code as CucumberStepFunction).stepConfig;
-}
+// export function getStepConfig(step: StepDefinition) {
+//   return (step.code as CucumberStepFunction).stepConfig;
+// }
 
 /**
  * Decorator steps have pom node.
@@ -45,12 +39,13 @@ export function isDecorator(
 /**
  * Step is defined via Given/When/Then from @cucumber/cucumber.
  */
-export function isDefinedViaCucumber(stepConfig?: StepConfig): stepConfig is undefined {
-  return !stepConfig;
-}
+// export function isDefinedViaCucumber(stepConfig?: StepConfig): stepConfig is undefined {
+//   return !stepConfig;
+// }
 
 /**
  * New cucumber-style steps have worldFixture in step config.
+ * todo: rename to isCucumberStyle
  */
 export function isUsingWorldFixture(
   stepConfig?: StepConfig,
