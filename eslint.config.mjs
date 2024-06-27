@@ -45,6 +45,8 @@ export default [
       ],
       '@typescript-eslint/triple-slash-reference': 0,
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      // require is needed for some functions (copied from PW)
+      '@typescript-eslint/no-var-requires': 0,
       'no-undef': 0,
       'no-empty-pattern': 0,
     },

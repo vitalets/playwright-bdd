@@ -5,9 +5,11 @@
 
 import { workerData } from 'node:worker_threads';
 import { TestFilesGenerator } from '../gen';
+import { forceExitIfNeeded } from './helpers';
 
 main();
 
 async function main() {
   await new TestFilesGenerator(workerData.config).generate();
+  forceExitIfNeeded();
 }

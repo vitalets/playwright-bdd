@@ -5,13 +5,13 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { requirePlaywrightModule } from './utils';
-import { requireTransform } from './transform';
 import { exit } from '../utils/exit';
+import { requireOrImport } from './requireOrImport';
 
 export async function loadConfig(cliConfigPath?: string) {
   const resolvedConfigFile = resolveConfigFile(cliConfigPath);
   assertConfigFileExists(resolvedConfigFile, cliConfigPath);
-  await requireTransform().requireOrImport(resolvedConfigFile);
+  await requireOrImport(resolvedConfigFile);
   return { resolvedConfigFile };
 }
 

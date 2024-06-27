@@ -3,8 +3,8 @@
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/api/support.ts
  */
 import { resolveFiles } from '../utils/paths';
-import { requireTransform } from '../playwright/transform';
 import { toArray } from '../utils';
+import { requireOrImport } from '../playwright/requireOrImport';
 
 const DEFAULT_STEP_EXTENSIONS = '{js,mjs,cjs,ts,mts,cts}';
 
@@ -14,8 +14,6 @@ export async function resolveAndLoadSteps(cwd: string, patterns: string | string
 }
 
 async function loadSteps(stepFiles: string[]) {
-  const { requireOrImport } = requireTransform();
-
   for (const file of stepFiles) {
     await requireOrImport(file);
   }

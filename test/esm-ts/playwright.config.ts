@@ -11,8 +11,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
         importTestFrom: 'steps/fixtures.ts',
-        paths: ['*.feature'],
-        import: ['steps/*.ts'], // <- note 'import' instead of 'require'
+        features: '*.feature',
+        steps: 'steps/*.ts',
       }),
     },
     {
@@ -21,8 +21,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
         importTestFrom: 'project-two/steps/fixtures.ts',
-        paths: ['project-two/*.feature'],
-        import: ['steps/*.ts', 'project-two/steps/*.ts'],
+        features: 'project-two/*.feature',
+        steps: ['steps/*.ts', 'project-two/steps/*.ts'],
       }),
     },
   ],

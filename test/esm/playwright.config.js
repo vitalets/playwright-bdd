@@ -8,8 +8,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
         importTestFrom: 'steps/fixtures.js',
-        paths: ['*.feature'],
-        import: ['steps/index.js'], // <- note 'import' instead of 'require'
+        features: '*.feature',
+        steps: 'steps/index.js',
       }),
     },
     {
@@ -18,8 +18,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
         importTestFrom: 'project-two/steps/fixtures.js',
-        paths: ['project-two/*.feature'],
-        import: ['steps/*.js', 'project-two/steps/*.js'],
+        features: 'project-two/*.feature',
+        steps: ['steps/*.js', 'project-two/steps/*.js'],
       }),
     },
   ],

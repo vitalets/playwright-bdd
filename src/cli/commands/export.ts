@@ -10,6 +10,7 @@ import { TestFilesGenerator } from '../../gen';
 import { relativeToCwd } from '../../utils/paths';
 import { BDDConfig } from '../../config/types';
 import { StepDefinition } from '../../steps/registry';
+import { forceExitIfNeeded } from '../helpers';
 
 const logger = new Logger({ verbose: true });
 
@@ -31,6 +32,8 @@ export const exportCommand = new Command('export')
     } else {
       await showStepsForConfigs(configs);
     }
+
+    forceExitIfNeeded();
   });
 
 async function showStepsForConfigs(configs: BDDConfig[]) {

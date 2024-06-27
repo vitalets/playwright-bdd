@@ -4,10 +4,10 @@
 
 /* eslint-disable complexity */
 import path from 'node:path';
-import { requireTransform } from './transform';
+import { requireOrImport } from './requireOrImport';
 
 export async function requireOrImportDefaultFunction(file: string, expectConstructor: boolean) {
-  let func = await requireTransform().requireOrImport(file);
+  let func = await requireOrImport(file);
   if (func && typeof func === 'object' && 'default' in func) func = func['default'];
   if (typeof func !== 'function') {
     throw errorWithFile(

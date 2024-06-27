@@ -15,5 +15,5 @@ program
   .addCommand(testCommand, { isDefault: true })
   .addCommand(exportCommand)
   .addCommand(envCommand)
-  .addHelpCommand(false)
+  .helpCommand(false)
   .parse();

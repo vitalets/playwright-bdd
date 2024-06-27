@@ -7,7 +7,6 @@ import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { FeaturesLoader, resolveFeatureFiles } from '../cucumber/loadFeatures';
 // import { Snippets } from '../snippets';
-import { requireTransform } from '../playwright/transform';
 import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
@@ -17,6 +16,7 @@ import { resolveAndLoadSteps } from '../cucumber/loadStepsOwn';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
+import { requireOrImport } from '../playwright/requireOrImport';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -80,7 +80,7 @@ export class TestFilesGenerator {
     if (importTestFrom) {
       // require importTestFrom for case when it is not required by step definitions
       // possible re-require but it's not a problem as it is cached by Node.js
-      await requireTransform().requireOrImport(importTestFrom.file);
+      await requireOrImport(importTestFrom.file);
     }
   }
 
