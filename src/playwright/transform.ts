@@ -10,6 +10,7 @@ import { getPlaywrightModulePath, requirePlaywrightModule } from './utils';
  * Installs require hook to transform ts.
  * Extracted from playwright.
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/transform/transform.ts
+ * @public
  */
 export function installTransform(): () => void {
   const { pirates } = requirePlaywrightModule('lib/utilsBundle.js');
