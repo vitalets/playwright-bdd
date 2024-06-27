@@ -1,15 +1,15 @@
 import { test as base } from '@playwright/test';
-import { getConfigFromEnv } from '../../config/env';
-import { getPlaywrightConfigDir } from '../../config/configDir';
-import { runScenarioHooks } from '../../hooks/scenario';
-import { runWorkerHooks } from '../../hooks/worker';
-import { createStepInvoker } from '../StepInvoker';
-import { getTestMeta } from '../../gen/testMeta';
-import { getEnrichReporterData } from '../../config/enrichReporterData';
-import { BddDataManager } from '../bddData';
+import { getConfigFromEnv } from '../config/env';
+import { getPlaywrightConfigDir } from '../config/configDir';
+import { runScenarioHooks } from '../hooks/scenario';
+import { runWorkerHooks } from '../hooks/worker';
+import { createStepInvoker } from './StepInvoker';
+import { getTestMeta } from '../gen/testMeta';
+import { getEnrichReporterData } from '../config/enrichReporterData';
+import { BddDataManager } from './bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
-import { resolveAndLoadSteps } from '../../cucumber/loadStepsOwn';
-import { SpecialTags } from '../../specialTags';
+import { resolveAndLoadSteps } from '../cucumber/loadStepsOwn';
+import { SpecialTags } from '../specialTags';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

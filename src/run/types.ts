@@ -1,9 +1,9 @@
-import { TestTypeCommon } from '../../playwright/types';
-import { StepKeywordFixture } from '../StepInvoker';
-import { TestMeta, TestMetaMap } from '../../gen/testMeta';
-import { BDDConfig } from '../../config/types';
+import { TestTypeCommon } from '../playwright/types';
+import { StepKeywordFixture } from './StepInvoker';
+import { TestMeta, TestMetaMap } from '../gen/testMeta';
+import { BDDConfig } from '../config/types';
 import { TestInfo } from '@playwright/test';
-import { BddDataManager } from '../bddData';
+import { BddDataManager } from './bddData';
 
 type StepFixture = {
   title: string;

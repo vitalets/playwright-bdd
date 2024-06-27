@@ -5,7 +5,7 @@ import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_b
 import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { FixturesArg, KeyValue } from '../../playwright/types';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
-import { BddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
+import { BddAutoInjectFixtures } from '../../run/autoInjectFixtures';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { StepConfig } from '../stepConfig';
 import { ParametersExceptFirst } from '../../utils/types';

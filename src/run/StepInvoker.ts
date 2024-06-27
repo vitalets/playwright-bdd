@@ -8,8 +8,8 @@ import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { isEnglish } from '../config/lang';
 import { DataTable } from '../cucumber/DataTable';
-import { BddContext } from './bddFixtures/types';
-import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
+import { BddContext } from './types';
+import { getBddAutoInjectFixtures } from './autoInjectFixtures';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 
 type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';

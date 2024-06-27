@@ -9,7 +9,7 @@ import {
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { test as baseBddTest } from '../run/bddFixtures';
+import { test as baseBddTest } from '../run/fixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { scenarioHookFactory } from '../hooks/scenario';

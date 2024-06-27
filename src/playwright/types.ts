@@ -14,7 +14,7 @@ import {
 } from '@playwright/test';
 
 import { Location as PlaywrightLocation } from '@playwright/test/reporter';
-import { BddFixtures } from '../run/bddFixtures/types';
+import { BddFixtures } from '../run/types';
 
 export type KeyValue = { [key: string]: any };
 

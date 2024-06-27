@@ -8,7 +8,7 @@ import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_k
 import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../registry';
-import { BddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
+import { BddAutoInjectFixtures } from '../../run/autoInjectFixtures';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
