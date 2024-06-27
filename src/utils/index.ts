@@ -45,6 +45,7 @@ export function resolvePackageRoot(packageName: string) {
 export function getPackageVersion(packageName: string) {
   const packageRoot = resolvePackageRoot(packageName);
   const packageJsonPath = path.join(packageRoot, 'package.json');
+  if (!fs.existsSync(packageJsonPath)) return '';
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   return (packageJson.version || '') as string;
 }
