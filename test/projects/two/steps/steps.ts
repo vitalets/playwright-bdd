@@ -4,7 +4,9 @@ import { test } from './fixtures';
 
 const { Given } = createBdd(test);
 
-Given('Another state {int}', async ({ option, secondOption }) => {
+Given('Unique step of project two', async ({ option, secondOption }) => {
   expect(option).toEqual('foo');
   expect(secondOption).toEqual('bar');
 });
+
+Given('Step defined in both projects', async () => {});
