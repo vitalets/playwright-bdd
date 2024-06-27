@@ -5,6 +5,7 @@ Feature: report location
 
   Scenario: Scenario 1
     Given I am on home page
+    And decorator step
     And Action 1
     When Action 2
     And Action 3

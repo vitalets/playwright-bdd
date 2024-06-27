@@ -14,9 +14,8 @@ function checkStepLocations(stdout) {
   expect(stdout).toContain(
     `Given I am on home page ${normalize('.features-gen/features/sample.feature.spec.js')}:11:11`,
   );
-  expect(stdout).toContain(
-    `page.goto(https://example.com) ${normalize('features/fixtures.ts')}:8:21`,
-  );
+  expect(stdout).toContain(`page.goto(https://example.com) ${normalize('features/pom.ts')}:10:21`);
+  expect(stdout).toContain(`And decorator step ${normalize('.features-gen/features/sample.feature.spec.js')}:12:11`);
   expect(stdout).toContain(`hook 1 ${normalize('features/steps.ts')}:14:1`);
 }
 
