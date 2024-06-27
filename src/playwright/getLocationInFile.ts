@@ -46,6 +46,13 @@ function getLocationBy(findFrame: (stackFrame: NodeJS.CallSite[]) => NodeJS.Call
   const oldPrepareStackTrace = Error.prepareStackTrace;
   // modify prepareStackTrace to return Location object instead of string
   Error.prepareStackTrace = (_error, stackFrames) => {
+    // useful for debug:
+    // const lines = stackFrames.map((frame) => {
+    //   const f: NodeJS.CallSite = sourceMapSupport.wrapCallSite(frame);
+    //   return `${f.getFileName()}:${f.getLineNumber()}:${f.getColumnNumber()}`;
+    // });
+    // if (lines.some((l) => l.includes('poms'))) console.log(lines);
+
     const foundFrame = findFrame(stackFrames);
     if (!foundFrame) return { file: '', line: 0, column: 0 };
     const frame: NodeJS.CallSite = sourceMapSupport.wrapCallSite(foundFrame);

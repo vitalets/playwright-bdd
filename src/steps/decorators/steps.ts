@@ -12,7 +12,7 @@ import { isBddAutoInjectFixture } from '../../run/autoInjectFixtures';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../registry';
 
-// initially we sotre step data inside method,
+// initially we store step data inside method,
 // and then extract it in @Fixture decorator call
 const decoratedStepSymbol = Symbol('decoratedStep');
 type DecoratedMethod = Function & { [decoratedStepSymbol]: StepConfig };
@@ -22,13 +22,14 @@ type DecoratedMethod = Function & { [decoratedStepSymbol]: StepConfig };
  */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
   return (pattern: DefineStepPattern) => {
+    // offset = 3 b/c this call is 3 steps below the user's code
+    const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
     return (method: StepConfig['fn'], _context: ClassMethodDecoratorContext) => {
       saveStepConfigToMethod(method, {
         keyword,
         pattern,
-        // offset = 3 b/c this call is 3 steps below the user's code
-        location: getLocationByOffset(3),
+        location,
         fn: method,
         hasCustomTest: true,
       });

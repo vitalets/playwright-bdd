@@ -31,6 +31,5 @@ test(`${testDir.name} (unused steps)`, () => {
   expect(stdout).toContain(normalize('steps/steps.ts:17'));
   expect(stdout).toContain(normalize('steps/steps2.ts:5'));
   expect(stdout).toContain(normalize('steps/steps2.ts:10'));
-  // temp skipped
-  // expect(stdout).toContain(normalize('steps/TodoPage.ts:7'));
+  expect(stdout).toContain(normalize('steps/TodoPage.ts:7'));
 });
