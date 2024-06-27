@@ -7,7 +7,7 @@ export default defineConfig({
     {
       name: 'hooks-fixtures-pw-style',
       testDir: defineBddConfig({
-        outputDir: './features-gen/pw-style',
+        outputDir: '.features-gen/pw-style',
         importTestFrom: 'pw-style/fixtures',
         paths: ['features/*.feature'],
         require: ['pw-style/steps.ts'],
@@ -16,7 +16,7 @@ export default defineConfig({
     {
       name: 'hooks-fixtures-cucumber-style',
       testDir: defineBddConfig({
-        outputDir: './features-gen/cucumber-style',
+        outputDir: '.features-gen/cucumber-style',
         importTestFrom: 'cucumber-style/fixtures',
         paths: ['features/*.feature'],
         require: ['cucumber-style/steps.ts'],
