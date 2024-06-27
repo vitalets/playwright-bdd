@@ -7,8 +7,7 @@ const pwVersion = getPackageVersion('@playwright/test');
 
 // Automatic screenshot for failing fixtures teardown depends on pw version.
 // see: https://github.com/microsoft/playwright/issues/29325
-const hasAutoScreenshotFixtureTeardown =
-  pwVersion < '1.35.0' || (pwVersion >= '1.42.0' && pwVersion < '1.45.0');
+const hasAutoScreenshotFixtureTeardown = pwVersion >= '1.42.0' && pwVersion < '1.45.0';
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);

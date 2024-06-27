@@ -1,5 +1,8 @@
 # Changelog
 
+## dev (v7)
+* set minimal Playwright version to 1.35
+
 ## 6.5.2
 * bugfix: createBdd returns Cucumber-Style Typing when using Playwright-Style, ([#163](https://github.com/vitalets/playwright-bdd/issues/163))
 

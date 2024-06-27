@@ -94,7 +94,6 @@ export class AttachmentMapper {
     const [foundAttachment] = allAttachments.splice(index, 1);
     const parentStep = attachmentStep.parent;
     // step.parent is empty:
-    // - in PW = 1.34 for screenshot attachment
     // - in PW <= 1.40 when testInfo.attach() promise
     // is awaited in the next async tick: 'attach' steps are on the top level
     const stepAttachments = parentStep
