@@ -8,17 +8,12 @@ import { requireOrImport } from '../playwright/requireOrImport';
 
 const DEFAULT_STEP_EXTENSIONS = '{js,mjs,cjs,ts,mts,cts}';
 
-export async function resolveAndLoadSteps(cwd: string, patterns: string | string[]) {
-  const stepFiles = await resolveStepFiles(cwd, patterns);
-  await loadSteps(stepFiles);
-}
-
-async function loadSteps(stepFiles: string[]) {
+export async function loadSteps(stepFiles: string[]) {
   for (const file of stepFiles) {
     await requireOrImport(file);
   }
 }
 
-async function resolveStepFiles(cwd: string, patterns: string | string[]) {
+export async function resolveStepFiles(cwd: string, patterns: string | string[]) {
   return resolveFiles(cwd, toArray(patterns), DEFAULT_STEP_EXTENSIONS);
 }

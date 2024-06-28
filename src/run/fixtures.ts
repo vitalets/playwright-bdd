@@ -8,8 +8,8 @@ import { getTestMeta } from '../gen/testMeta';
 import { getEnrichReporterData } from '../config/enrichReporterData';
 import { BddDataManager } from './bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
-import { resolveAndLoadSteps } from '../cucumber/loadStepsOwn';
 import { SpecialTags } from '../specialTags';
+import { loadSteps, resolveStepFiles } from '../cucumber/loadStepsOwn';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -18,7 +18,8 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     async ({}, use, workerInfo) => {
       const config = getConfigFromEnv(workerInfo.project.testDir);
       const cwd = getPlaywrightConfigDir();
-      await resolveAndLoadSteps(cwd, config.steps);
+      const stepFiles = await resolveStepFiles(cwd, config.steps);
+      await loadSteps(stepFiles);
       await use({ config });
     },
     { auto: true, scope: 'worker' },

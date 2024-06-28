@@ -17,16 +17,6 @@ export type StepConfig = {
   worldFixture?: string; // for new cucumber-style steps
 };
 
-// // attach stepConfig to Cucumber step function
-// // to keep type of StepDefinition itself unchanged
-// export type CucumberStepFunction = TestStepFunction<BddWorld> & {
-//   stepConfig?: StepConfig;
-// };
-
-// export function getStepConfig(step: StepDefinition) {
-//   return (step.code as CucumberStepFunction).stepConfig;
-// }
-
 /**
  * Decorator steps have pom node.
  */
@@ -37,17 +27,9 @@ export function isDecorator(
 }
 
 /**
- * Step is defined via Given/When/Then from @cucumber/cucumber.
- */
-// export function isDefinedViaCucumber(stepConfig?: StepConfig): stepConfig is undefined {
-//   return !stepConfig;
-// }
-
-/**
  * New cucumber-style steps have worldFixture in step config.
- * todo: rename to isCucumberStyle
  */
-export function isUsingWorldFixture(
+export function isCucumberStyleStep(
   stepConfig?: StepConfig,
 ): stepConfig is StepConfig & { worldFixture: string } {
   return Boolean(stepConfig?.worldFixture);

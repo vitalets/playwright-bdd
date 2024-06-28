@@ -6,13 +6,13 @@ import path from 'node:path';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { FeaturesLoader, resolveFeatureFiles } from '../cucumber/loadFeatures';
-// import { Snippets } from '../snippets';
+import { Snippets } from '../snippets';
 import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
 import { hasCustomTest } from '../steps/createBdd';
-import { resolveAndLoadSteps } from '../cucumber/loadStepsOwn';
+import { loadSteps, resolveStepFiles } from '../cucumber/loadStepsOwn';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
@@ -33,7 +33,7 @@ export class TestFilesGenerator {
     await withExitHandler(async () => {
       await Promise.all([this.loadFeatures(), this.loadSteps()]);
       this.buildFiles();
-      await this.checkUndefinedSteps();
+      this.checkUndefinedSteps();
       this.checkImportTestFrom();
       await this.clearOutputDir();
       await this.saveFiles();
@@ -58,7 +58,8 @@ export class TestFilesGenerator {
   private async loadFeatures() {
     const cwd = getPlaywrightConfigDir();
     const featureFiles = await resolveFeatureFiles(cwd, this.config.features);
-    this.logger.log(`Loading features: ${featureFiles.length} (${this.config.features})`);
+    this.logger.log(`Loading features: ${this.config.features}`);
+    this.logger.log(`Resolved feature files: ${featureFiles.length}`);
     featureFiles.forEach((featureFile) => this.logger.log(`  ${relativeToCwd(featureFile)}`));
     await this.featuresLoader.load(featureFiles, {
       relativeTo: cwd,
@@ -70,7 +71,10 @@ export class TestFilesGenerator {
   private async loadSteps() {
     const cwd = getPlaywrightConfigDir();
     this.logger.log(`Loading steps: ${this.config.steps}`);
-    await resolveAndLoadSteps(cwd, this.config.steps);
+    const stepFiles = await resolveStepFiles(cwd, this.config.steps);
+    this.logger.log(`Resolved step files: ${stepFiles.length}`);
+    stepFiles.forEach((stepFiles) => this.logger.log(`  ${relativeToCwd(stepFiles)}`));
+    await loadSteps(stepFiles);
     await this.loadDecoratorStepsViaImportTestFrom();
     this.logger.log(`Loaded steps: ${stepDefinitions.length}`);
   }
@@ -116,25 +120,12 @@ export class TestFilesGenerator {
     return `${absOutputPath}.spec.js`;
   }
 
-  private async checkUndefinedSteps() {
-    const lines: string[] = [];
-    this.files.forEach((file) => {
-      if (!file.undefinedSteps.length) return;
-      lines.push(`* ${file.featureUri}`);
-      file.undefinedSteps.forEach((step) => lines.push(` - ${step.pickleStep.text}`));
-    });
-    if (lines.length) {
-      lines.unshift(`Undefined steps found!`);
+  private checkUndefinedSteps() {
+    const snippets = new Snippets(this.files);
+    if (snippets.hasUndefinedSteps()) {
+      snippets.print();
       exit();
     }
-    // temporary simplify snippets
-    // todo: just print snippets without dynamically loading external files
-    // const undefinedSteps = this.files.reduce((sum, file) => sum + file.undefinedSteps.length, 0);
-    // if (undefinedSteps > 0) {
-    //   const snippets = new Snippets(this.files, this.supportCodeLibrary);
-    //   await snippets.print();
-    //   exit();
-    // }
   }
 
   private checkImportTestFrom() {

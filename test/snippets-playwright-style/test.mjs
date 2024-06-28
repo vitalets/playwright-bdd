@@ -4,8 +4,6 @@ const testDir = new TestDir(import.meta);
 
 test(testDir.name, () =>
   execPlaywrightTestWithError(testDir.name, [
-    `import { createBdd } from 'playwright-bdd';`,
-    `const { Given, When, Then } = createBdd();`,
     `// 1. Missing step definition for "${normalize('features/one.feature:4:5')}"`,
     `// 10. Missing step definition for "${normalize('features/one.feature:23:5')}"`,
     `Given('Step without parameters', async ({}) => {`,
@@ -18,6 +16,6 @@ test(testDir.name, () =>
     `Given('Step with dataTable', async ({}, dataTable: DataTable) => {`,
     `When('I click link {string}', async ({}, arg: string) => {`,
     `Then('I see in title {string}', async ({}, arg: string) => {`,
-    `Missing step definitions (10)`,
+    `Missing step definitions: 10`,
   ]),
 );

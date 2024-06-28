@@ -20,11 +20,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { KeywordType, getStepKeywordType } from '@cucumber/cucumber/lib/formatter/helpers/index';
 import { extractTemplateParams, template } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
-import { isDecorator, isUsingWorldFixture } from '../steps/stepConfig';
+import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
 import { extractFixtureNames } from './fixtures';
 import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
@@ -34,6 +33,7 @@ import { GherkinDocumentWithPickles } from '../cucumber/loadFeatures';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
+import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -42,7 +42,7 @@ type TestFileOptions = {
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
 };
 
-type UndefinedStep = {
+export type UndefinedStep = {
   keywordType: KeywordType;
   step: Step;
   pickleStep: PickleStep;
@@ -407,7 +407,7 @@ export class TestFile {
     // for decorator steps fixtureNames are defined later in second pass
     if (isDecorator(stepConfig)) return [];
     // for cucumber-style there is no fixtures arg
-    if (isUsingWorldFixture(stepConfig)) return [];
+    if (isCucumberStyleStep(stepConfig)) return [];
     return extractFixtureNames(stepConfig.fn);
   }
 

@@ -1,4 +1,4 @@
-import { Given } from '@cucumber/cucumber';
+import { Given } from './fixtures';
 
 Given('some state', async function () {
   // ...

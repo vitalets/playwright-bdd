@@ -1,4 +1,4 @@
-Feature: Snippets
+Feature: Snippets cucumber style
 
   Scenario: Some scenario
     Given Step without parameters
