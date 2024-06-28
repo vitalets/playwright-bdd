@@ -3,11 +3,11 @@
  * See: https://github.com/cucumber/cucumber-js/blob/main/docs/custom_formatters.md
  */
 import BaseReporter, { InternalOptions } from './base';
-import { requireOrImportDefaultFunction } from '../../playwright/loadUtils';
 import Formatter, { IFormatterOptions } from '../../cucumber/formatter';
 import getColorFns from '../../cucumber/formatter/getColorFns';
 import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
 import { ISupportCodeLibrary } from '../../cucumber/types';
+import { requireOrImportDefaultFunction } from '../../playwright/requireOrImport';
 
 export type CustomReporterOptions = {
   colorsEnabled?: boolean;

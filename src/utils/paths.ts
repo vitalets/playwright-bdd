@@ -14,7 +14,7 @@ export function toPosixPath(somePath: string) {
  * Returns path relative to cwd.
  */
 export function relativeToCwd(absPath: string) {
-  return path.relative(process.cwd(), absPath);
+  return path.isAbsolute(absPath) ? path.relative(process.cwd(), absPath) : absPath;
 }
 
 /**
