@@ -1,5 +1,5 @@
 import { TestTypeCommon } from '../playwright/types';
-import { StepKeywordFixture } from './StepInvoker';
+import { StepKeywordFixture } from './invokeStep';
 import { TestMeta, TestMetaMap } from '../gen/testMeta';
 import { BDDConfig } from '../config/types';
 import { TestInfo } from '@playwright/test';

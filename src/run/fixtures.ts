@@ -3,7 +3,7 @@ import { getConfigFromEnv } from '../config/env';
 import { getPlaywrightConfigDir } from '../config/configDir';
 import { runScenarioHooks } from '../hooks/scenario';
 import { runWorkerHooks } from '../hooks/worker';
-import { createStepInvoker } from './StepInvoker';
+import { createStepInvoker } from './invokeStep';
 import { getTestMeta } from '../gen/testMeta';
 import { getEnrichReporterData } from '../config/enrichReporterData';
 import { BddDataManager } from './bddData';
