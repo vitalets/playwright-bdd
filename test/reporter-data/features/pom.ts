@@ -2,8 +2,9 @@ import { Page } from '@playwright/test';
 import { Fixture, Given } from 'playwright-bdd/decorators';
 import type { test } from './fixtures';
 
+export
 @Fixture<typeof test>('myPage')
-export class MyPage {
+class MyPage {
   constructor(private page: Page) {}
 
   async open() {
