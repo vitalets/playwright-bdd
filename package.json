@@ -64,7 +64,7 @@
     "@cucumber/compatibility-kit": "15.0.0",
     "@cucumber/cucumber": "10.3.1",
     "@cucumber/pretty-formatter": "1.0.1",
-    "@eslint/js": "9.2.0",
+    "@eslint/js": "9.5.0",
     "@playwright/experimental-ct-react": "1.37.1",
     "@playwright/test": "1.37.1",
     "@types/micromatch": "4.0.8",
@@ -91,7 +91,7 @@
     "slugify": "1.6.6",
     "ts-node": "^10.9.2",
     "typescript": "5.4.5",
-    "typescript-eslint": "7.11.0",
+    "typescript-eslint": "7.14.1",
     "xml2js": "0.6.2"
   },
   "peerDependencies": {
