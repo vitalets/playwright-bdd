@@ -15,7 +15,6 @@ const config: KnipConfig = {
   ignoreDependencies: [
     '@cucumber/compatibility-kit',
     '@cucumber/pretty-formatter',
-    'chalk',
     '@types/react',
     '@types/react-dom',
     'react',
