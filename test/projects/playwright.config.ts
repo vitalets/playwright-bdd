@@ -9,6 +9,7 @@ import { defineBddConfig } from 'playwright-bdd';
 export const FOO = 'foo';
 
 export default defineConfig({
+  reporter: 'line',
   projects: [
     {
       name: 'project-one',
@@ -32,12 +33,16 @@ export default defineConfig({
     {
       name: 'project-two-copy',
       testDir: defineBddConfig({
-        outputDir: '.features-gen/two0copy',
+        outputDir: '.features-gen/two-copy',
         importTestFrom: 'two/steps/fixtures.ts',
         paths: ['two/*.feature'],
         require: ['one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
       dependencies: ['project-one'],
+    },
+    {
+      name: 'non-bdd-project',
+      testDir: 'non-bdd',
     },
   ],
 });

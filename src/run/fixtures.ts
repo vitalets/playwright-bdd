@@ -22,19 +22,16 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       await loadSteps(stepFiles);
       await use({ config });
     },
-    { auto: true, scope: 'worker' },
+    { scope: 'worker' },
   ],
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
-  $applySpecialTags: [
-    async ({ $testMeta }, use, testInfo) => {
-      const specialTags = new SpecialTags($testMeta.ownTags, $testMeta.tags);
-      if (specialTags.timeout !== undefined) testInfo.setTimeout(specialTags.timeout);
-      if (specialTags.slow !== undefined) testInfo.slow();
-      await use();
-    },
-    { auto: true },
-  ],
+  $applySpecialTags: async ({ $testMeta }, use, testInfo) => {
+    const specialTags = new SpecialTags($testMeta.ownTags, $testMeta.tags);
+    if (specialTags.timeout !== undefined) testInfo.setTimeout(specialTags.timeout);
+    if (specialTags.slow !== undefined) testInfo.slow();
+    await use();
+  },
   // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),
   $bddContext: async (
@@ -60,11 +57,23 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
     });
   },
 
-  Given: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'Given')),
-  When: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'When')),
-  Then: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'Then')),
-  And: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'And')),
-  But: ({ $bddContext }, use) => use(createStepInvoker($bddContext, 'But')),
+  // Unused fixtures below are important for lazy initialization only on bdd projects
+  // See: https://github.com/vitalets/playwright-bdd/issues/166
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Given: ({ $bddContext, $before, $applySpecialTags }, use) =>
+    use(createStepInvoker($bddContext, 'Given')),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  When: ({ $bddContext, $before, $applySpecialTags }, use) =>
+    use(createStepInvoker($bddContext, 'When')),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  Then: ({ $bddContext, $before, $applySpecialTags }, use) =>
+    use(createStepInvoker($bddContext, 'Then')),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  And: ({ $bddContext, $before, $applySpecialTags }, use) =>
+    use(createStepInvoker($bddContext, 'And')),
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  But: ({ $bddContext, $before, $applySpecialTags }, use) =>
+    use(createStepInvoker($bddContext, 'But')),
 
   // Cucumber style world: null by default, can be overwritten in test files for cucumber style
   $world: ({}, use: (arg: unknown) => unknown) => use(null),
@@ -88,7 +97,7 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
 
   // can be owerwritten in test file if there are scenario hooks
   $scenarioHookFixtures: ({}, use) => use({}),
-  $before: [
+  $before:
     // Unused dependencies are important:
     // 1. $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
     // 2. $after: to call after hooks in case of errors in before hooks
@@ -106,20 +115,16 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       });
       await use();
     },
-    { auto: true },
-  ],
-  $after: [
-    async ({ $scenarioHookFixtures, $bddContext, $tags }, use, $testInfo) => {
-      await use();
-      await runScenarioHooks('after', {
-        $bddContext,
-        $tags,
-        $testInfo,
-        ...$scenarioHookFixtures,
-      });
-    },
-    { auto: true },
-  ],
+
+  $after: async ({ $scenarioHookFixtures, $bddContext, $tags }, use, $testInfo) => {
+    await use();
+    await runScenarioHooks('after', {
+      $bddContext,
+      $tags,
+      $testInfo,
+      ...$scenarioHookFixtures,
+    });
+  },
 
   // can be owerwritten in test file if there are worker hooks
   $workerHookFixtures: [({}, use) => use({}), { scope: 'worker' }],
@@ -132,13 +137,16 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
       await use();
     },
-    { auto: true, scope: 'worker' },
+    { scope: 'worker' },
   ],
   $afterAll: [
-    async ({ $workerHookFixtures }, use, $workerInfo) => {
+    // Important unused dependencies:
+    // 1. $bddContextWorker: to load hooks before this fixtures
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
       await use();
       await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
     },
-    { auto: true, scope: 'worker' },
+    { scope: 'worker' },
   ],
 });
