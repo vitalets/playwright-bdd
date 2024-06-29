@@ -12,7 +12,7 @@ import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
 import { hasCustomTest } from '../steps/createBdd';
-import { loadSteps, resolveStepFiles } from '../cucumber/loadStepsOwn';
+import { loadSteps, resolveStepFiles } from '../steps/load';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';

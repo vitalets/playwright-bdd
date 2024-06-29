@@ -9,7 +9,7 @@ import { getEnrichReporterData } from '../config/enrichReporterData';
 import { BddDataManager } from './bddData';
 import { BddFixtures, BddFixturesWorker } from './types';
 import { SpecialTags } from '../specialTags';
-import { loadSteps, resolveStepFiles } from '../cucumber/loadStepsOwn';
+import { loadSteps, resolveStepFiles } from '../steps/load';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

@@ -1,6 +1,5 @@
 /**
- * Load steps using Playwright's import instead of Cucumber's tryRequire.
- * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/api/support.ts
+ * Load steps using Playwright's importOrRequire.
  */
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
