@@ -2,6 +2,10 @@
 
 ## dev (v7)
 * set minimal Playwright version to 1.35
+* set minimal Node.js version to 18
+
+## 6.6.0
+* bugfix: enable run of non-bdd projects, ([#166](https://github.com/vitalets/playwright-bdd/issues/166))
 
 ## 6.5.2
 * bugfix: createBdd returns Cucumber-Style Typing when using Playwright-Style, ([#163](https://github.com/vitalets/playwright-bdd/issues/163))
