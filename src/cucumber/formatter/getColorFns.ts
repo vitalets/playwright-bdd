@@ -26,25 +26,24 @@ export default function getColorFns(
 ): IColorFns {
   const support = detectSupport(stream, env, enabled);
   if (support) {
-    const chalkInstance = new chalk.Instance(support);
     return {
       forStatus(status: TestStepResultStatus) {
         return {
-          AMBIGUOUS: chalkInstance.red.bind(chalk),
-          FAILED: chalkInstance.red.bind(chalk),
-          PASSED: chalkInstance.green.bind(chalk),
-          PENDING: chalkInstance.yellow.bind(chalk),
-          SKIPPED: chalkInstance.cyan.bind(chalk),
-          UNDEFINED: chalkInstance.yellow.bind(chalk),
-          UNKNOWN: chalkInstance.yellow.bind(chalk),
+          AMBIGUOUS: chalk.red.bind(chalk),
+          FAILED: chalk.red.bind(chalk),
+          PASSED: chalk.green.bind(chalk),
+          PENDING: chalk.yellow.bind(chalk),
+          SKIPPED: chalk.cyan.bind(chalk),
+          UNDEFINED: chalk.yellow.bind(chalk),
+          UNKNOWN: chalk.yellow.bind(chalk),
         }[status];
       },
-      location: chalkInstance.gray.bind(chalk),
-      tag: chalkInstance.cyan.bind(chalk),
-      diffAdded: chalkInstance.green.bind(chalk),
-      diffRemoved: chalkInstance.red.bind(chalk),
-      errorMessage: chalkInstance.red.bind(chalk),
-      errorStack: chalkInstance.grey.bind(chalk),
+      location: chalk.gray.bind(chalk),
+      tag: chalk.cyan.bind(chalk),
+      diffAdded: chalk.green.bind(chalk),
+      diffRemoved: chalk.red.bind(chalk),
+      errorMessage: chalk.red.bind(chalk),
+      errorStack: chalk.grey.bind(chalk),
     };
   } else {
     return {
