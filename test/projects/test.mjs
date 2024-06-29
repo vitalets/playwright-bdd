@@ -1,7 +1,8 @@
-import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
+import { test, expect, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
 test(testDir.name, () => {
-  execPlaywrightTest(testDir.name);
+  const stdout = execPlaywrightTest(testDir.name);
+  expect(stdout).toContain('non-bdd test');
 });

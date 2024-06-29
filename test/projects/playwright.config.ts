@@ -39,5 +39,9 @@ export default defineConfig({
       }),
       dependencies: ['project-one'],
     },
+    {
+      name: 'non-bdd-project',
+      testDir: 'non-bdd',
+    },
   ],
 });

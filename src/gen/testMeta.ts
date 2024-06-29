@@ -3,7 +3,7 @@
  * Tests are identified by special key constructed from title path.
  *
  * Example:
- * const testMeta = {
+ * const testMetaMap = {
  *  "Simple scenario": { pickleLocation: "3:10", tags: ["@foo"] },
  *  "Scenario with examples|Example #1": { pickleLocation: "8:26", tags: [] },
  *  "Rule 1|Scenario with examples|Example #1": { pickleLocation: "9:42", tags: [] },
