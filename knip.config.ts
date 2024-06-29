@@ -7,25 +7,13 @@ const config: KnipConfig = {
     'src/index.ts',
     'src/decorators.ts',
     'src/reporter/cucumber/index.ts',
-    // temporary ignore unused files in src/cucumber dir
-    'src/cucumber/**/*.ts',
-    // temporary ignore unused files in src/snippets dir
-    'src/snippets/**/*.ts',
+    'test/reporter-cucumber-msg/**/cucumber.steps.ts',
   ],
   project: ['src/**/*.ts'],
   ignore: ['**/*.d.ts'],
   ignoreBinaries: ['docsify'],
   ignoreDependencies: [
-    // @cucumber/* dependencies are installed by @cucumber/cucumber
-    // todo: remove them from this list after removing @cucumber/cucumber dependency
-    '@cucumber/messages',
-    '@cucumber/cucumber-expressions',
-    '@cucumber/gherkin',
-    '@cucumber/gherkin-streams',
-    '@cucumber/gherkin-utils',
-    '@cucumber/tag-expressions',
     '@cucumber/compatibility-kit',
-    '@cucumber/html-formatter',
     '@cucumber/pretty-formatter',
     'xmlbuilder',
     'chalk',

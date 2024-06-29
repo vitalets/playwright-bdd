@@ -4,7 +4,11 @@
  */
 
 import { ParameterType, ParameterTypeRegistry } from '@cucumber/cucumber-expressions';
-import { ILineAndUri } from './formatter/locationHelpers';
+
+interface ILineAndUri {
+  line: number;
+  uri: string;
+}
 
 export class SourcedParameterTypeRegistry extends ParameterTypeRegistry {
   private parameterTypeToSource: WeakMap<ParameterType<unknown>, ILineAndUri> = new WeakMap();

@@ -10,7 +10,7 @@ export enum KeywordType {
   Outcome = 'outcome',
 }
 
-export interface IGetStepKeywordTypeOptions {
+interface IGetStepKeywordTypeOptions {
   keyword: string;
   language: string;
   previousKeywordType?: KeywordType;

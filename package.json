@@ -54,7 +54,17 @@
     "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
     "release": "bash scripts/release.sh"
   },
+  "peerDependencies": {
+    "@playwright/test": ">=1.35"
+  },
   "dependencies": {
+    "@cucumber/cucumber-expressions": "17.1.0",
+    "@cucumber/gherkin": "28.0.0",
+    "@cucumber/gherkin-streams": "5.0.1",
+    "@cucumber/gherkin-utils": "9.0.0",
+    "@cucumber/html-formatter": "21.4.0",
+    "@cucumber/messages": "25.0.1",
+    "@cucumber/tag-expressions": "6.1.0",
     "cli-table3": "0.6.5",
     "commander": "12.1.0",
     "fast-glob": "^3.3.2",
@@ -93,10 +103,6 @@
     "typescript": "5.4.5",
     "typescript-eslint": "7.14.1",
     "xml2js": "0.6.2"
-  },
-  "peerDependencies": {
-    "@cucumber/cucumber": ">=9",
-    "@playwright/test": ">=1.35"
   },
   "repository": {
     "type": "git",
