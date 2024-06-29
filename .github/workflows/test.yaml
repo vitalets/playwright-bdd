@@ -33,17 +33,6 @@ jobs:
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
-        cucumberVersion: ['9']
-        include:
-          # there were breaking changes in cucumber 10.x -> test on 10.0 and 10.1
-          - playwrightVersion: '1.37'
-            cucumberVersion: '10.0'
-          - playwrightVersion: '1.38'
-            cucumberVersion: '10.1'
-          - playwrightVersion: '1.39'
-            cucumberVersion: '10.3'
-          - playwrightVersion: '1.40'
-            cucumberVersion: '10'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -55,14 +44,13 @@ jobs:
           npm install
           @playwright/test@${{ matrix.playwrightVersion }}
           @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
-          @cucumber/cucumber@${{ matrix.cucumberVersion }}
 
       - run: npx playwright install --with-deps chromium
       - run: npm test
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: test-results-${{ matrix.playwrightVersion }}-${{ matrix.cucumberVersion }}
+          name: test-results-${{ matrix.playwrightVersion }}
           path: |
             test/**/test-results/
             test/**/actual-reports/

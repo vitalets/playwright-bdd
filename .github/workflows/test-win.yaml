@@ -13,8 +13,8 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        cucumberVersion: ['9', '10']
-        playwrightVersion: ['1.42']
+        # take min and max supported PW versions
+        playwrightVersion: ['1.35', '1.44']
     defaults:
       run:
         shell: bash
@@ -29,7 +29,6 @@ jobs:
           npm install
           @playwright/test@${{ matrix.playwrightVersion }}
           @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
-          @cucumber/cucumber@${{ matrix.cucumberVersion }}
       - run: npx playwright install --with-deps chromium
       - name: run tests
         run: |
