@@ -1,6 +1,5 @@
-import { createBdd } from 'playwright-bdd';
+import { createBdd, DataTable } from 'playwright-bdd';
 import { test } from './fixtures';
-import { DataTable } from '@cucumber/cucumber';
 import { expect } from '@playwright/test';
 
 const { When, Then } = createBdd(test, { worldFixture: 'world' });

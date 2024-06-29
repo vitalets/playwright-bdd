@@ -5,8 +5,6 @@
 import BaseReporter, { InternalOptions } from './base';
 import Formatter, { IFormatterOptions } from '../../cucumber/formatter';
 import getColorFns from '../../cucumber/formatter/getColorFns';
-import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
-import { ISupportCodeLibrary } from '../../cucumber/types';
 import { requireOrImportDefaultFunction } from '../../playwright/requireOrImport';
 
 export type CustomReporterOptions = {
@@ -63,18 +61,10 @@ export default class CustomReporter extends BaseReporter {
       stream: this.outputStream,
       log: this.outputStream.write.bind(this.outputStream),
       cleanup: async () => {},
-      snippetBuilder: null as unknown as StepDefinitionSnippetBuilder,
+      snippetBuilder: null,
       supportCodeLibrary: {
         World: {},
-      } as unknown as ISupportCodeLibrary,
+      },
     };
   }
 }
-
-// const fakeSuportCodeLibrary = {
-//   parameterTypeRegistry: ParameterTypeRegistry;
-// stepDefinitions: StepDefinition[];
-// // eslint-disable-next-line @typescript-eslint/no-explicit-any
-// World: any;
-// originalCoordinates: ISupportCodeCoordinates;
-// }

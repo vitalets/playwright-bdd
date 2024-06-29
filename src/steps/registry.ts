@@ -6,13 +6,15 @@ import { CucumberExpression, RegularExpression } from '@cucumber/cucumber-expres
 import { Expression } from '@cucumber/cucumber-expressions';
 import { parameterTypeRegistry } from './parameterTypes';
 import { StepConfig } from './stepConfig';
-import { GherkinStepKeyword } from '../cucumber/types';
 import { relativeToCwd } from '../utils/paths';
 import { exit } from '../utils/exit';
 
+export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
+export type DefineStepPattern = string | RegExp;
+
 export type StepDefinition = {
   keyword: GherkinStepKeyword;
-  pattern: string | RegExp;
+  pattern: DefineStepPattern;
   patternString: string;
   expression: Expression;
   code: Function; // eslint-disable-line @typescript-eslint/ban-types

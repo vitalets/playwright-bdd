@@ -2,9 +2,6 @@ import { Writable } from 'node:stream';
 import { EventEmitter } from 'node:events';
 import EventDataCollector from './EventDataCollector';
 import { IColorFns } from './getColorFns';
-import { ISupportCodeLibrary } from '../types';
-import StepDefinitionSnippetBuilder from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder';
-import { SnippetInterface } from '@cucumber/cucumber/lib/formatter/step_definition_snippet_builder/snippet_syntax';
 
 interface FormatRerunOptions {
   separator?: string;
@@ -13,7 +10,7 @@ interface FormatRerunOptions {
 interface FormatOptions {
   colorsEnabled?: boolean;
   rerun?: FormatRerunOptions;
-  snippetInterface?: SnippetInterface;
+  snippetInterface?: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   snippetSyntax?: string;
   printAttachments?: boolean;
   [customKey: string]: unknown;
@@ -29,10 +26,10 @@ export interface IFormatterOptions {
   eventDataCollector: EventDataCollector;
   log: IFormatterLogFn;
   parsedArgvOptions: FormatOptions;
-  snippetBuilder: StepDefinitionSnippetBuilder;
+  snippetBuilder: any; // eslint-disable-line @typescript-eslint/no-explicit-any
   stream: Writable;
   cleanup: IFormatterCleanupFn;
-  supportCodeLibrary: ISupportCodeLibrary;
+  supportCodeLibrary: any; // eslint-disable-line @typescript-eslint/no-explicit-any
 }
 
 // simplified Formatter class

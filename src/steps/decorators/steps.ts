@@ -4,13 +4,11 @@
 
 /* eslint-disable @typescript-eslint/ban-types */
 
-import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
-import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
 import { StepConfig } from '../stepConfig';
 import { PomNode } from './pomGraph';
 import { isBddAutoInjectFixture } from '../../run/autoInjectFixtures';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { registerStepDefinition } from '../registry';
+import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from '../registry';
 
 // initially we store step data inside method,
 // and then extract it in @Fixture decorator call

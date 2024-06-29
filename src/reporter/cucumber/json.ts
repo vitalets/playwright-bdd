@@ -22,8 +22,7 @@ import { doesHaveValue, doesNotHaveValue } from '../../cucumber/valueChecker';
 import { ITestCaseAttempt } from '../../cucumber/formatter/EventDataCollector';
 import { parseStepArgument } from '../../cucumber/stepArguments';
 import { durationToNanoseconds } from '../../cucumber/formatter/durationHelpers';
-import { formatLocation } from '../../cucumber/formatter/locationHelpers';
-import { ISupportCodeLibrary } from '../../cucumber/types';
+// import { formatLocation } from '../../cucumber/formatter/locationHelpers';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 import { getFeatureNameWithProject } from './messagesBuilder/Projects';
 
@@ -118,10 +117,10 @@ interface UriToTestCaseAttemptsMap {
 }
 
 export default class JsonReporter extends BaseReporter {
-  // for now omit step definitions
-  private supportCodeLibrary: Pick<ISupportCodeLibrary, 'stepDefinitions'> = {
-    stepDefinitions: [],
-  };
+  // for now omit adding step definitions to json report
+  // private supportCodeLibrary: Pick<ISupportCodeLibrary, 'stepDefinitions'> = {
+  //   stepDefinitions: [],
+  // };
 
   constructor(
     internalOptions: InternalOptions,
@@ -315,14 +314,15 @@ export default class JsonReporter extends BaseReporter {
       data.keyword = isBeforeHook ? 'Before' : 'After';
       data.hidden = true;
     }
-    if (doesHaveValue(testStep.stepDefinitionIds) && testStep.stepDefinitionIds.length === 1) {
-      const stepDefinition = this.supportCodeLibrary.stepDefinitions.find(
-        (s) => s.id === testStep.stepDefinitionIds?.[0],
-      );
-      if (doesHaveValue(stepDefinition)) {
-        data.match = { location: formatLocation(stepDefinition) };
-      }
-    }
+    // for now omit adding step definitions to json report
+    // if (doesHaveValue(testStep.stepDefinitionIds) && testStep.stepDefinitionIds.length === 1) {
+    //   const stepDefinition = this.supportCodeLibrary.stepDefinitions.find(
+    //     (s) => s.id === testStep.stepDefinitionIds?.[0],
+    //   );
+    //   if (doesHaveValue(stepDefinition)) {
+    //     data.match = { location: formatLocation(stepDefinition) };
+    //   }
+    // }
     const { message, status } = testStepResult;
     data.result = {
       status: messages.TestStepResultStatus[status].toLowerCase(),

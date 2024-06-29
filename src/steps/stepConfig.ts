@@ -4,11 +4,11 @@
 
 import { PlaywrightLocation } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
-import { GherkinStepKeyword } from '../cucumber/types';
+import { DefineStepPattern, GherkinStepKeyword } from './registry';
 
 export type StepConfig = {
   keyword: GherkinStepKeyword;
-  pattern: string | RegExp;
+  pattern: DefineStepPattern;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: (...args: any[]) => unknown;
   hasCustomTest: boolean;

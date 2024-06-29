@@ -4,10 +4,8 @@
  * const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
  */
 import { StepConfig } from '../stepConfig';
-import { GherkinStepKeyword } from '@cucumber/cucumber/lib/models/gherkin_step_keyword';
-import { DefineStepPattern } from '@cucumber/cucumber/lib/support_code_library_builder/types';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { registerStepDefinition } from '../registry';
+import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from '../registry';
 import { BddAutoInjectFixtures } from '../../run/autoInjectFixtures';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
