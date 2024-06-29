@@ -9,6 +9,7 @@ import { defineBddConfig } from 'playwright-bdd';
 export const FOO = 'foo';
 
 export default defineConfig({
+  reporter: 'line',
   projects: [
     {
       name: 'project-one',
