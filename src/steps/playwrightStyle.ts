@@ -1,13 +1,13 @@
 /**
  * Playwright-style steps.
  */
-import { FixturesArg, KeyValue } from '../../playwright/types';
-import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
-import { BddAutoInjectFixtures } from '../../run/autoInjectFixtures';
-import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { StepConfig } from '../stepConfig';
-import { ParametersExceptFirst } from '../../utils/types';
-import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from '../registry';
+import { FixturesArg, KeyValue } from '../playwright/types';
+import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
+import { BddAutoInjectFixtures } from '../run/autoInjectFixtures';
+import { getLocationByOffset } from '../playwright/getLocationInFile';
+import { StepConfig } from './stepConfig';
+import { ParametersExceptFirst } from '../utils/types';
+import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from './registry';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   fixtures: FixturesArg<T, W> & BddAutoInjectFixtures,

@@ -3,10 +3,10 @@
  * Instead they are imported as:
  * const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
  */
-import { StepConfig } from '../stepConfig';
-import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from '../registry';
-import { BddAutoInjectFixtures } from '../../run/autoInjectFixtures';
+import { StepConfig } from './stepConfig';
+import { getLocationByOffset } from '../playwright/getLocationInFile';
+import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from './registry';
+import { BddAutoInjectFixtures } from '../run/autoInjectFixtures';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
