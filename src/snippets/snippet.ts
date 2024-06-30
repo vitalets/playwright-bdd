@@ -39,7 +39,7 @@ export class Snippet {
   private buildDecoratorCode() {
     const stepType = this.getStepType();
     const pattern = this.getPattern();
-    return `@${stepType}('${pattern}')`;
+    return `@${stepType}(${pattern})`;
   }
 
   private getStepType() {
