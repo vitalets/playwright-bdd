@@ -1,5 +1,6 @@
 import { test as base } from 'playwright-bdd';
 import { AdminPage, AdminPage2, AdminPage3, IntermediatePage, TodoPage, TodoPage2 } from './poms';
+import { PomWithCustomParam } from './pomWithCustomParam';
 
 type Fixtures = {
   usedFixtures: string[];
@@ -9,6 +10,7 @@ type Fixtures = {
   adminPage2: AdminPage2;
   adminPage3: AdminPage3;
   intermediatePage: IntermediatePage;
+  pomWithCustomParam: PomWithCustomParam;
 };
 
 export const test = base.extend<Fixtures>({
@@ -19,4 +21,5 @@ export const test = base.extend<Fixtures>({
   adminPage2: ({ usedFixtures }, use) => use(new AdminPage2(usedFixtures)),
   adminPage3: ({ usedFixtures }, use) => use(new AdminPage3(usedFixtures)),
   intermediatePage: ({ usedFixtures }, use) => use(new IntermediatePage(usedFixtures)),
+  pomWithCustomParam: ({}, use) => use(new PomWithCustomParam()),
 });
