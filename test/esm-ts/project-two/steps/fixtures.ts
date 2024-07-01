@@ -1,4 +1,4 @@
-import { test as base } from '../../steps/fixtures.js';
+import { test as base } from '../../steps/fixtures2.js';
 import { AdminTodoPage } from './AdminTodoPage.js';
 
 export const test = base.extend<{ anotherOption: string; adminTodoPage: AdminTodoPage }>({
