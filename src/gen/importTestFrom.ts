@@ -4,74 +4,93 @@
 
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { TestTypeCommon } from '../playwright/types';
-import { findExportedTestWithFixture, getExportedTest } from '../steps/exportedTest';
+import {
+  findExportedTestWithFixture,
+  getExportedTest,
+  getExportedTestsCount,
+} from '../steps/exportedTest';
 import { StepDefinition } from '../steps/registry';
 import { exit } from '../utils/exit';
 import { ImportTestFrom } from './formatter';
 
-export function guessImportTestFrom(
-  featureUri: string,
-  usedStepDefinitions: Set<StepDefinition>,
-  usedDecoratorFixtures: Set<string>,
-): ImportTestFrom | undefined {
-  const usedCustomTests = getUsedCustomTests(usedStepDefinitions, usedDecoratorFixtures);
-  // todo: if usedCustomTests > 0 and exportedTest === 0 -> speciall error msg
+export class ImportTestFromGuesser {
+  private customTestsSet = new Set<TestTypeCommon>();
 
-  let topmostTest = usedCustomTests[0];
-  for (let i = 1; i < usedCustomTests.length; i++) {
-    const higherTest = selectHigherTestInstance(topmostTest, usedCustomTests[i]);
-    if (!higherTest) {
-      // todo: more details in message
+  constructor(
+    private featureUri: string,
+    private usedStepDefinitions: Set<StepDefinition>,
+    private usedDecoratorFixtures: Set<string>,
+  ) {}
+
+  guess(): ImportTestFrom | undefined {
+    this.fillCustomTestsFromRegularSteps();
+    this.fillCustomTestsFromDecoratorSteps();
+    this.exitIfNoExportedTests();
+    const customTests = [...this.customTestsSet];
+    const topmostTest = this.findTopmostTest(customTests);
+    // for default playwright-bdd baseTest -> topmostTest will be undefined
+    if (!topmostTest) return;
+    const { file, varName } = this.getExportedTest(topmostTest);
+    return { file, varName };
+  }
+
+  private fillCustomTestsFromRegularSteps() {
+    this.usedStepDefinitions.forEach(({ stepConfig }) => {
+      if (stepConfig.customTest) this.customTestsSet.add(stepConfig.customTest);
+    });
+  }
+
+  private fillCustomTestsFromDecoratorSteps() {
+    this.usedDecoratorFixtures.forEach((fixtureName) => {
+      const exportedTest = findExportedTestWithFixture(fixtureName);
+      if (!exportedTest) {
+        exit(
+          `Can't guess test instance for decorator fixture "${fixtureName}".`,
+          `Please add fixtures file to BDD configuration "steps" or set "importTestFrom" manually.`,
+        );
+      }
+      this.customTestsSet.add(exportedTest.testInstance);
+    });
+  }
+
+  private exitIfNoExportedTests() {
+    if (this.customTestsSet.size > 0 && getExportedTestsCount() === 0) {
       exit(
-        [
-          `Can't guess test instance for: ${featureUri}`,
-          `Found ${usedCustomTests.length} test instances, but they should extending each other.`,
-          `Please check BDD configuration "steps" or set "importTestFrom" manually.`,
-        ].join('\n'),
+        `Can't guess test instance for: ${this.featureUri}.`,
+        `Your tests use custom test instance, produced by test.extend().`,
+        `Please add file exporting custom test to BDD configuration "steps" or set "importTestFrom" manually.`,
       );
     }
-    topmostTest = higherTest;
   }
 
-  // for default playwright-bdd baseTest -> topmostTest will be undefined
-  if (!topmostTest) return;
+  private findTopmostTest(customTests: TestTypeCommon[]) {
+    let topmostTest = customTests[0];
 
-  const exportedTest = getExportedTest(topmostTest)!;
-  if (!exportedTest) {
-    exit(
-      [
-        `Can't guess test instance for: ${featureUri}`,
-        `Did you include fixtures file in BDD configuration "steps"?`,
-      ].join('\n'),
-    );
+    for (let i = 1; i < customTests.length; i++) {
+      const higherTest = selectHigherTestInstance(topmostTest, customTests[i]);
+      if (!higherTest) {
+        exit(
+          `Can't guess test instance for: ${this.featureUri}.`,
+          `Found ${customTests.length} test instances, but they should extending each other.`,
+          `Please check BDD configuration "steps" or set "importTestFrom" manually.`,
+        );
+      }
+      topmostTest = higherTest;
+    }
+
+    return topmostTest;
   }
 
-  return { file: exportedTest.file, varName: exportedTest.varName };
-}
-
-// todo: split on two functions
-function getUsedCustomTests(
-  stepDefinitions: Set<StepDefinition>,
-  usedDecoratorFixtures: Set<string>,
-) {
-  const set = new Set<TestTypeCommon>();
-
-  stepDefinitions.forEach(({ stepConfig }) => {
-    if (stepConfig.customTest) set.add(stepConfig.customTest);
-  });
-
-  usedDecoratorFixtures.forEach((fixtureName) => {
-    const exportedTest = findExportedTestWithFixture(fixtureName);
+  private getExportedTest(customTest: TestTypeCommon) {
+    const exportedTest = getExportedTest(customTest)!;
     if (!exportedTest) {
       exit(
-        `Can't find file that exports Playwright test with decorator fixture "${fixtureName}".`,
-        `Please check BDD configuration "steps".`,
+        `Can't guess test instance for: ${this.featureUri}.`,
+        `Did you include fixtures file in BDD configuration "steps"?`,
       );
     }
-    set.add(exportedTest.testInstance);
-  });
-
-  return [...set];
+    return exportedTest;
+  }
 }
 
 function selectHigherTestInstance(test1: TestTypeCommon, test2: TestTypeCommon) {

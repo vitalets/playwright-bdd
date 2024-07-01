@@ -34,7 +34,7 @@ import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
-import { guessImportTestFrom } from './importTestFrom';
+import { ImportTestFromGuesser } from './importTestFrom';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -135,10 +135,14 @@ export class TestFile {
   }
 
   private getRelativeImportTestFrom() {
-    const importTestFrom =
-      this.config.importTestFrom ||
-      guessImportTestFrom(this.featureUri, this.usedStepDefinitions, this.usedDecoratorFixtures);
-
+    let { importTestFrom } = this.config;
+    if (!importTestFrom) {
+      importTestFrom = new ImportTestFromGuesser(
+        this.featureUri,
+        this.usedStepDefinitions,
+        this.usedDecoratorFixtures,
+      ).guess();
+    }
     if (!importTestFrom) return;
 
     const { file, varName } = importTestFrom;

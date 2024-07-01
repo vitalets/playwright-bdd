@@ -24,6 +24,10 @@ export function getExportedTest(customTest: TestTypeCommon) {
   return exportedTests.get(customTest);
 }
 
+export function getExportedTestsCount() {
+  return exportedTests.size;
+}
+
 export function findExportedTestWithFixture(fixtureName: string) {
   for (const [testInstance, exportedTest] of exportedTests.entries()) {
     if (isTestContainsFixture(testInstance, fixtureName)) {

@@ -35,3 +35,21 @@ test(`${testDir.name} (missing-test-instance)`, () => {
     },
   );
 });
+
+test(`${testDir.name} (missing-test-instance-decorator)`, () => {
+  execPlaywrightTestWithError(
+    testDir.name,
+    `Can't guess test instance for decorator fixture "todoPage"`,
+    {
+      cmd: BDDGEN_CMD,
+      env: { PROJECT: 'missing-test-instance-decorator' },
+    },
+  );
+});
+
+test(`${testDir.name} (no-test-instances)`, () => {
+  execPlaywrightTestWithError(testDir.name, `Your tests use custom test instance`, {
+    cmd: BDDGEN_CMD,
+    env: { PROJECT: 'no-test-instances' },
+  });
+});
