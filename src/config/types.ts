@@ -3,6 +3,7 @@
  */
 import { ImportTestFrom } from '../gen/formatter';
 import { defaults } from './defaults';
+import { DisableWarningsConfig } from './warnings';
 
 // keep these fields for some time until full refuse of cucumber
 type CucumberConfigDeprecated = {
@@ -47,6 +48,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   enrichReporterData?: boolean;
   /** Set to true if your POMs have a state */
   statefulPoms?: boolean;
+  /** Disable warnings */
+  disableWarnings?: DisableWarningsConfig;
 };
 
 export type BDDConfig = BDDInputConfig &

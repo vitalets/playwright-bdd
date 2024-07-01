@@ -10,6 +10,7 @@ import { exit } from '../../utils/exit';
 import { BDDConfig } from '../../config/types';
 import { defaults } from '../../config/defaults';
 import { forceExitIfNeeded } from '../helpers';
+import { showWarnings } from '../../config/warnings';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
@@ -36,6 +37,7 @@ export const testCommand = new Command('test')
 function readConfigsFromEnv() {
   const configs: BDDConfig[] = Object.values(getEnvConfigs());
   assertConfigsCount(configs);
+  showWarnings(configs);
   return configs;
 }
 
