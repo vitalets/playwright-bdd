@@ -26,7 +26,6 @@ export default defineConfig({
       name: 'project one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        importTestFrom: 'features-one/steps/fixtures.ts',
         paths: ['features-one/*.feature'],
         require: ['features-one/steps/*.ts'],
       }),
@@ -38,7 +37,6 @@ export default defineConfig({
       name: 'project one copy',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one-copy',
-        importTestFrom: 'features-one/steps/fixtures.ts',
         paths: ['features-one/*.feature'],
         require: ['features-one/steps/*.ts'],
       }),

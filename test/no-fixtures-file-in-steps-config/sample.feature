@@ -1,4 +1,4 @@
-Feature: import test from steps - error
+Feature: feature
 
   Scenario: Simple scenario
     Given State 1

@@ -1,7 +1,7 @@
 /**
  * Playwright-style steps.
  */
-import { FixturesArg, KeyValue } from '../playwright/types';
+import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { BddAutoInjectFixtures } from '../run/autoInjectFixtures';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
@@ -16,15 +16,15 @@ export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
 
 export function playwrightStepCtor<StepFn extends StepConfig['fn']>(
   keyword: GherkinStepKeyword,
-  hasCustomTest: boolean,
+  customTest?: TestTypeCommon,
 ) {
   return (pattern: DefineStepPattern, fn: StepFn) => {
     registerStepDefinition({
       keyword,
       pattern,
       fn,
-      hasCustomTest,
       location: getLocationByOffset(3),
+      customTest,
     });
 
     return getCallableStepFn(pattern, fn);

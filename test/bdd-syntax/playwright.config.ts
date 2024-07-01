@@ -10,8 +10,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/pw-style',
         paths: ['features'],
-        require: ['steps-pw-style/steps.ts'],
-        importTestFrom: 'steps-pw-style/fixtures.ts',
+        steps: 'steps-pw-style/*.ts',
       }),
     },
     {
@@ -19,8 +18,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/cucumber-style',
         paths: ['features'],
-        require: ['steps-cucumber-style/steps.ts'],
-        importTestFrom: 'steps-cucumber-style/fixtures.ts',
+        steps: 'steps-cucumber-style/*.ts',
       }),
     },
   ],

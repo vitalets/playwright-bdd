@@ -8,8 +8,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/pw-style-success',
         paths: ['features/*.feature'],
-        require: ['steps-pw-style/index.ts'],
-        importTestFrom: 'steps-pw-style/fixtures.ts',
+        require: ['steps-pw-style/*.ts'],
         tags: '@success',
       }),
     },
@@ -18,8 +17,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/pw-style-invalid-invocation',
         paths: ['features/*.feature'],
-        require: ['steps-pw-style/index.ts'],
-        importTestFrom: 'steps-pw-style/fixtures.ts',
+        require: ['steps-pw-style/*.ts'],
         tags: '@error',
       }),
     },
@@ -28,8 +26,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/cucumber-style-success',
         paths: ['features/*.feature'],
-        require: ['steps-cucumber-style/index.ts'],
-        importTestFrom: 'steps-cucumber-style/fixtures.ts',
+        require: ['steps-cucumber-style/*.ts'],
         tags: '@success',
       }),
     },

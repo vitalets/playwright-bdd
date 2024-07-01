@@ -39,7 +39,7 @@ export async function withExitHandler(fn: () => unknown) {
   }
 }
 
-export function exit(...messages: string[]) {
+export function exit(...messages: string[]): never {
   messages = messages.filter(Boolean);
   if (isMainThread) {
     // use console.error() here instead of logger.error() to have less stack

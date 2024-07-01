@@ -7,9 +7,8 @@ export default defineConfig({
       name: 'project one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        importTestFrom: 'steps/fixtures.js',
         features: '*.feature',
-        steps: 'steps/index.js',
+        steps: 'steps/*.js',
       }),
     },
     {
@@ -17,7 +16,6 @@ export default defineConfig({
       dependencies: ['project one'],
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        importTestFrom: 'project-two/steps/fixtures.js',
         features: 'project-two/*.feature',
         steps: ['steps/*.js', 'project-two/steps/*.js'],
       }),

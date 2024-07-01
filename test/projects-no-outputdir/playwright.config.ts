@@ -6,17 +6,15 @@ export default defineConfig({
     {
       name: 'project one',
       testDir: defineBddConfig({
-        importTestFrom: 'fixtures.ts',
         paths: ['one/*.feature'],
-        require: ['steps.ts'],
+        require: ['*.ts'],
       }),
     },
     {
       name: 'project two',
       testDir: defineBddConfig({
-        importTestFrom: 'fixtures.ts',
         paths: ['two/*.feature'],
-        require: ['steps.ts'],
+        require: ['*.ts'],
       }),
     },
   ],

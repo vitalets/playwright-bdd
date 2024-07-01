@@ -3,8 +3,7 @@ import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   paths: [`features/${process.env.FEATURE}`],
-  importTestFrom: '../decorators/steps/fixtures.ts',
-  require: ['../decorators/steps/steps.ts'],
+  require: ['../decorators/steps/*.ts'],
   statefulPoms: true,
 });
 

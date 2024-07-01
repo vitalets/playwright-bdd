@@ -4,12 +4,14 @@
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
 import { requireOrImport } from '../playwright/requireOrImport';
+import { registerExportedTests } from './exportedTest';
 
 const DEFAULT_STEP_EXTENSIONS = '{js,mjs,cjs,ts,mts,cts}';
 
 export async function loadSteps(stepFiles: string[]) {
-  for (const file of stepFiles) {
-    await requireOrImport(file);
+  for (const filePath of stepFiles) {
+    const obj = await requireOrImport(filePath);
+    registerExportedTests(filePath, obj);
   }
 }
 

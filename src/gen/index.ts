@@ -11,12 +11,10 @@ import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
-import { hasCustomTest } from '../steps/createBdd';
 import { loadSteps, resolveStepFiles } from '../steps/load';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
-import { requireOrImport } from '../playwright/requireOrImport';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -34,7 +32,6 @@ export class TestFilesGenerator {
       await Promise.all([this.loadFeatures(), this.loadSteps()]);
       this.buildFiles();
       this.checkUndefinedSteps();
-      this.checkImportTestFrom();
       await this.clearOutputDir();
       await this.saveFiles();
     });
@@ -69,23 +66,15 @@ export class TestFilesGenerator {
   }
 
   private async loadSteps() {
+    const { importTestFrom } = this.config;
     const cwd = getPlaywrightConfigDir();
     this.logger.log(`Loading steps: ${this.config.steps}`);
     const stepFiles = await resolveStepFiles(cwd, this.config.steps);
+    if (importTestFrom) stepFiles.push(importTestFrom.file);
     this.logger.log(`Resolved step files: ${stepFiles.length}`);
     stepFiles.forEach((stepFiles) => this.logger.log(`  ${relativeToCwd(stepFiles)}`));
     await loadSteps(stepFiles);
-    await this.loadDecoratorStepsViaImportTestFrom();
     this.logger.log(`Loaded steps: ${stepDefinitions.length}`);
-  }
-
-  private async loadDecoratorStepsViaImportTestFrom() {
-    const { importTestFrom } = this.config;
-    if (importTestFrom) {
-      // require importTestFrom for case when it is not required by step definitions
-      // possible re-require but it's not a problem as it is cached by Node.js
-      await requireOrImport(importTestFrom.file);
-    }
   }
 
   private buildFiles() {
@@ -128,14 +117,14 @@ export class TestFilesGenerator {
     }
   }
 
-  private checkImportTestFrom() {
-    if (hasCustomTest && !this.config.importTestFrom) {
-      exit(
-        `When using custom "test" function in createBdd() you should`,
-        `set "importTestFrom" config option that points to file exporting custom test.`,
-      );
-    }
-  }
+  // private checkImportTestFrom() {
+  //   if (hasCustomTest && !this.config.importTestFrom) {
+  //     exit(
+  //       `When using custom "test" function in createBdd() you should`,
+  //       `set "importTestFrom" config option that points to file exporting custom test.`,
+  //     );
+  //   }
+  // }
 
   private async saveFiles() {
     this.logger.log(`Generating Playwright tests: ${this.files.length}`);

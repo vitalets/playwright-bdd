@@ -29,7 +29,7 @@ export function createStepDecorator(keyword: GherkinStepKeyword) {
         pattern,
         location,
         fn: method,
-        hasCustomTest: true,
+        // hasCustomTest: true,
       });
     };
   };
@@ -45,6 +45,8 @@ export function linkStepsWithPomNode(Ctor: Function, pomNode: PomNode) {
     registerDecoratorStep(stepConfig);
   });
 }
+
+// todo: link decorator steps with customTest!
 
 function registerDecoratorStep(stepConfig: StepConfig) {
   const { fn } = stepConfig;

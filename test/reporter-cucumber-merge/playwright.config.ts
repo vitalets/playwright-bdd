@@ -3,7 +3,6 @@ import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 import { testTimeout } from '../reporter-cucumber-html/timeout';
 
 const testDir = defineBddConfig({
-  importTestFrom: 'features/fixtures.ts',
   paths: ['features/*.feature'],
   require: ['features/*.ts'],
   enrichReporterData: true,

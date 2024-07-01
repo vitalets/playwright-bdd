@@ -15,18 +15,16 @@ export default defineConfig({
       name: 'project-one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        importTestFrom: 'one/steps/fixtures.ts',
         paths: ['one/*.feature'],
-        require: ['one/steps/steps-*.ts'],
+        require: ['one/steps/fixtures.ts', 'one/steps/steps-*.ts'],
       }),
     },
     {
       name: 'project-two',
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        importTestFrom: 'two/steps/fixtures.ts',
         paths: ['two/*.feature'],
-        require: ['one/steps/steps-shared.ts', 'two/steps/steps.ts'],
+        require: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
       dependencies: ['project-one'],
     },
@@ -34,9 +32,8 @@ export default defineConfig({
       name: 'project-two-copy',
       testDir: defineBddConfig({
         outputDir: '.features-gen/two-copy',
-        importTestFrom: 'two/steps/fixtures.ts',
         paths: ['two/*.feature'],
-        require: ['one/steps/steps-shared.ts', 'two/steps/steps.ts'],
+        require: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
       dependencies: ['project-one'],
     },

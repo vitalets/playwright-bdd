@@ -34,6 +34,7 @@ import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
+import { guessImportTestFrom } from './importTestFrom';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -53,7 +54,8 @@ export class TestFile {
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
   private testMetaBuilder: TestMetaBuilder;
-  public hasCustomTest = false;
+  private usedDecoratorFixtures = new Set<string>();
+
   public undefinedSteps: UndefinedStep[] = [];
   public featureUri: string;
   public usedStepDefinitions = new Set<StepDefinition>();
@@ -99,9 +101,11 @@ export class TestFile {
   build() {
     if (!this.pickles.length) return this;
     this.loadI18nKeywords();
+    // important to calc suites first, b/c header depend on used steps
+    const suites = this.getRootSuite();
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
-      ...this.getRootSuite(),
+      ...suites,
       ...this.getTechnicalSection(),
     ];
     return this;
@@ -131,8 +135,12 @@ export class TestFile {
   }
 
   private getRelativeImportTestFrom() {
-    const { importTestFrom } = this.config;
+    const importTestFrom =
+      this.config.importTestFrom ||
+      guessImportTestFrom(this.featureUri, this.usedStepDefinitions, this.usedDecoratorFixtures);
+
     if (!importTestFrom) return;
+
     const { file, varName } = importTestFrom;
     const dir = path.dirname(this.outputPath);
     return {
@@ -290,6 +298,7 @@ export class TestFile {
     decoratorSteps.resolveFixtureNames();
     decoratorSteps.forEach(({ index, keyword, pickleStep, fixtureName }) => {
       testFixtureNames.add(fixtureName);
+      this.usedDecoratorFixtures.add(fixtureName);
       lines[index] = this.formatter.step(keyword, pickleStep.text, pickleStep.argument, [
         fixtureName,
       ]);
@@ -324,7 +333,7 @@ export class TestFile {
     this.usedStepDefinitions.add(stepDefinition);
 
     const stepConfig = stepDefinition.stepConfig;
-    if (stepConfig.hasCustomTest) this.hasCustomTest = true;
+    // if (stepConfig.hasCustomTest) this.hasCustomTest = true;
 
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)

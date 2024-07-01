@@ -2,7 +2,7 @@
  * Playwright-bdd's step config.
  */
 
-import { PlaywrightLocation } from '../playwright/types';
+import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
 import { DefineStepPattern, GherkinStepKeyword } from './registry';
 
@@ -11,8 +11,8 @@ export type StepConfig = {
   pattern: DefineStepPattern;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: (...args: any[]) => unknown;
-  hasCustomTest: boolean;
   location: PlaywrightLocation;
+  customTest?: TestTypeCommon;
   pomNode?: PomNode; // for decorator steps
   worldFixture?: string; // for new cucumber-style steps
 };

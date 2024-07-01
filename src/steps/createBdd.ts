@@ -19,11 +19,6 @@ import { PlaywrightStyleStepFn, playwrightStepCtor } from './playwrightStyle';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
-// Global flag showing that custom test was passed.
-// Used when checking 'importTestFrom' config option.
-// todo: https://github.com/vitalets/playwright-bdd/issues/46
-export let hasCustomTest = false;
-
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
 };
@@ -36,7 +31,7 @@ export function createBdd<
   // otherwise it breaks TS non-strict mode
   // see: https://github.com/vitalets/playwright-bdd/issues/163
   WorldFixtureName extends keyof CustomFixtures<T> | '' = '',
->(customTest?: TestType<T, W> | null, options?: CreateBddOptions<WorldFixtureName>) {
+>(customTest?: TestType<T, W>, options?: CreateBddOptions<WorldFixtureName>) {
   // TypeScript does not narrow generic types by control flow
   // see: https://github.com/microsoft/TypeScript/issues/33912
   // So, we define return types separately using conditional types
@@ -52,7 +47,8 @@ export function createBdd<
     ? ReturnType<typeof cucumberStepCtor<StepFn>>
     : ReturnType<typeof playwrightStepCtor<StepFn>>;
 
-  if (!hasCustomTest) hasCustomTest = isCustomTest(customTest);
+  if (customTest === (baseBddTest as TestTypeCommon)) customTest = undefined;
+  if (customTest) assertTestHasBddFixtures(customTest);
 
   const BeforeAll = workerHookFactory<W>('beforeAll');
   const AfterAll = workerHookFactory<W>('afterAll');
@@ -61,27 +57,22 @@ export function createBdd<
 
   // cucumber-style
   if (options && 'worldFixture' in options && options.worldFixture) {
-    if (!hasCustomTest) {
+    if (!customTest) {
       exit(`When using worldFixture, you should provide custom test to createBdd()`);
     }
-    const Given = cucumberStepCtor('Given', options.worldFixture) as StepCtor;
-    const When = cucumberStepCtor('When', options.worldFixture) as StepCtor;
-    const Then = cucumberStepCtor('Then', options.worldFixture) as StepCtor;
-    const Step = cucumberStepCtor('Unknown', options.worldFixture) as StepCtor;
+    const Given = cucumberStepCtor('Given', customTest, options.worldFixture) as StepCtor;
+    const When = cucumberStepCtor('When', customTest, options.worldFixture) as StepCtor;
+    const Then = cucumberStepCtor('Then', customTest, options.worldFixture) as StepCtor;
+    const Step = cucumberStepCtor('Unknown', customTest, options.worldFixture) as StepCtor;
     return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
   }
 
-  const Given = playwrightStepCtor('Given', hasCustomTest) as StepCtor;
-  const When = playwrightStepCtor('When', hasCustomTest) as StepCtor;
-  const Then = playwrightStepCtor('Then', hasCustomTest) as StepCtor;
-  const Step = playwrightStepCtor('Unknown', hasCustomTest) as StepCtor;
+  // playwright-style
+  const Given = playwrightStepCtor('Given', customTest) as StepCtor;
+  const When = playwrightStepCtor('When', customTest) as StepCtor;
+  const Then = playwrightStepCtor('Then', customTest) as StepCtor;
+  const Step = playwrightStepCtor('Unknown', customTest) as StepCtor;
   return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
-}
-
-function isCustomTest(customTest?: TestTypeCommon | null) {
-  if (!customTest || customTest === (baseBddTest as TestTypeCommon)) return false;
-  assertTestHasBddFixtures(customTest);
-  return true;
 }
 
 function assertTestHasBddFixtures(customTest: TestTypeCommon) {

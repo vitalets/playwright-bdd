@@ -27,6 +27,10 @@ function getTestImpl(test: TestTypeCommon) {
   return test[testTypeSymbol] as any;
 }
 
+export function isPlaywrightTestInstance(value: unknown): value is TestTypeCommon {
+  return typeof value === 'function' && getTestImpl(value as TestTypeCommon);
+}
+
 // Partial copy of Playwright's TestStepInternal
 // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L32
 interface TestStepInternal {
@@ -89,6 +93,12 @@ export function isTestContainsSubtest(test: TestTypeCommon, subtest: TestTypeCom
   return getTestFixtures(subtest).every((f) => {
     return testFixtures.has(locationToString(f.location));
   });
+}
+
+export function isTestContainsFixture(test: TestTypeCommon, fixtureName: string) {
+  for (const { fixtures } of getTestFixtures(test)) {
+    if (Object.prototype.hasOwnProperty.call(fixtures, fixtureName)) return true;
+  }
 }
 
 function locationToString({ file, line, column }: Location) {

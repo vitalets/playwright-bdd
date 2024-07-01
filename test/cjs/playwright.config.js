@@ -2,7 +2,6 @@ const { defineConfig } = require('@playwright/test');
 const { defineBddConfig } = require('playwright-bdd');
 
 const testDir = defineBddConfig({
-  importTestFrom: 'steps/fixtures.js',
   paths: ['*.feature'],
   require: ['steps/*.js'],
 });

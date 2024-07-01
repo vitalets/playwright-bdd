@@ -7,9 +7,8 @@ export default defineConfig({
       name: 'project1',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        importTestFrom: 'steps/fixtures.ts',
         paths: ['features'],
-        require: ['steps/steps.ts'],
+        require: ['steps/*.ts'],
       }),
     },
     {

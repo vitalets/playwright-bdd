@@ -3,8 +3,5 @@ import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mj
 const testDir = new TestDir(import.meta);
 
 test(testDir.name, () =>
-  execPlaywrightTestWithError(
-    testDir.name,
-    `When using custom "test" function in createBdd() you should`,
-  ),
+  execPlaywrightTestWithError(testDir.name, `Can't guess test instance for: sample.feature`),
 );
