@@ -6,7 +6,7 @@ import { isPlaywrightTestInstance, isTestContainsFixture } from '../playwright/t
 
 const exportedTests = new Map<TestTypeCommon, ExportedTest>();
 
-export type ExportedTest = {
+type ExportedTest = {
   testInstance: TestTypeCommon;
   file: string;
   varName: string;
