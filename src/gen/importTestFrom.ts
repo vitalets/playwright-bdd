@@ -46,7 +46,7 @@ export class ImportTestFromGuesser {
       if (!exportedTest) {
         exit(
           `Can't guess test instance for decorator fixture "${fixtureName}".`,
-          `Please add fixtures file to BDD configuration "steps" or set "importTestFrom" manually.`,
+          `Please add fixture files to BDD configuration "steps" or set "importTestFrom" manually.`,
         );
       }
       this.customTestsSet.add(exportedTest.testInstance);
@@ -86,7 +86,7 @@ export class ImportTestFromGuesser {
     if (!exportedTest) {
       exit(
         `Can't guess test instance for: ${this.featureUri}.`,
-        `Did you include fixtures file in BDD configuration "steps"?`,
+        `Did you include all fixture files in BDD configuration "steps"?`,
       );
     }
     return exportedTest;
