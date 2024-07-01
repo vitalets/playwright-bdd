@@ -4,9 +4,9 @@
 import { TestTypeCommon } from '../playwright/types';
 import { isPlaywrightTestInstance, isTestContainsFixture } from '../playwright/testTypeImpl';
 
-const exportedTests = new Map<TestTypeCommon, ExportedTest>();
+const exportedTests = new Map<TestTypeCommon, ExportedTestInfo>();
 
-type ExportedTest = {
+type ExportedTestInfo = {
   testInstance: TestTypeCommon;
   file: string;
   varName: string;
