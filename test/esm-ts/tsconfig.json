@@ -3,10 +3,6 @@
     "target": "es2021",
     "module": "nodenext",
     "strict": true,
-    "useUnknownInCatchVariables": false,
-    "forceConsistentCasingInFileNames": true,
-    "allowSyntheticDefaultImports": true,
-    "resolveJsonModule": true,
     "esModuleInterop": true
   },
   "include": ["**/*.ts"]
