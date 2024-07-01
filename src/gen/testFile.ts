@@ -24,7 +24,6 @@ import { extractTemplateParams, template } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
-import { extractFixtureNames } from './fixtures';
 import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
@@ -35,6 +34,8 @@ import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
+import { isBddAutoInjectFixture } from '../run/autoInjectFixtures';
+import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -415,13 +416,15 @@ export class TestFile {
     return enKeyword;
   }
 
-  // eslint-disable-next-line complexity
   private getStepFixtureNames({ stepConfig }: StepDefinition) {
     // for decorator steps fixtureNames are defined later in second pass
     if (isDecorator(stepConfig)) return [];
+
     // for cucumber-style there is no fixtures arg
     if (isCucumberStyleStep(stepConfig)) return [];
-    return extractFixtureNames(stepConfig.fn);
+
+    return fixtureParameterNames(stepConfig.fn) // prettier-ignore
+      .filter((name) => !isBddAutoInjectFixture(name));
   }
 
   private getOutlineTestTitle(
