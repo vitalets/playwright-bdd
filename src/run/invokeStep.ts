@@ -4,13 +4,13 @@
 
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { isEnglish } from '../config/lang';
 import { DataTable } from '../cucumber/DataTable';
 import { BddContext } from './types';
 import { getBddAutoInjectFixtures } from './autoInjectFixtures';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
+import { runStepWithLocation } from '../playwright/runStepWithLocation';
 
 type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';
 
@@ -57,7 +57,7 @@ class StepInvoker {
     // update step title to be accessible via $step.title
     this.bddContext.step.title = stepText;
 
-    await runStepWithCustomLocation(this.bddContext.test, stepTitle, location, () =>
+    await runStepWithLocation(this.bddContext.test, stepTitle, location, () =>
       stepDefinition.code(fixturesArg, ...parameters),
     );
   }

@@ -12,8 +12,8 @@ import { KeyValue, PlaywrightLocation } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
-import { runStepWithCustomLocation } from '../playwright/testTypeImpl';
 import { BddContext } from '../run/types';
+import { runStepWithLocation } from '../playwright/runStepWithLocation';
 
 type ScenarioHookOptions = {
   name?: string;
@@ -94,7 +94,7 @@ export async function runScenarioHooks<Fixtures extends ScenarioHookBddFixtures>
 
     try {
       const hookFn = wrapHookFn(hook, fixtures);
-      await runStepWithCustomLocation(
+      await runStepWithLocation(
         fixtures.$bddContext.test,
         hook.options.name || '',
         hook.location,
