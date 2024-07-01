@@ -1,29 +1,56 @@
-import { test as base } from '@playwright/test';
-import { getConfigFromEnv } from '../config/env';
-import { getPlaywrightConfigDir } from '../config/configDir';
+/**
+ * Test-scoped fixtures added by playwright-bdd.
+ */
+import { BddContextWorker, BddFixturesWorker, test as base } from './workerFixtures';
 import { runScenarioHooks } from '../hooks/scenario';
-import { runWorkerHooks } from '../hooks/worker';
 import { createStepInvoker } from './invokeStep';
 import { getTestMeta } from '../gen/testMeta';
 import { getEnrichReporterData } from '../config/enrichReporterData';
-import { BddDataManager } from './bddData';
-import { BddFixtures, BddFixturesWorker } from './types';
 import { SpecialTags } from '../specialTags';
-import { loadSteps, resolveStepFiles } from '../steps/load';
+import { TestTypeCommon } from '../playwright/types';
+import { StepKeywordFixture } from './invokeStep';
+import { TestMeta, TestMetaMap } from '../gen/testMeta';
+import { TestInfo } from '@playwright/test';
+import { BddDataManager } from './bddData';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
-export const test = base.extend<BddFixtures, BddFixturesWorker>({
-  $bddContextWorker: [
-    async ({}, use, workerInfo) => {
-      const config = getConfigFromEnv(workerInfo.project.testDir);
-      const cwd = getPlaywrightConfigDir();
-      const stepFiles = await resolveStepFiles(cwd, config.steps);
-      await loadSteps(stepFiles);
-      await use({ config });
-    },
-    { scope: 'worker' },
-  ],
+type StepFixture = {
+  title: string;
+};
+
+export type BddFixtures = BddFixturesWorker & {
+  $bddContext: BddContext;
+  Given: StepKeywordFixture;
+  When: StepKeywordFixture;
+  Then: StepKeywordFixture;
+  And: StepKeywordFixture;
+  But: StepKeywordFixture;
+  $testMetaMap: TestMetaMap;
+  $testMeta: TestMeta;
+  $tags: string[];
+  $test: TestTypeCommon;
+  $step: StepFixture;
+  $uri: string;
+  $scenarioHookFixtures: Record<string, unknown>;
+  $before: void;
+  $after: void;
+  $lang: string;
+  $applySpecialTags: void;
+  $world: unknown;
+};
+
+export type BddContext = BddContextWorker & {
+  test: TestTypeCommon;
+  testInfo: TestInfo;
+  lang: string;
+  tags: string[];
+  step: StepFixture;
+  world: unknown;
+  bddDataManager?: BddDataManager;
+};
+
+export const test = base.extend<BddFixtures>({
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
   $applySpecialTags: async ({ $testMeta }, use, testInfo) => {
@@ -125,28 +152,4 @@ export const test = base.extend<BddFixtures, BddFixturesWorker>({
       ...$scenarioHookFixtures,
     });
   },
-
-  // can be owerwritten in test file if there are worker hooks
-  $workerHookFixtures: [({}, use) => use({}), { scope: 'worker' }],
-  $beforeAll: [
-    // Important unused dependencies:
-    // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
-    // 2. $bddContextWorker: to load hooks before this fixtures
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
-      await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
-      await use();
-    },
-    { scope: 'worker' },
-  ],
-  $afterAll: [
-    // Important unused dependencies:
-    // 1. $bddContextWorker: to load hooks before this fixtures
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
-      await use();
-      await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
-    },
-    { scope: 'worker' },
-  ],
 });

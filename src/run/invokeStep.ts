@@ -7,10 +7,10 @@ import { getLocationInFile } from '../playwright/getLocationInFile';
 import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { isEnglish } from '../config/lang';
 import { DataTable } from '../cucumber/DataTable';
-import { BddContext } from './types';
 import { getBddAutoInjectFixtures } from './autoInjectFixtures';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
+import { BddContext } from './testFixtures';
 
 type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';
 

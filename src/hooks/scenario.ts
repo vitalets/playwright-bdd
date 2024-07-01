@@ -12,8 +12,8 @@ import { KeyValue, PlaywrightLocation } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
-import { BddContext } from '../run/types';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
+import { BddContext } from '../run/testFixtures';
 
 type ScenarioHookOptions = {
   name?: string;

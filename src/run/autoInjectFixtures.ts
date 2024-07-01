@@ -1,11 +1,11 @@
 /**
  * Auto-inject fixtures are automatically injected into every step call
  * without explicitly passing them in the last argument of Given() / When() / Then().
- * It just reduces generated files visually.
+ * It just reduces generated code visually.
  */
 
 import { TestInfo } from '@playwright/test';
-import { BddContext, BddFixtures } from './types';
+import { BddContext, BddFixtures } from './testFixtures';
 
 export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags' | '$step'> & {
   $testInfo: TestInfo;
