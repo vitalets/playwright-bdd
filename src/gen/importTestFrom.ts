@@ -25,7 +25,7 @@ export function guessImportTestFrom(
       exit(
         [
           `Can't guess test instance for: ${featureUri}`,
-          `Selecting between ${usedCustomTests.length} tests.`,
+          `Found ${usedCustomTests.length} test instances, but they should extending each other.`,
           `Please check BDD configuration "steps" or set "importTestFrom" manually.`,
         ].join('\n'),
       );
