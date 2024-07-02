@@ -152,18 +152,108 @@ import { DataTable } from 'playwright-bdd';
 ```
 
 #### Other changes
-* minimal Playwright version increased to **1.35**
-* minimal Node.js version increased to **18**
+* minimal Playwright version increased to **v1.35**
+* minimal Node.js version increased to **v18**
 
 ## Cucumber-style only
 Below changes are related only to **cucumber-style steps**.
 
 #### Given/When/Then import
-  - `Given`, `When`, `Then` should be created via `createBdd` instead of importing from `@cucumber/cucumber`
-  
-#### Cucumber world
+Before v7 `Given / When / Then` for cucumber-style were imported directly from `@cucumber/cucumber` package. Now Cucumber package is removed, and these functions should be imported from `createBdd` call similar to Playwright-style steps. The only difference - you pass `worldFixture` name in a second parameter. 
 
-  - there no default Cucumber world. World can be defined as a regular Playwright fixture
-- default world is not available any more, use worldFixture and create own world
-  - add example of previous world
-- createBdd with world second param does not work any more, use fixture
+Before:
+
+**steps.ts**
+```ts
+import { Given, When, Then } from '@cucumber/cucumber';
+
+Given('I am on home page', async function () {
+  await this.page.goto('/');
+});
+```
+Since v7:
+
+**steps.ts**
+```ts
+import { Given, When, Then } from './fixtures';
+
+Given('I am on home page', async function () {
+  await this.page.goto('/');
+});
+```
+
+**fixtures.ts**
+```ts 
+import { test as base, createBdd } from 'playwright-bdd';
+
+// define simplest world
+type World  = { page: Page };
+
+export const test = base.extend<{ world: World }>({
+  world: async ({ page }, use) => {
+    const world = { page };
+    await use(world);
+  }),
+});
+
+export const { Given, When, Then } = createBdd(test, { 
+  worldFixture: 'world' 
+});
+```
+
+> Check-out full Cucumber-style example in [examples/cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
+
+#### Cucumber world
+There is no built-in Cucumber world anymore. Although it requires more code in userland,
+it gives your full control over world's shape and performance. You pass world as a regular Playwright fixture and provide only dependencies that you need. You are not restrcited to inherit world from some base class. When world fixture is provided to `test.extend()`, you pass the name of that fixture to `createBdd` and get `Given / When / Then` bound to that world.
+
+Example:
+
+1. **world.ts** - create some world
+
+```ts
+import { Page, TestInfo } from '@playwright/test';
+
+export class MyWorld {
+  constructor (public page: Page, testInfo: TestInfo) {}
+
+  async openHomepage() {
+    await this.page.goto('/');
+  }
+
+  async clickLink(name: string) {
+    await this.page.getByRole('link', { name }).click();
+  }
+};
+```
+
+2. **fixtures.ts** - wrap world into Playwright fixture and create `Given / When / Then`
+
+```ts
+import { test as base, createBdd } from 'playwright-bdd';
+import { MyWorld } from './world';
+
+export const test = base.extend<{ myWorld: MyWorld }>({
+  myWorld: async ({ page }, use, testInfo) => use(new MyWorld(page, testInfo));
+});
+
+export const { Given, When, Then } = createBdd(test, { 
+  worldFixture: 'myWorld' 
+});
+```
+
+3. **steps.ts** - write steps in cucumber-style
+
+```ts
+import { Given, When, Then } from './fixtures';
+
+Given('I am on the home page', async function () {
+  await this.openHomepage()
+});
+
+When('I click link {string}', async function (text: string) {
+  await this.clickLink(text);
+});
+```
+
+> Check-out full Cucumber-style example in [examples/cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
