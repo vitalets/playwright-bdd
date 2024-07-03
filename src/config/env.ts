@@ -39,7 +39,8 @@ export function saveConfigToEnv(config: BDDConfig) {
     if (!isSameConfigs(config, existingConfig)) {
       exit(
         `When using several calls of defineBddConfig()`,
-        `please manually provide different "outputDir" option.`,
+        `please manually provide different "outputDir" option for each project,`,
+        `or use defineBddProject() helper.`,
       );
     }
     return;
