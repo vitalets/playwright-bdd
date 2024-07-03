@@ -37,7 +37,6 @@ function buildAndInstallPlaywrightBdd() {
     isCI && fs.rmSync('node_modules', { recursive: true });
     !isCI && runCmd(`npm install --omit=peer --no-save ../${generatedTar}`, { cwd: 'examples' });
     isCI && runCmd(`npm install --no-save ../${generatedTar}`, { cwd: 'examples' });
-    // isCI && runCmd(`npm install @playwright/test@latest`, { cwd: 'examples' });
     isCI && runCmd(`npx playwright install --with-deps chromium`, { cwd: 'examples' });
   } finally {
     fs.rmSync(generatedTar, { force: true });
