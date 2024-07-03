@@ -59,6 +59,34 @@ export default defineConfig({
 });
 ```
 
+Since **playwright-bdd v7** there is new helper function [`defineBddProject()`](api.md#definebddprojectconfig) that automatically sets `outputDir` from project name:
+
+```ts
+import { defineConfig } from '@playwright/test';
+import { defineBddProject } from 'playwright-bdd';
+
+export default defineConfig({
+  projects: [
+    {
+      ...defineBddProject({
+        name: 'project-one',
+        importTestFrom: 'project-one/steps/fixtures.ts',
+        paths: ['project-one/*.feature'],
+        require: ['project-one/steps/*.ts'],
+      }),
+    },
+    {
+      ...defineBddProject({
+        name: 'project-two',
+        importTestFrom: 'project-two/steps/fixtures.ts',
+        paths: ['project-two/*.feature'],
+        require: ['project-two/steps/*.ts'],
+      }),
+    },
+  ],
+});
+```
+
 #### Authentication project
 
 When using [separate project for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
