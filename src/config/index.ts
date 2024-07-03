@@ -8,7 +8,16 @@ import { getPlaywrightConfigDir } from './configDir';
 import { BDDConfig, BDDInputConfig } from './types';
 import { defaults } from './defaults';
 
-export function defineBddConfig(inputConfig?: BDDInputConfig) {
+export function defineBddProject(config: BDDInputConfig & { name: string }) {
+  const { name, ...bddConfig } = config;
+  if (name && !bddConfig.outputDir) {
+    bddConfig.outputDir = path.join(defaults.outputDir, name);
+  }
+  const testDir = defineBddConfig(bddConfig);
+  return { name, testDir };
+}
+
+export function defineBddConfig(inputConfig: BDDInputConfig) {
   const isMainProcess = !process.env.TEST_WORKER_INDEX;
   const configDir = getPlaywrightConfigDir({ resolveAndSave: isMainProcess });
   const config = getConfig(configDir, inputConfig);
@@ -22,7 +31,7 @@ export function defineBddConfig(inputConfig?: BDDInputConfig) {
 }
 
 // eslint-disable-next-line complexity
-function getConfig(configDir: string, inputConfig?: BDDInputConfig): BDDConfig {
+function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, inputConfig);
 
   const features = config.features || config.paths;

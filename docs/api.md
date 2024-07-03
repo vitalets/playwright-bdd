@@ -8,6 +8,31 @@ Defines BDD config inside Playwright config file.
 
 **Returns**: *string* - directory where test files will be generated
 
+### `defineBddProject(config)`
+A thin wrapper around `defineBddConfig()` that makes BDD configuration of Playwright projects a bit easier. In addition to the standard BDD config, it accepts a project name and automatically sets [`outputDir`](configuration/options.md#outputdir) based on that name. The function returns an object `{ name, testDir }`, which can be merged into project config with spread operator.
+
+**Params**
+  * `config` *object* - BDD [configuration](configuration/index.md) + project name `{ name: string }`
+
+**Returns**: *{ name, testDir }* - object containing project name and generated tests directory
+
+**Usage**:
+```ts
+import { defineConfig } from '@playwright/test';
+import { defineBddProject } from 'playwright-bdd';
+
+export default defineConfig({
+  projects: [
+    {
+      ...defineBddProject({
+        name: 'foo',
+        features: '*.feature',
+        steps: 'steps/*.ts',
+      }), // -> { name: 'foo', testDir: '.features-gen/foo' }
+    },
+    
+```   
+
 ### `cucumberReporter(reporter, options?)`
 Helper to output test results in various [Cucumber reporters](reporters/cucumber.md).
 

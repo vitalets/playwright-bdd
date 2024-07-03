@@ -84,9 +84,6 @@ const testDir = defineBddConfig({
 
 > `importTestFrom` can be still used for some specific casees. If you have such case, feel free to share it in issues, we can try to improve the algorithm.
 
-#### outputDir
-tbd
-
 #### Cucumber config
 Before v7, if there was `cucumber.js` file, it was loaded and merged into BDD configuration. Now `cucumber.js` is not loaded anymore. You can provide all BDD options in `playwright.config.ts` explicitly.
 

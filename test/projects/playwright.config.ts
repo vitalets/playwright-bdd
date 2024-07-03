@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddProject } from 'playwright-bdd';
 
 // Exporting const from config and importing in test is shown in Playwright docs.
 // This leads to re-evaluation of config in worker and re-call of defineBddConfig().
@@ -12,26 +12,23 @@ export default defineConfig({
   reporter: 'line',
   projects: [
     {
-      name: 'project-one',
-      testDir: defineBddConfig({
-        outputDir: '.features-gen/one',
+      ...defineBddProject({
+        name: 'project-one',
         paths: ['one/*.feature'],
         require: ['one/steps/fixtures.ts', 'one/steps/steps-*.ts'],
       }),
     },
     {
-      name: 'project-two',
-      testDir: defineBddConfig({
-        outputDir: '.features-gen/two',
+      ...defineBddProject({
+        name: 'project-two',
         paths: ['two/*.feature'],
         require: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
       dependencies: ['project-one'],
     },
     {
-      name: 'project-two-copy',
-      testDir: defineBddConfig({
-        outputDir: '.features-gen/two-copy',
+      ...defineBddProject({
+        name: 'project-two-copy',
         paths: ['two/*.feature'],
         require: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
