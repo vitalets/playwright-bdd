@@ -1,6 +1,7 @@
 # API
 
 ### `defineBddConfig(config)`
+
 Defines BDD config inside Playwright config file.
 
 **Params**
@@ -9,6 +10,8 @@ Defines BDD config inside Playwright config file.
 **Returns**: *string* - directory where test files will be generated
 
 ### `defineBddProject(config)`
+<div style="color: gray; font-size: 0.8em">Since <b>v7.0.0</b></div>
+
 A thin wrapper around `defineBddConfig()` that makes BDD configuration of Playwright projects a bit easier. In addition to the standard BDD config, it accepts a project name and automatically sets [`outputDir`](configuration/options.md#outputdir) based on that name. The function returns an object `{ name, testDir }`, which can be merged into project config with spread operator.
 
 **Params**
