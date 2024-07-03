@@ -80,7 +80,7 @@ Defines `Given` step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures
+    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -91,7 +91,7 @@ Defines `When` step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures
+    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -102,7 +102,7 @@ Defines `Then` step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures
+    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -113,7 +113,7 @@ Defines universal step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures
+    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -155,7 +155,7 @@ Defines `BeforeAll` hook.
   * `hookFn` *Function* hook function `(fixtures?) => void`:
     - `fixtures` *object* - Playwright [worker-scoped fixtures](https://playwright.dev/docs/test-fixtures#worker-scoped-fixtures):
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo)
-      - any other built-in and custom worker-scoped fixtures
+      - any other built-in and custom **worker-scoped** fixtures
 
 ### `AfterAll(options?, hookFn)`
 Defines `AfterAll` hook.
@@ -166,7 +166,7 @@ Defines `AfterAll` hook.
   * `hookFn` *Function* hook function `(fixtures?) => void`:
     - `fixtures` *object* - Playwright [worker-scoped fixtures](https://playwright.dev/docs/test-fixtures#worker-scoped-fixtures):
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo)
-      - any other built-in and custom worker-scoped fixtures
+      - any other built-in and custom **worker-scoped** fixtures
 
 ### `@Fixture(fixtureName)`
 Class decorator to bind POM with fixture name.
