@@ -1,14 +1,24 @@
 # Playwright-style steps
-Playwright-style allows you to write step definitions like regular Playwright tests.
-You get all benefits of [built-in fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures) as well as [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures).
+Playwright-style allows you to write step definitions like a regular Playwright tests.
 
-Playwright-style highlights:
- 
-* use `Given`, `When`, `Then` from `createBdd()` call (see example below)
-* use arrow functions for step definitions, Playwright fixtures passed as first argument
-* don't use `World` / `this`
+* step definitions accept custom fixtures as a first parameter, and the rest are step parameters
+* step definitions don't use World (`this`)
+* step definitions can (and should) be defined as arrow functions
 
-Example:
+Comparison of Playwright-style and Cucumber-style steps:
+```ts
+// Playwright-style step
+Given('I open page {string}', async ({ page }, url: string) => {
+  await page.goto(url);
+});
+
+// Cucumber-style step
+Given('I open page {string}', async function (url: string) {
+  await this.page.goto(url);
+});
+```
+
+To produce `Given / When / Then` for playwright-style with default fixtures, call `createBdd()` without any arguments:
 
 ```ts
 import { createBdd } from 'playwright-bdd';
@@ -24,14 +34,12 @@ When('I click link {string}', async ({ page }, name: string) => {
 });
 ```
 
-> Usually step functions are async, but they can synchronous as well
+> Usually step functions are async, but they can be synchronous as well
 
-?> Calling `const { Given, When, Then } = createBdd()` at the top of each step file is normal, because it returns light-weight wrappers without heavy operations
+## Custom fixtures
+You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions.
 
-## Fixtures
-To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions:
-
-1. Import test as base from `playwright-bdd` and extend it with fixtures:
+1. First you should extend base test from `playwright-bdd` with custom fixtures:
     ```ts
     // fixtures.ts
     // Note: import base from playwright-bdd, not from @playwright/test!
@@ -43,20 +51,33 @@ To use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures
       }
     });
     ```
-2. Pass custom `test` as a first argument to `createBdd()`:
+2. Then in the same file you can construct `Given / When / Then`, passing `test` instance as a first argument to `createBdd()`:
+    ```ts
+    // fixtures.ts
+    // Note: import base from playwright-bdd, not from @playwright/test!
+    import { test as base } from 'playwright-bdd';
+
+    export const test = base.extend<{ myFixture: MyFixture }>({
+      myFixture: async ({ page }, use) => {
+        await use(new MyFixture(page));
+      }
+    });
+
+    export const { Given, When, Then } = createBdd(test);
+    ```
+
+3. Use these functions to define steps:
     ```ts
     // steps.ts
     import { createBdd } from 'playwright-bdd';
-    import { test } from './fixtures';
-
-    const { Given, When, Then } = createBdd(test);
+    import { Given, When, Then } from './fixtures';
 
     Given('I open url {string}', async ({ myFixture }, url: string) => { 
       // ... 
     });
     ```
 
-3. Set config option `importTestFrom` which points to file exporting custom `test` function: 
+4. (**Optional since v7**) Set config option `importTestFrom` which points to file exporting custom `test` function: 
     ```js
     // playwright.config.ts
 
@@ -191,8 +212,9 @@ Feature: Some feature
 
 Step definition:
 ```ts
-import { createBdd } from 'playwright-bdd';
-import { DataTable } from '@cucumber/cucumber';
+import { createBdd, DataTable } from 'playwright-bdd';
+// before playwright-bdd v7
+// import { DataTable } from '@cucumber/cucumber';
 
 const { Given, When, Then } = createBdd();
 

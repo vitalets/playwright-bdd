@@ -1,13 +1,29 @@
 # Cucumber-style steps
 
-?> This is a new approach for cucumber-style steps, for old one please check [cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
+?> This is a new approach for cucumber-style steps since **v7**. For old one please check [cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
 
 Cucumber-style step definitions are compatible with CucumberJS.
 
-The key point is that step definitions use World (`this`) to access Playwright APIs.
+ * step definitions use World (`this`) to interact with browser
+ * step definitions receive only step parameters, don't receive custom fixtures as a first parameter
+ * step definitions can't be defined as arrow functions
+
+Comparison of Cucumber-style and Playwright-style step:
+```ts
+// Cucumber-style step
+Given('I open page {string}', async function (url: string) {
+  await this.page.goto(url);
+});
+
+// Playwright-style step
+Given('I open page {string}', async ({ page }, url: string) => {
+  await page.goto(url);
+});
+```
+
 In terms of Playwright, World is just a test-scoped fixture, that is automatically provided to all step definitions.
 
-In this new approach, you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures and use them in step definitions.
+Since `playwright-bdd` v7 you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures and use them in step definitions.
 
 **Example of cucumber-style setup:**
 
@@ -26,21 +42,9 @@ export class World {
 }
 ```
 
-> There is also no need to call `setWorldConstructor` like for [CucumberJs custom world](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md#custom-worlds).
+> No need to call `setWorldConstructor` as it was before for [CucumberJs custom world](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md#custom-worlds).
 
-2. Provide world to test as Playwright fixture:
-
-```ts
-// fixtures.ts
-import { test as base } from 'playwright-bdd';
-import { World } from './world';
-
-export const test = base.extend<{ world: World }>({
-  world: ({ page }, use) => use(new World(page)),
-});
-```
-
-3. Export `Given / When / Then` functions via `createBdd()`. Parameter `worldFixture` is **required** for Cucumber-style:
+2. Extend Playwright's test with world fixture and export `Given / When/ Then`:
 
 ```ts
 // fixtures.ts
@@ -51,10 +55,12 @@ export const test = base.extend<{ world: World }>({
   world: ({ page }, use) => use(new World(page)),
 });
 
-export const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
+export const { Given, When, Then } = createBdd(test, { 
+  worldFixture: 'world' 
+});
 ```
 
-4. Use these `Given / When / Then` functions to define steps, world instance is accessible as `this`:
+3. Use these `Given / When / Then` functions to define steps, world instance is accessible as `this`:
 
 ```ts
 // steps.ts
@@ -70,7 +76,6 @@ See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/
 
 ### Is there default world?
 No. You define entire World youself, providing only necessary fixtures.
-It's good for performance as well.
 
 In the simplest case you can create a world with only `page` property:
 ```js

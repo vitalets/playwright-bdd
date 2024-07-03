@@ -57,15 +57,20 @@ export default defineConfig({
 });
 ```
 
-### `createBdd(test?, WorldConstructor?)`
+### `createBdd(test?, options?)`
+
+!> Before v7 second parameter was `WorldConstructor`
 
 Creates:
  * `Given`, `When`, `Then`, `Step` functions for defining steps
  * `Before`, `After`, `BeforeAll`, `AfterAll` functions for defining hooks
 
+By default produced functions work with [Playwright-style](writing-steps/playwright-style.md) steps. If `options.worldFixture` is defined, then produced functions work with [Cucumber-style](writing-steps/cucumber-style.md) steps.
+
 **Params**
-  * `test` *object* - custom test instance
-  * `WorldConstructor` *object* - custom world constructor
+  * `test` *object* - test instance to provide access to custom fixtures in steps
+  * `options` *object* - options
+    * `worldFixture` *string* - name of the fixture to be used as a World in cucumber-style steps
 
 **Returns**: *object* - `{ Given, When, Then, Step, Before, After, BeforeAll, AfterAll }`
 
