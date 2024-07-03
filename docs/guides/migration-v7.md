@@ -1,30 +1,25 @@
 # Migration to v7
 
-Playwright-bdd **v7** introduces several significant improvements. The root one is **removing dependency on Cucumber runner**. Now features and steps are imported directly without involving `@cucumber/cucumber` package. That gives a lot of advantages for dev experience, performance and code maintenance. This guide will go through all the changes and provide action items for migration.
+?> Your feedback on **v7** is really appreciated ❤️
+
+Playwright-bdd **v7** introduces several significant improvements. The root one is **removing dependency on Cucumber runner** ([#136](https://github.com/vitalets/playwright-bdd/issues/136)). Now features and steps are handled directly without involving `@cucumber/cucumber` package. That gives many advantages for dev experience, performance and future maintenance of `playwright-bdd`. This guide will go through all the changes and provide necessary action items.
 
 The guide consists of two parts, depending on steps style you are using:
-1. for **all users** - no matter what steps-style is used
-2. for **cucumber-style** steps - there are additional actions
+1. actions for **all users**
+2. additional actions for **cucumber-style** steps
 
-Migaration actions depend on steps style you are using:
-* if you are using **playwright-style** or **decorator** steps, migration should be easy, without any code changes or with minimal ones
-* If you are using **cucumber-style** steps, there are required actions that will be described in a separate section
+## All users
+Below actions are related to all playwright-bdd users.
 
-## Update packages
+### Update packages
 Currently v7 is in release candidate status. To try it out please run the following commands:
 ```
 npm un @cucumber/cucumber
 npm i -D playwright-bdd@next
 ```
 
-* [Steps location](#steps-location)
-* [Features location](#features-location)
-
-## All users
-Below changes are related to all playwright-bdd users.
-
-#### Steps location
-BDD config options `require` and `import` are replaced with all-in-one option `steps`. It is a glob pattern for searching step definition files, defined as a string or array of strings. Important change to previous behavior - it has **no default location** as [in Cucumber](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code). If your config relies on default location, please set steps path explicitly.
+### New `steps` option
+Starting from version 7, it's recommended to use the all-in-one `steps` option instead of the separate `require` and `import` options. This `steps` option is a glob pattern that searches for step definition files and can be defined as a string or an array of strings. A key change from the previous behavior is that there is **no default location** for these files, unlike [in Cucumber](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code). So, if your configuration relies on the default location, you'll need to explicitly set the `steps` path.
 
 Before:
 ```ts
@@ -43,8 +38,8 @@ const testDir = defineBddConfig({
 
 > `require` and `import` options are still allowed in BDD configuration, but under the hood they are converted into `steps` and will be deprecated in the future.
 
-#### Features location
-BDD config option `paths` is replaced with `features`. It is a glob pattern for searching feature files, defined as a string or array of strings. Important change to previous behavior - it has **no default location** as [in Cucumber](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features). If your config relies on default location, please set features path explicitly.
+### New `features` option
+It's also recommended to use new `features` option instead of `paths`. The behavior of `features` is the same except there is **no default location** for feature files, unlike [in Cucumber](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features). If your config relies on the default location, please set features path explicitly.
 
 Before:
 ```ts
@@ -61,8 +56,8 @@ const testDir = defineBddConfig({
 
 > `paths` option is still allowed in BDD configuration, but under the hood it is  converted into `features` and will be deprecated in the future.
 
-### importTestFrom
-Since v7 BDD config option `importTestFrom` can be omitted in most cases. Now playwright-bdd automatically checks fixtures and detects optimal file to import test in spec files. The only requirement - you should include these fixture files in `steps` option.
+### Omit `importTestFrom`
+Since v7 config option `importTestFrom` can be omitted in most cases. Now playwright-bdd automatically checks fixtures and detects optimal file to import test from. The only requirement - you should include these fixture files in `steps` option.
 
 Before:
 ```ts
@@ -84,10 +79,10 @@ const testDir = defineBddConfig({
 
 > `importTestFrom` can be still used for some specific casees. If you have such case, feel free to share it in issues, we can try to improve the algorithm.
 
-#### Cucumber config
+### Cucumber config
 Before v7, if there was `cucumber.js` file, it was loaded and merged into BDD configuration. Now `cucumber.js` is not loaded anymore. You can provide all BDD options in `playwright.config.ts` explicitly.
 
-#### Snippets
+### Snippets
 Before v7, you could configure [snippets](https://github.com/cucumber/cucumber-js/blob/main/docs/snippets.md) via Cucumber options `snippetInterface` / `snippetSyntax`. Now these options are dropped from BDD configuration. Playwright-bdd automatically detects style of your steps (playwright-style / cucumber-style / decorators) and shows propper syntax for missing steps.
 
 Example of Playwright-style snippet:
@@ -105,10 +100,9 @@ Use snippets above to create them.
 
 > If you have strong requirement for custom snippets, feel free to open an issue
 
-
-#### Custom parameter types
+### Custom parameter types
 - `defineParameterType` should be imported from `playwright-bdd` instead of `@cucumber/cucumber`
-- `defineParameterType` is supported in decorator steps 
+- `defineParameterType` is supported in decorator steps! 
 
 Example:
 ```ts
@@ -124,7 +118,7 @@ defineParameterType({
 Given('step with {color}', ({}, color: Color) => { ... });
 ```
 
-#### ESM
+### ESM
 ESM projects can be executed without `--loader=ts-node/esm` (since Playwright 1.41)
 
 Before:
@@ -136,7 +130,7 @@ Since v7:
 npx bddgen && npx playwright test
 ```
 
-#### DataTable
+### DataTable
 `DataTable` should be imported from `playwright-bdd` instead of `@cucumber/cucumber`.
 
 Before:
@@ -148,19 +142,18 @@ Since v7:
 import { DataTable } from 'playwright-bdd';
 ```
 
-#### Other changes
+### Other changes
 * minimal Playwright version increased to **v1.35**
 * minimal Node.js version increased to **v18**
 
-## Cucumber-style only
-Below changes are related only to **cucumber-style steps**.
+## Actions for Cucumber-style steps
+Cucumber-style steps require some additional actions due to `@cucumber/cucumber` removal.
 
-#### Given/When/Then import
-Before v7 `Given / When / Then` for cucumber-style were imported directly from `@cucumber/cucumber` package. Now Cucumber package is removed, and these functions should be imported from `createBdd` call similar to Playwright-style steps. The only difference - you pass `worldFixture` name in a second parameter. 
+### Given / When / Then import
+Before v7 `Given / When / Then` for cucumber-style were imported directly from `@cucumber/cucumber` package. Now these functions should be imported from `createBdd` call similar to Playwright-style steps. The only difference - you should pass `options.worldFixture` name in a second parameter. 
 
 Before:
 
-**steps.ts**
 ```ts
 import { Given, When, Then } from '@cucumber/cucumber';
 
@@ -183,7 +176,7 @@ Given('I am on home page', async function () {
 ```ts 
 import { test as base, createBdd } from 'playwright-bdd';
 
-// define simplest world
+// define simplest world (see the next section for more details)
 type World  = { page: Page };
 
 export const test = base.extend<{ world: World }>({
@@ -200,13 +193,13 @@ export const { Given, When, Then } = createBdd(test, {
 
 > Check-out full Cucumber-style example in [examples/cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
 
-#### Cucumber world
-There is no built-in Cucumber world anymore. Although it requires more code in userland,
-it gives your full control over world's shape and performance. You pass world as a regular Playwright fixture and provide only dependencies that you need. You are not restrcited to inherit world from some base class. When world fixture is provided to `test.extend()`, you pass the name of that fixture to `createBdd` and get `Given / When / Then` bound to that world.
+### Cucumber world
+There is no built-in World anymore. Although it requires more code in user-land,
+it gives your full control over world's shape and performance. You wrap world into regular Playwright fixture and provide only dependencies that you need. You are not restricted to inherit world from some base class. When world fixture is provided to `test.extend()`, you pass the name of that fixture to `createBdd` and get `Given / When / Then` bound to that world.
 
 Example:
 
-1. **world.ts** - create some world
+1. **world.ts** - create world
 
 ```ts
 import { Page, TestInfo } from '@playwright/test';
@@ -224,7 +217,7 @@ export class MyWorld {
 };
 ```
 
-2. **fixtures.ts** - wrap world into Playwright fixture and create `Given / When / Then`
+2. **fixtures.ts** - wrap world into Playwright fixture and export `Given / When / Then`
 
 ```ts
 import { test as base, createBdd } from 'playwright-bdd';
@@ -254,3 +247,8 @@ When('I click link {string}', async function (text: string) {
 ```
 
 > Check-out full Cucumber-style example in [examples/cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
+
+### Can I get previous BddWorld in v7?
+Yes. Previous `BddWorld` is extracted into the separate file [bddWorld.ts](https://github.com/vitalets/playwright-bdd/blob/v7/test/bdd-world-extracted/steps/bddWorld.ts). You can copy/paste it and tune later for your needs. Once copied, check-out [fixtures.ts](https://github.com/vitalets/playwright-bdd/blob/v7/test/bdd-world-extracted/steps/fixtures.ts) how to initialize BddWorld in your code.
+
+?> If you've found some mistake / missing items in this guide, feel free to open [an issue](https://github.com/vitalets/playwright-bdd/issues) on GitHub
