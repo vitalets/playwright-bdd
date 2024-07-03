@@ -11,6 +11,9 @@
 ## 6.6.0
 * bugfix: enable run of non-bdd projects, ([#166](https://github.com/vitalets/playwright-bdd/issues/166))
 
+## 6.6.0
+* bugfix: enable run of non-bdd projects, ([#166](https://github.com/vitalets/playwright-bdd/issues/166))
+
 ## 6.5.2
 * bugfix: createBdd returns Cucumber-Style Typing when using Playwright-Style, ([#163](https://github.com/vitalets/playwright-bdd/issues/163))
 
