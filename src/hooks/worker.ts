@@ -81,9 +81,7 @@ export function getWorkerHooksFixtures() {
     const set = new Set<string>();
     workerHooks.forEach((hook) => {
       fixtureParameterNames(hook.fn)
-        .filter(
-          (fixtureName) => !Object.prototype.hasOwnProperty.call(fixturesFakeObj, fixtureName),
-        )
+        .filter((fixtureName) => !Object.hasOwn(fixturesFakeObj, fixtureName))
         .forEach((fixtureName) => set.add(fixtureName));
     });
     workerHooksFixtures = [...set];

@@ -45,7 +45,7 @@ export function isTestContainsSubtest(test: TestTypeCommon, subtest: TestTypeCom
 
 export function isTestContainsFixture(test: TestTypeCommon, fixtureName: string) {
   for (const { fixtures } of getTestFixtures(test)) {
-    if (Object.prototype.hasOwnProperty.call(fixtures, fixtureName)) return true;
+    if (Object.hasOwn(fixtures, fixtureName)) return true;
   }
 }
 

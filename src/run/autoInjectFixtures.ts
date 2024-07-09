@@ -21,10 +21,7 @@ const BDD_AUTO_INJECT_FIXTURES: Record<keyof BddAutoInjectFixtures, null> = {
 };
 
 export function isBddAutoInjectFixture(name: string) {
-  return Object.prototype.hasOwnProperty.call(
-    BDD_AUTO_INJECT_FIXTURES,
-    name as keyof BddAutoInjectFixtures,
-  );
+  return Object.hasOwn(BDD_AUTO_INJECT_FIXTURES, name as keyof BddAutoInjectFixtures);
 }
 
 export function getBddAutoInjectFixtures(bddContext: BddContext): BddAutoInjectFixtures {

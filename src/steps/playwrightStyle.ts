@@ -53,7 +53,7 @@ function assertStepIsCalledWithRequiredFixtures<StepFn extends StepConfig['fn']>
 ) {
   const requiredFixtures = fixtureParameterNames(fn);
   const missingFixtures = requiredFixtures.filter(
-    (fixtureName) => !Object.prototype.hasOwnProperty.call(passedFixtures, fixtureName),
+    (fixtureName) => !Object.hasOwn(passedFixtures, fixtureName),
   );
   if (missingFixtures.length) {
     throw new Error(
