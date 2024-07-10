@@ -2,8 +2,7 @@
  * Own step definitions registry.
  */
 
-import { CucumberExpression, RegularExpression } from '@cucumber/cucumber-expressions';
-import { Expression } from '@cucumber/cucumber-expressions';
+import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
 import { parameterTypeRegistry } from './parameterTypes';
 import { StepConfig } from './stepConfig';
 import { relativeToCwd } from '../utils/paths';
@@ -12,44 +11,57 @@ import { exit } from '../utils/exit';
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type DefineStepPattern = string | RegExp;
 
-export type StepDefinition = {
-  keyword: GherkinStepKeyword;
-  pattern: DefineStepPattern;
-  patternString: string;
-  expression: Expression;
-  code: Function; // eslint-disable-line @typescript-eslint/ban-types
-  line: number;
-  uri: string;
-  // initial step config
-  // todo: merge into step definition in the future
-  stepConfig: StepConfig;
-};
+// todo: merge with StepConfig to have single class
+export class StepDefinition {
+  #expression?: Expression;
+
+  constructor(public stepConfig: StepConfig) {}
+
+  get keyword() {
+    return this.stepConfig.keyword;
+  }
+
+  get pattern() {
+    return this.stepConfig.pattern;
+  }
+
+  get code() {
+    return this.stepConfig.fn;
+  }
+
+  get uri() {
+    return this.stepConfig.location.file;
+  }
+
+  get line() {
+    return this.stepConfig.location.line;
+  }
+
+  get expression() {
+    // create expression lazily b/c we need all parameter types to be loaded
+    if (!this.#expression) {
+      this.#expression =
+        typeof this.pattern === 'string'
+          ? new CucumberExpression(this.pattern, parameterTypeRegistry)
+          : new RegularExpression(this.pattern, parameterTypeRegistry);
+    }
+
+    return this.#expression;
+  }
+
+  get patternString() {
+    return typeof this.pattern === 'string' ? this.pattern : this.pattern.source;
+  }
+}
 
 export const stepDefinitions: StepDefinition[] = [];
 
 export function registerStepDefinition(stepConfig: StepConfig) {
-  const { keyword, pattern } = stepConfig;
-  const { file: uri, line } = stepConfig.location;
-
-  // todo: handle error.undefinedParameterTypeName as it's done in cucumber?
-  const expression =
-    typeof pattern === 'string'
-      ? new CucumberExpression(pattern, parameterTypeRegistry)
-      : new RegularExpression(pattern, parameterTypeRegistry);
-
-  stepDefinitions.push({
-    keyword,
-    pattern,
-    patternString: typeof pattern === 'string' ? pattern : pattern.source,
-    expression,
-    code: stepConfig.fn,
-    uri,
-    line,
-    stepConfig,
-  });
+  const stepDefinition = new StepDefinition(stepConfig);
+  stepDefinitions.push(stepDefinition);
 }
 
-// todo: dont call exit here, call it upper
+// todo: don't call exit here, call it upper
 export function findStepDefinition(stepText: string, featureFile: string) {
   const matchedSteps = stepDefinitions.filter((step) => {
     return Boolean(step.expression.match(stepText));

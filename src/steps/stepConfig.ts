@@ -1,5 +1,5 @@
 /**
- * Playwright-bdd's step config.
+ * Playwright-bdd step config.
  */
 
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';

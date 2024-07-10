@@ -1,7 +1,7 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect } from '@playwright/test';
-import { createBdd, DataTable, defineParameterType } from 'playwright-bdd';
+import { createBdd, DataTable } from 'playwright-bdd';
 import { test } from './fixtures';
 
 const { Given, When, Then, Step } = createBdd(test);
@@ -30,14 +30,7 @@ Then('Passed int arg {int} to equal 42', ({}, arg: number) => {
   expect(arg).toEqual(42);
 });
 
-type Color = 'red' | 'blue' | 'yellow';
-defineParameterType({
-  name: 'color',
-  regexp: /red|blue|yellow/,
-  transformer: (s) => s.toLowerCase() as Color,
-});
-
-Then('Passed custom type arg {color} to equal "red"', ({}, color: Color) => {
+Then('Passed custom type arg {color} to equal "red"', ({}, color: string) => {
   expect(color).toEqual('red');
 });
 

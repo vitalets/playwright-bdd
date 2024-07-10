@@ -3,7 +3,7 @@
 ## Dev
 * chore: use Object.hasOwn instead of hasOwnProperty
 
-## 7.0.0
+## 7.0.0 (rc)
 * improvement: remove dependency on Cucumber runner, see all the details in [migration guide](), ([#136](https://github.com/vitalets/playwright-bdd/issues/136))
 * improvement: support custom parameter types in decorator steps, ([#112](https://github.com/vitalets/playwright-bdd/issues/112))
 * improvement: manual `importTestFrom` option is replaced with automatic detection and most likely can be removed from BDD configuration, ([#46](https://github.com/vitalets/playwright-bdd/issues/46))
