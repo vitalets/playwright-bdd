@@ -36,8 +36,8 @@ Some features were developed in `playwright-bdd` on top of Playwright and BDD ap
 ## Documentation
 Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 
-## Example
-Fork and play with [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) repo.
+## Examples
+There are several examples in [`examples`](/examples) folder and a separate fully working repo [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
 
 ## Feedback
 Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
