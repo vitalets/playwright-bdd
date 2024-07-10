@@ -48,7 +48,7 @@ npm t
 ```
 
 ## Run tests on different Cucumber version
-Install needed Cuucmber version (without saving to `package.json`):
+Install needed Cucumber version (without saving to `package.json`):
 ```
 npm i --no-save @cucumber/cucumber@10
 ```

@@ -137,7 +137,7 @@ There are several breaking changes in this release. Please check carefully after
   *If you use custom Playwright config file you may need to update paths in it*
 * **breaking:** Simplify generated directories structure [#40](https://github.com/vitalets/playwright-bdd/issues/40).
   *If you use snapshots you may need to re-save them in new paths*
-* Imporve support for several calls of `defineBddConfig()` [#39](https://github.com/vitalets/playwright-bdd/issues/39)
+* Improve support for several calls of `defineBddConfig()` [#39](https://github.com/vitalets/playwright-bdd/issues/39)
 * Add config option `quotes` = `'single' | 'double' | 'backtick'` to control quotes style in generated tests [#34](https://github.com/vitalets/playwright-bdd/issues/34)
 
 ## 4.0.0
