@@ -4,14 +4,14 @@ import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 // before playwright-bdd v7
 const testDir = defineBddConfig({
   paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  require: ['features/steps/*.ts'],
 });
 
 // since playwright-bdd v7
 /*
 const testDir = defineBddConfig({
-  features: './features',
-  steps: './steps',
+  features: 'features/*.feature',
+  steps: 'features/steps/*.ts',
 });
 */
 
