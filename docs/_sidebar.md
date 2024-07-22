@@ -1,6 +1,7 @@
 * [**Getting started**](getting-started/index.md)
   - [Installation](getting-started/installation.md)
   - [Write first BDD test](getting-started/write-first-test.md)
+  - [Add fixtures](getting-started/add-fixtures.md)
 
 * [**Configuration**](configuration/index.md)
   - [Options](configuration/options.md)
