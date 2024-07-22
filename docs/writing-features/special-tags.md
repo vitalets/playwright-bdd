@@ -1,6 +1,6 @@
 # Special tags
 
-There are some special tags to imporve your testing experience.
+There are some special tags to improve your testing experience.
 
 ## @only
 Use `@only` tag to run a single feature / scenario:

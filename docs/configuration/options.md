@@ -117,7 +117,7 @@ Verbose output.
 - Type: `boolean`
 - Default: `undefined`
 
-If this option is enabled, playwright-bdd will add special attachments with BDD data, required for Cucumber reports. It gets enabled automatically, when you use `cucmberReporter()` helper. But for scenarios with [reports merging](reporters/cucumber.md#merge-reports), you need to manually set `enrichReporterData: true` when generating **blob** report.
+If this option is enabled, playwright-bdd will add special attachments with BDD data, required for Cucumber reports. It gets enabled automatically, when you use `cucumberReporter()` helper. But for scenarios with [reports merging](reporters/cucumber.md#merge-reports), you need to manually set `enrichReporterData: true` when generating **blob** report.
 
 ## statefulPoms
 

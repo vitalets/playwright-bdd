@@ -75,7 +75,7 @@ See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/
 
 
 ### Is there default world?
-No. You define entire World youself, providing only necessary fixtures.
+No. You define entire World yourself, providing only necessary fixtures.
 
 In the simplest case you can create a world with only `page` property:
 ```js

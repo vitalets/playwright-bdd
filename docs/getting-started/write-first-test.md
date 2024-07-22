@@ -80,4 +80,4 @@ Follow the steps below to create and run first BDD test with `playwright-bdd`.
 
 !> If your project runs as [ES Module](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md)
 
-?> You can also get pre-configured Playwright-bdd project by clonning [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
+?> There is fully working Playwright-bdd example project [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)

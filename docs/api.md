@@ -80,7 +80,7 @@ Defines `Given` step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
+    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -91,7 +91,7 @@ Defines `When` step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
+    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -102,7 +102,7 @@ Defines `Then` step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
+    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
@@ -113,7 +113,7 @@ Defines universal step implementation.
 **Params**
   * `pattern` *string | regexp* - step pattern
   * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucubmer-style)
+    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.

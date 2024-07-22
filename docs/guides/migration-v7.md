@@ -77,13 +77,13 @@ const testDir = defineBddConfig({
 });
 ```
 
-> `importTestFrom` can be still used for some specific casees. If you have such case, feel free to share it in issues, we can try to improve the algorithm.
+> `importTestFrom` can be still used for some specific cases. If you have such case, feel free to share it in issues, we can try to improve the algorithm.
 
 ### Cucumber config
 Before v7, if there was `cucumber.js` file, it was loaded and merged into BDD configuration. Now `cucumber.js` is not loaded anymore. You can provide all BDD options in `playwright.config.ts` explicitly.
 
 ### Snippets
-Before v7, you could configure [snippets](https://github.com/cucumber/cucumber-js/blob/main/docs/snippets.md) via Cucumber options `snippetInterface` / `snippetSyntax`. Now these options are dropped from BDD configuration. Playwright-bdd automatically detects style of your steps (playwright-style / cucumber-style / decorators) and shows propper syntax for missing steps.
+Before v7, you could configure [snippets](https://github.com/cucumber/cucumber-js/blob/main/docs/snippets.md) via Cucumber options `snippetInterface` / `snippetSyntax`. Now these options are dropped from BDD configuration. Playwright-bdd automatically detects style of your steps (playwright-style / cucumber-style / decorators) and shows proper syntax for missing steps.
 
 Example of Playwright-style snippet:
 ```

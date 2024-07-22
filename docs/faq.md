@@ -23,7 +23,7 @@ This approach was initially implemented: test files were generated during the fi
 
 2. Implementation of watch mode is tricky. It is impossible to just run `nodemon` with `playwright.config.ts`. Separate command for test generation allows to easily [support watch mode](guides/watch-mode.md) 
 
-3. Watching files in `--ui` mode leads to circullar dependency: a change in test files triggers test run which in turn re-imports config and once again triggers a change in test files
+3. Watching files in `--ui` mode leads to circular dependency: a change in test files triggers test run which in turn re-imports config and once again triggers a change in test files
 
 For now decoupling **test generation** from **test running** proves to be a better option.
 

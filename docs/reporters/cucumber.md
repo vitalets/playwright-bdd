@@ -15,9 +15,9 @@ Currently, the following reporters are supported:
 Navigate to the concrete reporter for the usage details.
 
 #### Automatic screenshots / videos / traces
-Playwright-bdd fully supports [auto attaching screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options) to all Cucumber reports. No special action neede from your side.
+Playwright-bdd fully supports [auto attaching screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options) to all Cucumber reports. No special action needed from your side.
 
-<details><summary>Example HTML report with auto-attchments</summary>
+<details><summary>Example HTML report with auto-attachments</summary>
 
 ![html report](./_media/html-report-attachments.png)
 
@@ -300,7 +300,7 @@ npx bddgen && npx playwright test --shard 1/2
 npx bddgen && npx playwright test --shard 2/2
 ```
 
-Merge reports (important to pass`--config` option poinitng to `playwright.config.ts`):
+Merge reports (important to pass`--config` option pointing to `playwright.config.ts`):
 ```
 npx playwright merge-reports --config playwright.config.ts ./blob-report
 ```
