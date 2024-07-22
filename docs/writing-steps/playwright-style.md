@@ -77,16 +77,6 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
     });
     ```
 
-4. (**Optional since v7**) Set config option `importTestFrom` which points to file exporting custom `test` function: 
-    ```js
-    // playwright.config.ts
-
-    const testDir = defineBddConfig({
-      importTestFrom: './fixtures.ts',
-      // ...
-    });
-    ```
-
 See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic).
 
 ## Accessing `$test` and `$testInfo`
