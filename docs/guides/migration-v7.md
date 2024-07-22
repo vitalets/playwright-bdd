@@ -24,7 +24,7 @@ Starting from version 7, it's recommended to use the all-in-one `steps` option i
 Before:
 ```ts
 const testDir = defineBddConfig({
-  require: ['steps/*.ts'],
+  steps: ['steps/*.ts'],
   // or for ESM
   // import: ['steps/*.ts'],
 });
@@ -44,7 +44,7 @@ It's also recommended to use new `features` option instead of `paths`. The behav
 Before:
 ```ts
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
+  features: ['features/*.feature'],
 });
 ```
 Since v7:
@@ -63,7 +63,7 @@ Before:
 ```ts
 const testDir = defineBddConfig({
   importTestFrom: 'steps/fixtures.ts',
-  require: ['steps/steps.ts'],
+  steps: ['steps/steps.ts'],
 });
 ```
 Since v7:

@@ -38,8 +38,8 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['features/steps/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['features/steps/*.ts'],
 }),
 
 export default defineConfig({
@@ -70,8 +70,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['steps/*.ts'],
 });
 
 export default defineConfig({
@@ -101,8 +101,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['steps/*.ts'],
 });
 
 export default defineConfig({
@@ -162,8 +162,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['steps/*.ts'],
 });
 
 export default defineConfig({
@@ -197,8 +197,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['steps/*.ts'],
 });
 
 export default defineConfig({
@@ -251,8 +251,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['steps/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['steps/*.ts'],
 });
 
 export default defineConfig({
@@ -277,8 +277,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['features/*.ts'],
+  features: ['features/*.feature'],
+  steps: ['features/*.ts'],
   // Set to true to enrich data in Blob report
   enrichReporterData: true,
 });
