@@ -25,10 +25,9 @@ This approach was initially implemented: test files were generated during the fi
 For now decoupling **test generation** from **test running** proves to be a better option.
 
 ### How to make BDD valuable for my project?
-It is very easy to do BDD in a wrong way.
+The main point - **BDD is a collaboration technique**.
 
-The main point - BDD is a collaboration technique. **Create BDD scenarios together with your team during calls and discussions**.
-Use it as a format for clarifying requirements between business, QA and developers. It will save a lot of time for your team to get everybody on the same page instead of endless meetings and email ping-pong.
+Write BDD scenarios together with your team during calls and discussions. Use it as a strict format to clarify requirements between business, QA and developers. It should help you to get everybody on the same page instead of going back and forth on endless meetings.
 
 Don't just write BDD scenarios on your own. It's like having a corporate messenger used by a single employee.
 
