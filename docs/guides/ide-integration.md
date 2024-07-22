@@ -1,13 +1,34 @@
 # IDE integration
-Playwright-bdd provides support for all Playwright IDE integrations, because generated test files are regular `js` files used by Playwright.
+One of Playwright-bdd goals is to support all Playwright IDE integrations. It is the main reason for pre-generating test files as regular Playwright test files.
 
 ## VS Code
 
-* [Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) works the usual way. You can click and run tests from `.features-gen` directory:
+### Official Playwright extension
+[Official Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) is supported. It automatically picks up generated test files from `.features-gen` directory. You run/debug tests by click:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229162634-8a801f6e-8a79-407b-889b-7769f957896a.png">
 
-* [Cucumber autocomplete extension](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) works as usual:
-  <img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
+### Cucumber (Gherkin) Full Support
+[Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) is supported. Here is the recommended configuration in `.vscode/settings.json`:
+```json
+{
+  "cucumberautocomplete.steps": ["features/steps/*.{ts,js}"],
+  "cucumberautocomplete.strictGherkinCompletion": false,
+  "cucumberautocomplete.strictGherkinValidation": false,
+  "cucumberautocomplete.smartSnippets": true,
+  "cucumberautocomplete.onTypeFormat": true,
+  "editor.quickSuggestions": {
+    "comments": false,
+    "strings": true,
+    "other": true
+  },
+}  
+```
+You will get autocompletion of your steps and go to definition by click in feature files:
+<img width="70%" src="https://user-images.githubusercontent.com/1473072/229165348-eae41fb8-0918-48ac-8644-c55a880860de.png">
+
+### Official Cucumber extension
+[Official Cucumber extension](https://marketplace.visualstudio.com/items?itemName=CucumberOpen.cucumber-official) is supported. You may need to configure locations of your features/steps.
+
 
 ## Intellij IDE / Aqua
 Built-in Playwright support works as usual:
