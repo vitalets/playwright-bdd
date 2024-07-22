@@ -10,8 +10,8 @@ Follow the steps below to create and run first BDD test with `playwright-bdd`.
    import { defineBddConfig } from 'playwright-bdd';
 
    const testDir = defineBddConfig({
-     paths: ['sample.feature'],
-     require: ['steps.js'],
+     features: 'sample.feature',
+     steps: 'steps.js',
    });
 
    export default defineConfig({
@@ -78,6 +78,6 @@ Follow the steps below to create and run first BDD test with `playwright-bdd`.
 
 > Don't forget to [git-ignore generated files](guides/ignore-generated-files.md)
 
-!> If your project runs as [ES Module](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md)
+!> If your project uses [ES Modules](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md)
 
 ?> There is fully working Playwright-bdd example project [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)

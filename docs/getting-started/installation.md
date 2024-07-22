@@ -1,20 +1,16 @@
 # Installation
 
+?> Since **v7** `playwright-bdd` does not depend on `@cucumber/cucumber`
+
 Install `playwright-bdd` from npm:
 
 ```
 npm i -D playwright-bdd
 ```
 
-This package uses `@playwright/test` and `@cucumber/cucumber` as a peer dependencies.
-For brand new projects they will be installed automatically with `playwright-bdd`.
-For existing projects you may need to update them to the latest versions:
+This package uses `@playwright/test` as a peer dependency. Minimal Playwright version is **1.35**.
 
-```
-npm i -D @playwright/test@latest @cucumber/cucumber@latest
-```
-
-After installing/updating major Playwright version you may need to [install browsers](https://playwright.dev/docs/browsers):
+If you update Playwright version, you may need to [install browsers](https://playwright.dev/docs/browsers):
 
 ```
 npx playwright install

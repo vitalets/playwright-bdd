@@ -1,33 +1,26 @@
 # Options
 
-## paths
+## features
 
-- Type: `string[]`
-- Default: `features/**/*.{feature,feature.md}`
+?> Since v7 this option has replaced Cucumber's option `paths`
 
-Paths to feature files. [More in Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features).
+- Type: `string | string[]`
+- Default: `undefined`
 
-## require
+Path(s) to feature files. Can be directory or [glob pattern](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax).
+Example: `features/**/*.feature`.
+If you don't specify file extension, default is `*.feature`.
 
-- Type: `string[]`
-- Default: `features/**/*.(js)`
+## steps
 
-Paths to step definitions in **CommonJS**. [More in Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code).
+?> Since v7 this option has replaced Cucumber's options `require`, `import` and `requireModule`
 
-> Cucumber's option `requireModule: ['ts-node/register']` is not recommended for playwright-bdd. TypeScript compilation is performed with Playwright's built-in loader.
+- Type: `string | string[]`
+- Default: `undefined`
 
-## import
-
-- Type: `string[]`
-- Default: `features/**/*.(js)`
-
-Paths to step definitions in [ESM](configuration/esm.md).
-
-## importTestFrom
-
-- Type: `string`
-
-Path to file that exports custom `test` to be used in generated test files.
+Path(s) to step definitions. Can be directory or [glob pattern](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax).
+Example: `steps/**/*.ts`.
+If you don't specify file extension, default is `*.{js,mjs,cjs,ts,mts,cts}`.
 
 ## outputDir
 
@@ -146,14 +139,39 @@ What POM should we use for the 1st step: `BasePage`, `TodoPage` or `TodoPage2`?
 * If there is no state in POMs (`statefulPoms: false`): we will use `BasePage`
 * If there is state in POMs (`statefulPoms: true`): this scenario produces error, b/c for `TodoPage` / `TodoPage` it can be important to call previous steps
 
-## steps
+## importTestFrom
 
-?> Experimental
+?> Since **v7** you most likely don't need this option, it is detected automatically from step definitions
 
-- Type: `string | string[]`
-- Default: `undefined`
+- Type: `string`
 
-Paths to search for step definitions. Can be directory or glob pattern.
-Example: `steps/**/*.ts`.
-If you don't specify file extension, by default the following extensions are appended to the pattern: `*.{js,mjs,cjs,ts,mts,cts}`.
-This option will eventually replace Cucumber options `require`, `requireModule`, and `import`. 
+Path to file that exports custom `test` to be used in generated test files.
+
+## paths
+
+!> Deprecated, use `features` instead
+
+- Type: `string[]`
+- Default: `features/**/*.{feature,feature.md}`
+
+Paths to feature files. [More in Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-features).
+
+## require
+
+!> Deprecated, use `steps` instead
+
+- Type: `string[]`
+- Default: `features/**/*.(js)`
+
+Paths to step definitions in **CommonJS**. [More in Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code).
+
+> Cucumber's option `requireModule: ['ts-node/register']` is not recommended for playwright-bdd. TypeScript compilation is performed with Playwright's built-in loader.
+
+## import
+
+!> Deprecated, use `steps` instead
+
+- Type: `string[]`
+- Default: `features/**/*.(js)`
+
+Paths to step definitions in [ESM](configuration/esm.md).
