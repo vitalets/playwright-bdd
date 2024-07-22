@@ -57,5 +57,8 @@ Great thanks to the sponsors for supporting playwright-bdd project ❤️ [Becom
 
 Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id=how-to-make-bdd-valuable-for-my-project).
 
+## My other Playwright tools
+* [playwright-magic-steps](https://github.com/vitalets/playwright-magic-steps) - Auto-transform JavaScript comments into Playwright steps.
+
 ## License
 [MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
