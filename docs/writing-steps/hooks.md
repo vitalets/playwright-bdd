@@ -199,38 +199,3 @@ Before(async function ({ myFixture }) {
   // ...
 });
 ```
-
-> Note that you can access built-in fixtures via `this` context, e.g. `this.testInfo`.
-
-### Custom World
-
-!> This is legacy feature and will be removed in the future versions on ``playwright-bdd`.
-
-If you use custom World you can pass it as a second argument to `createBdd()`.
-Then produced `Before / After` hooks will get `this` properly typed for TypeScript.
-
-🔹 **Example of using custom world**
-
-Define custom world:
-```ts
-import { setWorldConstructor } from '@cucumber/cucumber';
-import { BddWorld } from 'playwright-bdd';
-
-export class CustomWorld extends BddWorld {
-  foo = 'bar';
-}
-
-setWorldConstructor(CustomWorld);
-```
-
-Pass it as a second argument to `createBdd()`:
-```ts
-import { createBdd } from 'playwright-bdd';
-import { CustomWorld } from './world';
-
-const { Before, After } = createBdd(null, CustomWorld);
-
-Before(async function () {
-  console.log(this.foo); // outputs "bar", TypeScript is happy
-});
-```
