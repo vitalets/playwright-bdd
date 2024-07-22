@@ -4,7 +4,7 @@
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
-> 🔥 **Playwright-bdd v7 released!**! Dropped Cucumber package dependency, simpler configuration and other improvements. [Try it out](https://vitalets.github.io/playwright-bdd/#/guides/migration-v7) and share the feedback!
+> 🔥 **Playwright-bdd v7 released!** Dropped Cucumber package dependency, simpler configuration and other improvements. [Try it out](https://vitalets.github.io/playwright-bdd/#/guides/migration-v7) and share the feedback!
 
 ## Quick start
 Jump to [getting started](getting-started/index.md) or read below about `playwright-bdd` architecture.
