@@ -203,8 +203,6 @@ Feature: Some feature
 Step definition:
 ```ts
 import { createBdd, DataTable } from 'playwright-bdd';
-// before playwright-bdd v7
-// import { DataTable } from '@cucumber/cucumber';
 
 const { Given, When, Then } = createBdd();
 

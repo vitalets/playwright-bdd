@@ -68,7 +68,7 @@ The benefits of using `auth` fixture:
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-`playwright-bdd` supports worker-level `BeforeAll / AfterAll` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#beforeall--afterall). Notice that these hooks are imported from `createBdd()`, not from `@cucumber/cucumber`.
+`playwright-bdd` supports worker-level `BeforeAll / AfterAll` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#beforeall--afterall).
 
 Usage:
 ```ts
@@ -134,7 +134,7 @@ BeforeAll(async function ({ myWorkerFixture }) {
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-`playwright-bdd` supports scenario-level `Before / After` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#hooks). Notice that these hooks are imported from `createBdd()`, not from `@cucumber/cucumber`.
+`playwright-bdd` supports scenario-level `Before / After` hooks similar to [Cucumber hooks](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/hooks.md#hooks).
 
 Usage:
 ```ts
