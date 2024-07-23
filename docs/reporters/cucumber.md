@@ -245,14 +245,16 @@ export default class CustomFormatter extends Formatter {
 }
 ```
 
+!> Please note that constructor options `colorFns`, `snippetBuilder` and `supportCodeLibrary` are passed as fake objects
+
 Configure reporter in `playwright.config.js`:
 ```js
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['steps/*.ts'],
+  features: 'features/*.feature',
+  steps: 'steps/*.ts',
 });
 
 export default defineConfig({
@@ -264,8 +266,6 @@ export default defineConfig({
 ```
 
 All options passed to `cucumberReporter()` will be available as `options.parsedArgvOptions`.
-
-!> Please note that `options.snippetBuilder` and `options.supportCodeLibrary` are passed as fake objects for now
 
 ## Merge reports
 
