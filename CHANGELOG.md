@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 7.0.1
 * improvement: dropped dependency on `chalk` and `supports-color`.
 
 ## 7.0.0
