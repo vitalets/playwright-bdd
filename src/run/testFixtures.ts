@@ -1,6 +1,9 @@
 /**
  * Test-scoped fixtures added by playwright-bdd.
  */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { BddContextWorker, BddFixturesWorker, test as base } from './workerFixtures';
 import { runScenarioHooks } from '../hooks/scenario';
 import { createStepInvoker } from './invokeStep';
@@ -27,7 +30,8 @@ export type BddFixtures = BddFixturesWorker & {
   And: StepKeywordFixture;
   But: StepKeywordFixture;
   $testMetaMap: TestMetaMap;
-  $testMeta: TestMeta;
+  // testMeta is undefined for non-bdd tests
+  $testMeta?: TestMeta;
   $tags: string[];
   $test: TestTypeCommon;
   $step: StepFixture;
@@ -54,7 +58,7 @@ export const test = base.extend<BddFixtures>({
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
   $applySpecialTags: async ({ $testMeta }, use, testInfo) => {
-    const specialTags = new SpecialTags($testMeta.ownTags, $testMeta.tags);
+    const specialTags = new SpecialTags($testMeta?.ownTags, $testMeta?.tags);
     if (specialTags.timeout !== undefined) testInfo.setTimeout(specialTags.timeout);
     if (specialTags.slow !== undefined) testInfo.slow();
     await use();
@@ -68,9 +72,10 @@ export const test = base.extend<BddFixtures>({
   ) => {
     const { config } = $bddContextWorker;
 
-    const bddDataManager = getEnrichReporterData(config)
-      ? new BddDataManager(testInfo, $testMeta, $uri)
-      : undefined;
+    const bddDataManager =
+      $testMeta && getEnrichReporterData(config)
+        ? new BddDataManager(testInfo, $testMeta, $uri)
+        : undefined;
 
     await use({
       config,
@@ -86,33 +91,28 @@ export const test = base.extend<BddFixtures>({
 
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Given: ({ $bddContext, $before, $applySpecialTags }, use) =>
     use(createStepInvoker($bddContext, 'Given')),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   When: ({ $bddContext, $before, $applySpecialTags }, use) =>
     use(createStepInvoker($bddContext, 'When')),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   Then: ({ $bddContext, $before, $applySpecialTags }, use) =>
     use(createStepInvoker($bddContext, 'Then')),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   And: ({ $bddContext, $before, $applySpecialTags }, use) =>
     use(createStepInvoker($bddContext, 'And')),
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   But: ({ $bddContext, $before, $applySpecialTags }, use) =>
     use(createStepInvoker($bddContext, 'But')),
 
   // Cucumber style world: null by default, can be overwritten in test files for cucumber style
   $world: ({}, use: (arg: unknown) => unknown) => use(null),
 
-  // init $testMetaMap with empty object, will be overwritten in each test file
+  // init $testMetaMap with empty object, will be overwritten in each BDD test file
   $testMetaMap: ({}, use) => use({}),
 
-  // concrete test meta
+  // particular test meta
   $testMeta: ({ $testMetaMap }, use, testInfo) => use(getTestMeta($testMetaMap, testInfo)),
 
-  // concrete test tags
-  $tags: ({ $testMeta }, use) => use($testMeta.tags || []),
+  // particular test tags
+  $tags: ({ $testMeta }, use) => use($testMeta?.tags || []),
 
   // init $test with base test, but it will be overwritten in test file
   $test: ({}, use) => use(base),
@@ -122,14 +122,13 @@ export const test = base.extend<BddFixtures>({
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: ({}, use) => use(''),
 
-  // can be owerwritten in test file if there are scenario hooks
+  // can be overwritten in test file if there are scenario hooks
   $scenarioHookFixtures: ({}, use) => use({}),
   $before:
     // Unused dependencies are important:
     // 1. $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
     // 2. $after: to call after hooks in case of errors in before hooks
     async (
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       { $scenarioHookFixtures, $bddContext, $tags, $beforeAll, $afterAll, $after },
       use,
       $testInfo,

@@ -57,10 +57,13 @@ export class TestMetaBuilder {
   }
 }
 
-export function getTestMeta(testMetaMap: TestMetaMap, testInfo: TestInfo) {
+export function getTestMeta(testMetaMap: TestMetaMap, testInfo: TestInfo): TestMeta | undefined {
   // .slice(2) -> b/c we remove filename and top describe title
   const key = testInfo.titlePath.slice(2).join(TEST_KEY_SEPARATOR);
-  const testMeta = testMetaMap[key];
-  if (!testMeta) throw new Error(`Can't find testMeta for key "${key}"`);
-  return testMeta;
+  return testMetaMap[key];
+  // Before we throw if key not found in testMetaMap.
+  // Now we just return undefined, b/c testMetaMap is empty for non-bdd projects.
+  // It is easier than checking is current project BDD or non-BDD.
+  // Although we can swallow some errors.
+  // See: https://github.com/vitalets/playwright-bdd/issues/189
 }

@@ -1,6 +1,9 @@
 /**
  * Worker-scoped fixtures added by playwright-bdd.
  */
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { BDDConfig } from '../config/types';
 import { test as base } from '@playwright/test';
 import { getConfigFromEnv } from '../config/env';
@@ -33,13 +36,12 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
     { scope: 'worker' },
   ],
 
-  // can be owerwritten in test file if there are worker hooks
+  // can be overwritten in test file if there are worker hooks
   $workerHookFixtures: [({}, use) => use({}), { scope: 'worker' }],
   $beforeAll: [
     // Important unused dependencies:
     // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
     // 2. $bddContextWorker: to load hooks before this fixtures
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
       await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
       await use();
@@ -49,7 +51,6 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
   $afterAll: [
     // Important unused dependencies:
     // 1. $bddContextWorker: to load hooks before this fixtures
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
       await use();
       await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
