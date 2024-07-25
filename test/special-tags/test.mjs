@@ -51,6 +51,7 @@ function checkRetriesTag() {
     `${' '.repeat(2)}test.describe(() => {`,
     `${' '.repeat(4)}test.describe.configure({"retries":2});`,
     `${' '.repeat(4)}test.describe.configure({"retries":1});`,
+    `${' '.repeat(4)}test.describe.configure({"retries":0});`,
   ]);
 }
 

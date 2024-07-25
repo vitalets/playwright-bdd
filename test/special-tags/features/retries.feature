@@ -13,3 +13,7 @@ Feature: retries tag
       | start |
       | 2     |
       | 3     |
+
+  @retries:0
+  Scenario: scenario with 0 retries
+    Given success step 1

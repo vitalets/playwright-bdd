@@ -80,7 +80,7 @@ export class Formatter {
     ];
     // Wrap test into anonymous describe in case of retries
     // See: https://github.com/microsoft/playwright/issues/10825
-    return node.specialTags.retries
+    return node.specialTags.retries !== undefined
       ? this.wrapInAnonymousDescribe([
           ...this.describeConfigure(node).map(indent),
           '',
