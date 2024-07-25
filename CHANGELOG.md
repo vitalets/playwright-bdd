@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 7.1.0
 * fix: access to $tags fixture in non-bdd project, ([#189](https://github.com/vitalets/playwright-bdd/issues/189))
 * fix: make @retries:0 special tag work, ([#187](https://github.com/vitalets/playwright-bdd/issues/187))
 
