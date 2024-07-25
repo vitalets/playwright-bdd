@@ -32,7 +32,6 @@ export class MessagesBuilder {
 
   private fullConfig!: pw.FullConfig;
   private fullResult!: pw.FullResult;
-  private onTestEnds: { test: pw.TestCase; result: pw.TestResult }[] = [];
   private testCaseRuns: TestCaseRun[] = [];
   private testCases = new AutofillMap</* testId */ string, TestCase>();
   private hooks = new AutofillMap</* internalId */ string, Hook>();
@@ -63,8 +62,9 @@ export class MessagesBuilder {
     // Don't add such test run to report.
     if (test.expectedStatus === 'skipped') return;
 
-    // Important to create TestCaseRun here,
-    // b/c test properties can change after retries (e.g. annotations)
+    // Important to create TestCaseRun in this method (not later),
+    // b/c test properties can change after retries
+    // (especially annotations where we store bddData)
     const testCaseRun = new TestCaseRun(test, result, this.hooks);
     this.testCaseRuns.push(testCaseRun);
   }
@@ -128,17 +128,6 @@ export class MessagesBuilder {
   private async loadFeatures() {
     await this.gherkinDocuments.load(this.testCaseRuns);
   }
-
-  // private createTestCaseRuns() {
-  //   this.onTestEnds.forEach(({ test, result }) => {
-  //     // For skipped tests Playwright doesn't run fixtures
-  //     // and we don't have bddData attachment -> don't know feature uri.
-  //     // Don't add such test run to report.
-  //     if (test.expectedStatus === 'skipped') return;
-  //     const testCaseRun = new TestCaseRun(test, result, this.hooks);
-  //     this.testCaseRuns.push(testCaseRun);
-  //   });
-  // }
 
   private addMeta() {
     this.report.meta = new Meta().buildMessage();
