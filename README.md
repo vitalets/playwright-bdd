@@ -10,7 +10,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 > Inspired by the issue in the Playwright repo [microsoft/playwright#11975](https://github.com/microsoft/playwright/issues/11975)
 
 > [!TIP]
-> **Playwright-bdd v7 released!** Dropped Cucumber package dependency, simpler configuration and other improvements. [Try it out](https://vitalets.github.io/playwright-bdd/#/guides/migration-v7) and share the feedback!
+> **Playwright-bdd v7 is released!** Dropped Cucumber package dependency, simpler configuration and other improvements. [Try it out](https://vitalets.github.io/playwright-bdd/#/guides/migration-v7) and share the feedback!
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
