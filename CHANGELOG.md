@@ -1,5 +1,8 @@
 # Changelog
 
+## Dev
+* fix: make @retries:0 special tag work, ([#187](https://github.com/vitalets/playwright-bdd/issues/187))
+
 ## 7.0.1
 * improvement: dropped dependency on `chalk` and `supports-color`.
 
