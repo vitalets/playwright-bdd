@@ -7,12 +7,11 @@
 import { BddContextWorker, BddFixturesWorker, test as base } from './workerFixtures';
 import { runScenarioHooks } from '../hooks/scenario';
 import { createStepInvoker } from './invokeStep';
-import { getTestMeta } from '../gen/testMeta';
+import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../gen/bddMeta';
 import { getEnrichReporterData } from '../config/enrichReporterData';
 import { SpecialTags } from '../specialTags';
 import { TestTypeCommon } from '../playwright/types';
 import { StepKeywordFixture } from './invokeStep';
-import { TestMeta, TestMetaMap } from '../gen/testMeta';
 import { TestInfo } from '@playwright/test';
 import { BddDataManager } from './bddData';
 
@@ -29,9 +28,8 @@ export type BddFixtures = BddFixturesWorker & {
   Then: StepKeywordFixture;
   And: StepKeywordFixture;
   But: StepKeywordFixture;
-  $testMetaMap: TestMetaMap;
-  // testMeta is undefined for non-bdd tests
-  $testMeta?: TestMeta;
+  $bddFileMeta: BddFileMeta;
+  $bddTestMeta?: BddTestMeta; // $bddTestMeta is undefined for non-bdd tests
   $tags: string[];
   $test: TestTypeCommon;
   $step: StepFixture;
@@ -57,8 +55,8 @@ export type BddContext = BddContextWorker & {
 export const test = base.extend<BddFixtures>({
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
-  $applySpecialTags: async ({ $testMeta }, use, testInfo) => {
-    const specialTags = new SpecialTags($testMeta?.ownTags, $testMeta?.tags);
+  $applySpecialTags: async ({ $bddTestMeta }, use, testInfo) => {
+    const specialTags = new SpecialTags($bddTestMeta?.ownTags, $bddTestMeta?.tags);
     if (specialTags.timeout !== undefined) testInfo.setTimeout(specialTags.timeout);
     if (specialTags.slow !== undefined) testInfo.slow();
     await use();
@@ -66,15 +64,15 @@ export const test = base.extend<BddFixtures>({
   // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),
   $bddContext: async (
-    { $tags, $test, $step, $bddContextWorker, $lang, $testMeta, $uri, $world },
+    { $tags, $test, $step, $bddContextWorker, $lang, $bddTestMeta, $uri, $world },
     use,
     testInfo,
   ) => {
     const { config } = $bddContextWorker;
 
     const bddDataManager =
-      $testMeta && getEnrichReporterData(config)
-        ? new BddDataManager(testInfo, $testMeta, $uri)
+      $bddTestMeta && getEnrichReporterData(config)
+        ? new BddDataManager(testInfo, $bddTestMeta, $uri)
         : undefined;
 
     await use({
@@ -105,14 +103,14 @@ export const test = base.extend<BddFixtures>({
   // Cucumber style world: null by default, can be overwritten in test files for cucumber style
   $world: ({}, use: (arg: unknown) => unknown) => use(null),
 
-  // init $testMetaMap with empty object, will be overwritten in each BDD test file
-  $testMetaMap: ({}, use) => use({}),
+  // init $bddFileMeta with empty object, will be overwritten in each BDD test file
+  $bddFileMeta: ({}, use) => use({}),
 
   // particular test meta
-  $testMeta: ({ $testMetaMap }, use, testInfo) => use(getTestMeta($testMetaMap, testInfo)),
+  $bddTestMeta: ({ $bddFileMeta }, use, testInfo) => use(getBddTestMeta($bddFileMeta, testInfo)),
 
   // particular test tags
-  $tags: ({ $testMeta }, use) => use($testMeta?.tags || []),
+  $tags: ({ $bddTestMeta }, use) => use($bddTestMeta?.tags || []),
 
   // init $test with base test, but it will be overwritten in test file
   $test: ({}, use) => use(base),

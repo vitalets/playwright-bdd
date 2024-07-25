@@ -27,7 +27,7 @@ import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
 import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
-import { TestMetaBuilder } from './testMeta';
+import { BddFileMetaBuilder } from './bddMeta';
 import { GherkinDocumentWithPickles } from '../cucumber/loadFeatures';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
@@ -54,7 +54,7 @@ export class TestFile {
   private lines: string[] = [];
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
-  private testMetaBuilder: TestMetaBuilder;
+  private bddFileMetaBuilder: BddFileMetaBuilder;
   private usedDecoratorFixtures = new Set<string>();
 
   public undefinedSteps: UndefinedStep[] = [];
@@ -63,7 +63,7 @@ export class TestFile {
 
   constructor(private options: TestFileOptions) {
     this.formatter = new Formatter(options.config);
-    this.testMetaBuilder = new TestMetaBuilder();
+    this.bddFileMetaBuilder = new BddFileMetaBuilder();
     this.featureUri = this.getFeatureUri();
   }
 
@@ -96,7 +96,7 @@ export class TestFile {
   }
 
   get testCount() {
-    return this.testMetaBuilder.testCount;
+    return this.bddFileMetaBuilder.testCount;
   }
 
   build() {
@@ -156,7 +156,7 @@ export class TestFile {
 
   private getTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
-    return this.formatter.technicalSection(this.testMetaBuilder, this.featureUri, [
+    return this.formatter.technicalSection(this.bddFileMetaBuilder, this.featureUri, [
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
@@ -240,7 +240,7 @@ export class TestFile {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
     const pickle = this.findPickle(scenario, exampleRow);
-    this.testMetaBuilder.registerTest(node, pickle);
+    this.bddFileMetaBuilder.registerTest(node, pickle);
     if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
@@ -253,7 +253,7 @@ export class TestFile {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
     const pickle = this.findPickle(scenario);
-    this.testMetaBuilder.registerTest(node, pickle);
+    this.bddFileMetaBuilder.registerTest(node, pickle);
     if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);

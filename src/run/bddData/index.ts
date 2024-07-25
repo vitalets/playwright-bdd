@@ -9,7 +9,7 @@
 import { TestInfo } from '@playwright/test';
 import { createTestStep } from '../../cucumber/createTestStep';
 import { stringifyLocation } from '../../utils';
-import { TestMeta } from '../../gen/testMeta';
+import { BddTestMeta } from '../../gen/bddMeta';
 import { TestCase } from '@playwright/test/reporter';
 import { PlaywrightLocation, PwAnnotation } from '../../playwright/types';
 import { BddData } from './types';
@@ -23,14 +23,10 @@ export class BddDataManager {
 
   constructor(
     private testInfo: TestInfo,
-    testMeta: TestMeta,
+    { pickleLocation }: BddTestMeta,
     uri: string,
   ) {
-    this.data = {
-      uri,
-      pickleLocation: testMeta.pickleLocation,
-      steps: [],
-    };
+    this.data = { uri, pickleLocation, steps: [] };
     this.save({ create: true });
   }
 

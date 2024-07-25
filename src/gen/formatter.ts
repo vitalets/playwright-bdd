@@ -5,7 +5,7 @@
 import { PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
-import { TestMetaBuilder } from './testMeta';
+import { BddFileMetaBuilder } from './bddMeta';
 import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
@@ -102,21 +102,21 @@ export class Formatter {
     return `// missing step: ${keyword}(${this.quoted(text)});`;
   }
 
-  technicalSection(testMetaBuilder: TestMetaBuilder, featureUri: string, fixtures: string[]) {
+  technicalSection(bddFileMetaBuilder: BddFileMetaBuilder, featureUri: string, fixtures: string[]) {
     return [
       '// == technical section ==', // prettier-ignore
       '',
       'test.use({',
       ...[
         '$test: ({}, use) => use(test),',
-        '$testMetaMap: ({}, use) => use(testMetaMap),',
         `$uri: ({}, use) => use(${this.quoted(featureUri)}),`,
+        '$bddFileMeta: ({}, use) => use(bddFileMeta),',
         ...fixtures,
       ].map(indent),
       '});',
       '',
-      'const testMetaMap = {',
-      ...testMetaBuilder.getObjectLines().map(indent),
+      'const bddFileMeta = {',
+      ...bddFileMetaBuilder.getObjectLines().map(indent),
       '};',
     ];
   }
