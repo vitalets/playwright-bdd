@@ -176,7 +176,7 @@ export const test = base.extend<{ world: World }>({
   world: async ({ page }, use) => {
     const world = { page };
     await use(world);
-  }),
+  },
 });
 
 export const { Given, When, Then } = createBdd(test, { 
