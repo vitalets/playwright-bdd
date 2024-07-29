@@ -43,8 +43,7 @@ There are several examples in [`examples`](/examples) folder and a separate full
 Let's make playwright-bdd awesome together!
 
 * Open an [issue on GitHub](https://github.com/vitalets/playwright-bdd/issues) to report bug or propose new feature
-* 🆕 Join [Playwright-bdd Discord Server](https://discord.gg/5rwa7TAGUr) to connect with other developers, ask questions and share your experience or showcase 
-
+* 🆕 Join [Playwright-bdd Discord Server](https://discord.gg/5rwa7TAGUr) to connect with other developers, ask questions and share your experience or showcase
 
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
