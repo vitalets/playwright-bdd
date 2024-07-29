@@ -39,11 +39,15 @@ Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 ## Examples
 There are several examples in [`examples`](/examples) folder and a separate fully working repo [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
 
-## Feedback
-Feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues).
+## Community
+Let's make playwright-bdd awesome together!
+
+* Open an [issue on GitHub](https://github.com/vitalets/playwright-bdd/issues) to report bug or propose new feature
+* 🆕 Join [Playwright-bdd Discord Server](https://discord.gg/5rwa7TAGUr) to connect with other developers, ask questions and share your experience or showcase 
+
 
 ## Changelog
-Inspect the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
+Check out the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
 
 ## Contributing
 Your contributions are welcome! Review [DEVELOPMENT.md](https://github.com/vitalets/playwright-bdd/blob/main/DEVELOPMENT.md) for playwright-bdd local setup and development.
