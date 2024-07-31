@@ -51,7 +51,9 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
       }
     });
     ```
-2. Then in the same file you can construct `Given / When / Then`, passing `test` instance as a first argument to `createBdd()`:
+  > Make sure to export test instance, because it is used in generated test files
+
+2. From the same file you can export `Given / When / Then` bound to custom `test`:
     ```ts
     // fixtures.ts
     // Note: import base from playwright-bdd, not from @playwright/test!
@@ -66,7 +68,7 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
     export const { Given, When, Then } = createBdd(test);
     ```
 
-3. Use these functions to define steps:
+3. Use these `Given / When / Then` to define steps:
     ```ts
     // steps.ts
     import { createBdd } from 'playwright-bdd';

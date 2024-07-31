@@ -60,7 +60,9 @@ export const { Given, When, Then } = createBdd(test, {
 });
 ```
 
-3. Use these `Given / When / Then` functions to define steps, world instance is accessible as `this`:
+> Make sure to export test instance, because it is used in generated test files
+
+3. Use these `Given / When / Then` to define steps, world instance is available as `this`:
 
 ```ts
 // steps.ts
