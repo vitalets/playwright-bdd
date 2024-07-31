@@ -38,16 +38,23 @@ export function removeDuplicates<T>(arr: T[]) {
 }
 
 export function resolvePackageRoot(packageName: string) {
-  const packageJsonPath = require.resolve(`${packageName}/package.json`);
-  return path.dirname(packageJsonPath);
+  try {
+    const packageJsonPath = require.resolve(`${packageName}/package.json`);
+    return path.dirname(packageJsonPath);
+  } catch {
+    throw new Error(`Package "${packageName}" is not installed.`);
+  }
 }
 
 export function getPackageVersion(packageName: string) {
-  const packageRoot = resolvePackageRoot(packageName);
-  const packageJsonPath = path.join(packageRoot, 'package.json');
-  if (!fs.existsSync(packageJsonPath)) return '';
-  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
-  return (packageJson.version || '') as string;
+  try {
+    const packageRoot = resolvePackageRoot(packageName);
+    const packageJsonPath = path.join(packageRoot, 'package.json');
+    const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+    return (packageJson.version || '') as string;
+  } catch {
+    return '';
+  }
 }
 
 export async function callWithTimeout<T>(fn: () => T, timeout?: number, timeoutMsg?: string) {

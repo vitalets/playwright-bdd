@@ -24,7 +24,7 @@ export function getPlaywrightModulePath(relativePath: string) {
 function getPlaywrightRoot() {
   if (!playwrightRoot) {
     // Since 1.38 all modules moved from @playwright/test to playwright.
-    // Here we check existance of 'lib' dir instead of checking version.
+    // Here we check existence of 'lib' dir instead of checking version.
     // See: https://github.com/microsoft/playwright/pull/26946
     const playwrightTestRoot = resolvePackageRoot('@playwright/test');
     const libDir = path.join(playwrightTestRoot, 'lib');

@@ -14,8 +14,10 @@ export { test, expect, normalize };
 export const playwrightVersion = getPackageVersion('@playwright/test');
 
 export function getPackageVersion(pkg) {
-  const { version } = JSON.parse(fs.readFileSync(`node_modules/${pkg}/package.json`, 'utf8'));
-  return version;
+  const packageJsonPath = `node_modules/${pkg}/package.json`;
+  if (!fs.existsSync(packageJsonPath)) return '';
+  const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
+  return packageJson.version || '';
 }
 
 export async function getJsonFromXmlFile(file) {
