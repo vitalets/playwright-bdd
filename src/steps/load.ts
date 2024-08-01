@@ -10,9 +10,13 @@ const DEFAULT_STEP_EXTENSIONS = '{js,mjs,cjs,ts,mts,cts}';
 
 export async function loadSteps(stepFiles: string[]) {
   for (const filePath of stepFiles) {
-    const obj = await requireOrImport(filePath);
-    registerExportedTests(filePath, obj);
+    await loadStepsFromFile(filePath);
   }
+}
+
+export async function loadStepsFromFile(filePath: string) {
+  const obj = await requireOrImport(filePath);
+  return registerExportedTests(filePath, obj);
 }
 
 export async function resolveStepFiles(cwd: string, patterns: string | string[]) {

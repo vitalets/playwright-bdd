@@ -11,11 +11,10 @@ import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
-import { loadSteps, resolveStepFiles } from '../steps/load';
+import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/load';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
-import { getExportedTestsForFile } from '../steps/exportedTest';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -67,16 +66,14 @@ export class TestFilesGenerator {
   }
 
   private async loadSteps() {
-    const { importTestFrom } = this.config;
     const cwd = getPlaywrightConfigDir();
     this.logger.log(`Loading steps: ${this.config.steps}`);
     const stepFiles = await resolveStepFiles(cwd, this.config.steps);
-    if (importTestFrom) stepFiles.push(importTestFrom.file);
     this.logger.log(`Resolved step files: ${stepFiles.length}`);
     stepFiles.forEach((stepFiles) => this.logger.log(`  ${relativeToCwd(stepFiles)}`));
     await loadSteps(stepFiles);
     this.logger.log(`Loaded steps: ${stepDefinitions.length}`);
-    if (importTestFrom) this.assertImportTestFromExportsTest(importTestFrom);
+    await this.handleImportTestFrom();
   }
 
   private buildFiles() {
@@ -119,22 +116,19 @@ export class TestFilesGenerator {
     }
   }
 
-  private assertImportTestFromExportsTest(importTestFrom: Required<BDDConfig>['importTestFrom']) {
+  private async handleImportTestFrom() {
+    const { importTestFrom } = this.config;
+    if (!importTestFrom) return;
+    // require importTestFrom separately instead of just adding to steps,
+    // b/c we need additionally check that it exports "test" variable.
+    // If checking by together loaded files, it's become messy to find correct file by url,
+    // b/c of win/posix path separator.
+    const exportedTests = await loadStepsFromFile(importTestFrom.file);
     const varName = importTestFrom.varName || 'test';
-    let filePath = '';
-    // importTestFrom can be defined without extension, so resolve it.
-    // Wrap in try catch to not break existing code due to invalid file resolution,
-    // that can differ for ESM / CJS.
-    try {
-      filePath = require.resolve(importTestFrom.file);
-    } catch {
-      return;
-    }
-
-    const exportedTests = getExportedTestsForFile(filePath);
     if (!exportedTests.find((info) => info.varName === varName)) {
       exit(
-        `File "${relativeToCwd(filePath)}" pointed by "importTestFrom" should export "${varName}" variable.`,
+        `File "${relativeToCwd(importTestFrom.file)}" pointed by "importTestFrom"`,
+        `should export "${varName}" variable.`,
       );
     }
   }

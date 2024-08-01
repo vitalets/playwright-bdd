@@ -9,14 +9,14 @@ import {
 const testDir = new TestDir(import.meta);
 
 test(`${testDir.name} (no-extension-js)`, () => {
-  execPlaywrightTestWithError(testDir.name, getError('steps-js/fixtures.js'), {
+  execPlaywrightTestWithError(testDir.name, getError('steps-js/fixtures'), {
     cmd: BDDGEN_CMD,
     env: { TEST_NAME: 'no-extension-js' },
   });
 });
 
 test(`${testDir.name} (no-extension-ts)`, () => {
-  execPlaywrightTestWithError(testDir.name, getError('steps-ts/fixtures.ts'), {
+  execPlaywrightTestWithError(testDir.name, getError('steps-ts/fixtures'), {
     cmd: BDDGEN_CMD,
     env: { TEST_NAME: 'no-extension-ts' },
   });

@@ -13,11 +13,17 @@ type ExportedTestInfo = {
 };
 
 export function registerExportedTests(file: string, exportsObj: Record<string, unknown>) {
+  const fileExportedTests: ExportedTestInfo[] = [];
   for (const [varName, testInstance] of Object.entries(exportsObj)) {
-    if (isPlaywrightTestInstance(testInstance) && !exportedTests.has(testInstance)) {
-      exportedTests.set(testInstance, { testInstance, file, varName });
+    if (!isPlaywrightTestInstance(testInstance)) continue;
+    const exportedTest: ExportedTestInfo = { testInstance, file, varName };
+    fileExportedTests.push(exportedTest);
+    if (!exportedTests.has(testInstance)) {
+      exportedTests.set(testInstance, exportedTest);
     }
   }
+
+  return fileExportedTests;
 }
 
 export function getExportedTestInfo(customTest: TestTypeCommon) {
@@ -34,8 +40,4 @@ export function findExportedTestWithFixture(fixtureName: string) {
       return exportedTest;
     }
   }
-}
-
-export function getExportedTestsForFile(filePath: string) {
-  return [...exportedTests.values()].filter((info) => info.file === filePath);
 }
