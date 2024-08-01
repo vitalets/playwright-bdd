@@ -1,4 +1,10 @@
-import { test, TestDir, execPlaywrightTestWithError, BDDGEN_CMD } from '../_helpers/index.mjs';
+import {
+  test,
+  TestDir,
+  normalize,
+  execPlaywrightTestWithError,
+  BDDGEN_CMD,
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -24,5 +30,5 @@ test(`${testDir.name} (with-extension-ts)`, () => {
 });
 
 function getError(importTestFile) {
-  return `File "${importTestFile}" pointed by "importTestFrom" should export "test" variable`;
+  return `File "${normalize(importTestFile)}" pointed by "importTestFrom" should export "test" variable`;
 }
