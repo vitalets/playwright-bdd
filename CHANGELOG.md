@@ -1,6 +1,6 @@
 # Changelog
 
-## dev
+## 7.1.2
 * fix: check exported test variable for manual importTestFrom, ([#196](https://github.com/vitalets/playwright-bdd/issues/196))
 
 ## 7.1.1
