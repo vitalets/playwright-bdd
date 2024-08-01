@@ -35,3 +35,7 @@ export function findExportedTestWithFixture(fixtureName: string) {
     }
   }
 }
+
+export function getExportedTestsForFile(filePath: string) {
+  return [...exportedTests.values()].filter((info) => info.file === filePath);
+}

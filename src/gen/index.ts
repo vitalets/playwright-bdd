@@ -15,6 +15,7 @@ import { loadSteps, resolveStepFiles } from '../steps/load';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
+import { getExportedTestsForFile } from '../steps/exportedTest';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -75,6 +76,7 @@ export class TestFilesGenerator {
     stepFiles.forEach((stepFiles) => this.logger.log(`  ${relativeToCwd(stepFiles)}`));
     await loadSteps(stepFiles);
     this.logger.log(`Loaded steps: ${stepDefinitions.length}`);
+    if (importTestFrom) this.assertImportTestFromExportsTest(importTestFrom);
   }
 
   private buildFiles() {
@@ -117,14 +119,15 @@ export class TestFilesGenerator {
     }
   }
 
-  // private checkImportTestFrom() {
-  //   if (hasCustomTest && !this.config.importTestFrom) {
-  //     exit(
-  //       `When using custom "test" function in createBdd() you should`,
-  //       `set "importTestFrom" config option that points to file exporting custom test.`,
-  //     );
-  //   }
-  // }
+  private assertImportTestFromExportsTest(importTestFrom: Required<BDDConfig>['importTestFrom']) {
+    const varName = importTestFrom.varName || 'test';
+    const exportedTests = getExportedTestsForFile(importTestFrom.file);
+    if (!exportedTests.find((info) => info.varName === varName)) {
+      exit(
+        `File "${relativeToCwd(importTestFrom.file)}" pointed by "importTestFrom" should export "${varName}" variable.`,
+      );
+    }
+  }
 
   private async saveFiles() {
     this.logger.log(`Generating Playwright tests: ${this.files.length}`);
