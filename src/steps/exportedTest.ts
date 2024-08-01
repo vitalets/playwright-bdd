@@ -20,7 +20,7 @@ export function registerExportedTests(file: string, exportsObj: Record<string, u
   }
 }
 
-export function getExportedTest(customTest: TestTypeCommon) {
+export function getExportedTestInfo(customTest: TestTypeCommon) {
   return exportedTests.get(customTest);
 }
 

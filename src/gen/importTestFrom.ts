@@ -6,7 +6,7 @@ import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { TestTypeCommon } from '../playwright/types';
 import {
   findExportedTestWithFixture,
-  getExportedTest,
+  getExportedTestInfo,
   getExportedTestsCount,
 } from '../steps/exportedTest';
 import { StepDefinition } from '../steps/registry';
@@ -25,12 +25,10 @@ export class ImportTestFromGuesser {
   guess(): ImportTestFrom | undefined {
     this.fillCustomTestsFromRegularSteps();
     this.fillCustomTestsFromDecoratorSteps();
-    this.exitIfNoExportedTests();
-    const customTests = [...this.customTestsSet];
-    const topmostTest = this.findTopmostTest(customTests);
-    // for default playwright-bdd baseTest -> topmostTest will be undefined
-    if (!topmostTest) return;
-    const { file, varName } = this.getExportedTest(topmostTest);
+    if (!this.getUsedCustomTestsCount()) return;
+    if (!getExportedTestsCount()) this.throwCantGuessError();
+    const topmostTest = this.findTopmostTest();
+    const { file, varName } = this.getExportedTestInfo(topmostTest);
     return { file, varName };
   }
 
@@ -53,17 +51,12 @@ export class ImportTestFromGuesser {
     });
   }
 
-  private exitIfNoExportedTests() {
-    if (this.customTestsSet.size > 0 && getExportedTestsCount() === 0) {
-      exit(
-        `Can't guess test instance for: ${this.featureUri}.`,
-        `Your tests use custom test instance, produced by test.extend().`,
-        `Please add file exporting custom test to BDD configuration "steps" or set "importTestFrom" manually.`,
-      );
-    }
+  private getUsedCustomTestsCount() {
+    return this.customTestsSet.size;
   }
 
-  private findTopmostTest(customTests: TestTypeCommon[]) {
+  private findTopmostTest() {
+    const customTests = [...this.customTestsSet];
     let topmostTest = customTests[0];
 
     for (let i = 1; i < customTests.length; i++) {
@@ -81,15 +74,21 @@ export class ImportTestFromGuesser {
     return topmostTest;
   }
 
-  private getExportedTest(customTest: TestTypeCommon) {
-    const exportedTest = getExportedTest(customTest)!;
-    if (!exportedTest) {
-      exit(
-        `Can't guess test instance for: ${this.featureUri}.`,
-        `Did you include all fixture files in BDD configuration "steps"?`,
-      );
-    }
-    return exportedTest;
+  private getExportedTestInfo(customTest: TestTypeCommon) {
+    const info = getExportedTestInfo(customTest)!;
+    if (!info) this.throwCantGuessError();
+    return info;
+  }
+
+  private throwCantGuessError() {
+    exit(
+      `Can't guess test instance for: ${this.featureUri}.`,
+      `Your tests use custom test instance, produced by base.extend().`,
+      `Please check that:\n`,
+      `- fixtures file exports "test" variable\n`,
+      `- fixtures file is included in BDD configuration "steps" option\n`,
+      `If it does not help, try to set "importTestFrom" option manually.`,
+    );
   }
 }
 
