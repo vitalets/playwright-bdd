@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 7.1.1
 * fix: improve error messages when guessing importTestFrom, ([#196](https://github.com/vitalets/playwright-bdd/issues/196))
 * fix: bddgen env throws if there is no @cucumber/cucumber
 
