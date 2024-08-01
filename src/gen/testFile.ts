@@ -119,7 +119,7 @@ export class TestFile {
   }
 
   private getFileHeader() {
-    const importTestFrom = this.getRelativeImportTestFrom();
+    const importTestFrom = this.resolveImportTestFrom();
     return this.formatter.fileHeader(this.featureUri, importTestFrom);
   }
 
@@ -135,7 +135,7 @@ export class TestFile {
     return uri;
   }
 
-  private getRelativeImportTestFrom() {
+  private resolveImportTestFrom() {
     let { importTestFrom } = this.config;
     if (!importTestFrom) {
       importTestFrom = new ImportTestFromGuesser(
