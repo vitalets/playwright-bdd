@@ -1,7 +1,7 @@
 /**
  * Generate playwright test files from Gherkin documents.
  */
-import fs from 'node:fs/promises';
+import fs from 'node:fs';
 import path from 'node:path';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
@@ -121,10 +121,20 @@ export class TestFilesGenerator {
 
   private assertImportTestFromExportsTest(importTestFrom: Required<BDDConfig>['importTestFrom']) {
     const varName = importTestFrom.varName || 'test';
-    const exportedTests = getExportedTestsForFile(importTestFrom.file);
+    let filePath = '';
+    // importTestFrom can be defined without extension, so resolve it.
+    // Wrap in try catch to not break existing code due to invalid file resolution,
+    // that can differ for ESM / CJS.
+    try {
+      filePath = require.resolve(importTestFrom.file);
+    } catch {
+      return;
+    }
+
+    const exportedTests = getExportedTestsForFile(filePath);
     if (!exportedTests.find((info) => info.varName === varName)) {
       exit(
-        `File "${relativeToCwd(importTestFrom.file)}" pointed by "importTestFrom" should export "${varName}" variable.`,
+        `File "${relativeToCwd(filePath)}" pointed by "importTestFrom" should export "${varName}" variable.`,
       );
     }
   }
@@ -141,7 +151,7 @@ export class TestFilesGenerator {
     const pattern = `${fg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
     const testFiles = await fg(pattern);
     this.logger.log(`Clearing output dir: ${relativeToCwd(pattern)}`);
-    const tasks = testFiles.map((testFile) => fs.rm(testFile));
+    const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
     await Promise.all(tasks);
   }
 

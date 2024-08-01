@@ -22,7 +22,7 @@ function warningImportTestFrom(config: BDDConfig) {
     showWarning(
       'importTestFrom',
       'Option "importTestFrom" in defineBddConfig() is not needed anymore.',
-      'Try to remove it and include that file into "require" / "steps" pattern.',
+      'Try to remove it and include that file into "steps" pattern.',
     );
   }
 }
