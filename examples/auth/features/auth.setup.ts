@@ -8,7 +8,7 @@ setup('authenticate', async ({ page }) => {
   await page.getByLabel('Password').fill('pa$$w0rd');
   await page.getByRole('button', { name: 'Log In' }).click();
 
-  await expect(page.getByRole('link', { name: 'Sign Out1' })).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Sign Out' })).toBeVisible();
 
   await page.context().storageState({ path: AUTH_FILE });
 });

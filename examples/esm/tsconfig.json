@@ -2,8 +2,7 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "nodenext",
-    "strict": true,
-    "esModuleInterop": true
+    "strict": true
   },
   "include": ["**/*.ts"]
 }
