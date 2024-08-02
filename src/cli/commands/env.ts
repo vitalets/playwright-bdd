@@ -22,7 +22,8 @@ export const envCommand = new Command('env')
 
 function showPackageVersion(packageName: string) {
   const version = getPackageVersion(packageName);
-  logger.log(`${packageName}: v${version}`);
+  const versionStr = version ? `v${version}` : 'none';
+  logger.log(`${packageName}: ${versionStr}`);
 }
 
 function showPlaywrightConfigPath(cliConfigPath?: string) {
