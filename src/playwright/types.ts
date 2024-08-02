@@ -21,11 +21,10 @@ export type KeyValue = { [key: string]: any };
 export type BuiltInFixturesWorker = PlaywrightWorkerArgs & PlaywrightWorkerOptions;
 export type BuiltInFixtures = PlaywrightTestArgs & PlaywrightTestOptions & BuiltInFixturesWorker;
 
-export type FixturesArg<T extends KeyValue = {}, W extends KeyValue = {}> = T & W & BuiltInFixtures;
-
 export type TestTypeCommon = TestType<KeyValue, KeyValue>;
 
-// T can be typeof test or fixtures type itself
+// Fixtures type as generic provided to test.extend() and as available in tests
+// T can be typeof test or fixtures list itself
 export type Fixtures<T extends KeyValue> =
   T extends TestType<infer U, infer W> ? Omit<U & W, symbol | number> : T;
 

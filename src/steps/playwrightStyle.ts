@@ -1,7 +1,7 @@
 /**
  * Playwright-style steps.
  */
-import { FixturesArg, KeyValue, TestTypeCommon } from '../playwright/types';
+import { BuiltInFixtures, KeyValue, TestTypeCommon } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { BddAutoInjectFixtures } from '../run/autoInjectFixtures';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
@@ -10,7 +10,7 @@ import { ParametersExceptFirst } from '../utils/types';
 import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from './registry';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
-  fixtures: FixturesArg<T, W> & BddAutoInjectFixtures,
+  fixtures: T & W & BuiltInFixtures & BddAutoInjectFixtures,
   ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => unknown;
 
