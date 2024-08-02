@@ -26,12 +26,12 @@ export class Snippets {
 
   print() {
     const snippetsToShow = [...this.snippets.values()].slice(0, MAX_SNIPPETS_TO_SHOW);
-    const moreSnippetsCount = MAX_SNIPPETS_TO_SHOW - this.snippets.size;
+    const moreSnippetsCount = this.snippets.size - snippetsToShow.length;
     logger.error(
       [
         `Some steps are without definition!`,
         ...snippetsToShow,
-        moreSnippetsCount ? `...and ${moreSnippetsCount} more.` : '',
+        moreSnippetsCount > 0 ? `...and ${moreSnippetsCount} more.` : '',
         `Missing step definitions: ${this.snippets.size}.\nUse snippets above to create them.`,
       ]
         .filter(Boolean)
