@@ -39,6 +39,10 @@ export class FeaturesLoader {
   async load(featureFiles: string[], options: IGherkinStreamOptions) {
     this.gherkinQuery = new GherkinQuery();
     this.parseErrors = [];
+    // Without this early return gherkinFromPaths() produced weird behavior
+    // for reporters: it does not keep exit code
+    // See: https://github.com/vitalets/playwright-bdd/issues/200
+    if (!featureFiles.length) return;
     await gherkinFromPaths(featureFiles, options, (envelope) => {
       this.gherkinQuery.update(envelope);
       if (envelope.parseError) {

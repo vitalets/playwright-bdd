@@ -1,6 +1,7 @@
 # Changelog
 
 ## dev
+* fix: unexpected Exit Code with cucumberReporter When Setup Fails, ([#200](https://github.com/vitalets/playwright-bdd/issues/200))
 * chore: set module node16 in tsconfig, remove typesVersions and add types tests
 
 ## 7.1.2
