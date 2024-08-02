@@ -8,6 +8,9 @@ import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
 import { stepDefinitions } from '../steps/registry';
 import { Snippet, SnippetOptions } from './snippet';
 
+// if there are too many snippets, it's more like invalid configuration
+const MAX_SNIPPETS_TO_SHOW = 10;
+
 export class Snippets {
   private snippets = new Map</* stepText */ string, /* code */ string>();
   private snippetOptions: SnippetOptions;
@@ -22,16 +25,17 @@ export class Snippets {
   }
 
   print() {
-    if (!stepDefinitions.length) {
-      logger.error(`No step definitions found!`);
-      return;
-    }
+    const snippetsToShow = [...this.snippets.values()].slice(0, MAX_SNIPPETS_TO_SHOW);
+    const moreSnippetsCount = MAX_SNIPPETS_TO_SHOW - this.snippets.size;
     logger.error(
       [
         `Some steps are without definition!`,
-        ...this.snippets.values(),
+        ...snippetsToShow,
+        moreSnippetsCount ? `...and ${moreSnippetsCount} more.` : '',
         `Missing step definitions: ${this.snippets.size}.\nUse snippets above to create them.`,
-      ].join('\n\n'),
+      ]
+        .filter(Boolean)
+        .join('\n\n'),
     );
   }
 
