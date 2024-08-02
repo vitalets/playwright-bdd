@@ -1,8 +1,9 @@
 import path from 'node:path';
 import fs from 'node:fs';
-import { expect } from '@playwright/test';
+import { expect, Page } from '@playwright/test';
 import { createBdd, DataTable } from 'playwright-bdd';
 import { test } from './fixtures';
+import { expectTypeOf } from 'expect-type';
 
 const { Given, When, Then, Step } = createBdd(test);
 
@@ -72,3 +73,12 @@ Step('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string)
   expect($tags.join(' ')).toEqual(tags);
   expect(tagsFromCustomFixture.join(' ')).toEqual(tags);
 });
+
+Then(
+  'This step is not used, defined for checking types',
+  async ({ page, $tags, tagsFromCustomFixture }) => {
+    expectTypeOf(page).toEqualTypeOf<Page>();
+    expectTypeOf($tags).toEqualTypeOf<string[]>();
+    expectTypeOf(tagsFromCustomFixture).toEqualTypeOf<string[]>();
+  },
+);

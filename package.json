@@ -13,19 +13,6 @@
     "./reporter/cucumber": "./dist/reporter/cucumber/index.js",
     "./package.json": "./package.json"
   },
-  "typesVersions": {
-    "*": {
-      "index": [
-        "./dist/index.d.ts"
-      ],
-      "decorators": [
-        "./dist/decorators.d.ts"
-      ],
-      "cucumber-reporter": [
-        "./dist/reporter/cucumber/index.d.ts"
-      ]
-    }
-  },
   "engines": {
     "node": ">=18"
   },
@@ -38,7 +25,7 @@
     "prepare": "git config core.hooksPath .hooks",
     "lint": "eslint .",
     "tsc": "tsc",
-    "knip": "knip -c knip.config.ts",
+    "knip": "knip -c knip.config.mts",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
@@ -84,6 +71,7 @@
     "cross-env": "^7.0.3",
     "eslint": "8.57.0",
     "eslint-plugin-playwright": "1.6.2",
+    "expect-type": "0.19.0",
     "globals": "15.8.0",
     "knip": "5.26.0",
     "lint-staged": "15.2.7",

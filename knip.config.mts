@@ -7,7 +7,7 @@ const config: KnipConfig = {
     'src/index.ts',
     'src/decorators.ts',
     'src/reporter/cucumber/index.ts',
-    'test/reporter-cucumber-msg/**/cucumber.steps.ts',
+    'test/**',
   ],
   project: ['src/**/*.ts'],
   ignore: ['**/*.d.ts'],
@@ -15,9 +15,7 @@ const config: KnipConfig = {
   ignoreDependencies: [
     '@cucumber/compatibility-kit',
     '@cucumber/pretty-formatter',
-    '@types/react',
     '@types/react-dom',
-    'react',
     'react-dom',
     'lint-staged',
     'np',

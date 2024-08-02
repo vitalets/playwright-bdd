@@ -1,6 +1,6 @@
 import { test as base, createBdd } from 'playwright-bdd';
 
-class CustomWorld {
+export class CustomWorld {
   foo = 'bar';
 }
 

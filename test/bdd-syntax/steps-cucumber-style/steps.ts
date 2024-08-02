@@ -3,6 +3,8 @@ import fs from 'node:fs';
 import { expect } from '@playwright/test';
 import { DataTable, defineParameterType } from 'playwright-bdd';
 import { Given, When, Then } from './fixtures';
+import { expectTypeOf } from 'expect-type';
+import { World } from './world';
 
 Given('State {int}', async function () {
   // noop
@@ -77,4 +79,8 @@ Then('Context prop {string} to equal {string}', async function (key: string, val
 
 Then('Tags are {string}', async function (tags: string) {
   expect(this.tags.join(' ')).toEqual(tags);
+});
+
+Then('This step is not used, defined for checking types', async function () {
+  expectTypeOf(this).toEqualTypeOf<World>();
 });

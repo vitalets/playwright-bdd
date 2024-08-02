@@ -1,5 +1,8 @@
 # Changelog
 
+## dev
+* chore: set module node16 in tsconfig, remove typesVersions and add types tests
+
 ## 7.1.2
 * fix: check exported test variable for manual importTestFrom, ([#196](https://github.com/vitalets/playwright-bdd/issues/196))
 

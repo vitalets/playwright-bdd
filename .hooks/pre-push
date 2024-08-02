@@ -7,6 +7,7 @@ if [[ -n "${SKIP_GIT_HOOKS-}" ]]; then exit 0; fi
 
 npm run lint
 node scripts/no-only-in-features.mjs test/**/*.feature
+npm run tsc
 npm run prettier
 npm run knip
 npm run docs:validate

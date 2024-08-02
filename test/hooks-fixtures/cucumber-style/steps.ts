@@ -1,5 +1,6 @@
-import { expect } from '@playwright/test';
-import { Given, Before, After, BeforeAll, AfterAll } from './fixtures';
+import { expect, Page } from '@playwright/test';
+import { expectTypeOf } from 'expect-type';
+import { Given, Before, After, BeforeAll, AfterAll, CustomWorld } from './fixtures';
 
 Before(async function ({ $tags, $testInfo, page, someTestFixture, someWorkerFixture }) {
   expect(this.foo).toEqual('bar');
@@ -8,6 +9,12 @@ Before(async function ({ $tags, $testInfo, page, someTestFixture, someWorkerFixt
   expect(page).toBeDefined();
   expect(someTestFixture).toEqual('someTestFixture');
   expect(someWorkerFixture).toEqual('someWorkerFixture');
+  // types
+  expectTypeOf(this).toEqualTypeOf<CustomWorld>();
+  expectTypeOf($tags).toEqualTypeOf<string[]>();
+  expectTypeOf(page).toEqualTypeOf<Page>();
+  expectTypeOf(someTestFixture).toEqualTypeOf<string>();
+  expectTypeOf(someWorkerFixture).toEqualTypeOf<string>();
 });
 
 After(async function ({ $tags, $testInfo, page, someTestFixture, someWorkerFixture }) {
