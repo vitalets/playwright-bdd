@@ -2,8 +2,8 @@
  * createBdd() definition.
  */
 import {
-  BuiltInFixtures,
-  BuiltInFixturesWorker,
+  PwBuiltInFixturesTest,
+  PwBuiltInFixturesWorker,
   CustomFixtures,
   KeyValue,
   TestTypeCommon,
@@ -25,8 +25,8 @@ type CreateBddOptions<WorldFixtureName> = {
 
 // eslint-disable-next-line max-statements, complexity
 export function createBdd<
-  T extends KeyValue = BuiltInFixtures,
-  W extends KeyValue = BuiltInFixturesWorker,
+  T extends KeyValue = PwBuiltInFixturesTest,
+  W extends KeyValue = PwBuiltInFixturesWorker,
   // important to set default value to empty string, not null or undefined
   // otherwise it breaks TS non-strict mode
   // see: https://github.com/vitalets/playwright-bdd/issues/163

@@ -17,20 +17,20 @@ import { Location as PlaywrightLocation } from '@playwright/test/reporter';
 import { BddFixtures } from '../run/testFixtures';
 
 export type KeyValue = { [key: string]: any };
-
-export type BuiltInFixturesWorker = PlaywrightWorkerArgs & PlaywrightWorkerOptions;
-export type BuiltInFixtures = PlaywrightTestArgs & PlaywrightTestOptions & BuiltInFixturesWorker;
-
 export type TestTypeCommon = TestType<KeyValue, KeyValue>;
 
-// Fixtures type as generic provided to test.extend() and as available in tests
-// T can be typeof test or fixtures list itself
+export type PwBuiltInFixturesWorker = PlaywrightWorkerArgs & PlaywrightWorkerOptions;
+export type PwBuiltInFixturesTest = PlaywrightTestArgs & PlaywrightTestOptions;
+export type PwBuiltInFixtures = PwBuiltInFixturesWorker & PwBuiltInFixturesTest;
+
+// Fixtures type as available in tests
+// T can be typeof test or fixtures type itself
 export type Fixtures<T extends KeyValue> =
   T extends TestType<infer U, infer W> ? Omit<U & W, symbol | number> : T;
 
 export type CustomFixtures<T extends KeyValue> = Omit<
   Fixtures<T>,
-  keyof (BuiltInFixtures & BddFixtures) | symbol | number
+  keyof (PwBuiltInFixtures & BddFixtures) | symbol | number
 >;
 
 export type PwAttachment = TestInfo['attachments'][0];
