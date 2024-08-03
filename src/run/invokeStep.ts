@@ -35,7 +35,6 @@ class StepInvoker {
     argument?: PickleStepArgument | null,
     stepFixtures?: Record<string, unknown>,
   ) {
-    // this.bddContext.currentStepFixtures = stepFixtures || {};
     const stepDefinition = this.getStepDefinition(stepText);
 
     // Get location of step call in generated test file.
