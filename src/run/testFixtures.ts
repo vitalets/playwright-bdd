@@ -21,7 +21,9 @@ type StepFixture = {
   title: string;
 };
 
-export type BddFixtures = BddFixturesWorker & {
+// export type BddFixtures = BddFixturesWorker & BddFixturesTest;
+
+export type BddFixturesTest = {
   $bddContext: BddContext;
   Given: StepKeywordFixture;
   When: StepKeywordFixture;
@@ -32,6 +34,7 @@ export type BddFixtures = BddFixturesWorker & {
   $bddTestMeta?: BddTestMeta; // $bddTestMeta is undefined for non-bdd tests
   $tags: string[];
   $test: TestTypeCommon;
+  $testInfo: TestInfo;
   $step: StepFixture;
   $uri: string;
   $scenarioHookFixtures: Record<string, unknown>;
@@ -52,7 +55,7 @@ export type BddContext = BddContextWorker & {
   bddDataManager?: BddDataManager;
 };
 
-export const test = base.extend<BddFixtures>({
+export const test = base.extend<BddFixturesTest>({
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
   $applySpecialTags: async ({ $bddTestMeta }, use, testInfo) => {
@@ -114,6 +117,8 @@ export const test = base.extend<BddFixtures>({
 
   // init $test with base test, but it will be overwritten in test file
   $test: ({}, use) => use(base),
+
+  $testInfo: ({}, use, testInfo) => use(testInfo),
 
   $step: ({}, use) => use({ title: '' }),
 

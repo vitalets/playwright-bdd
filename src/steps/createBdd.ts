@@ -4,18 +4,18 @@
 import {
   PwBuiltInFixturesTest,
   PwBuiltInFixturesWorker,
-  CustomFixtures,
   KeyValue,
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { test as baseBddTest } from '../run/testFixtures';
+import { test as baseBddTest, BddFixturesTest } from '../run/testFixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './playwrightStyle';
+import { BddFixturesWorker } from '../run/workerFixtures';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
@@ -23,29 +23,39 @@ type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
 };
 
+type DefaultFixturesTest = PwBuiltInFixturesTest & BddFixturesTest;
+type DefaultFixturesWorker = PwBuiltInFixturesWorker & BddFixturesWorker;
+type CustomFixtureNames<T extends KeyValue> = Exclude<
+  keyof T,
+  keyof DefaultFixturesTest | number | symbol
+>;
+
 // eslint-disable-next-line max-statements, complexity
 export function createBdd<
-  T extends KeyValue = PwBuiltInFixturesTest,
-  W extends KeyValue = PwBuiltInFixturesWorker,
+  T extends KeyValue = DefaultFixturesTest,
+  W extends KeyValue = DefaultFixturesWorker,
   // important to set default value to empty string, not null or undefined
   // otherwise it breaks TS non-strict mode
   // see: https://github.com/vitalets/playwright-bdd/issues/163
-  WorldFixtureName extends keyof CustomFixtures<T> | '' = '',
+  WorldFixtureName extends CustomFixtureNames<T> | '' = '',
 >(customTest?: TestType<T, W>, options?: CreateBddOptions<WorldFixtureName>) {
   // TypeScript does not narrow generic types by control flow
   // see: https://github.com/microsoft/TypeScript/issues/33912
   // So, we define return types separately using conditional types
-  type World = WorldFixtureName extends keyof CustomFixtures<T>
-    ? CustomFixtures<T>[WorldFixtureName]
-    : null;
+  type World =
+    WorldFixtureName extends CustomFixtureNames<T>
+      ? T[WorldFixtureName] // prettier-ignore
+      : null;
 
-  type StepFn = WorldFixtureName extends keyof CustomFixtures<T>
-    ? CucumberStyleStepFn<World>
-    : PlaywrightStyleStepFn<T, W>;
+  type StepFn =
+    WorldFixtureName extends CustomFixtureNames<T>
+      ? CucumberStyleStepFn<World>
+      : PlaywrightStyleStepFn<T, W>;
 
-  type StepCtor = WorldFixtureName extends keyof CustomFixtures<T>
-    ? ReturnType<typeof cucumberStepCtor<StepFn>>
-    : ReturnType<typeof playwrightStepCtor<StepFn>>;
+  type StepCtor =
+    WorldFixtureName extends CustomFixtureNames<T>
+      ? ReturnType<typeof cucumberStepCtor<StepFn>>
+      : ReturnType<typeof playwrightStepCtor<StepFn>>;
 
   if (customTest === (baseBddTest as TestTypeCommon)) customTest = undefined;
   if (customTest) assertTestHasBddFixtures(customTest);

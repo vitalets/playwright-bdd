@@ -4,7 +4,6 @@
 
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { Fixtures, TestTypeCommon } from '../playwright/types';
 import { isEnglish } from '../config/lang';
 import { DataTable } from '../cucumber/DataTable';
 import { getBddAutoInjectFixtures } from './autoInjectFixtures';
@@ -34,7 +33,7 @@ class StepInvoker {
   async invoke(
     stepText: string,
     argument?: PickleStepArgument | null,
-    stepFixtures?: Fixtures<TestTypeCommon>,
+    stepFixtures?: Record<string, unknown>,
   ) {
     // this.bddContext.currentStepFixtures = stepFixtures || {};
     const stepDefinition = this.getStepDefinition(stepText);

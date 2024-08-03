@@ -1,16 +1,15 @@
 /**
  * Playwright-style steps.
  */
-import { PwBuiltInFixtures, KeyValue, TestTypeCommon } from '../playwright/types';
+import { KeyValue, TestTypeCommon } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
-import { BddAutoInjectFixtures } from '../run/autoInjectFixtures';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { StepConfig } from './stepConfig';
 import { ParametersExceptFirst } from '../utils/types';
 import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from './registry';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
-  fixtures: T & W & PwBuiltInFixtures & BddAutoInjectFixtures,
+  fixtures: T & W,
   ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => unknown;
 
@@ -59,7 +58,7 @@ function assertStepIsCalledWithRequiredFixtures<StepFn extends StepConfig['fn']>
     throw new Error(
       [
         `Invocation of step "${pattern}" from another step does not pass all required fixtures.`,
-        `Missings fixtures: ${missingFixtures.join(', ')}`,
+        `Missing fixtures: ${missingFixtures.join(', ')}`,
       ].join(' '),
     );
   }

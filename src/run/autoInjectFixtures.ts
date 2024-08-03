@@ -4,13 +4,12 @@
  * It just reduces generated code visually.
  */
 
-import { TestInfo } from '@playwright/test';
-import { BddContext, BddFixtures } from './testFixtures';
+import { BddContext, BddFixturesTest } from './testFixtures';
 
-export type BddAutoInjectFixtures = Pick<BddFixtures, '$test' | '$tags' | '$step'> & {
-  $testInfo: TestInfo;
-  $bddContext: BddContext;
-};
+export type BddAutoInjectFixtures = Pick<
+  BddFixturesTest,
+  '$test' | '$tags' | '$step' | '$testInfo' | '$bddContext'
+>;
 
 const BDD_AUTO_INJECT_FIXTURES: Record<keyof BddAutoInjectFixtures, null> = {
   $tags: null,
