@@ -15,3 +15,13 @@ Given('some step', async ({ page, $tags, myFixture }) => {
   expectTypeOf(page).toEqualTypeOf<Page>();
   expectTypeOf(myFixture).toEqualTypeOf<MyFixture>();
 });
+
+/*
+The following does not provide correct types:
+
+const test = base.extend({});
+const { Given } = createBdd(test);
+
+But this is edge case and can be easily fixed with:
+const test = base.extend<{}>({});
+*/
