@@ -19,7 +19,7 @@ test(`${testDir.name} (cucumber-style-success)`, () => {
 test(`${testDir.name} (pw-style-invalid-invocation)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
-    ['Missings fixtures: todos, $testInfo'],
+    ['Missing fixtures: todos, $testInfo'],
     `${DEFAULT_CMD} --project pw-style-invalid-invocation`,
   );
 });
