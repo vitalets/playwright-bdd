@@ -8,6 +8,6 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  todoPage: ({ page }, use) => use(new TodoPage(page)),
-  adminTodoPage: ({ page }, use) => use(new AdminTodoPage(page)),
+  todoPage: async ({ page }, use) => use(new TodoPage(page)),
+  adminTodoPage: async ({ page }, use) => use(new AdminTodoPage(page)),
 });

@@ -1,7 +1,5 @@
 import { expect } from '@playwright/test';
-import { createBdd } from 'playwright-bdd';
-
-const { Given, When, Then } = createBdd();
+import { Given, When, Then } from './fixtures.js';
 
 Given('I am on home page', async ({ page }) => {
   await page.goto('https://playwright.dev');
