@@ -50,7 +50,7 @@ class StepInvoker {
 
     const fixturesArg = Object.assign({}, stepFixtures, getBddAutoInjectFixtures(this.bddContext));
 
-    this.bddContext.bddDataManager?.registerStep(stepDefinition, stepText, location);
+    this.bddContext.bddAnnotation?.registerStep(stepDefinition, stepText, location);
 
     // update step title to be accessible via $step.title
     this.bddContext.step.title = stepText;

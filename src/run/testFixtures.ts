@@ -13,7 +13,7 @@ import { SpecialTags } from '../specialTags';
 import { TestTypeCommon } from '../playwright/types';
 import { StepKeywordFixture } from './invokeStep';
 import { TestInfo } from '@playwright/test';
-import { BddDataManager } from './bddData';
+import { BddAnnotation } from './bddAnnotation';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -52,7 +52,7 @@ export type BddContext = BddContextWorker & {
   tags: string[];
   step: StepFixture;
   world: unknown;
-  bddDataManager?: BddDataManager;
+  bddAnnotation?: BddAnnotation;
 };
 
 export const test = base.extend<BddFixturesTest>({
@@ -73,9 +73,9 @@ export const test = base.extend<BddFixturesTest>({
   ) => {
     const { config } = $bddContextWorker;
 
-    const bddDataManager =
+    const bddAnnotation =
       $bddTestMeta && getEnrichReporterData(config)
-        ? new BddDataManager(testInfo, $bddTestMeta, $uri)
+        ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
         : undefined;
 
     await use({
@@ -86,7 +86,7 @@ export const test = base.extend<BddFixturesTest>({
       tags: $tags,
       step: $step,
       world: $world,
-      bddDataManager,
+      bddAnnotation,
     });
   },
 

@@ -16,9 +16,9 @@ import { BddData } from './types';
 import { updateAnnotation } from '../../playwright/utils';
 import { StepDefinition } from '../../steps/registry';
 
-const BDD_DATA_ANNOTATION_NAME = '__bddData';
+const BDD_ANNOTATION_NAME = '__bddData';
 
-export class BddDataManager {
+export class BddAnnotation {
   private data: BddData;
 
   constructor(
@@ -47,7 +47,7 @@ export class BddDataManager {
     updateAnnotation(
       this.testInfo,
       {
-        type: BDD_DATA_ANNOTATION_NAME,
+        type: BDD_ANNOTATION_NAME,
         description: JSON.stringify(this.data),
       },
       { create },
@@ -56,7 +56,7 @@ export class BddDataManager {
 }
 
 export function getBddDataFromTest({ annotations }: TestCase) {
-  const annotationIndex = annotations.findIndex(isBddDataAnnotation);
+  const annotationIndex = annotations.findIndex(isBddAnnotation);
   const annotation = annotations[annotationIndex];
   const bddData = annotation?.description
     ? (JSON.parse(annotation.description) as BddData)
@@ -64,6 +64,6 @@ export function getBddDataFromTest({ annotations }: TestCase) {
   return { bddData, annotationIndex };
 }
 
-function isBddDataAnnotation(annotation: PwAnnotation) {
-  return annotation.type === BDD_DATA_ANNOTATION_NAME;
+function isBddAnnotation(annotation: PwAnnotation) {
+  return annotation.type === BDD_ANNOTATION_NAME;
 }

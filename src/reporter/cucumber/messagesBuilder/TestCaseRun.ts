@@ -13,8 +13,8 @@ import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
-import { BddData, BddDataStep } from '../../../run/bddData/types';
-import { getBddDataFromTest } from '../../../run/bddData';
+import { BddData, BddDataStep } from '../../../run/bddAnnotation/types';
+import { getBddDataFromTest } from '../../../run/bddAnnotation';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -25,7 +25,7 @@ export type TestCaseRunEnvelope = TestStepRunEnvelope &
 
 export type ExecutedStepInfo = {
   bddDataStep: BddDataStep;
-  // pwStep can be missing even for executted steps when there is test timeout
+  // pwStep can be missing even for executed steps when there is test timeout
   pwStep?: pw.TestStep;
 };
 
