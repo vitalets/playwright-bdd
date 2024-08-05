@@ -79,7 +79,7 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
     });
     ```
 
-See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic).
+See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic-cjs).
 
 ## Accessing `$test` and `$testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:

@@ -1,10 +1,10 @@
 /**
  * Build and run examples
  * npm run examples
- * npm run examples basic
+ * npm run examples basic-cjs
+ * npm run examples basic-esm
  * npm run examples cucumber-style
  * npm run examples decorators
- * npm run examples esm
  */
 
 import path from 'node:path';
