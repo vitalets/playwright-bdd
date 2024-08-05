@@ -9,7 +9,7 @@ import {
   TestCase,
   TestResult,
 } from '@playwright/test/reporter';
-import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder';
+import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder/ref';
 import { getPlaywrightConfigDir } from '../../config/configDir';
 import { enableEnrichReporterData } from '../../config/enrichReporterData';
 import BaseReporter, { InternalOptions } from './base';
