@@ -11,7 +11,7 @@
  */
 
 import { TestNode } from './testNode';
-import { PickleWithLocation } from '../cucumber/loadFeatures';
+import { PickleWithLocation } from '../features/load';
 import { TestInfo } from '@playwright/test';
 import { stringifyLocation } from '../utils';
 

@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
-import { FeaturesLoader, resolveFeatureFiles } from '../cucumber/loadFeatures';
+import { FeaturesLoader, resolveFeatureFiles } from '../features/load';
 import { Snippets } from '../snippets';
 import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';

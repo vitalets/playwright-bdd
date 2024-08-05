@@ -12,7 +12,7 @@
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { Hook, HookType } from './Hook';
-import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../cucumber/loadFeatures';
+import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/load';
 import { stringifyLocation } from '../../../utils';
 import { ProjectInfo } from './Projects';
 import { BddData } from '../../../run/bddAnnotation/types';
