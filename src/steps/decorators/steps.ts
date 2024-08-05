@@ -6,7 +6,7 @@
 
 import { StepConfig } from '../stepConfig';
 import { PomNode } from './pomGraph';
-import { isBddAutoInjectFixture } from '../../run/autoInjectFixtures';
+import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from '../registry';
 

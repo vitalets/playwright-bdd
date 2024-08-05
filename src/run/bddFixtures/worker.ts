@@ -4,12 +4,12 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { BDDConfig } from '../config/types';
+import { BDDConfig } from '../../config/types';
 import { test as base } from '@playwright/test';
-import { getConfigFromEnv } from '../config/env';
-import { getPlaywrightConfigDir } from '../config/configDir';
-import { runWorkerHooks } from '../hooks/worker';
-import { loadSteps, resolveStepFiles } from '../steps/load';
+import { getConfigFromEnv } from '../../config/env';
+import { getPlaywrightConfigDir } from '../../config/configDir';
+import { runWorkerHooks } from '../../hooks/worker';
+import { loadSteps, resolveStepFiles } from '../../steps/load';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

@@ -6,10 +6,10 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { isEnglish } from '../config/lang';
 import { DataTable } from '../cucumber/DataTable';
-import { getBddAutoInjectFixtures } from './autoInjectFixtures';
+import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
-import { BddContext } from './testFixtures';
+import { BddContext } from './bddFixtures/test';
 
 type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';
 

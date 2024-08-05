@@ -4,24 +4,22 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { BddContextWorker, BddFixturesWorker, test as base } from './workerFixtures';
-import { runScenarioHooks } from '../hooks/scenario';
-import { createStepInvoker } from './invokeStep';
-import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../gen/bddMeta';
-import { getEnrichReporterData } from '../config/enrichReporterData';
-import { SpecialTags } from '../specialTags';
-import { TestTypeCommon } from '../playwright/types';
-import { StepKeywordFixture } from './invokeStep';
+import { BddContextWorker, test as base } from './worker';
+import { runScenarioHooks } from '../../hooks/scenario';
+import { createStepInvoker } from '../invokeStep';
+import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMeta';
+import { getEnrichReporterData } from '../../config/enrichReporterData';
+import { SpecialTags } from '../../specialTags';
+import { TestTypeCommon } from '../../playwright/types';
+import { StepKeywordFixture } from '../invokeStep';
 import { TestInfo } from '@playwright/test';
-import { BddAnnotation } from './bddAnnotation';
+import { BddAnnotation } from '../bddAnnotation';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 type StepFixture = {
   title: string;
 };
-
-// export type BddFixtures = BddFixturesWorker & BddFixturesTest;
 
 export type BddFixturesTest = {
   $bddContext: BddContext;

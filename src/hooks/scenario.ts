@@ -13,7 +13,7 @@ import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
-import { BddContext } from '../run/testFixtures';
+import { BddContext } from '../run/bddFixtures/test';
 
 type ScenarioHookOptions = {
   name?: string;

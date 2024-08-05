@@ -4,7 +4,7 @@
  * It just reduces generated code visually.
  */
 
-import { BddContext, BddFixturesTest } from './testFixtures';
+import { BddContext, BddFixturesTest } from './test';
 
 export type BddAutoInjectFixtures = Pick<
   BddFixturesTest,

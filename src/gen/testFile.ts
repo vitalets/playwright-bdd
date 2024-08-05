@@ -34,7 +34,7 @@ import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
-import { isBddAutoInjectFixture } from '../run/autoInjectFixtures';
+import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 
 type TestFileOptions = {

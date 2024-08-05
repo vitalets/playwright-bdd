@@ -8,14 +8,14 @@ import {
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { test as baseBddTest, BddFixturesTest } from '../run/testFixtures';
+import { test as baseBddTest, BddFixturesTest } from '../run/bddFixtures/test';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './playwrightStyle';
-import { BddFixturesWorker } from '../run/workerFixtures';
+import { BddFixturesWorker } from '../run/bddFixtures/worker';
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
 
