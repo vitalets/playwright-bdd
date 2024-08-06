@@ -4,7 +4,7 @@ import { defineBddConfig } from 'playwright-bdd';
 export default defineConfig({
   projects: [
     {
-      name: 'single-qoutes',
+      name: 'single-quotes',
       testDir: defineBddConfig({
         quotes: 'single',
         outputDir: `.features-gen/single`,
@@ -13,7 +13,7 @@ export default defineConfig({
       }),
     },
     {
-      name: 'double-qoutes',
+      name: 'double-quotes',
       testDir: defineBddConfig({
         quotes: 'double',
         outputDir: `.features-gen/double`,
