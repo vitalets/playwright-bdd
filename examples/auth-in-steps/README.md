@@ -1,4 +1,4 @@
-# Auth-in-steps playwright-bdd example
+# auth-in-steps playwright-bdd example
 
 Example of dynamic authentication in BDD steps. It allows you to dynamically authenticate with needed account via steps, e.g.:
 ```

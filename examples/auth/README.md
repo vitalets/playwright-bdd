@@ -1,4 +1,4 @@
-# Auth playwright-bdd example
+# auth playwright-bdd example
 
 Example of [single authentication account](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests) in BDD tests. There are two Playwright projects:
 
