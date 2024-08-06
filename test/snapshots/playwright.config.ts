@@ -8,5 +8,4 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  outputDir: './test-results',
 });
