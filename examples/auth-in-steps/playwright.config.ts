@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
-export const AUTH_FILE = 'playwright/.auth/user.json';
+export const AUTH_FILE = 'playwright/.auth/{user}.json';
 
 export default defineConfig({
   projects: [
@@ -16,9 +16,6 @@ export default defineConfig({
         features: 'features/*.feature',
         steps: 'features/steps/*.ts',
       }),
-      use: {
-        storageState: AUTH_FILE,
-      },
       dependencies: ['auth'],
     },
   ],

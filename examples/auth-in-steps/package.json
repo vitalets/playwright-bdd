@@ -1,0 +1,6 @@
+{
+  "type": "commonjs",
+  "scripts": {
+    "test": "npx bddgen && npx playwright test"
+  }
+}

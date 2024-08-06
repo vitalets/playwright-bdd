@@ -5,6 +5,6 @@ Given('I am on homepage', async ({ page }) => {
   await page.goto('https://authenticationtest.com/');
 });
 
-Then('I see link {string}', async ({ page }, name: string) => {
-  await expect(page.getByRole('link', { name })).toBeVisible();
+Then('I see {string} in navigation panel', async ({ page }, text: string) => {
+  await expect(page.getByRole('navigation')).toContainText(text);
 });

@@ -5,7 +5,13 @@ type Fixtures = {
 };
 
 export const test = base.extend<Fixtures>({
-  // add your fixtures
+  storageState: async ({ $tags, storageState }, use) => {
+    // reset storage state for features/scenarios with @noauth tag
+    if ($tags.includes('@noauth')) {
+      storageState = { cookies: [], origins: [] };
+    }
+    await use(storageState);
+  },
 });
 
 export const { Given, When, Then } = createBdd(test);

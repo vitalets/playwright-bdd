@@ -1,5 +1,5 @@
-Feature: Authorized page
+Feature: Authorized user
 
-  Scenario: Sign-out link is visible
+  Scenario: Homepage shows "Sign Out" for authorized user
     Given I am on homepage
-    Then I see link "Sign Out"
+    Then I see "Sign Out" in navigation panel

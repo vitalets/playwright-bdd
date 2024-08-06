@@ -25,4 +25,4 @@ blob-report
 /test/reporter-cucumber-merge/check-report
 /test/reporter-cucumber-merge/.features-gen/features/sample.feature.spec.js-snapshots
 
-/examples/auth/playwright/.auth
+/examples/**/playwright/.auth
