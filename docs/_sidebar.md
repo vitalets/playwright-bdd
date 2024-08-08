@@ -10,6 +10,7 @@
 
 * [**Writing features**](writing-features/index.md)
   - [Special tags](writing-features/special-tags.md)
+  - [Localization](writing-features/i18n.md)
   - [Customize examples title](writing-features/customize-examples-title.md)
   - [Use ChatGPT](writing-features/chatgpt.md)
 
