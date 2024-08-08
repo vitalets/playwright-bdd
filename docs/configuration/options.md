@@ -70,6 +70,13 @@ The behavior is similar to TypeScript [rootDir](https://www.typescriptlang.org/t
   ```
 </details>
 
+## language
+
+- Type: `string`
+- Default: `en`
+
+Default [language](https://cucumber.io/docs/gherkin/reference/#spoken-languages) for your feature files. 
+
 ## examplesTitleFormat
 
 - Type: `string`
