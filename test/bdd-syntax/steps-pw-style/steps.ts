@@ -1,11 +1,9 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { expect, Page } from '@playwright/test';
-import { createBdd, DataTable } from 'playwright-bdd';
-import { test } from './fixtures';
+import { DataTable } from 'playwright-bdd';
+import { Given, When, Then, Step } from './fixtures';
 import { expectTypeOf } from 'expect-type';
-
-const { Given, When, Then, Step } = createBdd(test);
 
 Given('State {int}', async () => {
   // noop
