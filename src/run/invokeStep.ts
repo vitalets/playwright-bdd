@@ -55,9 +55,13 @@ class StepInvoker {
     // update step title to be accessible via $step.title
     this.bddContext.step.title = stepText;
 
-    await runStepWithLocation(this.bddContext.test, stepTitle, location, () =>
-      stepDefinition.code(fixturesArg, ...parameters),
-    );
+    await runStepWithLocation(this.bddContext.test, stepTitle, location, () => {
+      // Although pw-style does not expect usage of world / this in steps,
+      // some projects request it for better migration process from cucumber.
+      // Here, for pw-style we pass empty object as world.
+      // See: https://github.com/vitalets/playwright-bdd/issues/208
+      return stepDefinition.code.call(this.bddContext.world, fixturesArg, ...parameters);
+    });
   }
 
   private getStepDefinition(text: string) {

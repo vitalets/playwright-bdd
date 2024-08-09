@@ -4,7 +4,8 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { BddContextWorker, test as base } from './worker';
+import { test as base } from './worker';
+import { BDDConfig } from '../../config/types';
 import { runScenarioHooks } from '../../hooks/scenario';
 import { createStepInvoker } from '../invokeStep';
 import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMeta';
@@ -43,7 +44,8 @@ export type BddFixturesTest = {
   $world: unknown;
 };
 
-export type BddContext = BddContextWorker & {
+export type BddContext = {
+  config: BDDConfig;
   test: TestTypeCommon;
   testInfo: TestInfo;
   lang: string;
@@ -101,8 +103,12 @@ export const test = base.extend<BddFixturesTest>({
   But: ({ $bddContext, $before, $applySpecialTags }, use) =>
     use(createStepInvoker($bddContext, 'But')),
 
-  // Cucumber style world: null by default, can be overwritten in test files for cucumber style
-  $world: ({}, use: (arg: unknown) => unknown) => use(null),
+  // For cucumber-style $world will be overwritten in test files
+  // For playwright-style $world will be empty object
+  // Note: although pw-style does not expect usage of world / this in steps,
+  // some projects request it for better migration process from cucumber
+  // See: https://github.com/vitalets/playwright-bdd/issues/208
+  $world: ({}, use: (arg: unknown) => unknown) => use({}),
 
   // init $bddFileMeta with empty object, will be overwritten in each BDD test file
   $bddFileMeta: ({}, use) => use({}),

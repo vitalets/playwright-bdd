@@ -1,5 +1,8 @@
 # Changelog
 
+## Dev
+* fix: provide empty world for Playwright-style steps, ([#208](https://github.com/vitalets/playwright-bdd/issues/208))
+
 ## 7.2.1
 * fix: show snippets even if there are no step definitions found, ([#201](https://github.com/vitalets/playwright-bdd/issues/201))
 * fix: unexpected Exit Code with cucumberReporter When Setup Fails, ([#200](https://github.com/vitalets/playwright-bdd/issues/200))

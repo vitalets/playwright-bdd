@@ -9,8 +9,10 @@ Given('State {int}', async () => {
   // noop
 });
 
-Given('Set context prop {string} = {string}', async ({ ctx }, key: string, value: string) => {
+Given('Set context prop {string} = {string}', async function ({ ctx }, key: string, value: string) {
   ctx[key] = value;
+  // @ts-expect-error 'this' is any in pw-style steps
+  this[key] = value;
 });
 
 When('Action {int}', () => {
@@ -63,9 +65,14 @@ Then('File {string} does not exist', async ({ $test }, fileName: string) => {
   expect(fs.existsSync(filePath)).toEqual(false);
 });
 
-Then('Context prop {string} to equal {string}', async ({ ctx }, key: string, value: string) => {
-  expect(String(ctx[key])).toEqual(value);
-});
+Then(
+  'Context prop {string} to equal {string}',
+  async function ({ ctx }, key: string, value: string) {
+    expect(String(ctx[key])).toEqual(value);
+    // @ts-expect-error 'this' is any in pw-style steps
+    expect(String(this[key])).toEqual(value);
+  },
+);
 
 Step('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string) => {
   expect($tags.join(' ')).toEqual(tags);
