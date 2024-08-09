@@ -5,7 +5,7 @@ import { Command } from 'commander';
 import { TestFilesGenerator } from '../../gen';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { getEnvConfigs } from '../../config/env';
-import { ConfigOption, configOption } from '../options';
+import { ConfigOption } from '../options';
 import { exit } from '../../utils/exit';
 import { BDDConfig } from '../../config/types';
 import { defaults } from '../../config/defaults';
@@ -21,7 +21,7 @@ type TestCommandOptions = ConfigOption & {
 
 export const testCommand = new Command('test')
   .description('Generate Playwright test files from Gherkin documents')
-  .addOption(configOption)
+  .configureHelp({ showGlobalOptions: true })
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .action(async (opts: TestCommandOptions) => {

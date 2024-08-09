@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Command } from 'commander';
 import Table from 'cli-table3';
-import { ConfigOption, configOption } from '../options';
+import { ConfigOption } from '../options';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { Logger } from '../../utils/logger';
 import { getEnvConfigs } from '../../config/env';
@@ -20,7 +20,7 @@ type Opts = ConfigOption & {
 
 export const exportCommand = new Command('export')
   .description('Prints step definitions')
-  .addOption(configOption)
+  .configureHelp({ showGlobalOptions: true })
   .option('--unused-steps', 'Output only unused steps')
   .action(async (opts: Opts) => {
     const { resolvedConfigFile } = await loadPlaywrightConfig(opts.config);

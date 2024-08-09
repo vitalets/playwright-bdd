@@ -13,17 +13,17 @@ Examples:
     npx bddgen && npx playwright test
     ```
     
-* Generate and run test files with [filtering by tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
+* Use `--tags` option to generate test with [filtering by tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
     ```
     npx bddgen --tags "@foo and not @bar" && npx playwright test
     ```
 
-* Generate and run test files using **custom** `playwright.config.ts`. The same config should be provided to both `bddgen` and `playwright test`):
+* Use `-c` / `--config` option to set custom config. Note: the same config should be provided to both `bddgen` and `playwright test` commands:
     ```
     npx bddgen -c path/to/playwright.config.ts && npx playwright test -c path/to/playwright.config.ts
     ```
 
-* Show help:
+* Use `-h` to show help:
     ```
     npx bddgen test -h
     # or to show global help
