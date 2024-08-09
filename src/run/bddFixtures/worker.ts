@@ -13,25 +13,21 @@ import { loadSteps, resolveStepFiles } from '../../steps/load';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
-type BddContextWorker = {
-  config: BDDConfig;
-};
-
 export type BddFixturesWorker = {
-  $bddContextWorker: BddContextWorker;
+  $bddConfig: BDDConfig;
   $workerHookFixtures: Record<string, unknown>;
   $beforeAll: void;
   $afterAll: void;
 };
 
 export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
-  $bddContextWorker: [
+  $bddConfig: [
     async ({}, use, workerInfo) => {
       const config = getConfigFromEnv(workerInfo.project.testDir);
       const cwd = getPlaywrightConfigDir();
       const stepFiles = await resolveStepFiles(cwd, config.steps);
       await loadSteps(stepFiles);
-      await use({ config });
+      await use(config);
     },
     { scope: 'worker' },
   ],
@@ -41,8 +37,8 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
   $beforeAll: [
     // Important unused dependencies:
     // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
-    // 2. $bddContextWorker: to load hooks before this fixtures
-    async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
+    // 2. $bddConfig: to load hooks before this fixtures
+    async ({ $workerHookFixtures, $bddConfig }, use, $workerInfo) => {
       await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
       await use();
     },
@@ -50,8 +46,8 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
   ],
   $afterAll: [
     // Important unused dependencies:
-    // 1. $bddContextWorker: to load hooks before this fixtures
-    async ({ $workerHookFixtures, $bddContextWorker }, use, $workerInfo) => {
+    // 1. $bddConfig: to load hooks before this fixtures
+    async ({ $workerHookFixtures, $bddConfig }, use, $workerInfo) => {
       await use();
       await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
     },

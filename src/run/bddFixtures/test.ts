@@ -67,19 +67,17 @@ export const test = base.extend<BddFixturesTest>({
   // $lang fixture can be overwritten in test file
   $lang: ({}, use) => use(''),
   $bddContext: async (
-    { $tags, $test, $step, $bddContextWorker, $lang, $bddTestMeta, $uri, $world },
+    { $tags, $test, $step, $bddConfig, $lang, $bddTestMeta, $uri, $world },
     use,
     testInfo,
   ) => {
-    const { config } = $bddContextWorker;
-
     const bddAnnotation =
-      $bddTestMeta && getEnrichReporterData(config)
+      $bddTestMeta && getEnrichReporterData($bddConfig)
         ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
         : undefined;
 
     await use({
-      config,
+      config: $bddConfig,
       testInfo,
       test: $test,
       lang: $lang,
