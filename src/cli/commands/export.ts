@@ -14,7 +14,7 @@ import { forceExitIfNeeded } from '../helpers';
 
 const logger = new Logger({ verbose: true });
 
-type Opts = ConfigOption & {
+type ExportCommandOptions = ConfigOption & {
   unusedSteps?: boolean;
 };
 
@@ -22,7 +22,8 @@ export const exportCommand = new Command('export')
   .description('Prints step definitions')
   .configureHelp({ showGlobalOptions: true })
   .option('--unused-steps', 'Output only unused steps')
-  .action(async (opts: Opts) => {
+  .action(async () => {
+    const opts = exportCommand.optsWithGlobals<ExportCommandOptions>();
     const { resolvedConfigFile } = await loadPlaywrightConfig(opts.config);
     logger.log(`Using config: ${path.relative(process.cwd(), resolvedConfigFile)}`);
     const configs = Object.values(getEnvConfigs());

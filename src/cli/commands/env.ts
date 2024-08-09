@@ -7,10 +7,13 @@ import { relativeToCwd } from '../../utils/paths';
 
 const logger = new Logger({ verbose: true });
 
+type EnvCommandOptions = ConfigOption;
+
 export const envCommand = new Command('env')
   .description('Prints environment info')
   .configureHelp({ showGlobalOptions: true })
-  .action((opts: ConfigOption) => {
+  .action(() => {
+    const opts = envCommand.optsWithGlobals<EnvCommandOptions>();
     logger.log(`Playwright-bdd environment info:\n`);
     logger.log(`platform: ${process.platform}`);
     logger.log(`node: ${process.version}`);

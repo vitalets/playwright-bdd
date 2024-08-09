@@ -24,7 +24,8 @@ export const testCommand = new Command('test')
   .configureHelp({ showGlobalOptions: true })
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
-  .action(async (opts: TestCommandOptions) => {
+  .action(async () => {
+    const opts = testCommand.optsWithGlobals<TestCommandOptions>();
     await loadPlaywrightConfig(opts.config);
     const configs = readConfigsFromEnv();
     mergeCliOptions(configs, opts);
