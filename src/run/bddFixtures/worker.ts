@@ -13,7 +13,7 @@ import { loadSteps, resolveStepFiles } from '../../steps/load';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
-export type BddContextWorker = {
+type BddContextWorker = {
   config: BDDConfig;
 };
 
