@@ -1,6 +1,6 @@
 # Cucumber-style steps
 
-?> This is a new approach for cucumber-style steps since **v7**. For old one please check [cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
+?> This is a new approach for cucumber-style steps since **v7**. For versions **before v7** please check [cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
 
 Cucumber-style step definitions are compatible with CucumberJS.
 
@@ -44,7 +44,7 @@ export class World {
 
 > No need to call `setWorldConstructor` as it was before for [CucumberJs custom world](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md#custom-worlds).
 
-2. Extend Playwright's test with world fixture and export `Given / When/ Then`:
+2. Extend Playwright's test with world fixture and create `Given / When/ Then`:
 
 ```ts
 // fixtures.ts
@@ -60,7 +60,7 @@ export const { Given, When, Then } = createBdd(test, {
 });
 ```
 
-> Make sure to export test instance, because it is used in generated test files
+> Make sure to export `test` instance, because it is used in generated test files
 
 3. Use these `Given / When / Then` to define steps, world instance is available as `this`:
 
@@ -75,6 +75,43 @@ Given('I am on home page', async function () {
 
 See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
 
+### Provide custom fixtures
+You can provide custom fixtures to cucumber-style steps.
+To achieve that, assign custom fixture to a property of World object 
+and then access it via `this`:
+
+```ts
+// fixtures.ts
+import { test as base } from 'playwright-bdd';
+
+type World = {
+  page: Page;
+  myFixture: MyFixture; // <- custom fixture property in World
+};
+
+export const test = base.extend<{ world: World }>({
+  myFixture: ({}, use) => {
+    // setup myFixture
+  },
+  world: ({ page, myFixture }, use) => {
+    const world: World = { page, myFixture };
+    use(world);
+  },
+});
+
+export const { Given, When, Then } = createBdd(test, { 
+  worldFixture: 'world' 
+});
+```
+
+Use `this.myFixture` in step definitions:
+```ts
+import { Given, When, Then } from './fixtures';
+
+Given('I am on home page', async function () {
+  console.log(this.myFixture);
+});
+```
 
 ### Is there default world?
 No. You define entire World yourself, providing only necessary fixtures.
