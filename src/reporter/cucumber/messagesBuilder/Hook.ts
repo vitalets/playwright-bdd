@@ -5,7 +5,7 @@
 import { randomUUID } from 'node:crypto';
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { getPlaywrightConfigDir } from '../../../config/configDir';
+import { getPlaywrightConfigDir } from '#config/configDir.js';
 import path from 'node:path';
 
 export type HookType = 'before' | 'after';

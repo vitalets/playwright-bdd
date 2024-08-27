@@ -55,10 +55,10 @@
  *   2.4 remove found attachment from attachments array
  */
 import * as pw from '@playwright/test/reporter';
-import { AutofillMap } from '../../../utils/AutofillMap';
+import { AutofillMap } from '#utils/AutofillMap.js';
 import { collectStepsWithCategory, getHooksRootPwStep } from './pwStepUtils';
-import { PwAttachment } from '../../../playwright/types';
-import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes';
+import { PwAttachment } from '#playwright/types.js';
+import { stripAnsiEscapes } from '#utils/stripAnsiEscapes.js';
 
 export class AttachmentMapper {
   private stepAttachments = new AutofillMap<pw.TestStep, PwAttachment[]>();

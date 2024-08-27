@@ -2,8 +2,8 @@
  * Builds Pickle messages.
  */
 import * as messages from '@cucumber/messages';
-import { omit } from '../../../utils';
-import { AutofillMap } from '../../../utils/AutofillMap';
+import { omit } from '#utils/index.js';
+import { AutofillMap } from '#utils/AutofillMap.js';
 import { TestCase } from './TestCase';
 import { ConcreteEnvelope } from './types';
 import { getFeatureUriWithProject } from './Projects';

@@ -52,6 +52,19 @@ export default [
     },
   },
   {
+    files: ['src/**/*.ts'],
+    rules: {
+      'no-restricted-imports': [
+        'error',
+        {
+          // restrict high parent imports in favor of import subpaths (not path alias!)
+          // https://www.typescriptlang.org/docs/handbook/modules/reference.html#packagejson-imports-and-self-name-imports
+          patterns: ['../../../*'],
+        },
+      ],
+    },
+  },
+  {
     files: ['test/**/*.{ts,js,mjs}'],
     plugins: {
       playwright,

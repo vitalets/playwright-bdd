@@ -3,16 +3,16 @@
  */
 import path from 'node:path';
 import * as messages from '@cucumber/messages';
-import { AutofillMap } from '../../../utils/AutofillMap';
+import { AutofillMap } from '#utils/AutofillMap.js';
 import { TestCaseRun } from './TestCaseRun';
-import { FeaturesLoader, GherkinDocumentWithPickles } from '../../../features/load';
-import { getPlaywrightConfigDir } from '../../../config/configDir';
+import { FeaturesLoader, GherkinDocumentWithPickles } from '#features/load.js';
+import { getPlaywrightConfigDir } from '#config/configDir.js';
 import { ConcreteEnvelope } from './types';
 import { GherkinDocumentClone } from './GherkinDocumentClone';
 import { GherkinDocumentMessage } from './GherkinDocument';
 import { ProjectInfo, getFeatureUriWithProject } from './Projects';
-import { getEnvConfigs } from '../../../config/env';
-import { LANG_EN } from '../../../config/lang';
+import { getEnvConfigs } from '#config/env.js';
+import { LANG_EN } from '#config/lang.js';
 
 export class GherkinDocuments {
   private featuresLoader = new FeaturesLoader();

@@ -7,10 +7,15 @@
     "useUnknownInCatchVariables": false,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
+    "resolvePackageJsonImports": true,
+    "rootDir": ".",
+    "outDir": "dist",
+    "customConditions": ["pw-bdd-dev"],
     "noEmit": true,
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "jsx": "react"
+    "jsx": "react-jsx"
   },
-  "include": ["**/*.ts", "**/*.tsx", "knip.config.mts"]
+  "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
+  "exclude": ["test/types-non-strict"]
 }
