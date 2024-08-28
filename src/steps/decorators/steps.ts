@@ -2,7 +2,7 @@
  * Define steps via decorators.
  */
 
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 import { StepConfig } from '../stepConfig';
 import { PomNode } from './pomGraph';

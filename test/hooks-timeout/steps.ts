@@ -35,7 +35,6 @@ Given('State {int}', async ({ $testInfo }) => {
   await track(`Step ${$testInfo.title}`);
 });
 
-// eslint-disable-next-line complexity
 async function track(hookTitle: string) {
   calls.push(hookTitle);
   const shouldTimeout = process.env.TIMEOUT && hookTitle.startsWith(process.env.TIMEOUT);

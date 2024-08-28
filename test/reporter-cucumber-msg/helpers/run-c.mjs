@@ -12,6 +12,7 @@ import { execSync } from 'node:child_process';
 const featureDir = process.argv[2];
 if (!featureDir) throw new Error(`Empty <featureDir>`);
 
+// eslint-disable-next-line no-console
 console.log(`Generating: features/${featureDir}/expected-reports/messages.ndjson`);
 
 try {

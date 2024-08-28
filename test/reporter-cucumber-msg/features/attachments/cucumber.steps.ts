@@ -1,8 +1,6 @@
 import { When } from '@cucumber/cucumber';
 import fs from 'fs';
 
-/* eslint-disable max-len */
-
 When('the string {string} is attached as {string}', function (text: string, mediaType: string) {
   this.attach(text, mediaType);
 });

@@ -18,13 +18,13 @@ export function getMessagesBuilderRef() {
   return {
     builder: instance,
     onBegin(config: pw.FullConfig) {
-      isFirstRef && this.builder.onBegin(config);
+      if (isFirstRef) this.builder.onBegin(config);
     },
     onTestEnd(test: pw.TestCase, result: pw.TestResult) {
-      isFirstRef && this.builder.onTestEnd(test, result);
+      if (isFirstRef) this.builder.onTestEnd(test, result);
     },
     onEnd(fullResult: pw.FullResult) {
-      isFirstRef && this.builder.onEnd(fullResult);
+      if (isFirstRef) this.builder.onEnd(fullResult);
     },
   };
 }

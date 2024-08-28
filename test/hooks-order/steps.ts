@@ -41,7 +41,6 @@ Given('State {int}', async ({ $testInfo }) => {
   track(`Step ${$testInfo.title}`);
 });
 
-// eslint-disable-next-line complexity
 function track(hookTitle: string) {
   calls.push(hookTitle);
   const shouldThrow = process.env.ERROR && hookTitle.startsWith(process.env.ERROR);

@@ -10,6 +10,7 @@ files.forEach((filePath) => {
   if (skipFiles.some((skipFile) => filePath.endsWith(skipFile))) return;
   const content = fs.readFileSync(filePath, 'utf8');
   if (content.includes('@only')) {
+    // eslint-disable-next-line no-console
     console.log('Unexpected @only in:', filePath);
     process.exit(1);
   }

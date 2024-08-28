@@ -3,7 +3,7 @@
  * https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/fixtures.ts#L226
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type */
 /* eslint-disable max-statements, complexity, max-len, max-depth */
 
 const signatureSymbol = Symbol('signature');

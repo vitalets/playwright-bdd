@@ -5,8 +5,7 @@ import path from 'node:path';
 import { Reporter, TestCase, TestResult, TestStep } from '@playwright/test/reporter';
 
 class MyReporter implements Reporter {
-  // eslint-disable-next-line
-  onStepEnd(test: TestCase, result: TestResult, step: TestStep) {
+  onStepEnd(_test: TestCase, _result: TestResult, step: TestStep) {
     const { title, location, category } = step;
     if (category === 'test.step' || title.includes('page.goto')) {
       const file = location?.file;

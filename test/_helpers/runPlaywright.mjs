@@ -1,6 +1,7 @@
 /**
  * Helpers for running bddgen + playwright test.
  */
+
 import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
@@ -9,10 +10,12 @@ export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
 export const PLAYWRIGHT_CMD = 'npx playwright test';
 export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
 
+const logger = console;
+
 export function execPlaywrightTest(dir, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
-    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
+    if (process.env.TEST_DEBUG) logger.log('STDOUT:', stdout);
     // no way to get stderr here.
     // see: https://stackoverflow.com/questions/57484453/how-to-get-err-stderr-from-execsync
     return stdout;
@@ -21,9 +24,9 @@ export function execPlaywrightTest(dir, cmd) {
     // if playwright cmd exits -> output is in stderr
     // if test.mjs not passed -> output is in stderr
     // That's why always print stdout + stderr
-    console.log('STDERR:', e.stderr?.toString());
-    console.log('STDOUT:', e.stdout?.toString());
-    console.log(e.message);
+    logger.log('STDERR:', e.stderr?.toString());
+    logger.log('STDOUT:', e.stdout?.toString());
+    logger.log(e.message);
     process.exit(1);
   }
 }
@@ -34,8 +37,8 @@ export function execPlaywrightTest(dir, cmd) {
 export function execPlaywrightTestWithError(dir, error, cmd) {
   try {
     const stdout = execPlaywrightTestInternal(dir, cmd);
-    console.log(`Expected to exit with error: ${error}`);
-    console.log('STDOUT:', stdout);
+    logger.log(`Expected to exit with error: ${error}`);
+    logger.log('STDOUT:', stdout);
     process.exit(1);
   } catch (e) {
     const stdout = e.stdout?.toString().trim() || '';
@@ -45,9 +48,9 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
       // to distinguish from other unexpected errors
       const expectedOutput = `Command failed: ${getCmdStr(cmd)}`;
       if (e.message !== expectedOutput) {
-        console.log(`Command exited with incorrect error.`);
-        console.log(`Expected:\n${expectedOutput}`);
-        console.log(`Actual:\n${e.message}`);
+        logger.log(`Command exited with incorrect error.`);
+        logger.log(`Expected:\n${expectedOutput}`);
+        logger.log(`Actual:\n${e.message}`);
         process.exit(1);
       }
     } else {
@@ -72,7 +75,7 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
       });
     }
 
-    if (process.env.TEST_DEBUG) console.log('STDOUT:', stdout);
+    if (process.env.TEST_DEBUG) logger.log('STDOUT:', stdout);
 
     return stdout;
   }

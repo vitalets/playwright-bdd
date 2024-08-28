@@ -5,7 +5,13 @@ import playwright from 'eslint-plugin-playwright';
 
 export default [
   {
-    ignores: ['examples', 'dist', '*.config.js', 'cucumber.js', 'test/**/.cache'],
+    ignores: [
+      'examples', // prettier-ignore
+      'dist',
+      '*.config.js',
+      'test/**/.cache',
+      '**/.features-gen/**',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -15,21 +21,20 @@ export default [
     },
   },
   {
-    files: ['**/*.ts'],
-    // languageOptions: {
-    //   parser: tsParser,
-    //   parserOptions: {
-    //     project: './tsconfig.json',
-    //   },
-    // },
-    // plugins: {
-    //   '@typescript-eslint': tsPlugin,
-    // },
+    // all files
+    files: ['**/*.{js,mjs,ts}'],
     rules: {
-      // ...tsPlugin.configs.recommended.rules,
-      // ...tsPlugin.configs['recommended-requiring-type-checking'].rules,
       'no-console': 'error',
-
+      'no-undef': 0,
+      'no-empty-pattern': 0,
+      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-require-imports': 0,
+    },
+  },
+  {
+    // src files
+    files: ['src/**/*.{js,mjs,ts}'],
+    rules: {
       complexity: ['error', { max: 5 }],
       'max-depth': ['error', { max: 2 }],
       'max-nested-callbacks': ['error', { max: 2 }],
@@ -37,23 +42,10 @@ export default [
       'max-statements': ['error', { max: 12 }, { ignoreTopLevelFunctions: false }],
       'max-len': ['error', { code: 120, ignoreUrls: true }],
       'max-lines': ['error', { max: 200, skipComments: true, skipBlankLines: true }],
-      semi: ['error', 'always'],
-      'no-multiple-empty-lines': ['error', { max: 1 }],
-      'space-before-function-paren': [
-        'error',
-        { anonymous: 'always', named: 'never', asyncArrow: 'always' },
-      ],
       '@typescript-eslint/triple-slash-reference': 0,
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       // require is needed for some functions (copied from PW)
       '@typescript-eslint/no-var-requires': 0,
-      'no-undef': 0,
-      'no-empty-pattern': 0,
-    },
-  },
-  {
-    files: ['src/**/*.ts'],
-    rules: {
+      '@typescript-eslint/no-require-imports': 0,
       'no-restricted-imports': [
         'error',
         {
@@ -65,30 +57,26 @@ export default [
     },
   },
   {
-    files: ['test/**/*.{ts,js,mjs}'],
+    // test files
+    files: ['test/**/*.{js,mjs,ts}'],
     plugins: {
       playwright,
     },
     rules: {
       'max-params': 0,
       'no-empty-pattern': 0,
+      'max-nested-callbacks': 0,
       '@typescript-eslint/no-empty-function': 0,
       'playwright/no-focused-test': 'error',
     },
   },
   {
-    files: ['test/special-tag-only/**'],
+    files: ['test/special-tag-only/**/*.{js,mjs,cjs,ts}'],
     plugins: {
       playwright,
     },
     rules: {
       'playwright/no-focused-test': 0,
-    },
-  },
-  {
-    files: ['test/cjs/**'],
-    rules: {
-      '@typescript-eslint/no-var-requires': 0,
     },
   },
 ];

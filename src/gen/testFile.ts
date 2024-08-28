@@ -315,7 +315,6 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
-  // eslint-disable-next-line max-statements
   private getStep(
     step: Step,
     previousKeywordType: KeywordType | undefined,

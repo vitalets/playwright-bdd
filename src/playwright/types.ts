@@ -2,7 +2,7 @@
  * Some playwright types.
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import {
   PlaywrightTestArgs,

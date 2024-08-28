@@ -24,7 +24,6 @@ test('Scenario: timeout in before fixture', async ({ page }) => {
   await expect(scenario.getSteps('skipped')).toHaveCount(3);
   await expect(scenario.getErrors()).toContainText([
     // here can be different error messages
-    // eslint-disable-next-line max-len
     /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
   ]);
 });
@@ -53,7 +52,6 @@ test('Scenario: timeout in after fixture', async ({ page }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getErrors()).toContainText([
-    // eslint-disable-next-line max-len
     /but tearing down "timeoutedAfterFixture" ran out of time|Tearing down "timeoutedAfterFixture" exceeded the test timeout/,
   ]);
 });

@@ -4,10 +4,12 @@
 import { execSync } from 'node:child_process';
 import { getPackageVersion } from './_helpers/index.mjs';
 
+const logger = console;
+
 setup();
 
 function setup() {
-  !process.env.CI && ensureNodeVersion(20);
+  if (!process.env.CI) ensureNodeVersion(20);
   showVersion('@playwright/test');
   showVersion('@playwright/experimental-ct-react');
   // must build project before tests as we run tests without ts-node
@@ -15,7 +17,7 @@ function setup() {
 }
 
 function showVersion(pkg) {
-  console.log(`Version of ${pkg}: ${getPackageVersion(pkg) || 'none'}`);
+  logger.log(`Version of ${pkg}: ${getPackageVersion(pkg) || 'none'}`);
 }
 
 function ensureNodeVersion(version) {

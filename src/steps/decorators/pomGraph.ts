@@ -3,7 +3,7 @@
  * Allows to guess correct fixture for decorator steps.
  */
 
-/* eslint-disable @typescript-eslint/ban-types */
+/* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 import { linkStepsWithPomNode } from './steps';
 import { exit } from '../../utils/exit';

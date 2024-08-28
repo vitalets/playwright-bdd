@@ -13,19 +13,19 @@ Before({ tags: '@failing-anonymous-hook' }, async ({ page }) => {
 });
 
 Given('step that uses failingBeforeFixtureNoStep', async ({ failingBeforeFixtureNoStep }) => {
-  failingBeforeFixtureNoStep;
+  return failingBeforeFixtureNoStep;
 });
 
 Given('step that uses failingBeforeFixtureWithStep', async ({ failingBeforeFixtureWithStep }) => {
-  failingBeforeFixtureWithStep;
+  return failingBeforeFixtureWithStep;
 });
 
 Given('step that uses failingAfterFixtureNoStep', async ({ failingAfterFixtureNoStep }) => {
-  failingAfterFixtureNoStep;
+  return failingAfterFixtureNoStep;
 });
 
 Given('step that uses failingAfterFixtureWithStep', async ({ failingAfterFixtureWithStep }) => {
-  failingAfterFixtureWithStep;
+  return failingAfterFixtureWithStep;
 });
 
 Given('step failing for scenario {string}', async ({ $testInfo }, title: string) => {
@@ -42,11 +42,11 @@ Given('timeouted step', async ({ $testInfo }) => {
 });
 
 Given('step that uses timeouted before fixture', async ({ timeoutedBeforeFixture }) => {
-  timeoutedBeforeFixture;
+  return timeoutedBeforeFixture;
 });
 
 Given('step that uses timeouted after fixture', async ({ timeoutedAfterFixture }) => {
-  timeoutedAfterFixture;
+  return timeoutedAfterFixture;
 });
 
 Before({ name: 'success before hook', tags: '@success-before-hook' }, async ({}) => {});

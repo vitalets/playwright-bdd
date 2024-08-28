@@ -64,7 +64,6 @@ function validateFile(fileInfo: FileInfo, index: number, files: FileInfo[]) {
   return fileInfo.links.map((token) => validateLink(fileInfo, token, files));
 }
 
-// eslint-disable-next-line complexity
 function validateLink(fileInfo: FileInfo, token: Tokens.Link, files: FileInfo[]) {
   const { pathname, hash } = parseTokenHref(token.href);
   if (pathname.startsWith('..')) {

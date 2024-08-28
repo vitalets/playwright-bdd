@@ -13,7 +13,7 @@ type AvailableFixtureName<T extends KeyValue> = Omit<keyof AvailableFixtures<T>,
 
 export function Fixture<T extends KeyValue>(fixtureName: AvailableFixtureName<T>) {
   // context parameter is required for decorator by TS even though it's not used
-  // eslint-disable-next-line @typescript-eslint/ban-types
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (Ctor: Function, _context: ClassDecoratorContext) => {
     createPomNode(Ctor, fixtureName as string);
   };

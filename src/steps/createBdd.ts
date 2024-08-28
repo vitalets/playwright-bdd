@@ -17,8 +17,6 @@ import { CucumberStyleStepFn, cucumberStepCtor } from './cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './playwrightStyle';
 import { BddFixturesWorker } from '../run/bddFixtures/worker';
 
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types */
-
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
 };
