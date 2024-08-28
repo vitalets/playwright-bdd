@@ -8,8 +8,6 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "resolvePackageJsonImports": true,
-    "rootDir": ".",
-    "outDir": "dist",
     "customConditions": ["pw-bdd-dev"],
     "noEmit": true,
     "resolveJsonModule": true,

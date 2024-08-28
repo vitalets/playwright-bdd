@@ -15,7 +15,7 @@
   },
   "imports": {
     "#*": {
-      "pw-bdd-dev": "./dist/src/*",
+      "pw-bdd-dev": "./src/*",
       "default": "./dist/*"
     }
   },
