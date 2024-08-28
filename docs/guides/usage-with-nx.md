@@ -45,9 +45,9 @@ npx nx e2e app1
 # or
 npx nx e2e app2
 ```
-Also run e2e in **all** apps:
+Also run e2e in **both** `app1` and `app2`:
 ```bash
-npx nx run-many -t e2e
+npx nx run-many -t e2e -p app1 app2
 ```
 
 If there are many projects with the same e2e setup, you can move default settings to `nx.json`:
@@ -67,9 +67,6 @@ If there are many projects with the same e2e setup, you can move default setting
         "config": "{projectRoot}"
       }
     }
-  },
-  "affected": {
-    "defaultBase": "main"
   }
 }
 ```
