@@ -4,7 +4,7 @@
  * See: https://github.com/microsoft/playwright/issues/29841
  */
 import * as pw from '@playwright/test/reporter';
-import { AutofillMap } from '../../../utils/AutofillMap';
+import { AutofillMap } from '#utils/AutofillMap.js';
 
 export type ProjectInfo = {
   projectName?: string;

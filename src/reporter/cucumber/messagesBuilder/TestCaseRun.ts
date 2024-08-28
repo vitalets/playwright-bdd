@@ -3,18 +3,18 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { stringifyLocation } from '../../../utils';
+import { stringifyLocation } from '#utils/index.js';
 import { Hook, HookType } from './Hook';
 import { TestCase } from './TestCase';
-import { AutofillMap } from '../../../utils/AutofillMap';
+import { AutofillMap } from '#utils/AutofillMap.js';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
 import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
-import { BddData, BddDataStep } from '../../../run/bddAnnotation/types';
-import { getBddDataFromTest } from '../../../run/bddAnnotation';
+import { BddData, BddDataStep } from '#run/bddAnnotation/types.js';
+import { getBddDataFromTest } from '#run/bddAnnotation/index.js';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<

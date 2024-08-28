@@ -8,13 +8,13 @@ import { TestCase } from './TestCase';
 import { Meta } from './Meta';
 import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
 import EventEmitter from 'node:events';
-import EventDataCollector from '../../../cucumber/formatter/EventDataCollector';
+import EventDataCollector from '#cucumber/formatter/EventDataCollector.js';
 import { Hook } from './Hook';
-import { AutofillMap } from '../../../utils/AutofillMap';
+import { AutofillMap } from '#utils/AutofillMap.js';
 import { GherkinDocuments } from './GherkinDocuments';
 import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
-import { hasBddConfig } from '../../../config/env';
+import { hasBddConfig } from '#config/env.js';
 
 export class MessagesBuilder {
   private report = {

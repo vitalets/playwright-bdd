@@ -5,7 +5,7 @@
  * See: https://github.com/cucumber/react-components
  */
 import { finished } from 'node:stream/promises';
-import CucumberHtmlStream from '@cucumber/html-formatter';
+import { CucumberHtmlStream } from '@cucumber/html-formatter';
 import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
 import BaseReporter, { InternalOptions } from './base';

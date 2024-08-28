@@ -1,5 +1,9 @@
 # Changelog
 
+## Dev
+* update @cucumber/html-formatter ([#213](https://github.com/vitalets/playwright-bdd/issues/213))
+* chore: use import subpath from package.json for internal imports
+
 ## 7.2.2
 * fix: provide empty world for Playwright-style steps ([#208](https://github.com/vitalets/playwright-bdd/issues/208))
 * fix: improve CLI output ([#206](https://github.com/vitalets/playwright-bdd/issues/206))

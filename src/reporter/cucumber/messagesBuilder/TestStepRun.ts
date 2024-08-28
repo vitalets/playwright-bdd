@@ -9,7 +9,7 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes';
+import { stripAnsiEscapes } from '#utils/stripAnsiEscapes.js';
 import { TestCaseRun } from './TestCaseRun';
 import { toCucumberTimestamp } from './timing';
 import { TestStepAttachments } from './TestStepAttachments';
