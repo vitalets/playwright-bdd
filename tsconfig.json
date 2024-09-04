@@ -10,7 +10,6 @@
     "customConditions": ["pw-bdd-dev"],
     "noEmit": true,
     "resolveJsonModule": true,
-    "esModuleInterop": true,
     "jsx": "react-jsx"
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
