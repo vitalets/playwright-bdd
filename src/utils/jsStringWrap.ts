@@ -13,7 +13,7 @@ export function jsStringWrap(
   { quotes = 'single' }: { quotes?: 'single' | 'double' | 'backtick' } = {},
 ) {
   const wrapQuote = quotes === 'single' ? "'" : quotes === 'double' ? '"' : '`';
-  // eslint-disable-next-line complexity
+  // eslint-disable-next-line visual-complexity/complexity
   const escapedStr = ('' + str).replace(/["'`\\\n\r\u2028\u2029]/g, (character) => {
     // Escape all characters not included in SingleStringCharacters and
     // DoubleStringCharacters on

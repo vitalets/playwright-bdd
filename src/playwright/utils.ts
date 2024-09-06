@@ -37,7 +37,6 @@ function getPlaywrightRoot() {
 /**
  * Create or update annotation with provided type.
  */
-// eslint-disable-next-line complexity
 export function updateAnnotation(
   testInfo: TestInfo,
   annotation: PwAnnotation,

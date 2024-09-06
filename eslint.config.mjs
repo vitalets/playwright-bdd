@@ -2,6 +2,7 @@ import globals from 'globals';
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import playwright from 'eslint-plugin-playwright';
+import visualComplexity from 'eslint-plugin-visual-complexity';
 
 export default [
   {
@@ -34,8 +35,13 @@ export default [
   {
     // src files
     files: ['src/**/*.{js,mjs,ts}'],
+    plugins: {
+      'visual-complexity': visualComplexity,
+    },
     rules: {
-      complexity: ['error', { max: 5 }],
+      complexity: 0,
+      'visual-complexity/complexity': ['error', { max: 5 }],
+
       'max-depth': ['error', { max: 2 }],
       'max-nested-callbacks': ['error', { max: 2 }],
       'max-params': ['error', { max: 3 }],

@@ -4,7 +4,7 @@
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/helpers/event_data_collector.ts
  */
 
-/* eslint-disable complexity */
+/* eslint-disable visual-complexity/complexity */
 
 import { EventEmitter } from 'node:events';
 import * as messages from '@cucumber/messages';

@@ -51,7 +51,6 @@ export class TestPoms {
 
   constructor(private testTitle: string) {}
 
-  // eslint-disable-next-line complexity
   registerPomNode(pomNode: PomNode, { byTag = false } = {}) {
     const usedPom = this.usedPoms.get(pomNode);
     if (usedPom) {
@@ -88,7 +87,7 @@ export class TestPoms {
    * Returns fixtures suitable for particular pomNode (actually for step).
    * Filter out pomNodes with empty fixture names (as they are not marked with @Fixture decorator)
    */
-  // eslint-disable-next-line complexity
+  // eslint-disable-next-line visual-complexity/complexity
   getResolvedFixtures(pomNode: PomNode) {
     const usedPom = this.usedPoms.get(pomNode);
     // fixtures already resolved

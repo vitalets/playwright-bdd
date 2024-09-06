@@ -30,7 +30,7 @@ export function defineBddConfig(inputConfig: BDDInputConfig) {
   return config.outputDir;
 }
 
-// eslint-disable-next-line complexity
+// eslint-disable-next-line visual-complexity/complexity
 function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, inputConfig);
 

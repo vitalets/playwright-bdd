@@ -94,7 +94,6 @@ export class TestStepRun {
     }
   }
 
-  // eslint-disable-next-line complexity
   private getStepError() {
     if (!this.pwStep) return;
     if (this.testCaseRun.errorSteps.has(this.pwStep)) {

@@ -21,7 +21,6 @@ export type ImportTestFrom = {
 export class Formatter {
   constructor(private config: BDDConfig) {}
 
-  // eslint-disable-next-line complexity
   fileHeader(featureUri: string, importTestFrom?: ImportTestFrom) {
     // always use "/" for imports, see #91
     const importTestFromFile = toPosixPath(importTestFrom?.file || 'playwright-bdd');

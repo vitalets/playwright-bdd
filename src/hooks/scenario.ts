@@ -82,7 +82,7 @@ export function scenarioHookFactory<
   };
 }
 
-// eslint-disable-next-line complexity
+// eslint-disable-next-line visual-complexity/complexity
 export async function runScenarioHooks<Fixtures extends ScenarioHookBddFixtures>(
   type: ScenarioHookType,
   fixtures: Fixtures,
