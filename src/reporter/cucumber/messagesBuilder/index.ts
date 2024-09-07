@@ -60,7 +60,7 @@ export class MessagesBuilder {
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.
     // Don't add such test run to report.
-    if (test.expectedStatus === 'skipped') return;
+    if (result.status === 'skipped') return;
 
     // Important to create TestCaseRun in this method (not later),
     // b/c test properties can change after retries
