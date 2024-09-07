@@ -11,7 +11,7 @@ export async function requireOrImport(file: string) {
   return transform.requireOrImport(file);
 }
 
-// eslint-disable-next-line visual-complexity/complexity
+// eslint-disable-next-line visual/complexity
 export async function requireOrImportDefaultFunction(file: string, expectConstructor: boolean) {
   let func = await requireOrImport(file);
   if (func && typeof func === 'object' && 'default' in func) func = func['default'];

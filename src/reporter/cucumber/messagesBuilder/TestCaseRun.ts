@@ -101,7 +101,7 @@ export class TestCaseRun {
     if (pwStep?.error) this.errorSteps.add(pwStep);
   }
 
-  // eslint-disable-next-line visual-complexity/complexity
+  // eslint-disable-next-line visual/complexity
   registerTimeoutedStep(pwStep?: pw.TestStep) {
     if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
     const { error } = pwStep;

@@ -53,7 +53,7 @@ export class DecoratorSteps {
     });
   }
 
-  // eslint-disable-next-line visual-complexity/complexity
+  // eslint-disable-next-line visual/complexity
   private getFixtureName(decoratorStep: DecoratorStepInfo) {
     const { pomNode, pickleStep } = decoratorStep;
     const resolvedFixtures = this.testPoms.getResolvedFixtures(pomNode);

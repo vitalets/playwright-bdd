@@ -6,7 +6,7 @@
  * See also: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/reporters/junit.ts
  */
 
-/* eslint-disable visual-complexity/complexity, max-lines, max-statements */
+/* eslint-disable visual/complexity, max-lines, max-statements */
 
 import xmlbuilder from 'xmlbuilder';
 import * as messages from '@cucumber/messages';

@@ -4,7 +4,7 @@
  */
 
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-function-type */
-/* eslint-disable max-statements, visual-complexity/complexity, max-len, max-depth */
+/* eslint-disable max-statements, visual/complexity, max-len, max-depth */
 
 const signatureSymbol = Symbol('signature');
 

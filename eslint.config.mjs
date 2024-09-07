@@ -36,11 +36,11 @@ export default [
     // src files
     files: ['src/**/*.{js,mjs,ts}'],
     plugins: {
-      'visual-complexity': visualComplexity,
+      visual: visualComplexity,
     },
     rules: {
       complexity: 0,
-      'visual-complexity/complexity': ['error', { max: 5 }],
+      'visual/complexity': ['error', { max: 5 }],
 
       'max-depth': ['error', { max: 2 }],
       'max-nested-callbacks': ['error', { max: 2 }],

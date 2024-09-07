@@ -53,7 +53,7 @@ export function workerHookFactory<WorkerFixtures extends KeyValue>(type: WorkerH
   };
 }
 
-// eslint-disable-next-line visual-complexity/complexity
+// eslint-disable-next-line visual/complexity
 export async function runWorkerHooks<Fixtures extends WorkerHookBddFixtures>(
   type: WorkerHook['type'],
   fixtures: Fixtures,

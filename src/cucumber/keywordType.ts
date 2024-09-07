@@ -16,7 +16,7 @@ interface IGetStepKeywordTypeOptions {
   previousKeywordType?: KeywordType;
 }
 
-// eslint-disable-next-line visual-complexity/complexity
+// eslint-disable-next-line visual/complexity
 export function getStepKeywordType({
   keyword,
   language,
