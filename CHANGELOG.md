@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 7.3.0
 * fix: skipped scenarios break cucumber reports ([#143](https://github.com/vitalets/playwright-bdd/issues/143))
 * chore: update @cucumber/html-formatter ([#213](https://github.com/vitalets/playwright-bdd/issues/213))
 * chore: use import subpath from package.json for internal imports
