@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 export default defineConfig({
   projects: [
@@ -21,4 +21,5 @@ export default defineConfig({
       }),
     },
   ],
+  reporter: [cucumberReporter('html', { outputFile: 'actual-reports/report.html' })],
 });

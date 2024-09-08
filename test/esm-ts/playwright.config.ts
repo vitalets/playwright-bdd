@@ -1,10 +1,11 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 export default defineConfig({
-  reporter: [['./reporter.ts']],
-  // for debug
-  // reporter: 'html',
+  reporter: [
+    ['./reporter.ts'],
+    cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
+  ],
   projects: [
     {
       name: 'project one',

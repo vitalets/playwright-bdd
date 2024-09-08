@@ -19,5 +19,5 @@ function checkGeneratedSpecFile() {
 }
 
 function checkHtmlReport() {
-  expect(testDir.getFileContents('reports/report.html')).toContain('Сценарий');
+  expect(testDir.getFileContents('actual-reports/report.html')).toContain('Сценарий');
 }

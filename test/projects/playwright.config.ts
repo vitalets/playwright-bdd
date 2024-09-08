@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddProject } from 'playwright-bdd';
+import { defineBddProject, cucumberReporter } from 'playwright-bdd';
 
 // Exporting const from config and importing in test is shown in Playwright docs.
 // This leads to re-evaluation of config in worker and re-call of defineBddConfig().
@@ -9,7 +9,10 @@ import { defineBddProject } from 'playwright-bdd';
 export const FOO = 'foo';
 
 export default defineConfig({
-  reporter: 'line',
+  reporter: [
+    ['line'], // prettier-ignore
+    cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
+  ],
   projects: [
     {
       ...defineBddProject({

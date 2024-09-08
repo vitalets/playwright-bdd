@@ -10,5 +10,5 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  reporter: [cucumberReporter('html', { outputFile: 'reports/report.html' })],
+  reporter: [cucumberReporter('html', { outputFile: 'actual-reports/report.html' })],
 });

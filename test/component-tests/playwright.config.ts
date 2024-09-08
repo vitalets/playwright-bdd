@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/experimental-ct-react';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   paths: ['features'],
@@ -14,4 +14,5 @@ export default defineConfig({
   use: {
     screenshot: 'only-on-failure',
   },
+  reporter: [cucumberReporter('html', { outputFile: 'actual-reports/report.html' })],
 });

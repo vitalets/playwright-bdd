@@ -1,9 +1,7 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 export default defineConfig({
-  // ignore b/c it contains test.only
-  testIgnore: 'only-skip-fixme.feature.spec.js',
   projects: [
     {
       name: 'pw-style',
@@ -22,4 +20,5 @@ export default defineConfig({
       }),
     },
   ],
+  reporter: [cucumberReporter('html', { outputFile: 'actual-reports/report.html' })],
 });

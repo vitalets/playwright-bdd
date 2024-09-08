@@ -1,5 +1,5 @@
 const { defineConfig } = require('@playwright/test');
-const { defineBddConfig } = require('playwright-bdd');
+const { defineBddConfig, cucumberReporter } = require('playwright-bdd');
 
 const testDir = defineBddConfig({
   paths: ['*.feature'],
@@ -8,4 +8,5 @@ const testDir = defineBddConfig({
 
 module.exports = defineConfig({
   testDir,
+  reporter: [cucumberReporter('html', { outputFile: 'actual-reports/report.html' })],
 });
