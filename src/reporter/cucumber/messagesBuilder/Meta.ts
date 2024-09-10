@@ -4,7 +4,7 @@
  */
 import os from 'node:os';
 import * as messages from '@cucumber/messages';
-import { getPackageVersion } from '#utils/index.js';
+import { getPackageVersion } from '../../../utils/index.js';
 
 export class Meta {
   buildMessage() {

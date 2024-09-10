@@ -7,7 +7,6 @@
     "useUnknownInCatchVariables": false,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
-    "customConditions": ["pw-bdd-dev"],
     "noEmit": true,
     "resolveJsonModule": true,
     "jsx": "react-jsx"

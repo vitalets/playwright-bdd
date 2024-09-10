@@ -5,7 +5,7 @@ import fs from 'node:fs';
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
-import { PwAttachment } from '#playwright/types.js';
+import { PwAttachment } from '../../../playwright/types.js';
 import path from 'node:path';
 
 export class TestStepAttachments {

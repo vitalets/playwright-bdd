@@ -17,12 +17,6 @@
     "./reporter/cucumber": "./dist/reporter/cucumber/index.js",
     "./package.json": "./package.json"
   },
-  "imports": {
-    "#*": {
-      "pw-bdd-dev": "./src/*",
-      "default": "./dist/*"
-    }
-  },
   "engines": {
     "node": ">=18"
   },

@@ -52,14 +52,6 @@ export default [
       // require is needed for some functions (copied from PW)
       '@typescript-eslint/no-var-requires': 0,
       '@typescript-eslint/no-require-imports': 0,
-      'no-restricted-imports': [
-        'error',
-        {
-          // restrict high parent imports in favor of import subpaths (not path alias!)
-          // https://www.typescriptlang.org/docs/handbook/modules/reference.html#packagejson-imports-and-self-name-imports
-          patterns: ['../../../*'],
-        },
-      ],
     },
   },
   {
