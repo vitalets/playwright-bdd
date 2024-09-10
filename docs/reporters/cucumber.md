@@ -38,8 +38,8 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['features/steps/*.ts'],
+  features: 'features/*.feature',
+  steps: 'features/steps/*.ts',
 }),
 
 export default defineConfig({
@@ -70,8 +70,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['steps/*.ts'],
+  features: 'features/*.feature',
+  steps: 'steps/*.ts',
 });
 
 export default defineConfig({
@@ -100,7 +100,7 @@ export default defineConfig({
   export default defineConfig({
     reporter: [
         cucumberReporter('html', { 
-          outputFile: 'cucumber-report/report.html'
+          outputFile: 'cucumber-report/report.html',
           skipAttachments: [ 'video/webm', 'application/zip' ],
         }),
       ],
