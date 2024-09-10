@@ -1,6 +1,3 @@
-/**
- * Test of Cucumber junit report.
- */
 import {
   test,
   TestDir,

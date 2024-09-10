@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as messages from '@cucumber/messages';
-import BaseReporter, { InternalOptions } from './base';
+import BaseReporter, { InternalOptions, isAttachmentAllowed, SkipAttachments } from './base';
 import * as GherkinDocumentParser from '../../cucumber/formatter/GherkinDocumentParser';
 import * as PickleParser from '../../cucumber/formatter/PickleParser';
 import { doesHaveValue, doesNotHaveValue } from '../../cucumber/valueChecker';
@@ -37,7 +37,7 @@ const { getScenarioDescription, getPickleStepMap, getStepKeyword } = PickleParse
 
 type JsonReporterOptions = {
   outputFile?: string;
-  skipAttachments?: boolean | ('image/png' | 'video/webm' | string)[];
+  skipAttachments?: SkipAttachments;
   addProjectToFeatureName?: boolean;
   addMetadata?: 'object' | 'list';
 };
@@ -392,13 +392,8 @@ export default class JsonReporter extends BaseReporter {
   }
 
   private getAllowedAttachments(testStepAttachments?: messages.Attachment[]) {
-    const { skipAttachments } = this.userOptions;
-    if (Array.isArray(skipAttachments)) {
-      return testStepAttachments?.filter((attachment) => {
-        return !skipAttachments.includes(attachment.mediaType);
-      });
-    } else {
-      return skipAttachments ? [] : testStepAttachments;
-    }
+    return testStepAttachments?.filter((attachment) => {
+      return isAttachmentAllowed({ attachment }, this.userOptions.skipAttachments);
+    });
   }
 }

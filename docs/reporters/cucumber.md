@@ -91,6 +91,21 @@ export default defineConfig({
 ##### Reporter options
 
 * **outputFile** `string` - path to output html file
+* **skipAttachments** `boolean | string[]` (default: `false`) - allows to exclude attachments from report to have smaller file size. Can be boolean or array of content types to skip.
+  * Use `image/png` to skip Playwright's screenshots
+  * Use `video/webm` to skip Playwright's video recordings
+  * Use `application/zip` to skip Playwright's trace files
+
+  ```js
+  export default defineConfig({
+    reporter: [
+        cucumberReporter('html', { 
+          outputFile: 'cucumber-report/report.html'
+          skipAttachments: [ 'video/webm', 'application/zip' ],
+        }),
+      ],
+    });
+  ```
 
 ## json
 Generates [Cucumber json](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#json) report.
@@ -136,18 +151,9 @@ export default defineConfig({
       },
     ```
 
-* **skipAttachments** `boolean | string[]` - allows to exclude attachments from report to have smaller file size. Can be boolean or array of content types to skip (default: `false`):
-    ```js
-    export default defineConfig({
-      reporter: [
-          cucumberReporter('json', { 
-            skipAttachments: [ 'video/webm' ],
-          }),
-        ],
-      });
-    ```
+* **skipAttachments** `boolean | string[]` (default: `false`) - see [skipAttachments](#reporter-options) in HTML report
 
-Output of Cucumber json reporter can be used to generate some third-party reports.
+Output of json reporter can be used to generate some third-party reports.
 Take a look on two these projects:
 
 * [WasiqB/multiple-cucumber-html-reporter](https://github.com/WasiqB/multiple-cucumber-html-reporter)
@@ -188,6 +194,8 @@ export default defineConfig({
 * **outputFile** `string` - path to output xml file
 * **suiteName** `string` - name attribute of the `testsuite` element 
 
+> Junit reporter does not contain attachments
+
 ## message
 Generates [Cucumber message](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#message) report.
 
@@ -218,6 +226,7 @@ export default defineConfig({
 ##### Reporter options
 
 * **outputFile** `string` - path to output ndjson file
+* **skipAttachments** `boolean | string[]` (default: `false`) - see [skipAttachments](#reporter-options) in HTML report
 
 > Please note that these 4 [message types](https://github.com/cucumber/messages/blob/main/messages.md#envelope) are not supported yet:
 > - `parameterType`

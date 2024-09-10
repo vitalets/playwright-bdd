@@ -1,6 +1,7 @@
 # Changelog
 
 ## Dev
+* support `skipAttachments` option in `html` and `message` reporters (related to [#182](https://github.com/vitalets/playwright-bdd/issues/182))
 * revert `#` subpath imports to relative paths: consumers with `(module = commonjs) + (skipLibCheck = false)` can't compile the project ([#218](https://github.com/vitalets/playwright-bdd/issues/218))
 
 ## 7.3.0

@@ -1,5 +1,5 @@
 /**
- * Helper function to define reporter in a type-safe way.
+ * Wrapper function to define Cucumber reporter in a type-safe way in Playwright config.
  *
  * Examples:
  * reporter: [cucumberReporter('html', { outputFile: 'cucumber-report.html' })],

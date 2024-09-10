@@ -5,13 +5,15 @@
  * See: https://github.com/cucumber/react-components
  */
 import { finished } from 'node:stream/promises';
+import * as messages from '@cucumber/messages';
 import { CucumberHtmlStream } from '@cucumber/html-formatter';
 import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
-import BaseReporter, { InternalOptions } from './base';
+import BaseReporter, { InternalOptions, isAttachmentAllowed, SkipAttachments } from './base';
 
 type HtmlReporterOptions = {
   outputFile?: string;
+  skipAttachments?: SkipAttachments;
 };
 
 export default class HtmlReporter extends BaseReporter {
@@ -28,7 +30,8 @@ export default class HtmlReporter extends BaseReporter {
       path.join(packageRoot, 'dist/main.css'),
       path.join(packageRoot, 'dist/main.js'),
     );
-    this.eventBroadcaster.on('envelope', (envelope) => {
+    this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
+      if (!isAttachmentAllowed(envelope, this.userOptions.skipAttachments)) return;
       this.htmlStream.write(envelope);
     });
     this.htmlStream.pipe(this.outputStream);
