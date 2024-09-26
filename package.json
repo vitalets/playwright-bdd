@@ -22,6 +22,7 @@
   },
   "files": [
     "dist",
+    "decorators.d.ts",
     "src",
     "README.md"
   ],
