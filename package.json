@@ -1,7 +1,7 @@
 {
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright runner and CucumberJS",
-  "version": "7.4.1",
+  "version": "7.4.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vitalets/playwright-bdd.git"
