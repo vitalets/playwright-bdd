@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 7.4.1
 * fix decorator typings for TypeScript consumers with `module` = `commonjs` ([#222](https://github.com/vitalets/playwright-bdd/issues/222))
 
 ## 7.4.0
