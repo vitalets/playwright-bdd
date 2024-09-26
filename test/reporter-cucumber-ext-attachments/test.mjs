@@ -1,6 +1,5 @@
 import { test, expect, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 import path from 'node:path';
-import fg from 'fast-glob';
 
 const testDir = new TestDir(import.meta);
 
@@ -23,8 +22,8 @@ function checkHtmlReport() {
 }
 
 function checkAttachmentFiles() {
-  const extensions = fg
-    .sync('actual-reports/attachments/*', { cwd: path.dirname(testDir.getAbsPath()) })
+  const extensions = testDir
+    .getAllFiles('actual-reports/attachments')
     .map((file) => path.extname(file))
     .sort();
   expect(extensions).toEqual(['.png', '.png', '.webm', '.zip']);
