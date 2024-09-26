@@ -4,7 +4,6 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
-import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
 
@@ -20,7 +19,7 @@ export class TestDir {
     return this.importMeta.url.split('/').slice(-2)[0];
   }
 
-  getAbsPath(relativePath) {
+  getAbsPath(relativePath = '') {
     return path.isAbsolute(relativePath)
       ? relativePath
       : fileURLToPath(new URL(relativePath, this.importMeta.url));
@@ -39,11 +38,6 @@ export class TestDir {
   getFileContents(relativePath) {
     const absPath = this.getAbsPath(relativePath);
     return fs.readFileSync(absPath, 'utf8');
-  }
-
-  getAllFiles(relativePath) {
-    const absPath = this.getAbsPath(relativePath);
-    return fg.sync(path.join(absPath, '**')).map((file) => path.relative(absPath, file));
   }
 
   expectFileContains(relativePath, substr) {
