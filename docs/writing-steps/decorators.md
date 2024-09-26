@@ -1,6 +1,12 @@
 # Decorators
-Playwright-bdd supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). For example, you can create the following `TodoPage` class:
+Playwright-bdd supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). 
 
+Decorators are imported from `playwright-bdd/decorators`:
+```ts
+import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
+```
+
+Apply `@Fixture` decorator to the whole class - to bind it with Playwright fixture name. Apply `@Given, @When, @Then` decorators to particular methods:
 ```ts
 // TodoPage.ts
 import { Page, expect } from '@playwright/test';
@@ -38,7 +44,7 @@ export const test = base.extend<{ todoPage: TodoPage }>({
 });
 ```
 
-And set `importTestFrom` to `./fixtures.ts` in `playwright.config.ts`:
+And add `fixtures.ts` to steps in `playwright.config.ts`:
 ```ts
 const testDir = defineBddConfig({
   features: 'features/todo.feature',
