@@ -80,8 +80,8 @@ export class AttachmentMapper {
     });
     this.unusedAttachments.push(...allAttachments);
     this.mapUnusedAttachments();
-    this.mapStdoutAttachments('stdout');
-    this.mapStdoutAttachments('stderr');
+    this.mapStdioAttachments('stdout');
+    this.mapStdioAttachments('stderr');
   }
 
   private mapAttachment(attachmentStep: pw.TestStep, allAttachments: PwAttachment[]) {
@@ -110,7 +110,7 @@ export class AttachmentMapper {
     stepAttachments.push(...this.unusedAttachments);
   }
 
-  private mapStdoutAttachments(name: 'stdout' | 'stderr') {
+  private mapStdioAttachments(name: 'stdout' | 'stderr') {
     // map stdout / stderr to the 'After Hooks' step
     if (!this.result[name]?.length) return;
     const body = this.result[name]
@@ -120,7 +120,7 @@ export class AttachmentMapper {
     const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
     stepAttachments.push({
       name,
-      contentType: 'text/plain',
+      contentType: 'text/x.cucumber.log+plain',
       body: Buffer.from(body),
     });
   }

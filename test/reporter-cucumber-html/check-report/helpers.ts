@@ -78,6 +78,12 @@ export class Scenario {
     return this.root.locator('details');
   }
 
+  getLogs() {
+    return this.root.locator('div > pre').filter({
+      hasNot: this.getErrors(),
+    });
+  }
+
   getErrors() {
     return this.getSteps()
       .locator('div > pre')

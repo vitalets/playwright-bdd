@@ -21,6 +21,7 @@ export type SkipAttachments = boolean | ('image/png' | 'video/webm' | 'applicati
 
 export default class BaseReporter {
   protected outputStream: Writable = process.stdout;
+  protected outputDir = '';
 
   constructor(protected internalOptions: InternalOptions) {}
 
@@ -48,7 +49,8 @@ export default class BaseReporter {
   protected setOutputStream(outputFile?: string) {
     if (!outputFile) return;
     const absolutePath = path.resolve(this.internalOptions.cwd, outputFile);
-    fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+    this.outputDir = path.dirname(absolutePath);
+    fs.mkdirSync(this.outputDir, { recursive: true });
     this.outputStream = fs.createWriteStream(absolutePath);
   }
 }

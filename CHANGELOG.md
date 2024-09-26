@@ -1,5 +1,8 @@
 # Changelog
 
+## Dev
+* support external attachments in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))
+
 ## 7.4.2
 * fix decorator typings for TypeScript consumers with `module` = `commonjs` ([#222](https://github.com/vitalets/playwright-bdd/issues/222))
 

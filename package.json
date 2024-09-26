@@ -60,6 +60,7 @@
     "cli-table3": "0.6.5",
     "commander": "12.1.0",
     "fast-glob": "^3.3.2",
+    "mime": "3.0.0",
     "xmlbuilder": "15.1.1"
   },
   "devDependencies": {
@@ -70,6 +71,7 @@
     "@playwright/experimental-ct-react": "1.41.2",
     "@playwright/test": "1.41.2",
     "@types/micromatch": "4.0.9",
+    "@types/mime": "3.0.4",
     "@types/node": "^18.15.0",
     "@types/react": "18.3.5",
     "@types/react-dom": "18.3.0",

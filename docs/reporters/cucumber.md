@@ -106,6 +106,7 @@ export default defineConfig({
       ],
     });
   ```
+* **externalAttachments** `boolean` - if enabled, attachments will be stored as separate files in `attachments` directory next to report file. This can significantly reduce report size. 
 
 ## json
 Generates [Cucumber json](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#json) report.
