@@ -2,13 +2,16 @@
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright runner and CucumberJS",
   "version": "7.4.2",
+  "type": "commonjs",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vitalets/playwright-bdd.git"
   },
-  "type": "commonjs",
   "bin": {
     "bddgen": "./dist/cli/index.js"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "main": "./dist/index.js",
   "exports": {
@@ -17,12 +20,15 @@
     "./reporter/cucumber": "./dist/reporter/cucumber/index.js",
     "./package.json": "./package.json"
   },
-  "engines": {
-    "node": ">=18"
+  "typesVersions": {
+    "*": {
+      "decorators": [
+        "./dist/decorators.d.ts"
+      ]
+    }
   },
   "files": [
     "dist",
-    "decorators.d.ts",
     "src",
     "README.md"
   ],
