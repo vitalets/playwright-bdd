@@ -19,6 +19,7 @@ Given('attach console log', async () => {
 Given('attach json', async ({ $testInfo }) => {
   await $testInfo.attach('json', {
     body: JSON.stringify({ foo: 'bar' }),
+    contentType: 'application/json',
   });
 });
 
@@ -29,9 +30,13 @@ Given('attach image', async ({ $testInfo }) => {
   });
 });
 
-// When('attach url list', async ({ $testInfo }) => {
-//   await $testInfo.attach('ignored text', {
-//     body: 'bar',
-//     contentType: 'x-ignored-type',
-//   });
-// });
+// See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/attachment_manager/index.ts#L59
+Given('attach links', async ({ $testInfo }) => {
+  await $testInfo.attach('Links', {
+    body: [
+      'https://github.com/cucumber/cucumber-js',
+      'https://github.com/cucumber/cucumber-jvm',
+    ].join('\n'),
+    contentType: 'text/uri-list',
+  });
+});

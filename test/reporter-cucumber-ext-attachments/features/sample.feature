@@ -5,6 +5,7 @@ Feature: some feature
     Given attach console log
     Given attach json
     Given attach image
+    Given attach links
 
 
 # And attach ignored text
