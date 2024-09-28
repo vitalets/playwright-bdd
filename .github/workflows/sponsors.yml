@@ -21,7 +21,8 @@ jobs:
           file: README.md
 
       - name: Push changes to main branch
-        uses: JamesIves/github-pages-deploy-action@v4
+        # See: https://github.com/JamesIves/github-pages-deploy-action/issues/1697
+        uses: JamesIves/github-pages-deploy-action@v4.6.4
         with:
           branch: main
           folder: '.'
