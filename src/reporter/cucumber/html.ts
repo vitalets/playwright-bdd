@@ -6,34 +6,36 @@
  */
 import fs from 'node:fs';
 import { finished } from 'node:stream/promises';
-import { randomUUID } from 'node:crypto';
 import * as messages from '@cucumber/messages';
 import { CucumberHtmlStream } from '@cucumber/html-formatter';
 import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
-import mimeTypes from 'mime';
-import BaseReporter, { InternalOptions, isAttachmentAllowed, SkipAttachments } from './base';
-import { ConcreteEnvelope } from './messagesBuilder/types';
+import BaseReporter, { InternalOptions } from './base';
+import { AttachmentEnvelope } from './messagesBuilder/types';
+import { isAttachmentEnvelope } from './attachmentHelpers/shared';
+import { shouldSkipAttachment, SkipAttachments } from './attachmentHelpers/skip';
+import {
+  isTextAttachment,
+  toEmbeddedAttachment,
+  toExternalAttachment,
+} from './attachmentHelpers/external';
 
 type HtmlReporterOptions = {
   outputFile?: string;
   skipAttachments?: SkipAttachments;
   externalAttachments?: boolean;
+  attachmentsBaseURL?: string;
 };
 
-// store attachments in 'attachments' subdirectory to not accidentally
+// store attachments in subdirectory to not accidentally
 // bloat working dir and make it easier to find report html file.
-const ATTACHMENTS_DIR = 'attachments';
-
-const encodingsMap = {
-  IDENTITY: 'utf-8',
-  BASE64: 'base64',
-} as const;
+// 'data' name is also used in Playwright HTML reporter.
+const ATTACHMENTS_DIR = 'data';
 
 export default class HtmlReporter extends BaseReporter {
   protected htmlStream: CucumberHtmlStream;
-  protected externalAttachmentsDir = '';
-  protected externalAttachmentsPromises: Promise<void>[] = [];
+  protected attachmentsDir = '';
+  protected attachmentsBaseURL = '';
 
   constructor(
     internalOptions: InternalOptions,
@@ -46,12 +48,16 @@ export default class HtmlReporter extends BaseReporter {
       path.join(packageRoot, 'dist/main.css'),
       path.join(packageRoot, 'dist/main.js'),
     );
+    if (this.userOptions.externalAttachments) {
+      this.setupAttachmentsDir();
+      this.setupAttachmentsBaseURL();
+    }
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
-      if (this.shouldSkipAttachment(envelope)) return;
-      if (this.shouldExternalizeAttachment(envelope)) {
-        envelope = this.externalizeAttachment(envelope);
+      if (isAttachmentEnvelope(envelope)) {
+        this.handleAttachment(envelope);
+      } else {
+        this.writeEnvelope(envelope);
       }
-      this.htmlStream.write(envelope);
     });
     this.htmlStream.pipe(this.outputStream);
   }
@@ -60,63 +66,39 @@ export default class HtmlReporter extends BaseReporter {
     this.htmlStream.end();
     await finished(this.htmlStream);
     await super.finished();
-    await Promise.all(this.externalAttachmentsPromises);
   }
 
-  private shouldSkipAttachment(envelope: messages.Envelope) {
-    return !isAttachmentAllowed(envelope, this.userOptions.skipAttachments);
-  }
-
-  private shouldExternalizeAttachment(
-    envelope: messages.Envelope,
-  ): envelope is NonNullable<ConcreteEnvelope<'attachment'>> {
-    if (!this.userOptions.externalAttachments) return false;
-    if (!envelope.attachment) return false;
+  protected handleAttachment(envelope: AttachmentEnvelope) {
+    if (shouldSkipAttachment(envelope, this.userOptions.skipAttachments)) return;
 
     // For now don't externalize text attachments, b/c they are not visible in the report.
     // In the future maybe handle separately 'text/x.cucumber.log+plain', 'text/uri-list'.
     // See: https://github.com/cucumber/cucumber-js/issues/2430
     // See: https://github.com/cucumber/react-components/blob/main/src/components/gherkin/attachment/Attachment.tsx#L32
-    if (/^(text\/|application\/json)/.test(envelope.attachment.mediaType)) return false;
 
-    return true;
+    envelope.attachment =
+      this.userOptions.externalAttachments && !isTextAttachment(envelope.attachment)
+        ? toExternalAttachment(envelope.attachment, this.attachmentsDir, this.attachmentsBaseURL)
+        : toEmbeddedAttachment(envelope.attachment);
+
+    this.writeEnvelope(envelope);
   }
 
-  private externalizeAttachment(
-    envelope: NonNullable<ConcreteEnvelope<'attachment'>>,
-  ): messages.Envelope {
-    const { attachment } = envelope;
-    const fileName = this.buildAttachmentFilename(attachment);
-    const filePath = this.buildAttachmentPath(fileName);
-    const content = Buffer.from(attachment.body, encodingsMap[attachment.contentEncoding]);
-    const externalAttachment: messages.Attachment = {
-      ...attachment,
-      contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
-      body: '',
-      url: `./${ATTACHMENTS_DIR}/${fileName}`,
-    };
-
-    const promise = fs.promises.writeFile(filePath, content);
-    this.externalAttachmentsPromises.push(promise);
-
-    return {
-      ...envelope,
-      attachment: externalAttachment,
-    };
+  protected writeEnvelope(envelope: messages.Envelope) {
+    this.htmlStream.write(envelope);
   }
 
-  private buildAttachmentFilename(attachment: messages.Attachment) {
-    return [randomUUID(), mimeTypes.getExtension(attachment.mediaType)].filter(Boolean).join('.');
-  }
-
-  private buildAttachmentPath(fileName: string) {
+  protected setupAttachmentsDir() {
     if (!this.outputDir) {
-      throw new Error('Unable to externalize attachments when formatter is not writing to a file');
+      throw new Error('Unable to externalize attachments when reporter is not writing to a file');
     }
-    if (!this.externalAttachmentsDir) {
-      this.externalAttachmentsDir = path.join(this.outputDir, ATTACHMENTS_DIR);
-      fs.mkdirSync(this.externalAttachmentsDir, { recursive: true });
-    }
-    return path.join(this.externalAttachmentsDir, fileName);
+    this.attachmentsDir = path.join(this.outputDir, ATTACHMENTS_DIR);
+    if (fs.existsSync(this.attachmentsDir)) fs.rmSync(this.attachmentsDir, { recursive: true });
+    fs.mkdirSync(this.attachmentsDir, { recursive: true });
+  }
+
+  protected setupAttachmentsBaseURL() {
+    this.attachmentsBaseURL = this.userOptions.attachmentsBaseURL || `./${ATTACHMENTS_DIR}`;
+    this.attachmentsBaseURL = this.attachmentsBaseURL.replace(/\/+$/, '');
   }
 }

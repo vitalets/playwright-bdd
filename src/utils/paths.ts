@@ -49,3 +49,9 @@ export function finalizePattern(pattern: string, extension: string) {
       return pattern;
   }
 }
+
+// See: https://github.com/microsoft/playwright/blob/6f16b6cc08f7d59a079d9afa67afacc321a37675/packages/playwright-core/src/utils/fileUtils.ts#L55
+export function sanitizeForFilePath(s: string) {
+  // eslint-disable-next-line no-control-regex
+  return s.replace(/[\x00-\x2C\x2E-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]+/g, '-');
+}

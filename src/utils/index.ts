@@ -1,6 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import timers from 'node:timers/promises';
+import crypto from 'crypto';
 
 /**
  * Returns Symbol by name.
@@ -89,4 +90,11 @@ export function trimTrailingSlash(s: string) {
 
 export function booleanDefault(value: unknown, defaultValue: boolean) {
   return typeof value === 'boolean' ? value : defaultValue;
+}
+
+// See: https://github.com/microsoft/playwright/blob/6f16b6cc08f7d59a079d9afa67afacc321a37675/packages/playwright-core/src/utils/crypto.ts#L24
+export function calculateSha1(buffer: Buffer | string): string {
+  const hash = crypto.createHash('sha1');
+  hash.update(buffer);
+  return hash.digest('hex');
 }

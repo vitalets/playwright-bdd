@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import { createBdd } from 'playwright-bdd';
 
 const { Given } = createBdd();
@@ -17,16 +18,23 @@ Given('attach console log', async () => {
 });
 
 Given('attach json', async ({ $testInfo }) => {
-  await $testInfo.attach('json', {
+  await $testInfo.attach('json text', {
     body: JSON.stringify({ foo: 'bar' }),
     contentType: 'application/json',
   });
 });
 
-Given('attach image', async ({ $testInfo }) => {
-  await $testInfo.attach('my image', {
+Given('attach image as path', async ({ $testInfo }) => {
+  await $testInfo.attach('image as path', {
     path: path.join(__dirname, 'cucumber.png'),
     contentType: 'image/png',
+  });
+});
+
+Given('attach image as buffer', async ({ $testInfo }) => {
+  await $testInfo.attach('image as buffer', {
+    body: fs.readFileSync(path.join(__dirname, 'cucumber.jpeg')),
+    contentType: 'image/jpeg',
   });
 });
 

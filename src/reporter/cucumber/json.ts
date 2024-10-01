@@ -15,7 +15,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as messages from '@cucumber/messages';
-import BaseReporter, { InternalOptions, isAttachmentAllowed, SkipAttachments } from './base';
+import BaseReporter, { InternalOptions } from './base';
 import * as GherkinDocumentParser from '../../cucumber/formatter/GherkinDocumentParser';
 import * as PickleParser from '../../cucumber/formatter/PickleParser';
 import { doesHaveValue, doesNotHaveValue } from '../../cucumber/valueChecker';
@@ -25,6 +25,8 @@ import { durationToNanoseconds } from '../../cucumber/formatter/durationHelpers'
 // import { formatLocation } from '../../cucumber/formatter/locationHelpers';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 import { getFeatureNameWithProject } from './messagesBuilder/Projects';
+import { shouldSkipAttachment, SkipAttachments } from './attachmentHelpers/skip';
+import { toEmbeddedAttachment } from './attachmentHelpers/external';
 
 const {
   getGherkinExampleRuleMap,
@@ -335,13 +337,15 @@ export default class JsonReporter extends BaseReporter {
     }
     const allowedAttachments = this.getAllowedAttachments(testStepAttachments);
     if (allowedAttachments && allowedAttachments.length > 0) {
-      data.embeddings = allowedAttachments.map((attachment) => ({
-        data:
+      data.embeddings = allowedAttachments.map((attachment) => {
+        attachment = toEmbeddedAttachment(attachment);
+        const data =
           attachment.contentEncoding === messages.AttachmentContentEncoding.IDENTITY
             ? Buffer.from(attachment.body).toString('base64')
-            : attachment.body,
-        mime_type: attachment.mediaType,
-      }));
+            : attachment.body;
+        const mime_type = attachment.mediaType;
+        return { data, mime_type };
+      });
     }
     return data;
   }
@@ -393,7 +397,7 @@ export default class JsonReporter extends BaseReporter {
 
   private getAllowedAttachments(testStepAttachments?: messages.Attachment[]) {
     return testStepAttachments?.filter((attachment) => {
-      return isAttachmentAllowed({ attachment }, this.userOptions.skipAttachments);
+      return !shouldSkipAttachment({ attachment }, this.userOptions.skipAttachments);
     });
   }
 }

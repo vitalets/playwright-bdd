@@ -27,7 +27,7 @@ export default defineConfig({
       // skip screenshots, video, trace and a custom type
       skipAttachments: ['image/png', 'video/webm', 'application/zip', 'x-ignored-type'],
     }),
-    // no junit here, b/c junit does not save store attachments in xml
+    // no junit here, b/c junit does not store attachments in xml
     // (although it collects them)
   ],
   use: {

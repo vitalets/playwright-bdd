@@ -2,7 +2,7 @@
  * Maps attachments to test steps.
  *
  * As there is no built-in method to map attachments with steps,
- * I've considered several approches:
+ * I've considered several approaches:
  *
  * 1. Track attachments count in onStepBegin/onStepEnd.
  * + intuitive and simple

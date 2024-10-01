@@ -18,16 +18,16 @@ import { hasBddConfig } from '../../../config/env.js';
 
 export class MessagesBuilder {
   private report = {
-    meta: null as ConcreteEnvelope<'meta'>,
+    meta: null as ConcreteEnvelope<'meta'> | null,
     source: [] as ConcreteEnvelope<'source'>[],
     gherkinDocument: [] as ConcreteEnvelope<'gherkinDocument'>[],
     pickle: [] as ConcreteEnvelope<'pickle'>[],
     stepDefinition: [] as ConcreteEnvelope<'stepDefinition'>[],
     hook: [] as ConcreteEnvelope<'hook'>[],
-    testRunStarted: null as ConcreteEnvelope<'testRunStarted'>,
+    testRunStarted: null as ConcreteEnvelope<'testRunStarted'> | null,
     testCase: [] as ConcreteEnvelope<'testCase'>[],
     testCaseRuns: [] as TestCaseRunEnvelope[],
-    testRunFinished: null as ConcreteEnvelope<'testRunFinished'>,
+    testRunFinished: null as ConcreteEnvelope<'testRunFinished'> | null,
   };
 
   private fullConfig!: pw.FullConfig;
