@@ -98,7 +98,7 @@ export default class HtmlReporter extends BaseReporter {
   }
 
   protected setupAttachmentsBaseURL() {
-    this.attachmentsBaseURL = this.userOptions.attachmentsBaseURL || `./${ATTACHMENTS_DIR}`;
+    this.attachmentsBaseURL = this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR;
     this.attachmentsBaseURL = this.attachmentsBaseURL.replace(/\/+$/, '');
   }
 }

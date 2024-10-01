@@ -106,7 +106,8 @@ export default defineConfig({
       ],
     });
   ```
-* **externalAttachments** `boolean` - if enabled, attachments will be stored as separate files in `attachments` directory next to report file. This can significantly reduce report size. 
+* **externalAttachments** `boolean` - if enabled, attachments will be stored as separate files in `data` directory next to the report file. This can significantly reduce report size.
+* **attachmentsBaseURL** `string` - A separate location where attachments from the `data` subdirectory are uploaded. Only needed when you upload report and data separately to different locations. The same as `attachmentsBaseURL` of Playwright's [HTML reporter](https://playwright.dev/docs/test-reporters#html-reporter).
 
 ## json
 Generates [Cucumber json](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#json) report.
