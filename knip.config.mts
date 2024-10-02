@@ -16,6 +16,7 @@ const config: KnipConfig = {
   ignoreDependencies: [
     '@cucumber/compatibility-kit',
     '@cucumber/pretty-formatter',
+    'playwright-core',
     'lint-staged',
     'np',
     'npm-run-all',

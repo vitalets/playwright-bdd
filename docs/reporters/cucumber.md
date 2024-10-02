@@ -44,7 +44,9 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  reporter: [ cucumberReporter('html', { outputFile: 'reports/report.html' }) ],
+  reporter: [ 
+    cucumberReporter('html', { outputFile: 'cucumber-report/index.html' })
+  ],
   projects: [
     {
       name: 'chromium',
@@ -77,7 +79,7 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   reporter: [
-    cucumberReporter('html', { outputFile: 'cucumber-report/report.html' }),  
+    cucumberReporter('html', { outputFile: 'cucumber-report/index.html' }),  
   ],
 });
 ```
@@ -100,7 +102,7 @@ export default defineConfig({
   export default defineConfig({
     reporter: [
         cucumberReporter('html', { 
-          outputFile: 'cucumber-report/report.html',
+          outputFile: 'cucumber-report/index.html',
           skipAttachments: [ 'video/webm', 'application/zip' ],
         }),
       ],
@@ -108,6 +110,42 @@ export default defineConfig({
   ```
 * **externalAttachments** `boolean` - if enabled, attachments will be stored as separate files in `data` directory next to the report file. This can significantly reduce report size.
 * **attachmentsBaseURL** `string` - A separate location where attachments from the `data` subdirectory are uploaded. Only needed when you upload report and data separately to different locations. The same as `attachmentsBaseURL` of Playwright's [HTML reporter](https://playwright.dev/docs/test-reporters#html-reporter).
+
+#### Trace viewer
+When you set `externalAttachments: true` and `attachmentsBaseURL`, Cucumber HTML report embeds Playwright [trace viewer](https://playwright.dev/docs/trace-viewer):
+
+```js
+export default defineConfig({
+  reporter: [
+    cucumberReporter('html', { 
+      outputFile: 'cucumber-report/index.html',
+      externalAttachments: true,
+      // URL depends on http server where you open the report
+      attachmentsBaseURL: 'http://127.0.0.1:8080/data',
+    }),
+  ],
+});
+```
+
+To view trace by click, you should open HTML report on `http(s)://` schema, not on `file://`. To achieve that on local machine, you can start http server by the following command:
+```
+npx http-server ./cucumber-report -o index.html
+```
+
+![html report with trace](./_media/html-report-with-trace.png)
+
+You can add that command to `package.json` scripts to open Cucumber report quickly:
+```json
+{
+  "scripts": {
+    "show-report": "npx http-server ./cucumber-report -o index.html"
+  }
+}
+```
+Open Cucumber report:
+```
+npm run show-report
+```
 
 ## json
 Generates [Cucumber json](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#json) report.

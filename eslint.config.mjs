@@ -12,6 +12,7 @@ export default [
       '*.config.js',
       'test/**/.cache',
       '**/.features-gen/**',
+      '**/actual-reports/**',
     ],
   },
   js.configs.recommended,
