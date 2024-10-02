@@ -13,6 +13,11 @@ import { loadSteps, resolveStepFiles } from '../../steps/load';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
+// Hide all BDD fixtures in reporter.
+// 'box' option was added in PW 1.46,
+// make type coercion to satisfy TS in early PW versions
+const fixtureOptions = { scope: 'worker', box: true } as { scope: 'worker' };
+
 export type BddFixturesWorker = {
   $bddConfig: BDDConfig;
   $workerHookFixtures: Record<string, unknown>;
@@ -29,11 +34,11 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
       await loadSteps(stepFiles);
       await use(config);
     },
-    { scope: 'worker' },
+    fixtureOptions,
   ],
 
   // can be overwritten in test file if there are worker hooks
-  $workerHookFixtures: [({}, use) => use({}), { scope: 'worker' }],
+  $workerHookFixtures: [({}, use) => use({}), fixtureOptions],
   $beforeAll: [
     // Important unused dependencies:
     // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
@@ -42,7 +47,7 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
       await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
       await use();
     },
-    { scope: 'worker' },
+    fixtureOptions,
   ],
   $afterAll: [
     // Important unused dependencies:
@@ -51,6 +56,6 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
       await use();
       await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
     },
-    { scope: 'worker' },
+    fixtureOptions,
   ],
 });
