@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 7.5.0
 * support external attachments in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))
 * support trace-viewer in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))
 * hide BDD fixtures from Playwright HTML report
