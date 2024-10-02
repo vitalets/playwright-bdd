@@ -9,10 +9,11 @@ test(testDir.name, async () => {
 
   checkHtmlReport();
   checkAttachmentFiles();
+  checkTraceViewer();
 });
 
 function checkHtmlReport() {
-  const html = testDir.getFileContents('actual-reports/report.html');
+  const html = testDir.getFileContents('actual-reports/index.html');
 
   expect(html.includes('"fileName":"image as path","body":""')).toEqual(true);
   expect(html.includes('"fileName":"image as buffer","body":""')).toEqual(true);
@@ -29,4 +30,8 @@ function checkAttachmentFiles() {
     .map((file) => path.extname(file))
     .sort();
   expect(extensions).toEqual(['.jpeg', '.png', '.png', '.webm', '.zip']);
+}
+
+function checkTraceViewer() {
+  testDir.expectFileExists('actual-reports/trace/index.html');
 }

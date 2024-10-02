@@ -1,4 +1,5 @@
 import path from 'node:path';
+import fs from 'node:fs';
 import fg from 'fast-glob';
 
 /**
@@ -54,4 +55,10 @@ export function finalizePattern(pattern: string, extension: string) {
 export function sanitizeForFilePath(s: string) {
   // eslint-disable-next-line no-control-regex
   return s.replace(/[\x00-\x2C\x2E-\x2F\x3A-\x40\x5B-\x60\x7B-\x7F]+/g, '-');
+}
+
+// See: https://github.com/microsoft/playwright/blob/0fd94521279cfe5e02d1221242a7bf8d001119f0/packages/playwright-core/src/utils/fileUtils.ts#L50
+export async function copyFileAndMakeWritable(from: string, to: string) {
+  await fs.promises.copyFile(from, to);
+  await fs.promises.chmod(to, 0o664);
 }

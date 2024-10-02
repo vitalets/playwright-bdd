@@ -19,6 +19,7 @@ import {
   toEmbeddedAttachment,
   toExternalAttachment,
 } from './attachments/external';
+import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './attachments/trace';
 
 type HtmlReporterOptions = {
   outputFile?: string;
@@ -36,6 +37,7 @@ export default class HtmlReporter extends BaseReporter {
   protected htmlStream: CucumberHtmlStream;
   protected attachmentsDir = '';
   protected attachmentsBaseURL = '';
+  protected hasTraces = false;
 
   constructor(
     internalOptions: InternalOptions,
@@ -65,6 +67,7 @@ export default class HtmlReporter extends BaseReporter {
   async finished() {
     this.htmlStream.end();
     await finished(this.htmlStream);
+    if (this.hasTraces) await copyTraceViewer(this.outputDir);
     await super.finished();
   }
 
@@ -83,6 +86,8 @@ export default class HtmlReporter extends BaseReporter {
       ? toExternalAttachment(envelope.attachment, this.attachmentsDir, this.attachmentsBaseURL)
       : toEmbeddedAttachment(envelope.attachment);
 
+    if (useExternalAttachment) this.handleTraceAttachment(newAttachment);
+
     this.writeEnvelope({
       ...envelope,
       attachment: newAttachment,
@@ -91,6 +96,27 @@ export default class HtmlReporter extends BaseReporter {
 
   protected writeEnvelope(envelope: messages.Envelope) {
     this.htmlStream.write(envelope);
+  }
+
+  /**
+   * If there is trace attachment, copy trace-viewer to the report
+   * and create additional attachment with trace view link.
+   * - implementation in PW: https://github.com/microsoft/playwright/blob/412073253f03099d0fe4081b26ad5f0494fea8d2/packages/playwright/src/reporters/html.ts#L414
+   * - attachmentsBaseURL should start with http(s) to be able to show traces.
+   */
+  protected handleTraceAttachment(attachment: messages.Attachment) {
+    if (this.attachmentsBaseURL.startsWith('http') && isTraceAttachment(attachment)) {
+      this.hasTraces = true;
+      this.writeEnvelope({
+        attachment: {
+          ...attachment,
+          contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
+          mediaType: 'text/uri-list',
+          body: generateTraceUrl(attachment),
+          url: undefined,
+        },
+      });
+    }
   }
 
   protected setupAttachmentsDir() {
@@ -103,7 +129,12 @@ export default class HtmlReporter extends BaseReporter {
   }
 
   protected setupAttachmentsBaseURL() {
-    this.attachmentsBaseURL = this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR;
-    this.attachmentsBaseURL = this.attachmentsBaseURL.replace(/\/+$/, '');
+    this.attachmentsBaseURL = removeTrailingSlash(
+      this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR,
+    );
   }
+}
+
+function removeTrailingSlash(url: string) {
+  return url.replace(/\/+$/, '');
 }
