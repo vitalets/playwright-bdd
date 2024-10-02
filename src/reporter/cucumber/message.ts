@@ -32,8 +32,11 @@ export default class MessageReporter extends BaseReporter {
 
   protected handleAttachment(envelope: AttachmentEnvelope) {
     if (shouldSkipAttachment(envelope, this.userOptions.skipAttachments)) return;
-    envelope.attachment = toEmbeddedAttachment(envelope.attachment);
-    this.writeEnvelope(envelope);
+
+    this.writeEnvelope({
+      ...envelope,
+      attachment: toEmbeddedAttachment(envelope.attachment),
+    });
   }
 
   protected writeEnvelope(envelope: messages.Envelope) {

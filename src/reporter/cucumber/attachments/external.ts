@@ -7,8 +7,9 @@ import path from 'node:path';
 import mime from 'mime-types';
 import { calculateSha1 } from '../../../utils';
 import { sanitizeForFilePath } from '../../../utils/paths';
+import { getAttachmentBodyAsBuffer } from './helpers';
 
-export function toEmbeddedAttachment(attachment: messages.Attachment) {
+export function toEmbeddedAttachment(attachment: messages.Attachment): messages.Attachment {
   if (attachment.body) return attachment;
 
   const attachmentPath = attachment.url;
@@ -16,11 +17,15 @@ export function toEmbeddedAttachment(attachment: messages.Attachment) {
 
   // add cache for file reading
 
-  attachment.body = fs.readFileSync(attachmentPath).toString('base64');
-  attachment.contentEncoding = messages.AttachmentContentEncoding.BASE64;
-  delete attachment.url;
+  const body = fs.readFileSync(attachmentPath).toString('base64');
+  const contentEncoding = messages.AttachmentContentEncoding.BASE64;
 
-  return attachment;
+  return {
+    ...attachment,
+    body,
+    contentEncoding,
+    url: undefined,
+  };
 }
 
 /**
@@ -50,12 +55,6 @@ export function toExternalAttachment(
     body: '',
     url: `${attachmentsBaseURL}/${fileName}`,
   };
-}
-
-function getAttachmentBodyAsBuffer(attachment: messages.Attachment) {
-  const encoding =
-    attachment.contentEncoding === messages.AttachmentContentEncoding.BASE64 ? 'base64' : 'utf-8';
-  return Buffer.from(attachment.body, encoding);
 }
 
 /**

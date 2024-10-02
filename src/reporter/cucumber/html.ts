@@ -76,12 +76,17 @@ export default class HtmlReporter extends BaseReporter {
     // See: https://github.com/cucumber/cucumber-js/issues/2430
     // See: https://github.com/cucumber/react-components/blob/main/src/components/gherkin/attachment/Attachment.tsx#L32
 
-    envelope.attachment =
-      this.userOptions.externalAttachments && !isTextAttachment(envelope.attachment)
-        ? toExternalAttachment(envelope.attachment, this.attachmentsDir, this.attachmentsBaseURL)
-        : toEmbeddedAttachment(envelope.attachment);
+    const useExternalAttachment =
+      this.userOptions.externalAttachments && !isTextAttachment(envelope.attachment);
 
-    this.writeEnvelope(envelope);
+    const newAttachment = useExternalAttachment
+      ? toExternalAttachment(envelope.attachment, this.attachmentsDir, this.attachmentsBaseURL)
+      : toEmbeddedAttachment(envelope.attachment);
+
+    this.writeEnvelope({
+      ...envelope,
+      attachment: newAttachment,
+    });
   }
 
   protected writeEnvelope(envelope: messages.Envelope) {

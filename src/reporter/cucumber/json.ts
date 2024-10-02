@@ -27,6 +27,7 @@ import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 import { getFeatureNameWithProject } from './messagesBuilder/Projects';
 import { shouldSkipAttachment, SkipAttachments } from './attachments/skip';
 import { toEmbeddedAttachment } from './attachments/external';
+import { getAttachmentBodyAsBase64 } from './attachments/helpers';
 
 const {
   getGherkinExampleRuleMap,
@@ -338,12 +339,9 @@ export default class JsonReporter extends BaseReporter {
     const allowedAttachments = this.getAllowedAttachments(testStepAttachments);
     if (allowedAttachments && allowedAttachments.length > 0) {
       data.embeddings = allowedAttachments.map((attachment) => {
-        attachment = toEmbeddedAttachment(attachment);
-        const data =
-          attachment.contentEncoding === messages.AttachmentContentEncoding.IDENTITY
-            ? Buffer.from(attachment.body).toString('base64')
-            : attachment.body;
-        const mime_type = attachment.mediaType;
+        const embeddedAttachment = toEmbeddedAttachment(attachment);
+        const data = getAttachmentBodyAsBase64(embeddedAttachment);
+        const mime_type = embeddedAttachment.mediaType;
         return { data, mime_type };
       });
     }
