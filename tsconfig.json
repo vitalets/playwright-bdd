@@ -12,5 +12,5 @@
     "jsx": "react-jsx"
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
-  "exclude": ["dist", "test/types-non-strict"]
+  "exclude": ["dist", "test/types-non-strict", "test/types-merge-tests"]
 }

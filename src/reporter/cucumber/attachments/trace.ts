@@ -1,6 +1,5 @@
 /**
  * Copy trace viewer to the report folder.
- * See: https://github.com/microsoft/playwright/blob/412073253f03099d0fe4081b26ad5f0494fea8d2/packages/playwright/src/reporters/html.ts#L317
  */
 
 import path from 'node:path';
@@ -8,15 +7,20 @@ import fs from 'node:fs';
 import * as messages from '@cucumber/messages';
 import { copyFileAndMakeWritable } from '../../../utils/paths';
 
+function getTraceViewerFolder() {
+  const pwCorePath = require.resolve('playwright-core');
+  // See: https://github.com/microsoft/playwright/blob/release-1.37/packages/playwright-test/src/reporters/html.ts#L276
+  const traceViewerFolderTill137 = path.join(pwCorePath, '..', 'lib', 'webpack', 'traceViewer');
+  // See: https://github.com/microsoft/playwright/blob/release-1.38/packages/playwright/src/reporters/html.ts#L295
+  const traceViewerFolderSince138 = path.join(pwCorePath, '..', 'lib', 'vite', 'traceViewer');
+  return fs.existsSync(traceViewerFolderSince138)
+    ? traceViewerFolderSince138
+    : traceViewerFolderTill137;
+}
+
 // eslint-disable-next-line visual/complexity
 export async function copyTraceViewer(reportDir: string) {
-  const traceViewerFolder = path.join(
-    require.resolve('playwright-core'),
-    '..',
-    'lib',
-    'vite',
-    'traceViewer',
-  );
+  const traceViewerFolder = getTraceViewerFolder();
   const traceViewerTargetFolder = path.join(reportDir, 'trace');
   const traceViewerAssetsTargetFolder = path.join(traceViewerTargetFolder, 'assets');
   fs.mkdirSync(traceViewerAssetsTargetFolder, { recursive: true });
