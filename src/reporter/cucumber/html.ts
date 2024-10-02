@@ -12,13 +12,13 @@ import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
 import BaseReporter, { InternalOptions } from './base';
 import { AttachmentEnvelope } from './messagesBuilder/types';
-import { isAttachmentEnvelope } from './attachmentHelpers/shared';
-import { shouldSkipAttachment, SkipAttachments } from './attachmentHelpers/skip';
+import { isAttachmentEnvelope } from './attachments/helpers';
+import { shouldSkipAttachment, SkipAttachments } from './attachments/skip';
 import {
   isTextAttachment,
   toEmbeddedAttachment,
   toExternalAttachment,
-} from './attachmentHelpers/external';
+} from './attachments/external';
 
 type HtmlReporterOptions = {
   outputFile?: string;

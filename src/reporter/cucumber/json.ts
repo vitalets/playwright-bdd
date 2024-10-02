@@ -25,8 +25,8 @@ import { durationToNanoseconds } from '../../cucumber/formatter/durationHelpers'
 // import { formatLocation } from '../../cucumber/formatter/locationHelpers';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 import { getFeatureNameWithProject } from './messagesBuilder/Projects';
-import { shouldSkipAttachment, SkipAttachments } from './attachmentHelpers/skip';
-import { toEmbeddedAttachment } from './attachmentHelpers/external';
+import { shouldSkipAttachment, SkipAttachments } from './attachments/skip';
+import { toEmbeddedAttachment } from './attachments/external';
 
 const {
   getGherkinExampleRuleMap,
