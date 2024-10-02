@@ -36,6 +36,8 @@ When('I click link {string}', async ({ page }, name: string) => {
 
 > Usually step functions are async, but they can be synchronous as well
 
+See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic-cjs).
+
 ## Custom fixtures
 You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions.
 
@@ -51,7 +53,7 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
       }
     });
     ```
-  > Make sure to export test instance, because it is used in generated test files
+  > Make sure to **export** test instance, because it is used in the generated files
 
 2. From the same file you can export `Given / When / Then` bound to custom `test`:
     ```ts
@@ -65,7 +67,7 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
       }
     });
 
-    export const { Given, When, Then } = createBdd(test);
+    export const { Given, When, Then } = createBdd(test); // <- export Given, When, Then
     ```
 
 3. Use these `Given / When / Then` to define steps:
@@ -79,7 +81,20 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
     });
     ```
 
-See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic-cjs).
+!> For TypeScript users: if you overwrite **only built-in** Playwright fixtures, you should pass `object` as a generic type parameter to `test.extend<object>()` to get proper typings.
+
+For example, if you overwrite only built-in `page` fixture:
+```ts
+// not valid: 
+// export const test = base.extend({ ... });
+
+export const test = base.extend<object>({  // <- notice <object> param
+  page: async ({ baseURL, page }, use) => {
+    await page.goto(baseURL);
+    await use(page);
+  },
+});
+```
 
 ## Accessing `$test` and `$testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:

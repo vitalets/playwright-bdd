@@ -7,6 +7,10 @@ class MyFixture2 {}
 
 const test1 = base.extend<{ myFixture: MyFixture }>({
   myFixture: async ({}, use) => await use(new MyFixture()),
+  page: async ({ baseURL, page }, use) => {
+    await page.goto(baseURL);
+    await use(page);
+  },
 });
 
 const test2 = test1.extend<{ myFixture2: MyFixture2 }>({
@@ -28,6 +32,6 @@ The following does not provide correct types:
 const test = base.extend({});
 const { Given } = createBdd(test);
 
-But this is edge case and can be easily fixed with:
-const test = base.extend<{}>({});
+But this is edge case and can be fixed with:
+const test = base.extend<object>({});
 */
