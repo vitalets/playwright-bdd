@@ -2,10 +2,10 @@
  * Runs Playwright for each dir in features/* and validates messages report.
  *
  * Run single feature:
- * node test/reporter-cucumber-msg/helpers/run-pw.mjs minimal
+ * node test/reporter-cucumber-msg/run/run-pw.mjs minimal
  *
  * Generate expected report by Cucumber:
- * node test/reporter-cucumber-msg/helpers/run-c.mjs minimal
+ * node test/reporter-cucumber-msg/run/run-c.mjs minimal
  *
  * Or to debug:
  * cd test/reporter-cucumber-msg
@@ -14,10 +14,7 @@
 import fg from 'fast-glob';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../_helpers/index.mjs';
-import { messageReportFields } from './message-report.fields.mjs';
-import { jsonReportFields } from './json-report.fields.mjs';
-import { assertShape } from './helpers/json-shape.mjs';
-import { getMessagesFromFile, getJsonFromFile } from './helpers/read-file.mjs';
+import { getJsonFromFile } from '../_helpers/reports/json.mjs';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
 const skipDirs = [
@@ -27,8 +24,9 @@ const skipDirs = [
 ];
 
 const testDir = new TestDir(import.meta);
+
 test(testDir.name, async () => {
-  const dirs = onlyFeatureDir ? [onlyFeatureDir] : getAllFeatureDirs();
+  const dirs = onlyFeatureDir ? [onlyFeatureDir] : readAllFeatureDirs();
   for (const dir of dirs) {
     await checkFeature(dir);
   }
@@ -36,12 +34,10 @@ test(testDir.name, async () => {
 
 /**
  * Checks feature.
- * featureDir - path to feature dir inside ./features,
+ * featureDir - name of feature dir inside ./features,
  * e.g. 'minimal'
  */
 async function checkFeature(featureDir) {
-  const absFeatureDir = testDir.getAbsPath(`features/${featureDir}`);
-
   try {
     execPlaywrightTestInternal(testDir.name, { env: { FEATURE_DIR: featureDir } });
   } catch (e) {
@@ -51,33 +47,39 @@ async function checkFeature(featureDir) {
     }
   }
 
-  assertMessagesReport(absFeatureDir);
-  assertJsonReport(absFeatureDir);
+  assertMessagesReport(featureDir);
+  assertJsonReport(featureDir);
+  assertJsonReportNoAttachments(featureDir);
+}
 
+function assertMessagesReport(featureDir) {
+  testDir.assertMessagesReport(
+    `features/${featureDir}/actual-reports/messages.ndjson`,
+    `features/${featureDir}/expected-reports/messages.ndjson`,
+  );
+}
+
+function assertJsonReport(featureDir) {
+  testDir.assertJsonReport(
+    `features/${featureDir}/actual-reports/json-report.json`,
+    `features/${featureDir}/expected-reports/json-report.json`,
+  );
+}
+
+function assertJsonReportNoAttachments(featureDir) {
   if (featureDir === 'attachments') {
-    const actualJson = getJsonFromFile(
-      `${absFeatureDir}/actual-reports/json-report-no-attachments.json`,
+    const reportAbsPath = testDir.getAbsPath(
+      `features/${featureDir}/actual-reports/json-report-no-attachments.json`,
     );
+    const actualJson = getJsonFromFile(reportAbsPath);
     expect(JSON.stringify(actualJson, null, 2)).not.toContain('embeddings');
   }
-}
-
-function assertMessagesReport(absFeatureDir) {
-  const actualMessages = getMessagesFromFile(`${absFeatureDir}/actual-reports/messages.ndjson`);
-  const expectedMessages = getMessagesFromFile(`${absFeatureDir}/expected-reports/messages.ndjson`);
-  assertShape(actualMessages, expectedMessages, messageReportFields);
-}
-
-function assertJsonReport(absFeatureDir) {
-  const actualJson = getJsonFromFile(`${absFeatureDir}/actual-reports/json-report.json`);
-  const expectedJson = getJsonFromFile(`${absFeatureDir}/expected-reports/json-report.json`);
-  assertShape(actualJson, expectedJson, jsonReportFields);
 }
 
 /**
  * Returns all feature dirs.
  */
-function getAllFeatureDirs() {
+function readAllFeatureDirs() {
   return fg
     .sync('**', {
       cwd: testDir.getAbsPath('features'),

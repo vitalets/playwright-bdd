@@ -4,8 +4,8 @@
  * Feature dir is passed as a last argument that is convenient.
  *
  * Usage:
- * node test/reporter-cucumber-msg/helpers/run-c.mjs <featureDir>
- * node test/reporter-cucumber-msg/helpers/run-c.mjs minimal
+ * node test/reporter-cucumber-msg/run/run-c.mjs <featureDir>
+ * node test/reporter-cucumber-msg/run/run-c.mjs minimal
  */
 import { execSync } from 'node:child_process';
 

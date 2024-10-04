@@ -7,6 +7,9 @@ import fs from 'node:fs';
 import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
+import { assertMessagesReport } from './reports/messages.mjs';
+import { assertJsonReport } from './reports/json.mjs';
+import { assertJunitReport } from './reports/junit.mjs';
 
 export class TestDir {
   constructor(importMeta) {
@@ -89,5 +92,17 @@ export class TestDir {
       false,
       `Expected file does not exist: ${relativePath}`,
     );
+  }
+
+  assertMessagesReport(actualFile, expectedFile) {
+    assertMessagesReport(this.getAbsPath(actualFile), this.getAbsPath(expectedFile));
+  }
+
+  assertJsonReport(actualFile, expectedFile) {
+    assertJsonReport(this.getAbsPath(actualFile), this.getAbsPath(expectedFile));
+  }
+
+  async assertJunitReport(actualFile, expectedFile) {
+    await assertJunitReport(this.getAbsPath(actualFile), this.getAbsPath(expectedFile));
   }
 }
