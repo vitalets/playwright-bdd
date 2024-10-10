@@ -129,7 +129,7 @@ export default defineConfig({
 
 To view trace by click, you should open HTML report on `http(s)://` schema, not on `file://`. To achieve that on local machine, you can start http server by the following command:
 ```
-npx http-server ./cucumber-report -o index.html
+npx http-server ./cucumber-report -c-1 -o index.html
 ```
 
 ![html report with trace](./_media/html-report-with-trace.png)
@@ -138,7 +138,7 @@ You can add that command to `package.json` scripts to open Cucumber report quick
 ```json
 {
   "scripts": {
-    "show-report": "npx http-server ./cucumber-report -o index.html"
+    "show-report": "npx http-server ./cucumber-report -c-1 -o index.html"
   }
 }
 ```
