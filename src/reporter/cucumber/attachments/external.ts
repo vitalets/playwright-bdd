@@ -47,7 +47,8 @@ export function toExternalAttachment(
   const fileName = calculateSha1(buffer) + '.' + extension;
   const filePath = path.join(attachmentsDir, fileName);
   // todo: save file async?
-  fs.writeFileSync(filePath, buffer);
+  // without converting to Uint8Array TS complains about buffer type
+  fs.writeFileSync(filePath, new Uint8Array(buffer));
 
   return {
     ...attachment,
@@ -72,17 +73,3 @@ function getAttachmentExtension(attachment: messages.Attachment) {
 export function isTextAttachment(attachment: messages.Attachment) {
   return /^(text\/|application\/json)/.test(attachment.mediaType);
 }
-
-// function createMissingAttachmentError(attachmentPath: string) {
-//   const attachmentDir = path.join(path.dirname(attachmentPath));
-//   const attachmentDirExists = fs.existsSync(attachmentDir);
-//   const files = attachmentDirExists ? fs.readdirSync(attachmentDir) : [];
-//   const errorMsg = [
-//     `Attachment file is not found:`,
-//     attachmentPath,
-//     `Attachment dir ${attachmentDirExists ? 'exists' : 'does not exist'}.`,
-//     ...(attachmentDirExists ? [`Available files (${files.length}):`, ...files] : []),
-//     '',
-//   ].join('\n');
-//   return new Error(errorMsg);
-// }

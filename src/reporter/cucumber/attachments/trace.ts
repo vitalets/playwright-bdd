@@ -45,5 +45,7 @@ export function isTraceAttachment(attachment: messages.Attachment) {
 }
 
 export function generateTraceUrl(attachment: messages.Attachment) {
+  // In PW trace url is generated dynamically in JS with location.href:
+  // https://github.com/microsoft/playwright/blob/8f3353865d8d98e9b40c15497e60d5e2583410b6/packages/html-reporter/src/links.tsx#L102
   return `trace/index.html?trace=${attachment.url}`;
 }
