@@ -15,6 +15,8 @@ interface TestStepInternal {
   location?: Location;
 }
 
+type StepOptions = Parameters<TestTypeCommon['step']>[2];
+
 // eslint-disable-next-line max-params
 export async function runStepWithLocation(
   test: TestTypeCommon,
@@ -22,6 +24,12 @@ export async function runStepWithLocation(
   location: Location,
   body: () => unknown,
 ) {
+  // PW 1.48 introduced official way to run step with location.
+  if (playwrightVersion >= '1.48.0') {
+    // use type assertion to avoid TS error in earlier PW versions
+    return test.step(stepText, body, { location } as StepOptions);
+  }
+
   // Since PW 1.43 testInfo._runAsStep was replaced with a more complex logic.
   // To run step with a custom location, we hijack testInfo._addStep()
   // so that it appends location for the bdd step calls.
