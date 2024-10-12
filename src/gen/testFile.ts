@@ -36,6 +36,7 @@ import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
 import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
+import { StepKeyword } from '../steps/types';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -276,7 +277,7 @@ export class TestFile {
 
     const lines = scenario.steps.map((step, index) => {
       const {
-        keyword,
+        keywordEng,
         keywordType,
         fixtureNames: stepFixtureNames,
         line,
@@ -286,10 +287,15 @@ export class TestFile {
 
       previousKeywordType = keywordType;
 
-      testFixtureNames.add(keyword);
+      testFixtureNames.add(keywordEng);
       stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
       if (isDecorator(stepConfig)) {
-        decoratorSteps.push({ index, keyword, pickleStep, pomNode: stepConfig.pomNode });
+        decoratorSteps.push({
+          index,
+          keywordEng,
+          pickleStep,
+          pomNode: stepConfig.pomNode,
+        });
       }
 
       return line;
@@ -301,12 +307,16 @@ export class TestFile {
     // and can guess background fixtures more precisely.
     // But for statefulPoms=false (that is default) it is not very important.
     decoratorSteps.resolveFixtureNames();
-    decoratorSteps.forEach(({ index, keyword, pickleStep, fixtureName }) => {
+    decoratorSteps.forEach(({ index, keywordEng, pickleStep, fixtureName }) => {
       testFixtureNames.add(fixtureName);
       this.usedDecoratorFixtures.add(fixtureName);
-      lines[index] = this.formatter.step(keyword, pickleStep.text, pickleStep.argument, [
-        fixtureName,
-      ]);
+      const stepFixtureNames = [fixtureName];
+      lines[index] = this.formatter.step(
+        keywordEng,
+        pickleStep.text,
+        pickleStep.argument,
+        stepFixtureNames,
+      );
     });
 
     return { fixtures: testFixtureNames, lines };
@@ -328,10 +338,10 @@ export class TestFile {
       previousKeywordType,
     });
 
-    const enKeyword = this.getStepEnglishKeyword(step);
+    const keywordEng = this.getStepEnglishKeyword(step);
     if (!stepDefinition) {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
-      return this.getMissingStep(enKeyword, keywordType, pickleStep);
+      return this.getMissingStep(keywordEng, keywordType, pickleStep);
     }
 
     this.usedStepDefinitions.add(stepDefinition);
@@ -342,10 +352,10 @@ export class TestFile {
     const fixtureNames = this.getStepFixtureNames(stepDefinition);
     const line = isDecorator(stepConfig)
       ? ''
-      : this.formatter.step(enKeyword, pickleStep.text, pickleStep.argument, fixtureNames);
+      : this.formatter.step(keywordEng, pickleStep.text, pickleStep.argument, fixtureNames);
 
     return {
-      keyword: enKeyword,
+      keywordEng,
       keywordType,
       fixtureNames,
       line,
@@ -354,12 +364,16 @@ export class TestFile {
     };
   }
 
-  private getMissingStep(keyword: string, keywordType: KeywordType, pickleStep: PickleStep) {
+  private getMissingStep(
+    keywordEng: StepKeyword,
+    keywordType: KeywordType,
+    pickleStep: PickleStep,
+  ) {
     return {
-      keyword,
+      keywordEng,
       keywordType,
       fixtureNames: [],
-      line: this.formatter.missingStep(keyword, pickleStep.text),
+      line: this.formatter.missingStep(keywordEng, pickleStep.text),
       pickleStep,
       stepConfig: undefined,
     };
@@ -409,10 +423,17 @@ export class TestFile {
   }
 
   private getStepEnglishKeyword(step: Step) {
-    const nativeKeyword = step.keyword.trim();
-    const enKeyword = nativeKeyword === '*' ? 'And' : this.getEnglishKeyword(nativeKeyword);
-    if (!enKeyword) throw new Error(`Keyword not found: ${nativeKeyword}`);
-    return enKeyword;
+    const keywordLocal = step.keyword.trim();
+    let keywordEng;
+    if (keywordLocal === '*') {
+      keywordEng = 'And';
+    } else if (this.i18nKeywordsMap) {
+      keywordEng = this.i18nKeywordsMap.get(keywordLocal);
+    } else {
+      keywordEng = keywordLocal;
+    }
+    if (!keywordEng) throw new Error(`Keyword not found: ${keywordLocal}`);
+    return keywordEng as StepKeyword;
   }
 
   private getStepFixtureNames({ stepConfig }: StepDefinition) {
@@ -480,23 +501,9 @@ export class TestFile {
   }
 
   private isOutline(scenario: Scenario) {
-    const keyword = this.getEnglishKeyword(scenario.keyword);
-    return (
-      keyword === 'ScenarioOutline' ||
-      keyword === 'Scenario Outline' ||
-      keyword === 'Scenario Template'
-    );
+    // scenario outline without 'Examples:' block behaves like a usual scenario
+    return Boolean(scenario.examples?.length);
   }
-
-  private getEnglishKeyword(keyword: string) {
-    return this.i18nKeywordsMap ? this.i18nKeywordsMap.get(keyword) : keyword;
-  }
-
-  // private hasStepsDefinedViaCucumber() {
-  //   return [...this.usedStepDefinitions].some((stepDefinition) => {
-  //     return isDefinedViaCucumber(getStepConfig(stepDefinition));
-  //   });
-  // }
 
   private getWorldFixtureName() {
     const worldFixtureNames = new Set<string>();

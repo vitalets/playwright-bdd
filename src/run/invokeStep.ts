@@ -10,8 +10,7 @@ import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from './bddFixtures/test';
-
-type StepKeyword = 'Given' | 'When' | 'Then' | 'And' | 'But';
+import { StepKeyword } from '../steps/types';
 
 export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
 
@@ -41,6 +40,8 @@ class StepInvoker {
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getLocationInFile(this.bddContext.testInfo.file);
 
+    // stepText - step text without keyword
+    // stepTitle - step text with keyword
     const stepTitle = this.getStepTitle(stepText);
     const parameters = await this.getStepParameters(
       stepDefinition,

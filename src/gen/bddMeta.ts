@@ -23,6 +23,12 @@ export type BddTestMeta = {
   pickleLocation: string;
   tags?: string[];
   ownTags?: string[];
+  steps?: BddTestMetaStep[];
+};
+
+export type BddTestMetaStep = {
+  keywordType: string;
+  fullText: string;
 };
 
 export class BddFileMetaBuilder {
@@ -33,6 +39,11 @@ export class BddFileMetaBuilder {
   }
 
   registerTest(node: TestNode, pickle: PickleWithLocation) {
+    // const steps = pickle.steps.map((step) => {
+    //   console.log('step', step);
+    //   // return { keywordType: step.type, fullText: step.text };
+    // });
+
     const bddTestMeta: BddTestMeta = {
       pickleLocation: stringifyLocation(pickle.location),
       tags: node.tags.length ? node.tags : undefined,

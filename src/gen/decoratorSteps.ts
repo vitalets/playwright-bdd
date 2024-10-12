@@ -8,6 +8,7 @@ import { PickleStep } from '@cucumber/messages';
 import { TestPoms, UsedFixture } from './testPoms';
 import { exit } from '../utils/exit';
 import { PomNode } from '../steps/decorators/pomGraph';
+import { StepKeyword } from '../steps/types';
 
 type DecoratorStepsOptions = {
   statefulPoms?: boolean;
@@ -19,7 +20,7 @@ type DecoratorStepsOptions = {
 
 type DecoratorStepInfo = {
   index: number;
-  keyword: string;
+  keywordEng: StepKeyword;
   pickleStep: PickleStep;
   pomNode: PomNode;
   fixtureName: string;

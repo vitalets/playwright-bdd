@@ -151,6 +151,7 @@ export const test = base.extend<BddFixturesTest>({
 
   $testInfo: [({}, use, testInfo) => use(testInfo), fixtureOptions],
 
+  // properties of $step will be dynamically assigned in invokeStep.ts
   $step: [({}, use) => use({ title: '' }), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file

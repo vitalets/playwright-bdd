@@ -66,3 +66,25 @@ Feature: scenario-outline
       | substring                                                                               |
       | test("Scenario title used as a template with 2 and \"4\", extra <, without <notexist>", |
       | test("Scenario title used as a template with 3 and \"6\", extra <, without <notexist>", |
+
+  # behaves like scenario
+  Scenario Outline: scenario outline without examples
+    Given State 123
+
+  Scenario Outline: scenario outline with empty examples (1)
+    Given State <start>
+
+    Examples:
+
+
+    Examples:
+
+
+  Scenario Outline: scenario outline with empty examples (2)
+    Given State <start>
+
+    Examples:
+      | start | end |
+
+
+# todo: add assertions for empty examples, but do it in js file, not here!

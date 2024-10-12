@@ -10,6 +10,7 @@ import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
+import { StepKeyword } from '../steps/types';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -89,16 +90,21 @@ export class Formatter {
   }
 
   // eslint-disable-next-line max-params
-  step(keyword: string, text: string, argument?: PickleStepArgument, fixtureNames: string[] = []) {
+  step(
+    keywordEng: StepKeyword,
+    text: string,
+    argument?: PickleStepArgument,
+    fixtureNames: string[] = [],
+  ) {
     const fixtures = fixtureNames.length ? `{ ${fixtureNames.join(', ')} }` : '';
     const argumentArg = argument ? JSON.stringify(argument) : fixtures ? 'null' : '';
     const textArg = this.quoted(text);
     const args = [textArg, argumentArg, fixtures].filter((arg) => arg !== '').join(', ');
-    return `await ${keyword}(${args});`;
+    return `await ${keywordEng}(${args});`;
   }
 
-  missingStep(keyword: string, text: string) {
-    return `// missing step: ${keyword}(${this.quoted(text)});`;
+  missingStep(keywordEng: StepKeyword, text: string) {
+    return `// missing step: ${keywordEng}(${this.quoted(text)});`;
   }
 
   technicalSection(bddFileMetaBuilder: BddFileMetaBuilder, featureUri: string, fixtures: string[]) {
