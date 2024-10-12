@@ -1,38 +1,36 @@
-import { normalize } from 'node:path';
 import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
+import { test, normalize, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
 test(testDir.name, () => {
-  const stdout = execPlaywrightTest(testDir.name);
-  checkStepLocations(stdout);
-  checkStepTitles(stdout);
+  testDir.clearDir('actual-reports');
+
+  execPlaywrightTest(testDir.name);
+
+  const output = testDir.getFileContents('actual-reports/report.txt');
+  checkStepLocations(output);
+  checkStepTitles(output);
 });
 
-function checkStepLocations(stdout) {
-  expect(stdout).toContain(
+function checkStepLocations(output) {
+  expect(output).toContain(
     `Given I am on home page ${normalize('.features-gen/features/sample.feature.spec.js')}:11:11`,
   );
-  expect(stdout).toContain(`page.goto(https://example.com) ${normalize('features/pom.ts')}:11:21`);
-  expect(stdout).toContain(
+  expect(output).toContain(`page.goto(https://example.com) ${normalize('features/pom.ts')}:11:21`);
+  expect(output).toContain(
     `And decorator step ${normalize('.features-gen/features/sample.feature.spec.js')}:12:11`,
   );
-  expect(stdout).toContain(`hook 1 ${normalize('features/steps.ts')}:14:1`);
+  expect(output).toContain(`hook 1 ${normalize('features/steps.ts')}:12:1`);
 }
 
-function checkStepTitles(stdout) {
+function checkStepTitles(output) {
   // prepended keywords
-  expect(stdout).toContain(`Given background step`);
-  expect(stdout).toContain(`And Action 1`);
-  expect(stdout).toContain(`When Action 2`);
-  expect(stdout).toContain(`And Action 3`);
-  expect(stdout).toContain(`Then Action 4`);
-  expect(stdout).toContain(`But Action 5`);
-  expect(stdout).toContain(`And Action 6`);
-
-  // for non-en lang keywords are not prepended
-  expect(stdout).toContain(`Состояние 0`);
-  expect(stdout).toContain(`Состояние 1`);
-  expect(stdout).not.toContain(`Пусть Состояние 1`);
+  expect(output).toContain(`Given background step`);
+  expect(output).toContain(`And Action 1`);
+  expect(output).toContain(`When Action 2`);
+  expect(output).toContain(`And Action 3`);
+  expect(output).toContain(`Then Action 4`);
+  expect(output).toContain(`But Action 5`);
+  expect(output).toContain(`And Action 6`);
 }

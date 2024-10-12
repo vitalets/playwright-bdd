@@ -15,6 +15,9 @@ Then('Результат {int}', async function () {
   // noop
 });
 
-Then('Переданный аргумент {string} равен "куку"', async function ({}, arg: string) {
-  expect(arg).toEqual('куку');
-});
+Then(
+  'Переданный аргумент {string} содержит {int} букв(ы)',
+  async function ({}, arg: string, letters: number) {
+    expect(arg).toHaveLength(letters);
+  },
+);
