@@ -47,7 +47,6 @@ export type BddFixturesTest = {
   $scenarioHookFixtures: Record<string, unknown>;
   $before: void;
   $after: void;
-  $lang: string;
   $applySpecialTags: void;
   $world: unknown;
 };
@@ -56,7 +55,6 @@ export type BddContext = {
   config: BDDConfig;
   test: TestTypeCommon;
   testInfo: TestInfo;
-  lang: string;
   tags: string[];
   step: StepFixture;
   world: unknown;
@@ -76,14 +74,8 @@ export const test = base.extend<BddFixturesTest>({
     },
     fixtureOptions,
   ],
-  // $lang fixture can be overwritten in test file
-  $lang: [({}, use) => use(''), fixtureOptions],
   $bddContext: [
-    async (
-      { $tags, $test, $bddConfig, $lang, $bddTestMeta, $uri, $step, $world },
-      use,
-      testInfo,
-    ) => {
+    async ({ $tags, $test, $bddConfig, $bddTestMeta, $uri, $step, $world }, use, testInfo) => {
       if (!$bddTestMeta) {
         throw new Error('BDD fixtures can be used only in BDD tests');
       }
@@ -96,7 +88,6 @@ export const test = base.extend<BddFixturesTest>({
         config: $bddConfig,
         testInfo,
         test: $test,
-        lang: $lang,
         tags: $tags,
         step: $step,
         world: $world,

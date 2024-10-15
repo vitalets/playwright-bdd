@@ -33,10 +33,10 @@ function checkCustomReport() {
     `Пусть Состояние 0 ${normalize('.features-gen/ru.feature.spec.js')}:7:11`,
   );
   expect(content).toContain(
-    `Когда Действие 1 ${normalize('.features-gen/ru.feature.spec.js')}:13:11`,
+    `Когда Действие 1 ${normalize('.features-gen/ru.feature.spec.js')}:14:11`,
   );
   expect(content).toContain(
-    `То Переданный аргумент "куку" содержит 4 буквы ${normalize('.features-gen/ru.feature.spec.js')}:15:11`,
+    `То Переданный аргумент "куку" содержит 4 буквы ${normalize('.features-gen/ru.feature.spec.js')}:16:11`,
   );
-  expect(content).toContain(`* Результат 2 ${normalize('.features-gen/ru.feature.spec.js')}:16:11`);
+  expect(content).toContain(`* Результат 2 ${normalize('.features-gen/ru.feature.spec.js')}:17:11`);
 }

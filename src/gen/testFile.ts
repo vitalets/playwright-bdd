@@ -165,7 +165,6 @@ export class TestFile {
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
       ...this.bddMetaBuilder.getFixture(),
-      ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),

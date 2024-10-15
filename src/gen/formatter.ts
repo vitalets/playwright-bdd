@@ -139,10 +139,6 @@ export class Formatter {
     return [`$test: ({}, use) => use(test),`];
   }
 
-  langFixture(lang: string) {
-    return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
-  }
-
   uriFixture(featureUri: string) {
     return [`$uri: ({}, use) => use(${this.quoted(featureUri)}),`];
   }
