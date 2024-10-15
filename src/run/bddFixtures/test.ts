@@ -78,7 +78,11 @@ export const test = base.extend<BddFixturesTest>({
   // $lang fixture can be overwritten in test file
   $lang: [({}, use) => use(''), fixtureOptions],
   $bddContext: [
-    async ({ $tags, $test, $bddConfig, $lang, $bddTestMeta, $uri, $world }, use, testInfo) => {
+    async (
+      { $tags, $test, $bddConfig, $lang, $bddTestMeta, $uri, $step, $world },
+      use,
+      testInfo,
+    ) => {
       const bddAnnotation =
         $bddTestMeta && getEnrichReporterData($bddConfig)
           ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
@@ -90,7 +94,7 @@ export const test = base.extend<BddFixturesTest>({
         test: $test,
         lang: $lang,
         tags: $tags,
-        step: { indexInPickle: 0, title: '' },
+        step: $step,
         world: $world,
         bddAnnotation,
       });
@@ -150,7 +154,11 @@ export const test = base.extend<BddFixturesTest>({
 
   $testInfo: [({}, use, testInfo) => use(testInfo), fixtureOptions],
 
-  $step: [({ $bddContext }, use) => use($bddContext.step), fixtureOptions],
+  // Info of the currently executed step.
+  // Filled dynamically in step invoker.
+  // Important to keep this fixture separate, without dependency on bddContext.
+  // Otherwise we can get cyclic fixtures dependency.
+  $step: [({}, use) => use({ indexInPickle: 0, title: '' }), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],
