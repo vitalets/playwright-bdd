@@ -24,7 +24,9 @@ export async function runStepWithLocation(
 ) {
   // PW 1.48 introduced official way to run step with location.
   if (playwrightVersion >= '1.48.0') {
-    // @ts-expect-error earlier PW versions do not support 3rd argument in test.step
+    // Earlier PW versions do not support 3rd argument in test.step
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     return test.step(stepText, body, { location });
   }
 
