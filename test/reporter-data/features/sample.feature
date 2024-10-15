@@ -2,6 +2,7 @@ Feature: report location
 
   Background:
     Given background step
+    And Action 00
 
   Scenario: Scenario 1
     Given I am on home page

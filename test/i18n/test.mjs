@@ -1,4 +1,11 @@
-import { test, normalize, TestDir, execPlaywrightTest, expect } from '../_helpers/index.mjs';
+import {
+  test,
+  normalize,
+  TestDir,
+  execPlaywrightTest,
+  expect,
+  playwrightVersion,
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -39,4 +46,7 @@ function checkCustomReport() {
     `То Переданный аргумент "куку" содержит 4 буквы ${normalize('.features-gen/ru.feature.spec.js')}:16:11`,
   );
   expect(content).toContain(`* Результат 2 ${normalize('.features-gen/ru.feature.spec.js')}:17:11`);
+
+  const bgTitle = playwrightVersion >= '1.38.0' ? 'Контекст: подготовка' : 'beforeEach hook';
+  expect(content).toContain(`${bgTitle} ${normalize('.features-gen/ru.feature.spec.js')}:6:8`);
 }

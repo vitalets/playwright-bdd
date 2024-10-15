@@ -11,7 +11,7 @@ export default class MyReporter implements Reporter {
 
   onStepEnd(_test: TestCase, _result: TestResult, step: TestStep) {
     const { title, location, category } = step;
-    if (category === 'test.step' || title.includes('page.goto')) {
+    if (category === 'test.step' || category === 'hook' || title.includes('page.goto')) {
       const file = location?.file;
       const relFile = file ? path.relative(process.cwd(), file) : '';
       this.messages.push(`${title} ${relFile}:${location?.line || 0}:${location?.column || 0}`);

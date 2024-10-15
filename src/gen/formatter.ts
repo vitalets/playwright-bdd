@@ -50,11 +50,11 @@ export class Formatter {
     ];
   }
 
-  beforeEach(fixtures: Set<string>, children: string[]) {
+  beforeEach(title: string, fixtures: Set<string>, children: string[]) {
+    const titleStr = title && playwrightVersion >= '1.38.0' ? `${this.quoted(title)}, ` : '';
     const fixturesStr = [...fixtures].join(', ');
-    // prettier-ignore
     return [
-      `test.beforeEach(async ({ ${fixturesStr} }) => {`,
+      `test.beforeEach(${titleStr}async ({ ${fixturesStr} }) => {`,
       ...children.map(indent),
       `});`,
       '',

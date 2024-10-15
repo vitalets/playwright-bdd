@@ -211,8 +211,9 @@ export class TestFile {
    */
   private getBeforeEach(bg: Background, parent: TestNode) {
     const node = new TestNode({ name: 'background', tags: [] }, parent);
+    const title = [bg.keyword, bg.name].filter(Boolean).join(': ');
     const { fixtures, lines } = this.getSteps(bg, node.tags);
-    return this.formatter.beforeEach(fixtures, lines);
+    return this.formatter.beforeEach(title, fixtures, lines);
   }
 
   /**
