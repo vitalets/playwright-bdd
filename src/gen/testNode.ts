@@ -1,5 +1,5 @@
 /**
- * Universal TestNode class representing test or suite in a test file.
+ * TestNode class represents test or suite node in a test file.
  * Holds parent-child links.
  * Allows to inherit tags and titles path.
  */

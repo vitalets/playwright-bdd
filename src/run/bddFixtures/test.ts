@@ -19,6 +19,9 @@ import { BddAnnotation } from '../bddAnnotation';
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 type StepFixture = {
+  // step index in pickle differs from index in scenario, b/c there can be bg steps
+  indexInPickle: number;
+  // step title (without keyword)
   title: string;
 };
 
@@ -75,11 +78,7 @@ export const test = base.extend<BddFixturesTest>({
   // $lang fixture can be overwritten in test file
   $lang: [({}, use) => use(''), fixtureOptions],
   $bddContext: [
-    async (
-      { $tags, $test, $step, $bddConfig, $lang, $bddTestMeta, $uri, $world },
-      use,
-      testInfo,
-    ) => {
+    async ({ $tags, $test, $bddConfig, $lang, $bddTestMeta, $uri, $world }, use, testInfo) => {
       const bddAnnotation =
         $bddTestMeta && getEnrichReporterData($bddConfig)
           ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
@@ -91,7 +90,7 @@ export const test = base.extend<BddFixturesTest>({
         test: $test,
         lang: $lang,
         tags: $tags,
-        step: $step,
+        step: { indexInPickle: 0, title: '' },
         world: $world,
         bddAnnotation,
       });
@@ -151,8 +150,7 @@ export const test = base.extend<BddFixturesTest>({
 
   $testInfo: [({}, use, testInfo) => use(testInfo), fixtureOptions],
 
-  // properties of $step will be dynamically assigned in invokeStep.ts
-  $step: [({}, use) => use({ title: '' }), fixtureOptions],
+  $step: [({ $bddContext }, use) => use($bddContext.step), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],

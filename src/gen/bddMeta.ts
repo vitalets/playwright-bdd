@@ -11,9 +11,12 @@
  */
 
 import { TestNode } from './testNode';
-import { PickleWithLocation } from '../features/load';
 import { TestInfo } from '@playwright/test';
 import { stringifyLocation } from '../utils';
+import { GherkinDocumentQuery } from '../features/documentQuery';
+import { RenderedTest } from './testFile';
+import { indent } from './formatter';
+import { PickleWithLocation } from '../features/load';
 
 const TEST_KEY_SEPARATOR = '|';
 
@@ -23,48 +26,55 @@ export type BddTestMeta = {
   pickleLocation: string;
   tags?: string[];
   ownTags?: string[];
-  steps?: BddTestMetaStep[];
-};
-
-export type BddTestMetaStep = {
-  keywordType: string;
-  fullText: string;
+  pickleSteps?: string[]; // array of step titles with keyword (including bg steps)
 };
 
 export class BddFileMetaBuilder {
-  private tests: { node: TestNode; bddTestMeta: BddTestMeta }[] = [];
+  constructor(private gherkinDocumentQuery: GherkinDocumentQuery) {}
 
-  get testCount() {
-    return this.tests.length;
+  formatFixture() {
+    return [`$bddFileMeta: ({}, use) => use(bddFileMeta),`];
   }
 
-  registerTest(node: TestNode, pickle: PickleWithLocation) {
-    // const steps = pickle.steps.map((step) => {
-    //   console.log('step', step);
-    //   // return { keywordType: step.type, fullText: step.text };
-    // });
+  formatObject(tests: RenderedTest[]) {
+    return [
+      'const bddFileMeta = {', // prettier-ignore
+      ...tests.map((test) => this.buildObjectLine(test)).map(indent),
+      '};',
+    ];
+  }
 
-    const bddTestMeta: BddTestMeta = {
+  private buildObjectLine({ node, pickle }: RenderedTest) {
+    // build object line by line to have each test on a separate line,
+    // but value should be in one line.
+    const testKey = this.buildTestKey(node);
+    const testMeta = this.buildTestMeta({ node, pickle });
+    return `${JSON.stringify(testKey)}: ${JSON.stringify(testMeta)},`;
+  }
+
+  private buildTestKey(node: TestNode) {
+    // .slice(1) -> b/c we remove top describe title (it's same for all tests)
+    return node.titlePath.slice(1).join(TEST_KEY_SEPARATOR);
+  }
+
+  private buildTestMeta({ node, pickle }: RenderedTest): BddTestMeta {
+    return {
       pickleLocation: stringifyLocation(pickle.location),
       tags: node.tags.length ? node.tags : undefined,
       // todo: avoid duplication of tags and ownTags
       ownTags: node.ownTags.length ? node.ownTags : undefined,
+      pickleSteps: this.buildTestMetaSteps(pickle),
     };
-    this.tests.push({ node, bddTestMeta });
   }
 
-  getObjectLines() {
-    // build object line by line to have each test on a separate line,
-    // but value should be in one line.
-    return this.tests.map((test) => {
-      const testKey = this.getTestKey(test.node);
-      return `${JSON.stringify(testKey)}: ${JSON.stringify(test.bddTestMeta)},`;
+  private buildTestMetaSteps(pickle: PickleWithLocation) {
+    return pickle.steps.map((pickleStep) => {
+      // const scenarioStep = this.gherkinDocumentQuery.getScenarioStep(pickleStep);
+      // There is no full original text for steps.
+      // Cucumber html-formatter concatenates keyword and text, we do the same.
+      // return `${scenarioStep.keyword}${pickleStep.text}`;
+      return `${pickleStep.text}`;
     });
-  }
-
-  private getTestKey(node: TestNode) {
-    // .slice(1) -> b/c we remove top describe title (it's same for all tests)
-    return node.titlePath.slice(1).join(TEST_KEY_SEPARATOR);
   }
 }
 

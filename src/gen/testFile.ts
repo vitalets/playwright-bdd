@@ -28,7 +28,7 @@ import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { BddFileMetaBuilder } from './bddMeta';
-import { GherkinDocumentWithPickles } from '../features/load';
+import { GherkinDocumentWithPickles, PickleWithLocation } from '../features/load';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
@@ -37,6 +37,7 @@ import { ImportTestFromGuesser } from './importTestFrom';
 import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { StepKeyword } from '../steps/types';
+import { GherkinDocumentQuery } from '../features/documentQuery';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -51,12 +52,18 @@ export type UndefinedStep = {
   pickleStep: PickleStep;
 };
 
+export type RenderedTest = {
+  node: TestNode;
+  pickle: PickleWithLocation;
+};
+
 export class TestFile {
   private lines: string[] = [];
+  private tests: RenderedTest[] = [];
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
-  private bddFileMetaBuilder: BddFileMetaBuilder;
   private usedDecoratorFixtures = new Set<string>();
+  private gherkinDocumentQuery: GherkinDocumentQuery;
 
   public undefinedSteps: UndefinedStep[] = [];
   public featureUri: string;
@@ -64,7 +71,7 @@ export class TestFile {
 
   constructor(private options: TestFileOptions) {
     this.formatter = new Formatter(options.config);
-    this.bddFileMetaBuilder = new BddFileMetaBuilder();
+    this.gherkinDocumentQuery = new GherkinDocumentQuery(this.gherkinDocument);
     this.featureUri = this.getFeatureUri();
   }
 
@@ -97,11 +104,11 @@ export class TestFile {
   }
 
   get testCount() {
-    return this.bddFileMetaBuilder.testCount;
+    return this.tests.length;
   }
 
-  build() {
-    if (!this.pickles.length) return this;
+  build(): this {
+    if (!this.gherkinDocumentQuery.hasPickles()) return this;
     this.loadI18nKeywords();
     // important to calc suites first, b/c header depend on used steps
     const suites = this.getRootSuite();
@@ -157,12 +164,22 @@ export class TestFile {
 
   private getTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
-    return this.formatter.technicalSection(this.bddFileMetaBuilder, this.featureUri, [
+    const bddFileMetaBuilder = new BddFileMetaBuilder(this.gherkinDocumentQuery);
+
+    const fixtures = this.formatter.fixtures([
+      ...this.formatter.testFixture(),
+      ...this.formatter.uriFixture(this.featureUri),
+      ...bddFileMetaBuilder.formatFixture(),
       ...(!this.isEnglish ? this.formatter.langFixture(this.language) : []),
       ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
-      ...(worldFixtureName ? this.formatter.setWorldFixture(worldFixtureName) : []),
+      ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
     ]);
+
+    return [
+      ...fixtures, // prettier-ignore
+      ...bddFileMetaBuilder.formatObject(this.tests),
+    ];
   }
 
   private getRootSuite() {
@@ -240,8 +257,8 @@ export class TestFile {
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.skipByTagsExpression(node)) return [];
-    const pickle = this.findPickle(scenario, exampleRow);
-    this.bddFileMetaBuilder.registerTest(node, pickle);
+    const pickle = this.gherkinDocumentQuery.findPickle(scenario, exampleRow);
+    this.tests.push({ node, pickle });
     if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
@@ -253,8 +270,8 @@ export class TestFile {
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
     if (this.skipByTagsExpression(node)) return [];
-    const pickle = this.findPickle(scenario);
-    this.bddFileMetaBuilder.registerTest(node, pickle);
+    const pickle = this.gherkinDocumentQuery.findPickle(scenario);
+    this.tests.push({ node, pickle });
     if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);
@@ -330,7 +347,8 @@ export class TestFile {
     previousKeywordType: KeywordType | undefined,
     outlineExampleRowId?: string,
   ) {
-    const pickleStep = this.findPickleStep(step, outlineExampleRowId);
+    // pickleStep contains step text with inserted example values and argument
+    const pickleStep = this.gherkinDocumentQuery.findPickleStep(step, outlineExampleRowId);
     const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
     const keywordType = getStepKeywordType({
       keyword: step.keyword,
@@ -377,49 +395,6 @@ export class TestFile {
       pickleStep,
       stepConfig: undefined,
     };
-  }
-
-  /**
-   * Returns pickle for scenario.
-   * Pickle is executable entity including background and steps with example values.
-   */
-  private findPickle(scenario: Scenario, exampleRow?: TableRow) {
-    const pickle = this.pickles.find((pickle) => {
-      const hasScenarioId = pickle.astNodeIds.includes(scenario.id);
-      const hasExampleRowId = !exampleRow || pickle.astNodeIds.includes(exampleRow.id);
-      return hasScenarioId && hasExampleRowId;
-    });
-
-    if (!pickle) {
-      throw new Error(`Pickle not found for scenario: ${scenario.name}`);
-    }
-
-    return pickle;
-  }
-
-  /**
-   * Returns pickleStep for ast step.
-   * PickleStep contains step text with inserted example values.
-   *
-   * Note:
-   * When searching for pickleStep iterate all pickles in a file
-   * b/c for background steps there is no own pickle.
-   * This can be optimized: pass optional 'pickle' parameter
-   * and search only inside it if it exists.
-   * But this increases code complexity, and performance impact seems to be minimal
-   * b/c number of pickles inside feature file is not very big.
-   */
-  private findPickleStep(step: Step, exampleRowId?: string) {
-    for (const pickle of this.pickles) {
-      const pickleStep = pickle.steps.find(({ astNodeIds }) => {
-        const hasStepId = astNodeIds.includes(step.id);
-        const hasRowId = !exampleRowId || astNodeIds.includes(exampleRowId);
-        return hasStepId && hasRowId;
-      });
-      if (pickleStep) return pickleStep;
-    }
-
-    throw new Error(`Pickle step not found for step: ${step.text}`);
   }
 
   private getStepEnglishKeyword(step: Step) {

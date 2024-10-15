@@ -5,7 +5,6 @@
 import { PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { TestNode } from './testNode';
-import { BddFileMetaBuilder } from './bddMeta';
 import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
@@ -107,22 +106,13 @@ export class Formatter {
     return `// missing step: ${keywordEng}(${this.quoted(text)});`;
   }
 
-  technicalSection(bddFileMetaBuilder: BddFileMetaBuilder, featureUri: string, fixtures: string[]) {
+  fixtures(lines: string[]) {
     return [
       '// == technical section ==', // prettier-ignore
       '',
       'test.use({',
-      ...[
-        '$test: ({}, use) => use(test),',
-        `$uri: ({}, use) => use(${this.quoted(featureUri)}),`,
-        '$bddFileMeta: ({}, use) => use(bddFileMeta),',
-        ...fixtures,
-      ].map(indent),
+      ...lines.map(indent),
       '});',
-      '',
-      'const bddFileMeta = {',
-      ...bddFileMetaBuilder.getObjectLines().map(indent),
-      '};',
     ];
   }
 
@@ -141,12 +131,20 @@ export class Formatter {
     ];
   }
 
-  setWorldFixture(worldFixtureName: string) {
+  worldFixture(worldFixtureName: string) {
     return [`$world: ({ ${worldFixtureName} }, use) => use(${worldFixtureName}),`];
+  }
+
+  testFixture() {
+    return [`$test: ({}, use) => use(test),`];
   }
 
   langFixture(lang: string) {
     return [`$lang: ({}, use) => use(${this.quoted(lang)}),`];
+  }
+
+  uriFixture(featureUri: string) {
+    return [`$uri: ({}, use) => use(${this.quoted(featureUri)}),`];
   }
 
   private getFunction(baseFn: 'test' | 'describe', node: TestNode) {
@@ -197,6 +195,6 @@ export class Formatter {
   }
 }
 
-function indent(value: string) {
+export function indent(value: string) {
   return value ? `${'  '}${value}` : value;
 }

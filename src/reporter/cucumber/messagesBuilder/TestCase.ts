@@ -117,6 +117,7 @@ export class TestCase {
    */
   private addStepsArgumentsLists(testCaseRun: TestCaseRun) {
     testCaseRun.bddData.steps.forEach((bddDataStep, stepIndex) => {
+      // map executed step from bddData to pickle step by index!
       const testCaseStep = this.mainSteps?.[stepIndex];
       if (testCaseStep && bddDataStep.stepMatchArgumentsLists) {
         testCaseStep.stepMatchArgumentsLists = bddDataStep.stepMatchArgumentsLists;

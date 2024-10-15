@@ -1,5 +1,8 @@
 /**
  * Extended Map that automatically creates item if it does not exist.
+ * Usage:
+ * const map = new AutofillMap<string, number[]>();
+ * map.getOrCreate('key', () => []);
  */
 
 export class AutofillMap<K, V> extends Map<K, V> {
