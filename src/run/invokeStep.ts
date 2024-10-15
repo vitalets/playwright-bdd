@@ -4,7 +4,6 @@
 
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { isEnglish } from '../config/lang';
 import { DataTable } from '../cucumber/DataTable';
 import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
@@ -14,15 +13,16 @@ import { StepKeyword } from '../steps/types';
 
 export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
 
-export function createStepInvoker(bddContext: BddContext, keyword: StepKeyword) {
-  const invoker = new StepInvoker(bddContext, keyword);
+export function createStepInvoker(bddContext: BddContext, _keyword: StepKeyword) {
+  const invoker = new StepInvoker(bddContext);
   return invoker.invoke.bind(invoker);
 }
 
 class StepInvoker {
   constructor(
     private bddContext: BddContext,
-    private keyword: StepKeyword,
+    // keyword in not needed now, b/c we can get all info about step from test meta
+    // private keyword: StepKeyword,
   ) {}
 
   /**
@@ -30,7 +30,7 @@ class StepInvoker {
    * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L299
    */
   async invoke(
-    stepText: string,
+    stepText: string, // step text without keyword
     argument?: PickleStepArgument | null,
     stepFixtures?: Record<string, unknown>,
   ) {
@@ -40,9 +40,7 @@ class StepInvoker {
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getLocationInFile(this.bddContext.testInfo.file);
 
-    // stepText - step text without keyword
-    // stepTitle - step text with keyword
-    const stepTitle = this.getStepTitle(stepText);
+    const { titleWithKeyword } = this.updateCurrentStepInfo(stepText);
     const parameters = await this.getStepParameters(
       stepDefinition,
       stepText,
@@ -53,10 +51,7 @@ class StepInvoker {
 
     this.bddContext.bddAnnotation?.registerStep(stepDefinition, stepText, location);
 
-    // update step title to be accessible via $step.title
-    this.bddContext.step.title = stepText;
-
-    await runStepWithLocation(this.bddContext.test, stepTitle, location, () => {
+    await runStepWithLocation(this.bddContext.test, titleWithKeyword, location, () => {
       // Although pw-style does not expect usage of world / this in steps,
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
@@ -101,9 +96,20 @@ class StepInvoker {
     return parameters;
   }
 
-  private getStepTitle(text: string) {
-    // Currently prepend keyword only for English.
-    // For other langs it's more complex as we need to pass original keyword from step.
-    return isEnglish(this.bddContext.lang) ? `${this.keyword} ${text}` : text;
+  private updateCurrentStepInfo(stepText: string) {
+    const { step, bddTestMeta } = this.bddContext;
+    step.indexInPickle++;
+    step.title = stepText;
+    step.titleWithKeyword = bddTestMeta.pickleSteps[step.indexInPickle];
+    if (!step.titleWithKeyword) {
+      // should not happen
+      throw new Error(
+        [
+          `Step title not found for index ${step.indexInPickle}`,
+          `in pickle steps: ${bddTestMeta.pickleSteps}`,
+        ].join(' '),
+      );
+    }
+    return step;
   }
 }

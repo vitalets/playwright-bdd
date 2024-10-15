@@ -9,7 +9,7 @@
 import { TestInfo } from '@playwright/test';
 import { createTestStep } from '../../cucumber/createTestStep';
 import { stringifyLocation } from '../../utils';
-import { BddTestMeta } from '../../gen/bddMeta';
+import { BddTestMeta } from '../../gen/bddMetaBuilder';
 import { TestCase } from '@playwright/test/reporter';
 import { PlaywrightLocation, PwAnnotation } from '../../playwright/types';
 import { BddData } from './types';

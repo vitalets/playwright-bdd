@@ -32,7 +32,5 @@ function checkStepTitles(output) {
   expect(output).toContain(`And Action 3`);
   expect(output).toContain(`Then Action 4`);
   expect(output).toContain(`But Action 5`);
-  expect(output).toContain(`And Action 6`);
-  // should be
-  // expect(output).toContain(`* Action 6`);
+  expect(output).toContain(`* Action 6`);
 }

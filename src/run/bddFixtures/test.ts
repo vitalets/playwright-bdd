@@ -8,7 +8,7 @@ import { test as base } from './worker';
 import { BDDConfig } from '../../config/types';
 import { runScenarioHooks } from '../../hooks/scenario';
 import { createStepInvoker } from '../invokeStep';
-import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMeta';
+import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMetaBuilder';
 import { getEnrichReporterData } from '../../config/enrichReporterData';
 import { SpecialTags } from '../../specialTags';
 import { TestTypeCommon } from '../../playwright/types';
@@ -21,8 +21,8 @@ import { BddAnnotation } from '../bddAnnotation';
 type StepFixture = {
   // step index in pickle differs from index in scenario, b/c there can be bg steps
   indexInPickle: number;
-  // step title (without keyword)
   title: string;
+  titleWithKeyword: string;
 };
 
 // Hide all BDD fixtures in reporter.
@@ -60,6 +60,7 @@ export type BddContext = {
   tags: string[];
   step: StepFixture;
   world: unknown;
+  bddTestMeta: BddTestMeta;
   bddAnnotation?: BddAnnotation;
 };
 
@@ -83,10 +84,13 @@ export const test = base.extend<BddFixturesTest>({
       use,
       testInfo,
     ) => {
-      const bddAnnotation =
-        $bddTestMeta && getEnrichReporterData($bddConfig)
-          ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
-          : undefined;
+      if (!$bddTestMeta) {
+        throw new Error('BDD fixtures can be used only in BDD tests');
+      }
+
+      const bddAnnotation = getEnrichReporterData($bddConfig)
+        ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
+        : undefined;
 
       await use({
         config: $bddConfig,
@@ -96,6 +100,7 @@ export const test = base.extend<BddFixturesTest>({
         tags: $tags,
         step: $step,
         world: $world,
+        bddTestMeta: $bddTestMeta,
         bddAnnotation,
       });
     },
@@ -158,7 +163,7 @@ export const test = base.extend<BddFixturesTest>({
   // Filled dynamically in step invoker.
   // Important to keep this fixture separate, without dependency on bddContext.
   // Otherwise we can get cyclic fixtures dependency.
-  $step: [({}, use) => use({ indexInPickle: 0, title: '' }), fixtureOptions],
+  $step: [({}, use) => use({ indexInPickle: -1, title: '', titleWithKeyword: '' }), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],

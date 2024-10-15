@@ -1,17 +1,26 @@
 /**
  * Helper to query data from loaded gherkin document.
  */
+
+/* eslint-disable max-nested-callbacks */
+
 import * as messages from '@cucumber/messages';
-import { GherkinDocumentWithPickles } from './load';
+import { GherkinDocumentWithPickles, PickleWithLocation } from './load';
+import { AutofillMap } from '../utils/AutofillMap';
 
 export class GherkinDocumentQuery {
-  // Map pickle step to scenario step.
-  // One scenario step can be used in several pickles:
-  // - steps from background are used in several pickles
-  // - steps from scenario outline are used in several pickles
-  // private pickleStepToScenarioStep = new Map<string /* pickleStep.id */, messages.Step>();
+  private astNodeIdsToPickles = new AutofillMap<string, PickleWithLocation[]>();
+  private astNodeIdsToPickleSteps = new AutofillMap<string, messages.PickleStep[]>();
 
-  constructor(private gherkinDocument: GherkinDocumentWithPickles) {}
+  constructor(private gherkinDocument: GherkinDocumentWithPickles) {
+    // Here, we could recursively iterate whole document
+    // and map astNodeIds to actual steps / example rows,
+    // to be able to quickly find ast step for pickle step astNodeIds.
+    // But actually we already iterate whole document in testFile,
+    // for now we just iterate pickles and build reverse map.
+    this.mapAstNodeIdsToPickles();
+    this.mapAstNodeIdsToPickleSteps();
+  }
 
   get pickles() {
     return this.gherkinDocument.pickles;
@@ -22,62 +31,47 @@ export class GherkinDocumentQuery {
   }
 
   /**
-   * Returns pickle for scenario.
+   * Returns pickle for astNodeId.
    * Pickle is executable entity including background steps
    * and steps titles with substituted example values.
-   */
-  findPickle(scenario: messages.Scenario, exampleRow?: messages.TableRow) {
-    const pickle = this.pickles.find((pickle) => {
-      const hasScenarioId = pickle.astNodeIds.includes(scenario.id);
-      const hasExampleRowId = !exampleRow || pickle.astNodeIds.includes(exampleRow.id);
-      return hasScenarioId && hasExampleRowId;
-    });
-
-    if (!pickle) {
-      throw new Error(`Pickle not found for scenario: ${scenario.name}`);
-    }
-
-    return pickle;
-  }
-
-  /**
-   * Returns pickleStep for ast step.
    *
-   * Note:
-   * When searching for pickleStep iterate all pickles in a file
-   * b/c for background steps there is no own pickle.
-   * This can be optimized: pass optional 'pickle' parameter
-   * and search only inside it if it passed (for bg pickle will be omitted).
-   * But this increases code complexity, and performance impact seems to be minimal
-   * b/c number of pickles inside feature file is not very big.
+   * AstNodeId can represent here:
+   * - bg scenario: maps to several pickles
+   * - scenario: maps to single pickle
+   * - scenario outline: maps to several pickles
+   * - example row: maps to single pickle
    */
-  findPickleStep(step: messages.Step, exampleRowId?: string) {
-    for (const pickle of this.pickles) {
-      const pickleStep = pickle.steps.find(({ astNodeIds }) => {
-        const hasStepId = astNodeIds.includes(step.id);
-        const hasRowId = !exampleRowId || astNodeIds.includes(exampleRowId);
-        return hasStepId && hasRowId;
-      });
-
-      if (pickleStep) {
-        return pickleStep;
-      }
-    }
-
-    throw new Error(`Pickle step not found for scenario step: ${step.text}`);
+  getPickles(astNodeId: string) {
+    return this.astNodeIdsToPickles.get(astNodeId) || [];
   }
 
   /**
-   * Gets scenario / bg step for pickle step (from map).
+   * Returns pickle steps for AstNodeId.
+   * AstNodeId can represent here:
+   * - bg step: maps to several pickle steps (in different pickles)
+   * - scenario step: maps to single pickle step
+   * - scenario outline step: maps to several pickle steps (for each example row)
+   * - example row: maps to several pickle steps (for each scenario step)
    */
-  // findScenarioStep(pickleStep: messages.PickleStep) {
-  //   const step = this.pickleStepToScenarioStep.get(pickleStep.id);
-  //   if (!step) {
-  //     // this should not happen
-  //     throw new Error(
-  //       `Scenario step not found for pickle step:${pickleStep.id} ${pickleStep.text}`,
-  //     );
-  //   }
-  //   return step;
-  // }
+  getPickleSteps(astNodeId: string) {
+    return this.astNodeIdsToPickleSteps.get(astNodeId) || [];
+  }
+
+  private mapAstNodeIdsToPickles() {
+    this.pickles.forEach((pickle) => {
+      pickle.astNodeIds.forEach((astNodeId) => {
+        this.astNodeIdsToPickles.getOrCreate(astNodeId, () => []).push(pickle);
+      });
+    });
+  }
+
+  private mapAstNodeIdsToPickleSteps() {
+    this.pickles.forEach((pickle) => {
+      pickle.steps.forEach((pickleStep) => {
+        pickleStep.astNodeIds.forEach((astNodeId) => {
+          this.astNodeIdsToPickleSteps.getOrCreate(astNodeId, () => []).push(pickleStep);
+        });
+      });
+    });
+  }
 }

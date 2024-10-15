@@ -4,4 +4,4 @@ dist
 playwright-report
 **/*.md
 test/parse-error/sample.feature
-test/i18n/features/sample.feature
+test/i18n/features/*.feature

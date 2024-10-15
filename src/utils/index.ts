@@ -95,6 +95,11 @@ export function booleanDefault(value: unknown, defaultValue: boolean) {
 // See: https://github.com/microsoft/playwright/blob/6f16b6cc08f7d59a079d9afa67afacc321a37675/packages/playwright-core/src/utils/crypto.ts#L24
 export function calculateSha1(buffer: Buffer | string): string {
   const hash = crypto.createHash('sha1');
-  hash.update(buffer);
+  const data = typeof buffer === 'string' ? buffer : new Uint8Array(buffer);
+  hash.update(data);
   return hash.digest('hex');
+}
+
+export function throwIf(condition: unknown, message: string) {
+  if (condition) throw new Error(message);
 }

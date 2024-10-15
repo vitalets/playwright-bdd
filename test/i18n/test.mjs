@@ -13,7 +13,7 @@ test(testDir.name, () => {
 });
 
 function checkGeneratedSpecFile() {
-  const fileContents = testDir.getFileContents('.features-gen/sample.feature.spec.js');
+  const fileContents = testDir.getFileContents('.features-gen/ru.feature.spec.js');
   expect(fileContents).toContain(`test.describe("русский язык"`);
   expect(fileContents).toContain(`test("сценарий 1"`);
   expect(fileContents).toContain(`test.describe("сценарий 2"`);
@@ -28,10 +28,15 @@ function checkHtmlReport() {
 
 function checkCustomReport() {
   const content = testDir.getFileContents('actual-reports/report.txt');
+
   expect(content).toContain(
-    `Состояние 0 ${normalize('.features-gen/sample.feature.spec.js')}:7:11`,
+    `Пусть Состояние 0 ${normalize('.features-gen/ru.feature.spec.js')}:7:11`,
   );
   expect(content).toContain(
-    `Действие 1 ${normalize('.features-gen/sample.feature.spec.js')}:13:11`,
+    `Когда Действие 1 ${normalize('.features-gen/ru.feature.spec.js')}:13:11`,
   );
+  expect(content).toContain(
+    `То Переданный аргумент "куку" содержит 4 буквы ${normalize('.features-gen/ru.feature.spec.js')}:15:11`,
+  );
+  expect(content).toContain(`* Результат 2 ${normalize('.features-gen/ru.feature.spec.js')}:16:11`);
 }
