@@ -3,8 +3,8 @@
  * pickle IDs and pickle steps IDs.
  */
 import { randomUUID } from 'node:crypto';
-import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/load.js';
-import { AutofillMap } from '../../../utils/AutofillMap.js';
+import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/types';
+import { AutofillMap } from '../../../utils/AutofillMap';
 
 export class GherkinDocumentClone {
   private oldNewIds = new AutofillMap<string, string>();

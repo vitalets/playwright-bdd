@@ -28,7 +28,7 @@ import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { BddMetaBuilder } from './bddMetaBuilder';
-import { GherkinDocumentWithPickles } from '../features/load';
+import { GherkinDocumentWithPickles } from '../features/types';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';

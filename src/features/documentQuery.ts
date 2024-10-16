@@ -5,8 +5,8 @@
 /* eslint-disable max-nested-callbacks */
 
 import * as messages from '@cucumber/messages';
-import { GherkinDocumentWithPickles, PickleWithLocation } from './load';
 import { AutofillMap } from '../utils/AutofillMap';
+import { GherkinDocumentWithPickles, PickleWithLocation } from './types';
 
 export class GherkinDocumentQuery {
   private astNodeIdsToPickles = new AutofillMap<string, PickleWithLocation[]>();

@@ -7,17 +7,10 @@
 
 import { GherkinStreams, IGherkinStreamOptions } from '@cucumber/gherkin-streams';
 import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
-import { Envelope, ParseError, Pickle, GherkinDocument, Location } from '@cucumber/messages';
+import { Envelope, ParseError, Pickle, GherkinDocument } from '@cucumber/messages';
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
-
-export type GherkinDocumentWithPickles = GherkinDocument & {
-  pickles: PickleWithLocation[];
-};
-
-export type PickleWithLocation = Pickle & {
-  location: Location;
-};
+import { GherkinDocumentWithPickles } from './types';
 
 export function resolveFeatureFiles(cwd: string, patterns: string | string[]) {
   return resolveFiles(cwd, toArray(patterns), 'feature');

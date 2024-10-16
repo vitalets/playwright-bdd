@@ -16,7 +16,7 @@ import { TestInfo } from '@playwright/test';
 import { stringifyLocation } from '../utils';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { indent } from './formatter';
-import { PickleWithLocation } from '../features/load';
+import { PickleWithLocation } from '../features/types';
 
 const TEST_KEY_SEPARATOR = '|';
 
