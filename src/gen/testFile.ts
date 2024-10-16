@@ -16,7 +16,6 @@ import {
   Examples,
   TableRow,
 } from '@cucumber/messages';
-import fs from 'node:fs';
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
@@ -115,12 +114,6 @@ export class TestFile {
       ...this.getTechnicalSection(),
     ];
     return this;
-  }
-
-  save() {
-    const dir = path.dirname(this.outputPath);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-    fs.writeFileSync(this.outputPath, this.content);
   }
 
   private getFileHeader() {

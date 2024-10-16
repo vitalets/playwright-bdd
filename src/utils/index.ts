@@ -85,3 +85,11 @@ export function calculateSha1(buffer: Buffer | string): string {
 export function throwIf(condition: unknown, message: string) {
   if (condition) throw new Error(message);
 }
+
+/**
+ * Save file synchronously, create directory if needed.
+ */
+export function saveFileSync(filePath: string, content: string) {
+  fs.mkdirSync(path.dirname(filePath), { recursive: true });
+  fs.writeFileSync(filePath, content);
+}

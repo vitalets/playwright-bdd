@@ -15,6 +15,7 @@ import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/load';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
+import { saveFileSync } from '../utils';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -136,7 +137,7 @@ export class TestFilesGenerator {
   private async saveFiles() {
     this.logger.log(`Generating Playwright tests: ${this.files.length}`);
     this.files.forEach((file) => {
-      file.save();
+      saveFileSync(file.outputPath, file.content);
       this.logger.log(`  ${relativeToCwd(file.outputPath)}`);
     });
   }
