@@ -4,17 +4,12 @@ import {
   TestDir,
   execPlaywrightTest,
   execPlaywrightTestWithError,
-  playwrightVersion,
   DEFAULT_CMD,
 } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
-// merge-reports was added in pw 1.37
-// See: https://playwright.dev/docs/release-notes#version-137
-const skip = playwrightVersion < '1.37';
-
-test(testDir.name, { skip }, () => {
+test(testDir.name, () => {
   testDir.clearDir('actual-reports');
   testDir.clearDir('blob-report');
 

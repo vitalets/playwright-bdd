@@ -14,7 +14,7 @@ jobs:
     strategy:
       matrix:
         # take min and max supported PW versions
-        playwrightVersion: ['1.35', 'latest', 'beta']
+        playwrightVersion: ['1.38', 'latest', 'beta']
     defaults:
       run:
         shell: bash

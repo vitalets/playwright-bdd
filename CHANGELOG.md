@@ -2,6 +2,7 @@
 
 ## Dev
 * feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229))
+* increase minimal Playwright version from 1.35 to 1.38
 
 ## 7.5.0
 * support external attachments in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))

@@ -9,13 +9,8 @@ import { copyFileAndMakeWritable } from '../../../utils/paths';
 
 function getTraceViewerFolder() {
   const pwCorePath = require.resolve('playwright-core');
-  // See: https://github.com/microsoft/playwright/blob/release-1.37/packages/playwright-test/src/reporters/html.ts#L276
-  const traceViewerFolderTill137 = path.join(pwCorePath, '..', 'lib', 'webpack', 'traceViewer');
-  // See: https://github.com/microsoft/playwright/blob/release-1.38/packages/playwright/src/reporters/html.ts#L295
-  const traceViewerFolderSince138 = path.join(pwCorePath, '..', 'lib', 'vite', 'traceViewer');
-  return fs.existsSync(traceViewerFolderSince138)
-    ? traceViewerFolderSince138
-    : traceViewerFolderTill137;
+  // See: https://github.com/microsoft/playwright/blob/94321fef1c94f9851b6fcc4304d3844760e986cb/packages/playwright/src/reporters/html.ts#L314
+  return path.join(pwCorePath, '..', 'lib', 'vite', 'traceViewer');
 }
 
 // eslint-disable-next-line visual/complexity

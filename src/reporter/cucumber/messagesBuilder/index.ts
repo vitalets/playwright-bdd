@@ -6,7 +6,7 @@ import * as messages from '@cucumber/messages';
 import { TestCaseRun, TestCaseRunEnvelope } from './TestCaseRun';
 import { TestCase } from './TestCase';
 import { Meta } from './Meta';
-import { TimeMeasured, calcMinMaxByArray, toCucumberTimestamp } from './timing';
+import { toCucumberTimestamp } from './timing';
 import EventEmitter from 'node:events';
 import EventDataCollector from '../../../cucumber/formatter/EventDataCollector.js';
 import { Hook } from './Hook';
@@ -36,7 +36,6 @@ export class MessagesBuilder {
   private testCases = new AutofillMap</* testId */ string, TestCase>();
   private hooks = new AutofillMap</* internalId */ string, Hook>();
   private gherkinDocuments = new GherkinDocuments();
-  private fullResultTiming?: TimeMeasured;
   private onEndPromise: Promise<void>;
   private onEndPromiseResolve = () => {};
   private buildMessagesPromise?: Promise<void>;
@@ -165,7 +164,7 @@ export class MessagesBuilder {
   }
 
   private addTestRunStarted() {
-    const { startTime } = this.getFullResultTiming();
+    const { startTime } = this.fullResult;
     const testRunStarted: messages.TestRunStarted = {
       timestamp: toCucumberTimestamp(startTime.getTime()),
     };
@@ -173,7 +172,7 @@ export class MessagesBuilder {
   }
 
   private addTestRunFinished() {
-    const { startTime, duration } = this.getFullResultTiming();
+    const { startTime, duration } = this.fullResult;
     const testRunFinished: messages.TestRunFinished = {
       success: this.fullResult.status === 'passed',
       timestamp: toCucumberTimestamp(startTime.getTime() + duration),
@@ -183,23 +182,5 @@ export class MessagesBuilder {
 
   private buildEventDataCollector() {
     this.emitMessages(this.eventDataCollectorEmitter);
-  }
-
-  private getFullResultTiming() {
-    if (this.fullResultTiming) return this.fullResultTiming;
-    // result.startTime and result.duration were added in pw 1.37
-    // see: https://github.com/microsoft/playwright/pull/26760
-    if ('startTime' in this.fullResult && 'duration' in this.fullResult) {
-      this.fullResultTiming = {
-        startTime: this.fullResult.startTime as Date,
-        duration: this.fullResult.duration as number,
-      };
-    } else {
-      // Calculate overall startTime and duration based on test timings
-      const items = this.testCaseRuns.map((t) => t.result);
-      this.fullResultTiming = calcMinMaxByArray(items);
-    }
-
-    return this.fullResultTiming;
   }
 }

@@ -51,7 +51,7 @@ export class Formatter {
   }
 
   beforeEach(title: string, fixtures: Set<string>, children: string[]) {
-    const titleStr = title && playwrightVersion >= '1.38.0' ? `${this.quoted(title)}, ` : '';
+    const titleStr = title ? `${this.quoted(title)}, ` : '';
     const fixturesStr = [...fixtures].join(', ');
     return [
       `test.beforeEach(${titleStr}async ({ ${fixturesStr} }) => {`,

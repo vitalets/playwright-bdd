@@ -1,11 +1,4 @@
-import {
-  test,
-  normalize,
-  expect,
-  TestDir,
-  execPlaywrightTest,
-  playwrightVersion,
-} from '../_helpers/index.mjs';
+import { test, normalize, expect, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -28,10 +21,8 @@ function checkStepLocations(output) {
     `And decorator step ${normalize('.features-gen/features/sample.feature.spec.js')}:13:11`,
   );
   expect(output).toContain(`hook 1 ${normalize('features/steps.ts')}:12:1`);
-
-  const bgTitle = playwrightVersion >= '1.38.0' ? 'Background' : 'beforeEach hook';
   expect(output).toContain(
-    `${bgTitle} ${normalize('.features-gen/features/sample.feature.spec.js')}:6:8`,
+    `Background ${normalize('.features-gen/features/sample.feature.spec.js')}:6:8`,
   );
 }
 

@@ -1,4 +1,3 @@
-import fs from 'node:fs';
 import path from 'node:path';
 import { getPackageVersion, resolvePackageRoot } from '../utils';
 import { TestInfo } from '@playwright/test';
@@ -23,12 +22,7 @@ export function getPlaywrightModulePath(relativePath: string) {
 
 function getPlaywrightRoot() {
   if (!playwrightRoot) {
-    // Since 1.38 all modules moved from @playwright/test to playwright.
-    // Here we check existence of 'lib' dir instead of checking version.
-    // See: https://github.com/microsoft/playwright/pull/26946
-    const playwrightTestRoot = resolvePackageRoot('@playwright/test');
-    const libDir = path.join(playwrightTestRoot, 'lib');
-    playwrightRoot = fs.existsSync(libDir) ? playwrightTestRoot : resolvePackageRoot('playwright');
+    playwrightRoot = resolvePackageRoot('playwright');
   }
 
   return playwrightRoot;

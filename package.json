@@ -53,7 +53,7 @@
     "release": "bash scripts/release.sh"
   },
   "peerDependencies": {
-    "@playwright/test": ">=1.35"
+    "@playwright/test": ">=1.38"
   },
   "dependencies": {
     "@cucumber/cucumber-expressions": "17.1.0",
