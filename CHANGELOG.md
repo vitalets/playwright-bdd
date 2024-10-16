@@ -1,13 +1,14 @@
 # Changelog
 
 ## Dev
-* feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229))
+* feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229), [#122](https://github.com/vitalets/playwright-bdd/issues/122))
+* show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
 * increase minimal Playwright version from 1.35 to 1.38
 
 ## 7.5.0
 * support external attachments in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))
 * support trace-viewer in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))
-* hide BDD fixtures from Playwright HTML report
+* hide BDD fixtures from Playwright HTML report ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
 
 ## 7.4.2
 * fix decorator typings for TypeScript consumers with `module` = `commonjs` ([#222](https://github.com/vitalets/playwright-bdd/issues/222))
