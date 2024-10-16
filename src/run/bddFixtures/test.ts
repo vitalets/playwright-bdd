@@ -18,10 +18,7 @@ import { BddAnnotation } from '../bddAnnotation';
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 type StepFixture = {
-  // step index in pickle differs from index in scenario, b/c there can be bg steps
-  indexInPickle: number;
   title: string;
-  titleWithKeyword: string;
 };
 
 // Hide all BDD fixtures in reporter.
@@ -56,6 +53,7 @@ export type BddContext = {
   testInfo: TestInfo;
   tags: string[];
   step: StepFixture;
+  stepIndex: number; // step index in pickle (differs from index in scenario, b/c bg steps)
   world: unknown;
   bddTestMeta: BddTestMeta;
   bddAnnotation?: BddAnnotation;
@@ -89,6 +87,7 @@ export const test = base.extend<BddFixturesTest>({
         test: $test,
         tags: $tags,
         step: $step,
+        stepIndex: -1,
         world: $world,
         bddTestMeta: $bddTestMeta,
         bddAnnotation,
@@ -153,7 +152,7 @@ export const test = base.extend<BddFixturesTest>({
   // Filled dynamically in step invoker.
   // Important to keep this fixture separate, without dependency on bddContext.
   // Otherwise we can get cyclic fixtures dependency.
-  $step: [({}, use) => use({ indexInPickle: -1, title: '', titleWithKeyword: '' }), fixtureOptions],
+  $step: [({}, use) => use({ title: '' }), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],

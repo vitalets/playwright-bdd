@@ -34,13 +34,16 @@ class StepInvoker {
     argument?: PickleStepArgument | null,
     stepFixtures?: Record<string, unknown>,
   ) {
+    this.bddContext.stepIndex++;
+    this.bddContext.step.title = stepText;
+
     const stepDefinition = this.getStepDefinition(stepText);
 
     // Get location of step call in generated test file.
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getLocationInFile(this.bddContext.testInfo.file);
 
-    const { titleWithKeyword } = this.updateCurrentStepInfo(stepText);
+    const stepTitleWithKeyword = this.getStepTitleWithKeyword();
     const parameters = await this.getStepParameters(
       stepDefinition,
       stepText,
@@ -51,7 +54,7 @@ class StepInvoker {
 
     this.bddContext.bddAnnotation?.registerStep(stepDefinition, stepText, location);
 
-    await runStepWithLocation(this.bddContext.test, titleWithKeyword, location, () => {
+    await runStepWithLocation(this.bddContext.test, stepTitleWithKeyword, location, () => {
       // Although pw-style does not expect usage of world / this in steps,
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
@@ -96,20 +99,8 @@ class StepInvoker {
     return parameters;
   }
 
-  private updateCurrentStepInfo(stepText: string) {
-    const { step, bddTestMeta } = this.bddContext;
-    step.indexInPickle++;
-    step.title = stepText;
-    step.titleWithKeyword = bddTestMeta.pickleSteps[step.indexInPickle];
-    if (!step.titleWithKeyword) {
-      // should not happen
-      throw new Error(
-        [
-          `Step title not found for index ${step.indexInPickle}`,
-          `in pickle steps: ${bddTestMeta.pickleSteps}`,
-        ].join(' '),
-      );
-    }
-    return step;
+  private getStepTitleWithKeyword() {
+    const { stepIndex, bddTestMeta } = this.bddContext;
+    return bddTestMeta.pickleSteps[stepIndex];
   }
 }
