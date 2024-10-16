@@ -1,5 +1,3 @@
-import path from 'node:path';
-import fs from 'node:fs';
 import { expect, Page } from '@playwright/test';
 import { DataTable } from 'playwright-bdd';
 import { Given, When, Then, Step } from './fixtures';
@@ -52,17 +50,6 @@ Then('Doubled {int} equals {int}', async ({}, arg: number, doubled: number) => {
 
 Then('Uppercase {string} equals {string}', async ({}, s1: string, s2: string) => {
   expect(s1.toUpperCase()).toEqual(s2);
-});
-
-Then('File {string} contains', async ({ $test }, fileName: string, table: DataTable) => {
-  const filePath = path.join(path.dirname($test.info().file), fileName);
-  const content = fs.readFileSync(filePath, 'utf8');
-  table.rows().forEach((row) => expect(content).toContain(row[0]));
-});
-
-Then('File {string} does not exist', async ({ $test }, fileName: string) => {
-  const filePath = path.join(path.dirname($test.info().file), fileName);
-  expect(fs.existsSync(filePath)).toEqual(false);
 });
 
 Then(
