@@ -188,7 +188,7 @@ export class TestFile {
    */
   private getSuite(feature: Feature | Rule, parent?: TestNode) {
     const node = new TestNode(feature, parent);
-    if (node.isSkipped()) return this.formatter.describe(node, []);
+    if (this.isSkippedBySpecialTag(node)) return this.formatter.describe(node, []);
     const lines: string[] = [];
     feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
     return this.formatter.describe(node, lines);
@@ -222,7 +222,7 @@ export class TestFile {
    */
   private getOutlineSuite(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
-    if (node.isSkipped()) return this.formatter.describe(node, []);
+    if (this.isSkippedBySpecialTag(node)) return this.formatter.describe(node, []);
     const lines: string[] = [];
     const examplesTitleBuilder = this.createExamplesTitleBuilder(scenario);
     scenario.examples.forEach((examples) => {
@@ -246,9 +246,9 @@ export class TestFile {
     parent: TestNode,
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
-    if (this.skipByTagsExpression(node)) return [];
+    if (this.isSkippedByTagsExpression(node)) return [];
     this.bddMetaBuilder.registerTest(node, exampleRow.id);
-    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
+    if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
     return this.formatter.test(node, fixtures, lines);
   }
@@ -258,9 +258,9 @@ export class TestFile {
    */
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
-    if (this.skipByTagsExpression(node)) return [];
+    if (this.isSkippedByTagsExpression(node)) return [];
     this.bddMetaBuilder.registerTest(node, scenario.id);
-    if (node.isSkipped()) return this.formatter.test(node, new Set(), []);
+    if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines } = this.getSteps(scenario, node.tags);
     return this.formatter.test(node, fixtures, lines);
   }
@@ -426,10 +426,15 @@ export class TestFile {
       .filter((name) => !isBddAutoInjectFixture(name));
   }
 
-  private skipByTagsExpression(node: TestNode) {
+  private isSkippedByTagsExpression(node: TestNode) {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
     const { tagsExpression } = this.options;
     return tagsExpression && !tagsExpression.evaluate(node.tags);
+  }
+
+  // this fn is for consistency with isSkippedByTagsExpression(node)
+  private isSkippedBySpecialTag(node: TestNode) {
+    return node.isSkipped();
   }
 
   private isOutline(scenario: Scenario) {
