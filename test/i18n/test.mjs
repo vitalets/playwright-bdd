@@ -14,12 +14,12 @@ test(testDir.name, () => {
 
 function checkGeneratedSpecFile() {
   const fileContents = testDir.getFileContents('.features-gen/ru.feature.spec.js');
-  expect(fileContents).toContain(`test.describe("русский язык"`);
-  expect(fileContents).toContain(`test("сценарий 1"`);
-  expect(fileContents).toContain(`test.describe("сценарий 2"`);
-  expect(fileContents).not.toContain(`test("сценарий 2"`);
-  expect(fileContents).toContain(`test("Примеры: #1",`);
-  expect(fileContents).toContain(`test("Примеры: #2",`);
+  expect(fileContents).toContain(`test.describe('русский язык'`);
+  expect(fileContents).toContain(`test('сценарий 1'`);
+  expect(fileContents).toContain(`test.describe('сценарий 2'`);
+  expect(fileContents).not.toContain(`test('сценарий 2'`);
+  expect(fileContents).toContain(`test('Примеры: #1',`);
+  expect(fileContents).toContain(`test('Примеры: #2',`);
 }
 
 function checkHtmlReport() {

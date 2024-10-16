@@ -32,13 +32,13 @@ test(testDir.name, () => {
   let fileContents = testDir.getFileContents(
     '.features-gen/features/subdir/include.feature.spec.js',
   );
-  expect(fileContents).toContain(`test("scenario 1",`);
-  expect(fileContents).not.toContain(`test("scenario 2",`);
+  expect(fileContents).toContain(`test('scenario 1',`);
+  expect(fileContents).not.toContain(`test('scenario 2',`);
 
   fileContents = testDir.getFileContents('.features-gen/features/subdir/outline.feature.spec.js');
-  expect(fileContents).not.toContain(`test("Example #1",`);
-  expect(fileContents).not.toContain(`test("Example #2",`);
-  expect(fileContents).toContain(`test("Example #3",`);
+  expect(fileContents).not.toContain(`test('Example #1',`);
+  expect(fileContents).not.toContain(`test('Example #2',`);
+  expect(fileContents).toContain(`test('Example #3',`);
 
   expect(testDir.isFileExists(fileToBeCleared)).toEqual(false);
 });

@@ -5,6 +5,6 @@ export const defaults: Required<
 > = {
   outputDir: '.features-gen',
   verbose: false,
-  quotes: 'double',
+  quotes: 'single',
   language: 'en',
 };

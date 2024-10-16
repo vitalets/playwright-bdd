@@ -3,6 +3,7 @@
 ## Dev
 * feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229), [#122](https://github.com/vitalets/playwright-bdd/issues/122))
 * show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
+* make config option `quote` default to `"single"` to have less escapes in generated files
 * increase minimal Playwright version from 1.35 to 1.38
 
 ## 7.5.0
