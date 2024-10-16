@@ -7,12 +7,11 @@
 import { test as base } from './worker';
 import { BDDConfig } from '../../config/types';
 import { runScenarioHooks } from '../../hooks/scenario';
-import { createStepInvoker } from '../invokeStep';
+import { createStepInvoker, StepKeywordFixture } from '../StepInvoker';
 import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMetaBuilder';
 import { getEnrichReporterData } from '../../config/enrichReporterData';
 import { SpecialTags } from '../../specialTags';
 import { TestTypeCommon } from '../../playwright/types';
-import { StepKeywordFixture } from '../invokeStep';
 import { TestInfo } from '@playwright/test';
 import { BddAnnotation } from '../bddAnnotation';
 
