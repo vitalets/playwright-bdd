@@ -65,12 +65,12 @@ export class ExamplesTitleBuilder {
   private getTitleTemplateScenarioName(examples: Examples) {
     const { scenario } = this.options;
     const columnsInScenarioName = new GherkinTemplate(scenario.name).extractParams();
-    const hasColumnsFromExamples =
+    const hasColumnNames =
       columnsInScenarioName.length &&
       examples.tableHeader?.cells?.some((cell) => {
         return cell.value && columnsInScenarioName.includes(cell.value);
       });
-    return hasColumnsFromExamples ? scenario.name : '';
+    return hasColumnNames ? scenario.name : '';
   }
 
   private getTitleTemplateFromConfig() {

@@ -5,69 +5,85 @@ It can be not reliable for reporters that keep track of test history, because on
 There are 3 ways to set consistent title for examples.
 
 #### 1. Use scenario name as a template
-You can add column names like `<column>` to the scenario name. In that case scenario name will be used as a title template for generated examples. E.g.:
-```gherkin
-Feature: Localization
+You can add column names like `<column>` to the scenario name. In that case scenario name will be used as a title template for generated examples.
 
-    Scenario Outline: Check title for <locale>
-      Given user locale is "<locale>"
-      Then page title is "<title>"
+!> Note that generated titles should be **unique** within scenario, otherwise Playwright will throw an error.
+
+Example:
+```gherkin
+Feature: Calculator
+
+    Scenario Outline: Multiply <value> by two
+      Given value is <value>
+      When multiply by two
+      Then result is <result>
 
       Examples:
-          | locale | title      |
-          | en     | Playwright |
-          | es     | Dramaturgo |
+        | value | result |
+        | 1     | 2      |
+        | 2     | 4      |
 ```
 
 Generated test file:
 ```js
-test.describe(`Localization`, () => {
+test.describe(`Calculator`, () => {
 
-  test.describe(`Check title for <locale>`, () => {
+  test.describe(`Multiply <value> by two`, () => {
 
-    test(`Check title for en`, async ({ Given, Then }) => {
-      await Given(`user locale is "en"`);
-      await Then(`page title is "Playwright"`);
+    test(`Multiply 1 by two`, async ({ Given, When, Then }) => {
+      await Given(`value is 1`);
+      await When(`multiply by two`);
+      await Then(`result is 2`);
     });
 
-    test(`Check title for es`, async ({ Given, Then }) => {
-      await Given(`user locale is "es"`);
-      await Then(`page title is "Dramaturgo"`);
+    test(`Multiply 2 by two`, async ({ Given, When, Then }) => {
+      await Given(`value is 2`);
+      await When(`multiply by two`);
+      await Then(`result is 4`);
     });
+
+  });
+});    
 ```
 
 #### 2. Use special comment syntax
 You can provide own fixed title format by adding a special comment right above `Examples`. 
 The comment should start with `# title-format:` and can reference column names as `<column>`. For example:
 ```gherkin
-Feature: Localization
+Feature: Calculator
 
-    Scenario Outline: Check title
-      Given user locale is "<locale>"
-      Then page title is "<title>"
+    Scenario Outline: Multiply by two
+      Given value is <value>
+      When multiply by two
+      Then result is <result>
 
-      # title-format: locale - <locale>
+      # title-format: check <value>
       Examples:
-          | locale | title      |
-          | en     | Playwright |
-          | es     | Dramaturgo |
+        | value | result |
+        | 1     | 2      |
+        | 2     | 4      |
 ```
 
 Generated test file:
 ```js
-test.describe(`Localization`, () => {
+test.describe(`Calculator`, () => {
 
-  test.describe(`Check title`, () => {
+  test.describe(`Multiply by two`, () => {
 
-    test(`locale - en`, async ({ Given, Then }) => {
-      await Given(`user locale is "en"`);
-      await Then(`page title is "Playwright"`);
+    test(`check 1`, async ({ Given, When, Then }) => {
+      await Given(`value is 1`);
+      await When(`multiply by two`);
+      await Then(`result is 2`);
     });
 
-    test(`locale - es`, async ({ Given, Then }) => {
-      await Given(`user locale is "es"`);
-      await Then(`page title is "Dramaturgo"`);
+    test(`check 2`, async ({ Given, When, Then }) => {
+      await Given(`value is 2`);
+      await When(`multiply by two`);
+      await Then(`result is 4`);
     });
+
+  });
+});
 ```
 
 #### 3. Use config option
