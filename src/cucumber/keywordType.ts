@@ -2,6 +2,7 @@
  * Based on: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/helpers/keyword_type.ts
  */
 import { Dialect, dialects } from '@cucumber/gherkin';
+import { Step } from '@cucumber/messages';
 import { doesHaveValue } from './valueChecker';
 
 export enum KeywordType {
@@ -17,7 +18,7 @@ interface IGetStepKeywordTypeOptions {
 }
 
 // eslint-disable-next-line visual/complexity
-export function getStepKeywordType({
+function getStepKeywordType({
   keyword,
   language,
   previousKeywordType,
@@ -39,4 +40,22 @@ export function getStepKeywordType({
     default:
       return KeywordType.Precondition;
   }
+}
+
+/**
+ * Maps steps to keyword types (to avoid this calculation in place).
+ */
+export function mapStepsToKeywordTypes(steps: readonly Step[], language: string) {
+  let previousKeywordType: KeywordType | undefined;
+  const stepToKeywordType = new Map<Step, KeywordType>();
+  steps.forEach((step) => {
+    const keywordType = getStepKeywordType({
+      keyword: step.keyword,
+      language,
+      previousKeywordType,
+    });
+    stepToKeywordType.set(step, keywordType);
+    previousKeywordType = keywordType;
+  });
+  return stepToKeywordType;
 }

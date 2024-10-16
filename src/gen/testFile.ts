@@ -31,7 +31,7 @@ import { GherkinDocumentWithPickles } from '../features/types';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
 import { StepDefinition, findStepDefinition } from '../steps/registry';
-import { KeywordType, getStepKeywordType } from '../cucumber/keywordType';
+import { KeywordType, mapStepsToKeywordTypes } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
 import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
@@ -271,19 +271,17 @@ export class TestFile {
       testTags: tags,
     });
 
-    let previousKeywordType: KeywordType | undefined = undefined;
+    const stepToKeywordType = mapStepsToKeywordTypes(scenario.steps, this.language);
 
     const lines = scenario.steps.map((step, index) => {
+      const keywordType = stepToKeywordType.get(step)!;
       const {
         keywordEng,
-        keywordType,
         fixtureNames: stepFixtureNames,
         line,
         pickleStep,
         stepConfig,
-      } = this.getStep(step, previousKeywordType, outlineExampleRowId);
-
-      previousKeywordType = keywordType;
+      } = this.getStep(step, keywordType, outlineExampleRowId);
 
       testFixtureNames.add(keywordEng);
       stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
@@ -323,22 +321,12 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
-  // eslint-disable-next-line max-statements
-  private getStep(
-    step: Step,
-    previousKeywordType: KeywordType | undefined,
-    outlineExampleRowId?: string,
-  ) {
+
+  private getStep(step: Step, keywordType: KeywordType, outlineExampleRowId?: string) {
     this.bddMetaBuilder.registerStep(step);
     // pickleStep contains step text with inserted example values and argument
     const pickleStep = this.findPickleStep(step, outlineExampleRowId);
     const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
-    const keywordType = getStepKeywordType({
-      keyword: step.keyword,
-      language: this.language,
-      previousKeywordType,
-    });
-
     const keywordEng = this.getStepEnglishKeyword(step);
     if (!stepDefinition) {
       this.undefinedSteps.push({ keywordType, step, pickleStep });
@@ -357,7 +345,6 @@ export class TestFile {
 
     return {
       keywordEng,
-      keywordType,
       fixtureNames,
       line,
       pickleStep,
