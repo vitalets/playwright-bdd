@@ -25,8 +25,8 @@ function checkGeneratedSpecFile() {
   expect(fileContents).toContain(`test("сценарий 1"`);
   expect(fileContents).toContain(`test.describe("сценарий 2"`);
   expect(fileContents).not.toContain(`test("сценарий 2"`);
-  expect(fileContents).toContain(`test("Example #1",`);
-  expect(fileContents).toContain(`test("Example #2",`);
+  expect(fileContents).toContain(`test("Примеры: #1",`);
+  expect(fileContents).toContain(`test("Примеры: #2",`);
 }
 
 function checkHtmlReport() {

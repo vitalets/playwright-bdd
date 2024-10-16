@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { extractTemplateParams, template, throwIf } from '../utils';
+import { throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
@@ -38,6 +38,7 @@ import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { StepKeyword } from '../steps/types';
 import { GherkinDocumentQuery } from '../features/documentQuery';
+import { ExamplesTitleBuilder } from './examplesTitleBuilder';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -223,16 +224,10 @@ export class TestFile {
     const node = new TestNode(scenario, parent);
     if (node.isSkipped()) return this.formatter.describe(node, []);
     const lines: string[] = [];
-    let exampleIndex = 0;
+    const examplesTitleBuilder = this.createExamplesTitleBuilder(scenario);
     scenario.examples.forEach((examples) => {
-      const titleFormat = this.getExamplesTitleFormat(scenario, examples);
       examples.tableBody.forEach((exampleRow) => {
-        const testTitle = this.getOutlineTestTitle(
-          titleFormat,
-          examples,
-          exampleRow,
-          ++exampleIndex,
-        );
+        const testTitle = examplesTitleBuilder.buildTitle(examples, exampleRow);
         const testLines = this.getOutlineTest(scenario, examples, exampleRow, testTitle, node);
         lines.push(...testLines);
       });
@@ -431,53 +426,6 @@ export class TestFile {
       .filter((name) => !isBddAutoInjectFixture(name));
   }
 
-  private getOutlineTestTitle(
-    titleFormat: string,
-    examples: Examples,
-    exampleRow: TableRow,
-    exampleIndex: number,
-  ) {
-    const params: Record<string, unknown> = {
-      _index_: exampleIndex,
-    };
-
-    exampleRow.cells.forEach((cell, index) => {
-      const colName = examples.tableHeader?.cells[index]?.value;
-      if (colName) params[colName] = cell.value;
-    });
-
-    return template(titleFormat, params);
-  }
-
-  private getExamplesTitleFormat(scenario: Scenario, examples: Examples) {
-    return (
-      this.getExamplesTitleFormatFromComment(examples) ||
-      this.getExamplesTitleFormatFromScenarioName(scenario, examples) ||
-      this.config.examplesTitleFormat
-    );
-  }
-
-  private getExamplesTitleFormatFromComment(examples: Examples) {
-    const { line } = examples.location;
-    const titleFormatCommentLine = line - 1;
-    const comment = this.gherkinDocument.comments.find((c) => {
-      return c.location.line === titleFormatCommentLine;
-    });
-    const commentText = comment?.text?.trim();
-    const prefix = '# title-format:';
-    return commentText?.startsWith(prefix) ? commentText.replace(prefix, '').trim() : '';
-  }
-
-  private getExamplesTitleFormatFromScenarioName(scenario: Scenario, examples: Examples) {
-    const columnsInScenarioName = extractTemplateParams(scenario.name);
-    const hasColumnsFromExamples =
-      columnsInScenarioName.length &&
-      examples.tableHeader?.cells?.some((cell) => {
-        return cell.value && columnsInScenarioName.includes(cell.value);
-      });
-    return hasColumnsFromExamples ? scenario.name : '';
-  }
-
   private skipByTagsExpression(node: TestNode) {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
     const { tagsExpression } = this.options;
@@ -508,5 +456,14 @@ export class TestFile {
     }
 
     return [...worldFixtureNames][0];
+  }
+
+  private createExamplesTitleBuilder(scenario: Scenario) {
+    return new ExamplesTitleBuilder({
+      config: this.config,
+      gherkinDocument: this.gherkinDocument,
+      isEnglish: this.isEnglish,
+      scenario,
+    });
   }
 }

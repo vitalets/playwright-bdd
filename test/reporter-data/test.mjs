@@ -44,4 +44,6 @@ function checkStepTitles(output) {
   expect(output).toContain(`Then Action 4`);
   expect(output).toContain(`But Action 5`);
   expect(output).toContain(`* Action 6`);
+  // examples
+  expect(output).toContain(`Given Action 42`);
 }

@@ -13,3 +13,15 @@ Feature: report location
     Then Action 4
     But Action 5
     * Action 6
+
+  Scenario Outline: Scenario 2
+    Given Action <num>
+
+    Examples:
+      | num |
+      | 42  |
+      | 43  |
+
+    Examples:
+      | num |
+      | 44  |
