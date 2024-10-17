@@ -38,18 +38,13 @@ import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { StepKeyword } from '../steps/types';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
+import { MissingStep } from '../snippets/types';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
   outputPath: string;
   config: BDDConfig;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
-};
-
-export type UndefinedStep = {
-  keywordType: KeywordType;
-  step: Step;
-  pickleStep: PickleStep;
 };
 
 export class TestFile {
@@ -60,7 +55,7 @@ export class TestFile {
   private gherkinDocumentQuery: GherkinDocumentQuery;
   private bddMetaBuilder: BddMetaBuilder;
 
-  public undefinedSteps: UndefinedStep[] = [];
+  public missingSteps: MissingStep[] = [];
   public featureUri: string;
   public usedStepDefinitions = new Set<StepDefinition>();
 
@@ -321,7 +316,6 @@ export class TestFile {
   /**
    * Generate step for Given, When, Then
    */
-
   private getStep(step: Step, keywordType: KeywordType, outlineExampleRowId?: string) {
     this.bddMetaBuilder.registerStep(step);
     // pickleStep contains step text with inserted example values and argument
@@ -329,8 +323,7 @@ export class TestFile {
     const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
     const keywordEng = this.getStepEnglishKeyword(step);
     if (!stepDefinition) {
-      this.undefinedSteps.push({ keywordType, step, pickleStep });
-      return this.getMissingStep(keywordEng, keywordType, pickleStep);
+      return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
     }
 
     this.usedStepDefinitions.add(stepDefinition);
@@ -352,11 +345,22 @@ export class TestFile {
     };
   }
 
-  private getMissingStep(
+  private handleMissingStep(
     keywordEng: StepKeyword,
     keywordType: KeywordType,
     pickleStep: PickleStep,
+    step: Step,
   ) {
+    this.missingSteps.push({
+      location: {
+        uri: this.featureUri,
+        line: step.location.line,
+        column: step.location.column || 0,
+      },
+      keywordType,
+      pickleStep,
+    });
+
     return {
       keywordEng,
       keywordType,

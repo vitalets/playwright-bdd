@@ -1,7 +1,7 @@
 import { CucumberExpressionGenerator, GeneratedExpression } from '@cucumber/cucumber-expressions';
 import { parameterTypeRegistry } from '../steps/parameterTypes';
-import { UndefinedStep } from '../gen/testFile';
 import { KeywordType } from '../cucumber/keywordType';
+import { MissingStep } from './types';
 
 export type SnippetOptions = {
   isTypeScript: boolean;
@@ -14,7 +14,7 @@ export class Snippet {
   public code: string;
 
   constructor(
-    private stepInfo: UndefinedStep,
+    private missingStep: MissingStep,
     private options: SnippetOptions,
   ) {
     this.generatedExpression = this.generateExpression();
@@ -22,7 +22,7 @@ export class Snippet {
   }
 
   private get pickleStep() {
-    return this.stepInfo.pickleStep;
+    return this.missingStep.pickleStep;
   }
 
   private buildCode() {
@@ -43,7 +43,7 @@ export class Snippet {
   }
 
   private getStepType() {
-    switch (this.stepInfo.keywordType) {
+    switch (this.missingStep.keywordType) {
       case KeywordType.Event:
         return 'When';
       case KeywordType.Outcome:

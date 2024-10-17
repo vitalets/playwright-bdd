@@ -16,6 +16,7 @@ import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/registry';
 import { saveFileSync } from '../utils';
+import { MissingStep } from '../snippets/types';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -32,7 +33,7 @@ export class TestFilesGenerator {
     await withExitHandler(async () => {
       await Promise.all([this.loadFeatures(), this.loadSteps()]);
       this.buildFiles();
-      this.checkUndefinedSteps();
+      this.checkMissingSteps();
       await this.clearOutputDir();
       await this.saveFiles();
     });
@@ -109,10 +110,13 @@ export class TestFilesGenerator {
     return `${absOutputPath}.spec.js`;
   }
 
-  private checkUndefinedSteps() {
-    const snippets = new Snippets(this.files);
-    if (snippets.hasUndefinedSteps()) {
-      snippets.print();
+  private checkMissingSteps() {
+    const missingSteps = this.files.reduce<MissingStep[]>(
+      (res, file) => res.concat(file.missingSteps),
+      [],
+    );
+    if (missingSteps.length) {
+      new Snippets(missingSteps).print();
       exit();
     }
   }
