@@ -50,6 +50,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   statefulPoms?: boolean;
   /** Disable warnings */
   disableWarnings?: DisableWarningsConfig;
+  /** Behavior for missing step definitions */
+  missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
 };
 
 export type BDDConfig = BDDInputConfig &

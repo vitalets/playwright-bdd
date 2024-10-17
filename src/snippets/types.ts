@@ -5,8 +5,9 @@ export type MissingStep = {
   location: {
     uri: string;
     line: number;
-    column: number;
+    column?: number;
   };
+  textWithKeyword: string;
   keywordType: KeywordType;
   pickleStep: PickleStep;
 };

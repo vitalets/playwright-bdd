@@ -111,10 +111,9 @@ export class TestFilesGenerator {
   }
 
   private checkMissingSteps() {
-    const missingSteps = this.files.reduce<MissingStep[]>(
-      (res, file) => res.concat(file.missingSteps),
-      [],
-    );
+    if (this.config.missingSteps !== 'fail-on-gen') return;
+    const missingSteps: MissingStep[] = [];
+    this.files.forEach((file) => missingSteps.push(...file.missingSteps));
     if (missingSteps.length) {
       new Snippets(missingSteps).print();
       exit();

@@ -10,6 +10,7 @@ import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { StepKeyword } from '../steps/types';
+import { MissingStep } from '../snippets/types';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -102,8 +103,10 @@ export class Formatter {
     return `await ${keywordEng}(${args});`;
   }
 
-  missingStep(keywordEng: StepKeyword, text: string) {
-    return `// missing step: ${keywordEng}(${this.quoted(text)});`;
+  missingStep({ textWithKeyword, location }: MissingStep) {
+    const locationStr = `${location.uri}:${location.line}:${location.column}`;
+    const message = `Missing step: ${textWithKeyword} (${locationStr})`;
+    return `throw new Error(${this.quoted(message)});`;
   }
 
   fixtures(lines: string[]) {
