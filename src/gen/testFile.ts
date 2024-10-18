@@ -274,7 +274,9 @@ export class TestFile {
     const stepToKeywordType = mapStepsToKeywordTypes(scenario.steps, this.language);
     let hasMissingSteps = false;
 
-    // todo: split internal fn later
+    // todo: refactor internal fn, move to a separate class.
+    // The problem - it is highly coupled with the testFile class,
+    // need to pass many params: config, language, featureUri, i18nKeywordsMap, gherkinDocument, etc...
     // eslint-disable-next-line max-statements
     const lines = scenario.steps.map((step, index) => {
       const keywordType = stepToKeywordType.get(step)!;
