@@ -1,20 +1,36 @@
-import { test, normalize, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import {
+  test,
+  expect,
+  TestDir,
+  execPlaywrightTestWithError,
+  execPlaywrightTest,
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
 test(`${testDir.name} (fail-on-gen)`, () => {
-  execPlaywrightTestWithError(testDir.name, [`Some steps are without definition`]);
+  execPlaywrightTestWithError(testDir.name, [
+    `Missing step definitions: 1`, // prettier-ignore
+    `Given('missing step {int}', async ({}, arg: number) => {`,
+  ]);
 });
 
 test(`${testDir.name} (fail-on-run)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     [
-      `Error: Missing step: Given missing step 1 (${normalize('features/sample.feature:4:5')})`,
-      `Error: Missing step: And missing step 2 (${normalize('features/sample.feature:8:5')})`,
+      `Error: Missing step: missing step 10`, // prettier-ignore
+      `Error: Missing step: missing step 20`,
+      `Error: Missing step: missing step 30`,
     ],
-    {
-      env: { MISSING_STEPS: 'fail-on-run' },
-    },
+    { env: { MISSING_STEPS: 'fail-on-run' } },
   );
+});
+
+test(`${testDir.name} (skip-scenario)`, () => {
+  const stdout = execPlaywrightTest(testDir.name, {
+    env: { MISSING_STEPS: 'skip-scenario' },
+  });
+  expect(stdout).toContain(`4 skipped`);
+  expect(stdout).toContain(`1 passed`);
 });

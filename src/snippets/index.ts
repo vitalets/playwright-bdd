@@ -25,10 +25,10 @@ export class Snippets {
     const moreSnippetsCount = this.snippets.size - snippetsToShow.length;
     logger.error(
       [
-        `Some steps are without definition!`,
+        `Missing step definitions: ${this.snippets.size}`,
         ...snippetsToShow,
         moreSnippetsCount > 0 ? `...and ${moreSnippetsCount} more.` : '',
-        `Missing step definitions: ${this.snippets.size}.\nUse snippets above to create them.`,
+        `Use snippets above to create missing steps.`,
       ]
         .filter(Boolean)
         .join('\n\n'),
@@ -54,10 +54,13 @@ export class Snippets {
     // use snippet code as unique key
     if (this.snippets.has(snippet.code)) return;
     const { uri, line, column } = missingStep.location;
-    const snippetWithLocation = [
-      `// ${this.snippets.size + 1}. Missing step definition for "${uri}:${line}:${column}"`,
-      snippet.code,
-    ].join('\n');
+    const snippetWithLocation = snippet.code.replace(
+      '// ...',
+      [
+        `// Step: ${missingStep.textWithKeyword}`, // prettier-ignore
+        `// File: ${uri}:${line}:${column}`,
+      ].join('\n  '),
+    );
     this.snippets.set(snippet.code, snippetWithLocation);
   }
 

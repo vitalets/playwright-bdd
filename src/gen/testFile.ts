@@ -202,7 +202,9 @@ export class TestFile {
   private getBeforeEach(bg: Background, parent: TestNode) {
     const node = new TestNode({ name: 'background', tags: [] }, parent);
     const title = [bg.keyword, bg.name].filter(Boolean).join(': ');
-    const { fixtures, lines } = this.getSteps(bg, node.tags);
+    const { fixtures, lines, hasMissingSteps } = this.getSteps(bg, node.tags);
+    // for bg we pass parent as node to forceFixme if needed
+    this.handleMissingStepsInScenario(hasMissingSteps, parent);
     return this.formatter.beforeEach(title, fixtures, lines);
   }
 
@@ -238,7 +240,8 @@ export class TestFile {
     if (this.isSkippedByTagsExpression(node)) return [];
     this.bddMetaBuilder.registerTest(node, exampleRow.id);
     if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
-    const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
+    const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags, exampleRow.id);
+    this.handleMissingStepsInScenario(hasMissingSteps, node);
     return this.formatter.test(node, fixtures, lines);
   }
 
@@ -250,7 +253,8 @@ export class TestFile {
     if (this.isSkippedByTagsExpression(node)) return [];
     this.bddMetaBuilder.registerTest(node, scenario.id);
     if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
-    const { fixtures, lines } = this.getSteps(scenario, node.tags);
+    const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags);
+    this.handleMissingStepsInScenario(hasMissingSteps, node);
     return this.formatter.test(node, fixtures, lines);
   }
 
@@ -268,24 +272,25 @@ export class TestFile {
     });
 
     const stepToKeywordType = mapStepsToKeywordTypes(scenario.steps, this.language);
+    let hasMissingSteps = false;
 
     // todo: split internal fn later
     // eslint-disable-next-line max-statements
     const lines = scenario.steps.map((step, index) => {
       const keywordType = stepToKeywordType.get(step)!;
+      const keywordEng = this.getStepEnglishKeyword(step);
+      testFixtureNames.add(keywordEng);
       this.bddMetaBuilder.registerStep(step);
       // pickleStep contains step text with inserted example values and argument
       const pickleStep = this.findPickleStep(step, outlineExampleRowId);
       const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
       if (!stepDefinition) {
-        return this.handleMissingStep(keywordType, pickleStep, step);
+        hasMissingSteps = true;
+        return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
       }
 
       this.usedStepDefinitions.add(stepDefinition);
       const stepConfig = stepDefinition.stepConfig;
-
-      const keywordEng = this.getStepEnglishKeyword(step);
-      testFixtureNames.add(keywordEng);
 
       if (isDecorator(stepConfig)) {
         decoratorSteps.push({
@@ -328,20 +333,23 @@ export class TestFile {
       );
     });
 
-    return { fixtures: testFixtureNames, lines };
+    return { fixtures: testFixtureNames, lines, hasMissingSteps };
   }
 
-  private handleMissingStep(keywordType: KeywordType, pickleStep: PickleStep, step: Step) {
+  private handleMissingStep(
+    keywordEng: StepKeyword,
+    keywordType: KeywordType,
+    pickleStep: PickleStep,
+    step: Step,
+  ) {
     const { line, column } = step.location;
-    const missingStep: MissingStep = {
+    this.missingSteps.push({
       location: { uri: this.featureUri, line, column },
       textWithKeyword: getStepTextWithKeyword(step, pickleStep),
       keywordType,
       pickleStep,
-    };
-    this.missingSteps.push(missingStep);
-
-    return this.formatter.missingStep(missingStep);
+    });
+    return this.formatter.missingStep(keywordEng, pickleStep.text);
   }
 
   private findPickleStep(step: Step, exampleRowId?: string) {
@@ -425,5 +433,11 @@ export class TestFile {
       isEnglish: this.isEnglish,
       scenario,
     });
+  }
+
+  private handleMissingStepsInScenario(hasMissingSteps: boolean, node: TestNode) {
+    if (hasMissingSteps && this.config.missingSteps === 'skip-scenario') {
+      node.specialTags.forceFixme();
+    }
   }
 }

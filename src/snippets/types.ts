@@ -7,7 +7,7 @@ export type MissingStep = {
     line: number;
     column?: number;
   };
-  textWithKeyword: string;
   keywordType: KeywordType;
+  textWithKeyword: string;
   pickleStep: PickleStep;
 };
