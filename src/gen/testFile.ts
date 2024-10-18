@@ -38,18 +38,14 @@ import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { StepKeyword } from '../steps/types';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
+import { MissingStep } from '../snippets/types';
+import { getStepTextWithKeyword } from '../features/helpers';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
   outputPath: string;
   config: BDDConfig;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
-};
-
-export type UndefinedStep = {
-  keywordType: KeywordType;
-  step: Step;
-  pickleStep: PickleStep;
 };
 
 export class TestFile {
@@ -60,7 +56,7 @@ export class TestFile {
   private gherkinDocumentQuery: GherkinDocumentQuery;
   private bddMetaBuilder: BddMetaBuilder;
 
-  public undefinedSteps: UndefinedStep[] = [];
+  public missingSteps: MissingStep[] = [];
   public featureUri: string;
   public usedStepDefinitions = new Set<StepDefinition>();
 
@@ -206,7 +202,9 @@ export class TestFile {
   private getBeforeEach(bg: Background, parent: TestNode) {
     const node = new TestNode({ name: 'background', tags: [] }, parent);
     const title = [bg.keyword, bg.name].filter(Boolean).join(': ');
-    const { fixtures, lines } = this.getSteps(bg, node.tags);
+    const { fixtures, lines, hasMissingSteps } = this.getSteps(bg, node.tags);
+    // for bg we pass parent as node to forceFixme if needed
+    this.handleMissingStepsInScenario(hasMissingSteps, parent);
     return this.formatter.beforeEach(title, fixtures, lines);
   }
 
@@ -242,7 +240,8 @@ export class TestFile {
     if (this.isSkippedByTagsExpression(node)) return [];
     this.bddMetaBuilder.registerTest(node, exampleRow.id);
     if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
-    const { fixtures, lines } = this.getSteps(scenario, node.tags, exampleRow.id);
+    const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags, exampleRow.id);
+    this.handleMissingStepsInScenario(hasMissingSteps, node);
     return this.formatter.test(node, fixtures, lines);
   }
 
@@ -254,7 +253,8 @@ export class TestFile {
     if (this.isSkippedByTagsExpression(node)) return [];
     this.bddMetaBuilder.registerTest(node, scenario.id);
     if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
-    const { fixtures, lines } = this.getSteps(scenario, node.tags);
+    const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags);
+    this.handleMissingStepsInScenario(hasMissingSteps, node);
     return this.formatter.test(node, fixtures, lines);
   }
 
@@ -272,19 +272,26 @@ export class TestFile {
     });
 
     const stepToKeywordType = mapStepsToKeywordTypes(scenario.steps, this.language);
+    let hasMissingSteps = false;
 
+    // todo: split internal fn later
+    // eslint-disable-next-line max-statements
     const lines = scenario.steps.map((step, index) => {
       const keywordType = stepToKeywordType.get(step)!;
-      const {
-        keywordEng,
-        fixtureNames: stepFixtureNames,
-        line,
-        pickleStep,
-        stepConfig,
-      } = this.getStep(step, keywordType, outlineExampleRowId);
-
+      const keywordEng = this.getStepEnglishKeyword(step);
       testFixtureNames.add(keywordEng);
-      stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
+      this.bddMetaBuilder.registerStep(step);
+      // pickleStep contains step text with inserted example values and argument
+      const pickleStep = this.findPickleStep(step, outlineExampleRowId);
+      const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
+      if (!stepDefinition) {
+        hasMissingSteps = true;
+        return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
+      }
+
+      this.usedStepDefinitions.add(stepDefinition);
+      const stepConfig = stepDefinition.stepConfig;
+
       if (isDecorator(stepConfig)) {
         decoratorSteps.push({
           index,
@@ -292,9 +299,20 @@ export class TestFile {
           pickleStep,
           pomNode: stepConfig.pomNode,
         });
+
+        // for decorator steps, line and fixtureNames are filled later in second pass
+        return '';
       }
 
-      return line;
+      const stepFixtureNames = this.getStepFixtureNames(stepDefinition);
+      stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
+
+      return this.formatter.step(
+        keywordEng,
+        pickleStep.text,
+        pickleStep.argument,
+        stepFixtureNames,
+      );
     });
 
     // fill decorator step slots in second pass (to guess fixtures)
@@ -315,56 +333,23 @@ export class TestFile {
       );
     });
 
-    return { fixtures: testFixtureNames, lines };
+    return { fixtures: testFixtureNames, lines, hasMissingSteps };
   }
 
-  /**
-   * Generate step for Given, When, Then
-   */
-
-  private getStep(step: Step, keywordType: KeywordType, outlineExampleRowId?: string) {
-    this.bddMetaBuilder.registerStep(step);
-    // pickleStep contains step text with inserted example values and argument
-    const pickleStep = this.findPickleStep(step, outlineExampleRowId);
-    const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
-    const keywordEng = this.getStepEnglishKeyword(step);
-    if (!stepDefinition) {
-      this.undefinedSteps.push({ keywordType, step, pickleStep });
-      return this.getMissingStep(keywordEng, keywordType, pickleStep);
-    }
-
-    this.usedStepDefinitions.add(stepDefinition);
-
-    const stepConfig = stepDefinition.stepConfig;
-    // if (stepConfig.hasCustomTest) this.hasCustomTest = true;
-
-    const fixtureNames = this.getStepFixtureNames(stepDefinition);
-    const line = isDecorator(stepConfig)
-      ? ''
-      : this.formatter.step(keywordEng, pickleStep.text, pickleStep.argument, fixtureNames);
-
-    return {
-      keywordEng,
-      fixtureNames,
-      line,
-      pickleStep,
-      stepConfig,
-    };
-  }
-
-  private getMissingStep(
+  private handleMissingStep(
     keywordEng: StepKeyword,
     keywordType: KeywordType,
     pickleStep: PickleStep,
+    step: Step,
   ) {
-    return {
-      keywordEng,
+    const { line, column } = step.location;
+    this.missingSteps.push({
+      location: { uri: this.featureUri, line, column },
+      textWithKeyword: getStepTextWithKeyword(step, pickleStep),
       keywordType,
-      fixtureNames: [],
-      line: this.formatter.missingStep(keywordEng, pickleStep.text),
       pickleStep,
-      stepConfig: undefined,
-    };
+    });
+    return this.formatter.missingStep(keywordEng, pickleStep.text);
   }
 
   private findPickleStep(step: Step, exampleRowId?: string) {
@@ -396,10 +381,8 @@ export class TestFile {
   }
 
   private getStepFixtureNames({ stepConfig }: StepDefinition) {
-    // for decorator steps fixtureNames are defined later in second pass
-    if (isDecorator(stepConfig)) return [];
-
-    // for cucumber-style there is no fixtures arg
+    // for cucumber-style there is no fixtures arg,
+    // fixtures are accessible via this.world
     if (isCucumberStyleStep(stepConfig)) return [];
 
     return fixtureParameterNames(stepConfig.fn) // prettier-ignore
@@ -450,5 +433,11 @@ export class TestFile {
       isEnglish: this.isEnglish,
       scenario,
     });
+  }
+
+  private handleMissingStepsInScenario(hasMissingSteps: boolean, node: TestNode) {
+    if (hasMissingSteps && this.config.missingSteps === 'skip-scenario') {
+      node.specialTags.forceFixme();
+    }
   }
 }

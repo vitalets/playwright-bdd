@@ -7,6 +7,7 @@ import { saveConfigToEnv } from './env';
 import { getPlaywrightConfigDir } from './configDir';
 import { BDDConfig, BDDInputConfig } from './types';
 import { defaults } from './defaults';
+import { removeUndefined } from '../utils';
 
 export function defineBddProject(config: BDDInputConfig & { name: string }) {
   const { name, ...bddConfig } = config;
@@ -32,7 +33,7 @@ export function defineBddConfig(inputConfig: BDDInputConfig) {
 
 // eslint-disable-next-line visual/complexity
 function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
-  const config = Object.assign({}, defaults, inputConfig);
+  const config = Object.assign({}, defaults, removeUndefined(inputConfig));
 
   const features = config.features || config.paths;
   if (!features) throw new Error(`Please provide 'features' option in defineBddConfig()`);

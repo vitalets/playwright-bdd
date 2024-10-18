@@ -8,4 +8,5 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  reporter: [['html', { open: 'never' }]],
 });

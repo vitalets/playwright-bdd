@@ -16,13 +16,23 @@ export class SpecialTags {
   mode?: DescribeConfigureOptions['mode'];
 
   constructor(
-    private ownTags: string[] = [],
-    private tags: string[] = [],
+    private ownTags: string[] = [], // own tags of gherkin node
+    private tags: string[] = [], // own + inherited tags
   ) {
     this.extractFlags();
     this.extractRetries();
     this.extractTimeout();
     this.extractMode();
+  }
+
+  /**
+   * Forces the test to be marked as `fixme` no matter which tags it has.
+   * Used for marking tests with missing steps.
+   */
+  forceFixme() {
+    this.fixme = true;
+    this.only = false;
+    this.retries = 0;
   }
 
   private extractFlags() {

@@ -17,6 +17,7 @@ import { stringifyLocation } from '../utils';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { indent } from './formatter';
 import { PickleWithLocation } from '../features/types';
+import { getStepTextWithKeyword } from '../features/helpers';
 
 const TEST_KEY_SEPARATOR = '|';
 
@@ -98,14 +99,7 @@ export class BddMetaBuilder {
 
   private buildStepTitleWithKeyword(pickleStep: messages.PickleStep) {
     const scenarioStep = this.pickleStepToScenarioStep.get(pickleStep);
-    // scenario step are undefined for skipped scenarios,
-    // but we still fill pickleSteps for consistency.
-    const keyword = scenarioStep?.keyword || '';
-    // There is no full original step text in gherkin document.
-    // Build it by concatenation of keyword and text.
-    // Cucumber html-formatter does the same.
-    // See: https://github.com/cucumber/react-components/blob/27b02543a5d7abeded3410a58588ee4b493b4a8f/src/components/gherkin/GherkinStep.tsx#L114
-    return `${keyword}${pickleStep.text}`;
+    return getStepTextWithKeyword(scenarioStep, pickleStep);
   }
 }
 

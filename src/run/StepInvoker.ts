@@ -71,7 +71,7 @@ class StepInvoker {
     );
 
     if (!stepDefinition) {
-      throw new Error(`Undefined step: "${text}"`);
+      throw new Error(`Missing step: ${text}`);
     }
 
     return stepDefinition;

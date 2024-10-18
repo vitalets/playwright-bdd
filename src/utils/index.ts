@@ -62,6 +62,16 @@ export function omit<T extends object, K extends keyof T>(obj: T, key: K) {
   return res as Omit<T, K>;
 }
 
+export function removeUndefined<T extends object>(obj: T) {
+  if (!obj) return obj;
+  const res = {} as T;
+  const keys = Object.keys(obj) as (keyof T)[];
+  keys.forEach((key) => {
+    if (obj[key] !== undefined) res[key] = obj[key];
+  });
+  return res;
+}
+
 export function toArray<T>(value: T | T[]) {
   return Array.isArray(value) ? value : [value];
 }

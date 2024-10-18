@@ -2,11 +2,11 @@
  * Generate and show snippets for missing steps.
  */
 
-import { TestFile, UndefinedStep } from '../gen/testFile';
 import { logger } from '../utils/logger';
 import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
 import { stepDefinitions } from '../steps/registry';
 import { Snippet, SnippetOptions } from './snippet';
+import { MissingStep } from './types';
 
 // if there are too many snippets, it's more like invalid configuration
 const MAX_SNIPPETS_TO_SHOW = 10;
@@ -15,13 +15,9 @@ export class Snippets {
   private snippets = new Map</* stepText */ string, /* code */ string>();
   private snippetOptions: SnippetOptions;
 
-  constructor(private files: TestFile[]) {
+  constructor(private missingSteps: MissingStep[]) {
     this.snippetOptions = this.buildSnippetOptions();
     this.buildSnippets();
-  }
-
-  hasUndefinedSteps() {
-    return this.snippets.size > 0;
   }
 
   print() {
@@ -29,10 +25,10 @@ export class Snippets {
     const moreSnippetsCount = this.snippets.size - snippetsToShow.length;
     logger.error(
       [
-        `Some steps are without definition!`,
+        `Missing step definitions: ${this.snippets.size}`,
         ...snippetsToShow,
         moreSnippetsCount > 0 ? `...and ${moreSnippetsCount} more.` : '',
-        `Missing step definitions: ${this.snippets.size}.\nUse snippets above to create them.`,
+        `Use snippets above to create missing steps.`,
       ]
         .filter(Boolean)
         .join('\n\n'),
@@ -48,22 +44,23 @@ export class Snippets {
   }
 
   private buildSnippets() {
-    this.files.forEach((file) => {
-      file.undefinedSteps.forEach((undefinedStep) => {
-        this.buildSnippet(file, undefinedStep);
-      });
+    this.missingSteps.forEach((missingStep) => {
+      this.buildSnippet(missingStep);
     });
   }
 
-  private buildSnippet(file: TestFile, undefinedStep: UndefinedStep) {
-    const snippet = new Snippet(undefinedStep, this.snippetOptions);
+  private buildSnippet(missingStep: MissingStep) {
+    const snippet = new Snippet(missingStep, this.snippetOptions);
     // use snippet code as unique key
     if (this.snippets.has(snippet.code)) return;
-    const { line, column } = undefinedStep.step.location;
-    const snippetWithLocation = [
-      `// ${this.snippets.size + 1}. Missing step definition for "${file.featureUri}:${line}:${column}"`,
-      snippet.code,
-    ].join('\n');
+    const { uri, line, column } = missingStep.location;
+    const snippetWithLocation = snippet.code.replace(
+      '// ...',
+      [
+        `// Step: ${missingStep.textWithKeyword}`, // prettier-ignore
+        `// File: ${uri}:${line}:${column}`,
+      ].join('\n  '),
+    );
     this.snippets.set(snippet.code, snippetWithLocation);
   }
 

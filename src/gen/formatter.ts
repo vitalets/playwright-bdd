@@ -103,7 +103,7 @@ export class Formatter {
   }
 
   missingStep(keywordEng: StepKeyword, text: string) {
-    return `// missing step: ${keywordEng}(${this.quoted(text)});`;
+    return `await ${keywordEng}(${this.quoted(text)}); // missing step`;
   }
 
   fixtures(lines: string[]) {
