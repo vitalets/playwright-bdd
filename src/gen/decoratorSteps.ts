@@ -79,24 +79,20 @@ export class DecoratorSteps {
   }
 
   private exitEmptyFixture(pickleStep: PickleStep) {
-    exit(
+    return exit(
       `No fixtures found for decorator step "${pickleStep.text}"`,
       `in "${this.options.testTitle}" (${this.options.featureUri}).`,
       `Please add @Fixture decorator to the class.`,
     );
-    // return string to make ts happy
-    return '';
   }
 
   private exitAmbiguousFixture(pickleStep: PickleStep, resolvedFixtures: UsedFixture[]) {
     const possibleFixturesNames = resolvedFixtures.map((f) => f.name).join(', ');
-    exit(
+    return exit(
       `Several fixtures found for decorator step "${pickleStep.text}"`,
       `in "${this.options.testTitle}" (${this.options.featureUri}).`,
       `Possible fixtures: ${possibleFixturesNames}`,
       `Please refactor your Page Object classes.`,
     );
-    // return string to make ts happy
-    return '';
   }
 }
