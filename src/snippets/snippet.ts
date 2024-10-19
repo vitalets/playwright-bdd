@@ -31,7 +31,8 @@ export class Snippet {
     const stepFn = this.getStepFunction();
     return [
       `${stepType}(${pattern}, ${stepFn}`, // prettier-ignore
-      `  // ...`,
+      `  // {step}`,
+      `  // {location}`,
       '});',
     ].join('\n');
   }
@@ -39,7 +40,7 @@ export class Snippet {
   private buildDecoratorCode() {
     const stepType = this.getStepType();
     const pattern = this.getPattern();
-    return `@${stepType}(${pattern})`;
+    return `@${stepType}(${pattern}); // {location}`;
   }
 
   private getStepType() {

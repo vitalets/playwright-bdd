@@ -54,13 +54,9 @@ export class Snippets {
     // use snippet code as unique key
     if (this.snippets.has(snippet.code)) return;
     const { uri, line, column } = missingStep.location;
-    const snippetWithLocation = snippet.code.replace(
-      '// ...',
-      [
-        `// Step: ${missingStep.textWithKeyword}`, // prettier-ignore
-        `// File: ${uri}:${line}:${column}`,
-      ].join('\n  '),
-    );
+    const snippetWithLocation = snippet.code
+      .replace('{step}', `Step: ${missingStep.textWithKeyword}`)
+      .replace('{location}', `From: ${uri}:${line}:${column}`);
     this.snippets.set(snippet.code, snippetWithLocation);
   }
 

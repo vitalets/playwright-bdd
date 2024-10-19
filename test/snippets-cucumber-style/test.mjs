@@ -7,7 +7,7 @@ test(testDir.name, () =>
     `Missing step definitions: 2`,
     `Given('Step without parameters', async function () {`,
     `// Step: Given Step without parameters`,
-    `// File: sample.feature:4:5`,
+    `// From: sample.feature:4:5`,
     `Given('Step with one string parameter {string}', async function (arg: string) {`,
   ]),
 );

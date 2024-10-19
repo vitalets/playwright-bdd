@@ -8,7 +8,7 @@ test(testDir.name, () =>
 
     `Given('Step without parameters', async ({}) => {`,
     `// Step: Given Step without parameters`,
-    `// File: ${normalize('features/one.feature:4:5')}`,
+    `// From: ${normalize('features/one.feature:4:5')}`,
 
     `Given('Step with one string parameter {string}', async ({}, arg: string) => {`,
     `Given('Step with two string parameters {string} and {string}', async ({}, arg: string, arg1: string) => {`,
