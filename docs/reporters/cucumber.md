@@ -1,7 +1,5 @@
 # Cucumber reporters
 
-?> Cucumber reporters is a new feature, feel free to share your feedback in [issues](https://github.com/vitalets/playwright-bdd/issues)
-
 Playwright-bdd provides special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
 
 Currently, the following reporters are supported:
@@ -12,12 +10,10 @@ Currently, the following reporters are supported:
 * [message](#message)
 * [custom](#custom)
 
-Navigate to the concrete reporter for the usage details.
-
 #### Automatic screenshots / videos / traces
-Playwright-bdd fully supports [auto attaching screenshots, videos and traces](https://playwright.dev/docs/test-use-options#recording-options) to all Cucumber reports. No special action needed from your side.
+Playwright-bdd fully supports auto-attaching of **screenshots**, **videos** and **traces** to all Cucumber reports. All you need is to [enable these options](https://playwright.dev/docs/test-use-options#recording-options) in Playwright config.
 
-<details><summary>Example HTML report with auto-attachments</summary>
+<details><summary>Example of HTML report with attached screenshot, video and trace</summary>
 
 ![html report](./_media/html-report-attachments.png)
 
@@ -25,7 +21,7 @@ Playwright-bdd fully supports [auto attaching screenshots, videos and traces](ht
 
 #### Projects
 
-Cucumber formatters don't natively support Playwright's [projects concept](https://playwright.dev/docs/test-projects#introduction). Nevertheless, playwright-bdd adopts Playwright test results and shows all projects in a single Cucumber report.
+Cucumber formatters don't natively support [projects concept](https://playwright.dev/docs/test-projects#introduction) that exists in Playwright. Nevertheless, playwright-bdd adopts test results to show projects in a Cucumber report.
 
 The final output depends on the particular reporter. For example, in HTML reporter project name is prepended to the feature file path:
 

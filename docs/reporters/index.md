@@ -1,21 +1,8 @@
 # Reporters
 
-All [Playwright reporters](https://playwright.dev/docs/test-reporters) are supported out-of-box. Define `reporter` option in `playwright.config.ts` as usual:
+Playwright-bdd provides many reporting options:
+- native [Playwright reporters](reporters/playwright.md)
+- [Cucumber reporters](reporters/cucumber.md) 
+- third-party reporters like [Allure](reporters/allure.md)
 
-```js
-import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
-
-const testDir = defineBddConfig({
-  features: 'sample.feature',
-  steps: 'steps.js',
-});
-
-export default defineConfig({
-  testDir,
-  reporter: 'html', // <- define reporter as usual
-});
-```
-
-If you need more BDD-adopted reports, have a look on [Cucumber reporters](reporters/cucumber.md).
 

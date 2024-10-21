@@ -23,7 +23,9 @@
   - [Snippets](writing-steps/snippets.md)
 
 * [**Reporters**](reporters/index.md)
-  - [Cucumber reporters](reporters/cucumber.md)
+  - [Playwright](reporters/playwright.md)
+  - [Cucumber](reporters/cucumber.md)
+  - [Allure](reporters/allure.md)
 
 * [**Guides**](guides/index.md)
   - [Migration to v7](guides/migration-v7.md)

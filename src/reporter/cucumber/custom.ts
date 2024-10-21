@@ -62,6 +62,9 @@ export default class CustomReporter extends BaseReporter {
       log: this.outputStream.write.bind(this.outputStream),
       cleanup: async () => {},
       snippetBuilder: null,
+      // Build truncated supportCodeLibrary object. It can lead to errors in custom reporters.
+      // For full object see:
+      // https://github.com/cucumber/cucumber-js/blob/main/src/support_code_library_builder/types.ts#L160
       supportCodeLibrary: {
         World: {},
       },
