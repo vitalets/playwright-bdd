@@ -19,9 +19,9 @@ test(`${testDir.name} (fail-on-run)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     [
-      `Error: Missing step: missing step 10`, // prettier-ignore
-      `Error: Missing step: missing step 20`,
-      `Error: Missing step: missing step 30`,
+      `Error: Missing step: Given missing step 10`, // prettier-ignore
+      `Error: Missing step: And missing step 20`,
+      `Error: Missing step: Given missing step 30`,
     ],
     { env: { MISSING_STEPS: 'fail-on-run' } },
   );

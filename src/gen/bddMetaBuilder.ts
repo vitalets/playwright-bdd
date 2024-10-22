@@ -1,12 +1,13 @@
+/* eslint max-len: ['error', { code: 130 }] */
 /**
  * Class to build and print meta - an object containing meta info about each test.
  * Tests are identified by special key constructed from title path.
  *
  * Example:
  * const bddFileMeta = {
- *  "Simple scenario": { pickleLocation: "3:10", tags: ["@foo"], pickleSteps: ["Given step"] },
- *  "Scenario with examples|Example #1": { pickleLocation: "8:26", tags: [], pickleSteps: ["Given step"] },
- *  "Rule 1|Scenario with examples|Example #1": { pickleLocation: "9:42", tags: [], pickleSteps: ["Given step"] },
+ *  "Simple scenario": { pickleLocation: "3:10", tags: ["@foo"], pickleSteps: [["Given ", "precondition"]] },
+ *  "Scenario with examples|Example #1": { pickleLocation: "8:26", tags: [], pickleSteps: [["Given ", "precondition"]] },
+ *  "Rule 1|Scenario with examples|Example #1": { pickleLocation: "9:42", tags: [], pickleSteps: [["Given ", "precondition"]] },
  * };
  */
 
@@ -17,7 +18,7 @@ import { stringifyLocation } from '../utils';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { indent } from './formatter';
 import { PickleWithLocation } from '../features/types';
-import { getStepTextWithKeyword } from '../features/helpers';
+import { KeywordType } from '../cucumber/keywordType';
 
 const TEST_KEY_SEPARATOR = '|';
 
@@ -27,8 +28,14 @@ export type BddTestMeta = {
   pickleLocation: string;
   tags?: string[];
   ownTags?: string[];
-  pickleSteps: string[]; // array of step titles with keyword (including bg steps)
+  pickleSteps: BddStepMeta[]; // array of steps meta (including bg)
 };
+
+type BddStepMeta = [
+  string /* original keyword*/,
+  KeywordType,
+  string /* step location 'line:col' */,
+];
 
 type BddTestData = {
   pickle: PickleWithLocation;
@@ -37,7 +44,7 @@ type BddTestData = {
 
 export class BddMetaBuilder {
   private tests: BddTestData[] = [];
-  private pickleStepToScenarioStep = new Map<messages.PickleStep, messages.Step>();
+  private stepsMap = new Map<messages.PickleStep, BddStepMeta>();
 
   constructor(private gherkinDocumentQuery: GherkinDocumentQuery) {}
 
@@ -53,10 +60,11 @@ export class BddMetaBuilder {
     this.tests.push({ node, pickle: pickles[0] });
   }
 
-  registerStep(scenarioStep: messages.Step) {
+  registerStep(scenarioStep: messages.Step, keywordType: KeywordType) {
     this.gherkinDocumentQuery.getPickleSteps(scenarioStep.id).forEach((pickleStep) => {
       // map each pickle step to scenario step to get full original step later
-      this.pickleStepToScenarioStep.set(pickleStep, scenarioStep);
+      const stepLocation = stringifyLocation(scenarioStep.location);
+      this.stepsMap.set(pickleStep, [scenarioStep.keyword, keywordType, stepLocation]);
     });
   }
 
@@ -82,24 +90,20 @@ export class BddMetaBuilder {
     });
   }
 
-  private buildTestKey(node: TestNode) {
-    // .slice(1) -> b/c we remove top describe title (it's same for all tests)
-    return node.titlePath.slice(1).join(TEST_KEY_SEPARATOR);
-  }
-
   private buildTestMeta({ node, pickle }: BddTestData): BddTestMeta {
     return {
       pickleLocation: stringifyLocation(pickle.location),
       tags: node.tags.length ? node.tags : undefined,
       // todo: avoid duplication of tags and ownTags
       ownTags: node.ownTags.length ? node.ownTags : undefined,
-      pickleSteps: pickle.steps.map((pickleStep) => this.buildStepTitleWithKeyword(pickleStep)),
+      // all pickle steps should be registered to that moment
+      pickleSteps: pickle.steps.map((pickleStep) => this.stepsMap.get(pickleStep)!),
     };
   }
 
-  private buildStepTitleWithKeyword(pickleStep: messages.PickleStep) {
-    const scenarioStep = this.pickleStepToScenarioStep.get(pickleStep);
-    return getStepTextWithKeyword(scenarioStep, pickleStep);
+  private buildTestKey(node: TestNode) {
+    // .slice(1) -> b/c we remove top describe title (it's same for all tests)
+    return node.titlePath.slice(1).join(TEST_KEY_SEPARATOR);
   }
 }
 

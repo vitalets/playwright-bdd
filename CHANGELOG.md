@@ -3,8 +3,9 @@
 ## Dev
 * feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229), [#122](https://github.com/vitalets/playwright-bdd/issues/122))
 * show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
-* new config option `missingSteps` to setup different behavior when missing step definitions detected ([#158](https://github.com/vitalets/playwright-bdd/issues/158))
-* make config option `quote` default to `"single"` to have less escapes in generated files
+* new config option `missingSteps` to setup different behavior when step definitions are missing ([#158](https://github.com/vitalets/playwright-bdd/issues/158))
+* new config option `matchKeywords` to enable keyword matching when searching for step definitions ([#221](https://github.com/vitalets/playwright-bdd/issues/221))
+* make config option `quote` default to `"single"` to have less escapes in the generated files
 * increase minimal Playwright version from 1.35 to 1.38
 
 ## 7.5.0

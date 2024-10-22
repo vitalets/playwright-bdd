@@ -29,7 +29,10 @@ export default [
       'no-console': 'error',
       'no-undef': 0,
       'no-empty-pattern': 0,
-      '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', destructuredArrayIgnorePattern: '^_' },
+      ],
       '@typescript-eslint/no-require-imports': 0,
     },
   },

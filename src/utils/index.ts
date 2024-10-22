@@ -53,7 +53,7 @@ export async function callWithTimeout<T>(fn: () => T, timeout?: number, timeoutM
 }
 
 export function stringifyLocation({ line, column }: { line: number; column?: number }) {
-  return `${line}:${column}`;
+  return `${line}:${column || 0}`;
 }
 
 export function omit<T extends object, K extends keyof T>(obj: T, key: K) {

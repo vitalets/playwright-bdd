@@ -6,10 +6,12 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
 import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
-import { StepDefinition, findStepDefinition } from '../steps/registry';
+import { StepDefinition } from '../steps/registry';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from './bddFixtures/test';
 import { StepKeyword } from '../steps/types';
+import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
+import { getStepTextWithKeyword } from '../features/helpers';
 
 export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
 
@@ -19,11 +21,10 @@ export function createStepInvoker(bddContext: BddContext, _keyword: StepKeyword)
 }
 
 class StepInvoker {
-  constructor(
-    private bddContext: BddContext,
-    // keyword in not needed now, b/c we can get all info about step from test meta
-    // private keyword: StepKeyword,
-  ) {}
+  private stepFinder: StepFinder;
+  constructor(private bddContext: BddContext) {
+    this.stepFinder = new StepFinder(bddContext.config);
+  }
 
   /**
    * Invokes particular step.
@@ -37,13 +38,13 @@ class StepInvoker {
     this.bddContext.stepIndex++;
     this.bddContext.step.title = stepText;
 
-    const stepDefinition = this.getStepDefinition(stepText);
+    const stepDefinition = this.findStepDefinition(stepText);
+    const stepTextWithKeyword = this.getStepTextWithKeyword(stepText);
 
     // Get location of step call in generated test file.
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getLocationInFile(this.bddContext.testInfo.file);
 
-    const stepTitleWithKeyword = this.getStepTitleWithKeyword();
     const parameters = await this.getStepParameters(
       stepDefinition,
       stepText,
@@ -54,7 +55,7 @@ class StepInvoker {
 
     this.bddContext.bddAnnotation?.registerStep(stepDefinition, stepText, location);
 
-    await runStepWithLocation(this.bddContext.test, stepTitleWithKeyword, location, () => {
+    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, () => {
       // Although pw-style does not expect usage of world / this in steps,
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
@@ -63,18 +64,27 @@ class StepInvoker {
     });
   }
 
-  private getStepDefinition(text: string) {
-    const stepDefinition = findStepDefinition(
-      text,
-      // todo: change to feature uri
-      this.bddContext.testInfo.file,
-    );
+  private findStepDefinition(stepText: string) {
+    const [_keyword, keywordType, stepLocation] = this.getStepMeta();
+    const stepDefinitions = this.stepFinder.findDefinitions(keywordType, stepText);
 
-    if (!stepDefinition) {
-      throw new Error(`Missing step: ${text}`);
+    if (stepDefinitions.length === 1) return stepDefinitions[0];
+
+    const stepTextWithKeyword = this.getStepTextWithKeyword(stepText);
+    const fullStepLocation = `${this.bddContext.featureUri}:${stepLocation}`;
+
+    if (stepDefinitions.length === 0) {
+      // todo: better error?
+      const message = `Missing step: ${stepTextWithKeyword}`;
+      throw new Error(message);
     }
 
-    return stepDefinition;
+    const message = formatDuplicateStepsMessage(
+      stepDefinitions,
+      stepTextWithKeyword,
+      fullStepLocation,
+    );
+    throw new Error(message);
   }
 
   private async getStepParameters(
@@ -99,7 +109,12 @@ class StepInvoker {
     return parameters;
   }
 
-  private getStepTitleWithKeyword() {
+  private getStepTextWithKeyword(stepText: string) {
+    const [keyword] = this.getStepMeta();
+    return getStepTextWithKeyword(keyword, stepText);
+  }
+
+  private getStepMeta() {
     const { stepIndex, bddTestMeta } = this.bddContext;
     return bddTestMeta.pickleSteps[stepIndex];
   }

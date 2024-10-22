@@ -5,6 +5,7 @@ const PROJECTS = (process.env.PROJECTS || '').split(',');
 
 export default defineConfig({
   projects: [
+    // 'no-duplicates' project must be first as it's needed to run the second project in a worker
     ...(PROJECTS.includes('no-duplicates') ? [noDuplicates()] : []),
     ...(PROJECTS.includes('duplicate-regular-steps') ? [duplicateRegularSteps()] : []),
     ...(PROJECTS.includes('duplicate-decorator-steps') ? [duplicateDecoratorSteps()] : []),
@@ -13,7 +14,6 @@ export default defineConfig({
 
 function noDuplicates(): Project {
   return {
-    // this project must be first and is needed to run the second project in a worker
     name: 'no-duplicates',
     testDir: defineBddConfig({
       outputDir: `.features-gen/no-duplicates`,

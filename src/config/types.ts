@@ -52,6 +52,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   disableWarnings?: DisableWarningsConfig;
   /** Behavior for missing step definitions */
   missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
+  /** Enables additional matching by keywords in step definitions */
+  matchKeywords?: boolean;
 };
 
 export type BDDConfig = BDDInputConfig &

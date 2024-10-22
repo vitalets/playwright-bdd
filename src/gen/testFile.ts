@@ -19,7 +19,7 @@ import {
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { throwIf } from '../utils';
+import { stringifyLocation, throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
 import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
@@ -30,7 +30,7 @@ import { BddMetaBuilder } from './bddMetaBuilder';
 import { GherkinDocumentWithPickles } from '../features/types';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
-import { StepDefinition, findStepDefinition } from '../steps/registry';
+import { StepDefinition } from '../steps/registry';
 import { KeywordType, mapStepsToKeywordTypes } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
 import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
@@ -40,6 +40,8 @@ import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
 import { MissingStep } from '../snippets/types';
 import { getStepTextWithKeyword } from '../features/helpers';
+import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
+import { exit } from '../utils/exit';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -55,6 +57,7 @@ export class TestFile {
   private usedDecoratorFixtures = new Set<string>();
   private gherkinDocumentQuery: GherkinDocumentQuery;
   private bddMetaBuilder: BddMetaBuilder;
+  private stepFinder: StepFinder;
 
   public missingSteps: MissingStep[] = [];
   public featureUri: string;
@@ -65,6 +68,7 @@ export class TestFile {
     this.gherkinDocumentQuery = new GherkinDocumentQuery(this.gherkinDocument);
     this.bddMetaBuilder = new BddMetaBuilder(this.gherkinDocumentQuery);
     this.featureUri = this.getFeatureUri();
+    this.stepFinder = new StepFinder(options.config);
   }
 
   get gherkinDocument() {
@@ -282,10 +286,10 @@ export class TestFile {
       const keywordType = stepToKeywordType.get(step)!;
       const keywordEng = this.getStepEnglishKeyword(step);
       testFixtureNames.add(keywordEng);
-      this.bddMetaBuilder.registerStep(step);
+      this.bddMetaBuilder.registerStep(step, keywordType);
       // pickleStep contains step text with inserted example values and argument
       const pickleStep = this.findPickleStep(step, outlineExampleRowId);
-      const stepDefinition = findStepDefinition(pickleStep.text, this.featureUri);
+      const stepDefinition = this.findStepDefinition(keywordType, step, pickleStep);
       if (!stepDefinition) {
         hasMissingSteps = true;
         return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
@@ -338,6 +342,19 @@ export class TestFile {
     return { fixtures: testFixtureNames, lines, hasMissingSteps };
   }
 
+  private findStepDefinition(keywordType: KeywordType, scenarioStep: Step, pickleStep: PickleStep) {
+    const stepDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text);
+
+    if (stepDefinitions.length > 1) {
+      const stepTextWithKeyword = getStepTextWithKeyword(scenarioStep.keyword, pickleStep.text);
+      const stepLocation = `${this.featureUri}:${stringifyLocation(scenarioStep.location)}`;
+      // todo: maybe not exit and collect all duplicates?
+      exit(formatDuplicateStepsMessage(stepDefinitions, stepTextWithKeyword, stepLocation));
+    }
+
+    return stepDefinitions[0];
+  }
+
   private handleMissingStep(
     keywordEng: StepKeyword,
     keywordType: KeywordType,
@@ -347,7 +364,7 @@ export class TestFile {
     const { line, column } = step.location;
     this.missingSteps.push({
       location: { uri: this.featureUri, line, column },
-      textWithKeyword: getStepTextWithKeyword(step, pickleStep),
+      textWithKeyword: getStepTextWithKeyword(step.keyword, pickleStep.text),
       keywordType,
       pickleStep,
     });

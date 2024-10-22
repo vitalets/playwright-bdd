@@ -49,6 +49,7 @@ export type BddFixturesTest = {
 
 export type BddContext = {
   config: BDDConfig;
+  featureUri: string;
   test: TestTypeCommon;
   testInfo: TestInfo;
   tags: string[];
@@ -83,6 +84,7 @@ export const test = base.extend<BddFixturesTest>({
 
       await use({
         config: $bddConfig,
+        featureUri: $uri,
         testInfo,
         test: $test,
         tags: $tags,
