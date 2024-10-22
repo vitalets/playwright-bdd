@@ -101,30 +101,14 @@ export const test = base.extend<BddFixturesTest>({
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
-    ({ $bddContext, $before, $applySpecialTags }, use) =>
-      use(createStepInvoker($bddContext, 'Given')),
+    ({ $bddContext, $before, $applySpecialTags }, use) => use(createStepInvoker($bddContext)),
     fixtureOptions,
   ],
-  When: [
-    ({ $bddContext, $before, $applySpecialTags }, use) =>
-      use(createStepInvoker($bddContext, 'When')),
-    fixtureOptions,
-  ],
-  Then: [
-    ({ $bddContext, $before, $applySpecialTags }, use) =>
-      use(createStepInvoker($bddContext, 'Then')),
-    fixtureOptions,
-  ],
-  And: [
-    ({ $bddContext, $before, $applySpecialTags }, use) =>
-      use(createStepInvoker($bddContext, 'And')),
-    fixtureOptions,
-  ],
-  But: [
-    ({ $bddContext, $before, $applySpecialTags }, use) =>
-      use(createStepInvoker($bddContext, 'But')),
-    fixtureOptions,
-  ],
+  // All invoke step fixtures use the same Given fixture, b/c we get keyword from step meta (by index)
+  When: [({ Given }, use) => use(Given), fixtureOptions],
+  Then: [({ Given }, use) => use(Given), fixtureOptions],
+  And: [({ Given }, use) => use(Given), fixtureOptions],
+  But: [({ Given }, use) => use(Given), fixtureOptions],
 
   // For cucumber-style $world will be overwritten in test files
   // For playwright-style $world will be empty object

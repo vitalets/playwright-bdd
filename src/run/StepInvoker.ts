@@ -9,13 +9,12 @@ import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
 import { StepDefinition } from '../steps/registry';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from './bddFixtures/test';
-import { StepKeyword } from '../steps/types';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { getStepTextWithKeyword } from '../features/helpers';
 
 export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
 
-export function createStepInvoker(bddContext: BddContext, _keyword: StepKeyword) {
+export function createStepInvoker(bddContext: BddContext) {
   const invoker = new StepInvoker(bddContext);
   return invoker.invoke.bind(invoker);
 }
