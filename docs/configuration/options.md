@@ -116,6 +116,14 @@ The behavior when missing steps are found:
 - `fail-on-run` - test files will be generated, but tests run will fail
 - `skip-scenario` -  test files will be generated, but scenarios with missing steps will be marked as `fixme`
 
+## matchKeywords
+<div style="color: gray; font-size: 0.8em">since <b>v8</b></div>
+
+- Type: `boolean`
+- Default: `false`
+
+If enabled, keyword is also taken into account when searching for step definition, see [Keywords matching](writing-steps/keywords-matching.md).
+
 ## verbose
 
 - Type: `boolean`
