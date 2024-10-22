@@ -2,7 +2,7 @@
 
 ## features
 
-?> Since v7 this option has replaced Cucumber's option `paths`
+?> Since playwright-bdd **v7** this option has replaced Cucumber's option `paths`.
 
 - Type: `string | string[]`
 - Default: `undefined`
@@ -10,6 +10,9 @@
 Path(s) to feature files. Can be directory or [glob pattern](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax).
 Example: `features/**/*.feature`.
 If you don't specify file extension, default is `*.feature`.
+Resolved relative to config file location.
+
+> Since playwright-bdd **v8**, you can omit `features` option and define `featuresRoot`, that serves as a common base directory for both features and steps. Features glob pattern will be calculated as `{featuresRoot} + /**/*.feature`.
 
 ## steps
 
@@ -21,21 +24,23 @@ If you don't specify file extension, default is `*.feature`.
 Path(s) to step definitions. Can be directory or [glob pattern](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax).
 Example: `steps/**/*.ts`.
 If you don't specify file extension, default is `*.{js,mjs,cjs,ts,mts,cts}`.
+Resolved relative to config file location.
+
+> Since playwright-bdd **v8**, you can omit `steps` option and define `featuresRoot`, that serves as a common base directory for both features and steps. Steps glob pattern will be calculated as `{featuresRoot} + /**/*.{js,mjs,cjs,ts,mts,cts}`.
 
 ## outputDir
 
 - Type: `string`
 - Default: `.features-gen`
 
-Directory to output generated test files.
+Directory to output generated test files. Resolved relative to config file location.
 
 ## featuresRoot
 
 - Type: `string`
 - Default: *location of config file*
 
-Base directory used to construct relative paths to feature files, 
-that then used to place test files inside `outputDir`.
+Base directory to construct generated files paths inside `outputDir`. Resolved relative to config file location. Note that `featuresRoot` is a directory, it can not contain glob patterns (`*`).
 
 The behavior is similar to TypeScript [rootDir](https://www.typescriptlang.org/tsconfig#rootDir) option, that sets common parent for all `.ts` files and actually defines `outDir` structure.
 
@@ -67,6 +72,26 @@ The behavior is similar to TypeScript [rootDir](https://www.typescriptlang.org/t
     feature1.feature.spec.js
     subdir
       feature2.feature.spec.js
+  ```
+</details>
+
+Since playwright-bdd **v8**, `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined. This allows to have more concise configurations:
+<details>
+  <summary>Example</summary>
+
+  Before:
+  ```js
+  const testDir = defineBddConfig({
+    features: './features/**/*.feature',
+    steps: './features/steps/**/*.js',
+    featuresRoot: './features',
+  });
+  ```
+  Since v8 the config with the same effect:
+  ```js
+  const testDir = defineBddConfig({
+    featuresRoot: './features',
+  });
   ```
 </details>
 

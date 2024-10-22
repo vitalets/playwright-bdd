@@ -13,8 +13,7 @@ export default defineConfig({
 function successProject(): Project {
   return defineBddProject({
     name: 'success',
-    features: 'features/success',
-    steps: 'features/success',
+    featuresRoot: 'features/success',
     matchKeywords: true,
   });
 }
@@ -22,8 +21,7 @@ function successProject(): Project {
 function failProject(): Project {
   return defineBddProject({
     name: 'fail',
-    features: 'features/fail',
-    steps: 'features/fail',
+    featuresRoot: 'features/fail',
     matchKeywords: true,
   });
 }
