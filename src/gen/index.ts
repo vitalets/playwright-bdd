@@ -11,7 +11,7 @@ import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
-import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/load';
+import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/loader';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/stepRegistry';
