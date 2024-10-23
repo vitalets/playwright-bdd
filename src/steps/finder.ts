@@ -2,9 +2,10 @@
  * Finding step definitions.
  */
 import { relativeToCwd } from '../utils/paths';
-import { StepDefinition, stepDefinitions } from './registry';
+import { stepDefinitions } from './registry';
 import { BDDConfig } from '../config/types';
 import { KeywordType } from '../cucumber/keywordType';
+import { StepDefinition } from './stepDefinition';
 
 export class StepFinder {
   constructor(private config: BDDConfig) {}

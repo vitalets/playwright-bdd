@@ -4,16 +4,16 @@
 import { KeyValue, TestTypeCommon } from '../../playwright/types';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { StepConfig } from '../stepConfig';
 import { ParametersExceptFirst } from '../../utils/types';
-import { DefineStepPattern, GherkinStepKeyword, registerStepDefinition } from '../registry';
+import { registerStepDefinition } from '../registry';
+import { DefineStepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   fixtures: T & W,
   ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => unknown;
 
-export function playwrightStepCtor<StepFn extends StepConfig['fn']>(
+export function playwrightStepCtor<StepFn extends StepDefinitionOptions['fn']>(
   keyword: GherkinStepKeyword,
   customTest?: TestTypeCommon,
 ) {
@@ -34,7 +34,7 @@ export function playwrightStepCtor<StepFn extends StepConfig['fn']>(
  * Returns wrapped step function to be called from other steps.
  * See: https://github.com/vitalets/playwright-bdd/issues/110
  */
-function getCallableStepFn<StepFn extends StepConfig['fn']>(
+function getCallableStepFn<StepFn extends StepDefinitionOptions['fn']>(
   pattern: DefineStepPattern,
   fn: StepFn,
 ) {
@@ -45,7 +45,7 @@ function getCallableStepFn<StepFn extends StepConfig['fn']>(
   };
 }
 
-function assertStepIsCalledWithRequiredFixtures<StepFn extends StepConfig['fn']>(
+function assertStepIsCalledWithRequiredFixtures<StepFn extends StepDefinitionOptions['fn']>(
   pattern: DefineStepPattern,
   fn: StepFn,
   passedFixtures: Partial<Parameters<StepFn>[0]>,

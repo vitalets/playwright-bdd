@@ -6,11 +6,11 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
 import { getBddAutoInjectFixtures } from './bddFixtures/autoInject';
-import { StepDefinition } from '../steps/registry';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from './bddFixtures/test';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { getStepTextWithKeyword } from '../features/helpers';
+import { StepDefinition } from '../steps/stepDefinition';
 
 export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
 

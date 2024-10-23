@@ -9,7 +9,7 @@ import {
   getExportedTestInfo,
   getExportedTestsCount,
 } from '../steps/exportedTest';
-import { StepDefinition } from '../steps/registry';
+import { StepDefinition } from '../steps/stepDefinition';
 import { exit } from '../utils/exit';
 import { ImportTestFrom } from './formatter';
 
@@ -33,8 +33,9 @@ export class ImportTestFromGuesser {
   }
 
   private fillCustomTestsFromRegularSteps() {
-    this.usedStepDefinitions.forEach(({ stepConfig }) => {
-      if (stepConfig.customTest) this.customTestsSet.add(stepConfig.customTest);
+    this.usedStepDefinitions.forEach((stepDefinition) => {
+      const { customTest } = stepDefinition.options;
+      if (customTest) this.customTestsSet.add(customTest);
     });
   }
 

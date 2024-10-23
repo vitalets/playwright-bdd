@@ -14,7 +14,7 @@ import { TestCase } from '@playwright/test/reporter';
 import { PlaywrightLocation, PwAnnotation } from '../../playwright/types';
 import { BddData } from './types';
 import { updateAnnotation } from '../../playwright/utils';
-import { StepDefinition } from '../../steps/registry';
+import { StepDefinition } from '../../steps/stepDefinition';
 
 const BDD_ANNOTATION_NAME = '__bddData';
 

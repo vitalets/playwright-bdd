@@ -6,7 +6,7 @@
  */
 
 import { Group, TestStep } from '@cucumber/messages';
-import { StepDefinition } from '../steps/registry';
+import { StepDefinition } from '../steps/stepDefinition';
 
 export function createTestStep(stepDefinition: StepDefinition, stepText: string): TestStep {
   const result = stepDefinition.expression.match(stepText);

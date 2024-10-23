@@ -3,7 +3,6 @@
  */
 
 import { logger } from '../utils/logger';
-import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
 import { stepDefinitions } from '../steps/registry';
 import { Snippet, SnippetOptions } from './snippet';
 import { MissingStep } from './types';
@@ -65,14 +64,12 @@ export class Snippets {
   }
 
   private hasDecoratorSteps() {
-    const decoratorSteps = stepDefinitions.filter((step) => isDecorator(step.stepConfig));
+    const decoratorSteps = stepDefinitions.filter((step) => step.isDecorator());
     return decoratorSteps.length > stepDefinitions.length / 2;
   }
 
   private hasCucumberStyleSteps() {
-    const cucumberStyleSteps = stepDefinitions.filter((step) =>
-      isCucumberStyleStep(step.stepConfig),
-    );
+    const cucumberStyleSteps = stepDefinitions.filter((step) => step.isCucumberStyle());
     return cucumberStyleSteps.length > stepDefinitions.length / 2;
   }
 }

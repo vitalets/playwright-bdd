@@ -22,7 +22,6 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { stringifyLocation, throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
-import { isCucumberStyleStep, isDecorator } from '../steps/stepConfig';
 import { getScenarioHooksFixtures } from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
@@ -30,7 +29,6 @@ import { BddMetaBuilder } from './bddMetaBuilder';
 import { GherkinDocumentWithPickles } from '../features/types';
 import { DecoratorSteps } from './decoratorSteps';
 import { BDDConfig } from '../config/types';
-import { StepDefinition } from '../steps/registry';
 import { KeywordType, mapStepsToKeywordTypes } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
 import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
@@ -41,6 +39,7 @@ import { MissingStep } from '../snippets/types';
 import { getStepTextWithKeyword } from '../features/helpers';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { exit } from '../utils/exit';
+import { StepDefinition } from '../steps/stepDefinition';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -295,14 +294,13 @@ export class TestFile {
       }
 
       this.usedStepDefinitions.add(stepDefinition);
-      const stepConfig = stepDefinition.stepConfig;
 
-      if (isDecorator(stepConfig)) {
+      if (stepDefinition.isDecorator()) {
         decoratorSteps.push({
           index,
           keywordEng,
           pickleStep,
-          pomNode: stepConfig.pomNode,
+          pomNode: stepDefinition.options.pomNode,
         });
 
         // for decorator steps, line and fixtureNames are filled later in second pass
@@ -398,12 +396,12 @@ export class TestFile {
     return keywordEng as StepFixtureName;
   }
 
-  private getStepFixtureNames({ stepConfig }: StepDefinition) {
+  private getStepFixtureNames(stepDefinition: StepDefinition) {
     // for cucumber-style there is no fixtures arg,
     // fixtures are accessible via this.world
-    if (isCucumberStyleStep(stepConfig)) return [];
+    if (stepDefinition.isCucumberStyle()) return [];
 
-    return fixtureParameterNames(stepConfig.fn) // prettier-ignore
+    return fixtureParameterNames(stepDefinition.code) // prettier-ignore
       .filter((name) => !isBddAutoInjectFixture(name));
   }
 
@@ -427,7 +425,7 @@ export class TestFile {
     const worldFixtureNames = new Set<string>();
 
     this.usedStepDefinitions.forEach((stepDefinition) => {
-      const { worldFixture } = stepDefinition.stepConfig;
+      const { worldFixture } = stepDefinition.options;
       if (worldFixture) worldFixtureNames.add(worldFixture);
     });
 
