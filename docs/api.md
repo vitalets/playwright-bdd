@@ -36,7 +36,7 @@ export default defineConfig({
     
 ```   
 
-### `cucumberReporter(reporter, options?)`
+### `cucumberReporter(reporter[, options])`
 Helper to output test results in various [Cucumber reporters](reporters/cucumber.md).
 
 **Params**
@@ -57,7 +57,7 @@ export default defineConfig({
 });
 ```
 
-### `createBdd(test?, options?)`
+### `createBdd([test][, options])`
 
 !> Before v7 second parameter was `WorldConstructor`
 
@@ -74,51 +74,59 @@ By default produced functions work with [Playwright-style](writing-steps/playwri
 
 **Returns**: *object* - `{ Given, When, Then, Step, Before, After, BeforeAll, AfterAll }`
 
-### `Given(pattern, fn)`
+### `Given(pattern,[ options,] fn)`
 Defines `Given` step implementation.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
 
-### `When(pattern, fn)`
+### `When(pattern,[ options,] fn)`
 Defines `When` step implementation.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
 
-### `Then(pattern, fn)`
+### `Then(pattern,[ options,] fn)`
 Defines `Then` step implementation.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios  
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
 
-### `Step(pattern, fn)`
+### `Step(pattern,[ options,] fn)`
 Defines universal step implementation.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios  
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
 **Returns**: *function* - a function to call this step from other steps.
 
-### `Before(options?, hookFn)`
+### `Before([options,] hookFn)`
 Defines `Before` hook.
 
 **Params**
@@ -132,7 +140,7 @@ Defines `Before` hook.
       - `$tags` *string[]* - list of tags for current scenario
       - any other built-in and custom fixtures
 
-### `After(options?, hookFn)`
+### `After([options,] hookFn)`
 Defines `After` hook.
 
 **Params**
@@ -146,7 +154,7 @@ Defines `After` hook.
       - `$tags` *string[]* - list of tags for current scenario
       - any other built-in and custom fixtures
 
-### `BeforeAll(options?, hookFn)`
+### `BeforeAll([options,] hookFn)`
 Defines `BeforeAll` hook.
 
 **Params**
@@ -157,7 +165,7 @@ Defines `BeforeAll` hook.
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo)
       - any other built-in and custom **worker-scoped** fixtures
 
-### `AfterAll(options?, hookFn)`
+### `AfterAll([options,] hookFn)`
 Defines `AfterAll` hook.
 
 **Params**
