@@ -13,8 +13,8 @@ import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
-import { CucumberStyleStepFn, cucumberStepCtor } from './cucumberStyle';
-import { PlaywrightStyleStepFn, playwrightStepCtor } from './playwrightStyle';
+import { CucumberStyleStepFn, cucumberStepCtor } from './styles/cucumberStyle';
+import { PlaywrightStyleStepFn, playwrightStepCtor } from './styles/playwrightStyle';
 import { BddFixturesWorker } from '../run/bddFixtures/worker';
 
 type CreateBddOptions<WorldFixtureName> = {
