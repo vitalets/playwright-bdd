@@ -8,11 +8,11 @@ import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
-export type DefineStepPattern = string | RegExp;
+export type StepPattern = string | RegExp;
 
 export type StepDefinitionOptions = {
   keyword: GherkinStepKeyword;
-  pattern: DefineStepPattern;
+  pattern: StepPattern;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   fn: (...args: any[]) => unknown;
   location: PlaywrightLocation;

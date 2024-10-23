@@ -6,7 +6,7 @@ import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { ParametersExceptFirst } from '../../utils/types';
 import { registerStepDefinition } from '../stepRegistry';
-import { DefineStepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
+import { StepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   fixtures: T & W,
@@ -17,7 +17,7 @@ export function playwrightStepCtor<StepFn extends StepDefinitionOptions['fn']>(
   keyword: GherkinStepKeyword,
   customTest?: TestTypeCommon,
 ) {
-  return (pattern: DefineStepPattern, fn: StepFn) => {
+  return (pattern: StepPattern, fn: StepFn) => {
     registerStepDefinition({
       keyword,
       pattern,
@@ -35,7 +35,7 @@ export function playwrightStepCtor<StepFn extends StepDefinitionOptions['fn']>(
  * See: https://github.com/vitalets/playwright-bdd/issues/110
  */
 function getCallableStepFn<StepFn extends StepDefinitionOptions['fn']>(
-  pattern: DefineStepPattern,
+  pattern: StepPattern,
   fn: StepFn,
 ) {
   // need Partial<...> here, otherwise TS requires all Playwright fixtures to be passed
@@ -46,7 +46,7 @@ function getCallableStepFn<StepFn extends StepDefinitionOptions['fn']>(
 }
 
 function assertStepIsCalledWithRequiredFixtures<StepFn extends StepDefinitionOptions['fn']>(
-  pattern: DefineStepPattern,
+  pattern: StepPattern,
   fn: StepFn,
   passedFixtures: Partial<Parameters<StepFn>[0]>,
 ) {

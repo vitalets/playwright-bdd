@@ -7,7 +7,7 @@ import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
 import { BddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
 import { TestTypeCommon } from '../../playwright/types';
-import { DefineStepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
+import { StepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
@@ -17,7 +17,7 @@ export function cucumberStepCtor<StepFn extends StepDefinitionOptions['fn']>(
   customTest: TestTypeCommon,
   worldFixture: string,
 ) {
-  return (pattern: DefineStepPattern, fn: StepFn) => {
+  return (pattern: StepPattern, fn: StepFn) => {
     registerStepDefinition({
       keyword,
       pattern,
