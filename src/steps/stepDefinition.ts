@@ -3,12 +3,16 @@
  */
 
 import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
+import parseTagsExpression from '@cucumber/tag-expressions';
 import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
+export type ProvidedStepOptions = {
+  tags?: string;
+};
 
 export type StepDefinitionOptions = {
   keyword: GherkinStepKeyword;
@@ -19,12 +23,16 @@ export type StepDefinitionOptions = {
   customTest?: TestTypeCommon;
   pomNode?: PomNode; // for decorator steps
   worldFixture?: string; // for new cucumber-style steps
+  providedOptions?: ProvidedStepOptions; // options passed as second argument
 };
 
 export class StepDefinition {
   #expression?: Expression;
+  #tagsExpression?: ReturnType<typeof parseTagsExpression>;
 
-  constructor(private options: StepDefinitionOptions) {}
+  constructor(private options: StepDefinitionOptions) {
+    this.buildTagsExpression();
+  }
 
   get keyword() {
     return this.options.keyword;
@@ -86,5 +94,16 @@ export class StepDefinition {
    */
   isCucumberStyle(): this is this & { worldFixture: string } {
     return Boolean(this.options.worldFixture);
+  }
+
+  matchesTags(tags: string[]) {
+    return this.#tagsExpression ? this.#tagsExpression.evaluate(tags) : true;
+  }
+
+  private buildTagsExpression() {
+    const tags = this.options.providedOptions?.tags;
+    if (tags) {
+      this.#tagsExpression = parseTagsExpression(tags);
+    }
   }
 }

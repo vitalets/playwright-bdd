@@ -10,11 +10,18 @@ import { StepDefinition } from './stepDefinition';
 export class StepFinder {
   constructor(private config: BDDConfig) {}
 
-  findDefinitions(keywordType: KeywordType, stepText: string) {
-    const matchedStepsByText = this.filterByText(stepDefinitions, stepText);
-    return this.config.matchKeywords
-      ? this.filterByKeyword(matchedStepsByText, keywordType)
-      : matchedStepsByText;
+  findDefinitions(keywordType: KeywordType, stepText: string, tags?: string[]) {
+    let matchedSteps = this.filterByText(stepDefinitions, stepText);
+
+    if (this.config.matchKeywords) {
+      matchedSteps = this.filterByKeyword(matchedSteps, keywordType);
+    }
+
+    if (tags) {
+      matchedSteps = this.filterByTags(matchedSteps, tags);
+    }
+
+    return matchedSteps;
   }
 
   private filterByText(steps: StepDefinition[], stepText: string) {
@@ -39,7 +46,9 @@ export class StepFinder {
     });
   }
 
-  // todo: filterByTags
+  private filterByTags(steps: StepDefinition[], tags: string[]) {
+    return steps.filter((step) => step.matchesTags(tags));
+  }
 }
 
 export function formatDuplicateStepsMessage(

@@ -287,7 +287,7 @@ export class TestFile {
       this.bddMetaBuilder.registerStep(step, keywordType);
       // pickleStep contains step text with inserted example values and argument
       const pickleStep = this.findPickleStep(step, outlineExampleRowId);
-      const stepDefinition = this.findStepDefinition(keywordType, step, pickleStep);
+      const stepDefinition = this.findStepDefinition(keywordType, step, pickleStep, tags);
       if (!stepDefinition) {
         hasMissingSteps = true;
         return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
@@ -339,8 +339,13 @@ export class TestFile {
     return { fixtures: testFixtureNames, lines, hasMissingSteps };
   }
 
-  private findStepDefinition(keywordType: KeywordType, scenarioStep: Step, pickleStep: PickleStep) {
-    const stepDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text);
+  private findStepDefinition(
+    keywordType: KeywordType,
+    scenarioStep: Step,
+    pickleStep: PickleStep,
+    tags?: string[],
+  ) {
+    const stepDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text, tags);
 
     if (stepDefinitions.length > 1) {
       const stepTextWithKeyword = getStepTextWithKeyword(scenarioStep.keyword, pickleStep.text);

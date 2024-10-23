@@ -65,7 +65,11 @@ class StepInvoker {
 
   private findStepDefinition(stepText: string) {
     const [_keyword, keywordType, stepLocation] = this.getStepMeta();
-    const stepDefinitions = this.stepFinder.findDefinitions(keywordType, stepText);
+    const stepDefinitions = this.stepFinder.findDefinitions(
+      keywordType,
+      stepText,
+      this.bddContext.tags,
+    );
 
     if (stepDefinitions.length === 1) return stepDefinitions[0];
 

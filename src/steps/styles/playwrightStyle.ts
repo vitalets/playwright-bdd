@@ -7,6 +7,7 @@ import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { ParametersExceptFirst } from '../../utils/types';
 import { registerStepDefinition } from '../stepRegistry';
 import { StepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
+import { parseStepDefinitionArgs, StepDefinitionArgs } from './shared';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   fixtures: T & W,
@@ -17,13 +18,16 @@ export function playwrightStepCtor<StepFn extends StepDefinitionOptions['fn']>(
   keyword: GherkinStepKeyword,
   customTest?: TestTypeCommon,
 ) {
-  return (pattern: StepPattern, fn: StepFn) => {
+  return (...args: StepDefinitionArgs<StepFn>) => {
+    const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
+
     registerStepDefinition({
       keyword,
       pattern,
       fn,
       location: getLocationByOffset(3),
       customTest,
+      providedOptions,
     });
 
     return getCallableStepFn(pattern, fn);

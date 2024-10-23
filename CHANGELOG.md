@@ -1,13 +1,15 @@
 # Changelog
 
 ## Dev
-* feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229), [#122](https://github.com/vitalets/playwright-bdd/issues/122))
-* show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
+* increase minimal Playwright version from 1.35 to 1.38
+* support scoped step definitions ([#205](https://github.com/vitalets/playwright-bdd/issues/205))
 * new config option `missingSteps` to setup different behavior when step definitions are missing ([#158](https://github.com/vitalets/playwright-bdd/issues/158))
 * new config option `matchKeywords` to enable keyword matching when searching for step definitions ([#221](https://github.com/vitalets/playwright-bdd/issues/221))
 * make config option `quote` default to `"single"` to have less escapes in the generated files
 * config option `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined
-* increase minimal Playwright version from 1.35 to 1.38
+* feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229), [#122](https://github.com/vitalets/playwright-bdd/issues/122))
+* show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
+
 
 ## 7.5.0
 * support external attachments in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))
