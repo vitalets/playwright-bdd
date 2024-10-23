@@ -9,10 +9,10 @@ import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
-import { StepKeyword } from '../steps/types';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
+export type StepFixtureName = 'Given' | 'When' | 'Then' | 'And' | 'But';
 export type ImportTestFrom = {
   file: string;
   varName?: string;
@@ -90,7 +90,7 @@ export class Formatter {
 
   // eslint-disable-next-line max-params
   step(
-    keywordEng: StepKeyword,
+    keywordEng: StepFixtureName,
     text: string,
     argument?: PickleStepArgument,
     fixtureNames: string[] = [],
@@ -102,7 +102,7 @@ export class Formatter {
     return `await ${keywordEng}(${args});`;
   }
 
-  missingStep(keywordEng: StepKeyword, text: string) {
+  missingStep(keywordEng: StepFixtureName, text: string) {
     return `await ${keywordEng}(${this.quoted(text)}); // missing step`;
   }
 

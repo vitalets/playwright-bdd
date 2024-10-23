@@ -17,7 +17,7 @@ import {
   TableRow,
 } from '@cucumber/messages';
 import path from 'node:path';
-import { Formatter } from './formatter';
+import { Formatter, StepFixtureName } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { stringifyLocation, throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
@@ -35,7 +35,6 @@ import { KeywordType, mapStepsToKeywordTypes } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
 import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
-import { StepKeyword } from '../steps/types';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
 import { MissingStep } from '../snippets/types';
@@ -356,7 +355,7 @@ export class TestFile {
   }
 
   private handleMissingStep(
-    keywordEng: StepKeyword,
+    keywordEng: StepFixtureName,
     keywordType: KeywordType,
     pickleStep: PickleStep,
     step: Step,
@@ -396,7 +395,7 @@ export class TestFile {
       keywordEng = keywordLocal;
     }
     if (!keywordEng) throw new Error(`Keyword not found: ${keywordLocal}`);
-    return keywordEng as StepKeyword;
+    return keywordEng as StepFixtureName;
   }
 
   private getStepFixtureNames({ stepConfig }: StepDefinition) {
