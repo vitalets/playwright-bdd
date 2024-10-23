@@ -300,7 +300,7 @@ export class TestFile {
           index,
           keywordEng,
           pickleStep,
-          pomNode: stepDefinition.options.pomNode,
+          pomNode: stepDefinition.pomNode,
         });
 
         // for decorator steps, line and fixtureNames are filled later in second pass
@@ -424,8 +424,7 @@ export class TestFile {
   private getWorldFixtureName() {
     const worldFixtureNames = new Set<string>();
 
-    this.usedStepDefinitions.forEach((stepDefinition) => {
-      const { worldFixture } = stepDefinition.options;
+    this.usedStepDefinitions.forEach(({ worldFixture }) => {
       if (worldFixture) worldFixtureNames.add(worldFixture);
     });
 

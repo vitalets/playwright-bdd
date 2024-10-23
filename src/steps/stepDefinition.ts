@@ -24,7 +24,7 @@ export type StepDefinitionOptions = {
 export class StepDefinition {
   #expression?: Expression;
 
-  constructor(public options: StepDefinitionOptions) {}
+  constructor(private options: StepDefinitionOptions) {}
 
   get keyword() {
     return this.options.keyword;
@@ -46,6 +46,18 @@ export class StepDefinition {
     return this.options.location.line;
   }
 
+  get customTest() {
+    return this.options.customTest;
+  }
+
+  get pomNode() {
+    return this.options.pomNode;
+  }
+
+  get worldFixture() {
+    return this.options.worldFixture;
+  }
+
   get expression() {
     // create expression lazily b/c we need all parameter types to be loaded
     if (!this.#expression) {
@@ -65,14 +77,14 @@ export class StepDefinition {
   /**
    * Decorator steps have pom node.
    */
-  isDecorator(): this is this & { options: StepDefinitionOptions & { pomNode: PomNode } } {
+  isDecorator(): this is this & { pomNode: PomNode } {
     return Boolean(this.options.pomNode);
   }
 
   /**
    * New cucumber-style steps have worldFixture in step config.
    */
-  isCucumberStyle(): this is this & { options: StepDefinitionOptions & { worldFixture: string } } {
+  isCucumberStyle(): this is this & { worldFixture: string } {
     return Boolean(this.options.worldFixture);
   }
 }

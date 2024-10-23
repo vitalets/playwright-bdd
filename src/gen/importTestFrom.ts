@@ -33,8 +33,7 @@ export class ImportTestFromGuesser {
   }
 
   private fillCustomTestsFromRegularSteps() {
-    this.usedStepDefinitions.forEach((stepDefinition) => {
-      const { customTest } = stepDefinition.options;
+    this.usedStepDefinitions.forEach(({ customTest }) => {
       if (customTest) this.customTestsSet.add(customTest);
     });
   }
