@@ -34,8 +34,7 @@ export class StepDefinition {
     return this.options.pattern;
   }
 
-  // todo: rename to fn to be consistent with options?
-  get code() {
+  get fn() {
     return this.options.fn;
   }
 

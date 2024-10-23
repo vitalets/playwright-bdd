@@ -401,7 +401,7 @@ export class TestFile {
     // fixtures are accessible via this.world
     if (stepDefinition.isCucumberStyle()) return [];
 
-    return fixtureParameterNames(stepDefinition.code) // prettier-ignore
+    return fixtureParameterNames(stepDefinition.fn) // prettier-ignore
       .filter((name) => !isBddAutoInjectFixture(name));
   }
 

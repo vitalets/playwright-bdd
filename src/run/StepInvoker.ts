@@ -59,7 +59,7 @@ class StepInvoker {
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
       // See: https://github.com/vitalets/playwright-bdd/issues/208
-      return stepDefinition.code.call(this.bddContext.world, fixturesArg, ...parameters);
+      return stepDefinition.fn.call(this.bddContext.world, fixturesArg, ...parameters);
     });
   }
 
