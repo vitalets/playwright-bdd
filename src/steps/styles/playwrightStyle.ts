@@ -5,7 +5,7 @@ import { KeyValue, TestTypeCommon } from '../../playwright/types';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { ParametersExceptFirst } from '../../utils/types';
-import { registerStepDefinition } from '../registry';
+import { registerStepDefinition } from '../stepRegistry';
 import { DefineStepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (

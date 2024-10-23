@@ -7,7 +7,7 @@
 import { PomNode } from './pomGraph';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { registerStepDefinition } from '../registry';
+import { registerStepDefinition } from '../stepRegistry';
 import { DefineStepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
 
 // initially we store step data inside method,

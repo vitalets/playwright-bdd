@@ -2,7 +2,7 @@
  * Finding step definitions.
  */
 import { relativeToCwd } from '../utils/paths';
-import { stepDefinitions } from './registry';
+import { stepDefinitions } from './stepRegistry';
 import { BDDConfig } from '../config/types';
 import { KeywordType } from '../cucumber/keywordType';
 import { StepDefinition } from './stepDefinition';

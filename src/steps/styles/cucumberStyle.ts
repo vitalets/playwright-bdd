@@ -4,7 +4,7 @@
  * const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
  */
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
-import { registerStepDefinition } from '../registry';
+import { registerStepDefinition } from '../stepRegistry';
 import { BddAutoInjectFixtures } from '../../run/bddFixtures/autoInject';
 import { TestTypeCommon } from '../../playwright/types';
 import { DefineStepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';

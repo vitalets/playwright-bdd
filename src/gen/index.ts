@@ -14,7 +14,7 @@ import { exit, withExitHandler } from '../utils/exit';
 import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/load';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
-import { stepDefinitions } from '../steps/registry';
+import { stepDefinitions } from '../steps/stepRegistry';
 import { saveFileSync } from '../utils';
 import { MissingStep } from '../snippets/types';
 

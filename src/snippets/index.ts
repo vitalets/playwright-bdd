@@ -3,7 +3,7 @@
  */
 
 import { logger } from '../utils/logger';
-import { stepDefinitions } from '../steps/registry';
+import { stepDefinitions } from '../steps/stepRegistry';
 import { Snippet, SnippetOptions } from './snippet';
 import { MissingStep } from './types';
 
