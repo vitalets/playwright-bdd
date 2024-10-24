@@ -1,7 +1,5 @@
 import { expect } from '@playwright/test';
-import { createBdd } from 'playwright-bdd';
-
-const { Given, Before, After, AfterAll } = createBdd();
+import { Before, After, AfterAll } from './fixtures';
 
 const calls: string[] = [];
 
@@ -25,10 +23,6 @@ AfterAll(() => {
   console.log(['Start', ...calls, 'End'].join('\n'));
 });
 
-Given('State {int}', async ({ $testInfo }) => {
-  track(`Step ${$testInfo.title}`);
-});
-
-function track(hookTitle: string) {
+export function track(hookTitle: string) {
   calls.push(hookTitle);
 }
