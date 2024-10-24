@@ -20,6 +20,7 @@
   - [Cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
   - [Decorators](writing-steps/decorators.md)
   - [Hooks](writing-steps/hooks.md)
+  - [Scoped step definitions](writing-steps/scoped.md)
   - [Keywords matching](writing-steps/keywords-matching.md)
   - [Snippets](writing-steps/snippets.md)
 
