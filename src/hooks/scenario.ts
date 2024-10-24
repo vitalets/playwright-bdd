@@ -1,12 +1,9 @@
 /**
  * Scenario level hooks: Before / After.
- *
- * before(async ({ page }) => {})
  */
 
 /* eslint-disable max-depth */
 
-import { TestInfo } from '@playwright/test';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { KeyValue, PlaywrightLocation } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
@@ -14,6 +11,9 @@ import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from '../run/bddFixtures/test';
+import { getBddAutoInjectFixtures, isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
+
+export type ScenarioHookType = 'before' | 'after';
 
 type ScenarioHookOptions = {
   name?: string;
@@ -21,16 +21,12 @@ type ScenarioHookOptions = {
   timeout?: number;
 };
 
-// todo: replace with auto-inject fixtures
-type ScenarioHookBddFixtures = {
+type ScenarioHookFixtures = {
   $bddContext: BddContext;
-  $tags: string[];
-  $testInfo: TestInfo;
+  [key: string]: unknown;
 };
 
 type ScenarioHookFn<Fixtures, World> = (this: World, fixtures: Fixtures) => unknown;
-
-type ScenarioHookType = 'before' | 'after';
 
 type ScenarioHook<Fixtures, World> = {
   type: ScenarioHookType;
@@ -54,10 +50,9 @@ type ScenarioHookDefinitionArgs<Fixtures, World> =
   | [ScenarioHookOptions, ScenarioHookFn<Fixtures, World>];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type GeneralScenarioHook = ScenarioHook<any, any>;
+export type GeneralScenarioHook = ScenarioHook<any, any>;
 
 const scenarioHooks: GeneralScenarioHook[] = [];
-let scenarioHooksFixtures: string[];
 
 /**
  * Returns Before() / After() functions.
@@ -67,14 +62,13 @@ export function scenarioHookFactory<
   WorkerFixtures extends KeyValue,
   World,
 >(type: ScenarioHookType) {
-  type AllFixtures = TestFixtures & WorkerFixtures & ScenarioHookBddFixtures;
+  type AllFixtures = TestFixtures & WorkerFixtures;
   type Args = ScenarioHookDefinitionArgs<AllFixtures, World>;
 
   return (...args: Args) => {
     addHook({
       type,
       options: getOptionsFromArgs(args) as ScenarioHookOptions,
-      // fn: getFnFromArgs(args) as ScenarioHook<AllFixtures, World>['fn'],
       fn: getFnFromArgs(args) as ScenarioHookFn<AllFixtures, World>,
       // offset = 3 b/c this call is 3 steps below the user's code
       location: getLocationByOffset(3),
@@ -83,23 +77,13 @@ export function scenarioHookFactory<
 }
 
 // eslint-disable-next-line visual/complexity
-export async function runScenarioHooks<Fixtures extends ScenarioHookBddFixtures>(
-  type: ScenarioHookType,
-  fixtures: Fixtures,
-) {
-  let error;
-  for (const hook of scenarioHooks) {
-    if (hook.type !== type) continue;
-    if (hook.tagsExpression && !hook.tagsExpression.evaluate(fixtures.$tags)) continue;
+export async function runScenarioHooks(type: ScenarioHookType, fixtures: ScenarioHookFixtures) {
+  const scenarioHooksToRun = getScenarioHooksToRun(type, fixtures.$bddContext.tags);
 
+  let error;
+  for (const hook of scenarioHooksToRun) {
     try {
-      const hookFn = wrapHookFn(hook, fixtures);
-      await runStepWithLocation(
-        fixtures.$bddContext.test,
-        hook.options.name || '',
-        hook.location,
-        hookFn,
-      );
+      await runScenarioHook(hook, fixtures);
     } catch (e) {
       if (type === 'before') throw e;
       if (!error) error = e;
@@ -108,36 +92,47 @@ export async function runScenarioHooks<Fixtures extends ScenarioHookBddFixtures>
   if (error) throw error;
 }
 
-export function getScenarioHooksFixtures() {
-  if (!scenarioHooksFixtures) {
-    const fixtureNames = new Set<string>();
-    scenarioHooks.forEach((hook) => {
-      fixtureParameterNames(hook.fn).forEach((fixtureName) => fixtureNames.add(fixtureName));
-    });
+async function runScenarioHook(hook: GeneralScenarioHook, fixtures: ScenarioHookFixtures) {
+  const hookFn = wrapHookFn(hook, fixtures);
+  await runStepWithLocation(
+    fixtures.$bddContext.test,
+    hook.options.name || '',
+    hook.location,
+    hookFn,
+  );
+}
 
-    const excludeFixtureNames: Record<keyof ScenarioHookBddFixtures, null> = {
-      $bddContext: null,
-      $tags: null,
-      $testInfo: null,
-    };
-    Object.keys(excludeFixtureNames).forEach((fixtureName) => fixtureNames.delete(fixtureName));
+export function getScenarioHooksFixtureNames(hooks: GeneralScenarioHook[]) {
+  const fixtureNames = new Set<string>();
 
-    scenarioHooksFixtures = [...fixtureNames];
-  }
+  hooks.forEach((hook) => {
+    const hookFixtureNames = fixtureParameterNames(hook.fn);
+    hookFixtureNames.forEach((fixtureName) => fixtureNames.add(fixtureName));
+  });
 
-  return scenarioHooksFixtures;
+  return [...fixtureNames].filter((name) => !isBddAutoInjectFixture(name));
+}
+
+export function getScenarioHooksToRun(type: ScenarioHookType, tags: string[] = []) {
+  return scenarioHooks
+    .filter((hook) => hook.type === type)
+    .filter((hook) => !hook.tagsExpression || hook.tagsExpression.evaluate(tags));
 }
 
 /**
  * Wraps hook fn with timeout and waiting Cucumber attachments to fulfill.
  */
-function wrapHookFn(hook: GeneralScenarioHook, fixtures: ScenarioHookBddFixtures) {
+function wrapHookFn(hook: GeneralScenarioHook, fixtures: ScenarioHookFixtures) {
   const { timeout } = hook.options;
   const { $bddContext } = fixtures;
+  const fixturesArg = {
+    ...fixtures,
+    ...getBddAutoInjectFixtures($bddContext),
+  };
 
   return async () => {
     await callWithTimeout(
-      () => hook.fn.call($bddContext.world, fixtures),
+      () => hook.fn.call($bddContext.world, fixturesArg),
       timeout,
       getTimeoutMessage(hook),
     );

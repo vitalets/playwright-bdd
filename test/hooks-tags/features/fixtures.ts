@@ -1,8 +1,16 @@
 import { test as base, createBdd } from 'playwright-bdd';
 
-export const test = base.extend<{ myFixture: string }>({
-  myFixture: async ({}, use) => {
-    await use('my fixture');
+const logger = console;
+
+export const test = base.extend<{ fixtureForFoo: void; fixtureForBar: void }>({
+  fixtureForFoo: async ({}, use) => {
+    logger.log(`setup fixture for foo`);
+    await use();
+  },
+
+  fixtureForBar: async ({}, use) => {
+    logger.log(`setup fixture for bar`);
+    await use();
   },
 });
 

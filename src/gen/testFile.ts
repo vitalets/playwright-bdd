@@ -22,7 +22,12 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { stringifyLocation, throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
-import { getScenarioHooksFixtures } from '../hooks/scenario';
+import {
+  GeneralScenarioHook,
+  getScenarioHooksFixtureNames,
+  getScenarioHooksToRun,
+  ScenarioHookType,
+} from '../hooks/scenario';
 import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { BddMetaBuilder } from './bddMetaBuilder';
@@ -56,6 +61,7 @@ export class TestFile {
   private gherkinDocumentQuery: GherkinDocumentQuery;
   private bddMetaBuilder: BddMetaBuilder;
   private stepFinder: StepFinder;
+  private testNodesToRun: TestNode[] = [];
 
   public missingSteps: MissingStep[] = [];
   public featureUri: string;
@@ -104,10 +110,12 @@ export class TestFile {
   build(): this {
     if (!this.gherkinDocumentQuery.hasPickles()) return this;
     this.loadI18nKeywords();
-    // important to calc suites first, b/c header depend on used steps
+    // important to calc suites first, b/c header depend on used steps and used tags
     const suites = this.getRootSuite();
+
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
+      ...this.getScenarioHooksCalls(),
       ...suites,
       ...this.getTechnicalSection(),
     ];
@@ -157,7 +165,7 @@ export class TestFile {
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
       ...this.bddMetaBuilder.getFixture(),
-      ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
+      // ...this.formatter.scenarioHookFixtures(getScenarioHooksFixtures()),
       ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
     ]);
@@ -210,6 +218,26 @@ export class TestFile {
     return this.formatter.beforeEach(title, fixtures, lines);
   }
 
+  private getScenarioHooksCalls() {
+    const lines = [
+      ...this.getScenarioHooksCall('before'), // prettier-ignore
+      ...this.getScenarioHooksCall('after'),
+    ];
+    if (lines.length) lines.push('');
+    return lines;
+  }
+
+  private getScenarioHooksCall(type: ScenarioHookType) {
+    const hooksToRun = new Set<GeneralScenarioHook>();
+    this.testNodesToRun.forEach((node) => {
+      const hooksToRunForNode = getScenarioHooksToRun(type, node.tags);
+      hooksToRunForNode.forEach((hook) => hooksToRun.add(hook));
+    });
+    if (!hooksToRun.size) return [];
+    const fixtureNames = getScenarioHooksFixtureNames([...hooksToRun]);
+    return this.formatter.scenarioHooksCall(type, fixtureNames);
+  }
+
   /**
    * Generate test.describe suite for Scenario Outline
    */
@@ -244,6 +272,7 @@ export class TestFile {
     if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags, exampleRow.id);
     this.handleMissingStepsInScenario(hasMissingSteps, node);
+    if (!node.isSkipped()) this.testNodesToRun.push(node);
     return this.formatter.test(node, fixtures, lines);
   }
 
@@ -257,6 +286,7 @@ export class TestFile {
     if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
     const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags);
     this.handleMissingStepsInScenario(hasMissingSteps, node);
+    if (!node.isSkipped()) this.testNodesToRun.push(node);
     return this.formatter.test(node, fixtures, lines);
   }
 

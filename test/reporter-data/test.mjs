@@ -14,15 +14,15 @@ test(testDir.name, () => {
 
 function checkStepLocations(output) {
   expect(output).toContain(
-    `Given I am on home page ${normalize('.features-gen/features/sample.feature.spec.js')}:12:11`,
+    `Given I am on home page ${normalize('.features-gen/features/sample.feature.spec.js')}:14:11`,
   );
   expect(output).toContain(`page.goto(https://example.com) ${normalize('features/pom.ts')}:11:21`);
   expect(output).toContain(
-    `And decorator step ${normalize('.features-gen/features/sample.feature.spec.js')}:13:11`,
+    `And decorator step ${normalize('.features-gen/features/sample.feature.spec.js')}:15:11`,
   );
   expect(output).toContain(`hook 1 ${normalize('features/steps.ts')}:12:1`);
   expect(output).toContain(
-    `Background ${normalize('.features-gen/features/sample.feature.spec.js')}:6:8`,
+    `Background ${normalize('.features-gen/features/sample.feature.spec.js')}:8:8`,
   );
 }
 

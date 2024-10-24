@@ -9,6 +9,7 @@ import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
+import { ScenarioHookType } from '../hooks/scenario';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -58,6 +59,16 @@ export class Formatter {
       ...children.map(indent),
       `});`,
       '',
+    ];
+  }
+
+  scenarioHooksCall(type: ScenarioHookType, fixturesNames: string[]) {
+    const runScenarioHooksFixture = '$runScenarioHooks';
+    const fixturesStr = fixturesNames.join(', ');
+    const allFixturesStr = [runScenarioHooksFixture, ...fixturesNames].join(', ');
+    const method = type === 'before' ? 'beforeEach' : 'afterEach';
+    return [
+      `test.${method}(({ ${allFixturesStr} }) => $runScenarioHooks(${this.quoted(type)}, { ${fixturesStr} }));`,
     ];
   }
 

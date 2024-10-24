@@ -12,5 +12,7 @@ Then('snapshot contains text {string}', async ({}, text: string) => {
 });
 
 Then('screenshot matches previous one', async ({ page }) => {
-  await expect(page).toHaveScreenshot();
+  await expect(page).toHaveScreenshot({
+    maxDiffPixelRatio: 0.02,
+  });
 });

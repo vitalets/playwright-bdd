@@ -6,7 +6,7 @@
 
 import { test as base } from './worker';
 import { BDDConfig } from '../../config/types';
-import { runScenarioHooks } from '../../hooks/scenario';
+import { runScenarioHooks, ScenarioHookType } from '../../hooks/scenario';
 import { createStepInvoker, StepKeywordFixture } from '../StepInvoker';
 import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMetaBuilder';
 import { getEnrichReporterData } from '../../config/enrichReporterData';
@@ -40,9 +40,7 @@ export type BddFixturesTest = {
   $testInfo: TestInfo;
   $step: StepFixture;
   $uri: string;
-  $scenarioHookFixtures: Record<string, unknown>;
-  $before: void;
-  $after: void;
+  $runScenarioHooks: typeof runScenarioHooks;
   $applySpecialTags: void;
   $world: unknown;
 };
@@ -101,7 +99,7 @@ export const test = base.extend<BddFixturesTest>({
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
-    ({ $bddContext, $before, $applySpecialTags }, use) => use(createStepInvoker($bddContext)),
+    ({ $bddContext, $applySpecialTags }, use) => use(createStepInvoker($bddContext)),
     fixtureOptions,
   ],
   // All invoke step fixtures use the same Given fixture, b/c we get keyword from step meta (by index)
@@ -143,38 +141,15 @@ export const test = base.extend<BddFixturesTest>({
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],
 
-  // can be overwritten in test file if there are scenario hooks
-  $scenarioHookFixtures: [({}, use) => use({}), fixtureOptions],
-  $before:
-    // Unused dependencies are important:
-    // 1. $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
-    // 2. $after: to call after hooks in case of errors in before hooks
-    [
-      async (
-        { $scenarioHookFixtures, $bddContext, $tags, $beforeAll, $afterAll, $after },
-        use,
-        $testInfo,
-      ) => {
-        await runScenarioHooks('before', {
-          $bddContext,
-          $tags,
-          $testInfo,
-          ...$scenarioHookFixtures,
-        });
-        await use();
-      },
-      fixtureOptions,
-    ],
-
-  $after: [
-    async ({ $scenarioHookFixtures, $bddContext, $tags }, use, $testInfo) => {
-      await use();
-      await runScenarioHooks('after', {
-        $bddContext,
-        $tags,
-        $testInfo,
-        ...$scenarioHookFixtures,
-      });
+  // Unused dependencies are important:
+  // - $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
+  // todo: $beforeAll, $afterAll should go away
+  $runScenarioHooks: [
+    async ({ $bddContext, $beforeAll, $afterAll }, use) => {
+      const fn = (type: ScenarioHookType, fixtures: Record<string, unknown>) => {
+        return runScenarioHooks(type, { $bddContext, ...fixtures });
+      };
+      await use(fn);
     },
     fixtureOptions,
   ],

@@ -3,10 +3,11 @@ import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mj
 
 const testDir = new TestDir(import.meta);
 
-test('timeout in beforeAll: no other hooks called, process exit', () => {
+test('timeout in beforeAll: no other BeforeAll hooks called', () => {
   const stdout = execPlaywrightWithTimeoutInHook('BeforeAll 1');
   expectHookCalls(stdout, ['BeforeAll 1 worker 0']);
-  expect(stdout).not.toContain('AfterAll');
+  expect(stdout).not.toContain('BeforeAll 2');
+  // but AfterAll hooks can be called (depending on PW version)
 });
 
 test('timeout in before: no more before hooks called, but all after / afterAll hooks called', () => {
