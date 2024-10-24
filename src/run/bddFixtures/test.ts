@@ -99,7 +99,9 @@ export const test = base.extend<BddFixturesTest>({
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
-    ({ $bddContext, $applySpecialTags }, use) => use(createStepInvoker($bddContext)),
+    // todo: $beforeAll, $afterAll should go away
+    ({ $bddContext, $applySpecialTags, $beforeAll, $afterAll }, use) =>
+      use(createStepInvoker($bddContext)),
     fixtureOptions,
   ],
   // All invoke step fixtures use the same Given fixture, b/c we get keyword from step meta (by index)

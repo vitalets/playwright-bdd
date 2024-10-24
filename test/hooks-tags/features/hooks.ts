@@ -1,16 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { expect } from '@playwright/test';
 import { Before, After, AfterAll } from './fixtures';
 import { track, calls } from './track';
 
 const logger = console;
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 Before('@bar', async function ({ $testInfo, $tags, fixtureForBar }) {
   track(`Before @bar ${$testInfo.title}`);
   expect($tags).toEqual(['@foo', '@bar']);
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 Before({ tags: '@foo and not @bar' }, async ({ $testInfo, fixtureForFoo }) => {
   track(`Before @foo and not @bar ${$testInfo.title}`);
 });

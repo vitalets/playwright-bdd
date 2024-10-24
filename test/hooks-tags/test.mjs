@@ -16,6 +16,7 @@ test(`${testDir.name} (run all tests)`, () => {
 
   expect(stdout).toContain('setup fixture for foo');
   expect(stdout).toContain('setup fixture for bar');
+  expect(stdout).toContain('step in sample2');
 
   expectHookCalls(stdout, [
     'Before @bar scenario 1',
@@ -51,6 +52,7 @@ test(`${testDir.name} (gen not bar)`, () => {
 
   expect(stdout).toContain('setup fixture for foo');
   expect(stdout).not.toContain('setup fixture for bar');
+  expect(stdout).toContain('step in sample2');
 
   expectHookCalls(stdout, [
     'Before @foo and not @bar scenario 2', // prettier-ignore
@@ -91,12 +93,39 @@ test(`${testDir.name} (run not bar)`, { skip: !pwSupportsTags }, () => {
   // We can't know beforehand, which will it be filtered with PW tags in runtime.
   // Looks like a minor issue.
   expect(stdout).toContain('setup fixture for bar');
+  expect(stdout).toContain('step in sample2');
 
   expectHookCalls(stdout, [
     'Before @foo and not @bar scenario 2', // prettier-ignore
     'Step scenario 2',
     'After @foo and not @bar scenario 2',
   ]);
+});
+
+test(`${testDir.name} (gen not foo)`, () => {
+  const stdout = execPlaywrightTest(
+    testDir.name,
+    `${BDDGEN_CMD} --tags "not @foo" && ${PLAYWRIGHT_CMD}`,
+  );
+
+  expect(stdout).toContain('step in sample2');
+
+  expect(stdout).not.toContain('setup fixture for foo');
+  expect(stdout).not.toContain('setup fixture for bar');
+  expectHookCalls(stdout, []);
+});
+
+test(`${testDir.name} (run not foo)`, () => {
+  const stdout = execPlaywrightTest(
+    testDir.name,
+    `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD} --grep-invert "@foo"`,
+  );
+
+  expect(stdout).toContain('step in sample2');
+
+  expect(stdout).not.toContain('setup fixture for foo');
+  expect(stdout).not.toContain('setup fixture for bar');
+  expectHookCalls(stdout, []);
 });
 
 function expectHookCalls(stdout, hookCalls) {
