@@ -62,9 +62,8 @@ export function formatDuplicateStepsMessage(
   });
 
   return [
-    `Multiple step definitions found!`,
-    `Step: ${stepTextWithKeyword}`,
-    `File: ${stepLocation}`,
+    `Multiple definitions (${matchedSteps.length}) matched scenario step!`,
+    `Step: ${stepTextWithKeyword} # ${stepLocation}`,
     ...stepLines,
   ].join('\n');
 }
