@@ -6,23 +6,30 @@
 
 import { WorkerInfo } from '@playwright/test';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
-import { KeyValue } from '../playwright/types';
+import { KeyValue, TestTypeCommon } from '../playwright/types';
 import { callWithTimeout } from '../utils';
+
+export type WorkerHookType = 'beforeAll' | 'afterAll';
 
 type WorkerHookOptions = {
   timeout?: number;
 };
 
-type WorkerHookBddFixtures = {
+type WorkerHookFixtures = {
   $workerInfo: WorkerInfo;
+  [key: string]: unknown;
 };
 
 type WorkerHookFn<Fixtures> = (fixtures: Fixtures) => unknown;
 
-type WorkerHook<Fixtures = object> = {
-  type: 'beforeAll' | 'afterAll';
+export type WorkerHook<Fixtures = object> = {
+  type: WorkerHookType;
   options: WorkerHookOptions;
   fn: WorkerHookFn<Fixtures>;
+  // Since playwright-bdd v8 we run worker hooks via test.beforeAll / test.afterAll in each test file,
+  // so we need to know if hook was executed to avoid double execution every test file.
+  executed?: boolean;
+  customTest?: TestTypeCommon;
 };
 
 /**
@@ -37,34 +44,32 @@ type WorkerHookDefinitionArgs<Fixtures> =
   | [WorkerHookOptions, WorkerHookFn<Fixtures>];
 
 const workerHooks: WorkerHook[] = [];
-let workerHooksFixtures: string[];
 
 /**
  * Returns BeforeAll() / AfterAll() functions.
  */
-export function workerHookFactory<WorkerFixtures extends KeyValue>(type: WorkerHook['type']) {
-  type Args = WorkerHookDefinitionArgs<WorkerFixtures & WorkerHookBddFixtures>;
+export function workerHookFactory<Fixtures extends KeyValue>(
+  type: WorkerHookType,
+  customTest: TestTypeCommon | undefined,
+) {
+  type Args = WorkerHookDefinitionArgs<Fixtures>;
   return (...args: Args) => {
     addHook({
       type,
       options: getOptionsFromArgs(args) as WorkerHookOptions,
       fn: getFnFromArgs(args) as WorkerHook['fn'],
+      customTest,
     });
   };
 }
 
 // eslint-disable-next-line visual/complexity
-export async function runWorkerHooks<Fixtures extends WorkerHookBddFixtures>(
-  type: WorkerHook['type'],
-  fixtures: Fixtures,
-) {
+export async function runWorkerHooks(type: WorkerHookType, fixtures: WorkerHookFixtures) {
+  const hooksToRun = getWorkerHooksToRun(type);
   let error;
-  for (const hook of workerHooks) {
-    if (hook.type !== type) continue;
-
-    const { timeout } = hook.options;
+  for (const hook of hooksToRun) {
     try {
-      await callWithTimeout(() => hook.fn(fixtures), timeout, getTimeoutMessage(hook));
+      await runWorkerHook(hook, fixtures);
     } catch (e) {
       if (type === 'beforeAll') throw e;
       if (!error) error = e;
@@ -73,21 +78,28 @@ export async function runWorkerHooks<Fixtures extends WorkerHookBddFixtures>(
   if (error) throw error;
 }
 
-export function getWorkerHooksFixtures() {
-  if (!workerHooksFixtures) {
-    const fixturesFakeObj: Record<keyof WorkerHookBddFixtures, null> = {
-      $workerInfo: null,
-    };
-    const set = new Set<string>();
-    workerHooks.forEach((hook) => {
-      fixtureParameterNames(hook.fn)
-        .filter((fixtureName) => !Object.hasOwn(fixturesFakeObj, fixtureName))
-        .forEach((fixtureName) => set.add(fixtureName));
-    });
-    workerHooksFixtures = [...set];
+async function runWorkerHook(hook: WorkerHook, fixtures: WorkerHookFixtures) {
+  if (!hook.executed) {
+    hook.executed = true;
+    const { timeout } = hook.options;
+    await callWithTimeout(() => hook.fn(fixtures), timeout, getTimeoutMessage(hook));
   }
+}
 
-  return workerHooksFixtures;
+export function getWorkerHooksToRun(type: WorkerHookType) {
+  return workerHooks.filter((hook) => hook.type === type);
+  // todo: add tags
+  // .filter((hook) => !hook.tagsExpression || hook.tagsExpression.evaluate(tags));
+}
+
+export function getWorkerHooksFixtureNames(hooks: WorkerHook[]) {
+  const fixtureNames = new Set<string>();
+
+  hooks.forEach((hook) => {
+    fixtureParameterNames(hook.fn).forEach((fixtureName) => fixtureNames.add(fixtureName));
+  });
+
+  return [...fixtureNames];
 }
 
 function getOptionsFromArgs(args: unknown[]) {

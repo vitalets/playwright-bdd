@@ -58,8 +58,8 @@ export function createBdd<
   if (customTest === (baseBddTest as TestTypeCommon)) customTest = undefined;
   if (customTest) assertTestHasBddFixtures(customTest);
 
-  const BeforeAll = workerHookFactory<W>('beforeAll');
-  const AfterAll = workerHookFactory<W>('afterAll');
+  const BeforeAll = workerHookFactory<W>('beforeAll', customTest);
+  const AfterAll = workerHookFactory<W>('afterAll', customTest);
   const Before = scenarioHookFactory<T, W, World>('before', customTest);
   const After = scenarioHookFactory<T, W, World>('after', customTest);
 

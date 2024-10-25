@@ -2,10 +2,8 @@
  * Worker-scoped fixtures added by playwright-bdd.
  */
 
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 import { BDDConfig } from '../../config/types';
-import { test as base } from '@playwright/test';
+import { test as base, WorkerInfo } from '@playwright/test';
 import { getConfigFromEnv } from '../../config/env';
 import { getPlaywrightConfigDir } from '../../config/configDir';
 import { runWorkerHooks } from '../../hooks/worker';
@@ -19,13 +17,13 @@ import { loadSteps, resolveStepFiles } from '../../steps/loader';
 const fixtureOptions = { scope: 'worker', box: true } as { scope: 'worker' };
 
 export type BddFixturesWorker = {
+  $workerInfo: WorkerInfo;
   $bddConfig: BDDConfig;
-  $workerHookFixtures: Record<string, unknown>;
-  $beforeAll: void;
-  $afterAll: void;
+  $runWorkerHooks: typeof runWorkerHooks;
 };
 
 export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
+  $workerInfo: [({}, use, $workerInfo) => use($workerInfo), fixtureOptions],
   $bddConfig: [
     async ({}, use, workerInfo) => {
       const config = getConfigFromEnv(workerInfo.project.testDir);
@@ -36,25 +34,12 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
     },
     fixtureOptions,
   ],
-
-  // can be overwritten in test file if there are worker hooks
-  $workerHookFixtures: [({}, use) => use({}), fixtureOptions],
-  $beforeAll: [
-    // Important unused dependencies:
-    // 1. $afterAll: in pw < 1.39 worker-scoped auto-fixtures are called in incorrect order
-    // 2. $bddConfig: to load hooks before this fixtures
-    async ({ $workerHookFixtures, $bddConfig }, use, $workerInfo) => {
-      await runWorkerHooks('beforeAll', { $workerInfo, ...$workerHookFixtures });
-      await use();
-    },
-    fixtureOptions,
-  ],
-  $afterAll: [
-    // Important unused dependencies:
-    // 1. $bddConfig: to load hooks before this fixtures
-    async ({ $workerHookFixtures, $bddConfig }, use, $workerInfo) => {
-      await use();
-      await runWorkerHooks('afterAll', { $workerInfo, ...$workerHookFixtures });
+  $runWorkerHooks: [
+    // Important unused dependency:
+    // - $bddConfig: to load bdd config before hooks
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    async ({ $bddConfig }, use) => {
+      await use(runWorkerHooks);
     },
     fixtureOptions,
   ],

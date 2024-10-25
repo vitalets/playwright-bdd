@@ -22,7 +22,6 @@ import { KeywordsMap, getKeywordsMap } from './i18n';
 import { stringifyLocation, throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { TestNode } from './testNode';
-import { getWorkerHooksFixtures } from '../hooks/worker';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { BddMetaBuilder } from './bddMetaBuilder';
 import { GherkinDocumentWithPickles } from '../features/types';
@@ -39,7 +38,7 @@ import { getStepTextWithKeyword } from '../features/helpers';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
-import { Hooks } from './hooks';
+import { TestFileHooks } from './testFileHooks';
 
 type TestFileOptions = {
   gherkinDocument: GherkinDocumentWithPickles;
@@ -56,7 +55,7 @@ export class TestFile {
   private gherkinDocumentQuery: GherkinDocumentQuery;
   private bddMetaBuilder: BddMetaBuilder;
   private stepFinder: StepFinder;
-  private hooks: Hooks;
+  private hooks: TestFileHooks;
 
   public missingSteps: MissingStep[] = [];
   public featureUri: string;
@@ -68,7 +67,7 @@ export class TestFile {
     this.bddMetaBuilder = new BddMetaBuilder(this.gherkinDocumentQuery);
     this.featureUri = this.getFeatureUri();
     this.stepFinder = new StepFinder(options.config);
-    this.hooks = new Hooks(this.formatter);
+    this.hooks = new TestFileHooks(this.formatter);
   }
 
   get gherkinDocument() {
@@ -162,7 +161,7 @@ export class TestFile {
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
       ...this.bddMetaBuilder.getFixture(),
-      ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
+      // ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
     ]);
 

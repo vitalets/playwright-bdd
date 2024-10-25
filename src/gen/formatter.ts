@@ -10,6 +10,7 @@ import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { ScenarioHookType } from '../hooks/scenario';
+import { WorkerHookType } from '../hooks/worker';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -68,7 +69,17 @@ export class Formatter {
     const allFixturesStr = [runScenarioHooksFixture, ...fixturesNames].join(', ');
     const method = type === 'before' ? 'beforeEach' : 'afterEach';
     return [
-      `test.${method}(({ ${allFixturesStr} }) => $runScenarioHooks(${this.quoted(type)}, { ${fixturesStr} }));`,
+      // eslint-disable-next-line max-len
+      `test.${method}(({ ${allFixturesStr} }) => ${runScenarioHooksFixture}(${this.quoted(type)}, { ${fixturesStr} }));`,
+    ];
+  }
+
+  workerHooksCall(type: WorkerHookType, fixturesNames: string[]) {
+    const runWorkerHooksFixture = '$runWorkerHooks';
+    const fixturesStr = fixturesNames.join(', ');
+    const allFixturesStr = [runWorkerHooksFixture, ...fixturesNames].join(', ');
+    return [
+      `test.${type}(({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(${this.quoted(type)}, { ${fixturesStr} }));`,
     ];
   }
 
@@ -124,15 +135,6 @@ export class Formatter {
       'test.use({',
       ...lines.map(indent),
       '});',
-    ];
-  }
-
-  workerHookFixtures(fixtureNames: string[]) {
-    if (!fixtureNames.length) return [];
-    const fixtures = fixtureNames.join(', ');
-    const scope = this.quoted('worker');
-    return [
-      `$workerHookFixtures: [({ ${fixtures} }, use) => use({ ${fixtures} }), { scope: ${scope} }],`,
     ];
   }
 

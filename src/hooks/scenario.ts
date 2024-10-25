@@ -80,10 +80,10 @@ export function scenarioHookFactory<
 
 // eslint-disable-next-line visual/complexity
 export async function runScenarioHooks(type: ScenarioHookType, fixtures: ScenarioHookFixtures) {
-  const scenarioHooksToRun = getScenarioHooksToRun(type, fixtures.$bddContext.tags);
+  const hooksToRun = getScenarioHooksToRun(type, fixtures.$bddContext.tags);
 
   let error;
-  for (const hook of scenarioHooksToRun) {
+  for (const hook of hooksToRun) {
     try {
       await runScenarioHook(hook, fixtures);
     } catch (e) {
@@ -122,7 +122,7 @@ export function getScenarioHooksToRun(type: ScenarioHookType, tags: string[] = [
 }
 
 /**
- * Wraps hook fn with timeout and waiting Cucumber attachments to fulfill.
+ * Wraps hook fn with timeout.
  */
 function wrapHookFn(hook: GeneralScenarioHook, fixtures: ScenarioHookFixtures) {
   const { timeout } = hook.options;

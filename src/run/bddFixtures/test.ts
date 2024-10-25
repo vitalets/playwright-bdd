@@ -100,7 +100,7 @@ export const test = base.extend<BddFixturesTest>({
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
     // todo: $beforeAll, $afterAll should go away
-    ({ $bddContext, $applySpecialTags, $beforeAll, $afterAll }, use) =>
+    ({ $bddContext, $applySpecialTags /*, $beforeAll, $afterAll */ }, use) =>
       use(createStepInvoker($bddContext)),
     fixtureOptions,
   ],
@@ -147,7 +147,7 @@ export const test = base.extend<BddFixturesTest>({
   // - $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
   // todo: $beforeAll, $afterAll should go away
   $runScenarioHooks: [
-    async ({ $bddContext, $beforeAll, $afterAll }, use) => {
+    async ({ $bddContext /*, $beforeAll, $afterAll */ }, use) => {
       const fn = (type: ScenarioHookType, fixtures: Record<string, unknown>) => {
         return runScenarioHooks(type, { $bddContext, ...fixtures });
       };

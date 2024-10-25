@@ -59,13 +59,16 @@ test('hooks order, 2 workers', () => {
   ]);
 });
 
-test('error in beforeAll: no other hooks called, process exit', () => {
+test('error in beforeAll: no other beforeAll hooks called', () => {
   const stdout = execPlaywrightWithErrorInHook('BeforeAll 1');
   expectHookCalls(stdout, ['BeforeAll 1 worker 0']);
-  expect(stdout).not.toContain('AfterAll');
+  expect(stdout).not.toContain('BeforeAll 2');
+  expect(stdout).not.toContain('After 1');
+  expect(stdout).not.toContain('After 2');
+  // AfterAll hooks can be called (depends on pw version)
 });
 
-test('error in before: no more before hooks called, but all after / afterAll hooks called', () => {
+test('error in before: no other before hooks called, but all after / afterAll hooks called', () => {
   const stdout = execPlaywrightWithErrorInHook('Before 1');
   expectHookCalls(stdout, [
     'BeforeAll 1 worker 0',

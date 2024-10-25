@@ -115,7 +115,7 @@ test(`${testDir.name} (gen not foo)`, () => {
   expectHookCalls(stdout, []);
 });
 
-test(`${testDir.name} (run not foo)`, () => {
+test(`${testDir.name} (run not foo)`, { skip: !pwSupportsTags }, () => {
   const stdout = execPlaywrightTest(
     testDir.name,
     `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD} --grep-invert "@foo"`,
