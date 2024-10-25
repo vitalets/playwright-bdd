@@ -127,12 +127,6 @@ export class Formatter {
     ];
   }
 
-  scenarioHookFixtures(fixtureNames: string[]) {
-    if (!fixtureNames.length) return [];
-    const fixtures = fixtureNames.join(', ');
-    return [`$scenarioHookFixtures: ({ ${fixtures} }, use) => use({ ${fixtures} }),`];
-  }
-
   workerHookFixtures(fixtureNames: string[]) {
     if (!fixtureNames.length) return [];
     const fixtures = fixtureNames.join(', ');

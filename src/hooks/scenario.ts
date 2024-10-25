@@ -5,7 +5,7 @@
 /* eslint-disable max-depth */
 
 import parseTagsExpression from '@cucumber/tag-expressions';
-import { KeyValue, PlaywrightLocation } from '../playwright/types';
+import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
@@ -34,6 +34,7 @@ type ScenarioHook<Fixtures, World> = {
   fn: ScenarioHookFn<Fixtures, World>;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
   location: PlaywrightLocation;
+  customTest?: TestTypeCommon;
 };
 
 /**
@@ -61,7 +62,7 @@ export function scenarioHookFactory<
   TestFixtures extends KeyValue,
   WorkerFixtures extends KeyValue,
   World,
->(type: ScenarioHookType) {
+>(type: ScenarioHookType, customTest: TestTypeCommon | undefined) {
   type AllFixtures = TestFixtures & WorkerFixtures;
   type Args = ScenarioHookDefinitionArgs<AllFixtures, World>;
 
@@ -72,6 +73,7 @@ export function scenarioHookFactory<
       fn: getFnFromArgs(args) as ScenarioHookFn<AllFixtures, World>,
       // offset = 3 b/c this call is 3 steps below the user's code
       location: getLocationByOffset(3),
+      customTest,
     });
   };
 }

@@ -13,19 +13,24 @@ import { StepDefinition } from '../steps/stepDefinition';
 import { exit } from '../utils/exit';
 import { ImportTestFrom } from './formatter';
 
+// todo: refactor to fill this class in-place, instead of collecting data
 export class ImportTestFromGuesser {
-  private customTestsSet = new Set<TestTypeCommon>();
+  private customTestsSet: Set<TestTypeCommon>;
 
+  // eslint-disable-next-line max-params
   constructor(
     private featureUri: string,
     private usedStepDefinitions: Set<StepDefinition>,
     private usedDecoratorFixtures: Set<string>,
-  ) {}
+    customTestsFromHooks: Set<TestTypeCommon>,
+  ) {
+    this.customTestsSet = new Set([...customTestsFromHooks]);
+  }
 
   guess(): ImportTestFrom | undefined {
     this.fillCustomTestsFromRegularSteps();
     this.fillCustomTestsFromDecoratorSteps();
-    if (!this.getUsedCustomTestsCount()) return;
+    if (!this.hasCustomTests()) return;
     if (!getExportedTestsCount()) this.throwCantGuessError();
     const topmostTest = this.findTopmostTest();
     const { file, varName } = this.getExportedTestInfo(topmostTest);
@@ -51,8 +56,8 @@ export class ImportTestFromGuesser {
     });
   }
 
-  private getUsedCustomTestsCount() {
-    return this.customTestsSet.size;
+  private hasCustomTests() {
+    return this.customTestsSet.size > 0;
   }
 
   private findTopmostTest() {

@@ -103,3 +103,7 @@ export function saveFileSync(filePath: string, content: string) {
   fs.mkdirSync(path.dirname(filePath), { recursive: true });
   fs.writeFileSync(filePath, content);
 }
+
+export function toBoolean<T>(value: T): value is NonNullable<T> {
+  return Boolean(value);
+}

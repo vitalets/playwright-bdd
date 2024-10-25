@@ -60,8 +60,8 @@ export function createBdd<
 
   const BeforeAll = workerHookFactory<W>('beforeAll');
   const AfterAll = workerHookFactory<W>('afterAll');
-  const Before = scenarioHookFactory<T, W, World>('before');
-  const After = scenarioHookFactory<T, W, World>('after');
+  const Before = scenarioHookFactory<T, W, World>('before', customTest);
+  const After = scenarioHookFactory<T, W, World>('after', customTest);
 
   // cucumber-style
   if (options && 'worldFixture' in options && options.worldFixture) {
