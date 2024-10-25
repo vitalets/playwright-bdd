@@ -11,8 +11,8 @@ import { TestType } from '@playwright/test';
 import { test as baseBddTest, BddFixturesTest } from '../run/bddFixtures/test';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
-import { scenarioHookFactory } from '../hooks/scenario';
-import { workerHookFactory } from '../hooks/worker';
+import { createBeforeAfter } from '../hooks/scenario';
+import { createBeforeAllAfterAll } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './styles/cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './styles/playwrightStyle';
 import { BddFixturesWorker } from '../run/bddFixtures/worker';
@@ -58,10 +58,10 @@ export function createBdd<
   if (customTest === (baseBddTest as TestTypeCommon)) customTest = undefined;
   if (customTest) assertTestHasBddFixtures(customTest);
 
-  const BeforeAll = workerHookFactory<W>('beforeAll', customTest);
-  const AfterAll = workerHookFactory<W>('afterAll', customTest);
-  const Before = scenarioHookFactory<T, W, World>('before', customTest);
-  const After = scenarioHookFactory<T, W, World>('after', customTest);
+  const BeforeAll = createBeforeAllAfterAll<W>('beforeAll', customTest);
+  const AfterAll = createBeforeAllAfterAll<W>('afterAll', customTest);
+  const Before = createBeforeAfter<T, W, World>('before', customTest);
+  const After = createBeforeAfter<T, W, World>('after', customTest);
 
   // cucumber-style
   if (options && 'worldFixture' in options && options.worldFixture) {

@@ -48,7 +48,7 @@ const workerHooks: WorkerHook[] = [];
 /**
  * Returns BeforeAll() / AfterAll() functions.
  */
-export function workerHookFactory<Fixtures extends KeyValue>(
+export function createBeforeAllAfterAll<Fixtures extends KeyValue>(
   type: WorkerHookType,
   customTest: TestTypeCommon | undefined,
 ) {
