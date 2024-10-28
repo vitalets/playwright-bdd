@@ -66,8 +66,8 @@ export class Formatter {
   scenarioHooksCall(type: ScenarioHookType) {
     return [
       type === 'before'
-        ? `test.beforeEach(({ $beforeEach }) => {});`
-        : `test.afterEach(({ $afterEach }) => {});`,
+        ? `test.beforeEach(${this.quoted('BeforeEach Hooks')}, ({ $beforeEach }) => {});`
+        : `test.afterEach(${this.quoted('AfterEach Hooks')}, ({ $afterEach }) => {});`,
     ];
   }
 
@@ -75,8 +75,10 @@ export class Formatter {
     const runWorkerHooksFixture = '$runWorkerHooks';
     const fixturesStr = fixturesNames.join(', ');
     const allFixturesStr = [runWorkerHooksFixture, ...fixturesNames].join(', ');
+    const title = type === 'beforeAll' ? 'BeforeAll Hooks' : 'AfterAll Hooks';
     return [
-      `test.${type}(({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(${this.quoted(type)}, { ${fixturesStr} }));`,
+      // eslint-disable-next-line max-len
+      `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(${this.quoted(type)}, { ${fixturesStr} }));`,
     ];
   }
 

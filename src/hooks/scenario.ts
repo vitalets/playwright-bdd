@@ -96,12 +96,8 @@ export async function runScenarioHooks(type: ScenarioHookType, fixtures: Scenari
 
 async function runScenarioHook(hook: GeneralScenarioHook, fixtures: ScenarioHookFixtures) {
   const hookFn = wrapHookFn(hook, fixtures);
-  await runStepWithLocation(
-    fixtures.$bddContext.test,
-    hook.options.name || '',
-    hook.location,
-    hookFn,
-  );
+  const stepTitle = getHookStepTitle(hook);
+  await runStepWithLocation(fixtures.$bddContext.test, stepTitle, hook.location, hookFn);
 }
 
 export function getScenarioHooksFixtureNames(hooks: GeneralScenarioHook[]) {
@@ -170,4 +166,8 @@ function addHook(hook: GeneralScenarioHook) {
 function getTimeoutMessage(hook: GeneralScenarioHook) {
   const { timeout, name: hookName } = hook.options;
   return `${hook.type} hook ${hookName ? `"${hookName}" ` : ''}timeout (${timeout} ms)`;
+}
+
+function getHookStepTitle(hook: GeneralScenarioHook) {
+  return hook.options.name || (hook.type === 'before' ? 'BeforeEach hook' : 'AfterEach hook');
 }

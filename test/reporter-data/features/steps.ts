@@ -2,7 +2,7 @@
 import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
 
-const { Given, When, Before } = createBdd(test);
+const { Given, When, Before, BeforeAll } = createBdd(test);
 
 Given('background step', async () => {});
 Given('I am on home page', async ({ myPage }) => {
@@ -10,3 +10,5 @@ Given('I am on home page', async ({ myPage }) => {
 });
 When('Action {int}', () => {});
 Before({ name: 'hook 1' }, async () => {});
+Before(async () => {});
+BeforeAll(async () => {});

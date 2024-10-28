@@ -36,7 +36,7 @@ test('Scenario: Failing by background step', async ({ page }) => {
 test('Scenario: Failing by anonymous before hook', async ({ page }) => {
   const scenario = getScenario(page, 'Failing by anonymous before hook');
   await expect(scenario.getSteps()).toContainText([
-    `Hook failed: ${normalize('features/failed-steps.ts')}:`, // prettier-ignore
+    `Hook "BeforeEach hook" failed: ${normalize('features/failed-steps.ts')}:`, // prettier-ignore
     'GivenAction 1',
     'screenshot',
   ]);
