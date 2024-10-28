@@ -63,14 +63,11 @@ export class Formatter {
     ];
   }
 
-  scenarioHooksCall(type: ScenarioHookType, fixturesNames: string[]) {
-    const runScenarioHooksFixture = '$runScenarioHooks';
-    const fixturesStr = fixturesNames.join(', ');
-    const allFixturesStr = [runScenarioHooksFixture, ...fixturesNames].join(', ');
-    const method = type === 'before' ? 'beforeEach' : 'afterEach';
+  scenarioHooksCall(type: ScenarioHookType) {
     return [
-      // eslint-disable-next-line max-len
-      `test.${method}(({ ${allFixturesStr} }) => ${runScenarioHooksFixture}(${this.quoted(type)}, { ${fixturesStr} }));`,
+      type === 'before'
+        ? `test.beforeEach(({ $beforeEach }) => {});`
+        : `test.afterEach(({ $afterEach }) => {});`,
     ];
   }
 
@@ -128,14 +125,8 @@ export class Formatter {
     return `await ${keywordEng}(${this.quoted(text)}); // missing step`;
   }
 
-  fixtures(lines: string[]) {
-    return [
-      '// == technical section ==', // prettier-ignore
-      '',
-      'test.use({',
-      ...lines.map(indent),
-      '});',
-    ];
+  testUse(lines: string[]) {
+    return ['test.use({', ...lines.map(indent), '});'];
   }
 
   worldFixture(worldFixtureName: string) {
@@ -148,6 +139,13 @@ export class Formatter {
 
   uriFixture(featureUri: string) {
     return [`$uri: ({}, use) => use(${this.quoted(featureUri)}),`];
+  }
+
+  scenarioHooksFixtures(type: ScenarioHookType, fixtureNames: string[]) {
+    if (!fixtureNames.length) return [];
+    const targetFixtureName = type === 'before' ? '$beforeEachFixtures' : '$afterEachFixtures';
+    const fixturesStr = fixtureNames.join(', ');
+    return [`${targetFixtureName}: ({ ${fixturesStr} }, use) => use({ ${fixturesStr} }),`];
   }
 
   private getFunction(baseFn: 'test' | 'describe', node: TestNode) {
@@ -189,7 +187,7 @@ export class Formatter {
 
   /**
    * Apply this function only to string literals (mostly titles here).
-   * Objects and arrays are handled with JSON.strinigfy,
+   * Objects and arrays are handled with JSON.stringify,
    * b/c object keys can't be in backticks.
    * See: https://stackoverflow.com/questions/33194138/template-string-as-object-property-name
    */

@@ -110,7 +110,6 @@ export class TestFile {
 
     this.lines = [
       ...this.getFileHeader(), // prettier-ignore
-      ...this.hooks.getLines(),
       ...suites,
       ...this.getTechnicalSection(),
     ];
@@ -157,16 +156,21 @@ export class TestFile {
   private getTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
 
-    const fixtures = this.formatter.fixtures([
+    const testUse = this.formatter.testUse([
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
       ...this.bddMetaBuilder.getFixture(),
-      // ...this.formatter.workerHookFixtures(getWorkerHooksFixtures()),
+      ...this.formatter.scenarioHooksFixtures('before', this.hooks.before.getFixtureNames()),
+      ...this.formatter.scenarioHooksFixtures('after', this.hooks.after.getFixtureNames()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
     ]);
 
     return [
-      ...fixtures, // prettier-ignore
+      '// == technical section ==', // prettier-ignore
+      '',
+      ...this.hooks.getLines(),
+      ...testUse,
+      '',
       ...this.bddMetaBuilder.getObject(),
     ];
   }

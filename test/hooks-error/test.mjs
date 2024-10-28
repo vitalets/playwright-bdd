@@ -24,7 +24,6 @@ test('error in before', () => {
     'BeforeAll 1',
     'BeforeAll 2',
     'Before 1 scenario 1',
-    'Step bg', // to be removed!
     'After 2 scenario 1',
     'After 1 scenario 1',
     'AfterAll 2',
@@ -34,7 +33,6 @@ test('error in before', () => {
     'BeforeAll 1',
     'BeforeAll 2',
     'Before 1 scenario 2',
-    'Step bg', // to be removed!
     'After 2 scenario 2',
     'After 1 scenario 2',
     'AfterAll 2',
@@ -42,7 +40,7 @@ test('error in before', () => {
   ]);
 });
 
-test('error in after', () => {
+test('error in After', () => {
   const stdout = execPlaywrightWithErrorInHook('After 2');
 
   // all other after / afterAll hooks called
@@ -72,7 +70,7 @@ test('error in after', () => {
   ]);
 });
 
-test('error in afterAll: all other AfterAll hooks called', () => {
+test('error in afterAll', () => {
   const stdout = execPlaywrightWithErrorInHook('AfterAll 2');
 
   // in cucumber: no other AfterAll hooks called

@@ -40,9 +40,12 @@ export type BddFixturesTest = {
   $testInfo: TestInfo;
   $step: StepFixture;
   $uri: string;
-  $runScenarioHooks: typeof runScenarioHooks;
   $applySpecialTags: void;
   $world: unknown;
+  $beforeEachFixtures: Record<string, unknown>;
+  $beforeEach: void;
+  $afterEachFixtures: Record<string, unknown>;
+  $afterEach: void;
 };
 
 export type BddContext = {
@@ -99,9 +102,7 @@ export const test = base.extend<BddFixturesTest>({
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
-    // todo: $beforeAll, $afterAll should go away
-    ({ $bddContext, $applySpecialTags /*, $beforeAll, $afterAll */ }, use) =>
-      use(createStepInvoker($bddContext)),
+    ({ $bddContext, $applySpecialTags, $beforeEach }, use) => use(createStepInvoker($bddContext)),
     fixtureOptions,
   ],
   // All invoke step fixtures use the same Given fixture, b/c we get keyword from step meta (by index)
@@ -143,15 +144,25 @@ export const test = base.extend<BddFixturesTest>({
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],
 
-  // Unused dependencies are important:
-  // - $beforeAll / $afterAll: in pw < 1.39 worker-scoped auto-fixtures were called after test-scoped
-  // todo: $beforeAll, $afterAll should go away
-  $runScenarioHooks: [
-    async ({ $bddContext /*, $beforeAll, $afterAll */ }, use) => {
-      const fn = (type: ScenarioHookType, fixtures: Record<string, unknown>) => {
-        return runScenarioHooks(type, { $bddContext, ...fixtures });
-      };
-      await use(fn);
+  // can be overwritten in test file if there are fixtures for beforeEach hooks
+  $beforeEachFixtures: [({}, use) => use({}), fixtureOptions],
+  // can be overwritten in test file if there are fixtures for afterEach hooks
+  $afterEachFixtures: [({}, use) => use({}), fixtureOptions],
+  // runs beforeEach hooks
+  // unused dependency '$afterEach' is important to run afterEach
+  // in case of error in beforeEach.
+  $beforeEach: [
+    async ({ $bddContext, $beforeEachFixtures, $afterEach }, use) => {
+      await runScenarioHooks('before', { $bddContext, ...$beforeEachFixtures });
+      await use();
+    },
+    fixtureOptions,
+  ],
+  // runs afterEach hooks
+  $afterEach: [
+    async ({ $bddContext, $afterEachFixtures }, use) => {
+      await use();
+      await runScenarioHooks('after', { $bddContext, ...$afterEachFixtures });
     },
     fixtureOptions,
   ],

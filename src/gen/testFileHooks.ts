@@ -1,5 +1,17 @@
 /**
- * Collect hooks for test file.
+ * Manage hooks for test file.
+ *
+ * For worker hooks we generate test.beforeAll() / test.afterAll() that call $runWorkerFixture
+ * and pass all needed fixtures to it.
+ *
+ * For scenario hooks we generate test.beforeEach() / test.afterEach()
+ * that just reference $beforeEach/$afterEach fixtures,
+ * to get them executed during fixtures setup and call scenario hooks.
+ * Additionally, we generate all scenario-hooks used fixtures in $beforeEachFixtures/$afterEachFixtures.
+ * The approach is different for beforeAll/afterAll.
+ * If we follow the same approach and call scenario hooks directly inside test.beforeEach,
+ * them in case of error in hook, Playwright will execute Background steps.
+ * See: https://github.com/microsoft/playwright/issues/33314
  */
 
 import {
@@ -21,8 +33,8 @@ import { TestNode } from './testNode';
 export class TestFileHooks {
   private beforeAll = new TestFileWorkerHooks('beforeAll', this.formatter);
   private afterAll = new TestFileWorkerHooks('afterAll', this.formatter);
-  private before = new TestFileScenarioHooks('before', this.formatter);
-  private after = new TestFileScenarioHooks('after', this.formatter);
+  public before = new TestFileScenarioHooks('before', this.formatter);
+  public after = new TestFileScenarioHooks('after', this.formatter);
 
   constructor(private formatter: Formatter) {}
 
@@ -56,7 +68,7 @@ export class TestFileHooks {
 }
 
 class TestFileScenarioHooks<T extends ScenarioHookType> {
-  hooks = new Set<GeneralScenarioHook>();
+  private hooks = new Set<GeneralScenarioHook>();
 
   constructor(
     private type: T,
@@ -73,13 +85,16 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
 
   getLines() {
     if (!this.hooks.size) return [];
-    const fixtureNames = getScenarioHooksFixtureNames([...this.hooks]);
-    return this.formatter.scenarioHooksCall(this.type, fixtureNames);
+    return this.formatter.scenarioHooksCall(this.type);
+  }
+
+  getFixtureNames() {
+    return getScenarioHooksFixtureNames([...this.hooks]);
   }
 }
 
 class TestFileWorkerHooks<T extends WorkerHookType> {
-  hooks = new Set<WorkerHook>();
+  private hooks = new Set<WorkerHook>();
 
   constructor(
     private type: T,

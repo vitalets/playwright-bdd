@@ -3,7 +3,7 @@ import timers from 'node:timers/promises';
 
 import { Given, Before, BeforeAll, After, AfterAll } from './fixtures';
 
-// const calls: string[] = [];
+// use tiny delay to avoid race conditions on stdout output
 const delay = async () => await timers.setTimeout(50);
 
 Before(async function ({ $tags, $testInfo, page, track }) {
