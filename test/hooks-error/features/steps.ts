@@ -1,6 +1,5 @@
 import { expect } from '@playwright/test';
 import timers from 'node:timers/promises';
-
 import { Given, Before, BeforeAll, After, AfterAll } from './fixtures';
 
 // use tiny delay to avoid race conditions on stdout output
