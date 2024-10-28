@@ -24,7 +24,7 @@ test(`${testDir.name} (1 worker)`, () => {
   ]);
 });
 
-test(`${testDir.name} (2 worker)`, () => {
+test(`${testDir.name} (2 workers)`, () => {
   const stdout = execPlaywrightTest(testDir.name, `${DEFAULT_CMD} --workers=2 --fully-parallel`);
 
   // worker 0

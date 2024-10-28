@@ -1,4 +1,4 @@
-Feature: sample
+Feature: sample 2
 
   Scenario: scenario 3
-    Given step in sample2
+    Given Step 3

@@ -14,17 +14,18 @@ const pwSupportsTags = playwrightVersion >= '1.42.0';
 test(`${testDir.name} (run all tests)`, () => {
   const stdout = execPlaywrightTest(testDir.name);
 
-  expect(stdout).toContain('setup fixture for foo');
-  expect(stdout).toContain('setup fixture for bar');
-  expect(stdout).toContain('step in sample2');
-
-  expectHookCalls(stdout, [
+  expectCalls('worker 0: ', stdout, [
+    'setup fixture for bar',
+    'setup fixture for foo',
     'Before @bar scenario 1',
-    'Step scenario 1',
+    'Step 1',
     'After @bar scenario 1',
+    'setup fixture for bar',
+    'setup fixture for foo',
     'Before @foo and not @bar scenario 2',
-    'Step scenario 2',
+    'Step 2',
     'After @foo and not @bar scenario 2',
+    'Step 3',
   ]);
 });
 
@@ -34,12 +35,10 @@ test(`${testDir.name} (gen only bar)`, () => {
     `${BDDGEN_CMD} --tags "@bar" && ${PLAYWRIGHT_CMD}`,
   );
 
-  expect(stdout).not.toContain('setup fixture for foo');
-  expect(stdout).toContain('setup fixture for bar');
-
-  expectHookCalls(stdout, [
-    'Before @bar scenario 1', // prettier-ignore
-    'Step scenario 1',
+  expectCalls('worker 0: ', stdout, [
+    'setup fixture for bar', // prettier-ignore
+    'Before @bar scenario 1',
+    'Step 1',
     'After @bar scenario 1',
   ]);
 });
@@ -50,14 +49,12 @@ test(`${testDir.name} (gen not bar)`, () => {
     `${BDDGEN_CMD} --tags "not @bar" && ${PLAYWRIGHT_CMD}`,
   );
 
-  expect(stdout).toContain('setup fixture for foo');
-  expect(stdout).not.toContain('setup fixture for bar');
-  expect(stdout).toContain('step in sample2');
-
-  expectHookCalls(stdout, [
-    'Before @foo and not @bar scenario 2', // prettier-ignore
-    'Step scenario 2',
+  expectCalls('worker 0: ', stdout, [
+    'setup fixture for foo', // prettier-ignore
+    'Before @foo and not @bar scenario 2',
+    'Step 2',
     'After @foo and not @bar scenario 2',
+    'Step 3',
   ]);
 });
 
@@ -67,16 +64,15 @@ test(`${testDir.name} (run bar)`, { skip: !pwSupportsTags }, () => {
     `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD} --grep "@bar"`,
   );
 
-  // initialization of fixtureForFoo is expected,
-  // b/c both scenarios are in the same file.
-  // We can't know beforehand, which will it be filtered with PW tags in runtime.
-  // Looks like a minor issue.
-  expect(stdout).toContain('setup fixture for foo');
-  expect(stdout).toContain('setup fixture for bar');
-
-  expectHookCalls(stdout, [
-    'Before @bar scenario 1', // prettier-ignore
-    'Step scenario 1',
+  expectCalls('worker 0: ', stdout, [
+    // initialization of fixtureForFoo is expected,
+    // b/c both scenarios are in the same file.
+    // We can't know beforehand, which scenarios will be filtered with PW tags in runtime.
+    // Looks like a minor issue.
+    'setup fixture for bar', // prettier-ignore
+    'setup fixture for foo',
+    'Before @bar scenario 1',
+    'Step 1',
     'After @bar scenario 1',
   ]);
 });
@@ -87,18 +83,17 @@ test(`${testDir.name} (run not bar)`, { skip: !pwSupportsTags }, () => {
     `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD} --grep-invert "@bar"`,
   );
 
-  expect(stdout).toContain('setup fixture for foo');
-  // initialization of fixtureForBar is expected,
-  // b/c both scenarios are in the same file.
-  // We can't know beforehand, which will it be filtered with PW tags in runtime.
-  // Looks like a minor issue.
-  expect(stdout).toContain('setup fixture for bar');
-  expect(stdout).toContain('step in sample2');
-
-  expectHookCalls(stdout, [
-    'Before @foo and not @bar scenario 2', // prettier-ignore
-    'Step scenario 2',
+  expectCalls('worker 0: ', stdout, [
+    // initialization of fixtureForBar is expected,
+    // b/c both scenarios are in the same file.
+    // We can't know beforehand, which will it be filtered with PW tags in runtime.
+    // Looks like a minor issue.
+    'setup fixture for bar', // prettier-ignore
+    'setup fixture for foo',
+    'Before @foo and not @bar scenario 2',
+    'Step 2',
     'After @foo and not @bar scenario 2',
+    'Step 3',
   ]);
 });
 
@@ -108,11 +103,7 @@ test(`${testDir.name} (gen not foo)`, () => {
     `${BDDGEN_CMD} --tags "not @foo" && ${PLAYWRIGHT_CMD}`,
   );
 
-  expect(stdout).toContain('step in sample2');
-
-  expect(stdout).not.toContain('setup fixture for foo');
-  expect(stdout).not.toContain('setup fixture for bar');
-  expectHookCalls(stdout, []);
+  expectCalls('worker 0: ', stdout, ['Step 3']);
 });
 
 test(`${testDir.name} (run not foo)`, { skip: !pwSupportsTags }, () => {
@@ -121,13 +112,10 @@ test(`${testDir.name} (run not foo)`, { skip: !pwSupportsTags }, () => {
     `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD} --grep-invert "@foo"`,
   );
 
-  expect(stdout).toContain('step in sample2');
-
-  expect(stdout).not.toContain('setup fixture for foo');
-  expect(stdout).not.toContain('setup fixture for bar');
-  expectHookCalls(stdout, []);
+  expectCalls('worker 0: ', stdout, ['Step 3']);
 });
 
-function expectHookCalls(stdout, hookCalls) {
-  expect(stdout).toContain(['Start', ...hookCalls, 'End'].join('\n'));
+function expectCalls(prefix, stdout, expectedCalls) {
+  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
+  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
 }

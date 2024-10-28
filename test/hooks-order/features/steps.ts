@@ -3,7 +3,6 @@ import timers from 'node:timers/promises';
 
 import { Given, Before, BeforeAll, After, AfterAll } from './fixtures';
 
-// const calls: string[] = [];
 const delay = async () => await timers.setTimeout(50);
 
 Before(async function ({ $tags, $testInfo, page, track }) {
@@ -58,22 +57,3 @@ Given('Step {int}', async ({ track }, n: number) => {
 Given('Step bg', async ({ track }) => {
   track(`Step bg`);
 });
-
-/*
-function track(hookTitle: string) {
-  logger.log(`track: ${hookTitle}`);
-  // calls.push(hookTitle);
-  const shouldThrow = process.env.ERROR && hookTitle.startsWith(process.env.ERROR);
-  if (shouldThrow) {
-    throw new Error(hookTitle);
-  }
-  // const isBeforeAll = hookTitle.startsWith('BeforeAll');
-  // const isLastHook = hookTitle.startsWith('AfterAll 1 ');
-  // if ((shouldThrow && isBeforeAll) || isLastHook) {
-  //   logger.log(['Start', ...calls, 'End'].join('\n'));
-  // }
-  // if (shouldThrow) {
-  //   throw new Error(hookTitle);
-  // }
-}
-*/

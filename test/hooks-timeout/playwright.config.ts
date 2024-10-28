@@ -1,10 +1,11 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
+const testDir = defineBddConfig({
+  featuresRoot: 'features',
+});
+
 export default defineConfig({
-  testDir: defineBddConfig({
-    paths: ['*.feature'],
-    require: ['steps.ts'],
-  }),
+  testDir,
   workers: 1,
 });

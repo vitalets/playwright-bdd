@@ -103,6 +103,5 @@ function execPlaywrightWithErrorInHook(hook) {
 
 function expectCalls(prefix, stdout, expectedCalls) {
   const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
-
   expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
 }

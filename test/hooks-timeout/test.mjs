@@ -1,70 +1,74 @@
-import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, expect, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
-test('timeout in beforeAll: no other BeforeAll hooks called', () => {
+test('timeout in beforeAll', () => {
   const stdout = execPlaywrightWithTimeoutInHook('BeforeAll 1');
-  expectHookCalls(stdout, ['BeforeAll 1 worker 0']);
-  expect(stdout).not.toContain('BeforeAll 2');
-  // but AfterAll hooks can be called (depending on PW version)
+  // no other BeforeAll hooks called, all AfterAll hooks called
+  expectCalls('worker 0: ', stdout, [
+    'BeforeAll 1', // prettier-ignore
+    'AfterAll 2',
+    'AfterAll 1',
+  ]);
 });
 
-test('timeout in before: no more before hooks called, but all after / afterAll hooks called', () => {
+test('timeout in before', () => {
   const stdout = execPlaywrightWithTimeoutInHook('Before 1');
-  expectHookCalls(stdout, [
-    'BeforeAll 1 worker 0',
-    'BeforeAll 2 worker 0',
+  // no more before hooks called, but all after / afterAll hooks called
+  expectCalls('worker 0: ', stdout, [
+    'BeforeAll 1',
+    'BeforeAll 2',
     'Before 1 scenario 1',
     'After 2 scenario 1',
     'After 1 scenario 1',
-    'AfterAll 2 worker 0',
-    'AfterAll 1 worker 0',
+    'AfterAll 2',
+    'AfterAll 1',
   ]);
-  expectHookCalls(stdout, [
-    'BeforeAll 1 worker 1',
-    'BeforeAll 2 worker 1',
+  expectCalls('worker 1: ', stdout, [
+    'BeforeAll 1',
+    'BeforeAll 2',
     'Before 1 scenario 2',
     'After 2 scenario 2',
     'After 1 scenario 2',
-    'AfterAll 2 worker 1',
-    'AfterAll 1 worker 1',
+    'AfterAll 2',
+    'AfterAll 1',
   ]);
 });
 
-test('timeout in after: all other after / afterAll hooks called', () => {
+test('timeout in after', () => {
   const stdout = execPlaywrightWithTimeoutInHook('After 2');
-  expectHookCalls(stdout, [
-    'BeforeAll 1 worker 0',
-    'BeforeAll 2 worker 0',
+  // all other after / afterAll hooks called
+  expectCalls('worker 0: ', stdout, [
+    'BeforeAll 1',
+    'BeforeAll 2',
     'Before 1 scenario 1',
     'Before 2 scenario 1',
     'Step scenario 1',
     'After 2 scenario 1',
     'After 1 scenario 1',
-    'AfterAll 2 worker 0',
-    'AfterAll 1 worker 0',
+    'AfterAll 2',
+    'AfterAll 1',
   ]);
-  expectHookCalls(stdout, [
-    'BeforeAll 1 worker 1',
-    'BeforeAll 2 worker 1',
+  expectCalls('worker 1: ', stdout, [
+    'BeforeAll 1',
+    'BeforeAll 2',
     'Before 1 scenario 2',
     'Before 2 scenario 2',
     'Step scenario 2',
     'After 2 scenario 2',
     'After 1 scenario 2',
-    'AfterAll 2 worker 1',
-    'AfterAll 1 worker 1',
+    'AfterAll 2',
+    'AfterAll 1',
   ]);
 });
 
-// in cucumber: no other AfterAll hooks called
-// in pw: all other AfterAll hooks called <-- we use this in pw-bdd
-test('error in afterAll: all other AfterAll hooks called', () => {
+test('error in afterAll', () => {
   const stdout = execPlaywrightWithTimeoutInHook('AfterAll 2');
-  expectHookCalls(stdout, [
-    'BeforeAll 1 worker 0',
-    'BeforeAll 2 worker 0',
+  // in cucumber: no other AfterAll hooks called
+  // in pw: all other AfterAll hooks called <-- we use this in pw-bdd
+  expectCalls('worker 0: ', stdout, [
+    'BeforeAll 1',
+    'BeforeAll 2',
     'Before 1 scenario 1',
     'Before 2 scenario 1',
     'Step scenario 1',
@@ -75,8 +79,8 @@ test('error in afterAll: all other AfterAll hooks called', () => {
     'Step scenario 2',
     'After 2 scenario 2',
     'After 1 scenario 2',
-    'AfterAll 2 worker 0',
-    'AfterAll 1 worker 0',
+    'AfterAll 2',
+    'AfterAll 1',
   ]);
 });
 
@@ -88,6 +92,7 @@ function execPlaywrightWithTimeoutInHook(hook) {
   return stdout;
 }
 
-function expectHookCalls(stdout, hookCalls) {
-  expect(stdout).toContain(['Start', ...hookCalls, 'End'].join('\n'));
+function expectCalls(prefix, stdout, expectedCalls) {
+  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
+  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
 }
