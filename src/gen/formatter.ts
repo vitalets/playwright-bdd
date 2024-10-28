@@ -78,7 +78,7 @@ export class Formatter {
     const title = type === 'beforeAll' ? 'BeforeAll Hooks' : 'AfterAll Hooks';
     return [
       // eslint-disable-next-line max-len
-      `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(${this.quoted(type)}, { ${fixturesStr} }));`,
+      `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(test, ${this.quoted(type)}, { ${fixturesStr} }));`,
     ];
   }
 

@@ -22,8 +22,11 @@ function checkStepLocations(output) {
   );
 
   expect(output).toContain(`Before Hooks :0:0`);
-  // todo: add named beforeAll hook
   expect(output).toContain(`BeforeAll Hooks`);
+  expect(output).toContain(`BeforeAll hook ${normalize('features/steps.ts')}:14:1`);
+  expect(output).toContain(`named BeforeAll hook ${normalize('features/steps.ts')}:15:1`);
+  expect(output).toContain(`named AfterAll hook ${normalize('features/steps.ts')}:16:1`);
+
   expect(output).toContain(`BeforeEach Hooks`);
   expect(output).toContain(`hook 1 ${normalize('features/steps.ts')}:12:1`);
   expect(output).toContain(`BeforeEach hook ${normalize('features/steps.ts')}:13:1`);
