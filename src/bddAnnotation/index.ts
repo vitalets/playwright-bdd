@@ -1,8 +1,10 @@
 /**
- * Bdd data is a special annotation with test meta data, needed for Cucumber reporting.
+ * Class to manage bdd annotation - special annotation attached to each test
+ * and used for Cucumber reporting.
  *
  * Previously we used attachment for that, but annotation is better:
- * it allows to update data synchronously, while attachment needs
+ * - can be attached statically during test generation
+ * - allows to update data synchronously, while attachment needs
  * to be asynchronously attached in teardown phase that may not run.
  * See: https://github.com/microsoft/playwright/issues/30175
  */
@@ -12,14 +14,14 @@ import { stringifyLocation } from '../utils';
 import { BddTestMeta } from '../gen/bddMetaBuilder';
 import { TestCase } from '@playwright/test/reporter';
 import { PlaywrightLocation, PwAnnotation } from '../playwright/types';
-import { BddData } from './types';
+import { BddAnnotationData } from './types';
 import { updateAnnotation } from '../playwright/utils';
 import { StepDefinition } from '../steps/stepDefinition';
 
 const BDD_ANNOTATION_NAME = '__bddData';
 
 export class BddAnnotation {
-  private data: BddData;
+  private data: BddAnnotationData;
 
   constructor(
     private testInfo: TestInfo,
@@ -59,7 +61,7 @@ export function getBddDataFromTest({ annotations }: TestCase) {
   const annotationIndex = annotations.findIndex(isBddAnnotation);
   const annotation = annotations[annotationIndex];
   const bddData = annotation?.description
-    ? (JSON.parse(annotation.description) as BddData)
+    ? (JSON.parse(annotation.description) as BddAnnotationData)
     : undefined;
   return { bddData, annotationIndex };
 }

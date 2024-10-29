@@ -15,7 +15,7 @@ import { Hook, HookType } from './Hook';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/types';
 import { stringifyLocation } from '../../../utils';
 import { ProjectInfo } from './Projects';
-import { BddData } from '../../../bddAnnotation/types';
+import { BddAnnotationData } from '../../../bddAnnotation/types';
 
 type HookWithStep = {
   hook: Hook;
@@ -125,7 +125,7 @@ export class TestCase {
     });
   }
 
-  private findPickle({ uri, pickleLocation }: BddData) {
+  private findPickle({ uri, pickleLocation }: BddAnnotationData) {
     const doc = this.gherkinDocuments.find((doc) => doc.uri === uri);
     if (!doc) throw new Error('GherkinDocument not found');
     const pickle = doc.pickles.find((pickle) => {

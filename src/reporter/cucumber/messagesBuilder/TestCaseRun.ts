@@ -13,7 +13,7 @@ import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
-import { BddData, BddDataStep } from '../../../bddAnnotation/types.js';
+import { BddAnnotationData, BddAnnotationDataStep } from '../../../bddAnnotation/types.js';
 import { getBddDataFromTest } from '../../../bddAnnotation/index.js';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
@@ -24,14 +24,14 @@ export type TestCaseRunEnvelope = TestStepRunEnvelope &
   >;
 
 export type ExecutedStepInfo = {
-  bddDataStep: BddDataStep;
+  bddDataStep: BddAnnotationDataStep;
   // pwStep can be missing even for executed steps when there is test timeout
   pwStep?: pw.TestStep;
 };
 
 export class TestCaseRun {
   id: string;
-  bddData: BddData;
+  bddData: BddAnnotationData;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
@@ -157,7 +157,7 @@ export class TestCaseRun {
     return { testCaseFinished };
   }
 
-  private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddDataStep: BddDataStep) {
+  private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddDataStep: BddAnnotationDataStep) {
     return possiblePwSteps.find((pwStep) => {
       return pwStep.location && stringifyLocation(pwStep.location) === bddDataStep.pwStepLocation;
     });
