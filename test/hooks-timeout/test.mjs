@@ -1,4 +1,10 @@
-import { test, expect, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import {
+  test,
+  expect,
+  expectCalls,
+  TestDir,
+  execPlaywrightTestWithError,
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -90,9 +96,4 @@ function execPlaywrightWithTimeoutInHook(hook) {
   });
   expect(stdout).toContain('hook timeout (5 ms)');
   return stdout;
-}
-
-function expectCalls(prefix, stdout, expectedCalls) {
-  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
-  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
 }

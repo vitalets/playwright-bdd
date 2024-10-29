@@ -1,22 +1,7 @@
-import timers from 'node:timers/promises';
+import { mergeTests } from '@playwright/test';
 import { test as base, createBdd } from 'playwright-bdd';
+import { test as testWithTrack } from '../../_helpers/track';
 
-const logger = console;
-
-export const test = base.extend<object, { track: (s: string) => unknown }>({
-  track: [
-    async ({}, use, workerInfo) => {
-      const fn = async (hookTitle: string) => {
-        logger.log(`worker ${workerInfo.workerIndex}: ${hookTitle}`);
-        const shouldTimeout = process.env.TIMEOUT && hookTitle.startsWith(process.env.TIMEOUT);
-        if (shouldTimeout) {
-          await timers.setTimeout(100);
-        }
-      };
-      await use(fn);
-    },
-    { scope: 'worker' },
-  ],
-});
+export const test = mergeTests(base, testWithTrack);
 
 export const { Given, Before, BeforeAll, After, AfterAll } = createBdd(test);
