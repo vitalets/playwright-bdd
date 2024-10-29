@@ -1,7 +1,12 @@
-import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, expectCalls, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
+
+function execPlaywrightWithErrorInHook(hook) {
+  return execPlaywrightTestWithError(testDir.name, ``, {
+    env: { ERROR: hook },
+  });
+}
 
 test('error in beforeAll', () => {
   const stdout = execPlaywrightWithErrorInHook('BeforeAll 1');
@@ -94,14 +99,3 @@ test('error in afterAll', () => {
     'AfterAll 1',
   ]);
 });
-
-function execPlaywrightWithErrorInHook(hook) {
-  return execPlaywrightTestWithError(testDir.name, ``, {
-    env: { ERROR: hook },
-  });
-}
-
-function expectCalls(prefix, stdout, expectedCalls) {
-  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
-  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
-}

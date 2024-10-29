@@ -1,6 +1,6 @@
 import {
   test,
-  expect,
+  expectCalls,
   TestDir,
   execPlaywrightTest,
   playwrightVersion,
@@ -114,8 +114,3 @@ test(`${testDir.name} (run not foo)`, { skip: !pwSupportsTags }, () => {
 
   expectCalls('worker 0: ', stdout, ['Step 3']);
 });
-
-function expectCalls(prefix, stdout, expectedCalls) {
-  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
-  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
-}

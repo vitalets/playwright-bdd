@@ -18,3 +18,9 @@ export function getPackageVersion(pkg) {
   const packageJson = JSON.parse(fs.readFileSync(packageJsonPath, 'utf8'));
   return packageJson.version || '';
 }
+
+// Check calls by 'track' fixture
+export function expectCalls(prefix, stdout, expectedCalls) {
+  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
+  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
+}

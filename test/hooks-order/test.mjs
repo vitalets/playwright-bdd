@@ -1,4 +1,4 @@
-import { test, expect, TestDir, execPlaywrightTest, DEFAULT_CMD } from '../_helpers/index.mjs';
+import { test, expectCalls, TestDir, execPlaywrightTest, DEFAULT_CMD } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -55,9 +55,3 @@ test(`${testDir.name} (2 workers)`, () => {
     'AfterAll 1',
   ]);
 });
-
-function expectCalls(prefix, stdout, expectedCalls) {
-  const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
-
-  expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
-}
