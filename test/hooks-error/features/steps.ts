@@ -1,53 +1,43 @@
-import { expect } from '@playwright/test';
-import timers from 'node:timers/promises';
 import { Given, Before, BeforeAll, After, AfterAll } from './fixtures';
 
-// use tiny delay to avoid race conditions on stdout output
-const delay = async () => await timers.setTimeout(50);
-
-Before(async function ({ $tags, $testInfo, page, track }) {
-  await delay();
+Before(async function ({ $testInfo, track }) {
   track(`Before 1 ${$testInfo.title}`);
-  expect(page).toBeDefined();
-  expect($tags).toEqual([]);
+  canThrow('Before 1');
 });
 
 Before(async ({ $testInfo, track }) => {
-  await delay();
   track(`Before 2 ${$testInfo.title}`);
+  canThrow('Before 2');
 });
 
 After(async function ({ $testInfo, track }) {
-  await delay();
   track(`After 1 ${$testInfo.title}`);
+  canThrow('After 1');
 });
 
-After(async ({ $testInfo, page, track }) => {
-  await delay();
+After(async ({ $testInfo, track }) => {
   track(`After 2 ${$testInfo.title}`);
-  expect(page).toBeDefined();
+  canThrow('After 2');
 });
 
-BeforeAll(async function ({ browser, track }) {
-  await delay();
+BeforeAll(async function ({ track }) {
   track(`BeforeAll 1`);
-  expect(browser).toBeDefined();
+  canThrow('BeforeAll 1');
 });
 
 BeforeAll(async ({ track }) => {
-  await delay();
   track(`BeforeAll 2`);
+  canThrow('BeforeAll 2');
 });
 
-AfterAll(async function ({ browser, track }) {
-  await delay();
+AfterAll(async function ({ track }) {
   track(`AfterAll 1`);
-  expect(browser).toBeDefined();
+  canThrow('AfterAll 1');
 });
 
 AfterAll(async ({ track }) => {
-  await delay();
   track(`AfterAll 2`);
+  canThrow('AfterAll 2');
 });
 
 Given('Step {int}', async ({ track }, n: number) => {
@@ -58,21 +48,9 @@ Given('Step bg', async ({ track }) => {
   track(`Step bg`);
 });
 
-/*
-function track(hookTitle: string) {
-  logger.log(`track: ${hookTitle}`);
-  // calls.push(hookTitle);
+function canThrow(hookTitle: string) {
   const shouldThrow = process.env.ERROR && hookTitle.startsWith(process.env.ERROR);
   if (shouldThrow) {
     throw new Error(hookTitle);
   }
-  // const isBeforeAll = hookTitle.startsWith('BeforeAll');
-  // const isLastHook = hookTitle.startsWith('AfterAll 1 ');
-  // if ((shouldThrow && isBeforeAll) || isLastHook) {
-  //   logger.log(['Start', ...calls, 'End'].join('\n'));
-  // }
-  // if (shouldThrow) {
-  //   throw new Error(hookTitle);
-  // }
 }
-*/
