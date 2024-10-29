@@ -23,11 +23,13 @@ After(async function ({ $tags, $testInfo, page, someTestFixture, someWorkerFixtu
   expect(someWorkerFixture).toEqual('someWorkerFixture');
 });
 
-BeforeAll(async ({ someWorkerFixture }) => {
+BeforeAll(async ({ $workerInfo, someWorkerFixture }) => {
+  expect($workerInfo).toBeDefined();
   expect(someWorkerFixture).toEqual('someWorkerFixture');
 });
 
-AfterAll({}, async ({ someWorkerFixture }) => {
+AfterAll({}, async ({ $workerInfo, someWorkerFixture }) => {
+  expect($workerInfo).toBeDefined();
   expect(someWorkerFixture).toEqual('someWorkerFixture');
 });
 
