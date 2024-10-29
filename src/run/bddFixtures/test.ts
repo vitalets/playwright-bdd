@@ -13,7 +13,7 @@ import { getEnrichReporterData } from '../../config/enrichReporterData';
 import { SpecialTags } from '../../specialTags';
 import { TestTypeCommon } from '../../playwright/types';
 import { TestInfo } from '@playwright/test';
-import { BddAnnotation } from '../bddAnnotation';
+import { BddAnnotation } from '../../bddAnnotation';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

@@ -13,8 +13,8 @@ import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
-import { BddData, BddDataStep } from '../../../run/bddAnnotation/types.js';
-import { getBddDataFromTest } from '../../../run/bddAnnotation/index.js';
+import { BddData, BddDataStep } from '../../../bddAnnotation/types.js';
+import { getBddDataFromTest } from '../../../bddAnnotation/index.js';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<

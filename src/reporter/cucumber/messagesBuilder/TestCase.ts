@@ -15,7 +15,7 @@ import { Hook, HookType } from './Hook';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/types';
 import { stringifyLocation } from '../../../utils';
 import { ProjectInfo } from './Projects';
-import { BddData } from '../../../run/bddAnnotation/types';
+import { BddData } from '../../../bddAnnotation/types';
 
 type HookWithStep = {
   hook: Hook;

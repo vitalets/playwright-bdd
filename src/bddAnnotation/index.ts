@@ -7,14 +7,14 @@
  * See: https://github.com/microsoft/playwright/issues/30175
  */
 import { TestInfo } from '@playwright/test';
-import { createTestStep } from '../../cucumber/createTestStep';
-import { stringifyLocation } from '../../utils';
-import { BddTestMeta } from '../../gen/bddMetaBuilder';
+import { createTestStep } from '../cucumber/createTestStep';
+import { stringifyLocation } from '../utils';
+import { BddTestMeta } from '../gen/bddMetaBuilder';
 import { TestCase } from '@playwright/test/reporter';
-import { PlaywrightLocation, PwAnnotation } from '../../playwright/types';
+import { PlaywrightLocation, PwAnnotation } from '../playwright/types';
 import { BddData } from './types';
-import { updateAnnotation } from '../../playwright/utils';
-import { StepDefinition } from '../../steps/stepDefinition';
+import { updateAnnotation } from '../playwright/utils';
+import { StepDefinition } from '../steps/stepDefinition';
 
 const BDD_ANNOTATION_NAME = '__bddData';
 
