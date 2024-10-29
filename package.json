@@ -13,6 +13,9 @@
   "engines": {
     "node": ">=18"
   },
+  "peerDependencies": {
+    "@playwright/test": ">=1.42"
+  },
   "main": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
@@ -51,9 +54,6 @@
     "docs:validate": "ts-node scripts/validate-docs.ts",
     "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
     "release": "bash scripts/release.sh"
-  },
-  "peerDependencies": {
-    "@playwright/test": ">=1.38"
   },
   "dependencies": {
     "@cucumber/cucumber-expressions": "17.1.0",
