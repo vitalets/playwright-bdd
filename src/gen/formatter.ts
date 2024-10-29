@@ -37,13 +37,13 @@ export class Formatter {
   }
 
   describe(node: TestNode, children: string[]) {
-    const firstLine = `test.${this.getFunction('describe', node)}(${this.quoted(node.title)}, () => {`;
+    const firstLine = `test.${this.withSubFunction('describe', node)}(${this.quoted(node.title)}, () => {`;
     if (!children.length) return [`${firstLine}});`, ''];
     return [
       firstLine, // prettier-ignore
       ...this.describeConfigure(node).map(indent),
       ...this.markAsFailing(node).map(indent),
-      // we dont render test.slow() here, b/c each test.slow() call multilies timeout
+      // we don't render test.slow() here, b/c each test.slow() call multi-lines timeout
       // that is not now tags are assumed to work
       '',
       ...children.map(indent),
@@ -86,7 +86,7 @@ export class Formatter {
     const fixturesStr = [...fixtures].join(', ');
     const title = this.quoted(node.title);
     const tags = this.testTags(node);
-    const firstLine = `${this.getFunction('test', node)}(${title}, ${tags}async ({ ${fixturesStr} }) => {`;
+    const firstLine = `${this.withSubFunction('test', node)}(${title}, ${tags}async ({ ${fixturesStr} }) => {`;
     if (!children.length) return [`${firstLine}});`, ''];
     const lines = [
       firstLine, // prettier-ignore
@@ -150,7 +150,7 @@ export class Formatter {
     return [`${targetFixtureName}: ({ ${fixturesStr} }, use) => use({ ${fixturesStr} }),`];
   }
 
-  private getFunction(baseFn: 'test' | 'describe', node: TestNode) {
+  private withSubFunction(baseFn: 'test' | 'describe', node: TestNode) {
     if (node.specialTags.only) return `${baseFn}.only`;
     if (node.specialTags.skip) return `${baseFn}.skip`;
     if (node.specialTags.fixme) return `${baseFn}.fixme`;
