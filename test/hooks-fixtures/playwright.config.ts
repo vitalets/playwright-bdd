@@ -1,23 +1,21 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
+import { defineBddProject, cucumberReporter } from 'playwright-bdd';
 
 export default defineConfig({
   workers: 1,
   projects: [
     {
-      name: 'hooks-fixtures-pw-style',
-      testDir: defineBddConfig({
-        outputDir: '.features-gen/pw-style',
-        paths: ['features/*.feature'],
-        require: ['pw-style/*.ts'],
+      ...defineBddProject({
+        name: 'hooks-fixtures-pw-style',
+        features: 'features',
+        steps: 'features/pw-style',
       }),
     },
     {
-      name: 'hooks-fixtures-cucumber-style',
-      testDir: defineBddConfig({
-        outputDir: '.features-gen/cucumber-style',
-        paths: ['features/*.feature'],
-        require: ['cucumber-style/*.ts'],
+      ...defineBddProject({
+        name: 'hooks-fixtures-cucumber-style',
+        features: 'features',
+        steps: 'features/cucumber-style',
       }),
     },
   ],
