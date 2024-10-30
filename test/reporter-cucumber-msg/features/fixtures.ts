@@ -5,7 +5,7 @@ export const test = base.extend({
   world: ({}, use, testInfo) => use({ testInfo }),
 });
 
-const isPlaywrightRun = Boolean(process.env.PLAYWRIGHT_BDD_CONFIG_DIR);
+const isPlaywrightRun = Boolean(process.env.PLAYWRIGHT_BDD_CONFIGS);
 
 export const { Given, When, Then } = isPlaywrightRun
   ? createBdd(test, { worldFixture: 'world' })

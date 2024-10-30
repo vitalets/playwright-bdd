@@ -7,7 +7,6 @@ import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { FeaturesLoader, resolveFeatureFiles } from '../features/load';
 import { Snippets } from '../snippets';
-import { getPlaywrightConfigDir } from '../config/configDir';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit, withExitHandler } from '../utils/exit';
@@ -55,22 +54,22 @@ export class TestFilesGenerator {
   }
 
   private async loadFeatures() {
-    const cwd = getPlaywrightConfigDir();
-    const featureFiles = await resolveFeatureFiles(cwd, this.config.features);
-    this.logger.log(`Loading features: ${this.config.features}`);
+    const { configDir, features, language } = this.config;
+    const featureFiles = await resolveFeatureFiles(configDir, features);
+    this.logger.log(`Loading features: ${features}`);
     this.logger.log(`Resolved feature files: ${featureFiles.length}`);
     featureFiles.forEach((featureFile) => this.logger.log(`  ${relativeToCwd(featureFile)}`));
     await this.featuresLoader.load(featureFiles, {
-      relativeTo: cwd,
-      defaultDialect: this.config.language,
+      relativeTo: configDir,
+      defaultDialect: language,
     });
     this.handleFeatureParseErrors();
   }
 
   private async loadSteps() {
-    const cwd = getPlaywrightConfigDir();
-    this.logger.log(`Loading steps: ${this.config.steps}`);
-    const stepFiles = await resolveStepFiles(cwd, this.config.steps);
+    const { configDir, steps } = this.config;
+    this.logger.log(`Loading steps: ${steps}`);
+    const stepFiles = await resolveStepFiles(configDir, steps);
     this.logger.log(`Resolved step files: ${stepFiles.length}`);
     stepFiles.forEach((stepFiles) => this.logger.log(`  ${relativeToCwd(stepFiles)}`));
     await loadSteps(stepFiles);
@@ -95,8 +94,7 @@ export class TestFilesGenerator {
   }
 
   private getSpecPathByFeaturePath(relFeaturePath: string) {
-    const configDir = getPlaywrightConfigDir();
-    const absFeaturePath = path.resolve(configDir, relFeaturePath);
+    const absFeaturePath = path.resolve(this.config.configDir, relFeaturePath);
     const relOutputPath = path.relative(this.config.featuresRoot, absFeaturePath);
     if (relOutputPath.startsWith('..')) {
       exit(

@@ -7,12 +7,11 @@ import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestCaseRun } from './TestCaseRun';
 import { FeaturesLoader } from '../../../features/load';
 import { GherkinDocumentWithPickles } from '../../../features/types';
-import { getPlaywrightConfigDir } from '../../../config/configDir';
 import { ConcreteEnvelope } from './types';
 import { GherkinDocumentClone } from './GherkinDocumentClone';
 import { GherkinDocumentMessage } from './GherkinDocument';
 import { ProjectInfo, getFeatureUriWithProject } from './Projects';
-import { getEnvConfigs } from '../../../config/env';
+import { getConfigDirFromEnv, getEnvConfigs } from '../../../config/env';
 import { LANG_EN } from '../../../config/lang';
 
 export class GherkinDocuments {
@@ -24,7 +23,7 @@ export class GherkinDocuments {
 
   async load(testCaseRuns: TestCaseRun[]) {
     this.fillProjectsPerFeaturePath(testCaseRuns);
-    const cwd = getPlaywrightConfigDir();
+    const cwd = getConfigDirFromEnv();
     const featurePaths = [...this.projectsPerFeaturePath.keys()].map((featurePath) =>
       path.resolve(cwd, featurePath),
     );

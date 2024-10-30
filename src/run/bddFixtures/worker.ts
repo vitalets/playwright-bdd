@@ -5,7 +5,6 @@
 import { BDDConfig } from '../../config/types';
 import { test as base, WorkerInfo } from '@playwright/test';
 import { getConfigFromEnv } from '../../config/env';
-import { getPlaywrightConfigDir } from '../../config/configDir';
 import { runWorkerHooks } from '../../hooks/worker';
 import { loadSteps, resolveStepFiles } from '../../steps/loader';
 
@@ -26,11 +25,10 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
   $workerInfo: [({}, use, $workerInfo) => use($workerInfo), fixtureOptions],
   $bddConfig: [
     async ({}, use, workerInfo) => {
-      const config = getConfigFromEnv(workerInfo.project.testDir);
-      const cwd = getPlaywrightConfigDir();
-      const stepFiles = await resolveStepFiles(cwd, config.steps);
+      const bddConfig = getBddConfig(workerInfo.project.testDir);
+      const stepFiles = await resolveStepFiles(bddConfig.configDir, bddConfig.steps);
       await loadSteps(stepFiles);
-      await use(config);
+      await use(bddConfig);
     },
     fixtureOptions,
   ],
@@ -44,3 +42,11 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
     fixtureOptions,
   ],
 });
+
+function getBddConfig(testDir: string) {
+  const config = getConfigFromEnv(testDir);
+  if (!config) {
+    throw new Error(`BDD config not found for testDir: "${testDir}"`);
+  }
+  return config;
+}

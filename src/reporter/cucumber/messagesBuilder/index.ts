@@ -14,7 +14,7 @@ import { AutofillMap } from '../../../utils/AutofillMap.js';
 import { GherkinDocuments } from './GherkinDocuments';
 import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
-import { hasBddConfig } from '../../../config/env.js';
+import { getConfigFromEnv } from '../../../config/env';
 
 export class MessagesBuilder {
   private report = {
@@ -54,7 +54,10 @@ export class MessagesBuilder {
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
     // Skip tests of non-bdd projects
     const testDir = test.parent.project()?.testDir || this.fullConfig.rootDir;
-    if (!hasBddConfig(testDir)) return;
+    const bddConfig = getConfigFromEnv(testDir);
+    if (!bddConfig) return;
+
+    // todo: resolve feature file
 
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.

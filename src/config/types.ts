@@ -58,6 +58,7 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
 
 export type BDDConfig = BDDInputConfig &
   typeof defaults & {
+    configDir: string; // Config dir is used to resolve all paths (features, step definitions).
     featuresRoot: string;
     importTestFrom?: ImportTestFrom;
     features: string | string[];

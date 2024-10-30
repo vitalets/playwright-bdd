@@ -10,7 +10,6 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder/ref';
-import { getPlaywrightConfigDir } from '../../config/configDir';
 import { enableEnrichReporterData } from '../../config/enrichReporterData';
 import BaseReporter, { InternalOptions } from './base';
 import MessageReporter from './message';
@@ -18,6 +17,7 @@ import HtmlReporter from './html';
 import JunitReporter from './junit';
 import JsonReporter from './json';
 import CustomReporter, { CustomReporterOptions } from './custom';
+import { getConfigDirFromEnv } from '../../config/env';
 
 const builtinReporters = {
   html: HtmlReporter,
@@ -74,7 +74,7 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
 
   private createCucumberReporter() {
     const internalOptions: InternalOptions = {
-      cwd: getPlaywrightConfigDir(),
+      cwd: getConfigDirFromEnv(),
       eventBroadcaster: new EventEmitter(),
       eventDataCollector: this.messagesBuilderRef.builder.eventDataCollector,
     };

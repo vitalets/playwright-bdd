@@ -23,17 +23,27 @@ import { trimTrailingSlash } from '../utils';
 import { exit } from '../utils/exit';
 import { BDDConfig } from './types';
 
-type OutputDir = string;
-type EnvConfigs = Record<OutputDir, BDDConfig>;
+type EnvConfigs = Record<string /* outputDir */, BDDConfig>;
 
+// In-memory cache for all BDD configs
 let envConfigsCache: EnvConfigs;
+
+export function getConfigDirFromEnv() {
+  const envConfigs = getEnvConfigs();
+  const keys = Object.keys(envConfigs);
+  if (!keys.length) {
+    exit(`Something went wrong: no BDD configs found.`);
+  }
+  // Config dir is the same for all BDD configs, so use the first one.
+  return envConfigs[keys[0]].configDir;
+}
 
 export function saveConfigToEnv(config: BDDConfig) {
   const envConfigs = getEnvConfigs();
   const configKey = getConfigKey(config.outputDir);
   const existingConfig = envConfigs[configKey];
   if (existingConfig) {
-    // Playwright config can be evaluated several times.
+    // Playwright config can be evaluated several times in one process.
     // Throw error only if different calls of defineBddConfig() use the same outputDir.
     // See: https://github.com/vitalets/playwright-bdd/issues/39#issuecomment-1653805368
     if (!isSameConfigs(config, existingConfig)) {
@@ -49,18 +59,13 @@ export function saveConfigToEnv(config: BDDConfig) {
   saveEnvConfigs(envConfigs);
 }
 
-export function getConfigFromEnv(testDir: string, { throws = true } = {}) {
-  const configKey = getConfigKey(testDir);
+/**
+ * Note: Playwright's project.testDir is the same as BDD outputDir.
+ */
+export function getConfigFromEnv(absOutputDir: string) {
+  const configKey = getConfigKey(absOutputDir);
   const envConfigs = getEnvConfigs();
-  const config = envConfigs[configKey];
-  if (!config && throws) {
-    exit(
-      `BDD config not found for testDir: "${configKey}".`,
-      `Available testDirs:\n${Object.keys(envConfigs).join('\n')}`,
-    );
-  }
-
-  return config;
+  return envConfigs[configKey];
 }
 
 export function getEnvConfigs() {
@@ -70,12 +75,8 @@ export function getEnvConfigs() {
   return envConfigsCache;
 }
 
-export function hasBddConfig(testDir?: string) {
-  return Boolean(testDir && getConfigFromEnv(testDir, { throws: false }));
-}
-
-function getConfigKey(testDir: string) {
-  return trimTrailingSlash(testDir);
+function getConfigKey(outputDir: string) {
+  return trimTrailingSlash(outputDir);
 }
 
 function saveEnvConfigs(envConfigs: EnvConfigs) {

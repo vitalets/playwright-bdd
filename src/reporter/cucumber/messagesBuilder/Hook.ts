@@ -5,8 +5,8 @@
 import { randomUUID } from 'node:crypto';
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { getPlaywrightConfigDir } from '../../../config/configDir.js';
 import path from 'node:path';
+import { getConfigDirFromEnv } from '../../../config/env.js';
 
 export type HookType = 'before' | 'after';
 
@@ -50,7 +50,7 @@ export class Hook {
 
   private getSourceReference(pwStep: pw.TestStep): messages.SourceReference {
     const { file, line, column } = pwStep.location || {};
-    const uri = file ? path.relative(getPlaywrightConfigDir(), file) : undefined;
+    const uri = file ? path.relative(getConfigDirFromEnv(), file) : undefined;
     return {
       uri,
       location: line
