@@ -39,11 +39,11 @@ import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
 import { TestFileHooks } from './testFileHooks';
+import { getSpecFileByFeatureFile } from './paths';
 
 type TestFileOptions = {
-  gherkinDocument: GherkinDocumentWithPickles;
-  outputPath: string;
   config: BDDConfig;
+  gherkinDocument: GherkinDocumentWithPickles;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
 };
 
@@ -58,20 +58,25 @@ export class TestFile {
   private hooks: TestFileHooks;
 
   public missingSteps: MissingStep[] = [];
-  public featureUri: string;
+  public outputPath: string;
   public usedStepDefinitions = new Set<StepDefinition>();
 
   constructor(private options: TestFileOptions) {
+    this.outputPath = getSpecFileByFeatureFile(this.config, this.featureUri);
     this.formatter = new Formatter(options.config);
     this.gherkinDocumentQuery = new GherkinDocumentQuery(this.gherkinDocument);
     this.bddMetaBuilder = new BddMetaBuilder(this.gherkinDocumentQuery);
-    this.featureUri = this.getFeatureUri();
     this.stepFinder = new StepFinder(options.config);
     this.hooks = new TestFileHooks(this.formatter);
   }
 
   get gherkinDocument() {
     return this.options.gherkinDocument;
+  }
+
+  // doc.uri always exists and is relative to configDir
+  get featureUri() {
+    return this.gherkinDocument.uri!;
   }
 
   get pickles() {
@@ -92,10 +97,6 @@ export class TestFile {
 
   get config() {
     return this.options.config;
-  }
-
-  get outputPath() {
-    return this.options.outputPath;
   }
 
   get testCount() {
@@ -125,12 +126,6 @@ export class TestFile {
     if (!this.isEnglish) {
       this.i18nKeywordsMap = getKeywordsMap(this.language);
     }
-  }
-
-  private getFeatureUri() {
-    const { uri } = this.gherkinDocument;
-    if (!uri) throw new Error(`Document without uri: ${this.gherkinDocument.feature?.name}`);
-    return uri;
   }
 
   private resolveImportTestFrom() {

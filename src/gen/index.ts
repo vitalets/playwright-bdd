@@ -2,7 +2,6 @@
  * Generate playwright test files from Gherkin documents.
  */
 import fs from 'node:fs';
-import path from 'node:path';
 import fg from 'fast-glob';
 import { TestFile } from './testFile';
 import { FeaturesLoader, resolveFeatureFiles } from '../features/load';
@@ -82,30 +81,12 @@ export class TestFilesGenerator {
       .getDocumentsWithPickles()
       .map((gherkinDocument) => {
         return new TestFile({
-          gherkinDocument,
-          // doc.uri is always relative to cwd (coming after cucumber handling)
-          // see: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts#L51
-          outputPath: this.getSpecPathByFeaturePath(gherkinDocument.uri!),
           config: this.config,
+          gherkinDocument,
           tagsExpression: this.tagsExpression,
         }).build();
       })
       .filter((file) => file.testCount > 0);
-  }
-
-  private getSpecPathByFeaturePath(relFeaturePath: string) {
-    const absFeaturePath = path.resolve(this.config.configDir, relFeaturePath);
-    const relOutputPath = path.relative(this.config.featuresRoot, absFeaturePath);
-    if (relOutputPath.startsWith('..')) {
-      exit(
-        `All feature files should be located underneath featuresRoot.`,
-        `Please change featuresRoot or paths in configuration.\n`,
-        `featureFile: ${absFeaturePath}\n`,
-        `featuresRoot: ${this.config.featuresRoot}\n`,
-      );
-    }
-    const absOutputPath = path.resolve(this.config.outputDir, relOutputPath);
-    return `${absOutputPath}.spec.js`;
   }
 
   private checkMissingSteps() {
