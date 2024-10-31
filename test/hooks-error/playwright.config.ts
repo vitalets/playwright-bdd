@@ -8,4 +8,7 @@ const testDir = defineBddConfig({
 export default defineConfig({
   testDir,
   workers: 1,
+  // reporter: [
+  //   cucumberReporter('html', { outputFile: `actual-reports/${process.env.ERROR}/report.html` }),
+  // ],
 });

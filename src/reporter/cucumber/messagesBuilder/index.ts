@@ -52,12 +52,10 @@ export class MessagesBuilder {
   }
 
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
-    // Skip tests of non-bdd projects
     const testDir = test.parent.project()?.testDir || this.fullConfig.rootDir;
     const bddConfig = getConfigFromEnv(testDir);
+    // Skip tests of non-bdd projects
     if (!bddConfig) return;
-
-    // todo: resolve feature file
 
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.
@@ -67,7 +65,7 @@ export class MessagesBuilder {
     // Important to create TestCaseRun in this method (not later),
     // b/c test properties can change after retries
     // (especially annotations where we store bddData)
-    const testCaseRun = new TestCaseRun(test, result, this.hooks);
+    const testCaseRun = new TestCaseRun(bddConfig, test, result, this.hooks);
     this.testCaseRuns.push(testCaseRun);
   }
 

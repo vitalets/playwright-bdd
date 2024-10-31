@@ -54,11 +54,9 @@ export class GherkinDocuments {
 
   private fillProjectsPerFeaturePath(testCaseRuns: TestCaseRun[]) {
     testCaseRuns.forEach((testCaseRun) => {
-      const projects = this.projectsPerFeaturePath.getOrCreate(
-        testCaseRun.bddData.uri,
-        () => new Set(),
-      );
-      projects.add(testCaseRun.projectInfo);
+      this.projectsPerFeaturePath
+        .getOrCreate(testCaseRun.bddData.uri, () => new Set())
+        .add(testCaseRun.projectInfo);
     });
   }
 
@@ -103,7 +101,7 @@ export class GherkinDocuments {
     if (langs.length > 1) {
       throw new Error(
         [
-          `Multi-language features are not supported yet.`,
+          `Multiple BDD configs with different language are not supported yet.`,
           `Detected languages: ${langs.join(', ')}`,
         ].join(' '),
       );

@@ -1,4 +1,4 @@
-Feature: hooks
+Feature: feature 1
 
   Background: bg
     Given Step bg

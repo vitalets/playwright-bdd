@@ -7,12 +7,24 @@ import fs from 'node:fs';
 import { requirePlaywrightModule } from './utils';
 import { exit } from '../utils/exit';
 import { requireOrImport } from './requireOrImport';
+import { getCliConfigPath } from '../cli/options';
 
 export async function loadConfig(cliConfigPath?: string) {
   const resolvedConfigFile = resolveConfigFile(cliConfigPath);
   assertConfigFileExists(resolvedConfigFile, cliConfigPath);
   await requireOrImport(resolvedConfigFile);
   return { resolvedConfigFile };
+}
+
+/**
+ * Returns Playwright config dir considering cli --config option.
+ * Note: This fn must be called only in main process, because in workers
+ * process.argv is different.
+ */
+export function resolveConfigDir() {
+  const cliConfigPath = getCliConfigPath();
+  const playwrightConfigFileFromCli = resolveConfigFile(cliConfigPath);
+  return playwrightConfigFileFromCli ? path.dirname(playwrightConfigFileFromCli) : process.cwd();
 }
 
 export function resolveConfigFile(cliConfigPath?: string): string {

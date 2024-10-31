@@ -13,8 +13,10 @@ import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
-import { BddAnnotationData, BddAnnotationDataStep } from '../../../bddAnnotation/types.js';
-import { getBddDataFromTest } from '../../../bddAnnotation/index.js';
+import { BddAnnotationData, BddAnnotationDataStep } from '../../../bddAnnotation/types';
+import { getBddDataFromTest } from '../../../bddAnnotation';
+import { BDDConfig } from '../../../config/types';
+// import { getFeatureFileBySpecFile } from '../../../gen/paths';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -31,6 +33,7 @@ export type ExecutedStepInfo = {
 
 export class TestCaseRun {
   id: string;
+  // featureUri: string; // relative path to feature file
   bddData: BddAnnotationData;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
@@ -43,12 +46,16 @@ export class TestCaseRun {
   private executedAfterHooks: TestCaseRunHooks;
   private executedSteps: ExecutedStepInfo[];
 
+  // eslint-disable-next-line max-params
   constructor(
+    private bddConfig: BDDConfig,
     public test: pw.TestCase,
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
     this.id = this.generateTestRunId();
+    // this.featureUri = getFeatureFileBySpecFile(bddConfig, test.location.file);
+    // todo: avoid bddData extraction here
     this.bddData = this.extractBddData();
     this.projectInfo = getProjectInfo(this.test);
     this.attachmentMapper = new AttachmentMapper(this.result);

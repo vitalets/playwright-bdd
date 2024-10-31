@@ -28,14 +28,24 @@ type EnvConfigs = Record<string /* outputDir */, BDDConfig>;
 // In-memory cache for all BDD configs
 let envConfigsCache: EnvConfigs;
 
-export function getConfigDirFromEnv() {
+/**
+ * Returns config dir for the first BDD config in env.
+ */
+export function getConfigDirFromEnv({ throws = true } = {}) {
   const envConfigs = getEnvConfigs();
   const keys = Object.keys(envConfigs);
-  if (!keys.length) {
+  if (throws && keys.length === 0) {
     exit(`Something went wrong: no BDD configs found.`);
   }
+
   // Config dir is the same for all BDD configs, so use the first one.
-  return envConfigs[keys[0]].configDir;
+  const firstConfig = envConfigs[keys[0]];
+  const configDir = firstConfig?.configDir;
+  if (throws && !configDir) {
+    exit(`Something went wrong: empty 'configDir' in: ${JSON.stringify(firstConfig)}`);
+  }
+
+  return configDir;
 }
 
 export function saveConfigToEnv(config: BDDConfig) {
