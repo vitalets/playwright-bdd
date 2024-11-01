@@ -8,7 +8,7 @@ function execPlaywrightWithErrorInHook(hook) {
   });
 }
 
-test('error in beforeAll', () => {
+test(`${testDir} (BeforeAll)`, () => {
   const stdout = execPlaywrightWithErrorInHook('BeforeAll 1');
 
   // no other beforeAll hooks called
@@ -19,7 +19,7 @@ test('error in beforeAll', () => {
   ]);
 });
 
-test('error in before', () => {
+test(`${testDir} (Before)`, () => {
   const stdout = execPlaywrightWithErrorInHook('Before 1');
 
   // PW runs all before* hooks in case of error
@@ -45,7 +45,7 @@ test('error in before', () => {
   ]);
 });
 
-test('error in After', () => {
+test(`${testDir} (After)`, () => {
   const stdout = execPlaywrightWithErrorInHook('After 2');
 
   // all other after / afterAll hooks called
@@ -75,7 +75,7 @@ test('error in After', () => {
   ]);
 });
 
-test('error in afterAll', () => {
+test(`${testDir} (afterAll)`, () => {
   const stdout = execPlaywrightWithErrorInHook('AfterAll 2');
 
   // in cucumber: no other AfterAll hooks called
