@@ -13,9 +13,7 @@ import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { Hook, HookType } from './Hook';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/types';
-import { stringifyLocation } from '../../../utils';
 import { ProjectInfo } from './Projects';
-import { BddAnnotationData } from '../../../bddAnnotation/types';
 
 type HookWithStep = {
   hook: Hook;
@@ -49,7 +47,7 @@ export class TestCase {
     this.addHooks(testCaseRun, 'before');
     this.addHooks(testCaseRun, 'after');
     if (!this.#pickle) {
-      this.#pickle = this.findPickle(testCaseRun.bddData);
+      this.#pickle = this.findPickle(testCaseRun);
       this.addStepsFromPickle(this.#pickle);
     }
     this.addStepsArgumentsLists(testCaseRun);
@@ -116,7 +114,7 @@ export class TestCase {
    * looks like it's not a problem as they should be equal for all runs.
    */
   private addStepsArgumentsLists(testCaseRun: TestCaseRun) {
-    testCaseRun.bddData.steps.forEach((bddDataStep, stepIndex) => {
+    testCaseRun.bddData?.steps.forEach((bddDataStep, stepIndex) => {
       // map executed step from bddData to pickle step by index!
       const testCaseStep = this.mainSteps?.[stepIndex];
       if (testCaseStep && bddDataStep.stepMatchArgumentsLists) {
@@ -125,11 +123,13 @@ export class TestCase {
     });
   }
 
-  private findPickle({ uri, pickleLocation }: BddAnnotationData) {
-    const doc = this.gherkinDocuments.find((doc) => doc.uri === uri);
+  private findPickle(testCaseRun: TestCaseRun) {
+    const featureUri = testCaseRun.getFeatureUri();
+    const doc = this.gherkinDocuments.find((doc) => doc.uri === featureUri);
     if (!doc) throw new Error('GherkinDocument not found');
+    const pickleLineNumber = testCaseRun.getPickleLineNumber();
     const pickle = doc.pickles.find((pickle) => {
-      return stringifyLocation(pickle.location) === pickleLocation;
+      return pickle.location.line === pickleLineNumber;
     });
     if (!pickle) throw new Error('Pickle not found');
     return pickle;

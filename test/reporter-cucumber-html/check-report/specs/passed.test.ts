@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getFeature, getScenario, openReport } from './helpers';
+import { getFeature, getScenario, openReport } from '../helpers';
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);
@@ -67,11 +67,6 @@ test('Scenario: Scenario with all keywords and success hooks', async ({ page }) 
     '*Action 7',
     '', // after hook
   ]);
-});
-
-test('Scenario: Skipped scenario', async ({ page }) => {
-  const scenario = getScenario(page, 'Skipped scenario');
-  await expect(scenario.root).not.toBeVisible();
 });
 
 test('Scenario Outline: Check doubled', async ({ page }) => {

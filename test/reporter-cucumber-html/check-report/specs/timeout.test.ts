@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getScenario, openReport } from './helpers';
+import { getScenario, openReport } from '../helpers';
 
 test.beforeEach(async ({ page }) => {
   await openReport(page);

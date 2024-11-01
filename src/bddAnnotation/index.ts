@@ -57,13 +57,16 @@ export class BddAnnotation {
   }
 }
 
-export function getBddDataFromTest({ annotations }: TestCase) {
+/**
+ * Extract bdd data from test annotations.
+ */
+export function extractBddData({ annotations }: TestCase) {
   const annotationIndex = annotations.findIndex(isBddAnnotation);
   const annotation = annotations[annotationIndex];
   const bddData = annotation?.description
     ? (JSON.parse(annotation.description) as BddAnnotationData)
     : undefined;
-  return { bddData, annotationIndex };
+  return bddData;
 }
 
 function isBddAnnotation(annotation: PwAnnotation) {

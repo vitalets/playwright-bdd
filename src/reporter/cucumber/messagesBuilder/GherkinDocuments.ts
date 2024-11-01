@@ -1,5 +1,7 @@
 /**
- * Loads Gherkin documents from feature files and maps them to projects.
+ * Loads Gherkin documents from feature files.
+ * The same feature can be executed in several PW projects,
+ * for that we map feature files to projects as 1-to-many.
  */
 import path from 'node:path';
 import * as messages from '@cucumber/messages';
@@ -21,6 +23,8 @@ export class GherkinDocuments {
 
   constructor() {}
 
+  // todo: maybe testCaseRuns are not needed here,
+  // we can pass testFiles + projects info
   async load(testCaseRuns: TestCaseRun[]) {
     this.fillProjectsPerFeaturePath(testCaseRuns);
     const cwd = getConfigDirFromEnv();
@@ -55,7 +59,7 @@ export class GherkinDocuments {
   private fillProjectsPerFeaturePath(testCaseRuns: TestCaseRun[]) {
     testCaseRuns.forEach((testCaseRun) => {
       this.projectsPerFeaturePath
-        .getOrCreate(testCaseRun.bddData.uri, () => new Set())
+        .getOrCreate(testCaseRun.getFeatureUri(), () => new Set())
         .add(testCaseRun.projectInfo);
     });
   }
@@ -75,8 +79,8 @@ export class GherkinDocuments {
     projectInfo: ProjectInfo,
     gherkinDocument: GherkinDocumentWithPickles,
   ) {
-    const projectDocs = this.gherkinDocumentsPerProject.getOrCreate(projectInfo, () => []);
     const clonedDocument = new GherkinDocumentClone(gherkinDocument).getClone();
+    const projectDocs = this.gherkinDocumentsPerProject.getOrCreate(projectInfo, () => []);
     projectDocs.push(clonedDocument);
   }
 

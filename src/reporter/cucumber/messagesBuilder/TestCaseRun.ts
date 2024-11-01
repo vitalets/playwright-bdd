@@ -14,9 +14,9 @@ import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
 import { BddAnnotationData, BddAnnotationDataStep } from '../../../bddAnnotation/types';
-import { getBddDataFromTest } from '../../../bddAnnotation';
+import { extractBddData } from '../../../bddAnnotation';
 import { BDDConfig } from '../../../config/types';
-// import { getFeatureFileBySpecFile } from '../../../gen/paths';
+import { TestFileExtractor } from '../testFiles/extractor.js';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -33,8 +33,7 @@ export type ExecutedStepInfo = {
 
 export class TestCaseRun {
   id: string;
-  // featureUri: string; // relative path to feature file
-  bddData: BddAnnotationData;
+  bddData?: BddAnnotationData;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
@@ -49,14 +48,13 @@ export class TestCaseRun {
   // eslint-disable-next-line max-params
   constructor(
     private bddConfig: BDDConfig,
+    private testFileExtractor: TestFileExtractor,
     public test: pw.TestCase,
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
     this.id = this.generateTestRunId();
-    // this.featureUri = getFeatureFileBySpecFile(bddConfig, test.location.file);
-    // todo: avoid bddData extraction here
-    this.bddData = this.extractBddData();
+    this.bddData = extractBddData(this.test);
     this.projectInfo = getProjectInfo(this.test);
     this.attachmentMapper = new AttachmentMapper(this.result);
     this.executedSteps = this.fillExecutedSteps();
@@ -73,26 +71,35 @@ export class TestCaseRun {
     return this.result.status === 'timedOut';
   }
 
+  getFeatureUri() {
+    return this.testFileExtractor.featureUri;
+  }
+
+  getPickleLineNumber() {
+    return this.testFileExtractor.getPickleLineNumber(this.test);
+  }
+
   private generateTestRunId() {
     return `${this.test.id}-attempt-${this.result.retry}`;
   }
 
-  private extractBddData() {
-    const { bddData } = getBddDataFromTest(this.test);
-    if (!bddData) {
-      throw new Error(`__bddData annotation is not found for test "${this.test.title}".`);
-    }
-    // We could delete __bddData annotation here to hide it from other reporters,
-    // but it leads to errors on Win.
-    // Better way is to get some official way to pass custom data to reporters,
-    // see: https://github.com/microsoft/playwright/issues/30179
-    // this.test.annotations.splice(annotationIndex, 1);
-    return bddData;
-  }
+  // commented, as bddData is now optional and extracted in constructor.
+  // private extractBddData() {
+  //   return extractBddDataFromAnnotation(this.test);
+  //   // if (!bddData) {
+  //   //   throw new Error(`__bddData annotation is not found for test "${this.test.title}".`);
+  //   // }
+  //   // We could delete __bddData annotation here to hide it from other reporters,
+  //   // but it leads to errors on Win.
+  //   // Better way is to get some official way to pass custom data to reporters,
+  //   // see: https://github.com/microsoft/playwright/issues/30179
+  //   // this.test.annotations.splice(annotationIndex, 1);
+  //   return bddData;
+  // }
 
   private fillExecutedSteps() {
     const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
-    return this.bddData.steps.map((bddDataStep) => {
+    return (this.bddData?.steps || []).map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
       this.registerErrorStep(pwStep);
       this.registerTimeoutedStep(pwStep);

@@ -242,12 +242,14 @@ export class TestFile {
   ) {
     const node = new TestNode({ name: title, tags: examples.tags }, parent);
     if (this.isSkippedByTagsExpression(node)) return [];
-    this.bddMetaBuilder.registerTest(node, exampleRow.id);
-    if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
+    const pickle = this.bddMetaBuilder.registerTest(node, exampleRow.id);
+    if (this.isSkippedBySpecialTag(node)) {
+      return this.formatter.test(node, new Set(), pickle.location.line, []);
+    }
     const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags, exampleRow.id);
     this.handleMissingStepsInScenario(hasMissingSteps, node);
     this.hooks.registerHooksForTest(node);
-    return this.formatter.test(node, fixtures, lines);
+    return this.formatter.test(node, fixtures, pickle.location.line, lines);
   }
 
   /**
@@ -256,12 +258,14 @@ export class TestFile {
   private getTest(scenario: Scenario, parent: TestNode) {
     const node = new TestNode(scenario, parent);
     if (this.isSkippedByTagsExpression(node)) return [];
-    this.bddMetaBuilder.registerTest(node, scenario.id);
-    if (this.isSkippedBySpecialTag(node)) return this.formatter.test(node, new Set(), []);
+    const pickle = this.bddMetaBuilder.registerTest(node, scenario.id);
+    if (this.isSkippedBySpecialTag(node)) {
+      return this.formatter.test(node, new Set(), pickle.location.line, []);
+    }
     const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags);
     this.handleMissingStepsInScenario(hasMissingSteps, node);
     this.hooks.registerHooksForTest(node);
-    return this.formatter.test(node, fixtures, lines);
+    return this.formatter.test(node, fixtures, pickle.location.line, lines);
   }
 
   /**

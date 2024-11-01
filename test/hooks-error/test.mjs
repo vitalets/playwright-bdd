@@ -18,7 +18,7 @@ test('error in beforeAll', () => {
     'AfterAll 1',
   ]);
 });
-/*
+
 test('error in before', () => {
   const stdout = execPlaywrightWithErrorInHook('Before 1');
 
@@ -99,4 +99,3 @@ test('error in afterAll', () => {
     'AfterAll 1',
   ]);
 });
-*/

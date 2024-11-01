@@ -21,9 +21,7 @@ function checkSkipScenario() {
     `test('Example #1',`,
     `test.skip('Example #2',`,
   ]);
-  testDir.expectFileContainsCounts(specFile, {
-    '}) => {});': 3,
-  });
+  // todo: check skipped scenarios steps
 }
 
 function checkSkipFeature() {

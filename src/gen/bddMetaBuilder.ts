@@ -14,7 +14,7 @@
 import * as messages from '@cucumber/messages';
 import { TestNode } from './testNode';
 import { TestInfo } from '@playwright/test';
-import { stringifyLocation } from '../utils';
+import { stringifyLocation, throwIf } from '../utils';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { indent } from './formatter';
 import { PickleWithLocation } from '../features/types';
@@ -54,10 +54,10 @@ export class BddMetaBuilder {
 
   registerTest(node: TestNode, astNodeId: string) {
     const pickles = this.gherkinDocumentQuery.getPickles(astNodeId);
-    if (pickles.length !== 1) {
-      throw new Error(`Found ${pickles.length} pickle(s) for scenario: ${node.title}`);
-    }
-    this.tests.push({ node, pickle: pickles[0] });
+    throwIf(pickles.length !== 1, `Found ${pickles.length} pickle(s) for scenario: ${node.title}`);
+    const pickle = pickles[0];
+    this.tests.push({ node, pickle });
+    return pickle;
   }
 
   registerStep(scenarioStep: messages.Step, keywordType: KeywordType) {

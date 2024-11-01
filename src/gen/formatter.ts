@@ -29,7 +29,7 @@ export class Formatter {
     let varName = importTestFrom?.varName || 'test';
     if (varName !== 'test') varName = `${varName} as test`;
     return [
-      `/** Generated from: ${featureUri} */`, // prettier-ignore
+      `// Generated from: ${featureUri}`, // prettier-ignore
       // this.quoted() is not possible for 'import from' as backticks not parsed
       `import { ${varName} } from ${JSON.stringify(importTestFromFile)};`,
       '',
@@ -82,12 +82,13 @@ export class Formatter {
     ];
   }
 
-  test(node: TestNode, fixtures: Set<string>, children: string[]) {
+  // eslint-disable-next-line max-params
+  test(node: TestNode, fixtures: Set<string>, pickleLineNumber: number, children: string[]) {
     const fixturesStr = [...fixtures].join(', ');
     const title = this.quoted(node.title);
     const tags = this.testTags(node);
-    const firstLine = `${this.withSubFunction('test', node)}(${title}, ${tags}async ({ ${fixturesStr} }) => {`;
-    if (!children.length) return [`${firstLine}});`, ''];
+    const fn = this.withSubFunction('test', node);
+    const firstLine = `${fn}(${title}, ${tags}async ({ ${fixturesStr} }) => { // ${pickleLineNumber}`;
     const lines = [
       firstLine, // prettier-ignore
       // We use test.fail() in the test body instead of test.fail('...', () => { ... })

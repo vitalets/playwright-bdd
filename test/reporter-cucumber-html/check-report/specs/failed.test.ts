@@ -1,7 +1,7 @@
 import { normalize } from 'node:path';
 import { test, expect } from '@playwright/test';
-import { getFeature, getScenario, openReport } from './helpers';
-import { getPackageVersion } from '../../../src/utils';
+import { getFeature, getScenario, openReport } from '../helpers';
+import { getPackageVersion } from '../../../../src/utils';
 
 const pwVersion = getPackageVersion('@playwright/test');
 

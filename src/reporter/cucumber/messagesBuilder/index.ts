@@ -15,6 +15,7 @@ import { GherkinDocuments } from './GherkinDocuments';
 import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
 import { getConfigFromEnv } from '../../../config/env';
+import { TestFiles } from '../testFiles';
 
 export class MessagesBuilder {
   private report = {
@@ -36,6 +37,7 @@ export class MessagesBuilder {
   private testCases = new AutofillMap</* testId */ string, TestCase>();
   private hooks = new AutofillMap</* internalId */ string, Hook>();
   private gherkinDocuments = new GherkinDocuments();
+  private testFiles = new TestFiles();
   private onEndPromise: Promise<void>;
   private onEndPromiseResolve = () => {};
   private buildMessagesPromise?: Promise<void>;
@@ -56,16 +58,18 @@ export class MessagesBuilder {
     const bddConfig = getConfigFromEnv(testDir);
     // Skip tests of non-bdd projects
     if (!bddConfig) return;
+    const testFileExtractor = this.testFiles.registerTestFile(test.location.file);
 
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.
     // Don't add such test run to report.
-    if (result.status === 'skipped') return;
+    // todo: don't omit skipped tests!
+    // if (result.status === 'skipped') return;
 
     // Important to create TestCaseRun in this method (not later),
     // b/c test properties can change after retries
     // (especially annotations where we store bddData)
-    const testCaseRun = new TestCaseRun(bddConfig, test, result, this.hooks);
+    const testCaseRun = new TestCaseRun(bddConfig, testFileExtractor, test, result, this.hooks);
     this.testCaseRuns.push(testCaseRun);
   }
 
@@ -83,8 +87,10 @@ export class MessagesBuilder {
     return this.buildMessagesPromise;
   }
 
+  // eslint-disable-next-line max-statements
   private async doBuildMessages() {
     await this.onEndPromise;
+    await this.testFiles.waitAllLoaded();
 
     // order here is important
     await this.loadFeatures();
