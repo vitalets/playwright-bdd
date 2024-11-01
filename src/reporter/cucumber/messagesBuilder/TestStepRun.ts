@@ -64,16 +64,18 @@ export class TestStepRun {
 
   private buildTestStepFinished() {
     const error = this.getStepError();
+    const status = this.getStatus(error);
     const testStepFinished: messages.TestStepFinished = {
       testCaseStartedId: this.testCaseRun.id,
       testStepId: this.testStep.id,
       testStepResult: {
         duration: messages.TimeConversion.millisecondsToDuration(this.duration),
-        status: this.getStatus(error),
+        status,
         // 'message' is deprecated since cucumber 10.4 in favor of 'exception' field
+        // But we keep both for compatibility with other reporters.
         // See: https://github.com/cucumber/react-components/pull/345
-        message: error ? buildErrorMessage(error) : undefined,
-        exception: error ? buildException(error) : undefined,
+        message: isFailed(status) && error ? buildErrorMessage(error) : undefined,
+        exception: isFailed(status) && error ? buildException(error) : undefined,
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };
@@ -82,9 +84,12 @@ export class TestStepRun {
 
   private getStatus(error?: pw.TestError): messages.TestStepResultStatus {
     switch (true) {
+      // When calling test.skip(), it actually throws an error
+      case isSkippedError(error):
+        return messages.TestStepResultStatus.SKIPPED;
       case Boolean(error):
         return messages.TestStepResultStatus.FAILED;
-      // For hooks that were not executted we return PASSED, not SKIPPED.
+      // For hooks that were not executed we return PASSED, not SKIPPED.
       // Because these hooks can be from another run attempt of this testCase.
       // If marked as skipped, the whole run is marked as skipped in reporter.
       case !this.isHook() && !this.wasExecuted():
@@ -117,9 +122,7 @@ function buildException(error: pw.TestError): messages.Exception {
     message: buildErrorMessage(error),
     // todo: extract only trace?
     stackTrace: error.stack ? extractStackTrace(stripAnsiEscapes(error.stack)) : undefined,
-    // Use type casting b/c older versions of @cucumber/messages don't have 'stackTrace' field
-    // todo: add direct dependency on @cucumber/messages
-  } as messages.Exception;
+  };
 }
 
 function extractStackTrace(errorStack: string) {
@@ -127,4 +130,18 @@ function extractStackTrace(errorStack: string) {
     .split('\n')
     .filter((line) => line.match(/^\s+at .*/))
     .join('\n');
+}
+
+/**
+ * When calling test.skip() in Playwright test, it throws an error with message:
+ * "Test is skipped".
+ * This error exists in step, but it is not a real error, it is a skipped step.
+ * See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L223
+ */
+function isSkippedError(error?: pw.TestError) {
+  return Boolean(error?.message?.includes('Test is skipped:'));
+}
+
+function isFailed(status: messages.TestStepResultStatus) {
+  return status === messages.TestStepResultStatus.FAILED;
 }
