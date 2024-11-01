@@ -55,3 +55,29 @@ test(`${testDir.name} (skip in before hook)`, async () => {
     result: { status: 'skipped' },
   });
 });
+
+test(`${testDir.name} (skip in after hook)`, async () => {
+  const report = runInDir('skip-in-after-hook');
+
+  const scenario1 = report[0].elements[0];
+  expect(scenario1.name).toEqual('scenario 1');
+  expect(scenario1.steps[0]).toMatchObject({
+    name: 'success step 1',
+    result: { status: 'passed' },
+  });
+  expect(scenario1.steps[1]).toMatchObject({
+    keyword: 'After',
+    result: { status: 'skipped' },
+  });
+
+  const scenario2 = report[0].elements[1];
+  expect(scenario2.name).toEqual('scenario 2');
+  expect(scenario2.steps[0]).toMatchObject({
+    name: 'success step 2',
+    result: { status: 'passed' },
+  });
+  expect(scenario2.steps[1]).toMatchObject({
+    keyword: 'After',
+    result: { status: 'skipped' },
+  });
+});
