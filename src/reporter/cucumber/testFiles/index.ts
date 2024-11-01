@@ -9,6 +9,9 @@ export class TestFiles {
     return this.files.getOrCreate(filePath, () => {
       const testFileExtractor = new TestFileExtractor(filePath);
       this.files.set(filePath, testFileExtractor);
+      // Read test file contents to extract data for reporter.
+      // Playwright's html reporter also reads test files (to extract snippets).
+      // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/reporters/html.ts#L623
       this.loadingPromises.push(testFileExtractor.load());
       return testFileExtractor;
     });
