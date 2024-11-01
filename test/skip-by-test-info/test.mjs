@@ -1,0 +1,13 @@
+import { test, TestDir, expect, execPlaywrightTest } from '../_helpers/index.mjs';
+
+const testDir = new TestDir(import.meta);
+
+test(testDir.name, async () => {
+  testDir.clearDir('actual-reports');
+
+  execPlaywrightTest(testDir.name);
+
+  const report = JSON.parse(testDir.getFileContents('actual-reports/report.json'));
+  expect(report[0].elements[0].steps[0]).toHaveProperty('result.status', 'passed');
+  expect(report[0].elements[0].steps[1]).toHaveProperty('result.status', 'skipped');
+});

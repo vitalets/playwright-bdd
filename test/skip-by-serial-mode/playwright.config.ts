@@ -8,7 +8,6 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  workers: 1,
   reporter: [
     cucumberReporter('json', { outputFile: 'actual-reports/report.json' }),
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),

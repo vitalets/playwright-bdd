@@ -8,7 +8,3 @@ Given('success step {int}', async () => {});
 Given('failing step', async ({}) => {
   expect('foo').toEqual('bar');
 });
-
-Given('skipped by test info', async ({ $testInfo }) => {
-  $testInfo.skip();
-});

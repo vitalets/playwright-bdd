@@ -1,5 +1,5 @@
 @mode:serial
-Feature: skip-by-serial-mode
+Feature: feature 1
 
   Scenario: failing scenario
     Given success step 1

@@ -7,16 +7,10 @@ test(testDir.name, async () => {
   execPlaywrightTestWithError(testDir.name);
 
   const report = JSON.parse(testDir.getFileContents('actual-reports/report.json'));
-  expect(report).toHaveLength(2); // 2 features
 
-  // skip by serial mode
   expect(report[0].elements).toHaveLength(2); // 2 scenarios
   expect(report[0].elements[0]).toHaveProperty('name', 'failing scenario');
   expect(report[0].elements[0].steps[0]).toHaveProperty('result.status', 'passed');
   expect(report[0].elements[1]).toHaveProperty('name', 'success scenario (will be skipped)');
   expect(report[0].elements[1].steps[0]).toHaveProperty('result.status', 'skipped');
-
-  // skip by test info
-  expect(report[1].elements[0].steps[0]).toHaveProperty('result.status', 'passed');
-  expect(report[1].elements[0].steps[1]).toHaveProperty('result.status', 'skipped');
 });
