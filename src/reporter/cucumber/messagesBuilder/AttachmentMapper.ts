@@ -120,6 +120,9 @@ export class AttachmentMapper {
     const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
     stepAttachments.push({
       name,
+      // Attach stdout / stderr as text/x.cucumber.log+plain instead of text/plain,
+      // because Cucumber HTML report has pretty formatting for that.
+      // See: https://github.com/vitalets/playwright-bdd/issues/239#issuecomment-2451423020
       contentType: 'text/x.cucumber.log+plain',
       body: Buffer.from(body),
     });
