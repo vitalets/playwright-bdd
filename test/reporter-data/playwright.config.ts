@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   features: 'features/*.feature',
@@ -8,5 +8,9 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  reporter: [['./reporter.ts', { outputFile: 'actual-reports/report.txt' }]],
+  reporter: [
+    ['./reporter.ts', { outputFile: 'actual-reports/report.txt' }],
+    cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
+    ['html', { open: 'never' }],
+  ],
 });

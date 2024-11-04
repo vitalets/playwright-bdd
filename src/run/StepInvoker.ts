@@ -10,7 +10,7 @@ import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from './bddFixtures/test';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { getStepTextWithKeyword } from '../features/helpers';
-import { StepDefinition } from '../steps/stepDefinition';
+import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 
 export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
 
@@ -37,7 +37,7 @@ class StepInvoker {
     this.bddContext.stepIndex++;
     this.bddContext.step.title = stepText;
 
-    const stepDefinition = this.findStepDefinition(stepText);
+    const matchedDefinition = this.findStepDefinition(stepText);
     const stepTextWithKeyword = this.getStepTextWithKeyword(stepText);
 
     // Get location of step call in generated test file.
@@ -45,21 +45,25 @@ class StepInvoker {
     const location = getLocationInFile(this.bddContext.testInfo.file);
 
     const parameters = await this.getStepParameters(
-      stepDefinition,
+      matchedDefinition,
       stepText,
       argument || undefined,
     );
 
     const fixturesArg = Object.assign({}, stepFixtures, getBddAutoInjectFixtures(this.bddContext));
 
-    this.bddContext.bddAnnotation?.registerStep(stepDefinition, stepText, location);
+    this.bddContext.bddAnnotation?.registerStep(matchedDefinition, location);
 
     await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, () => {
       // Although pw-style does not expect usage of world / this in steps,
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
       // See: https://github.com/vitalets/playwright-bdd/issues/208
-      return stepDefinition.fn.call(this.bddContext.world, fixturesArg, ...parameters);
+      return matchedDefinition.definition.fn.call(
+        this.bddContext.world,
+        fixturesArg,
+        ...parameters,
+      );
     });
   }
 
@@ -91,15 +95,12 @@ class StepInvoker {
   }
 
   private async getStepParameters(
-    stepDefinition: StepDefinition,
-    text: string,
+    matchedDefinition: MatchedStepDefinition,
+    world: unknown,
     argument?: PickleStepArgument,
   ) {
-    const parameters = await Promise.all(
-      // todo: pass World arg.getValue instead of null
-      // todo: optimize to re-use matches from finding step definitions
-      stepDefinition.expression.match(text)!.map((arg) => arg.getValue(null)),
-    );
+    const parameters = await matchedDefinition.getMatchedParameters(world);
+
     if (argument?.dataTable) {
       parameters.push(new DataTable(argument.dataTable));
     } else if (argument?.docString) {

@@ -1,4 +1,4 @@
-import { StepMatchArgumentsList } from '@cucumber/messages';
+import { StepMatchArgument } from '@cucumber/messages';
 
 export type BddAnnotationData = {
   // feature file path relative to configDir
@@ -12,6 +12,5 @@ export type BddAnnotationData = {
 export type BddAnnotationDataStep = {
   // playwright step location in spec file
   pwStepLocation: string;
-  // stepDefinition match result
-  stepMatchArgumentsLists: readonly StepMatchArgumentsList[];
+  stepMatchArguments: StepMatchArgument[];
 };

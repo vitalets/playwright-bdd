@@ -4,9 +4,11 @@
 
 import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
 import parseTagsExpression from '@cucumber/tag-expressions';
+import { KeywordType } from '../cucumber/keywordType';
 import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
+import { MatchedStepDefinition } from './matchedStepDefinition';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -96,8 +98,32 @@ export class StepDefinition {
     return Boolean(this.options.worldFixture);
   }
 
+  /**
+   * Tries to match step text.
+   * Returns MatchedStepDefinition in case of success.
+   */
+  matchStepText(stepText: string) {
+    const result = this.expression.match(stepText);
+    if (result) {
+      return new MatchedStepDefinition(this, stepText, result);
+    }
+  }
+
   matchesTags(tags: string[]) {
     return this.#tagsExpression ? this.#tagsExpression.evaluate(tags) : true;
+  }
+
+  matchesKeywordType(keywordType: KeywordType) {
+    switch (this.keyword) {
+      case 'Unknown':
+        return true;
+      case 'Given':
+        return keywordType === 'precondition';
+      case 'When':
+        return keywordType === 'event';
+      case 'Then':
+        return keywordType === 'outcome';
+    }
   }
 
   private buildTagsExpression() {

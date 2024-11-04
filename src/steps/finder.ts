@@ -6,64 +6,56 @@ import { stepDefinitions } from './stepRegistry';
 import { BDDConfig } from '../config/types';
 import { KeywordType } from '../cucumber/keywordType';
 import { StepDefinition } from './stepDefinition';
+import { MatchedStepDefinition } from './matchedStepDefinition';
+import { toBoolean } from '../utils';
 
 export class StepFinder {
   constructor(private config: BDDConfig) {}
 
   findDefinitions(keywordType: KeywordType, stepText: string, tags?: string[]) {
-    let matchedSteps = this.filterByText(stepDefinitions, stepText);
+    let definitions = this.matchByText(stepDefinitions, stepText);
 
     if (this.config.matchKeywords) {
-      matchedSteps = this.filterByKeyword(matchedSteps, keywordType);
+      definitions = this.filterByKeyword(definitions, keywordType);
     }
 
     if (tags) {
-      matchedSteps = this.filterByTags(matchedSteps, tags);
+      definitions = this.filterByTags(definitions, tags);
     }
 
-    return matchedSteps;
+    return definitions;
   }
 
-  private filterByText(steps: StepDefinition[], stepText: string) {
-    return steps.filter((step) => {
-      // todo: store result to reuse later (MatchedStepDefinition)
-      return Boolean(step.expression.match(stepText));
-    });
+  private matchByText(definitions: StepDefinition[], stepText: string) {
+    return definitions
+      .map((definition) => definition.matchStepText(stepText)) // prettier-ignore
+      .filter(toBoolean);
   }
 
-  private filterByKeyword(steps: StepDefinition[], keywordType: KeywordType) {
-    return steps.filter((step) => {
-      switch (step.keyword) {
-        case 'Unknown':
-          return true;
-        case 'Given':
-          return keywordType === 'precondition';
-        case 'When':
-          return keywordType === 'event';
-        case 'Then':
-          return keywordType === 'outcome';
-      }
-    });
+  private filterByKeyword(matchedDefinitions: MatchedStepDefinition[], keywordType: KeywordType) {
+    return matchedDefinitions.filter(({ definition }) =>
+      definition.matchesKeywordType(keywordType),
+    );
   }
 
-  private filterByTags(steps: StepDefinition[], tags: string[]) {
-    return steps.filter((step) => step.matchesTags(tags));
+  private filterByTags(matchedDefinitions: MatchedStepDefinition[], tags: string[]) {
+    return matchedDefinitions.filter(({ definition }) => definition.matchesTags(tags));
   }
 }
 
 export function formatDuplicateStepsMessage(
-  matchedSteps: StepDefinition[],
+  matchedDefinitions: MatchedStepDefinition[],
   stepTextWithKeyword: string,
   stepLocation: string,
 ) {
-  const stepLines = matchedSteps.map((step) => {
-    const file = step.uri ? relativeToCwd(step.uri) : '';
-    return `  - ${step.keyword} '${step.patternString}' # ${file}:${step.line}`;
+  const variants = matchedDefinitions.map(({ definition }) => {
+    const file = definition.uri ? relativeToCwd(definition.uri) : '';
+    return `  - ${definition.keyword} '${definition.patternString}' # ${file}:${definition.line}`;
   });
 
   return [
-    `Multiple definitions (${matchedSteps.length}) matched scenario step!`,
+    `Multiple definitions (${matchedDefinitions.length}) matched scenario step!`,
     `Step: ${stepTextWithKeyword} # ${stepLocation}`,
-    ...stepLines,
+    ...variants,
   ].join('\n');
 }

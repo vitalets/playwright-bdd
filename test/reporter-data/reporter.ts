@@ -22,4 +22,8 @@ export default class MyReporter implements Reporter {
     await fs.promises.mkdir(path.dirname(this.options.outputFile), { recursive: true });
     await fs.promises.writeFile(this.options.outputFile, this.messages.join('\n'));
   }
+
+  printsToStdio() {
+    return false;
+  }
 }

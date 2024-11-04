@@ -40,6 +40,7 @@ import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
 import { TestFileHooks } from './testFileHooks';
 import { getSpecFileByFeatureFile } from './paths';
+import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 
 type TestFileOptions = {
   config: BDDConfig;
@@ -295,27 +296,27 @@ export class TestFile {
       this.bddMetaBuilder.registerStep(step, keywordType);
       // pickleStep contains step text with inserted example values and argument
       const pickleStep = this.findPickleStep(step, outlineExampleRowId);
-      const stepDefinition = this.findStepDefinition(keywordType, step, pickleStep, tags);
-      if (!stepDefinition) {
+      const matchedDefinition = this.findMatchedDefinition(keywordType, step, pickleStep, tags);
+      if (!matchedDefinition) {
         hasMissingSteps = true;
         return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
       }
 
-      this.usedStepDefinitions.add(stepDefinition);
+      this.usedStepDefinitions.add(matchedDefinition.definition);
 
-      if (stepDefinition.isDecorator()) {
+      if (matchedDefinition.definition.isDecorator()) {
         decoratorSteps.push({
           index,
           keywordEng,
           pickleStep,
-          pomNode: stepDefinition.pomNode,
+          pomNode: matchedDefinition.definition.pomNode,
         });
 
         // for decorator steps, line and fixtureNames are filled later in second pass
         return '';
       }
 
-      const stepFixtureNames = this.getStepFixtureNames(stepDefinition);
+      const stepFixtureNames = this.getStepFixtureNames(matchedDefinition);
       stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
 
       return this.formatter.step(
@@ -347,22 +348,22 @@ export class TestFile {
     return { fixtures: testFixtureNames, lines, hasMissingSteps };
   }
 
-  private findStepDefinition(
+  private findMatchedDefinition(
     keywordType: KeywordType,
     scenarioStep: Step,
     pickleStep: PickleStep,
     tags?: string[],
   ) {
-    const stepDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text, tags);
+    const matchedDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text, tags);
 
-    if (stepDefinitions.length > 1) {
+    if (matchedDefinitions.length > 1) {
       const stepTextWithKeyword = getStepTextWithKeyword(scenarioStep.keyword, pickleStep.text);
       const stepLocation = `${this.featureUri}:${stringifyLocation(scenarioStep.location)}`;
       // todo: maybe not exit and collect all duplicates?
-      exit(formatDuplicateStepsMessage(stepDefinitions, stepTextWithKeyword, stepLocation));
+      exit(formatDuplicateStepsMessage(matchedDefinitions, stepTextWithKeyword, stepLocation));
     }
 
-    return stepDefinitions[0];
+    return matchedDefinitions[0];
   }
 
   private handleMissingStep(
@@ -409,12 +410,12 @@ export class TestFile {
     return keywordEng as StepFixtureName;
   }
 
-  private getStepFixtureNames(stepDefinition: StepDefinition) {
+  private getStepFixtureNames({ definition }: MatchedStepDefinition) {
     // for cucumber-style there is no fixtures arg,
     // fixtures are accessible via this.world
-    if (stepDefinition.isCucumberStyle()) return [];
+    if (definition.isCucumberStyle()) return [];
 
-    return fixtureParameterNames(stepDefinition.fn) // prettier-ignore
+    return fixtureParameterNames(definition.fn) // prettier-ignore
       .filter((name) => !isBddAutoInjectFixture(name));
   }
 

@@ -9,14 +9,13 @@
  * See: https://github.com/microsoft/playwright/issues/30175
  */
 import { TestInfo } from '@playwright/test';
-import { createTestStep } from '../cucumber/createTestStep';
 import { stringifyLocation } from '../utils';
 import { BddTestMeta } from '../gen/bddMetaBuilder';
 import { TestCase } from '@playwright/test/reporter';
 import { PlaywrightLocation, PwAnnotation } from '../playwright/types';
 import { BddAnnotationData } from './types';
 import { updateAnnotation } from '../playwright/utils';
-import { StepDefinition } from '../steps/stepDefinition';
+import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 
 const BDD_ANNOTATION_NAME = '__bddData';
 
@@ -32,15 +31,10 @@ export class BddAnnotation {
     this.save({ create: true });
   }
 
-  registerStep(
-    stepDefinition: StepDefinition,
-    stepText: string,
-    pwStepLocation: PlaywrightLocation,
-  ) {
-    const step = createTestStep(stepDefinition, stepText);
+  registerStep(matchedDefinition: MatchedStepDefinition, pwStepLocation: PlaywrightLocation) {
     this.data.steps.push({
       pwStepLocation: stringifyLocation(pwStepLocation),
-      stepMatchArgumentsLists: step.stepMatchArgumentsLists || [],
+      stepMatchArguments: matchedDefinition.getStepMatchArguments(),
     });
     this.save();
   }
