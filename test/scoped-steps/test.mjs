@@ -11,9 +11,13 @@ test(testDir.name, () => {
   expect(stdout).toContain('scenario bar: step without tags');
   expect(stdout).toContain('scenario bar: step for @bar');
 
+  // todo: check bg fixtures
+  expect(stdout).toContain('scenario baz1: bg step for @baz1');
   expect(stdout).toContain('scenario baz1: step without tags');
   expect(stdout).toContain('scenario baz1: step for @baz1');
 
+  // todo: check bg fixtures
+  expect(stdout).toContain('scenario baz2: bg step for @baz2');
   expect(stdout).toContain('scenario baz2: step without tags');
   expect(stdout).toContain('scenario baz2: step for @baz2');
 });

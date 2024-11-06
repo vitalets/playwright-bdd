@@ -1,7 +1,6 @@
-import { createBdd } from 'playwright-bdd';
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
-const { Given } = createBdd();
-const logger = console;
+import { Given, logger } from './fixtures';
 
 Given('step without tags', async ({ $testInfo }) => {
   logger.log(`${$testInfo.title}: step without tags`);
@@ -21,4 +20,12 @@ Given('step bound to scenario', { tags: '@baz1' }, async ({ $testInfo }) => {
 
 Given('step bound to scenario', { tags: '@baz2' }, async ({ $testInfo }) => {
   logger.log(`${$testInfo.title}: step for @baz2`);
+});
+
+Given('bg step bound to scenario', { tags: '@baz1' }, async ({ $testInfo, fixtureBg1 }) => {
+  logger.log(`${$testInfo.title}: bg step for @baz1`);
+});
+
+Given('bg step bound to scenario', { tags: '@baz2' }, async ({ $testInfo, fixtureBg2 }) => {
+  logger.log(`${$testInfo.title}: bg step for @baz2`);
 });
