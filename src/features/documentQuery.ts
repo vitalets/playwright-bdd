@@ -1,5 +1,6 @@
 /**
  * Helper to query data from loaded gherkin document.
+ * See PICKLES.md.
  */
 
 /* eslint-disable max-nested-callbacks */
