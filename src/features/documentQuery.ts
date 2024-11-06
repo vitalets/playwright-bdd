@@ -30,6 +30,11 @@ export class GherkinDocumentQuery {
     return this.pickles.length > 0;
   }
 
+  // todo: returns strictly one pickle step!
+  // getPickleStep(scenarioId: string, stepId: string, exampleRowId: string) {
+  //   return null;
+  // }
+
   /**
    * Returns pickle for astNodeId.
    * Pickle is executable entity including background steps
@@ -38,7 +43,7 @@ export class GherkinDocumentQuery {
    * AstNodeId can represent here:
    * - bg scenario: maps to several pickles
    * - scenario: maps to single pickle
-   * - scenario outline: maps to several pickles
+   * - scenario outline: maps to several pickles (for each example row)
    * - example row: maps to single pickle
    */
   getPickles(astNodeId: string) {

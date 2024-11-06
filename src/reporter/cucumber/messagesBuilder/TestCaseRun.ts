@@ -101,8 +101,8 @@ export class TestCaseRun {
     const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
     return (this.bddData?.steps || []).map((bddDataStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
-      this.registerErrorStep(pwStep);
-      this.registerTimeoutedStep(pwStep);
+      this.handleErrorStep(pwStep);
+      this.handleTimeoutedStep(pwStep);
       return { bddDataStep, pwStep };
     });
   }
@@ -111,12 +111,12 @@ export class TestCaseRun {
     return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
   }
 
-  registerErrorStep(pwStep?: pw.TestStep) {
+  handleErrorStep(pwStep?: pw.TestStep) {
     if (pwStep?.error) this.errorSteps.add(pwStep);
   }
 
   // eslint-disable-next-line visual/complexity
-  registerTimeoutedStep(pwStep?: pw.TestStep) {
+  handleTimeoutedStep(pwStep?: pw.TestStep) {
     if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
     const { error } = pwStep;
     if (isUnknownDuration(pwStep) || this.result.errors.some((e) => e.message === error?.message)) {

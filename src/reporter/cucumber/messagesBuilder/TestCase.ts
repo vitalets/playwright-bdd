@@ -108,10 +108,10 @@ export class TestCase {
   }
 
   /**
-   * Fill stepMatchArgumentsLists from all test runs.
+   * Fill stepMatchArgumentsLists from all test retries.
    * It allows to fill as many steps as possible.
    * Possibly, we write the same stepMatchArgumentsLists several times,
-   * looks like it's not a problem as they should be equal for all runs.
+   * looks like it's not a problem as they should be equal for all retries.
    */
   private addStepsArgumentsLists(testCaseRun: TestCaseRun) {
     testCaseRun.bddData?.steps.forEach((bddDataStep, stepIndex) => {

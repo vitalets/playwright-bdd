@@ -94,8 +94,8 @@ export class TestCaseRunHooks {
       this.hookSteps.add(stepWithError);
       // in Playwright error is inherited by all parent steps,
       // but we want to show it once (in the deepest step)
-      this.testCaseRun.registerErrorStep(stepWithError);
-      this.testCaseRun.registerTimeoutedStep(stepWithError);
+      this.testCaseRun.handleErrorStep(stepWithError);
+      this.testCaseRun.handleTimeoutedStep(stepWithError);
     }
   }
 
