@@ -1,6 +1,6 @@
-@foo
-Feature: feature foo
+@bar
+Feature: feature bar
 
-  Scenario: scenario for foo
+  Scenario: scenario bar
     Given step without tags
     Given step bound to feature

@@ -5,14 +5,15 @@ const testDir = new TestDir(import.meta);
 test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name);
 
-  expect(stdout).toContain('running step for @foo: scenario for foo');
-  expect(stdout).toContain('running step for @bar: scenario for bar');
+  expect(stdout).toContain('scenario foo: step without tags');
+  expect(stdout).toContain('scenario foo: step for @foo');
 
-  expect(stdout).toContain('running step for @baz1: scenario for baz 1');
-  expect(stdout).toContain('running step for @baz2: scenario for baz 2');
+  expect(stdout).toContain('scenario bar: step without tags');
+  expect(stdout).toContain('scenario bar: step for @bar');
 
-  expect(stdout).toContain('running step without tags: scenario for foo');
-  expect(stdout).toContain('running step without tags: scenario for bar');
-  expect(stdout).toContain('running step without tags: scenario for baz 1');
-  expect(stdout).toContain('running step without tags: scenario for baz 2');
+  expect(stdout).toContain('scenario baz1: step without tags');
+  expect(stdout).toContain('scenario baz1: step for @baz1');
+
+  expect(stdout).toContain('scenario baz2: step without tags');
+  expect(stdout).toContain('scenario baz2: step for @baz2');
 });
