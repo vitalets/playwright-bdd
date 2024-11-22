@@ -10,7 +10,6 @@ import {
   TestResult,
 } from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder/ref';
-import { enableEnrichReporterData } from '../../config/enrichReporterData';
 import BaseReporter, { InternalOptions } from './base';
 import MessageReporter from './message';
 import HtmlReporter from './html';
@@ -43,8 +42,6 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
     const { $type, ...userOptions } = fullOptions;
     this.type = $type;
     this.userOptions = userOptions as unknown as CucumberReporterOptions<T>;
-
-    enableEnrichReporterData();
     this.messagesBuilderRef = getMessagesBuilderRef();
     this.reporter = this.createCucumberReporter();
   }

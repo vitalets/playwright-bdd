@@ -1,7 +1,5 @@
 import path from 'node:path';
 import { getPackageVersion, resolvePackageRoot } from '../utils';
-import { TestInfo } from '@playwright/test';
-import { PwAnnotation } from './types';
 
 // cache playwright root
 let playwrightRoot = '';
@@ -26,22 +24,4 @@ function getPlaywrightRoot() {
   }
 
   return playwrightRoot;
-}
-
-/**
- * Create or update annotation with provided type.
- */
-export function updateAnnotation(
-  testInfo: TestInfo,
-  annotation: PwAnnotation,
-  { create = false } = {},
-) {
-  const { annotations } = testInfo;
-  const index = annotations.findIndex((a) => a.type === annotation.type);
-  if (index === -1 && !create) throw new Error(`Annotation "${annotation.type}" is not found.`);
-  if (index === -1) {
-    annotations.push(annotation);
-  } else {
-    annotations[index] = annotation;
-  }
 }

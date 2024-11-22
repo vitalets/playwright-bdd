@@ -44,7 +44,10 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   quotes?: 'single' | 'double' | 'backtick';
   /** Tags expression to filter scenarios for generation */
   tags?: string;
-  /** Add special BDD attachments for Cucumber reports */
+  /**
+   * Add special BDD attachments for Cucumber reports
+   * @deprecated since v8, now no bdd annotations are added
+   */
   enrichReporterData?: boolean;
   /** Set to true if your POMs have a state */
   statefulPoms?: boolean;
