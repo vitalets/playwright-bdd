@@ -53,8 +53,8 @@ function registerDecoratorStep(stepOptions: StepDefinitionOptions) {
   registerStepDefinition({
     ...stepOptions,
     fn: (fixturesArg: Record<string, unknown>, ...args: unknown[]) => {
-      const fixture = getFirstNonAutoInjectFixture(fixturesArg, stepOptions);
-      return fn.call(fixture, ...args);
+      const pomFixture = getFirstNonAutoInjectFixture(fixturesArg, stepOptions);
+      return fn.call(pomFixture, ...args);
     },
   });
 }

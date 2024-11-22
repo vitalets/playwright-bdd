@@ -44,15 +44,13 @@ class StepInvoker {
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getLocationInFile(this.bddContext.testInfo.file);
 
-    const parameters = await this.getStepParameters(
+    const stepParameters = await this.getStepParameters(
       matchedDefinition,
       stepText,
       argument || undefined,
     );
 
-    const fixturesArg = Object.assign({}, stepFixtures, getBddAutoInjectFixtures(this.bddContext));
-
-    // this.bddContext.bddAnnotation?.registerStep(matchedDefinition, location);
+    const fixturesArg = this.getStepFixtures(stepFixtures || {});
 
     await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, () => {
       // Although pw-style does not expect usage of world / this in steps,
@@ -62,7 +60,7 @@ class StepInvoker {
       return matchedDefinition.definition.fn.call(
         this.bddContext.world,
         fixturesArg,
-        ...parameters,
+        ...stepParameters,
       );
     });
   }
@@ -112,6 +110,18 @@ class StepInvoker {
     return parameters;
   }
 
+  private getStepFixtures(providedFixtures: Record<string, unknown>) {
+    const { pomFixtureName } = this.getBddStepData();
+    if (pomFixtureName) {
+      // for decorator steps keep only one fixture - POM instance.
+      const pomFixture = providedFixtures[pomFixtureName];
+      if (!pomFixture) throw new Error(`POM fixture not provided: ${pomFixtureName}`);
+      providedFixtures = { [pomFixtureName]: pomFixture };
+    }
+
+    return Object.assign({}, providedFixtures, getBddAutoInjectFixtures(this.bddContext));
+  }
+
   private getStepTextWithKeyword(stepText: string) {
     const { keywordOrig } = this.getBddStepData();
     return getStepTextWithKeyword(keywordOrig, stepText);
@@ -119,6 +129,15 @@ class StepInvoker {
 
   private getBddStepData() {
     const { stepIndex, bddTestData } = this.bddContext;
-    return bddTestData.steps[stepIndex];
+    const bddStepData = bddTestData.steps[stepIndex];
+    if (!bddStepData) {
+      throw new Error(
+        [
+          `bddStepData not found for step index: ${stepIndex}.`,
+          `Steps: ${JSON.stringify(bddTestData.steps)}`,
+        ].join(' '),
+      );
+    }
+    return bddStepData;
   }
 }
