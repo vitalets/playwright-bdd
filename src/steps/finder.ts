@@ -1,10 +1,11 @@
 /**
  * Finding step definitions.
  */
+import { PickleStepType } from '@cucumber/messages';
 import { relativeToCwd } from '../utils/paths';
 import { stepDefinitions } from './stepRegistry';
 import { BDDConfig } from '../config/types';
-import { KeywordType } from '../cucumber/keywordType';
+// import { KeywordType } from '../cucumber/keywordType';
 import { StepDefinition } from './stepDefinition';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { toBoolean } from '../utils';
@@ -12,7 +13,7 @@ import { toBoolean } from '../utils';
 export class StepFinder {
   constructor(private config: BDDConfig) {}
 
-  findDefinitions(keywordType: KeywordType, stepText: string, tags?: string[]) {
+  findDefinitions(keywordType: PickleStepType | undefined, stepText: string, tags?: string[]) {
     let definitions = this.matchByText(stepDefinitions, stepText);
 
     if (this.config.matchKeywords) {
@@ -32,7 +33,10 @@ export class StepFinder {
       .filter(toBoolean);
   }
 
-  private filterByKeyword(matchedDefinitions: MatchedStepDefinition[], keywordType: KeywordType) {
+  private filterByKeyword(
+    matchedDefinitions: MatchedStepDefinition[],
+    keywordType: PickleStepType | undefined,
+  ) {
     return matchedDefinitions.filter(({ definition }) =>
       definition.matchesKeywordType(keywordType),
     );

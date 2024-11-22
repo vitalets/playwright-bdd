@@ -1,5 +1,6 @@
 /**
  * Builds particular cucumber testCase.
+ * One testCase can have multiple runs, because of retries.
  *
  * About hooks:
  * There are many fixtures that wrap each test, they are actually hooks.
@@ -25,6 +26,7 @@ export class TestCase {
   #projectInfo?: ProjectInfo;
   private beforeHooks = new Map</* internalId */ string, HookWithStep>();
   private afterHooks = new Map</* internalId */ string, HookWithStep>();
+  // rename to pickleSteps
   private mainSteps: messages.TestStep[] = [];
 
   constructor(
@@ -50,6 +52,7 @@ export class TestCase {
       this.#pickle = this.findPickle(testCaseRun);
       this.addStepsFromPickle(this.#pickle);
     }
+    // todo: call only on first testCaseRun
     this.addStepsArgumentsLists(testCaseRun);
   }
 
@@ -114,24 +117,20 @@ export class TestCase {
    * looks like it's not a problem as they should be equal for all retries.
    */
   private addStepsArgumentsLists(testCaseRun: TestCaseRun) {
-    testCaseRun.bddData?.steps.forEach((bddDataStep, stepIndex) => {
+    testCaseRun.bddTestData.steps.forEach((bddStep, stepIndex) => {
       // map executed step from bddData to pickle step by index!
       const testCaseStep = this.mainSteps?.[stepIndex];
-      if (testCaseStep && bddDataStep.stepMatchArguments) {
-        testCaseStep.stepMatchArgumentsLists = [
-          { stepMatchArguments: bddDataStep.stepMatchArguments },
-        ];
+      if (testCaseStep && bddStep.stepMatchArguments) {
+        testCaseStep.stepMatchArgumentsLists = [{ stepMatchArguments: bddStep.stepMatchArguments }];
       }
     });
   }
 
   private findPickle(testCaseRun: TestCaseRun) {
-    const featureUri = testCaseRun.getFeatureUri();
-    const doc = this.gherkinDocuments.find((doc) => doc.uri === featureUri);
+    const doc = this.gherkinDocuments.find((doc) => doc.uri === testCaseRun.featureUri);
     if (!doc) throw new Error('GherkinDocument not found');
-    const pickleLineNumber = testCaseRun.getPickleLineNumber();
     const pickle = doc.pickles.find((pickle) => {
-      return pickle.location.line === pickleLineNumber;
+      return pickle.location.line === testCaseRun.bddTestData.pickleLine;
     });
     if (!pickle) throw new Error('Pickle not found');
     return pickle;

@@ -6,14 +6,11 @@
 
 import { test as base } from './worker';
 import { BDDConfig } from '../../config/types';
-import { runScenarioHooks, ScenarioHookType } from '../../hooks/scenario';
+import { runScenarioHooks } from '../../hooks/scenario';
 import { createStepInvoker, StepKeywordFixture } from '../StepInvoker';
-import { BddFileMeta, BddTestMeta, getBddTestMeta } from '../../gen/bddMetaBuilder';
-import { getEnrichReporterData } from '../../config/enrichReporterData';
-import { SpecialTags } from '../../specialTags';
 import { TestTypeCommon } from '../../playwright/types';
 import { TestInfo } from '@playwright/test';
-import { BddAnnotation } from '../../bddAnnotation';
+import { BddTestData } from '../../bddData/types';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -33,8 +30,8 @@ export type BddFixturesTest = {
   Then: StepKeywordFixture;
   And: StepKeywordFixture;
   But: StepKeywordFixture;
-  $bddFileMeta: BddFileMeta;
-  $bddTestMeta?: BddTestMeta; // $bddTestMeta is undefined for non-bdd tests
+  $bddFileData: BddTestData[];
+  $bddTestData?: BddTestData; // $bddTestData is undefined for non-bdd tests
   $tags: string[];
   $test: TestTypeCommon;
   $testInfo: TestInfo;
@@ -57,31 +54,25 @@ export type BddContext = {
   step: StepFixture;
   stepIndex: number; // step index in pickle (differs from index in scenario, b/c bg steps)
   world: unknown;
-  bddTestMeta: BddTestMeta;
-  bddAnnotation?: BddAnnotation;
+  bddTestData: BddTestData;
 };
 
 export const test = base.extend<BddFixturesTest>({
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
   $applySpecialTags: [
-    async ({ $bddTestMeta }, use, testInfo) => {
-      const specialTags = new SpecialTags($bddTestMeta?.ownTags, $bddTestMeta?.tags);
-      if (specialTags.timeout !== undefined) testInfo.setTimeout(specialTags.timeout);
-      if (specialTags.slow !== undefined) testInfo.slow();
+    async ({ $bddTestData }, use, testInfo) => {
+      if ($bddTestData?.timeout !== undefined) testInfo.setTimeout($bddTestData.timeout);
+      if ($bddTestData?.slow) testInfo.slow();
       await use();
     },
     fixtureOptions,
   ],
   $bddContext: [
-    async ({ $tags, $test, $bddConfig, $bddTestMeta, $uri, $step, $world }, use, testInfo) => {
-      if (!$bddTestMeta) {
+    async ({ $tags, $test, $bddConfig, $bddTestData, $uri, $step, $world }, use, testInfo) => {
+      if (!$bddTestData) {
         throw new Error('BDD fixtures can be used only in BDD tests');
       }
-
-      const bddAnnotation = getEnrichReporterData($bddConfig)
-        ? new BddAnnotation(testInfo, $bddTestMeta, $uri)
-        : undefined;
 
       await use({
         config: $bddConfig,
@@ -92,8 +83,7 @@ export const test = base.extend<BddFixturesTest>({
         step: $step,
         stepIndex: -1,
         world: $world,
-        bddTestMeta: $bddTestMeta,
-        bddAnnotation,
+        bddTestData: $bddTestData,
       });
     },
     fixtureOptions,
@@ -113,22 +103,25 @@ export const test = base.extend<BddFixturesTest>({
 
   // For cucumber-style $world will be overwritten in test files
   // For playwright-style $world will be empty object
-  // Note: although pw-style does not expect usage of world / this in steps,
+  // Note: although pw-style does not expect usage of world in steps,
   // some projects request it for better migration process from cucumber
   // See: https://github.com/vitalets/playwright-bdd/issues/208
   $world: [({}, use: (arg: unknown) => unknown) => use({}), fixtureOptions],
 
-  // init $bddFileMeta with empty object, will be overwritten in each BDD test file
-  $bddFileMeta: [({}, use) => use({}), fixtureOptions],
+  // init $bddFileData with empty array, will be overwritten in each BDD test file
+  $bddFileData: [({}, use) => use([]), fixtureOptions],
 
-  // particular test meta
-  $bddTestMeta: [
-    ({ $bddFileMeta }, use, testInfo) => use(getBddTestMeta($bddFileMeta, testInfo)),
+  // bddTestData for particular test
+  $bddTestData: [
+    async ({ $bddFileData }, use, testInfo) => {
+      const bddTestData = $bddFileData.find((data) => data.pwTestLine === testInfo.line);
+      await use(bddTestData);
+    },
     fixtureOptions,
   ],
 
   // particular test tags
-  $tags: [({ $bddTestMeta }, use) => use($bddTestMeta?.tags || []), fixtureOptions],
+  $tags: [({ $bddTestData }, use) => use($bddTestData?.tags || []), fixtureOptions],
 
   // init $test with base test, but it will be overwritten in test file
   $test: [({}, use) => use(base), fixtureOptions],

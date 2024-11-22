@@ -84,6 +84,7 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
 export function execPlaywrightTestInternal(dir, cmd) {
   const cwd = path.join('test', dir);
   const cmdStr = getCmdStr(cmd);
+  if (process.env.TEST_DEBUG) logger.log('CMD:', cmdStr);
   const env = Object.assign({}, process.env, cmd?.env);
   const stdout = execSync(cmdStr, { cwd, stdio: 'pipe', env })?.toString() || '';
   return stdout;

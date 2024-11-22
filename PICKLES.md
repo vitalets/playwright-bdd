@@ -27,26 +27,26 @@ pickle 1 (scenario 1)
 
 pickle 2 (scenario 2, example row 1)
   pickleStep 2.1 (A)
-  pickleStep 2.2 (C, C1)
+  pickleStep 2.2 (C)
 
 pickle 3 (scenario 2, example row 2)
   pickleStep 3.1 (A)
-  pickleStep 3.2 (C, C2)
+  pickleStep 3.2 (C)
 ```
 Mapping it back to feature file:
 ```gherkin
 Feature: feature 1
 
-  Background: # not referenced from any pickle
-    A # referenced from 3 pickle steps: 1.1, 2.1, 3.1
+  Background: # referenced from: none
+    A # referenced from: pickleStep 1.1, pickleStep 2.1, pickleStep 3.1
 
   Scenario: scenario 1 # referenced from: pickle 1
-    B # referenced from 1 pickle step: 1.2
+    B # referenced from: pickleStep 1.2
 
   Scenario Outline: scenario 2 # referenced from: pickle 2, pickle 3
-    C # referenced from 2 pickle steps: 2.2, 3.2
+    C # referenced from: pickleStep 2.2, pickleStep 3.2
     
   Examples:
-    C1 # referenced from 1 pickle step: 2.2
-    C2 # referenced from 1 pickle step: 3.2 
+    C1 # referenced from: pickle 2
+    C2 # referenced from: pickle 3
 ```

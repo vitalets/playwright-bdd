@@ -15,6 +15,7 @@ import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/stepRegistry';
 import { saveFileSync } from '../utils';
 import { MissingStep } from '../snippets/types';
+import { StepDefinition } from '../steps/stepDefinition';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -46,9 +47,12 @@ export class TestFilesGenerator {
   async extractUnusedSteps() {
     await Promise.all([this.loadFeatures(), this.loadSteps()]);
     this.buildFiles();
+    const allUsedDefinitions = this.files.reduce((acc, file) => {
+      file.getUsedDefinitions().forEach((definition) => acc.add(definition));
+      return acc;
+    }, new Set<StepDefinition>());
     return stepDefinitions.filter((stepDefinition) => {
-      const isUsed = this.files.some((file) => file.usedStepDefinitions.has(stepDefinition));
-      return !isUsed;
+      return !allUsedDefinitions.has(stepDefinition);
     });
   }
 
@@ -86,13 +90,13 @@ export class TestFilesGenerator {
           tagsExpression: this.tagsExpression,
         }).build();
       })
-      .filter((file) => file.testCount > 0);
+      .filter((file) => file.hasExecutableTests());
   }
 
   private checkMissingSteps() {
     if (this.config.missingSteps !== 'fail-on-gen') return;
     const missingSteps: MissingStep[] = [];
-    this.files.forEach((file) => missingSteps.push(...file.missingSteps));
+    this.files.forEach((file) => missingSteps.push(...file.getMissingSteps()));
     if (missingSteps.length) {
       new Snippets(missingSteps).print();
       exit();

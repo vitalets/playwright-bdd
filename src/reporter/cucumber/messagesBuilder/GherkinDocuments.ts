@@ -59,7 +59,7 @@ export class GherkinDocuments {
   private fillProjectsPerFeaturePath(testCaseRuns: TestCaseRun[]) {
     testCaseRuns.forEach((testCaseRun) => {
       this.projectsPerFeaturePath
-        .getOrCreate(testCaseRun.getFeatureUri(), () => new Set())
+        .getOrCreate(testCaseRun.featureUri, () => new Set())
         .add(testCaseRun.projectInfo);
     });
   }

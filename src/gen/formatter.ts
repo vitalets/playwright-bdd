@@ -4,13 +4,13 @@
 
 import { PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
-import { TestNode } from './testNode';
 import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { ScenarioHookType } from '../hooks/scenario';
 import { WorkerHookType } from '../hooks/worker';
+import { SpecialTags } from '../specialTags';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -36,14 +36,16 @@ export class Formatter {
     ];
   }
 
-  describe(node: TestNode, children: string[]) {
-    const firstLine = `test.${this.withSubFunction('describe', node)}(${this.quoted(node.title)}, () => {`;
+  describe(title: string, specialTags: SpecialTags, children: string[]) {
+    const titleStr = this.quoted(title);
+    const fn = this.withSubFunction('describe', specialTags);
+    const firstLine = `test.${fn}(${titleStr}, () => {`;
     if (!children.length) return [`${firstLine}});`, ''];
     return [
       firstLine, // prettier-ignore
-      ...this.describeConfigure(node).map(indent),
-      ...this.markAsFailing(node).map(indent),
-      // we don't render test.slow() here, b/c each test.slow() call multi-lines timeout
+      ...this.describeConfigure(specialTags).map(indent),
+      ...this.markAsFailing(specialTags).map(indent),
+      // we don't render test.slow() here, b/c each call of test.slow() multiplies timeout
       // that is not now tags are assumed to work
       '',
       ...children.map(indent),
@@ -71,9 +73,9 @@ export class Formatter {
     ];
   }
 
-  workerHooksCall(type: WorkerHookType, fixturesNames: string[]) {
+  workerHooksCall(type: WorkerHookType, fixturesNames: Set<string>) {
     const runWorkerHooksFixture = '$runWorkerHooks';
-    const fixturesStr = fixturesNames.join(', ');
+    const fixturesStr = [...fixturesNames].join(', ');
     const allFixturesStr = [runWorkerHooksFixture, ...fixturesNames].join(', ');
     const title = type === 'beforeAll' ? 'BeforeAll Hooks' : 'AfterAll Hooks';
     return [
@@ -83,27 +85,34 @@ export class Formatter {
   }
 
   // eslint-disable-next-line max-params
-  test(node: TestNode, fixtures: Set<string>, pickleLineNumber: number, children: string[]) {
+  test(
+    title: string,
+    tags: string[],
+    specialTags: SpecialTags,
+    fixtures: Set<string>,
+    pickleId: string,
+    children: string[],
+  ) {
+    const titleStr = this.quoted(title);
+    const tagsStr = this.testTags(tags);
     const fixturesStr = [...fixtures].join(', ');
-    const title = this.quoted(node.title);
-    const tags = this.testTags(node);
-    const fn = this.withSubFunction('test', node);
-    const firstLine = `${fn}(${title}, ${tags}async ({ ${fixturesStr} }) => { // ${pickleLineNumber}`;
+    const fn = this.withSubFunction('test', specialTags);
+    const firstLine = `${fn}(${titleStr}, ${tagsStr}async ({ ${fixturesStr} }) => { // test: ${pickleId}`;
     const lines = [
       firstLine, // prettier-ignore
       // We use test.fail() in the test body instead of test.fail('...', () => { ... })
       // It allows to apply .only() / .skip() on failing tests.
       // See: https://github.com/microsoft/playwright/issues/30662
-      ...this.markAsFailing(node).map(indent),
+      ...this.markAsFailing(specialTags).map(indent),
       ...children.map(indent),
       `});`,
       '',
     ];
     // Wrap test into anonymous describe in case of retries
     // See: https://github.com/microsoft/playwright/issues/10825
-    return node.specialTags.retries !== undefined
+    return specialTags.retries !== undefined
       ? this.wrapInAnonymousDescribe([
-          ...this.describeConfigure(node).map(indent),
+          ...this.describeConfigure(specialTags).map(indent),
           '',
           ...lines.map(indent),
         ])
@@ -113,15 +122,16 @@ export class Formatter {
   // eslint-disable-next-line max-params
   step(
     keywordEng: StepFixtureName,
-    text: string,
-    argument?: PickleStepArgument,
-    fixtureNames: string[] = [],
+    stepText: string,
+    argument: PickleStepArgument | undefined,
+    fixtureNames: Set<string>,
+    pickleStepIds: string[],
   ) {
-    const fixtures = fixtureNames.length ? `{ ${fixtureNames.join(', ')} }` : '';
+    const textArg = this.quoted(stepText);
+    const fixtures = fixtureNames.size ? `{ ${[...fixtureNames].join(', ')} }` : '';
     const argumentArg = argument ? JSON.stringify(argument) : fixtures ? 'null' : '';
-    const textArg = this.quoted(text);
     const args = [textArg, argumentArg, fixtures].filter((arg) => arg !== '').join(', ');
-    return `await ${keywordEng}(${args});`;
+    return `await ${keywordEng}(${args}); // step: ${pickleStepIds.join(',')}`;
   }
 
   missingStep(keywordEng: StepFixtureName, text: string) {
@@ -151,16 +161,15 @@ export class Formatter {
     return [`${targetFixtureName}: ({ ${fixturesStr} }, use) => use({ ${fixturesStr} }),`];
   }
 
-  private withSubFunction(baseFn: 'test' | 'describe', node: TestNode) {
-    if (node.specialTags.only) return `${baseFn}.only`;
-    if (node.specialTags.skip) return `${baseFn}.skip`;
-    if (node.specialTags.fixme) return `${baseFn}.fixme`;
+  private withSubFunction(baseFn: 'test' | 'describe', specialTags: SpecialTags) {
+    if (specialTags.only) return `${baseFn}.only`;
+    if (specialTags.skip) return `${baseFn}.skip`;
+    if (specialTags.fixme) return `${baseFn}.fixme`;
     return baseFn;
   }
 
-  private describeConfigure(node: TestNode) {
+  private describeConfigure({ retries, timeout, mode }: SpecialTags) {
     const options: DescribeConfigureOptions = {};
-    const { retries, timeout, mode } = node.specialTags;
     if (retries !== undefined) options.retries = retries;
     if (timeout !== undefined) options.timeout = timeout;
     if (mode !== undefined) options.mode = mode;
@@ -178,13 +187,13 @@ export class Formatter {
     ];
   }
 
-  private markAsFailing(node: TestNode) {
-    return node.specialTags.fail ? [`test.fail();`] : [];
+  private markAsFailing(specialTags: SpecialTags) {
+    return specialTags.fail ? [`test.fail();`] : [];
   }
 
-  private testTags(node: TestNode) {
-    return supportsTags && node.tags.length
-      ? `{ tag: [${node.tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
+  private testTags(tags: string[]) {
+    return supportsTags && tags.length
+      ? `{ tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
       : '';
   }
 
@@ -201,4 +210,26 @@ export class Formatter {
 
 export function indent(value: string) {
   return value ? `${'  '}${value}` : value;
+}
+
+export function extractPickleIdFromLine(line: string) {
+  const match = line.match(/\/\/ test: ([0-9a-f-]+)$/);
+  if (match) {
+    return { pickleId: match[1], index: match.index };
+  }
+}
+
+/**
+ * Extracts pickle step IDs from the comment at the end of the line.
+ * Note:
+ * - we can't use line.endsWith(`// step: ${gherkinStep.id}`), because for Scenario Outline
+ * the same step is rendered multiple times with different pickle step ids.
+ * - we can't use line.endsWith(`// step: ${pickleStep.id}`), because for Background
+ * the same step is referenced by multiple pickle steps.
+ */
+export function extractPickleStepIdsFromLine(line: string) {
+  const match = line.match(/\/\/ step: ([0-9a-f-,]+)$/);
+  if (match) {
+    return { pickleStepIds: match[1].split(','), index: match.index };
+  }
 }

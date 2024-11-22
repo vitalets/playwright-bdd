@@ -81,6 +81,6 @@ function checkScenarioOutline(outDir) {
 
   // scenarios without examples
   expect(content).toContain(`test("scenario outline without examples",`);
-  expect(content).toContain(`test.describe("scenario outline with empty examples (1)", () => {});`);
-  expect(content).toContain(`test.describe("scenario outline with empty examples (2)", () => {});`);
+  expect(content).not.toContain(`scenario outline with empty examples (1)`);
+  expect(content).not.toContain(`scenario outline with empty examples (2)`);
 }

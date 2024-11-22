@@ -3,7 +3,6 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { stringifyLocation } from '../../../utils/index.js';
 import { Hook, HookType } from './Hook';
 import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap.js';
@@ -13,10 +12,7 @@ import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
-import { BddAnnotationData, BddAnnotationDataStep } from '../../../bddAnnotation/types';
-import { extractBddData } from '../../../bddAnnotation';
-import { BDDConfig } from '../../../config/types';
-import { TestFileExtractor } from '../testFiles/extractor.js';
+import { BddStepData, BddTestData } from '../../../bddData/types';
 
 export type TestCaseRunEnvelope = TestStepRunEnvelope &
   Pick<
@@ -26,14 +22,13 @@ export type TestCaseRunEnvelope = TestStepRunEnvelope &
   >;
 
 export type ExecutedStepInfo = {
-  bddDataStep: BddAnnotationDataStep;
+  bddStep: BddStepData;
   // pwStep can be missing even for executed steps when there is test timeout
   pwStep?: pw.TestStep;
 };
 
 export class TestCaseRun {
   id: string;
-  bddData?: BddAnnotationData;
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
@@ -47,14 +42,13 @@ export class TestCaseRun {
 
   // eslint-disable-next-line max-params
   constructor(
-    private bddConfig: BDDConfig,
-    private testFileExtractor: TestFileExtractor,
+    public bddTestData: BddTestData,
+    public featureUri: string,
     public test: pw.TestCase,
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
     this.id = this.generateTestRunId();
-    this.bddData = extractBddData(this.test);
     this.projectInfo = getProjectInfo(this.test);
     this.attachmentMapper = new AttachmentMapper(this.result);
     this.executedSteps = this.fillExecutedSteps();
@@ -69,14 +63,6 @@ export class TestCaseRun {
 
   isTimeouted() {
     return this.result.status === 'timedOut';
-  }
-
-  getFeatureUri() {
-    return this.testFileExtractor.featureUri;
-  }
-
-  getPickleLineNumber() {
-    return this.testFileExtractor.getPickleLineNumber(this.test);
   }
 
   private generateTestRunId() {
@@ -99,11 +85,11 @@ export class TestCaseRun {
 
   private fillExecutedSteps() {
     const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
-    return (this.bddData?.steps || []).map((bddDataStep) => {
-      const pwStep = this.findPlaywrightStep(possiblePwSteps, bddDataStep);
+    return this.bddTestData.steps.map((bddStep) => {
+      const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
       this.handleErrorStep(pwStep);
       this.handleTimeoutedStep(pwStep);
-      return { bddDataStep, pwStep };
+      return { bddStep, pwStep };
     });
   }
 
@@ -171,9 +157,13 @@ export class TestCaseRun {
     return { testCaseFinished };
   }
 
-  private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddDataStep: BddAnnotationDataStep) {
+  private findPlaywrightStep(possiblePwSteps: pw.TestStep[], bddStep: BddStepData) {
     return possiblePwSteps.find((pwStep) => {
-      return pwStep.location && stringifyLocation(pwStep.location) === bddDataStep.pwStepLocation;
+      // todo: filter by file earlier?
+      return (
+        pwStep.location?.file === this.test.location.file &&
+        pwStep.location?.line === bddStep.pwStepLine
+      );
     });
   }
 

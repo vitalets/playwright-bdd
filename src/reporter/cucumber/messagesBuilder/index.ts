@@ -15,7 +15,7 @@ import { GherkinDocuments } from './GherkinDocuments';
 import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
 import { getConfigFromEnv } from '../../../config/env';
-import { TestFiles } from '../testFiles';
+import { TestFiles } from './TestFiles';
 
 export class MessagesBuilder {
   private report = {
@@ -56,9 +56,16 @@ export class MessagesBuilder {
   onTestEnd(test: pw.TestCase, result: pw.TestResult) {
     const testDir = test.parent.project()?.testDir || this.fullConfig.rootDir;
     const bddConfig = getConfigFromEnv(testDir);
+
     // Skip tests of non-bdd projects
     if (!bddConfig) return;
-    const testFileExtractor = this.testFiles.registerTestFile(test.location.file);
+
+    const { bddData, featureUri } = this.testFiles.getBddData(test.location.file);
+    // todo: move these line somewhere else
+    const bddTestData = bddData.find((data) => data.pwTestLine === test.location.line);
+    if (!bddTestData) {
+      throw new Error(`Cannot find bddTestData for ${test.location.file}:${test.location.line}`);
+    }
 
     // For skipped tests Playwright doesn't run fixtures
     // and we don't have bddData attachment -> don't know feature uri.
@@ -68,8 +75,8 @@ export class MessagesBuilder {
 
     // Important to create TestCaseRun in this method (not later),
     // b/c test properties can change after retries
-    // (especially annotations where we store bddData)
-    const testCaseRun = new TestCaseRun(bddConfig, testFileExtractor, test, result, this.hooks);
+    // especially annotations where we store bddData
+    const testCaseRun = new TestCaseRun(bddTestData, featureUri, test, result, this.hooks);
     this.testCaseRuns.push(testCaseRun);
   }
 
@@ -87,10 +94,8 @@ export class MessagesBuilder {
     return this.buildMessagesPromise;
   }
 
-  // eslint-disable-next-line max-statements
   private async doBuildMessages() {
     await this.onEndPromise;
-    await this.testFiles.waitAllLoaded();
 
     // order here is important
     await this.loadFeatures();

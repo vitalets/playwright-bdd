@@ -52,7 +52,7 @@ class StepInvoker {
 
     const fixturesArg = Object.assign({}, stepFixtures, getBddAutoInjectFixtures(this.bddContext));
 
-    this.bddContext.bddAnnotation?.registerStep(matchedDefinition, location);
+    // this.bddContext.bddAnnotation?.registerStep(matchedDefinition, location);
 
     await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, () => {
       // Although pw-style does not expect usage of world / this in steps,
@@ -68,7 +68,7 @@ class StepInvoker {
   }
 
   private findStepDefinition(stepText: string) {
-    const [_keyword, keywordType, stepLocation] = this.getStepMeta();
+    const { keywordType, gherkinStepLine } = this.getBddStepData();
     const stepDefinitions = this.stepFinder.findDefinitions(
       keywordType,
       stepText,
@@ -78,12 +78,11 @@ class StepInvoker {
     if (stepDefinitions.length === 1) return stepDefinitions[0];
 
     const stepTextWithKeyword = this.getStepTextWithKeyword(stepText);
-    const fullStepLocation = `${this.bddContext.featureUri}:${stepLocation}`;
+    const fullStepLocation = `${this.bddContext.featureUri}:${gherkinStepLine}`;
 
     if (stepDefinitions.length === 0) {
       // todo: better error?
-      const message = `Missing step: ${stepTextWithKeyword}`;
-      throw new Error(message);
+      throw new Error(`Missing step: ${stepTextWithKeyword}`);
     }
 
     const message = formatDuplicateStepsMessage(
@@ -114,12 +113,12 @@ class StepInvoker {
   }
 
   private getStepTextWithKeyword(stepText: string) {
-    const [keyword] = this.getStepMeta();
-    return getStepTextWithKeyword(keyword, stepText);
+    const { keywordOrig } = this.getBddStepData();
+    return getStepTextWithKeyword(keywordOrig, stepText);
   }
 
-  private getStepMeta() {
-    const { stepIndex, bddTestMeta } = this.bddContext;
-    return bddTestMeta.pickleSteps[stepIndex];
+  private getBddStepData() {
+    const { stepIndex, bddTestData } = this.bddContext;
+    return bddTestData.steps[stepIndex];
   }
 }

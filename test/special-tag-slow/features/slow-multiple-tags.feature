@@ -1,4 +1,5 @@
-Feature: slow-scenario
+@slow
+Feature: slow-multiple-tags
 
   @slow
   Scenario: scenario 1

@@ -31,3 +31,11 @@ function handleKeyword(enKeyword: keyof Dialect, origMap: Dialect, targetMap: Ke
 function capitalizeFirstLetter(s: string) {
   return s.charAt(0).toUpperCase() + s.slice(1);
 }
+
+export function getKeywordEng(i18nKeywordsMap: KeywordsMap | undefined, keywordOrig: string) {
+  keywordOrig = keywordOrig.trim();
+  if (keywordOrig === '*') return 'And';
+  const keywordEng = i18nKeywordsMap ? i18nKeywordsMap.get(keywordOrig) : keywordOrig;
+  if (!keywordEng) throw new Error(`Eng keyword not found: ${keywordOrig}`);
+  return keywordEng as 'Given' | 'When' | 'Then' | 'And' | 'But';
+}

@@ -1,4 +1,3 @@
-import { KeywordType } from '../cucumber/keywordType';
 import { PickleStep } from '@cucumber/messages';
 
 export type MissingStep = {
@@ -7,7 +6,6 @@ export type MissingStep = {
     line: number;
     column?: number;
   };
-  keywordType: KeywordType;
   textWithKeyword: string;
   pickleStep: PickleStep;
 };

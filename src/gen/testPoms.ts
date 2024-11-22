@@ -31,7 +31,6 @@
  * -> actually @fixture tag has no effect, resolved fixture will be A and B (warning?)
  */
 import { PomNode, getPomNodeByFixtureName } from '../steps/decorators/pomGraph';
-import { exit } from '../utils/exit';
 
 const FIXTURE_TAG_PREFIX = '@fixture:';
 
@@ -48,8 +47,7 @@ type UsedPom = {
 export class TestPoms {
   // map of poms used in test
   private usedPoms = new Map<PomNode, UsedPom>();
-
-  constructor(private testTitle: string) {}
+  private resolved = false;
 
   registerPomNode(pomNode: PomNode, { byTag = false } = {}) {
     const usedPom = this.usedPoms.get(pomNode);
@@ -74,10 +72,11 @@ export class TestPoms {
 
   /**
    * Resolve all used pomNodes to fixtures.
-   * This is needed to handle @fixture: tagged pomNodes
+   * We need to call this method to handle @fixture: tagged pomNodes
    * that does not have steps in the test, but should be considered.
    */
-  resolveFixtures() {
+  resolveAllFixtures() {
+    this.resolved = true;
     this.usedPoms.forEach((_, pomNode) => {
       this.getResolvedFixtures(pomNode);
     });
@@ -89,6 +88,7 @@ export class TestPoms {
    */
   // eslint-disable-next-line visual/complexity
   getResolvedFixtures(pomNode: PomNode) {
+    if (!this.resolved) this.resolveAllFixtures();
     const usedPom = this.usedPoms.get(pomNode);
     // fixtures already resolved
     if (usedPom?.fixtures) return usedPom.fixtures;
@@ -126,16 +126,16 @@ export class TestPoms {
    * deeper than xxx.
    * @fixture:xxx tag provides maximum fixture that can be used in the scenario.
    */
-  private verifyChildFixtures(pomNode: PomNode, usedPom: UsedPom, childFixtures: UsedFixture[]) {
-    if (!usedPom.byTag) return;
-    const childFixturesBySteps = childFixtures.filter((f) => !f.byTag);
-    if (childFixturesBySteps.length) {
-      exit(
-        `Scenario "${this.testTitle}" contains ${childFixturesBySteps.length} step(s)`,
-        `not compatible with required fixture "${pomNode.fixtureName}"`,
-      );
-    }
-  }
+  // private verifyChildFixtures(pomNode: PomNode, usedPom: UsedPom, childFixtures: UsedFixture[]) {
+  //   if (!usedPom.byTag) return;
+  //   const childFixturesBySteps = childFixtures.filter((f) => !f.byTag);
+  //   if (childFixturesBySteps.length) {
+  //     exit(
+  //       `Scenario "${this.testTitle}" contains ${childFixturesBySteps.length} step(s)`,
+  //       `not compatible with required fixture "${pomNode.fixtureName}"`,
+  //     );
+  //   }
+  // }
 }
 
 function extractFixtureName(tag: string) {

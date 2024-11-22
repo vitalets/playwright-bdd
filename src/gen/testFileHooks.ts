@@ -28,7 +28,7 @@ import {
 } from '../hooks/worker';
 import { toBoolean } from '../utils';
 import { Formatter } from './formatter';
-import { TestNode } from './testNode';
+import { TestGen } from './test';
 
 export class TestFileHooks {
   private beforeAll = new TestFileWorkerHooks('beforeAll', this.formatter);
@@ -38,12 +38,13 @@ export class TestFileHooks {
 
   constructor(private formatter: Formatter) {}
 
-  registerHooksForTest(node: TestNode) {
-    if (node.isSkipped()) return;
-    this.beforeAll.registerHooksForTest(node);
-    this.afterAll.registerHooksForTest(node);
-    this.before.registerHooksForTest(node);
-    this.after.registerHooksForTest(node);
+  fillFromTests(tests: TestGen[]) {
+    tests.forEach((test) => {
+      this.beforeAll.registerHooksForTest(test.tags);
+      this.afterAll.registerHooksForTest(test.tags);
+      this.before.registerHooksForTest(test.tags);
+      this.after.registerHooksForTest(test.tags);
+    });
   }
 
   getCustomTests() {
@@ -55,12 +56,12 @@ export class TestFileHooks {
     ]);
   }
 
-  getLines() {
+  render() {
     const lines = [
-      ...this.beforeAll.getLines(), // prettier-ignore
-      ...this.afterAll.getLines(),
-      ...this.before.getLines(),
-      ...this.after.getLines(),
+      ...this.beforeAll.render(), // prettier-ignore
+      ...this.afterAll.render(),
+      ...this.before.render(),
+      ...this.after.render(),
     ];
     if (lines.length) lines.push('');
     return lines;
@@ -75,15 +76,15 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
     private formatter: Formatter,
   ) {}
 
-  registerHooksForTest(node: TestNode) {
-    getScenarioHooksToRun(this.type, node.tags).forEach((hook) => this.hooks.add(hook));
+  registerHooksForTest(testTags: string[]) {
+    getScenarioHooksToRun(this.type, testTags).forEach((hook) => this.hooks.add(hook));
   }
 
   getCustomTests() {
     return new Set([...this.hooks].map((hook) => hook.customTest).filter(toBoolean));
   }
 
-  getLines() {
+  render() {
     if (!this.hooks.size) return [];
     return this.formatter.scenarioHooksCall(this.type);
   }
@@ -101,8 +102,8 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
     private formatter: Formatter,
   ) {}
 
-  // todo: node is not used until we add tags to worker hooks
-  registerHooksForTest(_node: TestNode) {
+  // todo: _testTags is not used until we add tags to worker hooks
+  registerHooksForTest(_testTags: string[]) {
     getWorkerHooksToRun(this.type).forEach((hook) => this.hooks.add(hook));
   }
 
@@ -110,9 +111,9 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
     return new Set([...this.hooks].map((hook) => hook.customTest).filter(toBoolean));
   }
 
-  getLines() {
+  render() {
     if (!this.hooks.size) return [];
     const fixtureNames = getWorkerHooksFixtureNames([...this.hooks]);
-    return this.formatter.workerHooksCall(this.type, fixtureNames);
+    return this.formatter.workerHooksCall(this.type, new Set(fixtureNames));
   }
 }

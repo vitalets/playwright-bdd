@@ -1,20 +1,24 @@
-import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mjs';
+import { test, TestDir, normalize, execPlaywrightTestWithError } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
-test(`${testDir.name} (empty fixture)`, () => {
+test(`${testDir.name} (empty pom fixture)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
-    [`No fixtures found for decorator step "BasePage: step" in "scenario 1"`],
+    [
+      `No POM fixtures found for decorator step "BasePage: step"`,
+      `at ${normalize('features/empty-fixture.feature:4:5')}`,
+    ],
     { env: { FEATURE: 'empty-fixture.feature' } },
   );
 });
 
-test(`${testDir.name} (ambiguous fixture)`, () => {
+test(`${testDir.name} (ambiguous pom fixture)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     [
-      `Several fixtures found for decorator step "TodoPage: step" in "ambiguous fixtures for TodoPage: step"`,
+      `Multiple POM fixtures found for decorator step "TodoPage: step"`,
+      `at ${normalize('features/ambiguous-fixture.feature:4:5')}`,
       `Possible fixtures: adminPage, adminPage2`,
     ],
     { env: { FEATURE: 'ambiguous-fixture.feature' } },

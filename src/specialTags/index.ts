@@ -1,8 +1,18 @@
 /**
- * Special tags.
+ * Special tags: @skip, @only, etc.
+ * SpecialTags class uses only own tags of gherkin node (without any inheritance),
+ * because inheritance is guaranteed by Playwright runner.
  */
 
 import { DescribeConfigureOptions } from '../playwright/types';
+
+export function isTestSkippedByCollectedTags(collectedTags: string[]) {
+  return collectedTags.includes('@skip') || collectedTags.includes('@fixme');
+}
+
+export function isTestSlowByCollectedTags(collectedTags: string[]) {
+  return collectedTags.includes('@slow');
+}
 
 export class SpecialTags {
   only?: boolean;
@@ -17,13 +27,16 @@ export class SpecialTags {
 
   constructor(
     private ownTags: string[] = [], // own tags of gherkin node
-    private tags: string[] = [], // own + inherited tags
   ) {
     this.extractFlags();
     this.extractRetries();
     this.extractTimeout();
     this.extractMode();
   }
+
+  // isSkipped() {
+  //   return Boolean(this.skip || this.fixme);
+  // }
 
   /**
    * Forces the test to be marked as `fixme` no matter which tags it has.
@@ -36,10 +49,14 @@ export class SpecialTags {
   }
 
   private extractFlags() {
-    // for slow we use this.tags (not this.ownTags),
-    // b/c each test.slow() call multiplies timeout
-    // that is not now tags are assumed to work
-    if (this.tags.includes(`@slow`)) this.slow = true;
+    // Note: before for slow we used this.tags (not this.ownTags),
+    // b/c slow converts to call of test.slow() and nested calls
+    // of test.slow() multiplies timeout.
+    // That is not now tags are assumed to work:
+    // For example, if both feature and scenario have @slow tag,
+    // it should work the same as if only scenario has @slow tag.
+    // But now for simplification we use only own tags.
+    if (this.ownTags.includes(`@slow`)) this.slow = true;
     if (this.ownTags.includes(`@fail`)) this.fail = true;
     // order is important
     const executionFlags = ['only', 'skip', 'fixme'] as const;

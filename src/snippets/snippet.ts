@@ -1,7 +1,7 @@
 import { CucumberExpressionGenerator, GeneratedExpression } from '@cucumber/cucumber-expressions';
 import { parameterTypeRegistry } from '../steps/parameterTypes';
-import { KeywordType } from '../cucumber/keywordType';
 import { MissingStep } from './types';
+import { PickleStepType } from '@cucumber/messages';
 
 export type SnippetOptions = {
   isTypeScript: boolean;
@@ -44,12 +44,13 @@ export class Snippet {
   }
 
   private getStepType() {
-    switch (this.missingStep.keywordType) {
-      case KeywordType.Event:
+    switch (this.missingStep.pickleStep.type) {
+      case PickleStepType.ACTION:
         return 'When';
-      case KeywordType.Outcome:
+      case PickleStepType.OUTCOME:
         return 'Then';
-      case KeywordType.Precondition:
+      case PickleStepType.CONTEXT:
+      case PickleStepType.UNKNOWN:
       default:
         return 'Given';
     }

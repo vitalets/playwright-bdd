@@ -10,37 +10,31 @@ import {
   Scenario,
   Background,
   Step,
-  PickleStep,
   Feature,
   Rule,
-  Examples,
-  TableRow,
 } from '@cucumber/messages';
 import path from 'node:path';
-import { Formatter, StepFixtureName } from './formatter';
+import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import { stringifyLocation, throwIf } from '../utils';
 import parseTagsExpression from '@cucumber/tag-expressions';
-import { TestNode } from './testNode';
 import { LANG_EN, isEnglish } from '../config/lang';
-import { BddMetaBuilder } from './bddMetaBuilder';
-import { GherkinDocumentWithPickles } from '../features/types';
-import { DecoratorSteps } from './decoratorSteps';
+import { GherkinDocumentWithPickles, PickleWithLocation } from '../features/types';
 import { BDDConfig } from '../config/types';
-import { KeywordType, mapStepsToKeywordTypes } from '../cucumber/keywordType';
 import { ImportTestFromGuesser } from './importTestFrom';
-import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
-import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
 import { MissingStep } from '../snippets/types';
-import { getStepTextWithKeyword } from '../features/helpers';
-import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
+import { getStepTextWithKeyword, getTagNames, isScenarioOutline } from '../features/helpers';
+import { StepFinder } from '../steps/finder';
 import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
 import { TestFileHooks } from './testFileHooks';
 import { getSpecFileByFeatureFile } from './paths';
-import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
+import { SpecialTags } from '../specialTags';
+import { BackgroundGen } from './background';
+import { TestGen } from './test';
+import { SourceMapper } from './sourceMapper';
+import { BddDataRenderer } from '../bddData/renderer';
 
 type TestFileOptions = {
   config: BDDConfig;
@@ -52,21 +46,18 @@ export class TestFile {
   private lines: string[] = [];
   private i18nKeywordsMap?: KeywordsMap;
   private formatter: Formatter;
-  private usedDecoratorFixtures = new Set<string>();
   private gherkinDocumentQuery: GherkinDocumentQuery;
-  private bddMetaBuilder: BddMetaBuilder;
   private stepFinder: StepFinder;
   private hooks: TestFileHooks;
+  private backgrounds: BackgroundGen[] = [];
+  private tests: TestGen[] = [];
 
-  public missingSteps: MissingStep[] = [];
   public outputPath: string;
-  public usedStepDefinitions = new Set<StepDefinition>();
 
   constructor(private options: TestFileOptions) {
     this.outputPath = getSpecFileByFeatureFile(this.config, this.featureUri);
     this.formatter = new Formatter(options.config);
     this.gherkinDocumentQuery = new GherkinDocumentQuery(this.gherkinDocument);
-    this.bddMetaBuilder = new BddMetaBuilder(this.gherkinDocumentQuery);
     this.stepFinder = new StepFinder(options.config);
     this.hooks = new TestFileHooks(this.formatter);
   }
@@ -100,25 +91,62 @@ export class TestFile {
     return this.options.config;
   }
 
-  get testCount() {
-    return this.bddMetaBuilder.testCount;
+  hasExecutableTests() {
+    return this.tests.some((test) => !test.skippedByTag);
   }
 
   build(): this {
     if (!this.gherkinDocumentQuery.hasPickles()) return this;
     this.loadI18nKeywords();
-    // important to calc suites first, b/c header depend on used steps and used tags
-    const suites = this.getRootSuite();
+    // important to calc suites first, b/c file header depends on used steps and used tags
+    const suites = this.renderRootSuite();
 
+    this.hooks.fillFromTests(this.tests);
+
+    // todo: use lines instead of this.lines,
+    // and pass them to updateTestLocations() explicitly
     this.lines = [
-      ...this.getFileHeader(), // prettier-ignore
+      ...this.renderFileHeader(), // prettier-ignore
       ...suites,
-      ...this.getTechnicalSection(),
     ];
+
+    this.renderInplaceBackgrounds();
+
+    this.lines.push(...this.renderTechnicalSection());
+
     return this;
   }
 
-  private getFileHeader() {
+  // todo: move to test.ts or to separate class
+  getMissingSteps() {
+    const missingSteps: MissingStep[] = [];
+    this.tests.forEach((test) => {
+      if (test.skippedByTag) return;
+      test.stepsData.forEach(({ matchedDefinition, pickleStep, gherkinStep }) => {
+        if (!matchedDefinition) {
+          const { line, column } = gherkinStep.location;
+          missingSteps.push({
+            location: { uri: this.featureUri, line, column },
+            textWithKeyword: getStepTextWithKeyword(gherkinStep.keyword, pickleStep.text),
+            pickleStep,
+          });
+        }
+      });
+    });
+    return missingSteps;
+  }
+
+  getUsedDefinitions() {
+    const usedDefinitions = new Set<StepDefinition>();
+    this.tests.forEach((test) => {
+      test.stepsData.forEach(({ matchedDefinition }) => {
+        if (matchedDefinition) usedDefinitions.add(matchedDefinition.definition);
+      });
+    });
+    return usedDefinitions;
+  }
+
+  private renderFileHeader() {
     const importTestFrom = this.resolveImportTestFrom();
     return this.formatter.fileHeader(this.featureUri, importTestFrom);
   }
@@ -129,33 +157,15 @@ export class TestFile {
     }
   }
 
-  private resolveImportTestFrom() {
-    let { importTestFrom } = this.config;
-    if (!importTestFrom) {
-      importTestFrom = new ImportTestFromGuesser(
-        this.featureUri,
-        this.usedStepDefinitions,
-        this.usedDecoratorFixtures,
-        this.hooks.getCustomTests(),
-      ).guess();
-    }
-    if (!importTestFrom) return;
-
-    const { file, varName } = importTestFrom;
-    const dir = path.dirname(this.outputPath);
-    return {
-      file: path.relative(dir, file),
-      varName,
-    };
-  }
-
-  private getTechnicalSection() {
+  private renderTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
+    const sourceMapper = new SourceMapper(this.lines);
+    const bddDataRenderer = new BddDataRenderer(this.tests, sourceMapper);
 
     const testUse = this.formatter.testUse([
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
-      ...this.bddMetaBuilder.getFixture(),
+      ...bddDataRenderer.renderFixture(),
       ...this.formatter.scenarioHooksFixtures('before', this.hooks.before.getFixtureNames()),
       ...this.formatter.scenarioHooksFixtures('after', this.hooks.after.getFixtureNames()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
@@ -164,282 +174,329 @@ export class TestFile {
     return [
       '// == technical section ==', // prettier-ignore
       '',
-      ...this.hooks.getLines(),
+      ...this.hooks.render(),
       ...testUse,
       '',
-      ...this.bddMetaBuilder.getObject(),
+      ...bddDataRenderer.renderVariable(),
     ];
   }
 
-  private getRootSuite() {
+  private renderRootSuite() {
     const { feature } = this.gherkinDocument;
     if (!feature) throw new Error(`Document without feature.`);
-    return this.getSuite(feature);
+    return this.renderDescribe(feature);
   }
 
   /**
-   * Generate test.describe suite for root Feature or Rule
+   * Generate test.describe suite for Feature or Rule
    */
-  private getSuite(feature: Feature | Rule, parent?: TestNode) {
-    const node = new TestNode(feature, parent);
-    if (this.isSkippedBySpecialTag(node)) return this.formatter.describe(node, []);
+  private renderDescribe(feature: Feature | Rule) {
+    const specialTags = new SpecialTags(getTagNames(feature.tags));
     const lines: string[] = [];
-    feature.children.forEach((child) => lines.push(...this.getSuiteChild(child, node)));
-    return this.formatter.describe(node, lines);
+    feature.children.forEach((child) => {
+      lines.push(...this.renderChild(child));
+    });
+    return this.formatter.describe(feature.name, specialTags, lines);
   }
 
-  private getSuiteChild(child: FeatureChild | RuleChild, parent: TestNode) {
-    if ('rule' in child && child.rule) return this.getSuite(child.rule, parent);
-    if (child.background) return this.getBeforeEach(child.background, parent);
-    if (child.scenario) return this.getScenarioLines(child.scenario, parent);
+  // eslint-disable-next-line visual/complexity
+  private renderChild(child: FeatureChild | RuleChild) {
+    if ('rule' in child && child.rule) return this.renderDescribe(child.rule);
+    if (child.background) return this.renderBackgroundPlaceholder(child.background);
+    if (child.scenario)
+      return isScenarioOutline(child.scenario) // prettier-ignore
+        ? this.renderScenarioOutline(child.scenario)
+        : this.renderScenario(child.scenario);
+
     throw new Error(`Empty child: ${JSON.stringify(child)}`);
   }
 
-  private getScenarioLines(scenario: Scenario, parent: TestNode) {
-    return this.isOutline(scenario)
-      ? this.getOutlineSuite(scenario, parent)
-      : this.getTest(scenario, parent);
+  private renderBackgroundPlaceholder(bg: Background) {
+    const bgGen = new BackgroundGen(this.formatter, this.i18nKeywordsMap, bg);
+    this.backgrounds.push(bgGen);
+    return [bgGen.placeholder];
   }
 
   /**
-   * Generate test.beforeEach for Background
+   * Insert test.beforeEach for Backgrounds
    */
-  private getBeforeEach(bg: Background, parent: TestNode) {
-    const node = new TestNode({ name: 'background', tags: [] }, parent);
-    const title = [bg.keyword, bg.name].filter(Boolean).join(': ');
-    const { fixtures, lines, hasMissingSteps } = this.getSteps(bg, node.tags);
-    // for bg we pass parent as node to forceFixme if needed
-    this.handleMissingStepsInScenario(hasMissingSteps, parent);
-    return this.formatter.beforeEach(title, fixtures, lines);
+  private renderInplaceBackgrounds() {
+    this.backgrounds.forEach((bg) => bg.renderInplace(this.lines));
+  }
+
+  private renderScenario(scenario: Scenario) {
+    const testTitle = scenario.name;
+    const pickle = this.findPickle(scenario.id, testTitle);
+    const ownTestTags = getTagNames(scenario.tags);
+    return this.renderTest(pickle, testTitle, ownTestTags, scenario.steps);
   }
 
   /**
    * Generate test.describe suite for Scenario Outline
    */
-  private getOutlineSuite(scenario: Scenario, parent: TestNode) {
-    const node = new TestNode(scenario, parent);
-    if (this.isSkippedBySpecialTag(node)) return this.formatter.describe(node, []);
-    const lines: string[] = [];
+  private renderScenarioOutline(scenario: Scenario) {
+    const specialTags = new SpecialTags(getTagNames(scenario.tags));
     const examplesTitleBuilder = this.createExamplesTitleBuilder(scenario);
+    const lines: string[] = [];
+
     scenario.examples.forEach((examples) => {
       examples.tableBody.forEach((exampleRow) => {
         const testTitle = examplesTitleBuilder.buildTitle(examples, exampleRow);
-        const testLines = this.getOutlineTest(scenario, examples, exampleRow, testTitle, node);
+        const pickle = this.findPickle(exampleRow.id, testTitle);
+        const ownTestTags = getTagNames(examples.tags);
+        const testLines = this.renderTest(pickle, testTitle, ownTestTags, scenario.steps);
         lines.push(...testLines);
       });
     });
-    return this.formatter.describe(node, lines);
+
+    // don't render describe without tests
+    if (!lines.length) return [];
+
+    return this.formatter.describe(scenario.name, specialTags, lines);
   }
 
   /**
    * Generate test from Examples row of Scenario Outline
    */
-  private getOutlineTest(
-    scenario: Scenario,
-    examples: Examples,
-    exampleRow: TableRow,
-    title: string,
-    parent: TestNode,
-  ) {
-    const node = new TestNode({ name: title, tags: examples.tags }, parent);
-    if (this.isSkippedByTagsExpression(node)) return [];
-    const pickle = this.bddMetaBuilder.registerTest(node, exampleRow.id);
-    if (this.isSkippedBySpecialTag(node)) {
-      return this.formatter.test(node, new Set(), pickle.location.line, []);
-    }
-    const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags, exampleRow.id);
-    this.handleMissingStepsInScenario(hasMissingSteps, node);
-    this.hooks.registerHooksForTest(node);
-    return this.formatter.test(node, fixtures, pickle.location.line, lines);
-  }
+  // private getOutlineTest(
+  //   scenario: Scenario,
+  //   examples: Examples,
+  //   exampleRow: TableRow,
+  //   title: string,
+  //   parent: TestNode,
+  // ) {
+  //   const node = new TestNode({ name: title, tags: examples.tags }, parent);
+  //   if (this.isSkippedByTagsExpression(node)) return [];
+  //   const pickle = this.bddMetaBuilder.registerTest(node, exampleRow.id);
+  //   if (this.isSkippedBySpecialTag(node)) {
+  //     return this.formatter.test(node, new Set(), pickle.location.line, []);
+  //   }
+  //   const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags, exampleRow.id);
+  //   this.handleMissingStepsInScenario(hasMissingSteps, node);
+  //   this.hooks.registerHooksForTest(node);
+  //   return this.formatter.test(node, fixtures, pickle.location.line, lines);
+  // }
 
   /**
    * Generate test from Scenario
    */
-  private getTest(scenario: Scenario, parent: TestNode) {
-    const node = new TestNode(scenario, parent);
-    if (this.isSkippedByTagsExpression(node)) return [];
-    const pickle = this.bddMetaBuilder.registerTest(node, scenario.id);
-    if (this.isSkippedBySpecialTag(node)) {
-      return this.formatter.test(node, new Set(), pickle.location.line, []);
+  // private getTestOld(scenario: Scenario, parent: TestNode) {
+  //   const node = new TestNode(scenario, parent);
+  //   if (this.isSkippedByTagsExpression(node)) return [];
+  //   const pickle = this.bddMetaBuilder.registerTest(node, scenario.id);
+  //   if (this.isSkippedBySpecialTag(node)) {
+  //     return this.formatter.test(node, new Set(), pickle.location.line, []);
+  //   }
+  //   const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags);
+  //   this.handleMissingStepsInScenario(hasMissingSteps, node);
+  //   this.hooks.registerHooksForTest(node);
+  //   return this.formatter.test(node, fixtures, pickle.location.line, lines);
+  // }
+
+  /**
+   * NEW way of getting test - by pickle
+   * Universal for Scenario and Scenario Outline
+   */
+  private renderTest(
+    pickle: PickleWithLocation,
+    testTitle: string,
+    ownTestTags: string[],
+    gherkinSteps: readonly Step[],
+  ) {
+    const testTags = getTagNames(pickle.tags);
+    if (this.isSkippedByTagsExpression(testTags)) return [];
+
+    const test = new TestGen(
+      this.config,
+      this.featureUri,
+      this.i18nKeywordsMap,
+      this.stepFinder,
+      this.formatter,
+      this.backgrounds,
+      pickle,
+      testTitle,
+      gherkinSteps,
+      ownTestTags,
+    );
+    this.tests.push(test);
+
+    return test.render();
+  }
+
+  private findPickle(astNodeId: string, testTitle: string) {
+    const pickles = this.gherkinDocumentQuery.getPickles(astNodeId);
+    if (pickles.length !== 1) {
+      exit(`Found ${pickles.length} pickle(s) for scenario: ${testTitle}`);
     }
-    const { fixtures, lines, hasMissingSteps } = this.getSteps(scenario, node.tags);
-    this.handleMissingStepsInScenario(hasMissingSteps, node);
-    this.hooks.registerHooksForTest(node);
-    return this.formatter.test(node, fixtures, pickle.location.line, lines);
+    return pickles[0];
   }
 
   /**
    * Generate test steps
    */
-  private getSteps(scenario: Scenario | Background, tags?: string[], outlineExampleRowId?: string) {
-    const testFixtureNames = new Set<string>();
-    const decoratorSteps = new DecoratorSteps({
-      statefulPoms: this.config.statefulPoms,
-      featureUri: this.featureUri,
-      testTitle: scenario.name || 'Background',
-      testFixtureNames,
-      testTags: tags,
-    });
+  // private getSteps(scenario: Scenario | Background, tags?: string[], outlineExampleRowId?: string) {
+  //   const testFixtureNames = new Set<string>();
+  //   const decoratorSteps = new DecoratorSteps({
+  //     statefulPoms: this.config.statefulPoms,
+  //     featureUri: this.featureUri,
+  //     testTitle: scenario.name || 'Background',
+  //     testFixtureNames,
+  //     testTags: tags,
+  //   });
 
-    const stepToKeywordType = mapStepsToKeywordTypes(scenario.steps, this.language);
-    let hasMissingSteps = false;
+  //   const stepToKeywordType = mapStepsToKeywordTypes(scenario.steps, this.language);
+  //   let hasMissingSteps = false;
 
-    // todo: refactor internal fn, move to a separate class.
-    // The problem - it is highly coupled with the testFile class,
-    // need to pass many params: config, language, featureUri, i18nKeywordsMap, gherkinDocument, etc...
-    // eslint-disable-next-line max-statements
-    const lines = scenario.steps.map((step, index) => {
-      const keywordType = stepToKeywordType.get(step)!;
-      const keywordEng = this.getStepEnglishKeyword(step);
-      testFixtureNames.add(keywordEng);
-      this.bddMetaBuilder.registerStep(step, keywordType);
-      // pickleStep contains step text with inserted example values and argument
-      const pickleStep = this.findPickleStep(step, outlineExampleRowId);
-      const matchedDefinition = this.findMatchedDefinition(keywordType, step, pickleStep, tags);
-      if (!matchedDefinition) {
-        hasMissingSteps = true;
-        return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
-      }
+  //   // todo: refactor internal fn, move to a separate class.
+  //   // The problem - it is highly coupled with the testFile class,
+  //   // need to pass many params: config, language, featureUri, i18nKeywordsMap, gherkinDocument, etc...
+  //   // eslint-disable-next-line max-statements
+  //   const lines = scenario.steps.map((step, index) => {
+  //     const keywordType = stepToKeywordType.get(step)!;
+  //     const keywordEng = this.getStepEnglishKeyword(step);
+  //     testFixtureNames.add(keywordEng);
+  //     this.bddMetaBuilder.registerStep(step, keywordType);
+  //     // pickleStep contains step text with inserted example values and argument
+  //     const pickleStep = this.findPickleStep(step, outlineExampleRowId);
+  //     const matchedDefinition = this.findMatchedDefinition(keywordType, step, pickleStep, tags);
+  //     if (!matchedDefinition) {
+  //       hasMissingSteps = true;
+  //       return this.handleMissingStep(keywordEng, keywordType, pickleStep, step);
+  //     }
 
-      this.usedStepDefinitions.add(matchedDefinition.definition);
+  //     this.usedStepDefinitions.add(matchedDefinition.definition);
 
-      if (matchedDefinition.definition.isDecorator()) {
-        decoratorSteps.push({
-          index,
-          keywordEng,
-          pickleStep,
-          pomNode: matchedDefinition.definition.pomNode,
-        });
+  //     if (matchedDefinition.definition.isDecorator()) {
+  //       decoratorSteps.push({
+  //         index,
+  //         keywordEng,
+  //         pickleStep,
+  //         pomNode: matchedDefinition.definition.pomNode,
+  //       });
 
-        // for decorator steps, line and fixtureNames are filled later in second pass
-        return '';
-      }
+  //       // for decorator steps, line and fixtureNames are filled later in second pass
+  //       return '';
+  //     }
 
-      const stepFixtureNames = this.getStepFixtureNames(matchedDefinition);
-      stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
+  //     const stepFixtureNames = this.getStepFixtureNames(matchedDefinition);
+  //     stepFixtureNames.forEach((fixtureName) => testFixtureNames.add(fixtureName));
 
-      return this.formatter.step(
-        keywordEng,
-        pickleStep.text,
-        pickleStep.argument,
-        stepFixtureNames,
-      );
-    });
+  //     return this.formatter.step(
+  //       keywordEng,
+  //       pickleStep.text,
+  //       pickleStep.argument,
+  //       stepFixtureNames,
+  //     );
+  //   });
 
-    // fill decorator step slots in second pass (to guess fixtures)
-    // TODO: for background steps we can delay resolving fixtures
-    // until all scenarios steps are processed. After that we know all used fixtures,
-    // and can guess background fixtures more precisely.
-    // But for statefulPoms=false (that is default) it is not very important.
-    decoratorSteps.resolveFixtureNames();
-    decoratorSteps.forEach(({ index, keywordEng, pickleStep, fixtureName }) => {
-      testFixtureNames.add(fixtureName);
-      this.usedDecoratorFixtures.add(fixtureName);
-      const stepFixtureNames = [fixtureName];
-      lines[index] = this.formatter.step(
-        keywordEng,
-        pickleStep.text,
-        pickleStep.argument,
-        stepFixtureNames,
-      );
-    });
+  //   // fill decorator step slots in second pass (to guess fixtures)
+  //   // TODO: for background steps we can delay resolving fixtures
+  //   // until all scenarios steps are processed. After that we know all used fixtures,
+  //   // and can guess background fixtures more precisely.
+  //   // But for statefulPoms=false (that is default) it is not very important.
+  //   decoratorSteps.resolveFixtureNames();
+  //   decoratorSteps.forEach(({ index, keywordEng, pickleStep, fixtureName }) => {
+  //     testFixtureNames.add(fixtureName);
+  //     this.usedDecoratorFixtures.add(fixtureName);
+  //     const stepFixtureNames = [fixtureName];
+  //     lines[index] = this.formatter.step(
+  //       keywordEng,
+  //       pickleStep.text,
+  //       pickleStep.argument,
+  //       stepFixtureNames,
+  //     );
+  //   });
 
-    return { fixtures: testFixtureNames, lines, hasMissingSteps };
-  }
+  //   return { fixtures: testFixtureNames, lines, hasMissingSteps };
+  // }
 
-  private findMatchedDefinition(
-    keywordType: KeywordType,
-    scenarioStep: Step,
-    pickleStep: PickleStep,
-    tags?: string[],
-  ) {
-    const matchedDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text, tags);
+  // private findMatchedDefinition(
+  //   keywordType: KeywordType,
+  //   scenarioStep: Step,
+  //   pickleStep: PickleStep,
+  //   tags?: string[],
+  // ) {
+  //   const matchedDefinitions = this.stepFinder.findDefinitions(keywordType, pickleStep.text, tags);
 
-    if (matchedDefinitions.length > 1) {
-      const stepTextWithKeyword = getStepTextWithKeyword(scenarioStep.keyword, pickleStep.text);
-      const stepLocation = `${this.featureUri}:${stringifyLocation(scenarioStep.location)}`;
-      // todo: maybe not exit and collect all duplicates?
-      exit(formatDuplicateStepsMessage(matchedDefinitions, stepTextWithKeyword, stepLocation));
-    }
+  //   if (matchedDefinitions.length > 1) {
+  //     const stepTextWithKeyword = getStepTextWithKeyword(scenarioStep.keyword, pickleStep.text);
+  //     const stepLocation = `${this.featureUri}:${stringifyLocation(scenarioStep.location)}`;
+  //     // todo: maybe not exit and collect all duplicates?
+  //     exit(formatDuplicateStepsMessage(matchedDefinitions, stepTextWithKeyword, stepLocation));
+  //   }
 
-    return matchedDefinitions[0];
-  }
+  //   return matchedDefinitions[0];
+  // }
 
-  private handleMissingStep(
-    keywordEng: StepFixtureName,
-    keywordType: KeywordType,
-    pickleStep: PickleStep,
-    step: Step,
-  ) {
-    const { line, column } = step.location;
-    this.missingSteps.push({
-      location: { uri: this.featureUri, line, column },
-      textWithKeyword: getStepTextWithKeyword(step.keyword, pickleStep.text),
-      keywordType,
-      pickleStep,
-    });
-    return this.formatter.missingStep(keywordEng, pickleStep.text);
-  }
+  // private handleMissingStep(
+  //   keywordEng: StepFixtureName,
+  //   keywordType: KeywordType,
+  //   pickleStep: PickleStep,
+  //   step: Step,
+  // ) {
+  //   const { line, column } = step.location;
+  //   this.missingSteps.push({
+  //     location: { uri: this.featureUri, line, column },
+  //     textWithKeyword: getStepTextWithKeyword(step.keyword, pickleStep.text),
+  //     keywordType,
+  //     pickleStep,
+  //   });
+  //   return this.formatter.missingStep(keywordEng, pickleStep.text);
+  // }
 
-  private findPickleStep(step: Step, exampleRowId?: string) {
-    let pickleSteps = this.gherkinDocumentQuery.getPickleSteps(step.id);
-    if (exampleRowId) {
-      pickleSteps = pickleSteps.filter((pickleStep) =>
-        pickleStep.astNodeIds.includes(exampleRowId),
-      );
-      throwIf(pickleSteps.length > 1, `Several pickle steps found for scenario step: ${step.text}`);
-    }
-    throwIf(pickleSteps.length === 0, `Pickle step not found for scenario step: ${step.text}`);
-    // several pickle steps should be found only for bg steps
-    // it's ok to take the first for bg
-    return pickleSteps[0];
-  }
+  // private findPickleStep(step: Step, exampleRowId?: string) {
+  //   let pickleSteps = this.gherkinDocumentQuery.getPickleSteps(step.id);
+  //   if (exampleRowId) {
+  //     pickleSteps = pickleSteps.filter((pickleStep) =>
+  //       pickleStep.astNodeIds.includes(exampleRowId),
+  //     );
+  //     throwIf(pickleSteps.length > 1, `Several pickle steps found for scenario step: ${step.text}`);
+  //   }
+  //   throwIf(pickleSteps.length === 0, `Pickle step not found for scenario step: ${step.text}`);
+  //   // several pickle steps should be found only for bg steps
+  //   // it's ok to take the first for bg
+  //   return pickleSteps[0];
+  // }
 
-  private getStepEnglishKeyword(step: Step) {
-    const keywordLocal = step.keyword.trim();
-    let keywordEng;
-    if (keywordLocal === '*') {
-      keywordEng = 'And';
-    } else if (this.i18nKeywordsMap) {
-      keywordEng = this.i18nKeywordsMap.get(keywordLocal);
-    } else {
-      keywordEng = keywordLocal;
-    }
-    if (!keywordEng) throw new Error(`Keyword not found: ${keywordLocal}`);
-    return keywordEng as StepFixtureName;
-  }
+  // private getStepEnglishKeyword(step: Step) {
+  //   const keywordLocal = step.keyword.trim();
+  //   let keywordEng;
+  //   if (keywordLocal === '*') {
+  //     keywordEng = 'And';
+  //   } else if (this.i18nKeywordsMap) {
+  //     keywordEng = this.i18nKeywordsMap.get(keywordLocal);
+  //   } else {
+  //     keywordEng = keywordLocal;
+  //   }
+  //   if (!keywordEng) throw new Error(`Keyword not found: ${keywordLocal}`);
+  //   return keywordEng as StepFixtureName;
+  // }
 
-  private getStepFixtureNames({ definition }: MatchedStepDefinition) {
-    // for cucumber-style there is no fixtures arg,
-    // fixtures are accessible via this.world
-    if (definition.isCucumberStyle()) return [];
+  // private getStepFixtureNames({ definition }: MatchedStepDefinition) {
+  //   // for cucumber-style there is no fixtures arg,
+  //   // fixtures are accessible via this.world
+  //   if (definition.isCucumberStyle()) return [];
 
-    return fixtureParameterNames(definition.fn) // prettier-ignore
-      .filter((name) => !isBddAutoInjectFixture(name));
-  }
+  //   return fixtureParameterNames(definition.fn) // prettier-ignore
+  //     .filter((name) => !isBddAutoInjectFixture(name));
+  // }
 
-  private isSkippedByTagsExpression(node: TestNode) {
+  private isSkippedByTagsExpression(tags: string[]) {
     // see: https://github.com/cucumber/tag-expressions/tree/main/javascript
     const { tagsExpression } = this.options;
-    return tagsExpression && !tagsExpression.evaluate(node.tags);
-  }
-
-  // this fn is for consistency with isSkippedByTagsExpression(node)
-  private isSkippedBySpecialTag(node: TestNode) {
-    return node.isSkipped();
-  }
-
-  private isOutline(scenario: Scenario) {
-    // scenario outline without 'Examples:' block behaves like a usual scenario
-    return Boolean(scenario.examples?.length);
+    return tagsExpression && !tagsExpression.evaluate(tags);
   }
 
   private getWorldFixtureName() {
     const worldFixtureNames = new Set<string>();
 
-    this.usedStepDefinitions.forEach(({ worldFixture }) => {
-      if (worldFixture) worldFixtureNames.add(worldFixture);
+    this.tests.forEach((test) => {
+      test.stepsData.forEach(({ matchedDefinition }) => {
+        if (matchedDefinition) {
+          const { worldFixture } = matchedDefinition.definition;
+          if (worldFixture) worldFixtureNames.add(worldFixture);
+        }
+      });
     });
 
     if (worldFixtureNames.size > 1) {
@@ -464,9 +521,33 @@ export class TestFile {
     });
   }
 
-  private handleMissingStepsInScenario(hasMissingSteps: boolean, node: TestNode) {
-    if (hasMissingSteps && this.config.missingSteps === 'skip-scenario') {
-      node.specialTags.forceFixme();
+  private resolveImportTestFrom() {
+    let { importTestFrom } = this.config;
+    if (!importTestFrom) {
+      importTestFrom = new ImportTestFromGuesser(
+        this.featureUri,
+        this.getUsedDefinitions(),
+        this.getUsedPomFixtures(),
+        this.hooks.getCustomTests(),
+      ).guess();
     }
+    if (!importTestFrom) return;
+
+    const { file, varName } = importTestFrom;
+    const dir = path.dirname(this.outputPath);
+    return {
+      file: path.relative(dir, file),
+      varName,
+    };
+  }
+
+  private getUsedPomFixtures() {
+    const usedPomFixtures = new Set<string>();
+    this.tests.forEach((test) => {
+      test.stepsData.forEach(({ pomFixtureName }) => {
+        if (pomFixtureName) usedPomFixtures.add(pomFixtureName);
+      });
+    });
+    return usedPomFixtures;
   }
 }

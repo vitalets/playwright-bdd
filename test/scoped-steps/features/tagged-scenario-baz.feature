@@ -1,8 +1,8 @@
 Feature: feature baz
 
-  # todo:
-  # Background:
-  #   Given bg step bound to scenario
+  Background:
+    Given bg step bound to scenario
+
   @baz1
   Scenario: scenario baz1
     When step without tags

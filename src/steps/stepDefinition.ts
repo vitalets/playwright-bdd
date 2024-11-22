@@ -3,8 +3,8 @@
  */
 
 import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
+import { PickleStepType } from '@cucumber/messages';
 import parseTagsExpression from '@cucumber/tag-expressions';
-import { KeywordType } from '../cucumber/keywordType';
 import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
@@ -113,16 +113,18 @@ export class StepDefinition {
     return this.#tagsExpression ? this.#tagsExpression.evaluate(tags) : true;
   }
 
-  matchesKeywordType(keywordType: KeywordType) {
+  // eslint-disable-next-line visual/complexity
+  matchesKeywordType(keywordType: PickleStepType | undefined) {
+    if (!keywordType || keywordType === PickleStepType.UNKNOWN) return true;
     switch (this.keyword) {
-      case 'Unknown':
-        return true;
       case 'Given':
-        return keywordType === 'precondition';
+        return keywordType === PickleStepType.CONTEXT;
       case 'When':
-        return keywordType === 'event';
+        return keywordType === PickleStepType.ACTION;
       case 'Then':
-        return keywordType === 'outcome';
+        return keywordType === PickleStepType.OUTCOME;
+      default: // Unknown
+        return true;
     }
   }
 
