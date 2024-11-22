@@ -2,10 +2,8 @@ import { defineConfig } from '@playwright/experimental-ct-react';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['features'],
-  require: process.env.NATIVE_MERGE_TESTS
-    ? ['steps-native/*.{js,jsx}']
-    : ['steps-polyfill/*.{ts,tsx}'],
+  features: './features',
+  steps: 'steps/*.{js,jsx}',
 });
 
 export default defineConfig({
