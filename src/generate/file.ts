@@ -528,7 +528,7 @@ export class TestFile {
         this.featureUri,
         this.getUsedDefinitions(),
         this.getUsedPomFixtures(),
-        this.hooks.getCustomTests(),
+        this.hooks.getCustomTestInstances(),
       ).guess();
     }
     if (!importTestFrom) return;

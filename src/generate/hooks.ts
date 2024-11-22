@@ -47,12 +47,12 @@ export class TestFileHooks {
     });
   }
 
-  getCustomTests() {
+  getCustomTestInstances() {
     return new Set([
-      ...this.beforeAll.getCustomTests(), // prettier-ignore
-      ...this.afterAll.getCustomTests(),
-      ...this.before.getCustomTests(),
-      ...this.after.getCustomTests(),
+      ...this.beforeAll.getCustomTestInstances(), // prettier-ignore
+      ...this.afterAll.getCustomTestInstances(),
+      ...this.before.getCustomTestInstances(),
+      ...this.after.getCustomTestInstances(),
     ]);
   }
 
@@ -80,7 +80,7 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
     getScenarioHooksToRun(this.type, testTags).forEach((hook) => this.hooks.add(hook));
   }
 
-  getCustomTests() {
+  getCustomTestInstances() {
     return new Set([...this.hooks].map((hook) => hook.customTest).filter(toBoolean));
   }
 
@@ -107,7 +107,7 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
     getWorkerHooksToRun(this.type).forEach((hook) => this.hooks.add(hook));
   }
 
-  getCustomTests() {
+  getCustomTestInstances() {
     return new Set([...this.hooks].map((hook) => hook.customTest).filter(toBoolean));
   }
 
