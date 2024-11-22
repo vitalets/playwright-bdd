@@ -43,7 +43,8 @@ function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, removeUndefined(inputConfig));
 
   const features = config.features || config.paths || config.featuresRoot;
-  if (!features) throw new Error(`Please provide 'features' option in defineBddConfig()`);
+  if (!features)
+    throw new Error(`Please provide 'features' or 'featuresRoot' option in defineBddConfig()`);
 
   // Currently steps can be empty: e.g. when decorator steps loaded via importTestFrom
   // After removing importTestFrom we should throw error for missing steps as well.
