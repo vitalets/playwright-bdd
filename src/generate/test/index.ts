@@ -20,7 +20,7 @@ import {
   isTestSlowByCollectedTags,
   SpecialTags,
 } from '../../specialTags';
-import { DecoratorFixtureResolver } from '../decoratorFixtureResolver';
+import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
 
 export type StepData = {
   pickleStep: PickleStep;

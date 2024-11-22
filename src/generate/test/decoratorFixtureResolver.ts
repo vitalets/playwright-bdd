@@ -2,10 +2,10 @@
  * Resolves fixture names for decorator steps.
  */
 import { TestPoms, UsedFixture } from './testPoms';
-import { exit } from '../utils/exit';
-import { PomNode } from '../steps/decorators/pomGraph';
-import { StepData } from './test';
-import { BDDConfig } from '../config/types';
+import { exit } from '../../utils/exit';
+import { PomNode } from '../../steps/decorators/pomGraph';
+import { StepData } from '.';
+import { BDDConfig } from '../../config/types';
 
 export class DecoratorFixtureResolver {
   private testPoms = new TestPoms();
