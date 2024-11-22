@@ -28,7 +28,7 @@ import {
 } from '../hooks/worker';
 import { toBoolean } from '../utils';
 import { Formatter } from './formatter';
-import { TestGen } from './test/test';
+import { TestGen } from './test';
 
 export class TestFileHooks {
   private beforeAll = new TestFileWorkerHooks('beforeAll', this.formatter);

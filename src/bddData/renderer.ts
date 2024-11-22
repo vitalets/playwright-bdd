@@ -3,7 +3,7 @@
  */
 import { indent } from '../generate/formatter';
 import { SourceMapper } from '../generate/sourceMapper';
-import { TestGen } from '../generate/test/test';
+import { TestGen } from '../generate/test';
 import { BddTestData } from './types';
 
 export class BddDataRenderer {

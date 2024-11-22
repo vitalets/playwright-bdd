@@ -32,7 +32,7 @@ import { TestFileHooks } from './testFileHooks';
 import { getSpecFileByFeatureFile } from './paths';
 import { SpecialTags } from '../specialTags';
 import { BackgroundGen } from './background';
-import { TestGen } from './test/test';
+import { TestGen } from './test';
 import { SourceMapper } from './sourceMapper';
 import { BddDataRenderer } from '../bddData/renderer';
 
