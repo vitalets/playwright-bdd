@@ -1,9 +1,9 @@
 /**
  * Renders BDD data in test file.
  */
-import { indent } from '../gen/formatter';
-import { SourceMapper } from '../gen/sourceMapper';
-import { TestGen } from '../gen/test';
+import { indent } from '../generate/formatter';
+import { SourceMapper } from '../generate/sourceMapper';
+import { TestGen } from '../generate/test';
 import { BddTestData } from './types';
 
 export class BddDataRenderer {

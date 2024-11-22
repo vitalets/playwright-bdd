@@ -2,7 +2,7 @@ import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
 import path from 'node:path';
 import { Command } from 'commander';
-import { TestFilesGenerator } from '../../gen';
+import { TestFilesGenerator } from '../../generate';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { getEnvConfigs } from '../../config/env';
 import { ConfigOption } from '../options';

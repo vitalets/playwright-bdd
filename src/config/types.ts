@@ -1,7 +1,7 @@
 /**
  * BDD Config type.
  */
-import { ImportTestFrom } from '../gen/formatter';
+import { ImportTestFrom } from '../generate/formatter';
 import { defaults } from './defaults';
 import { DisableWarningsConfig } from './warnings';
 

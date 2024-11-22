@@ -2,7 +2,7 @@
  * Maps generated file lines to test and step locations.
  */
 import { Pickle, PickleStep } from '@cucumber/messages';
-import { extractPickleIdFromLine, extractPickleStepIdsFromLine } from '../gen/formatter';
+import { extractPickleIdFromLine, extractPickleStepIdsFromLine } from './formatter';
 
 export class SourceMapper {
   private pwTestLocations = new Map<string /* pickle id */, number /* line number */>();

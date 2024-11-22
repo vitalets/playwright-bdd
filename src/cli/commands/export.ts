@@ -6,7 +6,7 @@ import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig'
 import { Logger } from '../../utils/logger';
 import { getEnvConfigs } from '../../config/env';
 import { assertConfigsCount } from './test';
-import { TestFilesGenerator } from '../../gen';
+import { TestFilesGenerator } from '../../generate';
 import { relativeToCwd } from '../../utils/paths';
 import { BDDConfig } from '../../config/types';
 import { forceExitIfNeeded } from '../helpers';

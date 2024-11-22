@@ -2,7 +2,7 @@
  * BDD Config.
  */
 import path from 'node:path';
-import { ImportTestFrom } from '../gen/formatter';
+import { ImportTestFrom } from '../generate/formatter';
 import { getConfigDirFromEnv, saveConfigToEnv } from './env';
 import { BDDConfig, BDDInputConfig } from './types';
 import { defaults } from './defaults';
