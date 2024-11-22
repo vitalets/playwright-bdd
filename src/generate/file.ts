@@ -28,7 +28,7 @@ import { getStepTextWithKeyword, getTagNames, isScenarioOutline } from '../featu
 import { StepFinder } from '../steps/finder';
 import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
-import { TestFileHooks } from './testFileHooks';
+import { TestFileHooks } from './hooks';
 import { getSpecFileByFeatureFile } from './paths';
 import { SpecialTags } from './specialTags';
 import { BackgroundGen } from './background';

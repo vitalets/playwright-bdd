@@ -3,7 +3,7 @@
  */
 import fs from 'node:fs';
 import fg from 'fast-glob';
-import { TestFile } from './testFile';
+import { TestFile } from './file';
 import { FeaturesLoader, resolveFeatureFiles } from '../features/load';
 import { Snippets } from '../snippets';
 import { Logger } from '../utils/logger';
