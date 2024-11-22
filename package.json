@@ -1,6 +1,6 @@
 {
   "name": "playwright-bdd",
-  "description": "BDD Testing with Playwright runner and CucumberJS",
+  "description": "BDD Testing with Playwright runner",
   "version": "7.5.0",
   "type": "commonjs",
   "repository": {
