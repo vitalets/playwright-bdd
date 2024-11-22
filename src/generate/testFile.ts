@@ -30,7 +30,7 @@ import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
 import { TestFileHooks } from './testFileHooks';
 import { getSpecFileByFeatureFile } from './paths';
-import { SpecialTags } from '../specialTags';
+import { SpecialTags } from './specialTags';
 import { BackgroundGen } from './background';
 import { TestGen } from './test';
 import { SourceMapper } from './sourceMapper';

@@ -19,7 +19,7 @@ import {
   isTestSkippedByCollectedTags,
   isTestSlowByCollectedTags,
   SpecialTags,
-} from '../../specialTags';
+} from '../specialTags';
 import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
 
 export type StepData = {

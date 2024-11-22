@@ -10,7 +10,7 @@ import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { ScenarioHookType } from '../hooks/scenario';
 import { WorkerHookType } from '../hooks/worker';
-import { SpecialTags } from '../specialTags';
+import { SpecialTags } from './specialTags';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
