@@ -155,7 +155,12 @@ test('Scenario: failing match snapshot', async ({ page }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(1);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  await expect(scenario.getErrors()).toContainText(['Snapshot comparison failed']);
+  // since pw 1.49 error text for snapshots was changed.
+  // before: Snapshot comparison failed
+  // after: expect(string).toMatchSnapshot(expected)
+  await expect(scenario.getErrors()).toContainText(
+    /Snapshot comparison failed|expect\(string\)\.toMatchSnapshot\(expected\)/,
+  );
 });
 
 test('Scenario: soft assertions', async ({ page }) => {
