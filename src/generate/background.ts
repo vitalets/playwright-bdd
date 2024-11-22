@@ -3,7 +3,7 @@
  * Note: per gherkin syntax, background section must appear before scenarios.
  */
 import { Background, PickleStep, Step } from '@cucumber/messages';
-import { StepData } from './test';
+import { StepData } from './test/test';
 import { AutofillMap } from '../utils/AutofillMap';
 import { Formatter } from './formatter';
 import { getKeywordEng, KeywordsMap } from './i18n';

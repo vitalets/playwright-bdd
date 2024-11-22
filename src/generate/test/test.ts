@@ -2,25 +2,25 @@
  * Class to generate single test from pickle.
  */
 import { PickleStep, Step } from '@cucumber/messages';
-import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
-import { Formatter } from './formatter';
-import { getKeywordEng, KeywordsMap } from './i18n';
-import { getStepTextWithKeyword, getTagNames } from '../features/helpers';
-import { removeDuplicates, stringifyLocation } from '../utils';
-import { exit } from '../utils/exit';
-import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
-import { PomNode } from '../steps/decorators/pomGraph';
-import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
-import { isBddAutoInjectFixture } from '../run/bddFixtures/autoInject';
-import { PickleWithLocation } from '../features/types';
-import { BackgroundGen } from './background';
-import { BDDConfig } from '../config/types';
+import { formatDuplicateStepsMessage, StepFinder } from '../../steps/finder';
+import { Formatter } from '../formatter';
+import { getKeywordEng, KeywordsMap } from '../i18n';
+import { getStepTextWithKeyword, getTagNames } from '../../features/helpers';
+import { removeDuplicates, stringifyLocation } from '../../utils';
+import { exit } from '../../utils/exit';
+import { MatchedStepDefinition } from '../../steps/matchedStepDefinition';
+import { PomNode } from '../../steps/decorators/pomGraph';
+import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
+import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
+import { PickleWithLocation } from '../../features/types';
+import { BackgroundGen } from '../background';
+import { BDDConfig } from '../../config/types';
 import {
   isTestSkippedByCollectedTags,
   isTestSlowByCollectedTags,
   SpecialTags,
-} from '../specialTags';
-import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
+} from '../../specialTags';
+import { DecoratorFixtureResolver } from '../decoratorFixtureResolver';
 
 export type StepData = {
   pickleStep: PickleStep;

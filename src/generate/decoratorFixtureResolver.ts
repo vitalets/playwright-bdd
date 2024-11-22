@@ -4,7 +4,7 @@
 import { TestPoms, UsedFixture } from './testPoms';
 import { exit } from '../utils/exit';
 import { PomNode } from '../steps/decorators/pomGraph';
-import { StepData } from './test';
+import { StepData } from './test/test';
 import { BDDConfig } from '../config/types';
 
 export class DecoratorFixtureResolver {
