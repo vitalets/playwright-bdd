@@ -158,6 +158,8 @@ Verbose output.
 
 ## enrichReporterData
 
+!> Since Playwright-bdd **v8** this option is not needed and will be removed in the future
+
 - Type: `boolean`
 - Default: `undefined`
 

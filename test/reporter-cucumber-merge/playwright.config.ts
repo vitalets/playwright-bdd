@@ -3,9 +3,8 @@ import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 import { testTimeout } from '../reporter-cucumber-html/timeout';
 
 const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['features/*.ts'],
-  enrichReporterData: true,
+  features: 'features/*.feature',
+  steps: 'features/*.ts',
 });
 
 const isShardRun = process.argv.some((a) => a.startsWith('--shard'));

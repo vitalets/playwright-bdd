@@ -322,10 +322,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['features/*.ts'],
-  // Set to true to enrich data in Blob report
-  enrichReporterData: true,
+  features: 'features/*.feature',
+  steps: 'features/*.ts',
 });
 
 // Distinguish shard runs from regular local runs and merge-reports run
