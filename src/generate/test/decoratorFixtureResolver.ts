@@ -1,7 +1,7 @@
 /**
  * Resolves fixture names for decorator steps.
  */
-import { TestPoms, UsedFixture } from './testPoms';
+import { TestPoms, UsedFixture } from './poms';
 import { exit } from '../../utils/exit';
 import { PomNode } from '../../steps/decorators/pomGraph';
 import { StepData } from '.';
