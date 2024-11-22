@@ -26,8 +26,8 @@ export class TestCase {
   #projectInfo?: ProjectInfo;
   private beforeHooks = new Map</* internalId */ string, HookWithStep>();
   private afterHooks = new Map</* internalId */ string, HookWithStep>();
-  // rename to pickleSteps
-  private mainSteps: messages.TestStep[] = [];
+  // in test case there are also hook steps, they are not included in this list
+  private steps: messages.TestStep[] = [];
 
   constructor(
     public id: string,
@@ -50,9 +50,8 @@ export class TestCase {
     this.addHooks(testCaseRun, 'after');
     if (!this.#pickle) {
       this.#pickle = this.findPickle(testCaseRun);
-      this.addStepsFromPickle(this.#pickle);
+      this.createStepsFromPickle(this.#pickle);
     }
-    // todo: call only on first testCaseRun
     this.addStepsArgumentsLists(testCaseRun);
   }
 
@@ -60,14 +59,14 @@ export class TestCase {
     return hookType == 'before' ? this.beforeHooks : this.afterHooks;
   }
 
-  getMainSteps() {
-    return this.mainSteps;
+  getSteps() {
+    return this.steps;
   }
 
   buildMessage() {
     const testSteps = [
       ...Array.from(this.beforeHooks.values()).map((hook) => hook.testStep),
-      ...(this.mainSteps || []),
+      ...(this.steps || []),
       ...Array.from(this.afterHooks.values()).map((hook) => hook.testStep),
     ];
 
@@ -99,8 +98,8 @@ export class TestCase {
   /**
    * Initially create steps from pickle steps, with empty stepMatchArgumentsLists.
    */
-  private addStepsFromPickle(pickle: messages.Pickle) {
-    this.mainSteps = pickle.steps.map((pickleStep, stepIndex) => {
+  private createStepsFromPickle(pickle: messages.Pickle) {
+    this.steps = pickle.steps.map((pickleStep, stepIndex) => {
       return {
         id: `${this.id}-step-${stepIndex}`,
         pickleStepId: pickleStep.id,
@@ -118,8 +117,8 @@ export class TestCase {
    */
   private addStepsArgumentsLists(testCaseRun: TestCaseRun) {
     testCaseRun.bddTestData.steps.forEach((bddStep, stepIndex) => {
-      // map executed step from bddData to pickle step by index!
-      const testCaseStep = this.mainSteps?.[stepIndex];
+      // map executed step from bddTestData to pickle step by index
+      const testCaseStep = this.steps[stepIndex];
       if (testCaseStep && bddStep.stepMatchArguments) {
         testCaseStep.stepMatchArgumentsLists = [{ stepMatchArguments: bddStep.stepMatchArguments }];
       }

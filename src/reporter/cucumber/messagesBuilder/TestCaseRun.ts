@@ -139,7 +139,7 @@ export class TestCaseRun {
 
   private buildStepRuns() {
     return this.getTestCase()
-      .getMainSteps()
+      .getSteps()
       .reduce((messages: TestStepRunEnvelope[], testStep, stepIndex) => {
         const { pwStep } = this.executedSteps[stepIndex] || {};
         const testStepRun = new TestStepRun(this, testStep, pwStep);
