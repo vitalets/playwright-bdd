@@ -23,21 +23,18 @@ export async function runStepWithLocation(
   body: () => unknown,
 ) {
   // PW 1.48 introduced official way to run step with location.
+  // See: https://github.com/microsoft/playwright/issues/30160
   if (playwrightVersion >= '1.48.0') {
     // Earlier PW versions do not support 3rd argument in test.step
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     return test.step(stepText, body, { location });
-  }
-
-  // Since PW 1.43 testInfo._runAsStep was replaced with a more complex logic.
-  // To run step with a custom location, we hijack testInfo._addStep()
-  // so that it appends location for the bdd step calls.
-  // Finally we call test.step(), that internally invokes testInfo._addStep().
-  // See: https://github.com/microsoft/playwright/issues/30160
-  // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/common/testType.ts#L262
-  // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/worker/testInfo.ts#L247
-  if (playwrightVersion >= '1.39.0') {
+  } else {
+    // To run step with a custom location, we hijack testInfo._addStep()
+    // so that it appends location for the bdd step calls.
+    // Finally we call test.step(), that internally invokes testInfo._addStep().
+    // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/common/testType.ts#L262
+    // See: https://github.com/microsoft/playwright/blob/release-1.43/packages/playwright/src/worker/testInfo.ts#L247
     const testInfo = test.info() as TestInfo & {
       _addStep: (data: TestStepInternal) => unknown;
     };
@@ -51,14 +48,5 @@ export async function runStepWithLocation(
     };
 
     return test.step(stepText, body);
-  } else {
-    const testInfo = test.info() as TestInfo & {
-      // testInfo._runAsStep is not public
-      // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/common/testType.ts#L221
-      _runAsStep: (data: TestStepInternal, fn: () => unknown) => unknown;
-    };
-    return testInfo._runAsStep({ category: 'test.step', title: stepText, location }, async () => {
-      return await body();
-    });
   }
 }
