@@ -49,7 +49,7 @@ export class TestCaseRunHooks {
         const executedHook = this.executedHooks.get(hookInfo.hook.internalId);
         // todo: if pwStep is not found in this.executedBeforeHooks,
         // it means that this hook comes from another attempt of this test case.
-        // We can stil try to find it in test result, as otherwise it will be marked as skipped,
+        // We can still try to find it in test result, as otherwise it will be marked as skipped,
         // but actually it was executed.
         const testStepRun = new TestStepRun(
           this.testCaseRun,

@@ -69,20 +69,6 @@ export class TestCaseRun {
     return `${this.test.id}-attempt-${this.result.retry}`;
   }
 
-  // commented, as bddData is now optional and extracted in constructor.
-  // private extractBddData() {
-  //   return extractBddDataFromAnnotation(this.test);
-  //   // if (!bddData) {
-  //   //   throw new Error(`__bddData annotation is not found for test "${this.test.title}".`);
-  //   // }
-  //   // We could delete __bddData annotation here to hide it from other reporters,
-  //   // but it leads to errors on Win.
-  //   // Better way is to get some official way to pass custom data to reporters,
-  //   // see: https://github.com/microsoft/playwright/issues/30179
-  //   // this.test.annotations.splice(annotationIndex, 1);
-  //   return bddData;
-  // }
-
   private fillExecutedSteps() {
     const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
     return this.bddTestData.steps.map((bddStep) => {
