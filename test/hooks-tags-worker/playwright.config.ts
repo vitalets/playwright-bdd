@@ -7,5 +7,5 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
-  workers: 1,
+  workers: Number(process.env.WORKERS),
 });

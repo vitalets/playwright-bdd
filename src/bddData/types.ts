@@ -12,6 +12,8 @@
 
 import { PickleStepType, StepMatchArgument } from '@cucumber/messages';
 
+export type BddFileData = BddTestData[];
+
 export type BddTestData = {
   pwTestLine: number;
   pickleLine: number;

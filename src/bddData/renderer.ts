@@ -7,13 +7,15 @@ import { TestGen } from '../generate/test';
 import { BddTestData } from './types';
 
 export class BddDataRenderer {
+  static varName = 'bddFileData';
+
   constructor(
     private tests: TestGen[],
     private sourceMapper: SourceMapper,
   ) {}
 
   renderFixture() {
-    return [`$bddFileData: ({}, use) => use(bddFileData),`];
+    return [`$bddFileData: ({}, use) => use(${BddDataRenderer.varName}),`];
   }
 
   renderVariable() {
@@ -22,7 +24,7 @@ export class BddDataRenderer {
       return `${JSON.stringify(data)},`;
     });
     return [
-      'const bddFileData = [ // bdd-data-start', // prettier-ignore
+      `const ${BddDataRenderer.varName} = [ // bdd-data-start`, // prettier-ignore
       ...lines.map(indent),
       ']; // bdd-data-end',
     ];

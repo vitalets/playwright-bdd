@@ -73,14 +73,14 @@ export class Formatter {
     ];
   }
 
-  workerHooksCall(type: WorkerHookType, fixturesNames: Set<string>) {
+  workerHooksCall(type: WorkerHookType, fixturesNames: Set<string>, bddDataVar: string) {
     const runWorkerHooksFixture = '$runWorkerHooks';
     const fixturesStr = [...fixturesNames].join(', ');
     const allFixturesStr = [runWorkerHooksFixture, ...fixturesNames].join(', ');
     const title = type === 'beforeAll' ? 'BeforeAll Hooks' : 'AfterAll Hooks';
     return [
       // eslint-disable-next-line max-len
-      `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(test, ${this.quoted(type)}, { ${fixturesStr} }));`,
+      `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(test, ${this.quoted(type)}, { ${fixturesStr} }, ${bddDataVar}));`,
     ];
   }
 

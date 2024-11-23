@@ -14,6 +14,7 @@
  * See: https://github.com/microsoft/playwright/issues/33314
  */
 
+import { BddDataRenderer } from '../bddData/renderer';
 import {
   GeneralScenarioHook,
   getScenarioHooksFixtureNames,
@@ -102,9 +103,8 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
     private formatter: Formatter,
   ) {}
 
-  // todo: _testTags is not used until we add tags to worker hooks
-  registerHooksForTest(_testTags: string[]) {
-    getWorkerHooksToRun(this.type).forEach((hook) => this.hooks.add(hook));
+  registerHooksForTest(testTags: string[]) {
+    getWorkerHooksToRun(this.type, testTags).forEach((hook) => this.hooks.add(hook));
   }
 
   getCustomTestInstances() {
@@ -114,6 +114,10 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
   render() {
     if (!this.hooks.size) return [];
     const fixtureNames = getWorkerHooksFixtureNames([...this.hooks]);
-    return this.formatter.workerHooksCall(this.type, new Set(fixtureNames));
+    return this.formatter.workerHooksCall(
+      this.type,
+      new Set(fixtureNames),
+      BddDataRenderer.varName,
+    );
   }
 }

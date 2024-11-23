@@ -5,16 +5,19 @@
 /* eslint-disable max-depth */
 
 import { WorkerInfo } from '@playwright/test';
+import parseTagsExpression from '@cucumber/tag-expressions';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
+import { BddFileData } from '../bddData/types';
 
 export type WorkerHookType = 'beforeAll' | 'afterAll';
 
 type WorkerHookOptions = {
   name?: string;
+  tags?: string;
   timeout?: number;
 };
 
@@ -29,6 +32,7 @@ export type WorkerHook<Fixtures = object> = {
   type: WorkerHookType;
   options: WorkerHookOptions;
   fn: WorkerHookFn<Fixtures>;
+  tagsExpression?: ReturnType<typeof parseTagsExpression>;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
   // Since playwright-bdd v8 we run worker hooks via test.beforeAll / test.afterAll in each test file,
@@ -69,13 +73,19 @@ export function createBeforeAllAfterAll<Fixtures extends KeyValue>(
   };
 }
 
-// eslint-disable-next-line visual/complexity
+// eslint-disable-next-line visual/complexity, max-params
 export async function runWorkerHooks(
   test: TestTypeCommon,
   type: WorkerHookType,
   fixtures: WorkerHookFixtures,
+  bddFileData: BddFileData,
 ) {
-  const hooksToRun = getWorkerHooksToRun(type);
+  // collect worker hooks for all tests in the file
+  const hooksToRun = new Set<WorkerHook>();
+  bddFileData.forEach((bddTestData) => {
+    getWorkerHooksToRun(type, bddTestData.tags).forEach((hook) => hooksToRun.add(hook));
+  });
+
   let error;
   for (const hook of hooksToRun) {
     try {
@@ -97,10 +107,10 @@ async function runWorkerHook(test: TestTypeCommon, hook: WorkerHook, fixtures: W
   }
 }
 
-export function getWorkerHooksToRun(type: WorkerHookType) {
-  return workerHooks.filter((hook) => hook.type === type);
-  // todo: add tags
-  // .filter((hook) => !hook.tagsExpression || hook.tagsExpression.evaluate(tags));
+export function getWorkerHooksToRun(type: WorkerHookType, tags: string[]) {
+  return workerHooks
+    .filter((hook) => hook.type === type)
+    .filter((hook) => !hook.tagsExpression || hook.tagsExpression.evaluate(tags));
 }
 
 export function getWorkerHooksFixtureNames(hooks: WorkerHook[]) {
@@ -139,6 +149,7 @@ function getFnFromArgs(args: unknown[]) {
 }
 
 function addHook(hook: WorkerHook) {
+  setTagsExpression(hook);
   if (hook.type === 'beforeAll') {
     workerHooks.push(hook);
   } else {
@@ -154,4 +165,10 @@ function getTimeoutMessage(hook: WorkerHook) {
 
 function getHookStepTitle(hook: WorkerHook) {
   return hook.options.name || (hook.type === 'beforeAll' ? 'BeforeAll hook' : 'AfterAll hook');
+}
+
+function setTagsExpression(hook: WorkerHook) {
+  if (hook.options.tags) {
+    hook.tagsExpression = parseTagsExpression(hook.options.tags);
+  }
 }

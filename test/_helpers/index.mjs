@@ -24,3 +24,7 @@ export function expectCalls(prefix, stdout, expectedCalls) {
   const calls = stdout.split('\n').filter((line) => line.startsWith(prefix));
   expect(calls).toEqual(expectedCalls.map((call) => prefix + call));
 }
+
+export function countOfSubstring(str, substr) {
+  return str.split(substr).length - 1;
+}
