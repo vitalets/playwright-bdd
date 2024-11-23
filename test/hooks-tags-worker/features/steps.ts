@@ -19,6 +19,10 @@ BeforeAll({ tags: '@feature2' }, ({ $workerInfo }) => {
   logger.log(`worker ${$workerInfo.workerIndex}: BeforeAll for feature 2`);
 });
 
+BeforeAll({ tags: '@feature1 or @feature2' }, ({ $workerInfo }) => {
+  logger.log(`worker ${$workerInfo.workerIndex}: BeforeAll for feature (1 or 2)`);
+});
+
 AfterAll(({ $workerInfo }) => {
   logger.log(`worker ${$workerInfo.workerIndex}: AfterAll 1`);
 });
