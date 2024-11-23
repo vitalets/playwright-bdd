@@ -3,7 +3,7 @@ import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   featuresRoot: 'features',
-  // features: 'features/tagged-scenario-baz.feature',
+  // features: 'features/pom.feature',
 });
 
 export default defineConfig({

@@ -1,5 +1,6 @@
 import { Given, Fixture } from 'playwright-bdd/decorators';
 import { test } from './fixtures';
+import { expectTypeOf } from 'expect-type';
 
 // notice: no @Fixture here
 class BasePage {
@@ -17,6 +18,17 @@ class TodoPage extends BasePage {
   @Given('TodoPage: step')
   step() {
     super.step();
+
+    // additionally check typing of @Fixture
+    expectTypeOf(Fixture<typeof test>)
+      .parameter(0)
+      .extract<'todoPage'>()
+      .toEqualTypeOf<'todoPage'>();
+
+    expectTypeOf(Fixture<typeof test>)
+      .parameter(0)
+      .extract<'xxxxx'>()
+      .toBeNever();
   }
 }
 

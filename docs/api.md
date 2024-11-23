@@ -192,26 +192,34 @@ export
 class TodoPage { ... };
 ```
 
-### `@Given(pattern)`
+### `@Given(pattern[, options])`
 Method decorator to define `Given` step.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
 
-### `@When(pattern)`
+### `@When(pattern[, options])`
 Method decorator to define `When` step.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
 
-### `@Then(pattern)`
+### `@Then(pattern[, options])`
 Method decorator to define `Then` step.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
 
-### `@Step(pattern)`
+### `@Step(pattern[, options])`
 Method decorator to define universal step.
 
 **Params**
   * `pattern` *string | regexp* - step pattern
+  * `options` *object* - step options
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios

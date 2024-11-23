@@ -8,7 +8,12 @@ import { PomNode } from './pomGraph';
 import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
-import { StepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
+import {
+  StepPattern,
+  GherkinStepKeyword,
+  StepDefinitionOptions,
+  ProvidedStepOptions,
+} from '../stepDefinition';
 
 // initially we store step data inside method,
 // and then extract it in @Fixture decorator call
@@ -19,7 +24,7 @@ type DecoratedMethod = Function & { [decoratedStepSymbol]: StepDefinitionOptions
  * Creates @Given, @When, @Then decorators.
  */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
-  return (pattern: StepPattern) => {
+  return (pattern: StepPattern, providedOptions?: ProvidedStepOptions) => {
     // offset = 3 b/c this call is 3 steps below the user's code
     const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
@@ -28,6 +33,7 @@ export function createStepDecorator(keyword: GherkinStepKeyword) {
         keyword,
         pattern,
         location,
+        providedOptions,
         fn: method,
       });
     };
