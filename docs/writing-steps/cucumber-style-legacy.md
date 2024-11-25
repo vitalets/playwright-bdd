@@ -1,6 +1,6 @@
 # Cucumber-style steps (legacy)
 
-!> This approach is **legacy** and will be removed in the future versions of `playwright-bdd`. Please check-out [new cucumber-style](writing-steps/cucumber-style.md).
+!> This is **legacy** approach supported in playwright-bdd < **v7**. For newer versions please check-out [new cucumber-style](writing-steps/cucumber-style.md).
 
 Cucumber-style step definitions are compatible with CucumberJS:
 
