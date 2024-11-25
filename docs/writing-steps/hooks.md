@@ -1,15 +1,15 @@
 # Hooks
 
-Hooks are functions that automatically run before/after some parts of test execution:
+Hooks are functions that automatically run before/after workers or scenarios:
 
 * `BeforeAll` / `AfterAll` - run before/after **every worker**
 * `Before` / `After` - run before/after **every scenario**
 
-> If you need to run some code **before/after overall test execution**, use Playwright's [global setup and teardown](https://playwright.dev/docs/test-global-setup-teardown)
+> If you need to run some code **before/after overall test execution**, check out Playwright's [project dependencies](https://playwright.dev/docs/test-global-setup-teardown#option-1-project-dependencies) or [global setup and teardown](https://playwright.dev/docs/test-global-setup-teardown#option-2-configure-globalsetup-and-globalteardown)
 
 ## Fixtures
 
-Although hooks is a well-known concept, Playwright offers a better alternative - [fixtures](https://playwright.dev/docs/test-fixtures#introduction). In most cases fixtures can fully replace hooks and provide [many advantages](https://playwright.dev/docs/test-fixtures#with-fixtures). By default always consider to use fixtures.
+Although hooks is a well-known concept, Playwright offers a better alternative - [fixtures](https://playwright.dev/docs/test-fixtures#introduction). In most cases fixtures can fully replace hooks and provide [many advantages](https://playwright.dev/docs/test-fixtures#with-fixtures). By default always consider using fixtures.
 
 🔹 **Example of rewriting code from hooks to fixtures**
 
@@ -22,7 +22,7 @@ Feature: Some feature
 ```
 So we need to wrap scenario with sign-in / sign-out actions.
 
-**In Cucumber** I can add some tag (e.g. `@auth`) to that scenario:
+**In Cucumber** you can add a tag (e.g. `@auth`) to that scenario:
 ```feature
 Feature: Some feature
 
@@ -42,7 +42,7 @@ After({ tags: '@auth' }, async function () {
 });
 ```
 
-**In Playwright** I can solve it with the following `auth` fixture:
+**In Playwright** you can create the following `auth` fixture:
 ```ts
 export const test = base.extend({
   auth: async ({}, use) => {
@@ -52,14 +52,14 @@ export const test = base.extend({
   }
 });
 ```
-Now I just reference `auth` fixture in the step:
+and use that `auth` fixture in the step:
 ```ts
 Given('I am an authorized user', async ({ auth }) => {
   console.log('step for authorized user', auth.username);
 });
 ```
 
-The benefits of using `auth` fixture:
+The benefits of using fixture:
 - no extra tags
 - automatically skipped when authorization is not needed
 - reusable in other features 
@@ -76,22 +76,22 @@ import { createBdd } from 'playwright-bdd';
 
 const { BeforeAll, AfterAll } = createBdd();
 
-BeforeAll(async function ({ $workerInfo, browser }) {
+BeforeAll(async ({ $workerInfo, browser }) => {
   // runs when each worker starts
 });
 
-AfterAll(async function ({ $workerInfo, browser }) {
+AfterAll(async ({ $workerInfo, browser }) => {
   // runs when each worker ends
 });
 ```
 
 You can set **timeout** for each hook as well as in Cucumber:
 ```ts
-BeforeAll({ timeout: 1000 }, async function () {
+BeforeAll({ timeout: 1000 }, async () => {
   // runs with timeout 1000 ms
 });
 
-AfterAll({ timeout: 1000 }, async function () {
+AfterAll({ timeout: 1000 }, async () => {
   // runs with timeout 1000 ms
 });
 ```
@@ -103,28 +103,25 @@ You can access [$workerInfo](https://playwright.dev/docs/api/class-workerinfo) a
 
 🔹 **Example of using custom fixture in `BeforeAll` hook**
 
-Imagine you have defined custom worker fixture `myWorkerFixture`:
+Imagine you have defined worker fixture `myWorkerFixture`:
 ```ts
-import { test as base } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 
 export const test = base.extend<{}, { myWorkerFixture: MyWorkerFixture }>({
-  myWorkerFixture: [async ({ browser }, use) => {
-    const fixture = new MyWorkerFixture(browser);
-    await fixture.setup();
-    await use(fixture);
+  myWorkerFixture: [async ({}, use) => {
+    // ... setup myWorkerFixture
   }, { scope: 'worker' }]
 });
+
+export const { BeforeAll, AfterAll } = createBdd(test);
 ```
 
-Now you can pass `test` instance to `createBdd()` and use `myWorkerFixture` in the produced hooks:
+Now you can use `myWorkerFixture` in the produced hooks:
 ```ts
-import { createBdd } from 'playwright-bdd';
-import { test } from './fixtures';
+import { BeforeAll } from './fixtures';
 
-const { BeforeAll, AfterAll } = createBdd(test);
-
-BeforeAll(async function ({ myWorkerFixture }) {
-  // ...
+BeforeAll(async ({ myWorkerFixture }) => {
+  // ... use myWorkerFixture in hook
 });
 ```
 
@@ -142,12 +139,12 @@ import { createBdd } from 'playwright-bdd';
 
 const { Before, After } = createBdd();
 
-Before(async function () {
-  // runs before each scenario, you can access to World as 'this'
+Before(async () => {
+  // runs before each scenario
 });
 
-After(async function () {
-  // runs after each scenario, you can access to World as 'this'.
+After(async () => {
+  // runs after each scenario
 });
 ```
 
@@ -178,24 +175,22 @@ You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$ta
 
 Imagine you have defined custom fixture `myFixture`:
 ```ts
-import { test as base } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 
 export const test = base.extend<{ myFixture: MyFixture }>({
   myFixture: async ({ page }, use) => {
-    const fixture = new MyFixture(page);
-    await use(fixture);
+    // ... setup myFixture
   }
 });
+
+export const { Before, After } = createBdd(test);
 ```
 
-Now you can pass `test` instance to `createBdd()` and use `myFixture` in the produced hooks:
+Now you can use `myFixture` in the produced hooks:
 ```ts
-import { createBdd } from 'playwright-bdd';
-import { test } from './fixtures';
+import { Before } from './fixtures';
 
-const { Before, After } = createBdd(test);
-
-Before(async function ({ myFixture }) {
-  // ...
+Before(async ({ myFixture }) => {
+  // ... use myFixture in the hook
 });
 ```
