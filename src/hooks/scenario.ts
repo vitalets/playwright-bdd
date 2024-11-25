@@ -79,15 +79,16 @@ export function createBeforeAfter<
 }
 
 // eslint-disable-next-line visual/complexity
-export async function runScenarioHooks(type: ScenarioHookType, fixtures: ScenarioHookFixtures) {
-  const hooksToRun = getScenarioHooksToRun(type, fixtures.$bddContext.tags);
-
+export async function runScenarioHooks(
+  hooks: GeneralScenarioHook[],
+  fixtures: ScenarioHookFixtures,
+) {
   let error;
-  for (const hook of hooksToRun) {
+  for (const hook of hooks) {
     try {
       await runScenarioHook(hook, fixtures);
     } catch (e) {
-      if (type === 'before') throw e;
+      if (hook.type === 'before') throw e;
       if (!error) error = e;
     }
   }
@@ -155,12 +156,7 @@ function setTagsExpression(hook: GeneralScenarioHook) {
 
 function addHook(hook: GeneralScenarioHook) {
   setTagsExpression(hook);
-  if (hook.type === 'before') {
-    scenarioHooks.push(hook);
-  } else {
-    // 'after' hooks run in reverse order
-    scenarioHooks.unshift(hook);
-  }
+  scenarioHooks.push(hook);
 }
 
 function getTimeoutMessage(hook: GeneralScenarioHook) {

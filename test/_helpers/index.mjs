@@ -9,6 +9,9 @@ import { expect } from '@playwright/test';
 export * from './runPlaywright.mjs';
 export * from './TestDir.mjs';
 
+// At some point we will be able to run test.only()
+// See: https://github.com/nodejs/node/issues/47945
+
 export { test, expect, normalize };
 export const playwrightVersion = getPackageVersion('@playwright/test');
 

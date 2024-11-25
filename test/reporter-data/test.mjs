@@ -25,7 +25,6 @@ function checkStepLocations(output) {
   expect(output).toContain(`BeforeAll Hooks`);
   expect(output).toContain(`BeforeAll hook ${normalize('features/steps.ts')}:14:1`);
   expect(output).toContain(`named BeforeAll hook ${normalize('features/steps.ts')}:15:1`);
-  expect(output).toContain(`named AfterAll hook ${normalize('features/steps.ts')}:16:1`);
 
   expect(output).toContain(`BeforeEach Hooks`);
   expect(output).toContain(`hook 1 ${normalize('features/steps.ts')}:12:1`);
@@ -34,6 +33,13 @@ function checkStepLocations(output) {
   expect(output).toContain(
     `Background ${normalize('.features-gen/features/sample.feature.spec.js')}:6:8`,
   );
+
+  // after hooks
+  expect(output).toContain(`AfterAll Hooks`);
+  // AfterAll hooks are not executed via test.step and don't have location.
+  // See: https://github.com/microsoft/playwright/issues/33750
+  // todo: fix this
+  // expect(output).toContain(`named AfterAll hook ${normalize('features/steps.ts')}:17:1`);
 }
 
 function checkStepTitles(output) {

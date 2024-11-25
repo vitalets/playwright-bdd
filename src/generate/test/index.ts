@@ -49,13 +49,13 @@ export class TestGen {
   // eslint-disable-next-line max-params
   constructor(
     private config: BDDConfig,
-    private featureUri: string,
+    public featureUri: string,
     private i18nKeywordsMap: KeywordsMap | undefined,
     private stepFinder: StepFinder,
     private formatter: Formatter,
     private backgrounds: BackgroundGen[],
     public pickle: PickleWithLocation,
-    private testTitle: string,
+    public testTitle: string,
     private scenarioSteps: readonly Step[],
     ownTestTags: string[],
   ) {

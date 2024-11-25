@@ -107,3 +107,7 @@ export function saveFileSync(filePath: string, content: string) {
 export function toBoolean<T>(value: T): value is NonNullable<T> {
   return Boolean(value);
 }
+
+export function areSetsEqual<T>(set1: Set<T>, set2: Set<T>) {
+  return set1.size === set2.size && [...set1].every((val) => set2.has(val));
+}

@@ -27,7 +27,8 @@ import {
   WorkerHook,
   WorkerHookType,
 } from '../hooks/worker';
-import { toBoolean } from '../utils';
+import { areSetsEqual, toBoolean } from '../utils';
+import { exit } from '../utils/exit';
 import { Formatter } from './formatter';
 import { TestGen } from './test';
 
@@ -41,10 +42,11 @@ export class TestFileHooks {
 
   fillFromTests(tests: TestGen[]) {
     tests.forEach((test) => {
-      this.beforeAll.registerHooksForTest(test.tags);
-      this.afterAll.registerHooksForTest(test.tags);
-      this.before.registerHooksForTest(test.tags);
-      this.after.registerHooksForTest(test.tags);
+      // todo: filter skipped tests
+      this.beforeAll.registerHooksForTest(test);
+      this.afterAll.registerHooksForTest(test);
+      this.before.registerHooksForTest(test);
+      this.after.registerHooksForTest(test);
     });
   }
 
@@ -77,8 +79,8 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
     private formatter: Formatter,
   ) {}
 
-  registerHooksForTest(testTags: string[]) {
-    getScenarioHooksToRun(this.type, testTags).forEach((hook) => this.hooks.add(hook));
+  registerHooksForTest(test: TestGen) {
+    getScenarioHooksToRun(this.type, test.tags).forEach((hook) => this.hooks.add(hook));
   }
 
   getCustomTestInstances() {
@@ -97,14 +99,27 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
 
 class TestFileWorkerHooks<T extends WorkerHookType> {
   private hooks = new Set<WorkerHook>();
+  private tests: TestGen[] = [];
 
   constructor(
     private type: T,
     private formatter: Formatter,
   ) {}
 
-  registerHooksForTest(testTags: string[]) {
-    getWorkerHooksToRun(this.type, testTags).forEach((hook) => this.hooks.add(hook));
+  registerHooksForTest(test: TestGen) {
+    /**
+     * For worker hooks (beforeAll, afterAll) we require
+     * that each test match exactly the same set of hooks.
+     * Otherwise, in fully-parallel mode, we will run all worker hooks
+     * in each worker for each test, that actually makes test-level tags useless.
+     */
+    const hooksForTest = new Set(getWorkerHooksToRun(this.type, test.tags));
+    if (this.tests.length === 0) {
+      this.hooks = hooksForTest;
+    } else {
+      this.ensureHooksEqual(test, hooksForTest);
+    }
+    this.tests.push(test);
   }
 
   getCustomTestInstances() {
@@ -118,6 +133,19 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
       this.type,
       new Set(fixtureNames),
       BddDataRenderer.varName,
+    );
+  }
+
+  private ensureHooksEqual(test: TestGen, hooksForTest: Set<WorkerHook>) {
+    if (areSetsEqual(this.hooks, hooksForTest)) return;
+    const prevTest = this.tests.at(-1)!;
+    exit(
+      [
+        `Tagged ${this.type} hooks should be the same for all scenarios in a feature.`,
+        `Feature: ${test.featureUri}`,
+        `  - ${this.hooks.size} hook(s): ${prevTest.testTitle} ${prevTest.tags.join(' ')}`,
+        `  - ${hooksForTest.size} hook(s): ${test.testTitle} ${test.tags.join(' ')}`,
+      ].join('\n'),
     );
   }
 }

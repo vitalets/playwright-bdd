@@ -6,7 +6,7 @@
 
 import { test as base } from './worker';
 import { BDDConfig } from '../../config/types';
-import { runScenarioHooks } from '../../hooks/scenario';
+import { getScenarioHooksToRun, runScenarioHooks } from '../../hooks/scenario';
 import { createStepInvoker, StepKeywordFixture } from '../StepInvoker';
 import { TestTypeCommon } from '../../playwright/types';
 import { TestInfo } from '@playwright/test';
@@ -145,17 +145,20 @@ export const test = base.extend<BddFixturesTest>({
   // unused dependency '$afterEach' is important to run afterEach
   // in case of error in beforeEach.
   $beforeEach: [
-    async ({ $bddContext, $beforeEachFixtures, $afterEach }, use) => {
-      await runScenarioHooks('before', { $bddContext, ...$beforeEachFixtures });
+    async ({ $bddContext, $beforeEachFixtures, $tags, $afterEach }, use) => {
+      const hooksToRun = getScenarioHooksToRun('before', $tags);
+      await runScenarioHooks(hooksToRun, { $bddContext, ...$beforeEachFixtures });
       await use();
     },
     fixtureOptions,
   ],
   // runs afterEach hooks
   $afterEach: [
-    async ({ $bddContext, $afterEachFixtures }, use) => {
+    async ({ $bddContext, $afterEachFixtures, $tags }, use) => {
       await use();
-      await runScenarioHooks('after', { $bddContext, ...$afterEachFixtures });
+      const hooksToRun = getScenarioHooksToRun('after', $tags);
+      hooksToRun.reverse();
+      await runScenarioHooks(hooksToRun, { $bddContext, ...$afterEachFixtures });
     },
     fixtureOptions,
   ],

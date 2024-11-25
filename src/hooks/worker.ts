@@ -11,7 +11,6 @@ import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/type
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
-import { BddFileData } from '../bddData/types';
 
 export type WorkerHookType = 'beforeAll' | 'afterAll';
 
@@ -38,6 +37,12 @@ export type WorkerHook<Fixtures = object> = {
   // Since playwright-bdd v8 we run worker hooks via test.beforeAll / test.afterAll in each test file,
   // so we need to know if hook was executed to avoid double execution in every test file.
   executed?: boolean;
+};
+
+export type WorkerHookRunInfo = {
+  test: TestTypeCommon;
+  hook: WorkerHook;
+  fixtures: WorkerHookFixtures;
 };
 
 /**
@@ -73,37 +78,32 @@ export function createBeforeAllAfterAll<Fixtures extends KeyValue>(
   };
 }
 
-// eslint-disable-next-line visual/complexity, max-params
-export async function runWorkerHooks(
-  test: TestTypeCommon,
-  type: WorkerHookType,
-  fixtures: WorkerHookFixtures,
-  bddFileData: BddFileData,
-) {
-  // collect worker hooks for all tests in the file
-  const hooksToRun = new Set<WorkerHook>();
-  bddFileData.forEach((bddTestData) => {
-    getWorkerHooksToRun(type, bddTestData.tags).forEach((hook) => hooksToRun.add(hook));
-  });
-
+// eslint-disable-next-line visual/complexity
+export async function runWorkerHooks(hooksRunInfo: Map<WorkerHook, WorkerHookRunInfo>) {
   let error;
-  for (const hook of hooksToRun) {
+  for (const runInfo of hooksRunInfo.values()) {
     try {
-      await runWorkerHook(test, hook, fixtures);
+      await runWorkerHook(runInfo);
     } catch (e) {
-      if (type === 'beforeAll') throw e;
+      if (runInfo.hook.type === 'beforeAll') throw e;
       if (!error) error = e;
     }
   }
   if (error) throw error;
 }
 
-async function runWorkerHook(test: TestTypeCommon, hook: WorkerHook, fixtures: WorkerHookFixtures) {
-  if (!hook.executed) {
-    hook.executed = true;
-    const hookFn = wrapHookFnWithTimeout(hook, fixtures);
-    const stepTitle = getHookStepTitle(hook);
+async function runWorkerHook({ test, hook, fixtures }: WorkerHookRunInfo) {
+  if (hook.executed) return;
+  hook.executed = true;
+  const hookFn = wrapHookFnWithTimeout(hook, fixtures);
+  const stepTitle = getHookStepTitle(hook);
+  // test.step() is not available for afterAll hooks.
+  // See: https://github.com/microsoft/playwright/issues/33750
+  // So all afterAll hooks are called under AfterAll step (with type = 'hook' in reporter)
+  if (hook.type === 'beforeAll') {
     await runStepWithLocation(test, stepTitle, hook.location, hookFn);
+  } else {
+    await hookFn();
   }
 }
 
@@ -150,12 +150,7 @@ function getFnFromArgs(args: unknown[]) {
 
 function addHook(hook: WorkerHook) {
   setTagsExpression(hook);
-  if (hook.type === 'beforeAll') {
-    workerHooks.push(hook);
-  } else {
-    // 'afterAll' hooks run in reverse order
-    workerHooks.unshift(hook);
-  }
+  workerHooks.push(hook);
 }
 
 function getTimeoutMessage(hook: WorkerHook) {

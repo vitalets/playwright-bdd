@@ -13,4 +13,5 @@ Before({ name: 'hook 1' }, async () => {});
 Before(async () => {});
 BeforeAll(async () => {});
 BeforeAll({ name: 'named BeforeAll hook' }, async () => {});
+AfterAll(async () => {});
 AfterAll({ name: 'named AfterAll hook' }, async () => {});
