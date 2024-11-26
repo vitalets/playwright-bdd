@@ -8,21 +8,21 @@ import {
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { test as baseBddTest, BddFixturesTest } from '../runtime/bddTestFixtures';
+import { test as baseBddTest, BddTestFixtures } from '../runtime/bddTestFixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { createBeforeAfter } from '../hooks/scenario';
 import { createBeforeAllAfterAll } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './styles/cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './styles/playwrightStyle';
-import { BddFixturesWorker } from '../runtime/bddWorkerFixtures';
+import { BddWorkerFixtures } from '../runtime/bddWorkerFixtures';
 
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
 };
 
-type DefaultFixturesTest = PwBuiltInFixturesTest & BddFixturesTest;
-type DefaultFixturesWorker = PwBuiltInFixturesWorker & BddFixturesWorker;
+type DefaultFixturesTest = PwBuiltInFixturesTest & BddTestFixtures;
+type DefaultFixturesWorker = PwBuiltInFixturesWorker & BddWorkerFixtures;
 type CustomFixtureNames<T extends KeyValue> = Exclude<
   keyof T,
   keyof DefaultFixturesTest | number | symbol

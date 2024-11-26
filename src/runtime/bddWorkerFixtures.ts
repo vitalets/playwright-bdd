@@ -28,14 +28,14 @@ type WorkerHooksFixture = (
   bddFileData: BddFileData,
 ) => unknown;
 
-export type BddFixturesWorker = {
+export type BddWorkerFixtures = {
   $workerInfo: WorkerInfo;
   $bddConfig: BDDConfig;
   $runBeforeAllHooks: WorkerHooksFixture;
   $registerAfterAllHooks: WorkerHooksFixture;
 };
 
-export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
+export const test = base.extend<NonNullable<unknown>, BddWorkerFixtures>({
   $workerInfo: [({}, use, $workerInfo) => use($workerInfo), fixtureOptions],
   $bddConfig: [
     async ({}, use, workerInfo) => {

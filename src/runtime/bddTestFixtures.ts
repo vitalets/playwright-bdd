@@ -23,7 +23,7 @@ type StepFixture = {
 // make type coercion to satisfy TS in early PW versions
 const fixtureOptions = { scope: 'test', box: true } as { scope: 'test' };
 
-export type BddFixturesTest = {
+export type BddTestFixtures = {
   $bddContext: BddContext;
   Given: StepKeywordFixture;
   When: StepKeywordFixture;
@@ -57,7 +57,7 @@ export type BddContext = {
   bddTestData: BddTestData;
 };
 
-export const test = base.extend<BddFixturesTest>({
+export const test = base.extend<BddTestFixtures>({
   // apply timeout and slow from special tags in runtime instead of generating in test body
   // to have cleaner test body and track fixtures in timeout calculation.
   $applySpecialTags: [
