@@ -7,7 +7,7 @@
 import { test as base } from './bddWorkerFixtures';
 import { BDDConfig } from '../config/types';
 import { getScenarioHooksToRun, runScenarioHooks } from '../hooks/scenario';
-import { BddStepInvoker, BddStepFn } from './StepInvoker';
+import { BddStepInvoker, BddStepFn } from './bddStepInvoker';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
