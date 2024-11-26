@@ -7,14 +7,14 @@
 import { test as base } from './bddWorkerFixtures';
 import { BDDConfig } from '../config/types';
 import { getScenarioHooksToRun, runScenarioHooks } from '../hooks/scenario';
-import { createStepInvoker, StepKeywordFixture } from './StepInvoker';
+import { BddStepInvoker, BddStepFn } from './StepInvoker';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
-type StepFixture = {
+type BddStepFixture = {
   title: string;
 };
 
@@ -25,17 +25,17 @@ const fixtureOptions = { scope: 'test', box: true } as { scope: 'test' };
 
 export type BddTestFixtures = {
   $bddContext: BddContext;
-  Given: StepKeywordFixture;
-  When: StepKeywordFixture;
-  Then: StepKeywordFixture;
-  And: StepKeywordFixture;
-  But: StepKeywordFixture;
+  Given: BddStepFn;
+  When: BddStepFn;
+  Then: BddStepFn;
+  And: BddStepFn;
+  But: BddStepFn;
   $bddFileData: BddTestData[];
   $bddTestData?: BddTestData; // $bddTestData is undefined for non-bdd tests
   $tags: string[];
   $test: TestTypeCommon;
   $testInfo: TestInfo;
-  $step: StepFixture;
+  $step: BddStepFixture;
   $uri: string;
   $applySpecialTags: void;
   $world: unknown;
@@ -51,7 +51,7 @@ export type BddContext = {
   test: TestTypeCommon;
   testInfo: TestInfo;
   tags: string[];
-  step: StepFixture;
+  step: BddStepFixture;
   stepIndex: number; // step index in pickle (differs from index in scenario, b/c bg steps)
   world: unknown;
   bddTestData: BddTestData;
@@ -92,10 +92,13 @@ export const test = base.extend<BddTestFixtures>({
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
-    ({ $bddContext, $applySpecialTags, $beforeEach }, use) => use(createStepInvoker($bddContext)),
+    async ({ $bddContext, $applySpecialTags, $beforeEach }, use) => {
+      const invoker = new BddStepInvoker($bddContext);
+      await use(invoker.invoke.bind(invoker));
+    },
     fixtureOptions,
   ],
-  // All invoke step fixtures use the same Given fixture, b/c we get keyword from step meta (by index)
+  // All invoke step fixtures use the same Given fixture, b/c we get keyword from bddStepData
   When: [({ Given }, use) => use(Given), fixtureOptions],
   Then: [({ Given }, use) => use(Given), fixtureOptions],
   And: [({ Given }, use) => use(Given), fixtureOptions],

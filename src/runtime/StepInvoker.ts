@@ -12,14 +12,9 @@ import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { getStepTextWithKeyword } from '../features/helpers';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 
-export type StepKeywordFixture = ReturnType<typeof createStepInvoker>;
+export type BddStepFn = BddStepInvoker['invoke'];
 
-export function createStepInvoker(bddContext: BddContext) {
-  const invoker = new StepInvoker(bddContext);
-  return invoker.invoke.bind(invoker);
-}
-
-class StepInvoker {
+export class BddStepInvoker {
   private stepFinder: StepFinder;
   constructor(private bddContext: BddContext) {
     this.stepFinder = new StepFinder(bddContext.config);
