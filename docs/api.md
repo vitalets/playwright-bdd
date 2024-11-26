@@ -70,24 +70,28 @@ Creates functions for defining steps and hooks.
 
 **Usage:** `createBdd([test][, options])`
 
-!> Before playwright-bdd **v7** second parameter was `WorldConstructor`
+> Before playwright-bdd **v7** second parameter was `WorldConstructor`
 
 **Params:**
   * `test` *object* - test instance to provide access to custom fixtures in steps
   * `options` *object* - options
     * `worldFixture` *string* - name of the fixture to be used as a World in cucumber-style steps
 
-**Returns:** *object* - `{ Given, When, Then, Step, Before, After, BeforeAll, AfterAll }`
+**Returns:** *object* - `{ Given, When, Then, Step, BeforeScenario, AfterScenario, BeforeWorker, AfterWorker, Before, After, BeforeAll, AfterAll }`
 
 By default produced functions work with [Playwright-style](writing-steps/playwright-style.md) steps. If `options.worldFixture` is defined, then produced functions work with [Cucumber-style](writing-steps/cucumber-style.md) steps.
 
-### Given
-Defines `Given` step implementation.
+### Given / When / Then / Step
+Functions for step implementations.
 
-**Usage:** `Given(pattern[, options], fn)`
+**Usage:** 
+ - `Given(pattern[, options], fn)`
+ - `When(pattern[, options], fn)`
+ - `Then(pattern[, options], fn)`
+ - `Step(pattern[, options], fn)`
 
 **Params:**
-  * `pattern` *string | regexp* - step pattern
+  * `pattern` *string | regexp* - step pattern as [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
   * `fn` *function* - step function `(fixtures, ...args) => void`:
@@ -96,103 +100,70 @@ Defines `Given` step implementation.
 
 **Returns:** *function* - a function to call this step from other steps.
 
-### When
-Defines `When` step implementation.
+### BeforeScenario / Before
+Defines a hook that runs **before each scenario**. You can target hook to specific scenarios by providing `tags` option. `BeforeScenario` and `Before` are aliases.
 
-**Usage:** `When(pattern[, options], fn)`
-
-**Params:**
-  * `pattern` *string | regexp* - step pattern
-  * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
-  * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
-    - `...args` *array* - arguments captured from step pattern  
-
-**Returns:** *function* - a function to call this step from other steps.
-
-### Then
-Defines `Then` step implementation.
-
-**Usage:** `Then(pattern[, options], fn)`
-
-**Params:**
-  * `pattern` *string | regexp* - step pattern
-  * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios  
-  * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
-    - `...args` *array* - arguments captured from step pattern  
-
-**Returns:** *function* - a function to call this step from other steps.
-
-### Step
-Defines universal step implementation.
-
-**Usage:** `Step(pattern[, options], fn)`
-
-**Params:**
-  * `pattern` *string | regexp* - step pattern
-  * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios  
-  * `fn` *function* - step function `(fixtures, ...args) => void`:
-    - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
-    - `...args` *array* - arguments captured from step pattern  
-
-**Returns:** *function* - a function to call this step from other steps.
-
-### Before
-Defines `Before` hook: runs before each scenario. Scenarios can be filtered by tags.
-
-**Usage:** `Before([options,] hookFn)`
+**Usage:** `BeforeScenario([options,] hookFn)`
 
 **Params:**
   * `options` *string | object*
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) used to apply this hook to only specific scenarios
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features/scenarios
+    - `name` *string* - an optional name for this hook for reporting
     - `timeout` *number* - timeout for this hook in milliseconds
-    - `name` *string* - an optional name for this hook
   * `hookFn` *Function* hook function `(fixtures?) => void`:
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo)
       - `$tags` *string[]* - list of tags for current scenario
       - any other built-in and custom fixtures
 
-### After
-Defines `After` hook: runs after each scenario. Scenarios can be filtered by tags.
+### AfterScenario / After
+Defines a hook that runs **after each scenario**. You can target hook to specific scenarios by providing `tags` option. `AfterScenario` and `After` are aliases.
 
-**Usage:** `After([options,] hookFn)`
+**Usage:** `AfterScenario([options,] hookFn)`
 
 **Params:**
   * `options` *string | object*
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) used to apply this hook to only specific scenarios
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features/scenarios
+    - `name` *string* - an optional name for this hook for reporting
     - `timeout` *number* - timeout for this hook in milliseconds
-    - `name` *string* - an optional name for this hook
   * `hookFn` *Function* hook function `(fixtures?) => void`:
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo)
       - `$tags` *string[]* - list of tags for current scenario
       - any other built-in and custom fixtures
 
-### BeforeAll
-Defines `BeforeAll` hook: runs once in each worker.
+### BeforeWorker / BeforeAll
+Defines a hook that runs **once in each worker**, before all scenarios.
+You can target hook to specific scenarios by providing `tags` option.
+`BeforeWorker` and `BeforeAll` are aliases.
 
-**Usage:** `BeforeAll([options,] hookFn)`
+> Note that for worker hooks it makes sense to provide only *feature-level tags*. Scenario-level tags will still trigger hook run for the whole feature file, not for particular scenario
+
+**Usage:** `BeforeWorker([options,] hookFn)`
 
 **Params:**
   * `options` *string | object*
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features
+    - `name` *string* - an optional name for this hook for reporting
     - `timeout` *number* - timeout for this hook in milliseconds
   * `hookFn` *Function* hook function `(fixtures?) => void`:
     - `fixtures` *object* - Playwright [worker-scoped fixtures](https://playwright.dev/docs/test-fixtures#worker-scoped-fixtures):
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo)
       - any other built-in and custom **worker-scoped** fixtures
 
-### AfterAll
-Defines `AfterAll` hook: runs once in each worker.
+### AfterWorker / AfterAll
+Defines a hook that runs **once in each worker**, after all scenarios.
+You can target hook to specific scenarios by providing `tags` option.
+`AfterWorker` and `AfterAll` are aliases.
 
-**Usage:** `AfterAll([options,] hookFn)`
+> Note that for worker hooks it makes sense to provide only *feature-level tags*. Scenario-level tags will still trigger hook run for the whole feature file, not for particular scenario
+
+**Usage:** `AfterWorker([options,] hookFn)`
 
 **Params:**
   * `options` *string | object*
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features
+    - `name` *string* - an optional name for this hook for reporting
     - `timeout` *number* - timeout for this hook in milliseconds
   * `hookFn` *Function* hook function `(fixtures?) => void`:
     - `fixtures` *object* - Playwright [worker-scoped fixtures](https://playwright.dev/docs/test-fixtures#worker-scoped-fixtures):
@@ -217,42 +188,16 @@ export
 class TodoPage { ... };
 ```
 
-### @Given
-Method decorator to define `Given` step.
+### @Given / @When / @Then / @Step
+A decorator to mark method as BDD step.
 
-**Usage:** `@Given(pattern[, options])`
-
-**Params:**
-  * `pattern` *string | regexp* - step pattern
-  * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
-
-### @When
-Method decorator to define `When` step.
-
-**Usage:** `@When(pattern[, options])`
+**Usage:** 
+  - `@Given(pattern[, options])`
+  - `@When(pattern[, options])`
+  - `@Then(pattern[, options])`
+  - `@Step(pattern[, options])`
 
 **Params:**
-  * `pattern` *string | regexp* - step pattern
-  * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
-
-### @Then
-Method decorator to define `Then` step.
-
-**Usage:** `@Then(pattern[, options])`
-
-**Params:**
-  * `pattern` *string | regexp* - step pattern
-  * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
-
-### @Step
-Method decorator to define universal step.
-
-**Usage:** `@Step(pattern[, options])`
-
-**Params:**
-  * `pattern` *string | regexp* - step pattern
+  * `pattern` *string | regexp* - step pattern as [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios

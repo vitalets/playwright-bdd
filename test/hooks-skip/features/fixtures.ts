@@ -37,4 +37,4 @@ export const test = withLog(base).extend<TestFixtures, WorkerFixtures>({
   ],
 });
 
-export const { Given, Before, After, BeforeAll, AfterAll } = createBdd(test);
+export const { Given, BeforeScenario, AfterScenario, BeforeWorker, AfterWorker } = createBdd(test);

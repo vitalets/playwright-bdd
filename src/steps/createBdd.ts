@@ -63,6 +63,10 @@ export function createBdd<
   const Before = createBeforeAfter<T, W, World>('before', customTest);
   const After = createBeforeAfter<T, W, World>('after', customTest);
 
+  // aliases
+  const [BeforeWorker, AfterWorker] = [BeforeAll, AfterAll];
+  const [BeforeScenario, AfterScenario] = [Before, After];
+
   // cucumber-style
   if (options && 'worldFixture' in options && options.worldFixture) {
     if (!customTest) {
@@ -72,7 +76,20 @@ export function createBdd<
     const When = cucumberStepCtor('When', customTest, options.worldFixture) as StepCtor;
     const Then = cucumberStepCtor('Then', customTest, options.worldFixture) as StepCtor;
     const Step = cucumberStepCtor('Unknown', customTest, options.worldFixture) as StepCtor;
-    return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
+    return {
+      Given,
+      When,
+      Then,
+      Step,
+      Before,
+      After,
+      BeforeAll,
+      AfterAll,
+      BeforeWorker,
+      AfterWorker,
+      BeforeScenario,
+      AfterScenario,
+    };
   }
 
   // playwright-style
@@ -90,11 +107,10 @@ export function createBdd<
     When,
     Then,
     Step,
-    // aliases
-    BeforeWorker: BeforeAll,
-    AfterWorker: AfterAll,
-    BeforeScenario: Before,
-    AfterScenario: After,
+    BeforeWorker,
+    AfterWorker,
+    BeforeScenario,
+    AfterScenario,
   };
 }
 

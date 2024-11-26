@@ -2,8 +2,10 @@
 
 Hooks are functions that automatically run before/after workers or scenarios:
 
-* `BeforeAll` / `AfterAll` - run before/after **every worker**
-* `Before` / `After` - run before/after **every scenario**
+* `BeforeWorker / BeforeAll` - runs **once in each worker**, before all scenarios
+* `AfterWorker / AfterAll` - runs **once in each worker**, after all scenarios
+* `BeforeScenario / Before` - runs **before each scenario**
+* `AfterScenario / After` -  runs **after each scenario**
 
 > If you need to run some code **before/after overall test execution**, check out Playwright's [project dependencies](https://playwright.dev/docs/test-global-setup-teardown#option-1-project-dependencies) or [global setup and teardown](https://playwright.dev/docs/test-global-setup-teardown#option-2-configure-globalsetup-and-globalteardown)
 
@@ -58,6 +60,7 @@ Given('I am an authorized user', async ({ auth }) => {
   console.log('step for authorized user', auth.username);
 });
 ```
+Playwright will automatically wrap test code with user sign-in and sign-out.
 
 The benefits of using fixture:
 - no extra tags
