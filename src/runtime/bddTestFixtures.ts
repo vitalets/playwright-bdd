@@ -5,12 +5,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { test as base } from './bddWorkerFixtures';
-import { BDDConfig } from '../../config/types';
-import { getScenarioHooksToRun, runScenarioHooks } from '../../hooks/scenario';
-import { createStepInvoker, StepKeywordFixture } from '../StepInvoker';
-import { TestTypeCommon } from '../../playwright/types';
+import { BDDConfig } from '../config/types';
+import { getScenarioHooksToRun, runScenarioHooks } from '../hooks/scenario';
+import { createStepInvoker, StepKeywordFixture } from './StepInvoker';
+import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
-import { BddTestData } from '../../bddData/types';
+import { BddTestData } from '../bddData/types';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

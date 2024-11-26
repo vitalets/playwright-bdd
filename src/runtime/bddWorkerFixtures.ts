@@ -2,18 +2,18 @@
  * Worker-scoped fixtures added by playwright-bdd.
  */
 
-import { BDDConfig } from '../../config/types';
+import { BDDConfig } from '../config/types';
 import { test as base, WorkerInfo } from '@playwright/test';
-import { getConfigFromEnv } from '../../config/env';
+import { getConfigFromEnv } from '../config/env';
 import {
   getWorkerHooksToRun,
   runWorkerHooks,
   WorkerHook,
   WorkerHookRunInfo,
-} from '../../hooks/worker';
-import { loadSteps, resolveStepFiles } from '../../steps/loader';
-import { BddFileData } from '../../bddData/types';
-import { TestTypeCommon } from '../../playwright/types';
+} from '../hooks/worker';
+import { loadSteps, resolveStepFiles } from '../steps/loader';
+import { BddFileData } from '../bddData/types';
+import { TestTypeCommon } from '../playwright/types';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

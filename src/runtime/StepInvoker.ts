@@ -5,9 +5,9 @@
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
-import { getBddAutoInjectFixtures } from './bddFixtures/bddTestFixturesAuto';
+import { getBddAutoInjectFixtures } from './bddTestFixturesAuto';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
-import { BddContext } from './bddFixtures/bddTestFixtures';
+import { BddContext } from './bddTestFixtures';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { getStepTextWithKeyword } from '../features/helpers';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';

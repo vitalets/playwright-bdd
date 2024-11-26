@@ -8,14 +8,14 @@ import {
   TestTypeCommon,
 } from '../playwright/types';
 import { TestType } from '@playwright/test';
-import { test as baseBddTest, BddFixturesTest } from '../runtime/bddFixtures/bddTestFixtures';
+import { test as baseBddTest, BddFixturesTest } from '../runtime/bddTestFixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { createBeforeAfter } from '../hooks/scenario';
 import { createBeforeAllAfterAll } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './styles/cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './styles/playwrightStyle';
-import { BddFixturesWorker } from '../runtime/bddFixtures/bddWorkerFixtures';
+import { BddFixturesWorker } from '../runtime/bddWorkerFixtures';
 
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
