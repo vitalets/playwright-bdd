@@ -80,7 +80,22 @@ export function createBdd<
   const When = playwrightStepCtor('When', customTest) as StepCtor;
   const Then = playwrightStepCtor('Then', customTest) as StepCtor;
   const Step = playwrightStepCtor('Unknown', customTest) as StepCtor;
-  return { Given, When, Then, Step, Before, After, BeforeAll, AfterAll };
+
+  return {
+    BeforeAll,
+    AfterAll,
+    Before,
+    After,
+    Given,
+    When,
+    Then,
+    Step,
+    // aliases
+    BeforeWorker: BeforeAll,
+    AfterWorker: AfterAll,
+    BeforeScenario: Before,
+    AfterScenario: After,
+  };
 }
 
 function assertTestHasBddFixtures(customTest: TestTypeCommon) {
