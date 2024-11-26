@@ -117,10 +117,14 @@ export class TestFile {
     return this;
   }
 
-  // todo: move to test.ts or to separate class
+  /**
+   * Collect missing steps for all tests in the feature file.
+   * todo: move to test.ts or to separate class
+   */
   getMissingSteps() {
     const missingSteps: MissingStep[] = [];
     this.tests.forEach((test) => {
+      // if user skipped scenario manually, don't report missing steps
       if (test.skippedByTag) return;
       test.stepsData.forEach(({ matchedDefinition, pickleStep, gherkinStep }) => {
         if (!matchedDefinition) {

@@ -41,13 +41,14 @@ export class TestFileHooks {
   constructor(private formatter: Formatter) {}
 
   fillFromTests(tests: TestGen[]) {
-    tests.forEach((test) => {
-      // todo: filter skipped tests
-      this.beforeAll.registerHooksForTest(test);
-      this.afterAll.registerHooksForTest(test);
-      this.before.registerHooksForTest(test);
-      this.after.registerHooksForTest(test);
-    });
+    tests
+      .filter((test) => !test.skipped)
+      .forEach((test) => {
+        this.beforeAll.registerHooksForTest(test);
+        this.afterAll.registerHooksForTest(test);
+        this.before.registerHooksForTest(test);
+        this.after.registerHooksForTest(test);
+      });
   }
 
   getCustomTestInstances() {

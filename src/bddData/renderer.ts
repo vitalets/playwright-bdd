@@ -47,8 +47,9 @@ export class BddDataRenderer {
     return {
       pwTestLine: this.sourceMapper.getPwTestLine(test.pickle),
       pickleLine: test.pickle.location.line,
+      skipped: test.skipped || undefined,
       timeout: test.ownTimeout,
-      slow: test.slow ? true : undefined,
+      slow: test.slow || undefined,
       tags: test.tags,
       steps,
     };

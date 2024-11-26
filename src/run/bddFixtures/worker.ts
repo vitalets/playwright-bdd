@@ -58,12 +58,14 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
         // todo: filter out skipped tests
         const hooksToRun = new Map<WorkerHook, WorkerHookRunInfo>();
         const fixtures = { $workerInfo, ...customFixtures };
-        bddFileData.forEach((bddTestData) => {
-          // eslint-disable-next-line max-nested-callbacks
-          getWorkerHooksToRun('beforeAll', bddTestData.tags).forEach((hook) => {
-            hooksToRun.set(hook, { test, hook, fixtures });
+        bddFileData
+          .filter((bddTestData) => !bddTestData.skipped)
+          .forEach((bddTestData) => {
+            // eslint-disable-next-line max-nested-callbacks
+            getWorkerHooksToRun('beforeAll', bddTestData.tags).forEach((hook) => {
+              hooksToRun.set(hook, { test, hook, fixtures });
+            });
           });
-        });
         await runWorkerHooks(hooksToRun);
       });
     },
@@ -85,13 +87,15 @@ export const test = base.extend<NonNullable<unknown>, BddFixturesWorker>({
 
       await use((test, customFixtures, bddFileData) => {
         const fixtures = { $workerInfo, ...customFixtures };
-        bddFileData.forEach((bddTestData) => {
-          getWorkerHooksToRun('afterAll', bddTestData.tags)
-            // eslint-disable-next-line max-nested-callbacks
-            .filter((hook) => !hooksToRun.has(hook))
-            // eslint-disable-next-line max-nested-callbacks
-            .forEach((hook) => hooksToRun.set(hook, { test, hook, fixtures }));
-        });
+        bddFileData
+          .filter((bddTestData) => !bddTestData.skipped)
+          .forEach((bddTestData) => {
+            getWorkerHooksToRun('afterAll', bddTestData.tags)
+              // eslint-disable-next-line max-nested-callbacks
+              .filter((hook) => !hooksToRun.has(hook))
+              // eslint-disable-next-line max-nested-callbacks
+              .forEach((hook) => hooksToRun.set(hook, { test, hook, fixtures }));
+          });
       });
 
       // run AfterAll hooks in FILO order

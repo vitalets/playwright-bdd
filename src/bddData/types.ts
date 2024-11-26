@@ -18,6 +18,7 @@ export type BddTestData = {
   pwTestLine: number;
   pickleLine: number;
   tags: string[];
+  skipped?: boolean;
   timeout?: number;
   slow?: boolean;
   steps: BddStepData[];

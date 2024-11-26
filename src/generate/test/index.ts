@@ -41,9 +41,8 @@ export class TestGen {
   public tags: string[];
   public stepsData = new Map<string /* pickle step id */, StepData>();
   private specialTags: SpecialTags;
-  // this property is called skippedByTag, b/c test can be also skipped
-  // if it has missing definitions (rendered with .fixme())
   public skippedByTag: boolean;
+  private skippedByMissingSteps = false;
   public slow: boolean;
 
   // eslint-disable-next-line max-params
@@ -71,6 +70,10 @@ export class TestGen {
     return this.specialTags.timeout;
   }
 
+  get skipped() {
+    return this.skippedByTag || this.skippedByMissingSteps;
+  }
+
   render() {
     const testFixtureNames: string[] = [];
     const stepLines = [...this.stepsData.values()]
@@ -96,6 +99,7 @@ export class TestGen {
       this.hasMissingDefinitions() &&
       this.config.missingSteps === 'skip-scenario'
     ) {
+      this.skippedByMissingSteps = true;
       this.specialTags.forceFixme();
     }
 
@@ -154,7 +158,7 @@ export class TestGen {
 
   private findMatchedDefinition(pickleStep: PickleStep, gherkinStep: Step) {
     // for skipped tests don't search for definition
-    if (this.skippedByTag) return;
+    if (this.skipped) return;
 
     const matchedDefinitions = this.stepFinder.findDefinitions(
       pickleStep.type,

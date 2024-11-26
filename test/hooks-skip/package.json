@@ -1,0 +1,4 @@
+{
+  "description": "This file is required for Playwright to consider this dir as a <package-json dir>. It ensures to load 'playwright-bdd' from './test/node_modules/playwright-bdd' and output './test-results' here to avoid conflicts.",
+  "smoke": true
+}
