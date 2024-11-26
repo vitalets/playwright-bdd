@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-function-type */
 
 import { PomNode } from './pomGraph';
-import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
+import { isBddAutoInjectFixture } from '../../runtime/bddFixtures/autoInject';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
 import {

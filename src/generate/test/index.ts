@@ -11,7 +11,7 @@ import { exit } from '../../utils/exit';
 import { MatchedStepDefinition } from '../../steps/matchedStepDefinition';
 import { PomNode } from '../../steps/decorators/pomGraph';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
-import { isBddAutoInjectFixture } from '../../run/bddFixtures/autoInject';
+import { isBddAutoInjectFixture } from '../../runtime/bddFixtures/autoInject';
 import { PickleWithLocation } from '../../features/types';
 import { BackgroundGen } from '../background';
 import { BDDConfig } from '../../config/types';
