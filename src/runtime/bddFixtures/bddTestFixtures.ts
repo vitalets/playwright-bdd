@@ -4,7 +4,7 @@
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import { test as base } from './worker';
+import { test as base } from './bddWorkerFixtures';
 import { BDDConfig } from '../../config/types';
 import { getScenarioHooksToRun, runScenarioHooks } from '../../hooks/scenario';
 import { createStepInvoker, StepKeywordFixture } from '../StepInvoker';

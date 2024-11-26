@@ -5,7 +5,7 @@
  */
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
-import { BddAutoInjectFixtures } from '../../runtime/bddFixtures/autoInject';
+import { BddAutoInjectFixtures } from '../../runtime/bddFixtures/bddTestFixturesAuto';
 import { TestTypeCommon } from '../../playwright/types';
 import { GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
 import { parseStepDefinitionArgs, StepDefinitionArgs } from './shared';
