@@ -57,7 +57,7 @@ export default defineConfig({
 
 ?> Please note, that you should also set unique `outputDir` for each project to avoid conflicts
 
-For convenience, there is a helper function [`defineBddProject()`](api.md#definebddprojectconfig). In addition to the standard BDD config, it accepts a project name and automatically sets `outputDir` based on that name. The function returns an object `{ name, testDir }`, which can be merged into project config with spread operator.
+For convenience, there is a helper function [`defineBddProject()`](api.md#definebddproject). In addition to the standard BDD config, it accepts a project name and automatically sets `outputDir` based on that name. The function returns an object `{ name, testDir }`, which can be merged into project config with spread operator.
 
 ```ts
 import { defineConfig } from '@playwright/test';

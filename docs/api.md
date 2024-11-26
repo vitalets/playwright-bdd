@@ -1,25 +1,29 @@
 # API
 
-### `defineBddConfig(config)`
+### defineBddConfig
 
 Defines BDD config inside Playwright config file.
 
-**Params**
+**Usage:** `defineBddConfig(config)`
+
+**Params:**
   * `config` *object* - BDD [configuration](configuration/index.md)
 
-**Returns**: *string* - directory where test files will be generated
+**Returns:** *string* - directory where test files will be generated
 
-### `defineBddProject(config)`
+### defineBddProject
 <div style="color: gray; font-size: 0.8em">Since <b>v7.0.0</b></div>
 
 A thin wrapper around `defineBddConfig()` that makes BDD configuration of Playwright projects a bit easier. In addition to the standard BDD config, it accepts a project name and automatically sets [`outputDir`](configuration/options.md#outputdir) based on that name. The function returns an object `{ name, testDir }`, which can be merged into project config with spread operator.
 
-**Params**
+**Usage:** `defineBddProject(config)`
+
+**Params:**
   * `config` *object* - BDD [configuration](configuration/index.md) + project name `{ name: string }`
 
-**Returns**: *{ name, testDir }* - object containing project name and generated tests directory
+**Returns:** *{ name, testDir }* - object containing project name and generated tests directory
 
-**Usage**:
+Example:
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddProject } from 'playwright-bdd';
@@ -33,19 +37,22 @@ export default defineConfig({
         steps: 'steps/*.ts',
       }), // -> { name: 'foo', testDir: '.features-gen/foo' }
     },
-    
+  ]
+});  
 ```   
 
-### `cucumberReporter(reporter[, options])`
-Helper to output test results in various [Cucumber reporters](reporters/cucumber.md).
+### cucumberReporter
+Helper function to output test results in various [Cucumber reporters](reporters/cucumber.md).
 
-**Params**
+**Usage:** `cucumberReporter(reporter[, options])`
+
+**Params:**
   * `reporter` *string* - Cucumber reporter name (`html|json|junit|message`) or path to custom reporter file
   * `options` *object* - Cucumber reporter options
 
-**Returns**: *array* - Playwright reporter tuple configuration
+**Returns:** *array* - Playwright reporter tuple configuration
 
-Usage in `playwright.config.ts`:
+Example usage in `playwright.config.ts`:
 ```ts
 import { cucumberReporter } from 'playwright-bdd';
 
@@ -57,27 +64,29 @@ export default defineConfig({
 });
 ```
 
-### `createBdd([test][, options])`
+### createBdd
 
-!> Before v7 second parameter was `WorldConstructor`
+Creates functions for defining steps and hooks.
 
-Creates:
- * `Given`, `When`, `Then`, `Step` functions for defining steps
- * `Before`, `After`, `BeforeAll`, `AfterAll` functions for defining hooks
+**Usage:** `createBdd([test][, options])`
 
-By default produced functions work with [Playwright-style](writing-steps/playwright-style.md) steps. If `options.worldFixture` is defined, then produced functions work with [Cucumber-style](writing-steps/cucumber-style.md) steps.
+!> Before playwright-bdd **v7** second parameter was `WorldConstructor`
 
-**Params**
+**Params:**
   * `test` *object* - test instance to provide access to custom fixtures in steps
   * `options` *object* - options
     * `worldFixture` *string* - name of the fixture to be used as a World in cucumber-style steps
 
-**Returns**: *object* - `{ Given, When, Then, Step, Before, After, BeforeAll, AfterAll }`
+**Returns:** *object* - `{ Given, When, Then, Step, Before, After, BeforeAll, AfterAll }`
 
-### `Given(pattern,[ options,] fn)`
+By default produced functions work with [Playwright-style](writing-steps/playwright-style.md) steps. If `options.worldFixture` is defined, then produced functions work with [Cucumber-style](writing-steps/cucumber-style.md) steps.
+
+### Given
 Defines `Given` step implementation.
 
-**Params**
+**Usage:** `Given(pattern[, options], fn)`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
@@ -85,12 +94,14 @@ Defines `Given` step implementation.
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
-**Returns**: *function* - a function to call this step from other steps.
+**Returns:** *function* - a function to call this step from other steps.
 
-### `When(pattern,[ options,] fn)`
+### When
 Defines `When` step implementation.
 
-**Params**
+**Usage:** `When(pattern[, options], fn)`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
@@ -98,12 +109,14 @@ Defines `When` step implementation.
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
-**Returns**: *function* - a function to call this step from other steps.
+**Returns:** *function* - a function to call this step from other steps.
 
-### `Then(pattern,[ options,] fn)`
+### Then
 Defines `Then` step implementation.
 
-**Params**
+**Usage:** `Then(pattern[, options], fn)`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios  
@@ -111,12 +124,14 @@ Defines `Then` step implementation.
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
-**Returns**: *function* - a function to call this step from other steps.
+**Returns:** *function* - a function to call this step from other steps.
 
-### `Step(pattern,[ options,] fn)`
+### Step
 Defines universal step implementation.
 
-**Params**
+**Usage:** `Step(pattern[, options], fn)`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios  
@@ -124,12 +139,14 @@ Defines universal step implementation.
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
 
-**Returns**: *function* - a function to call this step from other steps.
+**Returns:** *function* - a function to call this step from other steps.
 
-### `Before([options,] hookFn)`
-Defines `Before` hook.
+### Before
+Defines `Before` hook: runs before each scenario. Scenarios can be filtered by tags.
 
-**Params**
+**Usage:** `Before([options,] hookFn)`
+
+**Params:**
   * `options` *string | object*
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) used to apply this hook to only specific scenarios
     - `timeout` *number* - timeout for this hook in milliseconds
@@ -140,10 +157,12 @@ Defines `Before` hook.
       - `$tags` *string[]* - list of tags for current scenario
       - any other built-in and custom fixtures
 
-### `After([options,] hookFn)`
-Defines `After` hook.
+### After
+Defines `After` hook: runs after each scenario. Scenarios can be filtered by tags.
 
-**Params**
+**Usage:** `After([options,] hookFn)`
+
+**Params:**
   * `options` *string | object*
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) used to apply this hook to only specific scenarios
     - `timeout` *number* - timeout for this hook in milliseconds
@@ -154,10 +173,12 @@ Defines `After` hook.
       - `$tags` *string[]* - list of tags for current scenario
       - any other built-in and custom fixtures
 
-### `BeforeAll([options,] hookFn)`
-Defines `BeforeAll` hook.
+### BeforeAll
+Defines `BeforeAll` hook: runs once in each worker.
 
-**Params**
+**Usage:** `BeforeAll([options,] hookFn)`
+
+**Params:**
   * `options` *string | object*
     - `timeout` *number* - timeout for this hook in milliseconds
   * `hookFn` *Function* hook function `(fixtures?) => void`:
@@ -165,10 +186,12 @@ Defines `BeforeAll` hook.
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo)
       - any other built-in and custom **worker-scoped** fixtures
 
-### `AfterAll([options,] hookFn)`
-Defines `AfterAll` hook.
+### AfterAll
+Defines `AfterAll` hook: runs once in each worker.
 
-**Params**
+**Usage:** `AfterAll([options,] hookFn)`
+
+**Params:**
   * `options` *string | object*
     - `timeout` *number* - timeout for this hook in milliseconds
   * `hookFn` *Function* hook function `(fixtures?) => void`:
@@ -176,10 +199,12 @@ Defines `AfterAll` hook.
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo)
       - any other built-in and custom **worker-scoped** fixtures
 
-### `@Fixture(fixtureName)`
-Class decorator to bind POM with fixture name.
+### @Fixture
+Class decorator to bind Page Object Model (POM) with fixture name.
 
-**Params**
+**Usage:** `@Fixture(fixtureName)`
+
+**Params:**
   * `fixtureName` *string* - fixture name for the given class.
 
 It is also possible to provide `test` type as a generic parameter to restrict `fixtureName` to available fixture names:
@@ -192,34 +217,42 @@ export
 class TodoPage { ... };
 ```
 
-### `@Given(pattern[, options])`
+### @Given
 Method decorator to define `Given` step.
 
-**Params**
+**Usage:** `@Given(pattern[, options])`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
 
-### `@When(pattern[, options])`
+### @When
 Method decorator to define `When` step.
 
-**Params**
+**Usage:** `@When(pattern[, options])`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
 
-### `@Then(pattern[, options])`
+### @Then
 Method decorator to define `Then` step.
 
-**Params**
+**Usage:** `@Then(pattern[, options])`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
 
-### `@Step(pattern[, options])`
+### @Step
 Method decorator to define universal step.
 
-**Params**
+**Usage:** `@Step(pattern[, options])`
+
+**Params:**
   * `pattern` *string | regexp* - step pattern
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
