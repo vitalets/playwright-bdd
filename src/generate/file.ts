@@ -23,8 +23,7 @@ import { BDDConfig } from '../config/types';
 import { ImportTestFromGuesser } from './importTestFrom';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
-import { MissingStep } from '../snippets/types';
-import { getStepTextWithKeyword, getTagNames, isScenarioOutline } from '../features/helpers';
+import { getTagNames, isScenarioOutline } from '../features/helpers';
 import { StepFinder } from '../steps/finder';
 import { exit } from '../utils/exit';
 import { StepDefinition } from '../steps/stepDefinition';
@@ -32,7 +31,7 @@ import { TestFileHooks } from './hooks';
 import { getSpecFileByFeatureFile } from './paths';
 import { SpecialTags } from './specialTags';
 import { BackgroundGen } from './background';
-import { TestGen } from './test';
+import { StepData, TestGen } from './test';
 import { SourceMapper } from './sourceMapper';
 import { BddDataRenderer } from '../bddData/renderer';
 
@@ -119,25 +118,19 @@ export class TestFile {
 
   /**
    * Collect missing steps for all tests in the feature file.
-   * todo: move to test.ts or to separate class
    */
   getMissingSteps() {
-    const missingSteps: MissingStep[] = [];
-    this.tests.forEach((test) => {
-      // if user skipped scenario manually, don't report missing steps
-      if (test.skippedByTag) return;
-      test.stepsData.forEach(({ matchedDefinition, pickleStep, gherkinStep }) => {
-        if (!matchedDefinition) {
-          const { line, column } = gherkinStep.location;
-          missingSteps.push({
-            location: { uri: this.featureUri, line, column },
-            textWithKeyword: getStepTextWithKeyword(gherkinStep.keyword, pickleStep.text),
-            pickleStep,
+    return (
+      this.tests
+        // if user skipped scenario manually, don't report missing steps
+        .filter((test) => !test.skippedByTag)
+        .reduce<StepData[]>((acc, test) => {
+          test.stepsData.forEach((stepData) => {
+            if (!stepData.matchedDefinition) acc.push(stepData);
           });
-        }
-      });
-    });
-    return missingSteps;
+          return acc;
+        }, [])
+    );
   }
 
   getUsedDefinitions() {

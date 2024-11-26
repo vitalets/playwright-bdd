@@ -14,8 +14,8 @@ import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/stepRegistry';
 import { saveFileSync } from '../utils';
-import { MissingStep } from '../snippets/types';
 import { StepDefinition } from '../steps/stepDefinition';
+import { StepData } from './test';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
@@ -95,7 +95,7 @@ export class TestFilesGenerator {
 
   private checkMissingSteps() {
     if (this.config.missingSteps !== 'fail-on-gen') return;
-    const missingSteps: MissingStep[] = [];
+    const missingSteps: StepData[] = [];
     this.files.forEach((file) => missingSteps.push(...file.getMissingSteps()));
     if (missingSteps.length) {
       new Snippets(missingSteps).print();

@@ -5,7 +5,8 @@
 import { logger } from '../utils/logger';
 import { stepDefinitions } from '../steps/stepRegistry';
 import { Snippet, SnippetOptions } from './snippet';
-import { MissingStep } from './types';
+import { StepData } from '../generate/test';
+import { getStepTextWithKeyword } from '../features/helpers';
 
 // if there are too many snippets, it's more like invalid configuration
 const MAX_SNIPPETS_TO_SHOW = 10;
@@ -14,7 +15,7 @@ export class Snippets {
   private snippets = new Map</* stepText */ string, /* code */ string>();
   private snippetOptions: SnippetOptions;
 
-  constructor(private missingSteps: MissingStep[]) {
+  constructor(private missingSteps: StepData[]) {
     this.snippetOptions = this.buildSnippetOptions();
     this.buildSnippets();
   }
@@ -48,14 +49,15 @@ export class Snippets {
     });
   }
 
-  private buildSnippet(missingStep: MissingStep) {
+  private buildSnippet(missingStep: StepData) {
     const snippet = new Snippet(missingStep, this.snippetOptions);
     // use snippet code as unique key
     if (this.snippets.has(snippet.code)) return;
-    const { uri, line, column } = missingStep.location;
+    const { gherkinStep, pickleStep } = missingStep;
+    const stepTextWithKeyword = getStepTextWithKeyword(gherkinStep.keyword, pickleStep.text);
     const snippetWithLocation = snippet.code
-      .replace('{step}', `Step: ${missingStep.textWithKeyword}`)
-      .replace('{location}', `From: ${uri}:${line}:${column}`);
+      .replace('{step}', `Step: ${stepTextWithKeyword}`)
+      .replace('{location}', `From: ${missingStep.location}`);
     this.snippets.set(snippet.code, snippetWithLocation);
   }
 
