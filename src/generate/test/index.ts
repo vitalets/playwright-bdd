@@ -92,16 +92,7 @@ export class TestGen {
         );
       });
 
-    // sort fixture names to have Given/When/Then first
-
-    if (
-      !this.skippedByTag &&
-      this.hasMissingDefinitions() &&
-      this.config.missingSteps === 'skip-scenario'
-    ) {
-      this.skippedByMissingSteps = true;
-      this.specialTags.forceFixme();
-    }
+    this.handleMissingDefinitions();
 
     return this.formatter.test(
       this.testTitle,
@@ -132,6 +123,17 @@ export class TestGen {
       this.stepsData.set(pickleStep.id, stepData);
       bg?.addStepData(stepData);
     });
+  }
+
+  private handleMissingDefinitions() {
+    if (
+      !this.skippedByTag &&
+      this.hasMissingDefinitions() &&
+      this.config.missingSteps === 'skip-scenario'
+    ) {
+      this.skippedByMissingSteps = true;
+      this.specialTags.forceFixme();
+    }
   }
 
   private findGherkinStep(pickleStep: PickleStep) {

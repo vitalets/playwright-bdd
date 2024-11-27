@@ -11,7 +11,7 @@
  * https://github.com/vrymar/cucumber-json-report-formatter/tree/master
  */
 
-/* eslint-disable max-lines, max-statements, max-nested-callbacks, visual/complexity */
+/* eslint-disable max-lines, max-statements, max-nested-callbacks, visual/complexity, max-lines-per-function */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import * as messages from '@cucumber/messages';

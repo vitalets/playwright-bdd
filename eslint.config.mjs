@@ -45,13 +45,14 @@ export default [
     rules: {
       complexity: 0,
       'visual/complexity': ['error', { max: 5 }],
-
       'max-depth': ['error', { max: 2 }],
       'max-nested-callbacks': ['error', { max: 2 }],
       'max-params': ['error', { max: 3 }],
       'max-statements': ['error', { max: 12 }, { ignoreTopLevelFunctions: false }],
+      'max-lines-per-function': ['error', { max: 30, skipBlankLines: true, skipComments: true }],
       'max-len': ['error', { code: 120, ignoreUrls: true }],
       'max-lines': ['error', { max: 200, skipComments: true, skipBlankLines: true }],
+
       '@typescript-eslint/triple-slash-reference': 0,
       // require is needed for some functions (copied from PW)
       '@typescript-eslint/no-var-requires': 0,

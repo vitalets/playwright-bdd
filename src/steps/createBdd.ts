@@ -28,7 +28,7 @@ type CustomFixtureNames<T extends KeyValue> = Exclude<
   keyof DefaultFixturesTest | number | symbol
 >;
 
-// eslint-disable-next-line max-statements, visual/complexity
+// eslint-disable-next-line max-statements, visual/complexity, max-lines-per-function
 export function createBdd<
   T extends KeyValue = DefaultFixturesTest,
   W extends KeyValue = DefaultFixturesWorker,
