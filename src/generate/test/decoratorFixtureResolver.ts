@@ -1,7 +1,7 @@
 /**
  * Resolves fixture names for decorator steps.
  */
-import { TestPoms, UsedFixture } from './poms';
+import { TestPoms, UsedFixtureInfo } from './poms';
 import { exit } from '../../utils/exit';
 import { PomNode } from '../../steps/decorators/pomGraph';
 import { StepData } from '.';
@@ -68,7 +68,7 @@ function exitEmptyDecoratorFixture({ pickleStep, location }: StepData) {
 
 function exitAmbiguousDecoratorFixture(
   { pickleStep, location }: StepData,
-  resolvedFixtures: UsedFixture[],
+  resolvedFixtures: UsedFixtureInfo[],
 ) {
   const possibleFixturesNames = resolvedFixtures.map((f) => f.name).join(', ');
   return exit(
