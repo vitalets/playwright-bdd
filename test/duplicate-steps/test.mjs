@@ -10,7 +10,7 @@ const testDir = new TestDir(import.meta);
 
 test(`${testDir.name} (main thread - regular steps)`, () => {
   const error = [
-    `Multiple definitions (3) matched scenario step`,
+    `Multiple definitions matched scenario step`,
     `Step: Given duplicate step # ${normalize('features/sample.feature:5:5')}`,
     `  - Given 'duplicate step' # ${normalize('steps/steps.ts')}:6`,
     `  - Given 'duplicate step' # ${normalize('steps/steps.ts')}:7`,
@@ -24,7 +24,7 @@ test(`${testDir.name} (main thread - regular steps)`, () => {
 
 test(`${testDir.name} (main thread - decorator steps)`, () => {
   const error = [
-    `Multiple definitions (3) matched scenario step`,
+    `Multiple definitions matched scenario step`,
     `Step: Given duplicate decorator step # ${normalize('features/sample.feature:9:5')}`,
     `  - Given 'duplicate decorator step' # ${normalize('steps/TodoPage.ts')}:7`,
     `  - Given 'duplicate decorator step' # ${normalize('steps/TodoPage.ts')}:10`,
@@ -38,7 +38,7 @@ test(`${testDir.name} (main thread - decorator steps)`, () => {
 
 test(`${testDir.name} (worker - regular steps)`, () => {
   const error = [
-    `Multiple definitions (3) matched scenario step`,
+    `Multiple definitions matched scenario step`,
     `Step: Given duplicate step # ${normalize('features/sample.feature:5:5')}`,
     `  - Given 'duplicate step' # ${normalize('steps/steps.ts')}:6`,
     `  - Given 'duplicate step' # ${normalize('steps/steps.ts')}:7`,

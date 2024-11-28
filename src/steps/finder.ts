@@ -58,7 +58,7 @@ export function formatDuplicateStepsMessage(
   });
 
   return [
-    `Multiple definitions (${matchedDefinitions.length}) matched scenario step!`,
+    `Multiple definitions matched scenario step.`,
     `Step: ${stepTextWithKeyword} # ${stepLocation}`,
     ...variants,
   ].join('\n');
