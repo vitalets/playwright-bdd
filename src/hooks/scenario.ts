@@ -4,7 +4,6 @@
 
 /* eslint-disable max-depth */
 
-import parseTagsExpression from '@cucumber/tag-expressions';
 import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
@@ -12,6 +11,8 @@ import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddContext } from '../runtime/bddTestFixtures';
 import { getBddAutoInjectFixtures, isBddAutoInjectFixture } from '../runtime/bddTestFixturesAuto';
+import { HookConstructorOptions, setTagsExpression } from './shared';
+import { TagsExpression } from '../steps/tags';
 
 export type ScenarioHookType = 'before' | 'after';
 
@@ -32,9 +33,10 @@ type ScenarioHook<Fixtures, World> = {
   type: ScenarioHookType;
   options: ScenarioHookOptions;
   fn: ScenarioHookFn<Fixtures, World>;
-  tagsExpression?: ReturnType<typeof parseTagsExpression>;
+  tagsExpression?: TagsExpression;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
+  defaultTags?: string;
 };
 
 /**
@@ -62,7 +64,7 @@ export function createBeforeAfter<
   TestFixtures extends KeyValue,
   WorkerFixtures extends KeyValue,
   World,
->(type: ScenarioHookType, customTest: TestTypeCommon | undefined) {
+>(type: ScenarioHookType, { customTest, defaultTags }: HookConstructorOptions) {
   type AllFixtures = TestFixtures & WorkerFixtures;
   type Args = ScenarioHookDefinitionArgs<AllFixtures, World>;
 
@@ -74,6 +76,7 @@ export function createBeforeAfter<
       // offset = 3 b/c this call is 3 steps below the user's code
       location: getLocationByOffset(3),
       customTest,
+      defaultTags,
     });
   };
 }
@@ -146,12 +149,6 @@ function getOptionsFromArgs(args: unknown[]) {
 
 function getFnFromArgs(args: unknown[]) {
   return args.length === 1 ? args[0] : args[1];
-}
-
-function setTagsExpression(hook: GeneralScenarioHook) {
-  if (hook.options.tags) {
-    hook.tagsExpression = parseTagsExpression(hook.options.tags);
-  }
 }
 
 function addHook(hook: GeneralScenarioHook) {

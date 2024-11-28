@@ -19,6 +19,7 @@ import { BddWorkerFixtures } from '../runtime/bddWorkerFixtures';
 
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
+  tags?: string;
 };
 
 type DefaultFixturesTest = PwBuiltInFixturesTest & BddTestFixtures;
@@ -58,10 +59,17 @@ export function createBdd<
   if (customTest === (baseBddTest as TestTypeCommon)) customTest = undefined;
   if (customTest) assertTestHasBddFixtures(customTest);
 
-  const BeforeAll = createBeforeAllAfterAll<W>('beforeAll', customTest);
-  const AfterAll = createBeforeAllAfterAll<W>('afterAll', customTest);
-  const Before = createBeforeAfter<T, W, World>('before', customTest);
-  const After = createBeforeAfter<T, W, World>('after', customTest);
+  // hooks and steps have the same constructor options
+  const ctorOptions = {
+    customTest,
+    worldFixture: options?.worldFixture,
+    defaultTags: options?.tags,
+  };
+
+  const BeforeAll = createBeforeAllAfterAll<W>('beforeAll', ctorOptions);
+  const AfterAll = createBeforeAllAfterAll<W>('afterAll', ctorOptions);
+  const Before = createBeforeAfter<T, W, World>('before', ctorOptions);
+  const After = createBeforeAfter<T, W, World>('after', ctorOptions);
 
   // aliases
   const [BeforeWorker, AfterWorker] = [BeforeAll, AfterAll];
@@ -72,10 +80,10 @@ export function createBdd<
     if (!customTest) {
       exit(`When using worldFixture, you should provide custom test to createBdd()`);
     }
-    const Given = cucumberStepCtor('Given', customTest, options.worldFixture) as StepCtor;
-    const When = cucumberStepCtor('When', customTest, options.worldFixture) as StepCtor;
-    const Then = cucumberStepCtor('Then', customTest, options.worldFixture) as StepCtor;
-    const Step = cucumberStepCtor('Unknown', customTest, options.worldFixture) as StepCtor;
+    const Given = cucumberStepCtor('Given', ctorOptions) as StepCtor;
+    const When = cucumberStepCtor('When', ctorOptions) as StepCtor;
+    const Then = cucumberStepCtor('Then', ctorOptions) as StepCtor;
+    const Step = cucumberStepCtor('Unknown', ctorOptions) as StepCtor;
     return {
       Given,
       When,
@@ -93,10 +101,10 @@ export function createBdd<
   }
 
   // playwright-style
-  const Given = playwrightStepCtor('Given', customTest) as StepCtor;
-  const When = playwrightStepCtor('When', customTest) as StepCtor;
-  const Then = playwrightStepCtor('Then', customTest) as StepCtor;
-  const Step = playwrightStepCtor('Unknown', customTest) as StepCtor;
+  const Given = playwrightStepCtor('Given', ctorOptions) as StepCtor;
+  const When = playwrightStepCtor('When', ctorOptions) as StepCtor;
+  const Then = playwrightStepCtor('Then', ctorOptions) as StepCtor;
+  const Step = playwrightStepCtor('Unknown', ctorOptions) as StepCtor;
 
   return {
     BeforeAll,

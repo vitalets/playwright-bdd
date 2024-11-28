@@ -5,12 +5,13 @@
 /* eslint-disable max-depth */
 
 import { WorkerInfo } from '@playwright/test';
-import parseTagsExpression from '@cucumber/tag-expressions';
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
+import { HookConstructorOptions, setTagsExpression } from './shared';
+import { TagsExpression } from '../steps/tags';
 
 export type WorkerHookType = 'beforeAll' | 'afterAll';
 
@@ -31,9 +32,10 @@ export type WorkerHook<Fixtures = object> = {
   type: WorkerHookType;
   options: WorkerHookOptions;
   fn: WorkerHookFn<Fixtures>;
-  tagsExpression?: ReturnType<typeof parseTagsExpression>;
+  tagsExpression?: TagsExpression;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
+  defaultTags?: string;
   // Since playwright-bdd v8 we run worker hooks via test.beforeAll / test.afterAll in each test file,
   // so we need to know if hook was executed to avoid double execution in every test file.
   executed?: boolean;
@@ -63,7 +65,7 @@ const workerHooks: WorkerHook[] = [];
  */
 export function createBeforeAllAfterAll<Fixtures extends KeyValue>(
   type: WorkerHookType,
-  customTest: TestTypeCommon | undefined,
+  { customTest, defaultTags }: HookConstructorOptions,
 ) {
   type Args = WorkerHookDefinitionArgs<Fixtures>;
   return (...args: Args) => {
@@ -74,6 +76,7 @@ export function createBeforeAllAfterAll<Fixtures extends KeyValue>(
       // offset = 3 b/c this call is 3 steps below the user's code
       location: getLocationByOffset(3),
       customTest,
+      defaultTags,
     });
   };
 }
@@ -160,10 +163,4 @@ function getTimeoutMessage(hook: WorkerHook) {
 
 function getHookStepTitle(hook: WorkerHook) {
   return hook.options.name || (hook.type === 'beforeAll' ? 'BeforeAll hook' : 'AfterAll hook');
-}
-
-function setTagsExpression(hook: WorkerHook) {
-  if (hook.options.tags) {
-    hook.tagsExpression = parseTagsExpression(hook.options.tags);
-  }
 }

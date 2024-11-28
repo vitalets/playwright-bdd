@@ -4,11 +4,11 @@
 
 import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
 import { PickleStepType } from '@cucumber/messages';
-import parseTagsExpression from '@cucumber/tag-expressions';
 import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
 import { MatchedStepDefinition } from './matchedStepDefinition';
+import { buildTagsExpression, TagsExpression } from './tags';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -26,12 +26,12 @@ export type StepDefinitionOptions = {
   pomNode?: PomNode; // for decorator steps
   worldFixture?: string; // for new cucumber-style steps
   providedOptions?: ProvidedStepOptions; // options passed as second argument
-  defaultTags?: string; // tags from createBdd() or @Fixture
+  defaultTags?: string; // default tags from createBdd() or @Fixture
 };
 
 export class StepDefinition {
   #expression?: Expression;
-  #tagsExpression?: ReturnType<typeof parseTagsExpression>;
+  #tagsExpression?: TagsExpression;
 
   constructor(private options: StepDefinitionOptions) {
     this.buildTagsExpression();
@@ -130,11 +130,7 @@ export class StepDefinition {
   }
 
   private buildTagsExpression() {
-    const { defaultTags } = this.options;
-    const tags = this.options.providedOptions?.tags;
-    const allTags = [defaultTags, tags].filter(Boolean);
-    if (!allTags.length) return;
-    const tagsString = allTags.map((tag) => `(${tag})`).join(' and ');
-    this.#tagsExpression = parseTagsExpression(tagsString);
+    const { defaultTags, providedOptions } = this.options;
+    this.#tagsExpression = buildTagsExpression(defaultTags, providedOptions?.tags);
   }
 }

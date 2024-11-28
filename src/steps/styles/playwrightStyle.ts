@@ -1,13 +1,13 @@
 /**
  * Playwright-style steps.
  */
-import { KeyValue, TestTypeCommon } from '../../playwright/types';
+import { KeyValue } from '../../playwright/types';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { ParametersExceptFirst } from '../../utils/types';
 import { registerStepDefinition } from '../stepRegistry';
 import { StepPattern, GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
-import { parseStepDefinitionArgs, StepDefinitionArgs } from './shared';
+import { parseStepDefinitionArgs, StepConstructorOptions, StepDefinitionArgs } from './shared';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   fixtures: T & W,
@@ -16,7 +16,7 @@ export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
 
 export function playwrightStepCtor<StepFn extends StepDefinitionOptions['fn']>(
   keyword: GherkinStepKeyword,
-  customTest?: TestTypeCommon,
+  { customTest, defaultTags }: StepConstructorOptions,
 ) {
   return (...args: StepDefinitionArgs<StepFn>) => {
     const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
@@ -27,6 +27,7 @@ export function playwrightStepCtor<StepFn extends StepDefinitionOptions['fn']>(
       fn,
       location: getLocationByOffset(3),
       customTest,
+      defaultTags,
       providedOptions,
     });
 

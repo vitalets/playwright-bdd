@@ -1,3 +1,4 @@
+import { TestTypeCommon } from '../../playwright/types';
 import { ProvidedStepOptions, StepDefinitionOptions, StepPattern } from '../stepDefinition';
 
 export type StepDefinitionArgs<StepFn extends StepDefinitionOptions['fn']> =
@@ -10,3 +11,9 @@ export function parseStepDefinitionArgs<StepFn extends StepDefinitionOptions['fn
   const [pattern, providedOptions, fn] = args.length === 3 ? args : [args[0], {}, args[1]];
   return { pattern, providedOptions, fn };
 }
+
+export type StepConstructorOptions = {
+  worldFixture?: string;
+  customTest?: TestTypeCommon;
+  defaultTags?: string;
+};
