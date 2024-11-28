@@ -135,10 +135,13 @@ export class Formatter {
     return `await ${keywordEng}(${args}); // step: ${pickleStepIds.join(',')}`;
   }
 
-  missingStep(keywordEng: StepFixtureName, text: string) {
-    return `await ${keywordEng}(${this.quoted(text)}); // missing step`;
-  }
-
+  /**
+   * Renders test.use() call with fixtures.
+   *
+   * NOTE: don't generate worker-scoped fixtures in test file,
+   * because it forces new worker creation.
+   * See: https://github.com/microsoft/playwright/issues/33316
+   */
   testUse(lines: string[]) {
     return ['test.use({', ...lines.map(indent), '});'];
   }
