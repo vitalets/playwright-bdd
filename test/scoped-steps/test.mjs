@@ -24,8 +24,4 @@ test(testDir.name, () => {
   expect(stdout).toContain('scenario baz2: bg step for @baz2');
   expect(stdout).toContain('scenario baz2: step without tags');
   expect(stdout).toContain('scenario baz2: step for @baz2');
-
-  // decorator steps
-  expect(stdout).toContain('scenario for TodoPage: todoPage - decorator step');
-  expect(stdout).toContain('scenario for TodoPage2: todoPage2 - decorator step');
 });

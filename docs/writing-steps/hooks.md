@@ -69,6 +69,8 @@ The benefits of using fixture:
 
 ## BeforeWorker / BeforeAll
 
+> Consider using [fixtures](#fixtures) instead of hooks.
+
 Playwright-bdd supports worker-level hook `BeforeWorker` (aliased as `BeforeAll`). It runs **once in each worker, before all scenarios**. 
 
 ?> Although `BeforeAll` is more used name, `BeforeWorker` better expresses when the hook runs.
@@ -137,6 +139,8 @@ BeforeWorker(async ({ myWorkerFixture }) => {
 
 ## AfterWorker / AfterAll
 
+> Consider using [fixtures](#fixtures) instead of hooks.
+
 Playwright-bdd supports worker-level hook `AfterWorker` (aliased as `AfterAll`).
 It runs **once in each worker, after all scenarios**. 
 
@@ -156,6 +160,8 @@ AfterWorker(async ({ $workerInfo, browser }) => {
 For other options please see [BeforeWorker / BeforeAll](#beforeworker-beforeall) section.
 
 ## BeforeScenario / Before
+
+> Consider using [fixtures](#fixtures) instead of hooks.
 
 Playwright-bdd supports scenario-level hook `BeforeScenario` (aliased as `Before`). It runs **before each scenario**. 
 
@@ -219,6 +225,8 @@ BeforeScenario(async ({ myFixture }) => {
 ```
 
 ## AfterScenario / After
+
+> Consider using [fixtures](#fixtures) instead of hooks.
 
 Playwright-bdd supports scenario-level hook `AfterScenario` (aliased as `After`). It runs **after each scenario**. 
 

@@ -41,17 +41,18 @@ export type UsedFixture = {
 
 type UsedPom = {
   byTag: boolean;
-  fixtures?: UsedFixture[];
+  fixtures?: UsedFixture[]; // todo: rename to resolvedFixtures
 };
 
 export class TestPoms {
-  // map of poms used in test
+  // poms used in test + info about resolved fixtures
+  // todo: rename to usedPomNodes
   private usedPoms = new Map<PomNode, UsedPom>();
-  private resolved = false;
 
   registerPomNode(pomNode: PomNode, { byTag = false } = {}) {
     const usedPom = this.usedPoms.get(pomNode);
     if (usedPom) {
+      // todo: optimize: if (usedPom && byTag) usedPom.byTag = true
       if (byTag && !usedPom.byTag) usedPom.byTag = true;
     } else {
       this.usedPoms.set(pomNode, { byTag });
@@ -76,7 +77,6 @@ export class TestPoms {
    * that does not have steps in the test, but should be considered.
    */
   resolveAllFixtures() {
-    this.resolved = true;
     this.usedPoms.forEach((_, pomNode) => {
       this.getResolvedFixtures(pomNode);
     });
@@ -87,13 +87,12 @@ export class TestPoms {
    * Filter out pomNodes with empty fixture names (as they are not marked with @Fixture decorator)
    */
   // eslint-disable-next-line visual/complexity
-  getResolvedFixtures(pomNode: PomNode) {
-    if (!this.resolved) this.resolveAllFixtures();
+  getResolvedFixtures(pomNode: PomNode): UsedFixture[] {
     const usedPom = this.usedPoms.get(pomNode);
     // fixtures already resolved
     if (usedPom?.fixtures) return usedPom.fixtures;
 
-    // Recursively resolve children fixtures, used in test
+    // Recursively resolve children fixtures as deep as possible
     let childFixtures: UsedFixture[] = [...pomNode.children]
       .map((child) => this.getResolvedFixtures(child))
       .flat()

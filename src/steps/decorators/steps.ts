@@ -47,6 +47,7 @@ export function linkStepsWithPomNode(Ctor: Function, pomNode: PomNode) {
     const stepOptions = getStepOptionsFromMethod(descriptor);
     if (!stepOptions) return;
     stepOptions.pomNode = pomNode;
+    stepOptions.defaultTags = pomNode.fixtureTags;
     registerDecoratorStep(stepOptions);
   });
 }

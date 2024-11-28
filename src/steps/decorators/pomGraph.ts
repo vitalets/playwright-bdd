@@ -13,15 +13,17 @@ type PomClass = Function;
 // POM class with inherited children POMs: representation of classes inheritance.
 export type PomNode = {
   fixtureName: string;
+  fixtureTags?: string;
   className: string;
   children: Set<PomNode>;
 };
 
 const pomGraph = new Map<PomClass, PomNode>();
 
-export function createPomNode(Ctor: PomClass, fixtureName: string) {
+export function createPomNode(Ctor: PomClass, fixtureName: string, fixtureTags?: string) {
   const pomNode: PomNode = {
     fixtureName,
+    fixtureTags,
     className: Ctor.name,
     children: new Set(),
   };

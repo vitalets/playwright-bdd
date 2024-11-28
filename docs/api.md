@@ -93,7 +93,7 @@ Functions for step implementations.
 **Params:**
   * `pattern` *string | regexp* - step pattern as [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp
   * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios
   * `fn` *function* - step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style)
     - `...args` *array* - arguments captured from step pattern  
@@ -101,6 +101,7 @@ Functions for step implementations.
 **Returns:** *function* - a function to call this step from other steps.
 
 ### BeforeScenario / Before
+
 Defines a hook that runs **before each scenario**. You can target hook to specific scenarios by providing `tags` option. `BeforeScenario` and `Before` are aliases.
 
 **Usage:** `BeforeScenario([options,] hookFn)`
@@ -117,6 +118,7 @@ Defines a hook that runs **before each scenario**. You can target hook to specif
       - any other built-in and custom fixtures
 
 ### AfterScenario / After
+
 Defines a hook that runs **after each scenario**. You can target hook to specific scenarios by providing `tags` option. `AfterScenario` and `After` are aliases.
 
 **Usage:** `AfterScenario([options,] hookFn)`
@@ -133,6 +135,7 @@ Defines a hook that runs **after each scenario**. You can target hook to specifi
       - any other built-in and custom fixtures
 
 ### BeforeWorker / BeforeAll
+
 Defines a hook that runs **once in each worker**, before all scenarios.
 You can target hook to specific scenarios by providing `tags` option.
 `BeforeWorker` and `BeforeAll` are aliases.
@@ -152,6 +155,7 @@ You can target hook to specific scenarios by providing `tags` option.
       - any other built-in and custom **worker-scoped** fixtures
 
 ### AfterWorker / AfterAll
+
 Defines a hook that runs **once in each worker**, after all scenarios.
 You can target hook to specific scenarios by providing `tags` option.
 `AfterWorker` and `AfterAll` are aliases.
@@ -162,7 +166,7 @@ You can target hook to specific scenarios by providing `tags` option.
 
 **Params:**
   * `options` *string | object*
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to bind this hook to specific features
     - `name` *string* - an optional name for this hook for reporting
     - `timeout` *number* - timeout for this hook in milliseconds
   * `hookFn` *Function* hook function `(fixtures?) => void`:
@@ -173,10 +177,13 @@ You can target hook to specific scenarios by providing `tags` option.
 ### @Fixture
 Class decorator to bind Page Object Model (POM) with fixture name.
 
-**Usage:** `@Fixture(fixtureName)`
+**Usage:** `@Fixture(nameOrOptions)`
 
 **Params:**
-  * `fixtureName` *string* - fixture name for the given class.
+  * `nameOrOptions` *string* - fixture name for the given class
+  * `nameOrOptions` *object* - fixture options
+    - `name` *string* - fixture name for the given class
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to bind all steps of that class to specific features/scenarios
 
 It is also possible to provide `test` type as a generic parameter to restrict `fixtureName` to available fixture names:
 ```ts
@@ -200,4 +207,4 @@ A decorator to mark method as BDD step.
 **Params:**
   * `pattern` *string | regexp* - step pattern as [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp
   * `options` *object* - step options
-    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to match this step to specific features/scenarios
+    - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios

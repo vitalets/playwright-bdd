@@ -26,6 +26,7 @@ export type StepDefinitionOptions = {
   pomNode?: PomNode; // for decorator steps
   worldFixture?: string; // for new cucumber-style steps
   providedOptions?: ProvidedStepOptions; // options passed as second argument
+  defaultTags?: string; // tags from createBdd() or @Fixture
 };
 
 export class StepDefinition {
@@ -129,9 +130,11 @@ export class StepDefinition {
   }
 
   private buildTagsExpression() {
+    const { defaultTags } = this.options;
     const tags = this.options.providedOptions?.tags;
-    if (tags) {
-      this.#tagsExpression = parseTagsExpression(tags);
-    }
+    const allTags = [defaultTags, tags].filter(Boolean);
+    if (!allTags.length) return;
+    const tagsString = allTags.map((tag) => `(${tag})`).join(' and ');
+    this.#tagsExpression = parseTagsExpression(tagsString);
   }
 }

@@ -1,5 +1,16 @@
 /**
  * Class level @Fixture decorator.
+ *
+ * This decorator is needed to get access to class Constructor,
+ * that in turn is needed to build POM inheritance graph using prototype chain.
+ * Method decorators don't have access to Constructor in decoration phase,
+ * only in runtime (that is too late).
+ *
+ * There was idea to use the following way of creating decorators,
+ * that eliminates usage of @Fixture:
+ * const { Given, When, Then } = createBddDecorators(test, { pomFixture: 'myPOM' });
+ * But due to above reason it's not possible.
+ * Also it leads to cyclic dependencies: fixture imports test, and test imports fixture.
  */
 
 import { TestType } from '@playwright/test';
@@ -15,10 +26,22 @@ type CustomTestFixtureName<T extends KeyValue> = Exclude<
   keyof PwBuiltInFixturesTest | number | symbol
 >;
 
-export function Fixture<T extends KeyValue>(fixtureName: CustomTestFixtureName<T>) {
+export type FixtureOptions<T extends KeyValue> = {
+  name?: CustomTestFixtureName<T>;
+  tags?: string;
+};
+
+export function Fixture<T extends KeyValue>(arg: CustomTestFixtureName<T> | FixtureOptions<T>) {
+  const { name, tags } = resolveFixtureOptions(arg);
   // context parameter is required for decorator by TS even though it's not used
   // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
   return (Ctor: Function, _context: ClassDecoratorContext) => {
-    createPomNode(Ctor, fixtureName as string);
+    createPomNode(Ctor, name as string, tags);
   };
+}
+
+function resolveFixtureOptions<T extends KeyValue>(
+  arg: CustomTestFixtureName<T> | FixtureOptions<T>,
+): FixtureOptions<T> {
+  return typeof arg === 'string' ? { name: arg } : arg;
 }
