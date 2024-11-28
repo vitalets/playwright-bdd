@@ -60,7 +60,7 @@ const scenarioHooks: GeneralScenarioHook[] = [];
 /**
  * Returns Before() / After() functions.
  */
-export function createBeforeAfter<
+export function scenarioHookFactory<
   TestFixtures extends KeyValue,
   WorkerFixtures extends KeyValue,
   World,

@@ -11,8 +11,8 @@ import { TestType } from '@playwright/test';
 import { test as baseBddTest, BddTestFixtures } from '../runtime/bddTestFixtures';
 import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
-import { createBeforeAfter } from '../hooks/scenario';
-import { createBeforeAllAfterAll } from '../hooks/worker';
+import { scenarioHookFactory } from '../hooks/scenario';
+import { workerHookFactory } from '../hooks/worker';
 import { CucumberStyleStepFn, cucumberStepCtor } from './styles/cucumberStyle';
 import { PlaywrightStyleStepFn, playwrightStepCtor } from './styles/playwrightStyle';
 import { BddWorkerFixtures } from '../runtime/bddWorkerFixtures';
@@ -66,10 +66,10 @@ export function createBdd<
     defaultTags: options?.tags,
   };
 
-  const BeforeAll = createBeforeAllAfterAll<W>('beforeAll', ctorOptions);
-  const AfterAll = createBeforeAllAfterAll<W>('afterAll', ctorOptions);
-  const Before = createBeforeAfter<T, W, World>('before', ctorOptions);
-  const After = createBeforeAfter<T, W, World>('after', ctorOptions);
+  const BeforeAll = workerHookFactory<W>('beforeAll', ctorOptions);
+  const AfterAll = workerHookFactory<W>('afterAll', ctorOptions);
+  const Before = scenarioHookFactory<T, W, World>('before', ctorOptions);
+  const After = scenarioHookFactory<T, W, World>('after', ctorOptions);
 
   // aliases
   const [BeforeWorker, AfterWorker] = [BeforeAll, AfterAll];
