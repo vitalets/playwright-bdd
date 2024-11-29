@@ -9,7 +9,6 @@ Given('State {int}', async () => {
 
 Given('Set context prop {string} = {string}', async function ({ ctx }, key: string, value: string) {
   ctx[key] = value;
-  // @ts-expect-error 'this' is any in pw-style steps
   this[key] = value;
 });
 
@@ -56,7 +55,6 @@ Then(
   'Context prop {string} to equal {string}',
   async function ({ ctx }, key: string, value: string) {
     expect(String(ctx[key])).toEqual(value);
-    // @ts-expect-error 'this' is any in pw-style steps
     expect(String(this[key])).toEqual(value);
   },
 );
@@ -66,11 +64,14 @@ Step('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string)
   expect(tagsFromCustomFixture.join(' ')).toEqual(tags);
 });
 
+// don't use this step b/c it creates page
 Then(
   'This step is not used, defined for checking types',
-  async ({ page, $tags, tagsFromCustomFixture }) => {
+  async function ({ page, $tags, tagsFromCustomFixture }) {
     expectTypeOf(page).toEqualTypeOf<Page>();
     expectTypeOf($tags).toEqualTypeOf<string[]>();
     expectTypeOf(tagsFromCustomFixture).toEqualTypeOf<string[]>();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    expectTypeOf(this).toEqualTypeOf<Record<string, any>>();
   },
 );

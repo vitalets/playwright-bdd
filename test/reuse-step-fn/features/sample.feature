@@ -1,4 +1,4 @@
-Feature: call step from step
+Feature: reuse step fn
 
   @success
   Scenario: create todos

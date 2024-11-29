@@ -10,6 +10,7 @@
 * config option `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined
 * feature: provide full localized step titles to Playwright HTML reporter ([#229](https://github.com/vitalets/playwright-bdd/issues/229), [#122](https://github.com/vitalets/playwright-bdd/issues/122))
 * show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
+* preserve arg types in call-step-from-step functions ([#243](https://github.com/vitalets/playwright-bdd/issues/243))
 * increase minimal Playwright version from 1.35 to 1.39
 
 ## 7.5.0

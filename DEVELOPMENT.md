@@ -56,3 +56,8 @@ Run tests:
 ```
 npm t
 ```
+
+## Clear Playwright compilation cache
+```
+npx playwright clear-cache
+```

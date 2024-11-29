@@ -6,17 +6,21 @@
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
 import { BddAutoInjectFixtures } from '../../runtime/bddTestFixturesAuto';
-import { GherkinStepKeyword, StepDefinitionOptions } from '../stepDefinition';
+import { AnyFunction, GherkinStepKeyword } from '../stepDefinition';
 import { parseStepDefinitionArgs, StepConstructorOptions, StepDefinitionArgs } from './shared';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
 
-export function cucumberStepCtor<StepFn extends StepDefinitionOptions['fn']>(
+export type CucumberStyleStepCtor<T extends AnyFunction> = <StepFn extends T>(
+  ...args: StepDefinitionArgs<StepFn>
+) => StepFn;
+
+export function cucumberStepCtor(
   keyword: GherkinStepKeyword,
   { customTest, worldFixture, defaultTags }: StepConstructorOptions,
 ) {
-  return (...args: StepDefinitionArgs<StepFn>) => {
+  return <StepFn extends AnyFunction>(...args: StepDefinitionArgs<StepFn>) => {
     const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
 
     registerStepDefinition({
@@ -33,9 +37,10 @@ export function cucumberStepCtor<StepFn extends StepDefinitionOptions['fn']>(
       },
     });
 
-    // returns function to be able to call this step from other steps
+    // returns function to be able to reuse this fn in other steps
     // see: https://github.com/vitalets/playwright-bdd/issues/110
-    // Note: for new cucumber style we should call this fn with current world (add to docs)
+    // Note: for cucumber style we should call this fn with current world
+    // e.g.: fn.call(this, ...args)
     return fn;
   };
 }

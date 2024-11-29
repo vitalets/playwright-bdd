@@ -1,7 +1,7 @@
 import { TestInfo } from '@playwright/test';
 import { test as base } from 'playwright-bdd';
 
-type World = {
+export type World = {
   todos: string[];
   testInfo: TestInfo;
 };

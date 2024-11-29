@@ -13,8 +13,16 @@ import { isTestContainsSubtest } from '../playwright/testTypeImpl';
 import { exit } from '../utils/exit';
 import { scenarioHookFactory } from '../hooks/scenario';
 import { workerHookFactory } from '../hooks/worker';
-import { CucumberStyleStepFn, cucumberStepCtor } from './styles/cucumberStyle';
-import { PlaywrightStyleStepFn, playwrightStepCtor } from './styles/playwrightStyle';
+import {
+  CucumberStyleStepCtor,
+  CucumberStyleStepFn,
+  cucumberStepCtor,
+} from './styles/cucumberStyle';
+import {
+  PlaywrightStyleStepCtor,
+  PlaywrightStyleStepFn,
+  playwrightStepCtor,
+} from './styles/playwrightStyle';
 import { BddWorkerFixtures } from '../runtime/bddWorkerFixtures';
 
 type CreateBddOptions<WorldFixtureName> = {
@@ -40,7 +48,8 @@ export function createBdd<
 >(customTest?: TestType<T, W>, options?: CreateBddOptions<WorldFixtureName>) {
   // TypeScript does not narrow generic types by control flow
   // see: https://github.com/microsoft/TypeScript/issues/33912
-  // So, we define return types separately using conditional types
+  // So, we define return types separately using conditional types.
+  // 'WorldFixtureName extends CustomFixtureNames<T>' means it's cucumber style.
   type World =
     WorldFixtureName extends CustomFixtureNames<T>
       ? T[WorldFixtureName] // prettier-ignore
@@ -53,8 +62,8 @@ export function createBdd<
 
   type StepCtor =
     WorldFixtureName extends CustomFixtureNames<T>
-      ? ReturnType<typeof cucumberStepCtor<StepFn>>
-      : ReturnType<typeof playwrightStepCtor<StepFn>>;
+      ? CucumberStyleStepCtor<StepFn>
+      : PlaywrightStyleStepCtor<StepFn>;
 
   if (customTest === (baseBddTest as TestTypeCommon)) customTest = undefined;
   if (customTest) assertTestHasBddFixtures(customTest);
@@ -89,10 +98,10 @@ export function createBdd<
       When,
       Then,
       Step,
-      Before,
-      After,
       BeforeAll,
       AfterAll,
+      Before,
+      After,
       BeforeWorker,
       AfterWorker,
       BeforeScenario,
@@ -107,14 +116,14 @@ export function createBdd<
   const Step = playwrightStepCtor('Unknown', ctorOptions) as StepCtor;
 
   return {
-    BeforeAll,
-    AfterAll,
-    Before,
-    After,
     Given,
     When,
     Then,
     Step,
+    BeforeAll,
+    AfterAll,
+    Before,
+    After,
     BeforeWorker,
     AfterWorker,
     BeforeScenario,

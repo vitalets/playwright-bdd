@@ -16,6 +16,7 @@ import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
 import { getConfigFromEnv } from '../../../config/env';
 import { TestFiles } from './TestFiles';
+import { relativeToCwd } from '../../../utils/paths';
 
 export class MessagesBuilder {
   private report = {
@@ -64,7 +65,8 @@ export class MessagesBuilder {
     // todo: move these line somewhere else
     const bddTestData = bddData.find((data) => data.pwTestLine === test.location.line);
     if (!bddTestData) {
-      throw new Error(`Cannot find bddTestData for ${test.location.file}:${test.location.line}`);
+      const filePath = relativeToCwd(test.location.file);
+      throw new Error(`Cannot find bddTestData for ${filePath}:${test.location.line}`);
     }
 
     // For skipped tests Playwright doesn't run fixtures

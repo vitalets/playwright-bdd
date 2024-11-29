@@ -12,6 +12,8 @@ import { buildTagsExpression, TagsExpression } from './tags';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type AnyFunction = (...args: any[]) => unknown;
 export type ProvidedStepOptions = {
   tags?: string;
 };
@@ -19,8 +21,7 @@ export type ProvidedStepOptions = {
 export type StepDefinitionOptions = {
   keyword: GherkinStepKeyword;
   pattern: StepPattern;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  fn: (...args: any[]) => unknown;
+  fn: AnyFunction;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
   pomNode?: PomNode; // for decorator steps
