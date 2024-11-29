@@ -2,9 +2,24 @@ import { test, TestDir, execPlaywrightTestWithError } from '../_helpers/index.mj
 
 const testDir = new TestDir(import.meta);
 
-test(testDir.name, () => {
-  execPlaywrightTestWithError(testDir.name, [
-    'All steps in a feature file should have the same worldFixture',
-    'Found fixtures: world1, world2',
-  ]);
+test(`${testDir.name} (only-steps)`, () => {
+  execPlaywrightTestWithError(
+    testDir.name,
+    [
+      'All steps and hooks in a feature file should have the same worldFixture',
+      'Found fixtures: world1, world2',
+    ],
+    { env: { FEATURES_ROOT: 'only-steps' } },
+  );
+});
+
+test(`${testDir.name} (scenario-hooks)`, () => {
+  execPlaywrightTestWithError(
+    testDir.name,
+    [
+      'All steps and hooks in a feature file should have the same worldFixture',
+      'Found fixtures: world1, world2',
+    ],
+    { env: { FEATURES_ROOT: 'scenario-hooks' } },
+  );
 });

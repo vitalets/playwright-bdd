@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  featuresRoot: 'only-steps',
+  featuresRoot: process.env.FEATURES_ROOT!,
 });
 
 export default defineConfig({

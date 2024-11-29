@@ -307,10 +307,12 @@ export class TestFile {
       });
     });
 
+    this.hooks.getWorldFixtureNames().forEach((name) => worldFixtureNames.add(name));
+
     if (worldFixtureNames.size > 1) {
       throw new Error(
         [
-          `All steps in a feature file should have the same worldFixture.`,
+          `All steps and hooks in a feature file should have the same worldFixture.`,
           `Found fixtures: ${[...worldFixtureNames].join(', ')}`,
           `File: ${this.featureUri}`,
         ].join('\n'),

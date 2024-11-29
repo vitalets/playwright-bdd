@@ -37,6 +37,7 @@ type ScenarioHook<Fixtures, World> = {
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
   defaultTags?: string;
+  worldFixture?: string;
 };
 
 /**
@@ -64,7 +65,7 @@ export function scenarioHookFactory<
   TestFixtures extends KeyValue,
   WorkerFixtures extends KeyValue,
   World,
->(type: ScenarioHookType, { customTest, defaultTags }: HookConstructorOptions) {
+>(type: ScenarioHookType, { customTest, defaultTags, worldFixture }: HookConstructorOptions) {
   type AllFixtures = TestFixtures & WorkerFixtures;
   type Args = ScenarioHookDefinitionArgs<AllFixtures, World>;
 
@@ -77,6 +78,7 @@ export function scenarioHookFactory<
       location: getLocationByOffset(3),
       customTest,
       defaultTags,
+      worldFixture,
     });
   };
 }

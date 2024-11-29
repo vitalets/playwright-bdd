@@ -60,6 +60,13 @@ export class TestFileHooks {
     ]);
   }
 
+  getWorldFixtureNames() {
+    return new Set([
+      ...this.before.getWorldFixtureNames(), // prettier-ignore
+      ...this.after.getWorldFixtureNames(),
+    ]);
+  }
+
   render() {
     const lines = [
       ...this.beforeAll.render(), // prettier-ignore
@@ -95,6 +102,10 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
 
   getFixtureNames() {
     return getScenarioHooksFixtureNames([...this.hooks]);
+  }
+
+  getWorldFixtureNames() {
+    return new Set([...this.hooks].map((hook) => hook.worldFixture).filter(toBoolean));
   }
 }
 
