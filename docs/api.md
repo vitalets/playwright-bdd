@@ -75,14 +75,15 @@ Creates functions for defining steps and hooks.
 **Params:**
   * `test` *object* - test instance to provide access to custom fixtures in steps
   * `options` *object* - options
-    * `worldFixture` *string* - name of the fixture to be used as a World in cucumber-style steps
+    - `worldFixture` *string* - name of the fixture to be used as a World in cucumber-style steps
+    - `tags` *string* - default [tag expression](https://github.com/cucumber/tag-expressions) that will be applied to all steps/hooks by returned functions
 
 **Returns:** *object* - `{ Given, When, Then, Step, BeforeScenario, AfterScenario, BeforeWorker, AfterWorker, Before, After, BeforeAll, AfterAll }`
 
 By default produced functions work with [Playwright-style](writing-steps/playwright-style.md) steps. If `options.worldFixture` is defined, then produced functions work with [Cucumber-style](writing-steps/cucumber-style.md) steps.
 
 ### Given / When / Then / Step
-Functions for step implementations.
+Functions for step definitions.
 
 **Usage:** 
  - `Given(pattern[, options], fn)`

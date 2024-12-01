@@ -26,7 +26,7 @@ Feature: Video player
     When I click the PLAY button
 ```
 
-The step should have different implementation for each feature:
+The implementation of the step is different for each feature:
 ```js
 // game.steps.js
 When('I click the PLAY button', async () => {
@@ -41,7 +41,7 @@ When('I click the PLAY button', async () => {
 ```
 If I run the example as is, I will get an error:
 ```
-Error: Multiple definitions (2) matched scenario step!
+Error: Multiple definitions matched scenario step!
 Step: When I click the PLAY button # game.feature:6:5
   - When 'I click the PLAY button' # game.steps.js:5
   - When 'I click the PLAY button' # video-player.steps.js:5
@@ -76,4 +76,25 @@ Feature: Video player
     ... 
     When I click the PLAY button
 ```
-Now code runs.
+Now code runs. Each feature uses respective step definition without any conflicts.
+
+## Default tags
+You can provide default tags for step functions via `createBdd()`:
+
+```ts
+// game.steps.ts
+const { Given, When, Then } = createBdd(test, { tags: '@game' });
+
+When('I click the PLAY button', async () => {
+  // actions for game
+});
+```
+
+```ts
+// video-player.steps.ts
+const { Given, When, Then } = createBdd(test, { tags: '@video-player' });
+
+When('I click the PLAY button', async () => {
+  // actions for video-player
+});
+```

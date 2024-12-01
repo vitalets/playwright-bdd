@@ -21,5 +21,5 @@ npx bddgen --tags "@desktop and not @slow" && npx playwright test
 
 ?> Since Playwright **1.42** Cucumber tags are mapped to [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests)
 
-Also you can [access tags inside step definitions](writing-steps/playwright-style.md#tags).
+Also you can [access tags inside step definitions](writing-steps/builtin-fixtures.md#tags).
 

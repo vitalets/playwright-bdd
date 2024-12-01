@@ -86,20 +86,26 @@ BeforeWorker(async ({ $workerInfo, browser }) => {
 });
 ```
 
-Since playwright-bdd **v8** you can use **tags** to target worker hook to particular features:
+Since playwright-bdd **v8** you can target worker hook to particular features by `tags`:
 
-```gherkin
-@auth
-Feature: Some feature
-
-    Scenario: Some scenario
-        Given I am an authorized user
-```
-Hook that runs only before auth feature:
 ```ts
 BeforeWorker({ tags: '@auth' }, async () => { ... });
 ```
+
 This effectively works like **BeforeFeature** hook.
+
+You can also provide default tags via `createBdd()`:
+```ts
+const { BeforeWorker } = createBdd(test, { tags: '@mobile' });
+
+BeforeWorker(async () => {
+  // runs only for features with @mobile 
+});
+
+BeforeWorker(async () => {
+  // runs only for features with @mobile 
+});
+```
 
 Additionally, you can set `name` and `timeout` for the hook:
 ```ts
@@ -111,9 +117,9 @@ BeforeWorker({ name: 'setup database', timeout: 1000 }, async () => {
 Hook function accepts **1 argument** - [worker scoped fixtures](https://playwright.dev/docs/test-fixtures#worker-scoped-fixtures).
 You can access [$workerInfo](https://playwright.dev/docs/api/class-workerinfo) and any built-in or custom fixtures. See more details in [BeforeWorker / BeforeAll API](api.md#beforeworker-beforeall).
 
-#### Example of using custom fixture in `BeforeWorker` hook
+#### Example of using `BeforeWorker` with custom fixture
 
-Imagine you have defined worker fixture `myWorkerFixture`:
+Imagine you have defined custom worker fixture `myWorkerFixture`:
 ```ts
 import { test as base, createBdd } from 'playwright-bdd';
 
@@ -157,7 +163,7 @@ AfterWorker(async ({ $workerInfo, browser }) => {
 });
 ```
 
-For other options please see [BeforeWorker / BeforeAll](#beforeworker-beforeall) section.
+All options and behavior are similar to [BeforeWorker / BeforeAll](#beforeworker-beforeall).
 
 ## BeforeScenario / Before
 
@@ -177,16 +183,39 @@ BeforeScenario(async () => {
   // runs before each scenario
 });
 ```
-You can use `tags` to target hook to particular features/scenarios:
+
+Since playwright-bdd **v8** you can target scenario hook to particular features/scenarios by `tags`:
+
 ```ts
 BeforeScenario({ tags: '@mobile and not @slow' }, async function () {
-  // runs for scenarios with @mobile and not @slow tags
+  // runs for scenarios with @mobile and not @slow
 });
 ```
 If you want to pass only tags, you can use a shortcut:
 ```ts
 BeforeScenario('@mobile and not @slow', async function () {
-  // ...
+  // runs for scenarios with @mobile and not @slow
+});
+```
+You can also provide default tags via `createBdd()`:
+```ts
+const { BeforeScenario } = createBdd(test, { tags: '@mobile' });
+
+BeforeScenario(async () => {
+  // runs only for scenarios with @mobile 
+});
+
+BeforeScenario(async () => {
+  // runs only for scenarios with @mobile 
+});
+```
+
+If hook has both default and own tags, they are combined using `AND` logic:
+```ts
+const { BeforeScenario } = createBdd(test, { tags: '@mobile' });
+
+BeforeScenario({ tags: '@slow' }, async function () {
+  // runs for scenarios with @mobile and @slow
 });
 ```
 
@@ -198,9 +227,9 @@ BeforeScenario({ name: 'my hook', timeout: 5000 }, async function () {
 ```
 
 Hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
-You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/playwright-style.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
+You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/builtin-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
 
-#### Example of using custom fixture in `BeforeScenario` hook
+#### Example of using `BeforeScenario` with custom fixture
 
 Imagine you have defined custom fixture `myFixture`:
 ```ts
@@ -243,4 +272,4 @@ AfterScenario(async () => {
 });
 ```
 
-For other options please see [BeforeScenario / Before](#beforescenario-before) section.
+All options and behavior are similar to [BeforeScenario / Before](#beforescenario-before).

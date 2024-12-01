@@ -75,7 +75,7 @@ Given('I am on home page', async function () {
 
 See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
 
-### Provide custom fixtures
+### Custom fixtures
 You can provide custom fixtures to cucumber-style steps.
 To achieve that, assign custom fixture to a property of World object 
 and then access it via `this`:

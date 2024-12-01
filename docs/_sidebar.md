@@ -20,9 +20,11 @@
   - [Cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
   - [Decorators](writing-steps/decorators.md)
   - [Hooks](writing-steps/hooks.md)
-  - [Re-using step function](writing-steps/reusing-step-fn.md)
+  - [Built-in fixtures](writing-steps/builtin-fixtures.md)
   - [Scoped step definitions](writing-steps/scoped.md)
   - [Keywords matching](writing-steps/keywords-matching.md)
+  - [Re-using step function](writing-steps/reusing-step-fn.md)
+  - [Data tables](writing-steps/data-tables.md)
   - [Snippets](writing-steps/snippets.md)
 
 * [**Reporters**](reporters/index.md)
