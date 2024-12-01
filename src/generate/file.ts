@@ -34,6 +34,8 @@ import { BackgroundGen } from './background';
 import { StepData, TestGen } from './test';
 import { SourceMapper } from './sourceMapper';
 import { BddDataRenderer } from '../bddData/renderer';
+import { extractTagsFromPath } from '../steps/tags';
+import { removeDuplicates } from '../utils';
 
 type TestFileOptions = {
   config: BDDConfig;
@@ -50,6 +52,7 @@ export class TestFile {
   private hooks: TestFileHooks;
   private backgrounds: BackgroundGen[] = [];
   private tests: TestGen[] = [];
+  private tagsFromPath: string[];
 
   public outputPath: string;
 
@@ -59,13 +62,17 @@ export class TestFile {
     this.gherkinDocumentQuery = new GherkinDocumentQuery(this.gherkinDocument);
     this.stepFinder = new StepFinder(options.config);
     this.hooks = new TestFileHooks(this.formatter);
+    this.tagsFromPath = extractTagsFromPath(this.featureUri);
   }
 
   get gherkinDocument() {
     return this.options.gherkinDocument;
   }
 
-  // doc.uri always exists and is relative to configDir
+  /**
+   * Returns to feature file, relative to configDir.
+   * Separator is OS-specific (/ on Unix, \ on Windows).
+   */
   get featureUri() {
     return this.gherkinDocument.uri!;
   }
@@ -261,7 +268,7 @@ export class TestFile {
     ownTestTags: string[],
     gherkinSteps: readonly Step[],
   ) {
-    const testTags = getTagNames(pickle.tags);
+    const testTags = removeDuplicates([...this.tagsFromPath, ...getTagNames(pickle.tags)]);
     if (this.isSkippedByTagsExpression(testTags)) return [];
 
     const test = new TestGen(
@@ -274,6 +281,7 @@ export class TestFile {
       pickle,
       testTitle,
       gherkinSteps,
+      testTags,
       ownTestTags,
     );
     this.tests.push(test);

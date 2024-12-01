@@ -5,8 +5,8 @@ import { PickleStep, Step } from '@cucumber/messages';
 import { formatDuplicateStepsMessage, StepFinder } from '../../steps/finder';
 import { Formatter } from '../formatter';
 import { getKeywordEng, KeywordsMap } from '../i18n';
-import { getStepTextWithKeyword, getTagNames } from '../../features/helpers';
-import { removeDuplicates, stringifyLocation } from '../../utils';
+import { getStepTextWithKeyword } from '../../features/helpers';
+import { stringifyLocation } from '../../utils';
 import { exit } from '../../utils/exit';
 import { MatchedStepDefinition } from '../../steps/matchedStepDefinition';
 import { PomNode } from '../../steps/decorators/pomGraph';
@@ -38,7 +38,6 @@ export type StepData = {
  * Generates steps for a single scenario (test) and updates background steps.
  */
 export class TestGen {
-  public tags: string[];
   public stepsData = new Map<string /* pickle step id */, StepData>();
   private specialTags: SpecialTags;
   public skippedByTag: boolean;
@@ -56,9 +55,9 @@ export class TestGen {
     public pickle: PickleWithLocation,
     public testTitle: string,
     private scenarioSteps: readonly Step[],
-    ownTestTags: string[],
+    public tags: string[], // all tags of test (including tags from path)
+    ownTestTags: string[], // tags from scenario (without inherited)
   ) {
-    this.tags = removeDuplicates(getTagNames(this.pickle.tags));
     this.specialTags = new SpecialTags(ownTestTags);
     this.skippedByTag = isTestSkippedByCollectedTags(this.tags);
     this.slow = isTestSlowByCollectedTags(this.tags);

@@ -8,7 +8,7 @@ import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
 import { MatchedStepDefinition } from './matchedStepDefinition';
-import { buildTagsExpression, TagsExpression } from './tags';
+import { buildTagsExpression, extractTagsFromPath, TagsExpression } from './tags';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -131,7 +131,12 @@ export class StepDefinition {
   }
 
   private buildTagsExpression() {
-    const { defaultTags, providedOptions } = this.options;
-    this.#tagsExpression = buildTagsExpression(defaultTags, providedOptions?.tags);
+    const { defaultTags, providedOptions, location } = this.options;
+    const tagsFromPath = extractTagsFromPath(location.file);
+    this.#tagsExpression = buildTagsExpression([
+      ...tagsFromPath,
+      defaultTags,
+      providedOptions?.tags,
+    ]);
   }
 }

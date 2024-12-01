@@ -3,7 +3,7 @@
  * todo: move more functions here.
  */
 import { TestTypeCommon } from '../playwright/types';
-import { buildTagsExpression } from '../steps/tags';
+import { buildTagsExpression, extractTagsFromPath } from '../steps/tags';
 import { GeneralScenarioHook } from './scenario';
 import { WorkerHook } from './worker';
 
@@ -17,5 +17,7 @@ export type HookConstructorOptions = {
 };
 
 export function setTagsExpression(hook: WorkerHook | GeneralScenarioHook) {
-  hook.tagsExpression = buildTagsExpression(hook.defaultTags, hook.options.tags);
+  const { defaultTags, options, location } = hook;
+  const tagsFromPath = extractTagsFromPath(location.file);
+  hook.tagsExpression = buildTagsExpression([...tagsFromPath, defaultTags, options.tags]);
 }

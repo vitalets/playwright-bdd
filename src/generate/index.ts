@@ -90,6 +90,7 @@ export class TestFilesGenerator {
           tagsExpression: this.tagsExpression,
         }).build();
       })
+      // render only files that have at least one executable test
       .filter((file) => file.hasExecutableTests());
   }
 
