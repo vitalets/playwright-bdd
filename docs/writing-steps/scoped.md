@@ -30,13 +30,13 @@ The implementation of the step is different for each feature:
 ```js
 // game.steps.js
 When('I click the PLAY button', async () => {
-  // actions for game
+  // actions for game.feature
 });
 ```
 ```js
 // video-player.steps.js
 When('I click the PLAY button', async () => {
-  // actions for video-player
+  // actions for video-player.feature
 });
 ```
 If I run the example as is, I will get an error:
@@ -46,20 +46,20 @@ Step: When I click the PLAY button # game.feature:6:5
   - When 'I click the PLAY button' # game.steps.js:5
   - When 'I click the PLAY button' # video-player.steps.js:5
 ```
-To solve the issue I can scope step definition to the corresponding feature by tags:
+To solve the issue you can scope step definition to the corresponding feature by `tags`:
 ```js
 // game.steps.js
 When('I click the PLAY button', { tags: '@game' }, async () => {
-  // actions for game
+  // actions for game.feature
 });
 ```
 ```js
 // video-player.steps.js
 When('I click the PLAY button', { tags: '@video-player' }, async () => {
-  // actions for video-player
+  // actions for video-player.feature
 });
 ```
-And set these tags in feature files:
+And set these tags in the feature files:
 ```gherkin
 @game
 Feature: Game
@@ -76,17 +76,17 @@ Feature: Video player
     ... 
     When I click the PLAY button
 ```
-Now code runs. Each feature uses respective step definition without any conflicts.
+Now code runs. Each feature uses respective step definition without conflicts.
 
 ## Default tags
-You can provide default tags for step functions via `createBdd()`:
+You can provide default tags for step definitions and hooks via `createBdd()` options:
 
 ```ts
 // game.steps.ts
 const { Given, When, Then } = createBdd(test, { tags: '@game' });
 
 When('I click the PLAY button', async () => {
-  // actions for game
+  // actions for game.feature
 });
 ```
 
@@ -95,6 +95,52 @@ When('I click the PLAY button', async () => {
 const { Given, When, Then } = createBdd(test, { tags: '@video-player' });
 
 When('I click the PLAY button', async () => {
-  // actions for video-player
+  // actions for video-player.feature
 });
 ```
+
+## Tags from path
+You can provide default tags for step definitions and hooks via `@`-prefixed directory or file names. It is a convenient way for binding your steps and features.
+
+Example:
+```
+features
+├── @game
+│   ├── game.feature
+│   └── steps.ts
+└── @video-player
+    ├── video-player.feature
+    └── steps.ts
+```
+This is equivalent of having `@game` tag explicitly defined in the `game.feature` and in all step definitions inside `@game/steps.ts`. With tagged directory you can omit tags from code - step definitions will be scoped automatically:
+```ts
+// @game/steps.ts
+
+When('I click the PLAY button', async () => {
+  // actions for game.feature
+});
+```
+
+You can also add shared steps, to be used in both features:
+
+```
+features
+├── @game
+│   ├── game.feature
+│   └── steps.ts
+├── @video-player
+│   ├── video-player.feature
+│   └── steps.ts
+└── shared-steps.ts
+```
+
+You can use `@`-tagged filenames as well. It allows to store features and steps separately:
+
+```
+features
+├── @game.feature
+└── @video-player.feature
+steps
+├── @game.ts
+└── @video-player.ts
+```   

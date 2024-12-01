@@ -19,7 +19,7 @@ Tags allow to run subset of tests using `--tags` option with [tags expression](h
 npx bddgen --tags "@desktop and not @slow" && npx playwright test
 ```
 
-?> Since Playwright **1.42** Cucumber tags are mapped to [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests)
+?> Since Playwright **1.42** Gherkin tags are mapped to [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests)
 
 Also you can [access tags inside step definitions](writing-steps/builtin-fixtures.md#tags).
 
