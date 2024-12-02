@@ -33,14 +33,15 @@ test(`${testDir.name} (extractTagsFromPath)`, async () => {
   expect(extractTagsFromPath(normalize('features/@foo @bar/'))).toEqual(['@foo', '@bar']);
   expect(extractTagsFromPath(normalize('features/tag @foo and @bar/'))).toEqual(['@foo', '@bar']);
   expect(extractTagsFromPath(normalize('features/auth@foo@bar/'))).toEqual(['@foo', '@bar']);
-  expect(extractTagsFromPath(normalize('features/@foo,@bar/'))).toEqual(['@foo', '@bar']);
-  expect(extractTagsFromPath(normalize('features/@foo,bar/'))).toEqual(['@foo']);
+  expect(extractTagsFromPath(normalize('features/@foo,@bar/'))).toEqual(['@foo,', '@bar']);
+  expect(extractTagsFromPath(normalize('features/@foo,bar/'))).toEqual(['@foo,bar']);
   expect(extractTagsFromPath(normalize('features/@foo:123/'))).toEqual(['@foo:123']);
 
   expect(extractTagsFromPath(normalize('features/'))).toEqual([]);
   expect(extractTagsFromPath(normalize('features/@/'))).toEqual([]);
 
   // filename
+  expect(extractTagsFromPath(normalize('features/@foo'))).toEqual(['@foo']);
   expect(extractTagsFromPath(normalize('features/@foo.feature'))).toEqual(['@foo']);
   expect(extractTagsFromPath(normalize('features/@foo.ts'))).toEqual(['@foo']);
   expect(extractTagsFromPath(normalize('features/@foo.steps.ts'))).toEqual(['@foo']);

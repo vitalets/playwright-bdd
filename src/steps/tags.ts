@@ -1,5 +1,6 @@
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { removeDuplicates } from '../utils';
+import path from 'node:path';
 
 type TagString = string | undefined;
 export type TagsExpression = ReturnType<typeof parseTagsExpression>;
@@ -17,29 +18,18 @@ export function buildTagsExpression(tagStrings: TagString[]): TagsExpression | u
 /**
  * Extracts all '@'-prefixed tags from a given file path.
  *
- * @param {string} path - The file path from which to extract tags.
- * @returns {string[]} An array of tags found in the path.
- *
- * The function uses a regular expression to match tags that start with an '@' symbol
- * and are followed by any characters except for specific delimiters. The delimiters
- * that signal the end of a tag are:
- * - '@': Indicates the start of a new tag.
- * - '/': Forward slash, used in file paths.
- * - '\\': Backslash, used in Windows file paths.
- * - Whitespace characters (spaces, tabs, etc.).
- * - ',': Comma, used to separate tags.
- * - '.': Dot, used in file extensions.
- *
- * This allows tags to include a wide range of characters, including symbols like ':', '-',
- * and others, while ensuring they are properly extracted from the path.
- *
- * **Example Usage:**
- * ```typescript
- * extractTagsFromPath('features/@foo-bar/@baz:qux');
- * // Returns: ['@foo-bar', '@baz:qux']
- * ```
+ * Example:
+ * 'features/@foo-bar/@baz.ts' -> ['@foo-bar', '@baz']
  */
-export function extractTagsFromPath(path: string): string[] {
-  const regex = /@[^@/\\\s,.]+/g;
-  return path.match(regex) || [];
+export function extractTagsFromPath(filePath: string) {
+  const tags: string[] = [];
+  // for filename take first part before dot to omit extension and sub-extension.
+  const fileNamePart = path.basename(filePath).split('.')[0] || '';
+  const dirParts = path.dirname(filePath).split(path.sep);
+  [...dirParts, fileNamePart].forEach((part) => {
+    // consider any @-prefixed symbols as tag
+    const partTags = part.match(/@[^@\s]+/g) || [];
+    tags.push(...partTags);
+  });
+  return tags;
 }
