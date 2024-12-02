@@ -127,11 +127,23 @@ export class TestCase {
 
   private findPickle(testCaseRun: TestCaseRun) {
     const doc = this.gherkinDocuments.find((doc) => doc.uri === testCaseRun.featureUri);
-    if (!doc) throw new Error('GherkinDocument not found');
+    if (!doc) {
+      throw new Error(`GherkinDocument not found for test: ${testCaseRun.test.title}`);
+    }
+
     const pickle = doc.pickles.find((pickle) => {
       return pickle.location.line === testCaseRun.bddTestData.pickleLine;
     });
-    if (!pickle) throw new Error('Pickle not found');
+
+    if (!pickle) {
+      throw new Error(
+        [
+          `Pickle not found for test: ${testCaseRun.test.title}`,
+          `Gherkin document: ${doc.uri}`,
+        ].join('\n'),
+      );
+    }
+
     return pickle;
   }
 }
