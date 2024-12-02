@@ -20,7 +20,7 @@ import parseTagsExpression from '@cucumber/tag-expressions';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../features/types';
 import { BDDConfig } from '../config/types';
-import { ImportTestFromGuesser } from './importTestFrom';
+import { ImportTestGuesser } from './importTest';
 import { GherkinDocumentQuery } from '../features/documentQuery';
 import { ExamplesTitleBuilder } from './examplesTitleBuilder';
 import { getTagNames, isScenarioOutline } from '../features/helpers';
@@ -342,7 +342,7 @@ export class TestFile {
   private resolveImportTestFrom() {
     let { importTestFrom } = this.config;
     if (!importTestFrom) {
-      importTestFrom = new ImportTestFromGuesser(
+      importTestFrom = new ImportTestGuesser(
         this.featureUri,
         this.getUsedDefinitions(),
         this.getUsedPomFixtures(),

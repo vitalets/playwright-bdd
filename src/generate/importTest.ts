@@ -14,7 +14,7 @@ import { exit } from '../utils/exit';
 import { ImportTestFrom } from './formatter';
 
 // todo: refactor to fill this class in-place, instead of collecting data
-export class ImportTestFromGuesser {
+export class ImportTestGuesser {
   private customTestsSet: Set<TestTypeCommon>;
 
   // eslint-disable-next-line max-params
