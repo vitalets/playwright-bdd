@@ -1,5 +1,5 @@
-import { test as base, createBdd } from 'playwright-bdd';
-import { withLog } from '../../_helpers/withLog';
+import { createBdd } from 'playwright-bdd';
+import { testWithLog } from '../../_helpers/withLog';
 
 type WorkerFixtures = {
   workerFixtureCommon: void;
@@ -7,7 +7,7 @@ type WorkerFixtures = {
   workerFixture2: void;
 };
 
-export const test = withLog(base).extend<object, WorkerFixtures>({
+export const test = testWithLog.extend<object, WorkerFixtures>({
   workerFixtureCommon: [
     async ({ log }, use) => {
       log(`workerFixtureCommon setup`);

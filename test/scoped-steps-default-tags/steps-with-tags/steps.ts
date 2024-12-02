@@ -1,7 +1,7 @@
-import { test as base, createBdd } from 'playwright-bdd';
-import { withLog } from '../../_helpers/withLog';
+import { createBdd } from 'playwright-bdd';
+import { testWithLog } from '../../_helpers/withLog';
 
-export const test = withLog(base);
+export const test = testWithLog;
 
 const { Given: GivenScenario1 } = createBdd(test, { tags: '@scenario1' });
 const { Given: GivenScenario2 } = createBdd(test, { tags: '@scenario2' });

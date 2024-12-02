@@ -1,13 +1,13 @@
 import timers from 'node:timers/promises';
-import { test as base, createBdd } from 'playwright-bdd';
-import { withLog } from '../../_helpers/withLog';
+import { createBdd } from 'playwright-bdd';
+import { testWithLog } from '../../_helpers/withLog';
 
 type TestFixtures = {
   testFixtureCommon: void;
   testFixtureScenario1: void;
 };
 
-export const test = withLog(base).extend<TestFixtures>({
+export const test = testWithLog.extend<TestFixtures>({
   testFixtureCommon: async ({ log }, use) => {
     log(`testFixtureCommon setup`);
     await use();
