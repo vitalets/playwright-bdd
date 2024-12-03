@@ -34,7 +34,7 @@ type ScenarioHook<Fixtures, World> = {
   options: ScenarioHookOptions;
   fn: ScenarioHookFn<Fixtures, World>;
   tagsExpression?: TagsExpression;
-  location: PlaywrightLocation;
+  location: PlaywrightLocation; // absolute path to hook location, line and col
   customTest?: TestTypeCommon;
   defaultTags?: string;
   worldFixture?: string;

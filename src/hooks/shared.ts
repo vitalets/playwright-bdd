@@ -4,6 +4,7 @@
  */
 import { TestTypeCommon } from '../playwright/types';
 import { buildTagsExpression, extractTagsFromPath } from '../steps/tags';
+import { relativeToCwd } from '../utils/paths';
 import { GeneralScenarioHook } from './scenario';
 import { WorkerHook } from './worker';
 
@@ -18,6 +19,8 @@ export type HookConstructorOptions = {
 
 export function setTagsExpression(hook: WorkerHook | GeneralScenarioHook) {
   const { defaultTags, options, location } = hook;
-  const tagsFromPath = extractTagsFromPath(location.file);
+  // Possibly, we should use relative to configDir
+  const relFilePath = relativeToCwd(location.file);
+  const tagsFromPath = extractTagsFromPath(relFilePath);
   hook.tagsExpression = buildTagsExpression([...tagsFromPath, defaultTags, options.tags]);
 }

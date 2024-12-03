@@ -70,9 +70,7 @@ export const test = base.extend<BddTestFixtures>({
   ],
   $bddContext: [
     async ({ $tags, $test, $bddConfig, $bddTestData, $uri, $step, $world }, use, testInfo) => {
-      if (!$bddTestData) {
-        throw new Error('BDD fixtures can be used only in BDD tests');
-      }
+      if (!$bddTestData) throw errorBddTestDataNotFound(testInfo);
 
       await use({
         config: $bddConfig,
@@ -166,3 +164,8 @@ export const test = base.extend<BddTestFixtures>({
     fixtureOptions,
   ],
 });
+
+function errorBddTestDataNotFound(testInfo: TestInfo) {
+  const testLocation = testInfo.file + ':' + testInfo.line;
+  return new Error(`bddTestData not found for test: ${testLocation}`);
+}

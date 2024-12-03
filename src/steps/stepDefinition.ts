@@ -9,6 +9,7 @@ import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { PomNode } from './decorators/pomGraph';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { buildTagsExpression, extractTagsFromPath, TagsExpression } from './tags';
+import { relativeToCwd } from '../utils/paths';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -132,7 +133,9 @@ export class StepDefinition {
 
   private buildTagsExpression() {
     const { defaultTags, providedOptions, location } = this.options;
-    const tagsFromPath = extractTagsFromPath(location.file);
+    // Possibly, we should use relative to configDir
+    const relFilePath = relativeToCwd(location.file);
+    const tagsFromPath = extractTagsFromPath(relFilePath);
     this.#tagsExpression = buildTagsExpression([
       ...tagsFromPath,
       defaultTags,
