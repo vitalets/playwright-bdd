@@ -74,7 +74,7 @@ export const test = base.extend<BddTestFixtures>({
   // Unused fixtures below are important for lazy initialization only on bdd projects
   // See: https://github.com/vitalets/playwright-bdd/issues/166
   Given: [
-    async ({ $bddContext, $applySpecialTags, $beforeEach }, use) => {
+    async ({ $bddContext, $applySpecialTags }, use) => {
       const invoker = new BddStepInvoker($bddContext);
       await use(invoker.invoke.bind(invoker));
     },
@@ -130,8 +130,8 @@ export const test = base.extend<BddTestFixtures>({
   // unused dependency '$afterEach' is important to run afterEach
   // in case of error in beforeEach.
   $beforeEach: [
-    async ({ $bddContext, $beforeEachFixtures, $tags, $afterEach }, use) => {
-      const hooksToRun = getScenarioHooksToRun('before', $tags);
+    async ({ $bddContext, $beforeEachFixtures, $afterEach }, use) => {
+      const hooksToRun = getScenarioHooksToRun('before', $bddContext.tags);
       await runScenarioHooks(hooksToRun, { $bddContext, ...$beforeEachFixtures });
       await use();
     },
@@ -139,9 +139,9 @@ export const test = base.extend<BddTestFixtures>({
   ],
   // runs afterEach hooks
   $afterEach: [
-    async ({ $bddContext, $afterEachFixtures, $tags }, use) => {
+    async ({ $bddContext, $afterEachFixtures }, use) => {
       await use();
-      const hooksToRun = getScenarioHooksToRun('after', $tags);
+      const hooksToRun = getScenarioHooksToRun('after', $bddContext.tags);
       hooksToRun.reverse();
       await runScenarioHooks(hooksToRun, { $bddContext, ...$afterEachFixtures });
     },

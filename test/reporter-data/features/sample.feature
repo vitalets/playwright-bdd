@@ -19,9 +19,8 @@ Feature: report location
 
     Examples:
       | num |
-      | 42  |
-      | 43  |
+      | 44  |
 
     Examples:
       | num |
-      | 44  |
+      | 55  |

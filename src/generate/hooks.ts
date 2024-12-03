@@ -46,6 +46,11 @@ export class TestFileHooks {
       .forEach((test) => {
         this.beforeAll.registerHooksForTest(test);
         this.afterAll.registerHooksForTest(test);
+        // Important to generate calls of test.beforeEach() / test.afterEach()
+        // that reference $beforeEach/$afterEach fixtures.
+        // This forces $beforeEach/$afterEach to be initialized before the background.
+        // Otherwise, Before/After hooks are called during background initialization
+        // and in the report results are placed inside Background parent.
         this.before.registerHooksForTest(test);
         this.after.registerHooksForTest(test);
       });
