@@ -10,7 +10,8 @@
  * The main goal of auto-fixtures is to have cleaner generated code.
  */
 
-import { BddContext, BddTestFixtures } from './bddTestFixtures';
+import { BddContext } from './bddContext';
+import { BddTestFixtures } from './bddTestFixtures';
 
 export type BddAutoInjectFixtures = Pick<
   BddTestFixtures,

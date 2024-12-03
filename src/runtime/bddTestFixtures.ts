@@ -5,18 +5,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { test as base } from './bddWorkerFixtures';
-import { BDDConfig } from '../config/types';
 import { getScenarioHooksToRun, runScenarioHooks } from '../hooks/scenario';
 import { BddStepInvoker, BddStepFn } from './bddStepInvoker';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
+import { BddContext, BddStepInfo } from './bddContext';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
-
-type BddStepFixture = {
-  title: string;
-};
 
 // Hide all BDD fixtures in reporter.
 // 'box' option was added in PW 1.46,
@@ -35,7 +31,7 @@ export type BddTestFixtures = {
   $tags: string[];
   $test: TestTypeCommon;
   $testInfo: TestInfo;
-  $step: BddStepFixture;
+  $step: BddStepInfo;
   $uri: string;
   $applySpecialTags: void;
   $world: unknown;
@@ -43,18 +39,6 @@ export type BddTestFixtures = {
   $beforeEach: void;
   $afterEachFixtures: Record<string, unknown>;
   $afterEach: void;
-};
-
-export type BddContext = {
-  config: BDDConfig;
-  featureUri: string;
-  test: TestTypeCommon;
-  testInfo: TestInfo;
-  tags: string[];
-  step: BddStepFixture;
-  stepIndex: number; // step index in pickle (differs from index in scenario, b/c bg steps)
-  world: unknown;
-  bddTestData: BddTestData;
 };
 
 export const test = base.extend<BddTestFixtures>({

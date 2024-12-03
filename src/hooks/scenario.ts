@@ -9,10 +9,10 @@ import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
-import { BddContext } from '../runtime/bddTestFixtures';
 import { getBddAutoInjectFixtures, isBddAutoInjectFixture } from '../runtime/bddTestFixturesAuto';
 import { HookConstructorOptions, setTagsExpression } from './shared';
 import { TagsExpression } from '../steps/tags';
+import { BddContext } from '../runtime/bddContext';
 
 export type ScenarioHookType = 'before' | 'after';
 
