@@ -170,7 +170,7 @@ test('Scenario: soft assertions', async ({ page }) => {
     'AndAction 1',
     /Andfailing soft assertion "bar"/,
     'AndAction 2',
-    'screenshot',
+    'screenshotDownload trace',
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(2);
