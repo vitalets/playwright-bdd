@@ -12,4 +12,8 @@ export default defineConfig({
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
     ['html', { open: 'never' }],
   ],
+  use: {
+    screenshot: 'on',
+    trace: 'on',
+  },
 });
