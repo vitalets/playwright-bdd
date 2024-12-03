@@ -5,7 +5,7 @@
 import * as pw from '@playwright/test/reporter';
 import { HookType } from './Hook';
 
-// Playwright step categoires, that can be mapped to testStep / hook in Cucumber messages
+// Playwright step categories, that can be mapped to testStep / hook in Cucumber messages
 const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
 
 export function collectStepsWithCategory(
@@ -18,6 +18,8 @@ export function collectStepsWithCategory(
 }
 
 export function getHooksRootPwStep(result: pw.TestResult, type: HookType) {
+  // 'Before Hooks' and 'After Hooks' are hardcoded in Playwright.
+  // See: https://github.com/microsoft/playwright/blob/release-1.49/packages/playwright/src/worker/workerMain.ts#L336
   const rootStepTitle = type === 'before' ? 'Before Hooks' : 'After Hooks';
   return result.steps.find((step) => step.category === 'hook' && step.title === rootStepTitle);
 }
