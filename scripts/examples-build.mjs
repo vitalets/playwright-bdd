@@ -9,6 +9,7 @@ import { execSync } from 'node:child_process';
 const pkg = JSON.parse(fs.readFileSync('./package.json'));
 const isCI = Boolean(process.env.CI);
 const generatedTar = `playwright-bdd-${pkg.version}.tgz`;
+const logger = console;
 
 buildAndInstallPlaywrightBdd();
 
@@ -27,6 +28,6 @@ function buildAndInstallPlaywrightBdd() {
 }
 
 function runCmd(cmd, opts = {}) {
-  console.log(`Running: ${cmd}`); // eslint-disable-line no-console
+  logger.log(`Running: ${cmd}`);
   execSync(cmd, { ...opts, stdio: 'inherit' });
 }

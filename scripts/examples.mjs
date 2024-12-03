@@ -1,5 +1,5 @@
 /**
- * Build and run examples
+ * Run examples.
  * npm run examples
  * npm run examples basic-cjs
  * npm run examples basic-esm
@@ -8,8 +8,8 @@
  */
 
 import path from 'node:path';
+import fs from 'node:fs';
 import { execSync } from 'node:child_process';
-import fg from 'fast-glob';
 
 const dir = process.argv[2];
 const dirs = dir ? [dir] : getExampleDirs();
@@ -26,11 +26,9 @@ function runExamples() {
 }
 
 function getExampleDirs() {
-  return fg
-    .sync('**', {
-      cwd: 'examples',
-      deep: 1,
-      onlyDirectories: true,
-    })
+  return fs
+    .readdirSync('examples', { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => entry.name)
     .filter((dir) => dir !== 'node_modules');
 }
