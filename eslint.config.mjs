@@ -13,6 +13,7 @@ export default [
       'test/**/.cache',
       '**/.features-gen/**',
       '**/actual-reports/**',
+      '**/playwright-report/**',
     ],
   },
   js.configs.recommended,
