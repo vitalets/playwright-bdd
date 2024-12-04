@@ -20,6 +20,7 @@ export default defineConfig({
       ],
   use: {
     screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
   },
   timeout: testTimeout,
   expect: {
