@@ -15,11 +15,11 @@
             "line": 5,
             "name": "I have 42 <![CDATA[cukes]]> in my belly",
             "match": {
-              "location": "features/cdata/common.steps.ts:3"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 399583
+              "duration": 602791
             }
           }
         ],

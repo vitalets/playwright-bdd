@@ -19,7 +19,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 134916
+              "duration": 469249
             }
           }
         ],
@@ -43,7 +43,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 24291
+              "duration": 26166
             }
           }
         ],
@@ -67,7 +67,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 18708
+              "duration": 32542
             }
           }
         ],
@@ -91,7 +91,7 @@
             },
             "result": {
               "status": "failed",
-              "duration": 19458,
+              "duration": 33125,
               "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/retry/cucumber.steps.ts:24:9)"
             }
           }

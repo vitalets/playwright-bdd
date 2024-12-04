@@ -15,11 +15,11 @@
             "line": 7,
             "name": "there are 12 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 176624
+              "duration": 599208
             }
           },
           {
@@ -28,11 +28,11 @@
             "line": 8,
             "name": "I eat 5 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:8"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 26249
+              "duration": 48957
             }
           },
           {
@@ -41,11 +41,11 @@
             "line": 9,
             "name": "I should have 7 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:12"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "passed",
-              "duration": 51667
+              "duration": 49666
             }
           }
         ],
@@ -70,11 +70,11 @@
             "line": 7,
             "name": "there are 20 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 20333
+              "duration": 26916
             }
           },
           {
@@ -83,11 +83,11 @@
             "line": 8,
             "name": "I eat 5 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:8"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 16125
+              "duration": 25333
             }
           },
           {
@@ -96,11 +96,11 @@
             "line": 9,
             "name": "I should have 15 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:12"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "passed",
-              "duration": 13625
+              "duration": 43374
             }
           }
         ],
@@ -125,11 +125,11 @@
             "line": 7,
             "name": "there are 12 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 13917
+              "duration": 66334
             }
           },
           {
@@ -138,11 +138,11 @@
             "line": 8,
             "name": "I eat 20 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:8"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 13624
+              "duration": 26082
             }
           },
           {
@@ -151,11 +151,11 @@
             "line": 9,
             "name": "I should have 0 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:12"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "failed",
-              "duration": 1825416,
+              "duration": 3186791,
               "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n-8 !== 0\n\n    + expected - actual\n\n    --8\n    +0\n\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/examples-tables/common.steps.ts:13:10)"
             }
           }
@@ -181,11 +181,11 @@
             "line": 7,
             "name": "there are 0 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 31000
+              "duration": 313999
             }
           },
           {
@@ -194,11 +194,11 @@
             "line": 8,
             "name": "I eat 1 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:8"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 95624
+              "duration": 182999
             }
           },
           {
@@ -207,11 +207,11 @@
             "line": 9,
             "name": "I should have 0 cucumbers",
             "match": {
-              "location": "features/examples-tables/common.steps.ts:12"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "failed",
-              "duration": 203750,
+              "duration": 328874,
               "error_message": "AssertionError [ERR_ASSERTION]: Expected values to be strictly equal:\n\n-1 !== 0\n\n    + expected - actual\n\n    --1\n    +0\n\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/examples-tables/common.steps.ts:13:10)"
             }
           }

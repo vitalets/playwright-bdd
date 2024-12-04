@@ -6,59 +6,59 @@
         "description": "",
         "id": "usage-of-a-`rule`;a-sale-cannot-happen-if-the-customer-does-not-have-enough-money;not-enough-money",
         "keyword": "Example",
-        "line": 9,
+        "line": 10,
         "name": "Not enough money",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 10,
+            "line": 11,
             "name": "the customer has 100 cents",
             "match": {
-              "location": "features/rules/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 449333
+              "duration": 584165
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 11,
+            "line": 12,
             "name": "there are chocolate bars in stock",
             "match": {
-              "location": "features/rules/common.steps.ts:8"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 48041
+              "duration": 50709
             }
           },
           {
             "arguments": [],
             "keyword": "When ",
-            "line": 12,
+            "line": 13,
             "name": "the customer tries to buy a 125 cent chocolate bar",
             "match": {
-              "location": "features/rules/common.steps.ts:16"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 34082
+              "duration": 93125
             }
           },
           {
             "arguments": [],
             "keyword": "Then ",
-            "line": 13,
+            "line": 14,
             "name": "the sale should not happen",
             "match": {
-              "location": "features/rules/common.steps.ts:22"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "passed",
-              "duration": 48417
+              "duration": 49709
             }
           }
         ],
@@ -69,59 +69,59 @@
         "description": "",
         "id": "usage-of-a-`rule`;a-sale-cannot-happen-if-the-customer-does-not-have-enough-money;enough-money",
         "keyword": "Example",
-        "line": 16,
+        "line": 17,
         "name": "Enough money",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 17,
+            "line": 18,
             "name": "the customer has 100 cents",
             "match": {
-              "location": "features/rules/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 20708
+              "duration": 87874
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 18,
+            "line": 19,
             "name": "there are chocolate bars in stock",
             "match": {
-              "location": "features/rules/common.steps.ts:8"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 11042
+              "duration": 26916
             }
           },
           {
             "arguments": [],
             "keyword": "When ",
-            "line": 19,
+            "line": 20,
             "name": "the customer tries to buy a 75 cent chocolate bar",
             "match": {
-              "location": "features/rules/common.steps.ts:16"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 18916
+              "duration": 31707
             }
           },
           {
             "arguments": [],
             "keyword": "Then ",
-            "line": 20,
+            "line": 21,
             "name": "the sale should happen",
             "match": {
-              "location": "features/rules/common.steps.ts:26"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "passed",
-              "duration": 24791
+              "duration": 34750
             }
           }
         ],
@@ -132,59 +132,59 @@
         "description": "",
         "id": "usage-of-a-`rule`;a-sale-cannot-happen-if-there-is-no-stock;no-chocolates-left",
         "keyword": "Example",
-        "line": 25,
+        "line": 27,
         "name": "No chocolates left",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 26,
+            "line": 28,
             "name": "the customer has 100 cents",
             "match": {
-              "location": "features/rules/common.steps.ts:4"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 19458
+              "duration": 41124
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 27,
+            "line": 29,
             "name": "there are no chocolate bars in stock",
             "match": {
-              "location": "features/rules/common.steps.ts:12"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 30250
+              "duration": 100625
             }
           },
           {
             "arguments": [],
             "keyword": "When ",
-            "line": 28,
+            "line": 30,
             "name": "the customer tries to buy a 1 cent chocolate bar",
             "match": {
-              "location": "features/rules/common.steps.ts:16"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 95333
+              "duration": 143583
             }
           },
           {
             "arguments": [],
             "keyword": "Then ",
-            "line": 29,
+            "line": 31,
             "name": "the sale should not happen",
             "match": {
-              "location": "features/rules/common.steps.ts:22"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "passed",
-              "duration": 24208
+              "duration": 36624
             }
           }
         ],

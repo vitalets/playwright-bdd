@@ -15,11 +15,11 @@
             "line": 9,
             "name": "a step throws an exception",
             "match": {
-              "location": "features/stack-traces/common.steps.ts:3"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "failed",
-              "duration": 135540,
+              "duration": 565915,
               "error_message": "Error: BOOM\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/stack-traces/common.steps.ts:4:9)"
             }
           }

@@ -6,33 +6,33 @@
         "description": "",
         "id": "skipping-scenarios;skipping-from-a-step-doesn't-affect-the-previous-steps",
         "keyword": "Scenario",
-        "line": 13,
+        "line": 11,
         "name": "Skipping from a step doesn't affect the previous steps",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 14,
+            "line": 12,
             "name": "a step that does not skip",
             "match": {
               "location": "features/skipped/cucumber.steps.ts:7"
             },
             "result": {
               "status": "passed",
-              "duration": 161291
+              "duration": 584499
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 15,
+            "line": 13,
             "name": "I skip a step",
             "match": {
               "location": "features/skipped/cucumber.steps.ts:15"
             },
             "result": {
               "status": "skipped",
-              "duration": 34250
+              "duration": 50124
             }
           }
         ],
@@ -43,26 +43,26 @@
         "description": "",
         "id": "skipping-scenarios;skipping-from-a-step-causes-the-rest-of-the-scenario-to-be-skipped",
         "keyword": "Scenario",
-        "line": 17,
+        "line": 15,
         "name": "Skipping from a step causes the rest of the scenario to be skipped",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 18,
+            "line": 16,
             "name": "I skip a step",
             "match": {
               "location": "features/skipped/cucumber.steps.ts:15"
             },
             "result": {
               "status": "skipped",
-              "duration": 14290
+              "duration": 25958
             }
           },
           {
             "arguments": [],
             "keyword": "And ",
-            "line": 19,
+            "line": 17,
             "name": "a step that is skipped",
             "match": {
               "location": "features/skipped/cucumber.steps.ts:11"

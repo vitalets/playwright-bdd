@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 105875
+              "duration": 441708
             }
           },
           {
@@ -22,7 +22,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 13166
+              "duration": 96374
             }
           },
           {
@@ -35,7 +35,7 @@
             },
             "result": {
               "status": "passed",
-              "duration": 115166
+              "duration": 114167
             }
           },
           {
@@ -43,7 +43,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 12000
+              "duration": 21208
             }
           }
         ],
@@ -62,7 +62,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 6750
+              "duration": 16124
             }
           },
           {
@@ -70,7 +70,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 6625
+              "duration": 13791
             }
           },
           {
@@ -83,7 +83,7 @@
             },
             "result": {
               "status": "failed",
-              "duration": 37666,
+              "duration": 51625,
               "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:17:9)"
             }
           },
@@ -92,7 +92,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 10208
+              "duration": 19584
             }
           }
         ],
@@ -103,7 +103,7 @@
         "description": "",
         "id": "hooks;with-a-tag,-a-failure-in-the-hook-and-a-passed-step",
         "keyword": "Scenario",
-        "line": 17,
+        "line": 16,
         "name": "With a tag, a failure in the hook and a passed step",
         "steps": [
           {
@@ -111,7 +111,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 10583
+              "duration": 25666
             }
           },
           {
@@ -119,20 +119,20 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 62417
+              "duration": 78959
             }
           },
           {
             "arguments": [],
             "keyword": "When ",
-            "line": 18,
+            "line": 17,
             "name": "a step passes",
             "match": {
               "location": "features/hooks/cucumber.steps.ts:12"
             },
             "result": {
               "status": "passed",
-              "duration": 69791
+              "duration": 112292
             }
           },
           {
@@ -140,7 +140,7 @@
             "hidden": true,
             "result": {
               "status": "failed",
-              "duration": 36541,
+              "duration": 36749,
               "error_message": "Error: Exception in conditional hook\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:25:9)"
             }
           },
@@ -149,14 +149,14 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 11457
+              "duration": 14125
             }
           }
         ],
         "tags": [
           {
             "name": "@some-tag",
-            "line": 16
+            "line": 15
           }
         ],
         "type": "scenario"
@@ -165,7 +165,7 @@
         "description": "",
         "id": "hooks;with-an-tag,-an-valid-attachment-in-the-hook-and-a-passed-step",
         "keyword": "Scenario",
-        "line": 21,
+        "line": 20,
         "name": "With an tag, an valid attachment in the hook and a passed step",
         "steps": [
           {
@@ -173,7 +173,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 5584
+              "duration": 13292
             }
           },
           {
@@ -181,20 +181,20 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 8625
+              "duration": 12750
             }
           },
           {
             "arguments": [],
             "keyword": "When ",
-            "line": 22,
+            "line": 21,
             "name": "a step passes",
             "match": {
               "location": "features/hooks/cucumber.steps.ts:12"
             },
             "result": {
               "status": "passed",
-              "duration": 16541
+              "duration": 24417
             }
           },
           {
@@ -202,7 +202,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1295833
+              "duration": 1998375
             },
             "embeddings": [
               {
@@ -216,14 +216,14 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 5459
+              "duration": 17583
             }
           }
         ],
         "tags": [
           {
             "name": "@with-attachment",
-            "line": 20
+            "line": 19
           }
         ],
         "type": "scenario"

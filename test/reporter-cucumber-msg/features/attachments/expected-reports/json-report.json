@@ -15,11 +15,11 @@
             "line": 16,
             "name": "the string \"hello\" is attached as \"application/octet-stream\"",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:6"
+              "location": "features/attachments/cucumber.steps.ts:4"
             },
             "result": {
               "status": "passed",
-              "duration": 338625
+              "duration": 681249
             },
             "embeddings": [
               {
@@ -45,11 +45,11 @@
             "line": 19,
             "name": "the string \"hello\" is logged",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:10"
+              "location": "features/attachments/cucumber.steps.ts:8"
             },
             "result": {
               "status": "passed",
-              "duration": 51499
+              "duration": 86208
             },
             "embeddings": [
               {
@@ -75,11 +75,11 @@
             "line": 22,
             "name": "text with ANSI escapes is logged",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:14"
+              "location": "features/attachments/cucumber.steps.ts:12"
             },
             "result": {
               "status": "passed",
-              "duration": 34834
+              "duration": 51708
             },
             "embeddings": [
               {
@@ -102,7 +102,7 @@
           {
             "arguments": [
               {
-                "content": "{\"message\": \"The <b>big</b> question\", \"foo\": \"bar\"}",
+                "content": "{ \"message\": \"The <b>big</b> question\", \"foo\": \"bar\" }",
                 "line": 26
               }
             ],
@@ -110,15 +110,15 @@
             "line": 25,
             "name": "the following string is attached as \"application/json\":",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:20"
+              "location": "features/attachments/cucumber.steps.ts:18"
             },
             "result": {
               "status": "passed",
-              "duration": 60374
+              "duration": 83250
             },
             "embeddings": [
               {
-                "data": "eyJtZXNzYWdlIjogIlRoZSA8Yj5iaWc8L2I+IHF1ZXN0aW9uIiwgImZvbyI6ICJiYXIifQ==",
+                "data": "eyAibWVzc2FnZSI6ICJUaGUgPGI+YmlnPC9iPiBxdWVzdGlvbiIsICJmb28iOiAiYmFyIiB9",
                 "mime_type": "application/json"
               }
             ]
@@ -140,11 +140,11 @@
             "line": 31,
             "name": "an array with 10 bytes is attached as \"text/plain\"",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:24"
+              "location": "features/attachments/cucumber.steps.ts:22"
             },
             "result": {
               "status": "passed",
-              "duration": 102791
+              "duration": 110749
             },
             "embeddings": [
               {
@@ -170,11 +170,11 @@
             "line": 34,
             "name": "a JPEG image is attached",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:33"
+              "location": "features/attachments/cucumber.steps.ts:31"
             },
             "result": {
               "status": "passed",
-              "duration": 1027707
+              "duration": 1130125
             },
             "embeddings": [
               {
@@ -200,11 +200,11 @@
             "line": 37,
             "name": "a PNG image is attached",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:37"
+              "location": "features/attachments/cucumber.steps.ts:35"
             },
             "result": {
               "status": "passed",
-              "duration": 359125
+              "duration": 321708
             },
             "embeddings": [
               {
@@ -230,11 +230,11 @@
             "line": 40,
             "name": "a JPEG image is attached",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:33"
+              "location": "features/attachments/cucumber.steps.ts:31"
             },
             "result": {
               "status": "passed",
-              "duration": 348209
+              "duration": 257708
             },
             "embeddings": [
               {
@@ -260,11 +260,11 @@
             "line": 40,
             "name": "a PNG image is attached",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:37"
+              "location": "features/attachments/cucumber.steps.ts:35"
             },
             "result": {
               "status": "passed",
-              "duration": 375332
+              "duration": 444415
             },
             "embeddings": [
               {
@@ -290,11 +290,11 @@
             "line": 48,
             "name": "a PDF document is attached and renamed",
             "match": {
-              "location": "features/attachments/cucumber.steps.ts:41"
+              "location": "features/attachments/cucumber.steps.ts:39"
             },
             "result": {
               "status": "passed",
-              "duration": 395500
+              "duration": 650916
             },
             "embeddings": [
               {

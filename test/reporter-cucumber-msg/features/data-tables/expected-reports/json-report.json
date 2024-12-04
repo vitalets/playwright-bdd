@@ -26,11 +26,11 @@
             "line": 8,
             "name": "the following table is transposed:",
             "match": {
-              "location": "features/data-tables/common.steps.ts:4"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 189666
+              "duration": 737166
             }
           },
           {
@@ -50,11 +50,11 @@
             "line": 11,
             "name": "it should be:",
             "match": {
-              "location": "features/data-tables/common.steps.ts:8"
+              "location": "features/fixtures.ts:23"
             },
             "result": {
               "status": "passed",
-              "duration": 291000
+              "duration": 359999
             }
           }
         ],
