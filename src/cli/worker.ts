@@ -10,6 +10,12 @@ import { forceExitIfNeeded } from './helpers';
 main();
 
 async function main() {
-  await new TestFilesGenerator(workerData.config).generate();
+  try {
+    await new TestFilesGenerator(workerData.config).generate();
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    if (e.message) console.error(e.message);
+    process.exitCode = 1;
+  }
   forceExitIfNeeded();
 }

@@ -8,7 +8,7 @@ import { FeaturesLoader, resolveFeatureFiles } from '../features/load';
 import { Snippets } from '../snippets';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
-import { exit, withExitHandler } from '../utils/exit';
+import { exit } from '../utils/exit';
 import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/loader';
 import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
@@ -29,13 +29,11 @@ export class TestFilesGenerator {
   }
 
   async generate() {
-    await withExitHandler(async () => {
-      await Promise.all([this.loadFeatures(), this.loadSteps()]);
-      this.buildFiles();
-      this.checkMissingSteps();
-      await this.clearOutputDir();
-      await this.saveFiles();
-    });
+    await Promise.all([this.loadFeatures(), this.loadSteps()]);
+    this.buildFiles();
+    this.checkMissingSteps();
+    await this.clearOutputDir();
+    await this.saveFiles();
   }
 
   async extractSteps() {
