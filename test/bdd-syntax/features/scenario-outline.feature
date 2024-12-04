@@ -21,7 +21,7 @@ Feature: scenario-outline
       | hi | HI |
       | fo | FO |
 
-  Scenario Outline: Custom titles
+  Scenario Outline: Custom examples title via gherkin comment
     Given State <start>
 
     # title-format: Test with <start> and "<end>", extra >, without <notexist>
@@ -31,13 +31,17 @@ Feature: scenario-outline
       | 3     | 6   |
 
   # see: https://github.com/vitalets/playwright-bdd/issues/67
-  Scenario Outline: Scenario title used as a template with <start> and "<end>", extra <, without <notexist>
+  Scenario Outline: Custom examples title via scenario name with <start> and "<end>", extra <, without <notexist>
     Given State <start>
 
     Examples:
       | start | end |
       | 2     | 4   |
       | 3     | 6   |
+
+    Examples: Custom examples title via examples name with <start>
+      | start | end |
+      | 4     | 8   |
 
   # outline without examples behaves like normal scenario
   Scenario Outline: scenario outline without examples

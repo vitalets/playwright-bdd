@@ -26,10 +26,11 @@ export class ExamplesTitleBuilder {
 
   private getTitleTemplate(examples: Examples) {
     return (
-      this.getTitleTemplateFromComment(examples) ||
-      this.getTitleTemplateScenarioName(examples) ||
-      this.getTitleTemplateFromConfig() ||
-      this.getTitleTemplateDefault(examples)
+      this.getTitleFromComment(examples) ||
+      this.getTitleFromExamplesName(examples) ||
+      this.getTitleFromScenarioName(examples) ||
+      this.getTitleFromConfig() ||
+      this.getDefaultTitle(examples)
     );
   }
 
@@ -46,7 +47,7 @@ export class ExamplesTitleBuilder {
     return new GherkinTemplate(titleTemplate).fill(params);
   }
 
-  private getTitleTemplateFromComment(examples: Examples) {
+  private getTitleFromComment(examples: Examples) {
     const { gherkinDocument } = this.options;
     const { line } = examples.location;
     const titleFormatCommentLine = line - 1;
@@ -59,25 +60,41 @@ export class ExamplesTitleBuilder {
   }
 
   /**
+   * If Examples block is named with columns from Examples, use it as title format:
+   * Examples: test user with <name> and <age>
+   */
+  private getTitleFromExamplesName(examples: Examples) {
+    return this.getTitleFromString(examples, examples.name);
+  }
+
+  /**
    * If scenario is named with columns from Examples, use it as title format:
    * Scenario: test user with <name> and <age>
    */
-  private getTitleTemplateScenarioName(examples: Examples) {
-    const { scenario } = this.options;
-    const columnsInScenarioName = new GherkinTemplate(scenario.name).extractParams();
-    const hasColumnNames =
-      columnsInScenarioName.length &&
-      examples.tableHeader?.cells?.some((cell) => {
-        return cell.value && columnsInScenarioName.includes(cell.value);
-      });
-    return hasColumnNames ? scenario.name : '';
+  private getTitleFromScenarioName(examples: Examples) {
+    return this.getTitleFromString(examples, this.options.scenario.name);
   }
 
-  private getTitleTemplateFromConfig() {
+  /**
+   * Check if string can be an examples title template:
+   * Contains at least one column name in <>.
+   * E.g.: test user with <name> and <age>
+   */
+  private getTitleFromString(examples: Examples, str = '') {
+    const columns = new GherkinTemplate(str).extractParams();
+    const hasColumnsInStr =
+      columns.length &&
+      examples.tableHeader?.cells?.some((cell) => {
+        return cell.value && columns.includes(cell.value);
+      });
+    return hasColumnsInStr ? str : '';
+  }
+
+  private getTitleFromConfig() {
     return this.options.config.examplesTitleFormat;
   }
 
-  private getTitleTemplateDefault(examples: Examples) {
+  private getDefaultTitle(examples: Examples) {
     return this.options.isEnglish
       ? `Example #<_index_>` // for english use 'Example' not 'Examples', and without ':'
       : `${examples.keyword}: #<_index_>`;

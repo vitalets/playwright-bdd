@@ -67,17 +67,18 @@ function checkScenarioOutline(outDir) {
   expect(content).toContain(`Then("Uppercase \\"hi\\" equals \\"HI\\"")`);
   expect(content).toContain(`Then("Uppercase \\"fo\\" equals \\"FO\\"")`);
 
-  // Custom titles
+  // Custom examples title via comment
   expect(content).toContain(`test("Test with 2 and \\"4\\", extra >, without <notexist>",`);
   expect(content).toContain(`test("Test with 3 and \\"6\\", extra >, without <notexist>",`);
 
-  // Scenario title used as a template
+  // Custom examples title via scenario name
   expect(content).toContain(
-    `test("Scenario title used as a template with 2 and \\"4\\", extra <, without <notexist>",`,
+    `test("Custom examples title via scenario name with 2 and \\"4\\", extra <, without <notexist>",`,
   );
   expect(content).toContain(
-    `test("Scenario title used as a template with 3 and \\"6\\", extra <, without <notexist>",`,
+    `test("Custom examples title via scenario name with 3 and \\"6\\", extra <, without <notexist>",`,
   );
+  expect(content).toContain(`test("Custom examples title via examples name with 4"`);
 
   // scenarios without examples
   expect(content).toContain(`test("scenario outline without examples",`);
