@@ -13,7 +13,9 @@ export function toEmbeddedAttachment(attachment: messages.Attachment): messages.
   if (attachment.body) return attachment;
 
   const attachmentPath = attachment.url;
-  if (!attachmentPath) throw new Error('Attachment without body and url');
+  if (!attachmentPath) {
+    throw new Error(`Attachment without body and url: ${JSON.stringify(attachment)}`);
+  }
 
   // add cache for file reading
 
