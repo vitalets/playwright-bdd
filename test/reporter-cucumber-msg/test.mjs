@@ -56,6 +56,12 @@ function assertMessagesReport(featureDir) {
   testDir.assertMessagesReport(
     `features/${featureDir}/actual-reports/messages.ndjson`,
     `features/${featureDir}/expected-reports/messages.ndjson`,
+    {
+      // cucumber-js still generates messages report without these fields,
+      // although they are added to @cucumber/messages
+      'testRunStarted.id': null,
+      'testRunFinished.testRunStartedId': null,
+    },
   );
 }
 

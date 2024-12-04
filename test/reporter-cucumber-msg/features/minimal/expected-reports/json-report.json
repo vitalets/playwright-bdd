@@ -15,11 +15,11 @@
             "line": 11,
             "name": "I have 42 cukes in my belly",
             "match": {
-              "location": "features/minimal/common.steps.ts:3"
+              "location": "features/fixtures.ts:15"
             },
             "result": {
               "status": "passed",
-              "duration": 238958
+              "duration": 526166
             }
           }
         ],

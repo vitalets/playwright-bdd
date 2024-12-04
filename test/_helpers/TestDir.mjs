@@ -94,8 +94,8 @@ export class TestDir {
     );
   }
 
-  assertMessagesReport(actualFile, expectedFile) {
-    assertMessagesReport(this.getAbsPath(actualFile), this.getAbsPath(expectedFile));
+  assertMessagesReport(actualFile, expectedFile, extraRules = {}) {
+    assertMessagesReport(this.getAbsPath(actualFile), this.getAbsPath(expectedFile), extraRules);
   }
 
   assertJsonReport(actualFile, expectedFile) {

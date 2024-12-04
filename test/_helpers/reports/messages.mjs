@@ -4,10 +4,10 @@
 import fs from 'node:fs';
 import { assertJsonPaths, toPosixPath } from './helpers.mjs';
 
-export function assertMessagesReport(actualFile, expectedFile) {
+export function assertMessagesReport(actualFile, expectedFile, extraRules = {}) {
   const actualMessages = getMessagesFromFile(actualFile);
   const expectedMessages = getMessagesFromFile(expectedFile);
-  assertJsonPaths(actualMessages, expectedMessages, rules);
+  assertJsonPaths(actualMessages, expectedMessages, { ...rules, ...extraRules });
 }
 
 /**
