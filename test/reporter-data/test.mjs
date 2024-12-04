@@ -28,5 +28,9 @@ test(testDir.name, () => {
 function checkStepsTree() {
   const expectedTree = testDir.getFileContents(`expected-reports/${expectedReportName}`);
   const actualTree = testDir.getFileContents('actual-reports/report.txt');
-  expect(actualTree).toEqual(expectedTree);
+  expect(normalizeCRLF(actualTree)).toEqual(normalizeCRLF(expectedTree));
+}
+
+function normalizeCRLF(text) {
+  return text.replace(/\r\n/g, '\n');
 }
