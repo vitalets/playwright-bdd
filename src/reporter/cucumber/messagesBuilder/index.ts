@@ -2,11 +2,9 @@
  * Builds cucumber messages from Playwright test results.
  */
 import * as pw from '@playwright/test/reporter';
-import * as messages from '@cucumber/messages';
 import { TestCaseRun, TestCaseRunEnvelope } from './TestCaseRun';
 import { TestCase } from './TestCase';
 import { Meta } from './Meta';
-import { toCucumberTimestamp } from './timing';
 import EventEmitter from 'node:events';
 import EventDataCollector from '../../../cucumber/formatter/EventDataCollector.js';
 import { Hook } from './Hook';
@@ -17,6 +15,7 @@ import { ConcreteEnvelope } from './types';
 import { getConfigFromEnv } from '../../../config/env';
 import { TestFiles } from './TestFiles';
 import { relativeToCwd } from '../../../utils/paths';
+import { TestRun } from './TestRun';
 
 export class MessagesBuilder {
   private report = {
@@ -107,10 +106,9 @@ export class MessagesBuilder {
     this.addSourcesAndDocuments();
     this.addPickles();
     this.addHooks();
-    this.addTestRunStarted();
+    this.addTestRun();
     this.addTestCases();
     this.addTestCaseRuns();
-    this.addTestRunFinished();
 
     this.buildEventDataCollector();
   }
@@ -177,21 +175,10 @@ export class MessagesBuilder {
     });
   }
 
-  private addTestRunStarted() {
-    const { startTime } = this.fullResult;
-    const testRunStarted: messages.TestRunStarted = {
-      timestamp: toCucumberTimestamp(startTime.getTime()),
-    };
-    this.report.testRunStarted = { testRunStarted };
-  }
-
-  private addTestRunFinished() {
-    const { startTime, duration } = this.fullResult;
-    const testRunFinished: messages.TestRunFinished = {
-      success: this.fullResult.status === 'passed',
-      timestamp: toCucumberTimestamp(startTime.getTime() + duration),
-    };
-    this.report.testRunFinished = { testRunFinished };
+  private addTestRun() {
+    const testRun = new TestRun(this.fullResult);
+    this.report.testRunStarted = testRun.buildTestRunStarted();
+    this.report.testRunFinished = testRun.buildTestRunFinished();
   }
 
   private buildEventDataCollector() {
