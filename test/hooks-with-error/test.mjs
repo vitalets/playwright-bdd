@@ -22,8 +22,6 @@ test(`${testDir.name} (BeforeAll)`, () => {
 test(`${testDir.name} (Before)`, () => {
   const stdout = execPlaywrightWithErrorInHook('Before 1');
 
-  // PW runs all before* hooks in case of error
-  // See: https://github.com/microsoft/playwright/issues/28285
   // no other before hooks called, but all after / afterAll hooks called
   expectCalls('worker 0: ', stdout, [
     'BeforeAll 1',

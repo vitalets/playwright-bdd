@@ -71,10 +71,13 @@ export const test = base.extend<BddTestFixtures>({
     fixtureOptions,
   ],
 
-  // Unused fixtures below are important for lazy initialization only on bdd projects
-  // See: https://github.com/vitalets/playwright-bdd/issues/166
+  // Unused fixtures here are important:
+  // - $applySpecialTags: to apply special tags before test run
+  // - $beforeEach: to not run any steps in background's test.beforeEach
+  //   because Playwright runs all before* hooks even in case of error in one of them
+  //   See: https://github.com/microsoft/playwright/issues/28285
   Given: [
-    async ({ $bddContext, $applySpecialTags }, use) => {
+    async ({ $bddContext, $applySpecialTags, $beforeEach }, use) => {
       const invoker = new BddStepInvoker($bddContext);
       await use(invoker.invoke.bind(invoker));
     },

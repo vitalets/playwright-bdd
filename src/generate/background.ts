@@ -8,32 +8,6 @@ import { AutofillMap } from '../utils/AutofillMap';
 import { Formatter } from './formatter';
 import { getKeywordEng, KeywordsMap } from './i18n';
 
-// export type BackgroundData = {
-//   bg: Background;
-//   steps: Record<string /* gherkin step id */, StepData[]>;
-// };
-
-// export class BackgroundsManager {
-//   private backgrounds: BackgroundGen[] = [];
-
-// registerBackground(bg: Background) {
-//   const bgGen = new BackgroundGen(bg);
-//   this.backgrounds.push(bgGen);
-//   return bgGen.placeholder;
-// }
-
-//   findGherkinStep(pickleStep: PickleStep) {
-//     for (const bg of this.backgrounds) {
-//       const gherkinStep = bg.findGherkinStep(pickleStep);
-//       if (gherkinStep) return { bg, gherkinStep };
-//     }
-//   }
-
-//   renderBackgrounds(lines: string[]) {
-//     this.backgrounds.forEach((bg) => bg.render(lines));
-//   }
-// }
-
 export class BackgroundGen {
   private steps = new AutofillMap<Step, StepData[]>();
 
@@ -69,7 +43,8 @@ export class BackgroundGen {
         return;
       }
     }
-    // todo: throw
+
+    throw new Error(`Background placeholder "${this.placeholder}" is not found in the file.`);
   }
 
   private render() {
