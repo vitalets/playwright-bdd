@@ -40,10 +40,8 @@ After({ name: 'after 3', tags: '@with-attachment' }, async function () {
   }
 });
 
-// This hook does not exist in messages, because we report only hooks that:
-// - have attachment
-// - have error
-// todo: change that!
+// This hook does not exist in messages,
+// because for AfterAll hooks we report to messages only hooks that have error.
 AfterAll({}, async function () {
   // no-op
 });

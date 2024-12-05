@@ -1,5 +1,19 @@
 /**
  * Executed hooks of test run.
+ *
+ * In Playwright:
+ * worker-level hooks (BeforeAll / AfterAll) are still part of
+ * particular test results. E.g. BeforeAll is reported as a step of the first test in a worker.
+ *
+ * In Cucumber:
+ * Worker-level hooks are not considered to be a part of any test case.
+ * They will be reported as separate messages TestRunHookStarted / TestRunHookFinished.
+ * See: https://github.com/cucumber/messages/pull/102
+ *
+ * In playwright-bdd:
+ * As of now, we don't emit TestRunHookStarted / TestRunHookFinished messages,
+ * but include worker-level hooks into testCase steps.
+ * This could be changed in the future, when cucumber-js will add it.
  */
 import * as pw from '@playwright/test/reporter';
 import { Hook, HookType } from './Hook';
@@ -118,7 +132,7 @@ export class TestCaseRunHooks {
   }
 
   private excludeMainSteps(mainSteps: ExecutedStepInfo[]) {
-    // - exclude background steps, b/c they are in pickle and should not in hooks.
+    // - exclude background steps, b/c they are in pickle and should not be in hooks.
     // - exclude other test.step items that are bdd steps and should not be in hooks.
     // Important to run this fn after this.fillExecutedSteps()
     // as we assume steps are already populated

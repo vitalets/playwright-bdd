@@ -32,6 +32,7 @@ export class TestCase {
   constructor(
     public id: string,
     private gherkinDocuments: GherkinDocumentWithPickles[],
+    private testRunStartedId: string,
   ) {}
 
   get projectInfo() {
@@ -71,6 +72,7 @@ export class TestCase {
     ];
 
     const testCase: messages.TestCase = {
+      testRunStartedId: this.testRunStartedId,
       id: this.id,
       pickleId: this.pickle.id,
       testSteps,
@@ -83,12 +85,14 @@ export class TestCase {
    */
   private addHooks(testCaseRun: TestCaseRun, hookType: HookType) {
     const testCaseHooks = hookType === 'before' ? this.beforeHooks : this.afterHooks;
-    const testRunHooks = testCaseRun.getExecutedHooks(hookType);
+    const testCaseRunHooks = testCaseRun.getExecutedHooks(hookType);
 
-    testRunHooks.forEach(({ hook }) => {
+    testCaseRunHooks.forEach((executedHookInfo) => {
+      const { hook } = executedHookInfo;
       if (testCaseHooks.has(hook.internalId)) return;
+      const hookTypeStr = hook.hookType.toLowerCase().replaceAll('_', '-');
       const testStep: messages.TestStep = {
-        id: `${this.id}-${hookType}-${testCaseHooks.size}`,
+        id: `${this.id}-${hookTypeStr}-${testCaseHooks.size}`,
         hookId: hook.id,
       };
       testCaseHooks.set(hook.internalId, { hook, testStep });

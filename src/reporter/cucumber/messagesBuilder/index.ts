@@ -33,6 +33,7 @@ export class MessagesBuilder {
 
   private fullConfig!: pw.FullConfig;
   private fullResult!: pw.FullResult;
+  private testRun = new TestRun();
   private testCaseRuns: TestCaseRun[] = [];
   private testCases = new AutofillMap</* testId */ string, TestCase>();
   private hooks = new AutofillMap</* internalId */ string, Hook>();
@@ -129,7 +130,7 @@ export class MessagesBuilder {
       );
       const testCase = this.testCases.getOrCreate(
         testId,
-        () => new TestCase(testId, gherkinDocsForProject),
+        () => new TestCase(testId, gherkinDocsForProject, this.testRun.id),
       );
       testCase.addRun(testCaseRun);
       testCaseRun.testCase = testCase;
@@ -176,9 +177,8 @@ export class MessagesBuilder {
   }
 
   private addTestRun() {
-    const testRun = new TestRun(this.fullResult);
-    this.report.testRunStarted = testRun.buildTestRunStarted();
-    this.report.testRunFinished = testRun.buildTestRunFinished();
+    this.report.testRunStarted = this.testRun.buildTestRunStarted(this.fullResult);
+    this.report.testRunFinished = this.testRun.buildTestRunFinished(this.fullResult);
   }
 
   private buildEventDataCollector() {

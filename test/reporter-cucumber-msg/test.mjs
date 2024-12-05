@@ -77,8 +77,10 @@ function assertMessagesReport(featureDir) {
     {
       // cucumber-js still generates messages report without these fields,
       // although they are added to @cucumber/messages
+      // See: https://github.com/cucumber/messages/pull/102
       'testRunStarted.id': null,
       'testRunFinished.testRunStartedId': null,
+      'testCase.testRunStartedId': null,
     },
   );
 }

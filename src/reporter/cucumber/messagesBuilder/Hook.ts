@@ -2,6 +2,8 @@
  * Hook that can be used in different test cases.
  * Builds Cucumber's hook message.
  * See: https://github.com/cucumber/messages/blob/main/messages.md#hook
+ *
+ * Hook is created from TestCaseRunHooks class.
  */
 import { randomUUID } from 'node:crypto';
 import * as pw from '@playwright/test/reporter';
@@ -12,7 +14,7 @@ import { BEFORE_EACH_HOOKS_GROUP_NAME } from '../../../hooks/const';
 import { findParent } from './pwStepUtils';
 
 // We don't distinguish between BeforeAll / Before hooks here (and AfterAll / After)
-// Do it only when building cucumber message.
+// Do it only when building cucumber message: setting messages.HookType.
 export type HookType = 'before' | 'after';
 
 export class Hook {
@@ -23,19 +25,21 @@ export class Hook {
   }
 
   public id: string;
+  public hookType: messages.HookType;
 
   constructor(
     public internalId: string,
-    private hookType: HookType,
+    hookType: HookType,
     /* one of pwSteps for this hook */
     private pwStep: pw.TestStep,
   ) {
     this.id = randomUUID();
+    this.hookType = hookType === 'before' ? this.getBeforeType() : this.getAfterType();
   }
 
   buildMessage() {
     const hook: messages.Hook = {
-      type: this.hookType === 'before' ? this.getBeforeType() : this.getAfterType(),
+      type: this.hookType,
       name: this.getName(),
       id: this.id,
       sourceReference: this.getSourceReference(),

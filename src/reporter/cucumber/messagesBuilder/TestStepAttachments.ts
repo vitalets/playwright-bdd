@@ -28,6 +28,11 @@ export class TestStepAttachments {
       fileName: pwAttachment.name,
       body: '',
       contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
+      // For attachments from global hooks (BeforeAll / AfterAll)
+      // cucumber added 'testRunStartedId' field to associate attachment with test run.
+      // This is not finalized yet, see: https://github.com/cucumber/cucumber-js/issues/1394
+      // Playwright does not allow to attach files in global hooks,
+      // b/c there is not testInfo.attach().
     };
 
     if (pwAttachment.path) {
