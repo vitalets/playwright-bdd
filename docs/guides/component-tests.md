@@ -75,6 +75,3 @@ Finally, run tests:
 ```
 npm run test-ct
 ```
-
-> If you stick to Playwright < 1.39 but need component tests, you can use this
-[`mergeTest` polyfill](https://github.com/vitalets/playwright-bdd/blob/main/test/component-tests/steps-polyfill/mergeTests.ts).
