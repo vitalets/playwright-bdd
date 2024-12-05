@@ -20,7 +20,7 @@ import {
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
-export type StepFixtureName = 'Given' | 'When' | 'Then' | 'And' | 'But';
+type StepFixtureName = 'Given' | 'When' | 'Then' | 'And' | 'But';
 export type ImportTestFrom = {
   file: string;
   varName?: string;
