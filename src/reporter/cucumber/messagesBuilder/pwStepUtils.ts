@@ -68,3 +68,11 @@ export function collectStepsDfs(parent: pw.TestResult | pw.TestStep | undefined)
 export function isUnknownDuration(pwStep: pw.TestStep) {
   return pwStep.duration === -1;
 }
+
+export function findParent(pwStep: pw.TestStep, predicate: (pwStep: pw.TestStep) => boolean) {
+  let parent = pwStep.parent;
+  while (parent) {
+    if (predicate(parent)) return parent;
+    parent = parent.parent;
+  }
+}

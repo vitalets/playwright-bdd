@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 441708
+              "duration": 0
             }
           },
           {
@@ -22,7 +22,15 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 96374
+              "duration": 1000000
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
             }
           },
           {
@@ -30,12 +38,9 @@
             "keyword": "When ",
             "line": 7,
             "name": "a step passes",
-            "match": {
-              "location": "features/hooks/cucumber.steps.ts:12"
-            },
             "result": {
               "status": "passed",
-              "duration": 114167
+              "duration": 1000000
             }
           },
           {
@@ -43,7 +48,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 21208
+              "duration": 0
             }
           }
         ],
@@ -62,7 +67,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 16124
+              "duration": 0
             }
           },
           {
@@ -70,7 +75,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 13791
+              "duration": 0
             }
           },
           {
@@ -78,13 +83,10 @@
             "keyword": "When ",
             "line": 10,
             "name": "a step fails",
-            "match": {
-              "location": "features/hooks/cucumber.steps.ts:16"
-            },
             "result": {
               "status": "failed",
-              "duration": 51625,
-              "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:17:9)"
+              "duration": 0,
+              "error_message": "Error: Exception in step\n   at ../common.steps.ts:21\n\n  19 |\n  20 | When('a step fails', function () {\n> 21 |   throw new Error('Exception in step');\n     |         ^\n  22 | });\n  23 |\n  24 | After({}, function () {"
             }
           },
           {
@@ -92,7 +94,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 19584
+              "duration": 0
             }
           }
         ],
@@ -111,7 +113,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 25666
+              "duration": 0
             }
           },
           {
@@ -119,7 +121,15 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 78959
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
             }
           },
           {
@@ -127,12 +137,9 @@
             "keyword": "When ",
             "line": 17,
             "name": "a step passes",
-            "match": {
-              "location": "features/hooks/cucumber.steps.ts:12"
-            },
             "result": {
               "status": "passed",
-              "duration": 112292
+              "duration": 0
             }
           },
           {
@@ -140,8 +147,8 @@
             "hidden": true,
             "result": {
               "status": "failed",
-              "duration": 36749,
-              "error_message": "Error: Exception in conditional hook\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/hooks/cucumber.steps.ts:25:9)"
+              "duration": 0,
+              "error_message": "Error: Exception in conditional hook\n   at ../common.steps.ts:29\n\n  27 |\n  28 | After({ name: 'after 2', tags: '@some-tag or @some-other-tag' }, function () {\n> 29 |   throw new Error('Exception in conditional hook');\n     |         ^\n  30 | });\n  31 |\n  32 | After({ name: 'after 3', tags: '@with-attachment' }, async function () {"
             }
           },
           {
@@ -149,14 +156,13 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 14125
+              "duration": 0
             }
           }
         ],
         "tags": [
           {
-            "name": "@some-tag",
-            "line": 15
+            "name": "@some-tag"
           }
         ],
         "type": "scenario"
@@ -173,7 +179,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 13292
+              "duration": 1000000
             }
           },
           {
@@ -181,7 +187,15 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 12750
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
             }
           },
           {
@@ -189,12 +203,9 @@
             "keyword": "When ",
             "line": 21,
             "name": "a step passes",
-            "match": {
-              "location": "features/hooks/cucumber.steps.ts:12"
-            },
             "result": {
               "status": "passed",
-              "duration": 24417
+              "duration": 0
             }
           },
           {
@@ -202,7 +213,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 1998375
+              "duration": 2000000
             },
             "embeddings": [
               {
@@ -216,14 +227,13 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 17583
+              "duration": 0
             }
           }
         ],
         "tags": [
           {
-            "name": "@with-attachment",
-            "line": 19
+            "name": "@with-attachment"
           }
         ],
         "type": "scenario"

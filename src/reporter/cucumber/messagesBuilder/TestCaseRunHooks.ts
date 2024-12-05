@@ -134,7 +134,7 @@ export class TestCaseRunHooks {
       const internalId = Hook.getInternalId(pwStep);
       const hook = this.testCaseRun.hooks.getOrCreate(
         internalId,
-        () => new Hook(internalId, pwStep),
+        () => new Hook(internalId, this.hookType, pwStep),
       );
       this.executedHooks.set(internalId, { hook, pwStep });
     });

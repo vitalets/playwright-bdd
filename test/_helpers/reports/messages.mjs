@@ -45,4 +45,5 @@ const rules = {
   'testCaseStarted.attempt': 'value',
   'testStepFinished.testStepResult.status': 'value',
   'testRunFinished.success': 'value',
+  'hook.type': 'value',
 };

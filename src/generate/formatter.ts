@@ -11,6 +11,12 @@ import { BDDConfig } from '../config/types';
 import { ScenarioHookType } from '../hooks/scenario';
 import { WorkerHookType } from '../hooks/worker';
 import { SpecialTags } from './specialTags';
+import {
+  AFTER_ALL_HOOKS_GROUP_NAME,
+  AFTER_EACH_HOOKS_GROUP_NAME,
+  BEFORE_ALL_HOOKS_GROUP_NAME,
+  BEFORE_EACH_HOOKS_GROUP_NAME,
+} from '../hooks/const';
 
 const supportsTags = playwrightVersion >= '1.42.0';
 
@@ -66,19 +72,21 @@ export class Formatter {
   }
 
   scenarioHooksCall(type: ScenarioHookType) {
+    const title = type === 'before' ? BEFORE_EACH_HOOKS_GROUP_NAME : AFTER_EACH_HOOKS_GROUP_NAME;
     return [
       type === 'before'
-        ? `test.beforeEach(${this.quoted('BeforeEach Hooks')}, ({ $beforeEach }) => {});`
-        : `test.afterEach(${this.quoted('AfterEach Hooks')}, ({ $afterEach }) => {});`,
+        ? `test.beforeEach(${this.quoted(title)}, ({ $beforeEach }) => {});`
+        : `test.afterEach(${this.quoted(title)}, ({ $afterEach }) => {});`,
     ];
   }
 
   workerHooksCall(type: WorkerHookType, fixturesNames: Set<string>, bddDataVar: string) {
+    // For beforeAll we run hooks, but for afterAll just register, and run on worker teardown.
     const runWorkerHooksFixture =
       type === 'beforeAll' ? '$runBeforeAllHooks' : '$registerAfterAllHooks';
     const fixturesStr = [...fixturesNames].join(', ');
     const allFixturesStr = [runWorkerHooksFixture, ...fixturesNames].join(', ');
-    const title = type === 'beforeAll' ? 'BeforeAll Hooks' : 'AfterAll Hooks';
+    const title = type === 'beforeAll' ? BEFORE_ALL_HOOKS_GROUP_NAME : AFTER_ALL_HOOKS_GROUP_NAME;
     return [
       // eslint-disable-next-line max-len
       `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(test, { ${fixturesStr} }, ${bddDataVar}));`,
