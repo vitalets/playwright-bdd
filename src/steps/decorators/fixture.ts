@@ -26,7 +26,7 @@ type CustomTestFixtureName<T extends KeyValue> = Exclude<
   keyof PwBuiltInFixturesTest | number | symbol
 >;
 
-export type FixtureOptions<T extends KeyValue> = {
+type FixtureOptions<T extends KeyValue> = {
   name?: CustomTestFixtureName<T>;
   tags?: string;
 };
