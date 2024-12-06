@@ -15,11 +15,11 @@
             "line": 9,
             "name": "a step that always passes",
             "match": {
-              "location": "features/retry/cucumber.steps.ts:3"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 469249
+              "duration": 810999
             }
           }
         ],
@@ -39,11 +39,11 @@
             "line": 12,
             "name": "a step that passes the second time",
             "match": {
-              "location": "features/retry/cucumber.steps.ts:8"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 26166
+              "duration": 56125
             }
           }
         ],
@@ -63,11 +63,11 @@
             "line": 15,
             "name": "a step that passes the third time",
             "match": {
-              "location": "features/retry/cucumber.steps.ts:16"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "passed",
-              "duration": 32542
+              "duration": 30124
             }
           }
         ],
@@ -87,12 +87,12 @@
             "line": 18,
             "name": "a step that always fails",
             "match": {
-              "location": "features/retry/cucumber.steps.ts:23"
+              "location": "features/fixtures.ts:19"
             },
             "result": {
               "status": "failed",
-              "duration": 33125,
-              "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/retry/cucumber.steps.ts:24:9)"
+              "duration": 175083,
+              "error_message": "Error: Exception in step\n    at World.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-msg/features/retry/common.steps.ts:37:9)"
             }
           }
         ],
