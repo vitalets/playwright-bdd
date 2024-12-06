@@ -6,14 +6,6 @@ const testDir = defineBddConfig({
   steps: 'features/steps/*.ts',
 });
 
-// before playwright-bdd v7
-/*
-const testDir = defineBddConfig({
-  paths: ['features/*.feature'],
-  require: ['features/steps/*.ts'],
-});
-*/
-
 export default defineConfig({
   testDir,
   reporter: [

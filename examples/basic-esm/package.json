@@ -2,6 +2,6 @@
   "type": "module",
   "scripts": {
     "test": "npx bddgen && npx playwright test",
-    "show-report": "npx http-server ./cucumber-report -c-1 -o index.html"
+    "report": "npx http-server ./cucumber-report -c-1 -o index.html"
   }
 }

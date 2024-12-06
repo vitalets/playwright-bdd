@@ -1,6 +1,9 @@
-# basic-cjs
+## Basic usage of Playwright-BDD in TypeScript project (CommonJS)
 
-Example of Playwright BDD setup for CommonJS TypeScript project.
+Most important files:
+- `playwright.config.ts` - configuration for Playwright and Playwright-BDD
+- `features/homepage.feature` - feature file for testing Playwright homepage
+- `features/steps/index.ts` - step definitions
 
 ### Run tests
 ```
