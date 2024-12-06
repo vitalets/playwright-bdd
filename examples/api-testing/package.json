@@ -1,0 +1,6 @@
+{
+  "scripts": {
+    "test": "npx bddgen && npx playwright test",
+    "report": "open ./cucumber-report/index.html"
+  }
+}
