@@ -4,10 +4,12 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  expect: { timeout: 500 },
+  testDir: './specs',
   outputDir: './test-results',
   reporter: 'dot',
   use: {
     screenshot: 'only-on-failure',
+    viewport: { width: 800, height: 720 },
   },
+  expect: { timeout: 500 },
 });

@@ -1,12 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { createBdd } from 'playwright-bdd';
-import { test } from './fixtures';
-import { expect } from '@playwright/test';
 
-const { When, Then } = createBdd(test);
+const { When, Then, Before, After } = createBdd();
 
-When('Action {int}', () => {});
 When('Step with data table', () => {});
 When('Step with doc string', () => {});
 
@@ -33,20 +30,6 @@ Then('attach stdout', async () => {
   // don't test console.error b/c it poisons the output
 });
 
-When('open page {string}', async ({ page }, url: string) => {
-  await page.goto(url);
-});
+Before({ name: 'success before hook', tags: '@success-before-hook' }, async ({}) => {});
 
-When('failing soft assertion {string}', async ({}, msg: string) => {
-  expect.soft('xxx').toEqual(msg);
-});
-
-When('fails until retry {int}', async ({ $testInfo }, retry: number) => {
-  if ($testInfo.retry < retry) {
-    expect(1).toEqual(2);
-  }
-});
-
-Then('page title snapshot matches the golden one', async ({ page }) => {
-  expect(await page.title()).toMatchSnapshot();
-});
+After({ name: 'success after hook', tags: '@success-after-hook' }, async ({}) => {});

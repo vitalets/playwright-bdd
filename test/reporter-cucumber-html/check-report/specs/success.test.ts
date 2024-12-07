@@ -1,14 +1,15 @@
-import { test, expect } from '@playwright/test';
-import { getFeature, getScenario, openReport } from '../helpers';
+import { expect } from '@playwright/test';
+import { test } from '../fixtures';
 
-test.beforeEach(async ({ page }) => {
-  await openReport(page);
+test.use({ featureUri: 'success/sample.feature' });
+
+test('Feature tags', async ({ feature }) => {
+  await expect(feature.getTags()).toHaveText(['@feature-tag']);
 });
 
 // Cucumber html-formatter does not show failed retries
 // See: https://github.com/cucumber/react-components/issues/75
-test('Scenario: Scenario with retries', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with retries');
+test('Scenario with retries', async ({ scenario }) => {
   await expect(scenario.getSteps()).toHaveText([
     'GivenAction 1',
     'Andfails until retry 1',
@@ -19,8 +20,7 @@ test('Scenario: Scenario with retries', async ({ page }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(3);
 });
 
-test('Scenario: Scenario with data table', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with data table');
+test('Scenario with data table', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText(['Step with data table']);
   await expect(scenario.getDataTable().getByRole('cell')).toHaveText([
     'name',
@@ -32,14 +32,12 @@ test('Scenario: Scenario with data table', async ({ page }) => {
   ]);
 });
 
-test('Scenario: Scenario with doc string', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with doc string');
+test('Scenario with doc string', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText(['Step with doc string']);
   await expect(scenario.getDocString()).toHaveText('some text');
 });
 
-test('Scenario: Scenario with attachments', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with attachments');
+test('Scenario with attachments', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'attach text',
     'attach image inline',
@@ -53,8 +51,7 @@ test('Scenario: Scenario with attachments', async ({ page }) => {
   await expect(scenario.getLogs()).toHaveText(['123 some logs']);
 });
 
-test('Scenario: Scenario with all keywords and success hooks', async ({ page }) => {
-  const scenario = getScenario(page, 'Scenario with all keywords and success hooks');
+test('Scenario with all keywords and success hooks', async ({ scenario }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(7);
   await expect(scenario.getSteps()).toHaveText([
     '', // before hook
@@ -69,9 +66,16 @@ test('Scenario: Scenario with all keywords and success hooks', async ({ page }) 
   ]);
 });
 
-test('Scenario Outline: Check doubled', async ({ page }) => {
-  const scenario = getFeature(page).getScenarioOutline('Check doubled');
-  await expect(scenario.getSteps()).toContainText(['GivenAction <start>', 'ThenAction <end>']);
+test('Skipped scenario', async ({ scenario }) => {
+  await expect(scenario.getSteps('skipped')).toHaveCount(2);
+});
+
+test('Check doubled', async ({ feature }) => {
+  const scenario = feature.getScenarioOutline('Check doubled');
+  await expect(scenario.getSteps()).toContainText([
+    'GivenAction <start>', // prettier-ignore
+    'ThenAction <end>',
+  ]);
   await expect(scenario.getExamples().nth(0).getByRole('cell')).toContainText([
     ' ',
     'start',

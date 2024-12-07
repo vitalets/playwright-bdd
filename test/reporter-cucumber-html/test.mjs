@@ -1,3 +1,6 @@
+/**
+ * Generate Cucumber HTML reporter and check the report via Playwright.
+ */
 import {
   test,
   TestDir,
