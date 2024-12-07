@@ -1,30 +1,29 @@
 import { test as base } from 'playwright-bdd';
 
 export const test = base.extend<{
-  failingBeforeFixtureNoStep: void;
-  failingBeforeFixtureWithStep: void;
-  timeoutedBeforeFixture: void;
-  timeoutedAfterFixture: void;
+  fixtureWithErrorInSetup: void;
+  fixtureWithErrorInSetupStep: void;
+  fixtureWithTimeoutInSetup: void;
 }>({
-  failingBeforeFixtureNoStep: async ({}, use, testInfo) => {
+  fixtureWithErrorInSetup: async ({}, use, testInfo) => {
     await testInfo.attach('my attachment', { body: '|outside step' });
     await (async () => {
       await testInfo.attach('my attachment', { body: '|in step' });
-      throw new Error('error in failingBeforeFixtureNoStep');
+      throw new Error('error in fixture setup');
     })();
     await use();
     await testInfo.attach('my attachment', { body: 'should not attach' });
   },
-  failingBeforeFixtureWithStep: async ({}, use, testInfo) => {
+  fixtureWithErrorInSetupStep: async ({}, use, testInfo) => {
     await testInfo.attach('my attachment', { body: '|outside step' });
     await test.step('my step', async () => {
       await testInfo.attach('my attachment', { body: '|in step' });
-      throw new Error('error in failingBeforeFixtureWithStep');
+      throw new Error('error in fixture setup');
     });
     await use();
     await testInfo.attach('my attachment', { body: 'should not attach' });
   },
-  timeoutedBeforeFixture: async ({}, use, testInfo) => {
+  fixtureWithTimeoutInSetup: async ({}, use, testInfo) => {
     await new Promise((r) => setTimeout(r, testInfo.timeout + 100));
     await use();
   },

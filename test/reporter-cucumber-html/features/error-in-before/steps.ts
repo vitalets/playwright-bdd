@@ -12,14 +12,14 @@ Before({ tags: '@failing-anonymous-hook' }, async ({ page }) => {
   await expect(page).toHaveTitle('Some title2');
 });
 
-Given('step that uses failingBeforeFixtureNoStep', async ({ failingBeforeFixtureNoStep }) => {
-  return failingBeforeFixtureNoStep;
+Given('step that uses fixtureWithErrorInSetup', async ({ fixtureWithErrorInSetup }) => {
+  return fixtureWithErrorInSetup;
 });
 
-Given('step that uses failingBeforeFixtureWithStep', async ({ failingBeforeFixtureWithStep }) => {
-  return failingBeforeFixtureWithStep;
+Given('step that uses fixtureWithErrorInSetupStep', async ({ fixtureWithErrorInSetupStep }) => {
+  return fixtureWithErrorInSetupStep;
 });
 
-Given('step that uses timeouted before fixture', async ({ timeoutedBeforeFixture }) => {
-  return timeoutedBeforeFixture;
+Given('step that uses fixtureWithTimeoutInSetup', async ({ fixtureWithTimeoutInSetup }) => {
+  return fixtureWithTimeoutInSetup;
 });

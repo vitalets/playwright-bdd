@@ -30,10 +30,10 @@ test('Failing by named before hook', async ({ scenario }) => {
   await expect(scenario.getErrors()).toContainText([`Before({ name: 'failing named before hook'`]);
 });
 
-test('Failing by failingBeforeFixtureNoStep', async ({ scenario }) => {
+test('Failing by fixture setup (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "fixture: failingBeforeFixtureNoStep" failed: ${normalize('features/error-in-before/fixtures.ts')}:`,
-    'Givenstep that uses failingBeforeFixtureNoStep',
+    `Hook "fixture: fixtureWithErrorInSetup" failed: ${normalize('features/error-in-before/fixtures.ts')}:`,
+    'Givenstep that uses fixtureWithErrorInSetup',
     'WhenAction 1',
     'screenshot',
   ]);
@@ -44,13 +44,13 @@ test('Failing by failingBeforeFixtureNoStep', async ({ scenario }) => {
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(2);
-  await expect(scenario.getErrors()).toContainText(['error in failingBeforeFixtureNoStep']);
+  await expect(scenario.getErrors()).toContainText(['error in fixture setup']);
 });
 
-test('Failing by failingBeforeFixtureWithStep', async ({ scenario }) => {
+test('Failing by fixture setup (with step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     `Hook "my step" failed: ${normalize('features/error-in-before/fixtures.ts')}:`,
-    'Givenstep that uses failingBeforeFixtureWithStep',
+    'Givenstep that uses fixtureWithErrorInSetupStep',
     'WhenAction 2',
     'screenshot',
   ]);
@@ -61,13 +61,13 @@ test('Failing by failingBeforeFixtureWithStep', async ({ scenario }) => {
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(2);
-  await expect(scenario.getErrors()).toContainText(['error in failingBeforeFixtureWithStep']);
+  await expect(scenario.getErrors()).toContainText(['error in fixture setup']);
 });
 
-test('timeout in before fixture', async ({ scenario }) => {
+test('Failing by fixture setup timeout', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
-    'Givenstep that uses timeouted before fixture',
+    'Givenstep that uses fixtureWithTimeoutInSetup',
     'WhenAction 1',
   ]);
   // 1. position of error message sometimes appears in After Hooks, so check it separately
@@ -82,6 +82,6 @@ test('timeout in before fixture', async ({ scenario }) => {
   await expect(scenario.getSteps('skipped')).toHaveCount(3);
   await expect(scenario.getErrors()).toContainText([
     // here can be different error messages
-    /(Test timeout of \d+ms exceeded while setting up "timeoutedBeforeFixture")|(browser has been closed)|(Browser closed)/,
+    /(Test timeout of \d+ms exceeded while setting up "fixtureWithTimeoutInSetup")|(browser has been closed)|(Browser closed)/,
   ]);
 });
