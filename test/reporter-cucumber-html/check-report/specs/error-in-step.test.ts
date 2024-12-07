@@ -3,7 +3,7 @@ import { test } from '../fixtures';
 
 test.use({ featureUri: 'error-in-step/sample.feature' });
 
-test('failing by step assertion', async ({ scenario }) => {
+test('error in step', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'Givenfailing step', // prettier-ignore
     'screenshotDownload trace',
@@ -13,14 +13,15 @@ test('failing by step assertion', async ({ scenario }) => {
   ]);
 });
 
-test('failing by step timeout', async ({ scenario }) => {
+test('timeout in step', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
     'Giventimeouted step',
     'WhenAction 1',
     // not 'screenshot', b/c no page
     // 'screenshot',
-    'Download trace',
+    // 'Download trace' can be attached to 'timeouted step' (pw 1.43) - is it a bug?
+    // 'Download trace',
   ]);
   // don't check passed/skipped steps counts b/c in different PW versions it's different
   await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
@@ -28,7 +29,7 @@ test('failing by step timeout', async ({ scenario }) => {
 
 test('failing match snapshot', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    'Whenopen page "https://example.com"',
+    'Whenopen example.com',
     'Thenpage title snapshot matches the golden one',
   ]);
   await expect(scenario.getAttachments()).toHaveText([

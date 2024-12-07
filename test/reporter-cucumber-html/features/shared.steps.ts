@@ -11,6 +11,11 @@ Given('failing step', async ({ page }) => {
   await expect(page.getByText('missing string')).toBeVisible();
 });
 
-When('open page {string}', async ({ page }, url: string) => {
-  await page.goto(url);
+// using 'page' here to have a screenshot in report
+When('step with page', async ({ page }) => {
+  return page;
+});
+
+When('open example.com', async ({ page }) => {
+  await page.goto('https://example.com');
 });

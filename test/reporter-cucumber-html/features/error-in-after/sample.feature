@@ -1,10 +1,12 @@
 Feature: error-in-after
 
   Scenario: error in fixture teardown (no step)
+    Given step with page
     Given step that uses fixtureWithErrorInTeardown
     When Action 1
 
   Scenario: error in fixture teardown (with step)
+    Given step with page
     Given step that uses fixtureWithErrorInTeardownStep
     When Action 1
 

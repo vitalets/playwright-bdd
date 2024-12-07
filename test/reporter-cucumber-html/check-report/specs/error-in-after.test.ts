@@ -13,6 +13,7 @@ test.use({ featureUri: 'error-in-after/sample.feature' });
 test('error in fixture teardown (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'my attachment|before use',
+    'Givenstep with page',
     'Givenstep that uses fixtureWithErrorInTeardown',
     'WhenAction 1',
     `Hook "fixture: fixtureWithErrorInTeardown" failed: ${normalize('features/error-in-after/fixtures.ts')}:`,
@@ -24,7 +25,7 @@ test('error in fixture teardown (no step)', async ({ scenario }) => {
     'my attachment|before use', // prettier-ignore
     'my attachment|after use',
   ]);
-  await expect(scenario.getSteps('passed')).toHaveCount(2);
+  await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
   await expect(scenario.getErrors()).toContainText(['error in fixture teardown']);
@@ -33,6 +34,7 @@ test('error in fixture teardown (no step)', async ({ scenario }) => {
 test('error in fixture teardown (with step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'my attachment|outside step (before use)',
+    'Givenstep with page',
     'Givenstep that uses fixtureWithErrorInTeardownStep',
     'WhenAction 1',
     `Hook "step inside fixture" failed: ${normalize('features/error-in-after/fixtures.ts')}:`,
@@ -46,7 +48,7 @@ test('error in fixture teardown (with step)', async ({ scenario }) => {
     'my attachment|in step',
     'my attachment|outside step (after use)',
   ]);
-  await expect(scenario.getSteps('passed')).toHaveCount(2);
+  await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
   await expect(scenario.getErrors()).toContainText(['error in fixture teardown']);

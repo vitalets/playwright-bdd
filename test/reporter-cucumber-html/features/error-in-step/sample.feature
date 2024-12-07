@@ -2,10 +2,10 @@ Feature: error-in-step
 
   # - Increased timeout b/c this test opens page
   @timeout:10_000
-  Scenario: failing by step assertion
+  Scenario: error in step
     Given failing step
 
-  Scenario: failing by step timeout
+  Scenario: timeout in step
     Given Action 0
     Given timeouted step
     When Action 1
@@ -14,7 +14,7 @@ Feature: error-in-step
   # - Increased timeout b/c this test opens page
   @timeout:10_000
   Scenario: failing match snapshot
-    When open page "https://example.com"
+    When open example.com
     Then page title snapshot matches the golden one
 
   Scenario: soft assertions
