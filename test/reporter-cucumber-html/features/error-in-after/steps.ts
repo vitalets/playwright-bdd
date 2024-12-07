@@ -5,14 +5,17 @@ const { Given } = createBdd(test);
 
 // todo: error in after hook
 
-Given('step that uses failingAfterFixtureNoStep', async ({ failingAfterFixtureNoStep }) => {
-  return failingAfterFixtureNoStep;
+Given('step that uses fixtureWithErrorInTeardown', async ({ fixtureWithErrorInTeardown }) => {
+  return fixtureWithErrorInTeardown;
 });
 
-Given('step that uses failingAfterFixtureWithStep', async ({ failingAfterFixtureWithStep }) => {
-  return failingAfterFixtureWithStep;
-});
+Given(
+  'step that uses fixtureWithErrorInTeardownStep',
+  async ({ fixtureWithErrorInTeardownStep }) => {
+    return fixtureWithErrorInTeardownStep;
+  },
+);
 
-Given('step that uses timeouted after fixture', async ({ timeoutedAfterFixture }) => {
-  return timeoutedAfterFixture;
+Given('step that uses fixtureWithTimeoutInTeardown', async ({ fixtureWithTimeoutInTeardown }) => {
+  return fixtureWithTimeoutInTeardown;
 });

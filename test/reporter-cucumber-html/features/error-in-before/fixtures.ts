@@ -16,7 +16,7 @@ export const test = base.extend<{
   },
   fixtureWithErrorInSetupStep: async ({}, use, testInfo) => {
     await testInfo.attach('my attachment', { body: '|outside step' });
-    await test.step('my step', async () => {
+    await test.step('step inside fixture', async () => {
       await testInfo.attach('my attachment', { body: '|in step' });
       throw new Error('error in fixture setup');
     });

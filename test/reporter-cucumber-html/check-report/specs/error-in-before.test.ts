@@ -49,7 +49,7 @@ test('Failing by fixture setup (no step)', async ({ scenario }) => {
 
 test('Failing by fixture setup (with step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "my step" failed: ${normalize('features/error-in-before/fixtures.ts')}:`,
+    `Hook "step inside fixture" failed: ${normalize('features/error-in-before/fixtures.ts')}:`,
     'Givenstep that uses fixtureWithErrorInSetupStep',
     'WhenAction 2',
     'screenshot',

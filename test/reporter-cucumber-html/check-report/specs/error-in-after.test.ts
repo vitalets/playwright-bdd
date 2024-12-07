@@ -10,12 +10,12 @@ const hasAutoScreenshotFixtureTeardown = pwVersion >= '1.42.0' && pwVersion < '1
 
 test.use({ featureUri: 'error-in-after/sample.feature' });
 
-test('Failing by failingAfterFixtureNoStep', async ({ scenario }) => {
+test('error in fixture teardown (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'my attachment|before use',
-    'Givenstep that uses failingAfterFixtureNoStep',
-    'WhenAction 3',
-    `Hook "fixture: failingAfterFixtureNoStep" failed: ${normalize('features/error-in-after/fixtures.ts')}:`,
+    'Givenstep that uses fixtureWithErrorInTeardown',
+    'WhenAction 1',
+    `Hook "fixture: fixtureWithErrorInTeardown" failed: ${normalize('features/error-in-after/fixtures.ts')}:`,
   ]);
   if (hasAutoScreenshotFixtureTeardown) {
     await expect(scenario.getSteps()).toContainText(['screenshot']);
@@ -27,15 +27,15 @@ test('Failing by failingAfterFixtureNoStep', async ({ scenario }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  await expect(scenario.getErrors()).toContainText(['error in failingAfterFixtureNoStep']);
+  await expect(scenario.getErrors()).toContainText(['error in fixture teardown']);
 });
 
-test('Failing by failingAfterFixtureWithStep', async ({ scenario }) => {
+test('error in fixture teardown (with step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'my attachment|outside step (before use)',
-    'Givenstep that uses failingAfterFixtureWithStep',
-    'WhenAction 4',
-    `Hook "step in failingAfterFixtureWithStep" failed: ${normalize('features/error-in-after/fixtures.ts')}:`,
+    'Givenstep that uses fixtureWithErrorInTeardownStep',
+    'WhenAction 1',
+    `Hook "step inside fixture" failed: ${normalize('features/error-in-after/fixtures.ts')}:`,
     'my attachment|outside step (after use)',
   ]);
   if (hasAutoScreenshotFixtureTeardown) {
@@ -49,35 +49,35 @@ test('Failing by failingAfterFixtureWithStep', async ({ scenario }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  await expect(scenario.getErrors()).toContainText(['error in failingAfterFixtureWithStep']);
+  await expect(scenario.getErrors()).toContainText(['error in fixture teardown']);
 });
 
-test('timeout in after fixture', async ({ scenario }) => {
+test('timeout in fixture teardown', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
-    'Givenstep that uses timeouted after fixture',
+    'Givenstep that uses fixtureWithTimeoutInTeardown',
     'WhenAction 1',
-    /Hook "(After Hooks|fixture: timeoutedAfterFixture)" failed/,
+    /Hook "(After Hooks|fixture: fixtureWithTimeoutInTeardown)" failed/,
   ]);
   // don't check screenshot as it's not reliable in timeouts
   await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getErrors()).toContainText([
-    /but tearing down "timeoutedAfterFixture" ran out of time|Tearing down "timeoutedAfterFixture" exceeded the test timeout/,
+    /but tearing down "fixtureWithTimeoutInTeardown" ran out of time|Tearing down "fixtureWithTimeoutInTeardown" exceeded the test timeout/,
   ]);
 });
 
-test('timeout in step and in after fixture', async ({ scenario }) => {
+test('timeout in step and in fixture teardown', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
     'Giventimeouted step',
     'WhenAction 1',
-    'Givenstep that uses timeouted after fixture',
-    /Hook "(After Hooks|fixture: timeoutedAfterFixture)" failed/,
+    'Givenstep that uses fixtureWithTimeoutInTeardown',
+    /Hook "(After Hooks|fixture: fixtureWithTimeoutInTeardown)" failed/,
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getErrors()).toContainText([
-    /Test timeout of \d+ms exceeded|Tearing down "timeoutedAfterFixture" exceeded the test timeout/,
+    /Test timeout of \d+ms exceeded|Tearing down "fixtureWithTimeoutInTeardown" exceeded the test timeout/,
   ]);
 });
