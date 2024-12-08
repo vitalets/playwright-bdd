@@ -1,9 +1,17 @@
 import { createBdd } from 'playwright-bdd';
 import { test } from './fixtures';
+import { expect } from '@playwright/test';
 
-const { Given } = createBdd(test);
+const { Given, After } = createBdd(test);
 
-// todo: error in after hook
+// 'page' arg is important to have a screenshot in the report
+After({ tags: '@failing-anonymous-after-hook' }, async ({ page }) => {
+  await expect(page).toHaveTitle('foo');
+});
+
+After({ name: 'failing named after hook', tags: '@failing-named-after-hook' }, async ({ page }) => {
+  await expect(page).toHaveTitle('foo');
+});
 
 Given('step that uses fixtureWithErrorInTeardown', async ({ fixtureWithErrorInTeardown }) => {
   return fixtureWithErrorInTeardown;
