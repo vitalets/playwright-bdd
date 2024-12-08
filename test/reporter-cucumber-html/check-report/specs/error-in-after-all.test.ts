@@ -7,6 +7,7 @@ import { test } from '../fixtures';
 // It would be better to run afterAll hooks inside test.afterAll(),
 // but it's will work incorrectly if single afterAll hook is tagged to several features,
 // because it will be run several times.
+// Or just un-tagged afterAll hook + several files.
 
 test.describe.skip('error in anonymous after all hook', () => {
   test.use({ featureUri: 'error-in-after-all/anonymous.feature' });

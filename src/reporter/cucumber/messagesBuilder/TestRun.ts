@@ -17,6 +17,7 @@ export class TestRun {
   // See: https://github.com/cucumber/messages/blob/main/messages.md#testrunfinished
   // todo: there are also new props: message and exception,
   // they could be populated in reporter.onError handler
+  // See: https://github.com/cucumber/html-formatter/issues/340
   buildTestRunFinished({ status, startTime, duration }: pw.FullResult) {
     const testRunFinished: messages.TestRunFinished = {
       testRunStartedId: this.id,
