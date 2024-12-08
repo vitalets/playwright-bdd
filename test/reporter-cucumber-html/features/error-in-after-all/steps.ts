@@ -12,6 +12,10 @@ AfterAll({ name: 'my hook', tags: '@failing-named-after-all-hook' }, async () =>
   expect(true).toEqual(false);
 });
 
+AfterAll({ tags: '@after-all-hook-with-timeout' }, async ({ $workerInfo }) => {
+  await new Promise((r) => setTimeout(r, $workerInfo.project.timeout + 100));
+});
+
 Given(
   'step that uses workerFixtureWithErrorInTeardown',
   async ({ workerFixtureWithErrorInTeardown }) => {

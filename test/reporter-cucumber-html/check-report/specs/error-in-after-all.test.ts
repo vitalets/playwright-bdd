@@ -27,3 +27,9 @@ test.describe.skip('error in worker fixture teardown', () => {
 
   test('scenario 1', async () => {});
 });
+
+test.describe.skip('timeout in after-all hook', () => {
+  test.use({ featureUri: 'error-in-after-all/timeout.feature' });
+
+  test('scenario 1', async () => {});
+});
