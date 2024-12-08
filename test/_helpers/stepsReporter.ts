@@ -3,16 +3,17 @@
  */
 import fs from 'node:fs';
 import path from 'node:path';
-import { Reporter, TestCase, TestResult, TestStep } from '@playwright/test/reporter';
+import { Reporter, TestCase, TestError, TestResult, TestStep } from '@playwright/test/reporter';
 import { toPosixPath } from '../../src/utils/paths';
 
-type StepReporterOptions = {
+type StepsReporterOptions = {
   outputFile: string;
   categories?: string[];
   titles?: string[];
 };
 
-const defaults: Pick<StepReporterOptions, 'categories' | 'titles'> = {
+const defaults: Pick<StepsReporterOptions, 'categories' | 'titles'> = {
+  // step category and titles to include in report
   // add 'fixture' to debug
   categories: ['hook', 'test.step', 'attach'],
   titles: ['fixture: $beforeEach', 'fixture: $afterEach'],
@@ -20,9 +21,9 @@ const defaults: Pick<StepReporterOptions, 'categories' | 'titles'> = {
 
 export default class StepsReporter implements Reporter {
   private lines: string[] = [];
-  private options: StepReporterOptions;
+  private options: StepsReporterOptions;
 
-  constructor(options: StepReporterOptions) {
+  constructor(options: StepsReporterOptions) {
     this.options = { ...defaults, ...options };
   }
 
@@ -30,6 +31,10 @@ export default class StepsReporter implements Reporter {
     if (this.lines.length) this.lines.push('');
     this.lines.push(test.title);
     this.lines.push(...this.stringifySteps(result.steps).map((l) => indent(l)));
+  }
+
+  onError(_error: TestError) {
+    // global error, e.g. error in afterAll hook
   }
 
   async onEnd() {
@@ -48,7 +53,8 @@ export default class StepsReporter implements Reporter {
       .filter((step) => this.shouldReportStep(step))
       .map((step) => {
         const location = stringifyLocation(step.location);
-        const line = [`[${step.category}]`, step.title, location].filter(Boolean).join(' ');
+        const error = step.error ? stringifyError(step.error) : '';
+        const line = [`[${step.category}]`, step.title, location, error].filter(Boolean).join(' ');
         const childrenLines = this.stringifySteps(step.steps).map((l) => indent(l));
         lines.push(line, ...childrenLines);
       });
@@ -67,6 +73,10 @@ function stringifyLocation(location: TestStep['location']) {
   return !relFile || relFile.includes('node_modules')
     ? ''
     : `${relFile}:${location?.line || 0}:${location?.column || 0}`;
+}
+
+function stringifyError(error: TestError) {
+  return error.message?.split('\n')[0] || '';
 }
 
 function indent(value: string) {

@@ -15,5 +15,11 @@ export default defineConfig({
     cucumberReporter('message', { outputFile: `actual-reports/${ERROR}/report.jsonl` }),
     cucumberReporter('html', { outputFile: `actual-reports/${ERROR}/report.html` }),
     ['html', { open: 'never', outputFolder: `playwright-report/${ERROR}` }],
+    [
+      '../_helpers/stepsReporter.ts',
+      {
+        outputFile: `actual-reports/${ERROR}/steps.txt`,
+      },
+    ],
   ],
 });
