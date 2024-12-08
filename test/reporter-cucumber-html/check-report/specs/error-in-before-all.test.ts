@@ -42,3 +42,19 @@ test.describe('error in named before all hook', () => {
     await expect(scenario.getErrors()).toContainText([`expect(true).toEqual(false)`]);
   });
 });
+
+test.describe('error in worker fixture setup', () => {
+  test.use({ featureUri: 'error-in-before-all/fixture.feature' });
+
+  test('scenario 1', async ({ scenario }) => {
+    await expect(scenario.getSteps()).toContainText([
+      `Hook "fixture: workerFixtureWithErrorInSetup" failed: ${normalize('features/error-in-before-all/fixtures.ts')}:`,
+      'GivenAction 1',
+      'Givenstep that uses workerFixtureWithErrorInSetup',
+      'Download trace',
+    ]);
+    await expect(scenario.getSteps('failed')).toHaveCount(1);
+    await expect(scenario.getSteps('skipped')).toHaveCount(2);
+    await expect(scenario.getErrors()).toContainText(['error in worker fixture setup']);
+  });
+});
