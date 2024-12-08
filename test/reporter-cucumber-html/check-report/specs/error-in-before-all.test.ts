@@ -70,3 +70,18 @@ test.describe('error in worker fixture setup', () => {
     await expect(scenario.getErrors()).toContainText(['error in worker fixture setup']);
   });
 });
+
+test.describe('timeout in before-all hook', () => {
+  test.use({ featureUri: 'error-in-before-all/timeout.feature' });
+
+  test('scenario 1', async ({ scenario }) => {
+    await expect(scenario.getSteps()).toContainText([
+      `Hook "BeforeAll hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
+      'GivenAction 1',
+    ]);
+    await expect(scenario.getErrors()).toContainText([
+      // here can be different error messages
+      /("beforeAll" hook timeout of \d+ms exceeded)|(browser has been closed)|(Browser closed)/,
+    ]);
+  });
+});

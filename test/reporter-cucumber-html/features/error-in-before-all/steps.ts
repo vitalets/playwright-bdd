@@ -12,6 +12,10 @@ BeforeAll({ name: 'my hook', tags: '@failing-named-before-all-hook' }, async () 
   expect(true).toEqual(false);
 });
 
+BeforeAll({ tags: '@before-all-hook-with-timeout' }, async ({ $workerInfo }) => {
+  await new Promise((r) => setTimeout(r, $workerInfo.project.timeout + 100));
+});
+
 Given('step that uses workerFixtureWithErrorInSetup', async ({ workerFixtureWithErrorInSetup }) => {
   return workerFixtureWithErrorInSetup;
 });
