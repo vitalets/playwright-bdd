@@ -5,22 +5,24 @@ test.use({ featureUri: 'error-in-step/sample.feature' });
 
 test('error in step', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    'Givenfailing step', // prettier-ignore
+    'Givenstep with page', // prettier-ignore
+    'Givenfailing step',
+    'WhenAction 1',
     'screenshotDownload trace',
   ]);
-  await expect(scenario.getErrors()).toContainText([
-    'Timed out 1ms waiting for expect', // prettier-ignore
-  ]);
+  await expect(scenario.getSteps('passed')).toHaveCount(1);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getSteps('skipped')).toHaveCount(1);
+  await expect(scenario.getErrors()).toContainText(['expect(true).toBe(false)']);
 });
 
 test('timeout in step', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    'GivenAction 0',
+    'Givenstep with page', // prettier-ignore
     'Giventimeouted step',
     'WhenAction 1',
-    // not 'screenshot', b/c no page
-    // 'screenshot',
-    // 'Download trace' can be attached to 'timeouted step' (pw 1.43) - is it a bug?
+    'screenshot',
+    // don't check 'Download trace' as it is attached to 'timeouted step' in pw 1.42 / 1.43
     // 'Download trace',
   ]);
   // don't check passed/skipped steps counts b/c in different PW versions it's different
@@ -29,8 +31,8 @@ test('timeout in step', async ({ scenario }) => {
 
 test('failing match snapshot', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    'Whenopen example.com',
-    'Thenpage title snapshot matches the golden one',
+    'Whenstep with page',
+    'Thenerror in match snapshot',
   ]);
   await expect(scenario.getAttachments()).toHaveText([
     'error-in-step-failing-match-snapshot-1-expected.txtbla-bla',
@@ -40,12 +42,7 @@ test('failing match snapshot', async ({ scenario }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(1);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(0);
-  // since pw 1.49 error text for snapshots was changed.
-  // before: Snapshot comparison failed
-  // after: expect(string).toMatchSnapshot(expected)
-  await expect(scenario.getErrors()).toContainText(
-    /Snapshot comparison failed|expect\(string\)\.toMatchSnapshot\(expected\)/,
-  );
+  await expect(scenario.getErrors()).toContainText(['toMatchSnapshot']);
 });
 
 test('soft assertions', async ({ scenario }) => {

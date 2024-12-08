@@ -1,6 +1,7 @@
 Feature: error-in-bg
 
   Background:
+    Given step with page
     Given failing step
 
   Scenario: scenario 1

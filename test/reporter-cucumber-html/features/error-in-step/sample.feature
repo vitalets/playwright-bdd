@@ -1,21 +1,19 @@
 Feature: error-in-step
 
-  # - Increased timeout b/c this test opens page
-  @timeout:10_000
   Scenario: error in step
+    Given step with page
     Given failing step
+    When Action 1
 
   Scenario: timeout in step
-    Given Action 0
+    Given step with page
     Given timeouted step
     When Action 1
 
   # - If this scenario name changed, snapshot file names should also change
-  # - Increased timeout b/c this test opens page
-  @timeout:10_000
   Scenario: failing match snapshot
-    When open example.com
-    Then page title snapshot matches the golden one
+    When step with page
+    Then error in match snapshot
 
   Scenario: soft assertions
     Given failing soft assertion "foo"

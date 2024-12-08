@@ -17,6 +17,6 @@ When('fails until retry {int}', async ({ $testInfo }, retry: number) => {
   }
 });
 
-Then('page title snapshot matches the golden one', async ({ page }) => {
-  expect(await page.title()).toMatchSnapshot();
+Then('error in match snapshot', async () => {
+  expect('Example Domain').toMatchSnapshot();
 });
