@@ -1,10 +1,10 @@
 Feature: error-in-before
 
-  @failing-anonymous-hook
+  @failing-anonymous-before-hook
   Scenario: error in anonymous before hook
     Given Action 1
 
-  @failing-named-hook
+  @failing-named-before-hook
   Scenario: error in named before hook
     Given Action 1
 

@@ -12,9 +12,8 @@ test('error in anonymous before hook', async ({ scenario }) => {
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getTags()).toContainText(['@failing-anonymous-hook']);
-  await expect(scenario.getErrors()).toContainText(['Timed out']);
-  await expect(scenario.getErrors()).toContainText([`Before({ tags: '@failing-anonymous-hook' }`]);
+  await expect(scenario.getTags()).toContainText(['@failing-anonymous-before-hook']);
+  await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
 });
 
 test('error in named before hook', async ({ scenario }) => {
@@ -25,9 +24,8 @@ test('error in named before hook', async ({ scenario }) => {
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getTags()).toContainText(['@failing-named-hook']);
-  await expect(scenario.getErrors()).toContainText(['Timed out']);
-  await expect(scenario.getErrors()).toContainText([`Before({ name: 'failing named before hook'`]);
+  await expect(scenario.getTags()).toContainText(['@failing-named-before-hook']);
+  await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
 });
 
 test('error in fixture setup (no step)', async ({ scenario }) => {

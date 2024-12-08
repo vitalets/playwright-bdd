@@ -4,13 +4,17 @@ import { test } from './fixtures';
 
 const { Given, Before } = createBdd(test);
 
-Before({ name: 'failing named before hook', tags: '@failing-named-hook' }, async ({ page }) => {
-  await expect(page).toHaveTitle('Some title1');
+// 'page' arg is important to have a screenshot in the report
+Before({ tags: '@failing-anonymous-before-hook' }, async ({ page }) => {
+  await expect(page).toHaveTitle('foo');
 });
 
-Before({ tags: '@failing-anonymous-hook' }, async ({ page }) => {
-  await expect(page).toHaveTitle('Some title2');
-});
+Before(
+  { name: 'failing named before hook', tags: '@failing-named-before-hook' },
+  async ({ page }) => {
+    await expect(page).toHaveTitle('foo');
+  },
+);
 
 Given('step that uses fixtureWithErrorInSetup', async ({ fixtureWithErrorInSetup }) => {
   return fixtureWithErrorInSetup;
