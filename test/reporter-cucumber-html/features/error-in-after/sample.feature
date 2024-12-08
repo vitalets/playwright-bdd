@@ -8,6 +8,10 @@ Feature: error-in-after
   Scenario: error in named after hook
     Given step with page
 
+  @after-hook-with-timeout
+  Scenario: timeout in after hook
+    Given step with page
+
   Scenario: error in fixture teardown (no step)
     Given step with page
     Given step that uses fixtureWithErrorInTeardown

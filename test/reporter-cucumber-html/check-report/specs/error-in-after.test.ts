@@ -113,3 +113,13 @@ test('timeout in step and in fixture teardown', async ({ scenario }) => {
     /Test timeout of \d+ms exceeded|Tearing down "fixtureWithTimeoutInTeardown" exceeded the test timeout/,
   ]);
 });
+
+test('timeout in after hook', async ({ scenario }) => {
+  await expect(scenario.getSteps()).toContainText([
+    'Givenstep with page',
+    'Hook "After Hooks" failed',
+  ]);
+  await expect(scenario.getErrors()).toContainText([
+    /but tearing down "\$afterEach" ran out of time|Tearing down "\$afterEach" exceeded the test timeout/,
+  ]);
+});

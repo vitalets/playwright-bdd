@@ -13,6 +13,10 @@ After({ name: 'failing named after hook', tags: '@failing-named-after-hook' }, a
   await expect(page).toHaveTitle('foo');
 });
 
+After({ tags: '@after-hook-with-timeout' }, async ({ $testInfo }) => {
+  await new Promise((r) => setTimeout(r, $testInfo.timeout + 100));
+});
+
 Given('step that uses fixtureWithErrorInTeardown', async ({ fixtureWithErrorInTeardown }) => {
   return fixtureWithErrorInTeardown;
 });

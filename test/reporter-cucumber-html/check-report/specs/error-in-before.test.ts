@@ -83,3 +83,14 @@ test('timeout in fixture setup', async ({ scenario }) => {
     /(Test timeout of \d+ms exceeded while setting up "fixtureWithTimeoutInSetup")|(browser has been closed)|(Browser closed)|(Page closed)/,
   ]);
 });
+
+test('timeout in before hook', async ({ scenario }) => {
+  await expect(scenario.getSteps()).toContainText([
+    `Hook "BeforeEach hook" failed: ${normalize('features/error-in-before/steps.ts')}:`, // prettier-ignore
+    'GivenAction 1',
+  ]);
+  await expect(scenario.getErrors()).toContainText([
+    // here can be different error messages
+    /(Test timeout of \d+ms exceeded while running "beforeEach" hook)|(browser has been closed)|(Browser closed)|(Page closed)/,
+  ]);
+});
