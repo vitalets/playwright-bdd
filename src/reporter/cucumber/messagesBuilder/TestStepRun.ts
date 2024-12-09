@@ -99,17 +99,23 @@ export class TestStepRun {
     }
   }
 
+  // eslint-disable-next-line visual/complexity
   private getStepError() {
     if (!this.pwStep) return;
     if (this.testCaseRun.errorSteps.has(this.pwStep)) {
       return this.pwStep.error;
     }
-    // For timeouted test run show concatenated error in the timeouted step
-    if (this.testCaseRun.isTimeouted() && this.pwStep === this.testCaseRun.timeoutedStep) {
-      return {
-        message: this.testCaseRun.result.errors?.map((e) => e.message).join('\n\n'),
-      };
+    if (this.isTimeoutedStep()) {
+      return (
+        this.pwStep.error ||
+        this.pwStep.parent?.error ||
+        buildConcatenatedError(this.testCaseRun.result)
+      );
     }
+  }
+
+  private isTimeoutedStep() {
+    return this.testCaseRun.isTimeouted() && this.pwStep === this.testCaseRun.timeoutedStep;
   }
 }
 
@@ -145,4 +151,10 @@ function isSkippedError(error?: pw.TestError) {
 
 function isFailed(status: messages.TestStepResultStatus) {
   return status === messages.TestStepResultStatus.FAILED;
+}
+
+function buildConcatenatedError(result: pw.TestResult) {
+  if (!result.errors?.length) return;
+  const message = result.errors.map((e) => e.message).join('\n\n');
+  return { message };
 }

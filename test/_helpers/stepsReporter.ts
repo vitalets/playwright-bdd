@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { Reporter, TestCase, TestError, TestResult, TestStep } from '@playwright/test/reporter';
 import { toPosixPath } from '../../src/utils/paths';
+import { stripAnsiEscapes } from '../../src/utils/stripAnsiEscapes';
 
 type StepsReporterOptions = {
   outputFile: string;
@@ -38,8 +39,9 @@ export default class StepsReporter implements Reporter {
   }
 
   async onEnd() {
+    const content = this.lines.map((l) => stripAnsiEscapes(l)).join('\n');
     fs.mkdirSync(path.dirname(this.options.outputFile), { recursive: true });
-    fs.writeFileSync(this.options.outputFile, this.lines.join('\n'));
+    fs.writeFileSync(this.options.outputFile, content);
   }
 
   printsToStdio() {

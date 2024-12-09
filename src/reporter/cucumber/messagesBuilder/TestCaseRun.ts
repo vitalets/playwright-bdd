@@ -70,7 +70,7 @@ export class TestCaseRun {
   }
 
   private fillExecutedSteps() {
-    const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
+    const possiblePwSteps = this.getPossiblePwSteps();
     return this.bddTestData.steps.map((bddStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
       this.collectErrorStep(pwStep);
@@ -87,12 +87,11 @@ export class TestCaseRun {
     if (pwStep?.error) this.errorSteps.add(pwStep);
   }
 
-  // eslint-disable-next-line visual/complexity
   private collectTimeoutedStep(pwStep?: pw.TestStep) {
     if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
-    const { error } = pwStep;
-    // Assumption: timeouted BDD step always has duration -1 and 'error' field.
-    if (isUnknownDuration(pwStep) || this.result.errors.some((e) => e.message === error?.message)) {
+    // if we don't find exact timeouted step, it's not a big problem,
+    // just show error message in after hooks section
+    if (isUnknownDuration(pwStep)) {
       this.timeoutedStep = pwStep;
     }
   }
@@ -154,7 +153,7 @@ export class TestCaseRun {
     });
   }
 
-  private getPossiblePlaywrightBddSteps() {
+  private getPossiblePwSteps() {
     // Before we collected only top-level steps and steps from before hooks (as they are background)
     // But it's more reliable to just collect all test.step items b/c some Playwright versions
     // move steps to fixtures (see: https://github.com/microsoft/playwright/issues/30075)

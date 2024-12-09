@@ -1,5 +1,5 @@
 @failing-anonymous-before-all-hook
-Feature: anonymous before-all hook
+Feature: error in anonymous before-all hook
 
   Scenario: scenario 1
     Given Action 1

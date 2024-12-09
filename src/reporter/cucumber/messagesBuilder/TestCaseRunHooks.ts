@@ -15,6 +15,27 @@
  * but include worker-level hooks into testCase steps.
  * This could be changed in the future, when cucumber-js will add it.
  */
+
+/**
+ * Finding timeouted step for hooks / fixtures is tricky.
+ *
+ * Timeout in before hook:
+ * - has duration = -1
+ * - has 'error' field in all parent steps (but not own!)
+ *
+ * Timeout in after hook:
+ * - [PW >= 1.43] same as before hook (but sometimes noticed normal duration...)
+ * - [pw < 1.43]
+ *    - does not have duration = -1
+ *    - no 'error' field in steps, 'error' field is only in test result
+ *    So there is no way to find which exactly fixture timed out.
+ *    We mark root 'After Hooks' step as timeouted.
+ *
+ * Timeout in fixture setup / teardown:
+ * - does not have duration = -1
+ * - has 'error' field in own and all parent steps
+ * These timeout steps will be added as deepest error.
+ */
 import * as pw from '@playwright/test/reporter';
 import { Hook, HookType } from './Hook';
 import {
@@ -48,6 +69,7 @@ export class TestCaseRunHooks {
     this.addStepsWithName();
     this.addStepWithTimeout();
     this.addStepWithError();
+    this.addStepWithTimeoutFallback();
     this.addStepsWithAttachment();
     this.excludeMainSteps(mainSteps);
     this.setExecutedHooks();
@@ -103,38 +125,46 @@ export class TestCaseRunHooks {
   }
 
   private addStepWithError() {
+    // todo: if there are several errors in after hooks?
     const stepWithError = findDeepestStepWithError(this.rootPwStep);
     if (!stepWithError) return;
-    // if this step is a parent of timeouted step, omit it
-    // to not show the same error
+
+    // This workaround is for timeout in before hook,
+    // where timeouted step has duration -1 and no 'error' field.
+    // If error step = it's parent, omit it.
+    // Error will be shown via timeouted step.
     const { timeoutedStep } = this.testCaseRun;
-    if (this.hookType === 'before' && timeoutedStep?.parent === stepWithError) return;
+    if (stepWithError === timeoutedStep?.parent) return;
 
     this.hookSteps.add(stepWithError);
-    // in Playwright error is inherited by all parent steps,
-    // but we want to show it once (in the deepest step)
     this.testCaseRun.collectErrorStep(stepWithError);
-    // this.testCaseRun.handleTimeoutedStep(stepWithError);
   }
 
   private addStepWithTimeout() {
     if (!this.testCaseRun.isTimeouted()) return;
     if (this.testCaseRun.timeoutedStep) return;
-    const timeoutedStep =
-      this.hookType === 'before'
-        ? // Timeouted before hook:
-          // - has duration = -1
-          // - 'error' field in all parent steps
-          findDeepestStepWithUnknownDuration(this.rootPwStep)
-        : // Timeouted after hook:
-          // - does not have duration = -1
-          // - no 'error' field in steps, 'error' field is only in test result
-          // So there is no way to find which exactly fixture timed out.
-          // We mark root 'After Hooks' step as timeouted.
-          this.rootPwStep;
+
+    const timeoutedStep = findDeepestStepWithUnknownDuration(this.rootPwStep);
     if (timeoutedStep) {
       this.hookSteps.add(timeoutedStep);
       this.testCaseRun.timeoutedStep = timeoutedStep;
+    }
+  }
+
+  // eslint-disable-next-line visual/complexity
+  private addStepWithTimeoutFallback() {
+    // if in after hook there is no timeouted step and no error steps in test run,
+    // use root step "After Hooks" as last resort timeouted step.
+    // todo: check that all errors have related pwStep
+    if (
+      this.hookType == 'after' &&
+      this.testCaseRun.isTimeouted() &&
+      !this.testCaseRun.timeoutedStep &&
+      this.testCaseRun.errorSteps.size === 0 &&
+      this.rootPwStep
+    ) {
+      this.hookSteps.add(this.rootPwStep);
+      this.testCaseRun.timeoutedStep = this.rootPwStep;
     }
   }
 
