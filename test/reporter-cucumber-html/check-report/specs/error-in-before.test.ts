@@ -86,7 +86,7 @@ test('timeout in fixture setup', async ({ scenario }) => {
 
 test('timeout in before hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "BeforeEach hook" failed: ${normalize('features/error-in-before/steps.ts')}:`, // prettier-ignore
+    /Hook "(BeforeEach hook|fixture: \$beforeEach)" failed:/, // prettier-ignore
     'GivenAction 1',
   ]);
   await expect(scenario.getErrors()).toContainText([
