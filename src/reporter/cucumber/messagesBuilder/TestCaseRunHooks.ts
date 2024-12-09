@@ -46,8 +46,8 @@ export class TestCaseRunHooks {
     this.setRootStep();
     this.setCandidateSteps();
     this.addStepsWithName();
-    this.addStepWithError();
     this.addStepWithTimeout();
+    this.addStepWithError();
     this.addStepsWithAttachment();
     this.excludeMainSteps(mainSteps);
     this.setExecutedHooks();
@@ -104,13 +104,17 @@ export class TestCaseRunHooks {
 
   private addStepWithError() {
     const stepWithError = findDeepestStepWithError(this.rootPwStep);
-    if (stepWithError) {
-      this.hookSteps.add(stepWithError);
-      // in Playwright error is inherited by all parent steps,
-      // but we want to show it once (in the deepest step)
-      this.testCaseRun.handleErrorStep(stepWithError);
-      this.testCaseRun.handleTimeoutedStep(stepWithError);
-    }
+    if (!stepWithError) return;
+    // if this step is a parent of timeouted step, omit it
+    // to not show the same error
+    const { timeoutedStep } = this.testCaseRun;
+    if (this.hookType === 'before' && timeoutedStep?.parent === stepWithError) return;
+
+    this.hookSteps.add(stepWithError);
+    // in Playwright error is inherited by all parent steps,
+    // but we want to show it once (in the deepest step)
+    this.testCaseRun.collectErrorStep(stepWithError);
+    // this.testCaseRun.handleTimeoutedStep(stepWithError);
   }
 
   private addStepWithTimeout() {
@@ -118,11 +122,14 @@ export class TestCaseRunHooks {
     if (this.testCaseRun.timeoutedStep) return;
     const timeoutedStep =
       this.hookType === 'before'
-        ? // Timeouted steps have duration = -1 in PW <= 1.39 and no error field.
-          // In PW > 1.39 timeouted steps have '.error' populated
+        ? // Timeouted before hook:
+          // - has duration = -1
+          // - 'error' field in all parent steps
           findDeepestStepWithUnknownDuration(this.rootPwStep)
-        : // Timeouted after hooks don't have duration = -1,
-          // so there is no way to find which exactly fixture timed out.
+        : // Timeouted after hook:
+          // - does not have duration = -1
+          // - no 'error' field in steps, 'error' field is only in test result
+          // So there is no way to find which exactly fixture timed out.
           // We mark root 'After Hooks' step as timeouted.
           this.rootPwStep;
     if (timeoutedStep) {

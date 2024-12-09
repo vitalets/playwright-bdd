@@ -104,6 +104,7 @@ export class TestStepRun {
     if (this.testCaseRun.errorSteps.has(this.pwStep)) {
       return this.pwStep.error;
     }
+    // For timeouted test run show concatenated error in the timeouted step
     if (this.testCaseRun.isTimeouted() && this.pwStep === this.testCaseRun.timeoutedStep) {
       return {
         message: this.testCaseRun.result.errors?.map((e) => e.message).join('\n\n'),

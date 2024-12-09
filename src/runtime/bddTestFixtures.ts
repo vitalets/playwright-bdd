@@ -130,10 +130,8 @@ export const test = base.extend<BddTestFixtures>({
   // can be overwritten in test file if there are fixtures for afterEach hooks
   $afterEachFixtures: [({}, use) => use({}), fixtureOptions],
   // runs beforeEach hooks
-  // unused dependency '$afterEach' is important to run afterEach
-  // in case of error in beforeEach.
   $beforeEach: [
-    async ({ $bddContext, $beforeEachFixtures, $afterEach }, use) => {
+    async ({ $bddContext, $beforeEachFixtures }, use) => {
       const hooksToRun = getScenarioHooksToRun('before', $bddContext.tags);
       await runScenarioHooks(hooksToRun, { $bddContext, ...$beforeEachFixtures });
       await use();

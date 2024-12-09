@@ -73,8 +73,8 @@ export class TestCaseRun {
     const possiblePwSteps = this.getPossiblePlaywrightBddSteps();
     return this.bddTestData.steps.map((bddStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
-      this.handleErrorStep(pwStep);
-      this.handleTimeoutedStep(pwStep);
+      this.collectErrorStep(pwStep);
+      this.collectTimeoutedStep(pwStep);
       return { bddStep, pwStep };
     });
   }
@@ -83,14 +83,15 @@ export class TestCaseRun {
     return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
   }
 
-  handleErrorStep(pwStep?: pw.TestStep) {
+  collectErrorStep(pwStep?: pw.TestStep) {
     if (pwStep?.error) this.errorSteps.add(pwStep);
   }
 
   // eslint-disable-next-line visual/complexity
-  handleTimeoutedStep(pwStep?: pw.TestStep) {
+  private collectTimeoutedStep(pwStep?: pw.TestStep) {
     if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
     const { error } = pwStep;
+    // Assumption: timeouted BDD step always has duration -1 and 'error' field.
     if (isUnknownDuration(pwStep) || this.result.errors.some((e) => e.message === error?.message)) {
       this.timeoutedStep = pwStep;
     }

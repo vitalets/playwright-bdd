@@ -13,7 +13,7 @@ After({ name: 'failing named after hook', tags: '@failing-named-after-hook' }, a
   await expect(page).toHaveTitle('foo');
 });
 
-After({ tags: '@after-hook-with-timeout' }, async ({ $testInfo }) => {
+After({ name: 'my timeouted hook', tags: '@after-hook-with-timeout' }, async ({ $testInfo }) => {
   await new Promise((r) => setTimeout(r, $testInfo.timeout + 100));
 });
 

@@ -7,6 +7,7 @@ import {
   FullResult,
   Reporter as PlaywrightReporter,
   TestCase,
+  TestError,
   TestResult,
 } from '@playwright/test/reporter';
 import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder/ref';
@@ -56,6 +57,10 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
 
   onTestEnd(test: TestCase, result: TestResult) {
     this.messagesBuilderRef.onTestEnd(test, result);
+  }
+
+  onError(_error: TestError): void {
+    // todo: implement
   }
 
   async onEnd(result: FullResult) {

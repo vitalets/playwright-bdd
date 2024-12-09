@@ -10,7 +10,6 @@ const isShardRun = process.argv.some((a) => a.startsWith('--shard'));
 
 export default defineConfig({
   testDir,
-  fullyParallel: true,
   reporter: isShardRun
     ? 'blob'
     : [

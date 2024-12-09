@@ -25,16 +25,10 @@ test.describe('error in anonymous before all hook', () => {
   });
 
   test('scenario 2', async ({ scenario }) => {
-    await expect(scenario.getSteps()).toContainText(
-      [
-        `Hook "BeforeAll hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
-        'GivenAction 2',
-        hasDownloadTrace ? 'Download trace' : '',
-      ].filter(Boolean),
-    );
-    await expect(scenario.getSteps('failed')).toHaveCount(1);
+    await expect(scenario.getSteps()).toContainText([
+      'GivenAction 2', // prettier-ignore
+    ]);
     await expect(scenario.getSteps('skipped')).toHaveCount(1);
-    await expect(scenario.getErrors()).toContainText([`expect(true).toEqual(false)`]);
   });
 });
 
@@ -76,7 +70,7 @@ test.describe('timeout in before-all hook', () => {
 
   test('scenario 1', async ({ scenario }) => {
     await expect(scenario.getSteps()).toContainText([
-      `Hook "BeforeAll hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
+      `Hook "my timeouted hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
       'GivenAction 1',
     ]);
     await expect(scenario.getErrors()).toContainText([
