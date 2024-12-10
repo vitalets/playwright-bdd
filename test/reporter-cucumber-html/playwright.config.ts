@@ -13,7 +13,7 @@ export default defineConfig({
     ['blob'],
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
-    ['../_helpers/stepsReporter.ts', { outputFile: 'actual-reports/steps.txt' }],
+    ['../_helpers/rawJsonReporter.ts', { outputDir: 'actual-reports/raw-json' }],
   ],
   use: {
     screenshot: 'only-on-failure',
