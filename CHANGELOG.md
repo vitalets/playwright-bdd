@@ -13,7 +13,7 @@
 * show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
 * use `Examples:` block name as a template for examples test titles
 * preserve arg types in call-step-from-step functions ([#243](https://github.com/vitalets/playwright-bdd/issues/243))
-* increase minimal Playwright version from 1.35 to 1.39
+* increase minimal Playwright version to 1.41
 
 ## 7.5.0
 * support external attachments in Cucumber HTML reporter ([#182](https://github.com/vitalets/playwright-bdd/issues/182))

@@ -16,7 +16,7 @@ jobs:
         id: get-versions
         with:
           script: |
-            const minimalVersion = '1.39';
+            const minimalVersion = '1.41';
             const { execSync } = require('node:child_process');
             const info = execSync('npm show --json @playwright/test').toString();
             const { versions } = JSON.parse(info);
