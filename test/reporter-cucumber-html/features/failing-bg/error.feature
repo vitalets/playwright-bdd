@@ -1,4 +1,4 @@
-Feature: error-in-bg
+Feature: failing-bg
 
   Background:
     Given step with page

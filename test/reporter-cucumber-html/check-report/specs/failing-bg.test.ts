@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures';
 
-test.use({ featureUri: 'error-in-bg/sample.feature' });
+test.use({ featureUri: 'failing-bg/error.feature' });
 
 test('background is failing', async ({ feature }) => {
   const background = feature.getBackground();

@@ -9,12 +9,12 @@ const pwVersion = getPackageVersion('@playwright/test');
 const hasDownloadTrace = pwVersion >= '1.42.0';
 
 test.describe('error in anonymous before all hook', () => {
-  test.use({ featureUri: 'error-in-before-all/anonymous.feature' });
+  test.use({ featureUri: 'failing-before-all/anonymous.feature' });
 
   test('scenario 1', async ({ scenario }) => {
     await expect(scenario.getSteps()).toContainText(
       [
-        `Hook "BeforeAll hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
+        `Hook "BeforeAll hook" failed: ${normalize('features/failing-before-all/steps.ts')}:`, // prettier-ignore
         'GivenAction 1',
         hasDownloadTrace ? 'Download trace' : '',
       ].filter(Boolean),
@@ -33,12 +33,12 @@ test.describe('error in anonymous before all hook', () => {
 });
 
 test.describe('error in named before all hook', () => {
-  test.use({ featureUri: 'error-in-before-all/named.feature' });
+  test.use({ featureUri: 'failing-before-all/named.feature' });
 
   test('scenario 1', async ({ scenario }) => {
     await expect(scenario.getSteps()).toContainText(
       [
-        `Hook "my hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
+        `Hook "my hook" failed: ${normalize('features/failing-before-all/steps.ts')}:`, // prettier-ignore
         'GivenAction 1',
         hasDownloadTrace ? 'Download trace' : '',
       ].filter(Boolean),
@@ -50,11 +50,11 @@ test.describe('error in named before all hook', () => {
 });
 
 test.describe('error in worker fixture setup', () => {
-  test.use({ featureUri: 'error-in-before-all/fixture.feature' });
+  test.use({ featureUri: 'failing-before-all/fixture.feature' });
 
   test('scenario 1', async ({ scenario }) => {
     await expect(scenario.getSteps()).toContainText([
-      `Hook "fixture: workerFixtureWithErrorInSetup" failed: ${normalize('features/error-in-before-all/fixtures.ts')}:`,
+      `Hook "fixture: workerFixtureWithErrorInSetup" failed: ${normalize('features/failing-before-all/fixtures.ts')}:`,
       'GivenAction 1',
       'Givenstep that uses workerFixtureWithErrorInSetup',
       'Download trace',
@@ -66,11 +66,11 @@ test.describe('error in worker fixture setup', () => {
 });
 
 test.describe('timeout in before-all hook', () => {
-  test.use({ featureUri: 'error-in-before-all/timeout.feature' });
+  test.use({ featureUri: 'failing-before-all/timeout.feature' });
 
   test('scenario 1', async ({ scenario }) => {
     await expect(scenario.getSteps()).toContainText([
-      `Hook "my timeouted hook" failed: ${normalize('features/error-in-before-all/steps.ts')}:`, // prettier-ignore
+      `Hook "my timeouted hook" failed: ${normalize('features/failing-before-all/steps.ts')}:`, // prettier-ignore
       'GivenAction 1',
     ]);
     await expect(scenario.getErrors()).toContainText([

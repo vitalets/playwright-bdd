@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { test } from '../fixtures';
 
-test.use({ featureUri: 'error-in-step/sample.feature' });
+test.use({ featureUri: 'failing-step/error.feature' });
 
 test('error in step', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([

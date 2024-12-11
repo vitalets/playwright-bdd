@@ -12,6 +12,7 @@ const testDir = new TestDir(import.meta);
 test(testDir.name, () => {
   testDir.clearDir('actual-reports');
   testDir.clearDir('blob-report');
+  testDir.clearDir('check-report');
   testDir.clearDir('features');
 
   copyFeatures(); // uses features from reporter-cucumber-html
@@ -55,7 +56,7 @@ function copyFeatures() {
   fs.cpSync('test/reporter-cucumber-html/check-report', testDir.getAbsPath('check-report'), {
     recursive: true,
   });
-  const snapshotsDir = '.features-gen/error-in-step/sample.feature.spec.js-snapshots';
+  const snapshotsDir = '.features-gen/failing-step/error.feature.spec.js-snapshots';
   fs.cpSync(`test/reporter-cucumber-html/${snapshotsDir}`, testDir.getAbsPath(snapshotsDir), {
     recursive: true,
   });

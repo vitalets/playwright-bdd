@@ -10,26 +10,26 @@ import { test } from '../fixtures';
 // Or just un-tagged afterAll hook + several files.
 
 test.describe.skip('error in anonymous after all hook', () => {
-  test.use({ featureUri: 'error-in-after-all/anonymous.feature' });
+  test.use({ featureUri: 'failing-after-all/anonymous.feature' });
 
   test('scenario 1', async () => {});
   test('scenario 2', async () => {});
 });
 
 test.describe.skip('error in named after all hook', () => {
-  test.use({ featureUri: 'error-in-after-all/named.feature' });
+  test.use({ featureUri: 'failing-after-all/named.feature' });
 
   test('scenario 1', async () => {});
 });
 
 test.describe.skip('error in worker fixture teardown', () => {
-  test.use({ featureUri: 'error-in-after-all/fixture.feature' });
+  test.use({ featureUri: 'failing-after-all/fixture.feature' });
 
   test('scenario 1', async () => {});
 });
 
 test.describe.skip('timeout in after-all hook', () => {
-  test.use({ featureUri: 'error-in-after-all/timeout.feature' });
+  test.use({ featureUri: 'failing-after-all/timeout.feature' });
 
   test('scenario 1', async () => {});
 });
