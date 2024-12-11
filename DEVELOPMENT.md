@@ -39,7 +39,7 @@ npx cross-env PW=1.39 npm run pw
 
 Install corresponding browsers without clearing other versions:
 ```
-npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium
+npm run browsers
 ```
 
 Run tests:
