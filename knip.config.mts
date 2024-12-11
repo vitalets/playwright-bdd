@@ -21,7 +21,6 @@ const config: KnipConfig = {
     'np',
     'npm-run-all',
     'publint',
-    'cross-env',
   ],
 };
 
