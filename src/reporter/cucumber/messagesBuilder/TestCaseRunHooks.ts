@@ -16,26 +16,6 @@
  * This could be changed in the future, when cucumber-js will add it.
  */
 
-/**
- * Finding timeouted step for hooks / fixtures is tricky.
- *
- * Timeout in before hook:
- * - has duration = -1
- * - has 'error' field in all parent steps (but not own!)
- *
- * Timeout in after hook:
- * - [PW >= 1.43] same as before hook (but sometimes noticed normal duration...)
- * - [pw < 1.43]
- *    - does not have duration = -1
- *    - no 'error' field in steps, 'error' field is only in test result
- *    So there is no way to find which exactly fixture timed out.
- *    We mark root 'After Hooks' step as timeouted.
- *
- * Timeout in fixture setup / teardown:
- * - does not have duration = -1
- * - has 'error' field in own and all parent steps
- * These timeout steps will be added as deepest error.
- */
 import * as pw from '@playwright/test/reporter';
 import { Hook, HookType } from './Hook';
 import {
@@ -129,6 +109,9 @@ export class TestCaseRunHooks {
     if (!this.testCaseRun.isTimeouted()) return;
     if (this.testCaseRun.timeoutedStep) return;
 
+    // Search timeouted step by duration = -1.
+    // This is not 100% method, sometimes timeouted steps have real duration value.
+    // But allows to better place timeout error message in report.
     const timeoutedStep = findDeepestStepWithUnknownDuration(this.rootPwStep);
     if (!timeoutedStep) return;
 

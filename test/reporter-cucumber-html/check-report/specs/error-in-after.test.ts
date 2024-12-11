@@ -108,7 +108,14 @@ test('timeout in step and in fixture teardown', async ({ scenario }) => {
     /Hook "(After Hooks|fixture: fixtureWithTimeoutInTeardown)" failed/,
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
-  await expect(scenario.getSteps('failed')).toHaveCount(2);
+  // Don't check exact failed steps, it depends on PW version.
+  // - In modern PW versions (e.g. 1.49) timeouted fixture has 'error' field, we can find it.
+  //   It shows:
+  //   (1) Hook "fixture: fixtureWithTimeoutInTeardown" failed
+  //   (2) Hook "After Hooks" failed: Test timeout of 1500ms exceeded
+  // - In older PW versions there is no 'error' field in timeouted fixture, we can't find it.
+  //   It shows only fallback:
+  //   (1) Hook "After Hooks" failed: Test timeout of 1500ms exceeded
   await expect(scenario.getErrors()).toContainText([
     /Test timeout of \d+ms exceeded|Tearing down "fixtureWithTimeoutInTeardown" exceeded the test timeout/,
   ]);
