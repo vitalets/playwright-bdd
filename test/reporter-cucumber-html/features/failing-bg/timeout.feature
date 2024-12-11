@@ -1,8 +1,8 @@
-Feature: error-in-bg
+Feature: timeout-in-bg
 
   Background:
     Given step with page
-    Given failing step
+    Given timeouted step
 
   Scenario: scenario 1
     Given Action 1
