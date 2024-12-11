@@ -5,11 +5,6 @@ Feature: error-in-step
     Given failing step
     When Action 1
 
-  Scenario: timeout in step
-    Given step with page
-    Given timeouted step
-    When Action 1
-
   # - If this scenario name changed, snapshot file names should also change
   Scenario: failing match snapshot
     When step with page

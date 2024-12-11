@@ -2,7 +2,9 @@
  * Generate Cucumber HTML reporter and check the report via Playwright.
  * To check particular scenario:
  * 1. add @only tag to the scenario
- * 2. add `test.only` to the related spec file in check-report directory
+ * 2. comment checkHtmlReport() call in this file
+ *    OR
+ *    add `test.only` to the related spec file in check-report directory
  */
 import {
   test,
