@@ -21,6 +21,9 @@ export type TestStepRunEnvelope = Pick<
   | 'attachment'
 >;
 
+/**
+ * Run of messages.TestStep from hook or scenario.
+ */
 export class TestStepRun {
   constructor(
     protected testCaseRun: TestCaseRun,
@@ -99,23 +102,10 @@ export class TestStepRun {
     }
   }
 
-  // eslint-disable-next-line visual/complexity
   private getStepError() {
-    if (!this.pwStep) return;
-    if (this.testCaseRun.errorSteps.has(this.pwStep)) {
-      return this.pwStep.error;
+    if (this.pwStep) {
+      return this.testCaseRun.getStepError(this.pwStep);
     }
-    if (this.isTimeoutedStep()) {
-      return (
-        this.pwStep.error ||
-        this.pwStep.parent?.error ||
-        buildConcatenatedError(this.testCaseRun.result)
-      );
-    }
-  }
-
-  private isTimeoutedStep() {
-    return this.testCaseRun.isTimeouted() && this.pwStep === this.testCaseRun.timeoutedStep;
   }
 }
 
@@ -151,10 +141,4 @@ function isSkippedError(error?: pw.TestError) {
 
 function isFailed(status: messages.TestStepResultStatus) {
   return status === messages.TestStepResultStatus.FAILED;
-}
-
-function buildConcatenatedError(result: pw.TestResult) {
-  if (!result.errors?.length) return;
-  const message = result.errors.map((e) => e.message).join('\n\n');
-  return { message };
 }

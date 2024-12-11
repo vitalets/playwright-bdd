@@ -8,7 +8,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap.js';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
+import { areTestErrorsEqual, collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
@@ -32,10 +32,16 @@ export class TestCaseRun {
   testCase?: TestCase;
   attachmentMapper: AttachmentMapper;
   projectInfo: ProjectInfo;
-  // collect steps with error and show only these errors in report.
-  // it allows to not show the same error on parent steps
-  errorSteps = new Set<pw.TestStep>();
+  // Collect steps with error and show only these errors in report,
+  // it allows to not show the same error of parent steps.
+  // Usually, value contains step.error, but can be customized:
+  // e.g. timeouted step may not have 'error' field.
+  errorSteps = new Map<pw.TestStep, pw.TestError>();
+  // Sometimes timeouted step has duration = -1, sometimes real duration.
+  // This step is populated only for duration = -1.
+  // For other cases timeout error message is shown in After Hooks as a fallback.
   timeoutedStep?: pw.TestStep;
+
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
   private executedSteps: ExecutedStepInfo[];
@@ -65,37 +71,6 @@ export class TestCaseRun {
     return this.result.status === 'timedOut';
   }
 
-  private generateTestRunId() {
-    return `${this.test.id}-attempt-${this.result.retry}`;
-  }
-
-  private fillExecutedSteps() {
-    const possiblePwSteps = this.getPossiblePwSteps();
-    return this.bddTestData.steps.map((bddStep) => {
-      const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
-      this.collectErrorStep(pwStep);
-      this.collectTimeoutedStep(pwStep);
-      return { bddStep, pwStep };
-    });
-  }
-
-  private fillExecutedHooks(hookType: HookType) {
-    return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
-  }
-
-  collectErrorStep(pwStep?: pw.TestStep) {
-    if (pwStep?.error) this.errorSteps.add(pwStep);
-  }
-
-  private collectTimeoutedStep(pwStep?: pw.TestStep) {
-    if (!pwStep || !this.isTimeouted() || this.timeoutedStep) return;
-    // if we don't find exact timeouted step, it's not a big problem,
-    // just show error message in after hooks section
-    if (isUnknownDuration(pwStep)) {
-      this.timeoutedStep = pwStep;
-    }
-  }
-
   buildMessages() {
     return [
       this.buildTestCaseStarted(),
@@ -110,6 +85,51 @@ export class TestCaseRun {
     return hookType === 'before'
       ? this.executedBeforeHooks.executedHooks
       : this.executedAfterHooks.executedHooks;
+  }
+
+  getStepError(pwStep: pw.TestStep) {
+    return this.errorSteps.get(pwStep);
+  }
+
+  private generateTestRunId() {
+    return `${this.test.id}-attempt-${this.result.retry}`;
+  }
+
+  private fillExecutedSteps() {
+    const possiblePwSteps = this.getPossiblePwSteps();
+    return this.bddTestData.steps.map((bddStep) => {
+      const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
+      if (pwStep?.error) this.registerErrorStep(pwStep, pwStep.error);
+      this.registerTimeoutedStep(pwStep);
+      return { bddStep, pwStep };
+    });
+  }
+
+  private fillExecutedHooks(hookType: HookType) {
+    return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
+  }
+
+  registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {
+    this.errorSteps.set(pwStep, error);
+  }
+
+  // todo: rename
+  private registerTimeoutedStep(pwStep?: pw.TestStep) {
+    if (this.isTimeouted() && !this.timeoutedStep && pwStep && isUnknownDuration(pwStep)) {
+      this.timeoutedStep = pwStep;
+    }
+  }
+
+  getUnprocessedErrors() {
+    return this.result.errors.filter((error) => !this.isProcessedError(error));
+  }
+
+  private isProcessedError(error: pw.TestError) {
+    for (const pwStepError of this.errorSteps.values()) {
+      if (areTestErrorsEqual(pwStepError, error)) {
+        return true;
+      }
+    }
   }
 
   private buildTestCaseStarted() {

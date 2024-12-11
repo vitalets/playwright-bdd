@@ -108,7 +108,7 @@ test('timeout in step and in fixture teardown', async ({ scenario }) => {
     /Hook "(After Hooks|fixture: fixtureWithTimeoutInTeardown)" failed/,
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
-  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getSteps('failed')).toHaveCount(2);
   await expect(scenario.getErrors()).toContainText([
     /Test timeout of \d+ms exceeded|Tearing down "fixtureWithTimeoutInTeardown" exceeded the test timeout/,
   ]);

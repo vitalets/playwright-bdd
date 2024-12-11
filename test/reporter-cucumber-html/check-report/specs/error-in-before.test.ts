@@ -86,7 +86,9 @@ test('timeout in fixture setup', async ({ scenario }) => {
 
 test('timeout in before hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    /Hook "(BeforeEach hook|fixture: \$beforeEach)" failed:/, // prettier-ignore
+    // sometimes we still have 'BeforeEach Hooks' here, not 'my timeouted hook',
+    // when 'duration' is not -1, we can't find timeouted item.
+    /Hook "(my timeouted hook|BeforeEach Hooks|fixture: \$beforeEach)" failed:/, // prettier-ignore
     'GivenAction 1',
   ]);
   await expect(scenario.getErrors()).toContainText([

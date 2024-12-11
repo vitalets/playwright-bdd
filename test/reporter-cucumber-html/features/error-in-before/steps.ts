@@ -16,10 +16,13 @@ Before(
   },
 );
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-Before({ tags: '@before-hook-with-timeout' }, async ({ page, $testInfo }) => {
-  await new Promise((r) => setTimeout(r, $testInfo.timeout + 100));
-});
+Before(
+  { name: 'my timeouted hook', tags: '@before-hook-with-timeout' },
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async ({ page, $testInfo }) => {
+    await new Promise((r) => setTimeout(r, $testInfo.timeout + 100));
+  },
+);
 
 Given('step that uses fixtureWithErrorInSetup', async ({ fixtureWithErrorInSetup }) => {
   return fixtureWithErrorInSetup;

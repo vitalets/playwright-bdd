@@ -56,6 +56,7 @@ export class TestCaseRunHooks {
   private rootPwStep?: pw.TestStep;
   private candidateSteps: pw.TestStep[] = [];
   private hookSteps = new Set<pw.TestStep>();
+  private timeoutedStep?: pw.TestStep;
   executedHooks = new Map</* internalId */ string, ExecutedHookInfo>();
 
   constructor(
@@ -69,7 +70,7 @@ export class TestCaseRunHooks {
     this.addStepsWithName();
     this.addStepWithTimeout();
     this.addStepWithError();
-    this.addStepWithTimeoutFallback();
+    this.addStepWithErrorFallback();
     this.addStepsWithAttachment();
     this.excludeMainSteps(mainSteps);
     this.setExecutedHooks();
@@ -124,47 +125,65 @@ export class TestCaseRunHooks {
     });
   }
 
-  private addStepWithError() {
-    // todo: if there are several errors in after hooks?
-    const stepWithError = findDeepestStepWithError(this.rootPwStep);
-    if (!stepWithError) return;
-
-    // This workaround is for timeout in before hook,
-    // where timeouted step has duration -1 and no 'error' field.
-    // If error step = it's parent, omit it.
-    // Error will be shown via timeouted step.
-    const { timeoutedStep } = this.testCaseRun;
-    if (stepWithError === timeoutedStep?.parent) return;
-
-    this.hookSteps.add(stepWithError);
-    this.testCaseRun.collectErrorStep(stepWithError);
-  }
-
   private addStepWithTimeout() {
     if (!this.testCaseRun.isTimeouted()) return;
     if (this.testCaseRun.timeoutedStep) return;
 
     const timeoutedStep = findDeepestStepWithUnknownDuration(this.rootPwStep);
-    if (timeoutedStep) {
-      this.hookSteps.add(timeoutedStep);
-      this.testCaseRun.timeoutedStep = timeoutedStep;
+    if (!timeoutedStep) return;
+
+    this.timeoutedStep = timeoutedStep;
+    this.hookSteps.add(timeoutedStep);
+    this.testCaseRun.timeoutedStep = timeoutedStep;
+
+    if (timeoutedStep.error) {
+      this.registerErrorStep(timeoutedStep, timeoutedStep.error);
     }
   }
 
-  // eslint-disable-next-line visual/complexity
-  private addStepWithTimeoutFallback() {
-    // if in after hook there is no timeouted step and no error steps in test run,
-    // use root step "After Hooks" as last resort timeouted step.
-    // todo: check that all errors have related pwStep
+  private addStepWithError() {
+    // In case of several errors in after hooks (as they all run),
+    // parent pwStep and test result contain only the last error,
+    // but each hook step itself contains own error.
+    // Here we find only first step with error.
+    // Todo: find and show all errors for after hooks.
+    const stepWithError = findDeepestStepWithError(this.rootPwStep);
+    if (!stepWithError) return;
+
+    // Handling timeout in Before hook:
+    // - timeout step has duration -1 and no 'error' field
+    // - timeout step parent has 'error' field with timeout error
+    // We move error from parent to timeout step and don't save parent as error step.
     if (
-      this.hookType == 'after' &&
-      this.testCaseRun.isTimeouted() &&
-      !this.testCaseRun.timeoutedStep &&
-      this.testCaseRun.errorSteps.size === 0 &&
-      this.rootPwStep
+      this.timeoutedStep &&
+      !this.timeoutedStep.error &&
+      this.timeoutedStep.parent === stepWithError
     ) {
-      this.hookSteps.add(this.rootPwStep);
-      this.testCaseRun.timeoutedStep = this.rootPwStep;
+      this.registerErrorStep(this.timeoutedStep, stepWithError.error);
+      return;
+    }
+
+    this.registerErrorStep(stepWithError, stepWithError.error);
+  }
+
+  // eslint-disable-next-line visual/complexity
+  private addStepWithErrorFallback() {
+    // if in 'after' hooks group there are unprocessed errors,
+    // attach them to After Hooks root step.
+    if (this.hookType !== 'after') return;
+
+    const unprocessedErrors = this.testCaseRun.getUnprocessedErrors();
+    if (unprocessedErrors.length === 0) return;
+
+    const error = buildFallbackError(unprocessedErrors);
+
+    // if there is timeouted step without attached error, attach all unprocessed errors to it,
+    // otherwise attach unprocessed error to root 'After Hooks' step.
+    const { timeoutedStep } = this.testCaseRun;
+    if (timeoutedStep && !this.testCaseRun.getStepError(timeoutedStep)) {
+      this.testCaseRun.registerErrorStep(timeoutedStep, error);
+    } else if (this.rootPwStep) {
+      this.registerErrorStep(this.rootPwStep, error);
     }
   }
 
@@ -183,11 +202,35 @@ export class TestCaseRunHooks {
   private setExecutedHooks() {
     this.hookSteps.forEach((pwStep) => {
       const internalId = Hook.getInternalId(pwStep);
-      const hook = this.testCaseRun.hooks.getOrCreate(
-        internalId,
-        () => new Hook(internalId, this.hookType, pwStep),
-      );
+      const hook = this.getOrRegisterHook(pwStep);
       this.executedHooks.set(internalId, { hook, pwStep });
     });
   }
+
+  private getOrRegisterHook(pwStep: pw.TestStep) {
+    const internalId = Hook.getInternalId(pwStep);
+    return this.testCaseRun.hooks.getOrCreate(
+      internalId,
+      () => new Hook(internalId, this.hookType, pwStep),
+    );
+  }
+
+  private registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {
+    this.hookSteps.add(pwStep);
+    this.testCaseRun.registerErrorStep(pwStep, error);
+  }
+}
+
+function buildFallbackError(unprocessedErrors: pw.TestError[]) {
+  return unprocessedErrors.length === 1
+    ? unprocessedErrors[0]
+    : buildConcatenatedError(unprocessedErrors);
+}
+
+function buildConcatenatedError(errors: pw.TestError[]) {
+  const message = errors
+    .map((e) => e.message)
+    .filter(Boolean)
+    .join('\n\n');
+  return { message };
 }

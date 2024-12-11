@@ -8,6 +8,8 @@ import { HookType } from './Hook';
 // Playwright step categories, that can be mapped to testStep / hook in Cucumber messages
 const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
 
+type StepWithError = pw.TestStep & Required<Pick<pw.TestStep, 'error'>>;
+
 export function collectStepsWithCategory(
   parent: pw.TestResult | pw.TestStep | undefined,
   category: string | string[],
@@ -28,7 +30,7 @@ export function findDeepestStepWithError(root?: pw.TestStep) {
   if (!root) return;
   return findDeepestStepWith(root, (pwStep) => {
     return Boolean(pwStep.error) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
-  });
+  }) as StepWithError | undefined;
 }
 
 export function findDeepestStepWithUnknownDuration(root?: pw.TestStep) {
@@ -81,4 +83,10 @@ export function findParent(pwStep: pw.TestStep, predicate: (pwStep: pw.TestStep)
     if (predicate(parent)) return parent;
     parent = parent.parent;
   }
+}
+
+export function areTestErrorsEqual(e1: pw.TestError, e2: pw.TestError) {
+  // don't check location as it's object
+  const keys: (keyof pw.TestError)[] = ['message', 'stack', 'value'];
+  return keys.every((key) => e1[key] === e2[key]);
 }
