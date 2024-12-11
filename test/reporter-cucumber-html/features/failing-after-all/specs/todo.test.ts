@@ -1,4 +1,4 @@
-import { test } from '../fixtures';
+// import { test } from '../../../check-report/fixtures';
 
 // All these tests are skipped because they are marked as passed in Cucumber html report.
 // It's because afterAll hooks run in worker fixture teardown phase that is not related to any test.
@@ -9,6 +9,7 @@ import { test } from '../fixtures';
 // because it will be run several times.
 // Or just un-tagged afterAll hook + several files.
 
+/*
 test.describe.skip('error in anonymous after all hook', () => {
   test.use({ featureUri: 'failing-after-all/anonymous.feature' });
 
@@ -33,3 +34,4 @@ test.describe.skip('timeout in after-all hook', () => {
 
   test('scenario 1', async () => {});
 });
+*/

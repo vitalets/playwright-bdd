@@ -1,7 +1,5 @@
 import { expect } from '@playwright/test';
-import { test } from '../fixtures';
-
-test.use({ featureUri: 'success/sample.feature' });
+import { test } from '../../../check-report/fixtures';
 
 test('Feature tags', async ({ feature }) => {
   await expect(feature.getTags()).toHaveText(['@feature-tag']);

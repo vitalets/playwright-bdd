@@ -4,7 +4,7 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './specs',
+  testDir: '../features',
   outputDir: './test-results',
   reporter: 'dot',
   use: {

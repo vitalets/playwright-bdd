@@ -4,6 +4,7 @@ import { testTimeout } from '../reporter-cucumber-html/timeout';
 
 const testDir = defineBddConfig({
   featuresRoot: './features',
+  steps: ['./features/**/*.ts', '!**/*.spec.ts'],
 });
 
 const isShardRun = process.argv.some((a) => a.startsWith('--shard'));
