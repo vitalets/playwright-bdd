@@ -24,6 +24,7 @@ Feature: success
     And attach image inline
     And attach image as file
     And attach stdout
+    And attach buffer as stdout
 
   @success-before-hook
   @success-after-hook

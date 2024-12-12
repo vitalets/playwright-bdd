@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { createBdd } from 'playwright-bdd';
@@ -28,6 +29,11 @@ Then('attach image as file', async ({ $testInfo }) => {
 Then('attach stdout', async () => {
   console.log(123, 'some logs'); // eslint-disable-line no-console
   // don't test console.error b/c it poisons the output
+});
+
+// See: https://github.com/vitalets/playwright-bdd/issues/250
+Then('attach buffer as stdout', async () => {
+  execSync('echo "logs from exec"', { stdio: 'inherit' });
 });
 
 Before({ name: 'success before hook', tags: '@success-before-hook' }, async ({}) => {});

@@ -13,6 +13,7 @@
 * show background title in Playwright HTML reporter ([#122](https://github.com/vitalets/playwright-bdd/issues/122))
 * use `Examples:` block name as a template for examples test titles
 * preserve arg types in call-step-from-step functions ([#243](https://github.com/vitalets/playwright-bdd/issues/243))
+* handle buffer in attachments ([#250](https://github.com/vitalets/playwright-bdd/issues/250))
 * increase minimal Playwright version to 1.41
 
 ## 7.5.0

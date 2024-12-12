@@ -116,8 +116,12 @@ export class AttachmentMapper {
     // map stdout / stderr to the 'After Hooks' step
     if (!this.result[name]?.length) return;
     const body = this.result[name]
-      .map((s) => (typeof s === 'string' ? stripAnsiEscapes(s) : s))
+      // data can be buffer
+      .map((data) => (typeof data === 'string' ? data : data?.toString('utf8')))
+      .filter(Boolean)
+      .map((str) => stripAnsiEscapes(str))
       .join('');
+
     const afterHooksRoot = this.getAfterHooksRoot();
     const stepAttachments = this.stepAttachments.getOrCreate(afterHooksRoot, () => []);
     stepAttachments.push({
