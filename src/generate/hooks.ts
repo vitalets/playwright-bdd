@@ -33,10 +33,10 @@ import { Formatter } from './formatter';
 import { TestGen } from './test';
 
 export class TestFileHooks {
-  private beforeAll = new TestFileWorkerHooks('beforeAll', this.formatter);
-  private afterAll = new TestFileWorkerHooks('afterAll', this.formatter);
-  public before = new TestFileScenarioHooks('before', this.formatter);
-  public after = new TestFileScenarioHooks('after', this.formatter);
+  private beforeAll = new WorkerHooks('beforeAll', this.formatter);
+  private afterAll = new WorkerHooks('afterAll', this.formatter);
+  public before = new ScenarioHooks('before', this.formatter);
+  public after = new ScenarioHooks('after', this.formatter);
 
   constructor(private formatter: Formatter) {}
 
@@ -84,7 +84,7 @@ export class TestFileHooks {
   }
 }
 
-class TestFileScenarioHooks<T extends ScenarioHookType> {
+class ScenarioHooks<T extends ScenarioHookType> {
   private hooks = new Set<GeneralScenarioHook>();
 
   constructor(
@@ -114,7 +114,7 @@ class TestFileScenarioHooks<T extends ScenarioHookType> {
   }
 }
 
-class TestFileWorkerHooks<T extends WorkerHookType> {
+class WorkerHooks<T extends WorkerHookType> {
   private hooks = new Set<WorkerHook>();
   private tests: TestGen[] = [];
 
