@@ -4,8 +4,8 @@ import { test } from '../../../check-report/fixtures';
 test('timeout in bg', async ({ feature }) => {
   const background = feature.getBackground();
   await expect(background.getSteps()).toContainText([
-    'step with page', // prettier-ignore
-    'timeouted step',
+    'Givenstep with page', // prettier-ignore
+    'Giventimeouted step',
   ]);
   await expect(background.getSteps('failed')).toHaveCount(1);
   await expect(background.getErrors()).toContainText([
@@ -15,18 +15,24 @@ test('timeout in bg', async ({ feature }) => {
 
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    'Action 1', // prettier-ignore
+    'GivenAction 1', // prettier-ignore
     'screenshotDownload trace',
   ]);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getErrors()).not.toBeVisible();
+  // Can't ensure that there will be no errors.
+  // If timeouted bg step has real duration and no 'error' -> no way to find it
+  // In that case each scenario will show: Hook "Background" failed
+  // await expect(scenario.getErrors()).not.toBeVisible();
 });
 
 test('scenario 2', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    'Action 2', // prettier-ignore
+    'GivenAction 2', // prettier-ignore
     'screenshotDownload trace',
   ]);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getErrors()).not.toBeVisible();
+  // Can't ensure that there will be no errors.
+  // If timeouted bg step has real duration and no 'error' -> no way to find it
+  // In that case each scenario will show: Hook "Background" failed
+  // await expect(scenario.getErrors()).not.toBeVisible();
 });

@@ -20,9 +20,9 @@ import * as pw from '@playwright/test/reporter';
 import { Hook, HookType } from './Hook';
 import {
   getHooksRootPwStep,
-  collectStepsDfs,
   findDeepestStepWithError,
   findDeepestStepWithUnknownDuration,
+  findAllStepsWith,
 } from './pwStepUtils';
 import { ExecutedStepInfo, TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
@@ -34,9 +34,7 @@ type ExecutedHookInfo = {
 
 export class TestCaseRunHooks {
   private rootPwStep?: pw.TestStep;
-  private candidateSteps: pw.TestStep[] = [];
   private hookSteps = new Set<pw.TestStep>();
-  private timeoutedStep?: pw.TestStep;
   executedHooks = new Map</* internalId */ string, ExecutedHookInfo>();
 
   constructor(
@@ -46,7 +44,6 @@ export class TestCaseRunHooks {
 
   fill(mainSteps: ExecutedStepInfo[]) {
     this.setRootStep();
-    this.setCandidateSteps();
     this.addStepsWithName();
     this.addStepWithTimeout();
     this.addStepWithError();
@@ -83,26 +80,25 @@ export class TestCaseRunHooks {
     this.rootPwStep = getHooksRootPwStep(this.testCaseRun.result, this.hookType);
   }
 
-  private setCandidateSteps() {
-    if (this.rootPwStep) this.candidateSteps.push(this.rootPwStep);
-    this.candidateSteps.push(...collectStepsDfs(this.rootPwStep));
-  }
-
   private addStepsWithName() {
-    this.candidateSteps.forEach((pwStep) => {
-      if (pwStep.category === 'test.step' && pwStep.title) {
-        this.hookSteps.add(pwStep);
-      }
+    if (!this.rootPwStep) return;
+
+    const stepsWithName = findAllStepsWith(this.rootPwStep, (pwStep) => {
+      return pwStep.category === 'test.step' && pwStep.title;
     });
+
+    stepsWithName.forEach((pwStep) => this.hookSteps.add(pwStep));
   }
 
   private addStepsWithAttachment() {
+    if (!this.rootPwStep) return;
+
     const { attachmentMapper } = this.testCaseRun;
-    this.candidateSteps.forEach((pwStep) => {
-      if (attachmentMapper.getStepAttachments(pwStep).length > 0) {
-        this.hookSteps.add(pwStep);
-      }
+    const stepsWithAttachment = findAllStepsWith(this.rootPwStep, (pwStep) => {
+      return attachmentMapper.getStepAttachments(pwStep).length > 0;
     });
+
+    stepsWithAttachment.forEach((pwStep) => this.hookSteps.add(pwStep));
   }
 
   private addStepWithTimeout() {

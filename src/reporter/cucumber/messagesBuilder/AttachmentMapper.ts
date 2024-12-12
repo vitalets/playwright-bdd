@@ -50,7 +50,7 @@
  * 1. find all steps with category: 'attach' using deep-first search traversal
  * 2. iterate these steps in the following manner:
  *   2.1 take step and extract attachment name from step title
- *   2.2 find attachment with the same name, searching from the beginning of array
+ *   2.2 find this attachment by name in result.attachments, searching from the beginning of array
  *   2.3 map found attachment with step.parent
  *   2.4 remove found attachment from attachments array
  */
@@ -74,8 +74,8 @@ export class AttachmentMapper {
 
   private mapAttachments() {
     const allAttachments = this.result.attachments.slice();
-    const attachmentSteps = collectStepsWithCategory(this.result, 'attach');
-    attachmentSteps.forEach((attachmentStep) => {
+    const allAttachmentSteps = collectStepsWithCategory(this.result, 'attach');
+    allAttachmentSteps.forEach((attachmentStep) => {
       this.mapAttachment(attachmentStep, allAttachments);
     });
     this.unusedAttachments.push(...allAttachments);
@@ -91,14 +91,15 @@ export class AttachmentMapper {
     if (index === -1) {
       throw new Error(`Attachment not found for step: ${attachmentStep.title}`);
     }
+
+    // pick attachment from result.attachments array
     const [foundAttachment] = allAttachments.splice(index, 1);
+
     const parentStep = attachmentStep.parent;
-    // step.parent is empty:
-    // - in PW <= 1.40 when testInfo.attach() promise
-    // is awaited in the next async tick: 'attach' steps are on the top level
     const stepAttachments = parentStep
       ? this.stepAttachments.getOrCreate(parentStep, () => [])
       : this.unusedAttachments;
+
     stepAttachments.push(foundAttachment);
   }
 

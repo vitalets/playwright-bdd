@@ -10,6 +10,16 @@ const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
 
 type StepWithError = pw.TestStep & Required<Pick<pw.TestStep, 'error'>>;
 
+/**
+ * Returns root step for Before Hooks / After Hooks.
+ * Strings 'Before Hooks' and 'After Hooks' are hardcoded in Playwright.
+ * See: https://github.com/microsoft/playwright/blob/release-1.49/packages/playwright/src/worker/workerMain.ts#L336
+ */
+export function getHooksRootPwStep(result: pw.TestResult, type: HookType) {
+  const rootStepTitle = type === 'before' ? 'Before Hooks' : 'After Hooks';
+  return result.steps.find((step) => step.category === 'hook' && step.title === rootStepTitle);
+}
+
 export function collectStepsWithCategory(
   parent: pw.TestResult | pw.TestStep | undefined,
   category: string | string[],
@@ -17,13 +27,6 @@ export function collectStepsWithCategory(
   const categories = Array.isArray(category) ? category : [category];
   const steps = collectStepsDfs(parent);
   return steps.filter((step) => categories.includes(step.category));
-}
-
-export function getHooksRootPwStep(result: pw.TestResult, type: HookType) {
-  // 'Before Hooks' and 'After Hooks' are hardcoded in Playwright.
-  // See: https://github.com/microsoft/playwright/blob/release-1.49/packages/playwright/src/worker/workerMain.ts#L336
-  const rootStepTitle = type === 'before' ? 'Before Hooks' : 'After Hooks';
-  return result.steps.find((step) => step.category === 'hook' && step.title === rootStepTitle);
 }
 
 export function findDeepestStepWithError(root?: pw.TestStep) {
@@ -51,6 +54,25 @@ function findDeepestStepWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep)
     const nextSteps: pw.TestStep[] = [];
     curSteps.forEach((pwStep) => {
       if (predicate(pwStep)) result = pwStep;
+      nextSteps.push(...(pwStep.steps || []));
+    });
+    curSteps = nextSteps;
+  }
+
+  return result;
+}
+
+/**
+ * Find all steps that satisfies predicate function.
+ */
+export function findAllStepsWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep) => unknown) {
+  const result: pw.TestStep[] = [];
+  let curSteps = [root];
+
+  while (curSteps.length) {
+    const nextSteps: pw.TestStep[] = [];
+    curSteps.forEach((pwStep) => {
+      if (predicate(pwStep)) result.push(pwStep);
       nextSteps.push(...(pwStep.steps || []));
     });
     curSteps = nextSteps;
