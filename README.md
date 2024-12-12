@@ -1,12 +1,12 @@
-<p align="center">
+<div align="center">
   <a href="https://github.com/vitalets/playwright-bdd">
     <img width="128" alt="playwright-bdd" src="./docs/logo.svg">
   </a>
-</p>
+</div>
 
 <h2 align="center">Playwright-BDD</h2>
 
-<p align="center">
+<div align="center">
 
 [![lint](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/lint.yaml)
 [![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
@@ -14,7 +14,7 @@
 [![npm downloads](https://img.shields.io/npm/dw/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
 [![license](https://img.shields.io/npm/l/playwright-bdd)](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
 
-</p>
+</div>
 
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
 
