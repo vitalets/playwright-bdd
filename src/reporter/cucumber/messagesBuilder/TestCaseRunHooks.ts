@@ -115,13 +115,8 @@ export class TestCaseRunHooks {
     const timeoutedStep = findDeepestStepWithUnknownDuration(this.rootPwStep);
     if (!timeoutedStep) return;
 
-    this.timeoutedStep = timeoutedStep;
     this.hookSteps.add(timeoutedStep);
-    this.testCaseRun.timeoutedStep = timeoutedStep;
-
-    if (timeoutedStep.error) {
-      this.registerErrorStep(timeoutedStep, timeoutedStep.error);
-    }
+    this.testCaseRun.registerTimeoutedStep(timeoutedStep);
   }
 
   private addStepWithError() {
@@ -133,20 +128,13 @@ export class TestCaseRunHooks {
     const stepWithError = findDeepestStepWithError(this.rootPwStep);
     if (!stepWithError) return;
 
-    // Handling timeout in Before hook:
-    // - timeout step has duration -1 and no 'error' field
-    // - timeout step parent has 'error' field with timeout error
-    // We move error from parent to timeout step and don't save parent as error step.
-    if (
-      this.timeoutedStep &&
-      !this.timeoutedStep.error &&
-      this.timeoutedStep.parent === stepWithError
-    ) {
-      this.registerErrorStep(this.timeoutedStep, stepWithError.error);
-      return;
+    // If step is already added to errorSteps, don't register it as hookStep.
+    // This is mainly for timeout steps in hooks or bg:
+    // They have duration -1 and no 'error' field, but their parent has 'error' field.
+    // Here we find this parent again and avoid reporting the error twice.
+    if (!this.testCaseRun.hasRegisteredError(stepWithError.error)) {
+      this.registerErrorStep(stepWithError, stepWithError.error);
     }
-
-    this.registerErrorStep(stepWithError, stepWithError.error);
   }
 
   // eslint-disable-next-line visual/complexity

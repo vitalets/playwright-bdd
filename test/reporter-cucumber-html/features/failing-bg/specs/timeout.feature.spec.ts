@@ -1,14 +1,16 @@
 import { expect } from '@playwright/test';
 import { test } from '../../../check-report/fixtures';
 
-test('background is failing', async ({ feature }) => {
+test('timeout in bg', async ({ feature }) => {
   const background = feature.getBackground();
   await expect(background.getSteps()).toContainText([
     'step with page', // prettier-ignore
-    'failing step',
+    'timeouted step',
   ]);
   await expect(background.getSteps('failed')).toHaveCount(1);
-  await expect(background.getErrors()).toContainText(['expect(true).toBe(false)']);
+  await expect(background.getErrors()).toContainText([
+    /Test timeout of \d+ms exceeded while running "beforeEach" hook/,
+  ]);
 });
 
 test('scenario 1', async ({ scenario }) => {

@@ -90,3 +90,7 @@ export function areTestErrorsEqual(e1: pw.TestError, e2: pw.TestError) {
   const keys: (keyof pw.TestError)[] = ['message', 'stack', 'value'];
   return keys.every((key) => e1[key] === e2[key]);
 }
+
+export function isTopLevelStep(pwStep: pw.TestStep) {
+  return !pwStep.parent;
+}

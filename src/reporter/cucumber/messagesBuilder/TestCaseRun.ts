@@ -8,7 +8,12 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap.js';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import { areTestErrorsEqual, collectStepsWithCategory, isUnknownDuration } from './pwStepUtils';
+import {
+  areTestErrorsEqual,
+  collectStepsWithCategory,
+  isTopLevelStep,
+  isUnknownDuration,
+} from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
@@ -99,8 +104,12 @@ export class TestCaseRun {
     const possiblePwSteps = this.getPossiblePwSteps();
     return this.bddTestData.steps.map((bddStep) => {
       const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
-      if (pwStep?.error) this.registerErrorStep(pwStep, pwStep.error);
-      this.registerTimeoutedStep(pwStep);
+      if (pwStep?.error) {
+        this.registerErrorStep(pwStep, pwStep.error);
+      }
+      if (this.isTimeouted() && pwStep && isUnknownDuration(pwStep)) {
+        this.registerTimeoutedStep(pwStep);
+      }
       return { bddStep, pwStep };
     });
   }
@@ -113,10 +122,24 @@ export class TestCaseRun {
     this.errorSteps.set(pwStep, error);
   }
 
-  // todo: rename
-  private registerTimeoutedStep(pwStep?: pw.TestStep) {
-    if (this.isTimeouted() && !this.timeoutedStep && pwStep && isUnknownDuration(pwStep)) {
-      this.timeoutedStep = pwStep;
+  hasRegisteredError(error: pw.TestError) {
+    for (const registeredError of this.errorSteps.values()) {
+      if (registeredError === error) return true;
+    }
+  }
+
+  registerTimeoutedStep(pwStep: pw.TestStep) {
+    if (this.timeoutedStep) return;
+
+    this.timeoutedStep = pwStep;
+
+    // Handle case when timeouted step has duration -1 and no 'error' field,
+    // but it's parent contains actual error.
+    // - timeout in bg step
+    // - timeout in hooks
+    // We register timeouted step with error from parent.
+    if (!pwStep.error && pwStep.parent?.error && !isTopLevelStep(pwStep)) {
+      this.registerErrorStep(this.timeoutedStep, pwStep.parent.error);
     }
   }
 
