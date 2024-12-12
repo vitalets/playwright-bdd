@@ -21,6 +21,7 @@
   - [Decorators](writing-steps/decorators.md)
   - [Hooks](writing-steps/hooks.md)
   - [Built-in fixtures](writing-steps/builtin-fixtures.md)
+  - [Passing data between steps](writing-steps/passing-data.md)
   - [Scoped step definitions](writing-steps/scoped.md)
   - [Keywords matching](writing-steps/keywords-matching.md)
   - [Re-using step function](writing-steps/reusing-step-fn.md)
