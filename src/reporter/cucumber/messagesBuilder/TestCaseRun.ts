@@ -10,7 +10,7 @@ import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
 import {
   areTestErrorsEqual,
-  collectStepsWithCategory,
+  findAllStepsWithCategory,
   isTopLevelStep,
   isUnknownDuration,
 } from './pwStepUtils';
@@ -26,7 +26,7 @@ export type TestCaseRunEnvelope = TestStepRunEnvelope &
     | 'testCaseFinished'
   >;
 
-export type ExecutedBddStepInfo = {
+type ExecutedBddStepInfo = {
   bddStep: BddStepData;
   // pwStep can be missing even for executed steps when there is test timeout
   pwStep?: pw.TestStep;
@@ -211,6 +211,6 @@ export class TestCaseRun {
     // But it's more reliable to just collect all test.step items b/c some Playwright versions
     // move steps to fixtures (see: https://github.com/microsoft/playwright/issues/30075)
     // Collecting all test.step items should be ok, as later we anyway map them by location.
-    return collectStepsWithCategory(this.result, 'test.step');
+    return findAllStepsWithCategory(this.result, 'test.step');
   }
 }

@@ -56,7 +56,7 @@
  */
 import * as pw from '@playwright/test/reporter';
 import { AutofillMap } from '../../../utils/AutofillMap.js';
-import { collectStepsWithCategory, getHooksRootPwStep } from './pwStepUtils';
+import { findAllStepsWithCategory, getHooksRootPwStep } from './pwStepUtils';
 import { PwAttachment } from '../../../playwright/types.js';
 import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes.js';
 
@@ -77,7 +77,7 @@ export class AttachmentMapper {
 
   private mapAttachments() {
     const allAttachments = this.result.attachments.slice();
-    const allAttachmentSteps = collectStepsWithCategory(this.result, 'attach');
+    const allAttachmentSteps = findAllStepsWithCategory(this.result, 'attach');
     allAttachmentSteps
       // filter out trace/screenshot/video to always show them at the scenario bottom (and not in bg)
       .filter((attachmentStep) => !isPlaywrightAutoAttachment(attachmentStep))

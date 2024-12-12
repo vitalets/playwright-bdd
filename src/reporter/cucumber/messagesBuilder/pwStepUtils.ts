@@ -4,6 +4,7 @@
 
 import * as pw from '@playwright/test/reporter';
 import { HookType } from './Hook';
+import { toArray } from '../../../utils';
 
 // Playwright step categories, that can be mapped to testStep / hook in Cucumber messages
 const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
@@ -20,13 +21,9 @@ export function getHooksRootPwStep(result: pw.TestResult, type: HookType) {
   return result.steps.find((step) => step.category === 'hook' && step.title === rootStepTitle);
 }
 
-export function collectStepsWithCategory(
-  parent: pw.TestResult | pw.TestStep | undefined,
-  category: string | string[],
-) {
+export function findAllStepsWithCategory(result: pw.TestResult, category: string | string[]) {
   const categories = Array.isArray(category) ? category : [category];
-  const steps = collectStepsDfs(parent);
-  return steps.filter((step) => categories.includes(step.category));
+  return findAllStepsWith(result.steps, (pwStep) => categories.includes(pwStep.category));
 }
 
 export function findDeepestStepWithError(root?: pw.TestStep) {
@@ -65,9 +62,12 @@ function findDeepestStepWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep)
 /**
  * Find all steps that satisfies predicate function.
  */
-export function findAllStepsWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep) => unknown) {
+export function findAllStepsWith(
+  root: pw.TestStep | pw.TestStep[] | undefined,
+  predicate: (pwStep: pw.TestStep) => unknown,
+) {
   const result: pw.TestStep[] = [];
-  let curSteps = [root];
+  let curSteps = root ? toArray(root) : [];
 
   while (curSteps.length) {
     const nextSteps: pw.TestStep[] = [];
@@ -79,20 +79,6 @@ export function findAllStepsWith(root: pw.TestStep, predicate: (pwStep: pw.TestS
   }
 
   return result;
-}
-
-/**
- * Returns all steps in DFS order.
- * See: https://en.wikipedia.org/wiki/Depth-first_search
- */
-export function collectStepsDfs(parent: pw.TestResult | pw.TestStep | undefined) {
-  return (
-    parent?.steps?.reduce((res: pw.TestStep[], step) => {
-      res.push(step);
-      res.push(...collectStepsDfs(step));
-      return res;
-    }, []) || []
-  );
 }
 
 export function isUnknownDuration(pwStep: pw.TestStep) {
