@@ -158,7 +158,7 @@ class TestFileWorkerHooks<T extends WorkerHookType> {
     const prevTest = this.tests.at(-1)!;
     exit(
       [
-        `Tagged ${this.type} hooks should be the same for all scenarios in a feature.`,
+        `Tagged ${this.type} hooks can use only feature-level tags.`,
         `Feature: ${test.featureUri}`,
         `  - ${this.hooks.size} hook(s): ${prevTest.testTitle} ${prevTest.tags.join(' ')}`,
         `  - ${hooksForTest.size} hook(s): ${test.testTitle} ${test.tags.join(' ')}`,
