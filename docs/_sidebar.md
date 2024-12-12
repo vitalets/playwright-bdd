@@ -18,7 +18,6 @@
 * [**Writing steps**](writing-steps/index.md)
   - [Playwright-style](writing-steps/playwright-style.md)
   - [Cucumber-style](writing-steps/cucumber-style.md)
-  - [Cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
   - [Decorators](writing-steps/decorators.md)
   - [Hooks](writing-steps/hooks.md)
   - [Built-in fixtures](writing-steps/builtin-fixtures.md)

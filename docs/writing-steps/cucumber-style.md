@@ -1,29 +1,14 @@
 # Cucumber-style steps
 
-?> This is a new approach for cucumber-style steps since **v7**. For versions **before v7** please check [cucumber-style (legacy)](writing-steps/cucumber-style-legacy.md)
-
 Cucumber-style step definitions are compatible with CucumberJS.
 
  * step definitions use World (`this`) to interact with browser
  * step definitions receive only step parameters, don't receive custom fixtures as a first parameter
  * step definitions can't be defined as arrow functions
 
-Comparison of Cucumber-style and Playwright-style step:
-```ts
-// Cucumber-style step
-Given('I open page {string}', async function (url: string) {
-  await this.page.goto(url);
-});
-
-// Playwright-style step
-Given('I open page {string}', async ({ page }, url: string) => {
-  await page.goto(url);
-});
-```
-
 In terms of Playwright, World is just a test-scoped fixture, that is automatically provided to all step definitions.
 
-Since `playwright-bdd` v7 you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures and use them in step definitions.
+Since `playwright-bdd` v7 you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures as world props and use them in step definitions.
 
 **Example of cucumber-style setup:**
 

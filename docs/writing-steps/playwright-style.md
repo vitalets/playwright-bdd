@@ -1,22 +1,9 @@
 # Playwright-style steps
 Playwright-style allows you to write step definitions like a regular Playwright tests.
 
-* step definitions accept custom fixtures as a first parameter, and the rest are step parameters
+* step definitions accept custom fixtures as a first argument, and the rest are step parameters
 * step definitions don't use World (`this`)
 * step definitions can (and should) be defined as arrow functions
-
-Comparison of Playwright-style and Cucumber-style steps:
-```ts
-// Playwright-style step
-Given('I open page {string}', async ({ page }, url: string) => {
-  await page.goto(url);
-});
-
-// Cucumber-style step
-Given('I open page {string}', async function (url: string) {
-  await this.page.goto(url);
-});
-```
 
 To produce `Given / When / Then` for playwright-style with default fixtures, call `createBdd()` without any arguments:
 
