@@ -30,6 +30,7 @@ export type StepData = {
   matchedDefinition?: MatchedStepDefinition; // empty for missing steps
   pomNode?: PomNode; // for decorator steps
   pomFixtureName?: string; // for decorator steps
+  isBg?: boolean;
 };
 
 // todo: class StepGen ?
@@ -117,6 +118,7 @@ export class TestGen {
         matchedDefinition,
         fixtureNames,
         pomNode,
+        isBg: Boolean(bg),
       };
 
       this.stepsData.set(pickleStep.id, stepData);

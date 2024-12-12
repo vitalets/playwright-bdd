@@ -66,6 +66,9 @@ export class AttachmentMapper {
 
   constructor(private result: pw.TestResult) {
     this.mapAttachments();
+    this.mapUnusedAttachments();
+    this.mapStdioAttachments('stdout');
+    this.mapStdioAttachments('stderr');
   }
 
   getStepAttachments(pwStep: pw.TestStep) {
@@ -75,13 +78,11 @@ export class AttachmentMapper {
   private mapAttachments() {
     const allAttachments = this.result.attachments.slice();
     const allAttachmentSteps = collectStepsWithCategory(this.result, 'attach');
-    allAttachmentSteps.forEach((attachmentStep) => {
-      this.mapAttachment(attachmentStep, allAttachments);
-    });
+    allAttachmentSteps
+      // filter out trace/screenshot/video to always show them at the scenario bottom (and not in bg)
+      .filter((attachmentStep) => !isPlaywrightAutoAttachment(attachmentStep))
+      .forEach((attachmentStep) => this.mapAttachment(attachmentStep, allAttachments));
     this.unusedAttachments.push(...allAttachments);
-    this.mapUnusedAttachments();
-    this.mapStdioAttachments('stdout');
-    this.mapStdioAttachments('stderr');
   }
 
   private mapAttachment(attachmentStep: pw.TestStep, allAttachments: PwAttachment[]) {
@@ -141,4 +142,8 @@ export class AttachmentMapper {
 // See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L413
 function getAttachmentStepTitle(attachmentName: string) {
   return `attach "${attachmentName}"`;
+}
+
+function isPlaywrightAutoAttachment(attachmentStep: pw.TestStep) {
+  return /^attach "(trace|screenshot|video)"$/.test(attachmentStep.title);
 }

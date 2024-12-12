@@ -21,7 +21,7 @@ export type BddTestData = {
   skipped?: boolean;
   timeout?: number;
   slow?: boolean;
-  steps: BddStepData[];
+  steps: BddStepData[]; // pickle steps: (bg steps + scenario steps)
 };
 
 export type BddStepData = {
@@ -31,4 +31,5 @@ export type BddStepData = {
   keywordType: PickleStepType | undefined;
   pomFixtureName?: string;
   stepMatchArguments?: StepMatchArgument[];
+  isBg?: boolean;
 };

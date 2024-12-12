@@ -26,7 +26,7 @@ export type TestCaseRunEnvelope = TestStepRunEnvelope &
     | 'testCaseFinished'
   >;
 
-export type ExecutedStepInfo = {
+export type ExecutedBddStepInfo = {
   bddStep: BddStepData;
   // pwStep can be missing even for executed steps when there is test timeout
   pwStep?: pw.TestStep;
@@ -49,7 +49,8 @@ export class TestCaseRun {
 
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
-  private executedSteps: ExecutedStepInfo[];
+  private executedBddSteps: ExecutedBddStepInfo[];
+  private bgSteps = new Set<pw.TestStep>();
 
   // eslint-disable-next-line max-params
   constructor(
@@ -61,8 +62,9 @@ export class TestCaseRun {
   ) {
     this.id = this.generateTestRunId();
     this.projectInfo = getProjectInfo(this.test);
+    // call order is important here
     this.attachmentMapper = new AttachmentMapper(this.result);
-    this.executedSteps = this.fillExecutedSteps();
+    this.executedBddSteps = this.fillExecutedBddSteps();
     this.executedBeforeHooks = this.fillExecutedHooks('before');
     this.executedAfterHooks = this.fillExecutedHooks('after');
   }
@@ -100,22 +102,30 @@ export class TestCaseRun {
     return `${this.test.id}-attempt-${this.result.retry}`;
   }
 
-  private fillExecutedSteps() {
+  private fillExecutedBddSteps() {
     const possiblePwSteps = this.getPossiblePwSteps();
     return this.bddTestData.steps.map((bddStep) => {
-      const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
-      if (pwStep?.error) {
-        this.registerErrorStep(pwStep, pwStep.error);
-      }
-      if (this.isTimeouted() && pwStep && isUnknownDuration(pwStep)) {
-        this.registerTimeoutedStep(pwStep);
-      }
-      return { bddStep, pwStep };
+      return this.fillExecutedBddStep(bddStep, possiblePwSteps);
     });
   }
 
+  // eslint-disable-next-line visual/complexity
+  private fillExecutedBddStep(bddStep: BddStepData, possiblePwSteps: pw.TestStep[]) {
+    const pwStep = this.findPlaywrightStep(possiblePwSteps, bddStep);
+    if (pwStep?.error) {
+      this.registerErrorStep(pwStep, pwStep.error);
+    }
+    if (this.isTimeouted() && pwStep && isUnknownDuration(pwStep)) {
+      this.registerTimeoutedStep(pwStep);
+    }
+    if (pwStep && bddStep.isBg) {
+      this.bgSteps.add(pwStep);
+    }
+    return { bddStep, pwStep };
+  }
+
   private fillExecutedHooks(hookType: HookType) {
-    return new TestCaseRunHooks(this, hookType).fill(this.executedSteps);
+    return new TestCaseRunHooks(this, hookType).fill(this.executedBddSteps);
   }
 
   registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {
@@ -170,7 +180,7 @@ export class TestCaseRun {
     return this.getTestCase()
       .getSteps()
       .reduce((messages: TestStepRunEnvelope[], testStep, stepIndex) => {
-        const { pwStep } = this.executedSteps[stepIndex] || {};
+        const { pwStep } = this.executedBddSteps[stepIndex] || {};
         const testStepRun = new TestStepRun(this, testStep, pwStep);
         return messages.concat(testStepRun.buildMessages());
       }, []);

@@ -32,12 +32,13 @@ export class BddDataRenderer {
 
   private getBddTestData(test: TestGen): BddTestData {
     const steps = [...test.stepsData.values()].map(
-      ({ pickleStep, gherkinStep, pomFixtureName, matchedDefinition }) => {
+      ({ pickleStep, gherkinStep, isBg, pomFixtureName, matchedDefinition }) => {
         return {
           pwStepLine: this.sourceMapper.getPwStepLine(pickleStep),
           gherkinStepLine: gherkinStep.location.line,
           keywordOrig: gherkinStep.keyword,
           keywordType: pickleStep.type,
+          isBg: isBg || undefined,
           pomFixtureName,
           stepMatchArguments: matchedDefinition?.getStepMatchArguments(),
         };

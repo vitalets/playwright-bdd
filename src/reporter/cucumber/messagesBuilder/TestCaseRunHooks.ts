@@ -24,7 +24,7 @@ import {
   findDeepestStepWithUnknownDuration,
   findAllStepsWith,
 } from './pwStepUtils';
-import { ExecutedStepInfo, TestCaseRun } from './TestCaseRun';
+import { ExecutedBddStepInfo, TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 
 type ExecutedHookInfo = {
@@ -42,7 +42,7 @@ export class TestCaseRunHooks {
     private hookType: HookType,
   ) {}
 
-  fill(mainSteps: ExecutedStepInfo[]) {
+  fill(mainSteps: ExecutedBddStepInfo[]) {
     this.setRootStep();
     this.addStepsWithName();
     this.addStepWithTimeout();
@@ -154,7 +154,7 @@ export class TestCaseRunHooks {
     }
   }
 
-  private excludeMainSteps(mainSteps: ExecutedStepInfo[]) {
+  private excludeMainSteps(mainSteps: ExecutedBddStepInfo[]) {
     // - exclude background steps, b/c they are in pickle and should not be in hooks.
     // - exclude other test.step items that are bdd steps and should not be in hooks.
     // Important to run this fn after this.fillExecutedSteps()
