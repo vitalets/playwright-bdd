@@ -8,6 +8,8 @@ import { BDDConfig, BDDInputConfig } from './types';
 import { defaults } from './defaults';
 import { removeUndefined } from '../utils';
 import { resolveConfigDir } from '../playwright/loadConfig';
+import { isDirectory } from '../utils/paths';
+import { exit } from '../utils/exit';
 
 export function defineBddProject(config: BDDInputConfig & { name: string }) {
   const { name, ...bddConfig } = config;
@@ -31,10 +33,7 @@ export function defineBddConfig(inputConfig: BDDInputConfig) {
     return config.outputDir;
   } else {
     const configDir = getConfigDirFromEnv();
-    // resolve full config, although here we need only outputDir
-    // it's simpler, because we should apply defaults etc.
-    const config = getConfig(configDir, inputConfig);
-    return config.outputDir;
+    return resolveOutputDir(configDir, inputConfig?.outputDir);
   }
 }
 
@@ -42,9 +41,12 @@ export function defineBddConfig(inputConfig: BDDInputConfig) {
 function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
   const config = Object.assign({}, defaults, removeUndefined(inputConfig));
 
+  validateFeaturesRoot(config.featuresRoot);
+
   const features = config.features || config.paths || config.featuresRoot;
-  if (!features)
-    throw new Error(`Please provide 'features' or 'featuresRoot' option in defineBddConfig()`);
+  if (!features) {
+    exit(`Please provide 'features' or 'featuresRoot' option in defineBddConfig()`);
+  }
 
   // Currently steps can be empty: e.g. when decorator steps loaded via importTestFrom
   // After removing importTestFrom we should throw error for missing steps as well.
@@ -61,9 +63,17 @@ function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
     steps,
     featuresRoot,
     // important to resolve outputDir as it is used as unique key for input configs
-    outputDir: path.resolve(configDir, config.outputDir),
+    outputDir: resolveOutputDir(configDir, config.outputDir),
     importTestFrom: resolveImportTestFrom(configDir, config.importTestFrom),
   };
+}
+
+/**
+ * Separate function to resolve only outputDir.
+ * Used in workers, to not resolve the whole config again.
+ */
+function resolveOutputDir(configDir: string, providedOutputDir?: string) {
+  return path.resolve(configDir, providedOutputDir || defaults.outputDir);
 }
 
 function resolveImportTestFrom(
@@ -80,5 +90,14 @@ function resolveImportTestFrom(
       file: path.resolve(configDir, file),
       varName,
     };
+  }
+}
+
+function validateFeaturesRoot(featuresRoot?: string) {
+  if (featuresRoot && !isDirectory(featuresRoot)) {
+    exit(
+      `Config option 'featuresRoot' should be a directory.`,
+      `You can provide 'features' option with glob pattern, e.g. ./features/*.feature.`,
+    );
   }
 }

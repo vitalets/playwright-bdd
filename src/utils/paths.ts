@@ -62,3 +62,12 @@ export async function copyFileAndMakeWritable(from: string, to: string) {
   await fs.promises.copyFile(from, to);
   await fs.promises.chmod(to, 0o664);
 }
+
+export function isDirectory(directoryPath: string) {
+  try {
+    const stats = fs.statSync(directoryPath);
+    return stats.isDirectory();
+  } catch {
+    return false;
+  }
+}
