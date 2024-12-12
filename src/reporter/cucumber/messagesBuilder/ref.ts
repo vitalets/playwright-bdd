@@ -26,5 +26,8 @@ export function getMessagesBuilderRef() {
     onEnd(fullResult: pw.FullResult) {
       if (isFirstRef) this.builder.onEnd(fullResult);
     },
+    onError(error: pw.TestError) {
+      if (isFirstRef) this.builder.onError(error);
+    },
   };
 }

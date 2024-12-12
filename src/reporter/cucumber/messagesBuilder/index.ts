@@ -69,12 +69,6 @@ export class MessagesBuilder {
       throw new Error(`Cannot find bddTestData for ${filePath}:${test.location.line}`);
     }
 
-    // For skipped tests Playwright doesn't run fixtures
-    // and we don't have bddData attachment -> don't know feature uri.
-    // Don't add such test run to report.
-    // todo: don't omit skipped tests!
-    // if (result.status === 'skipped') return;
-
     // Important to create TestCaseRun in this method (not later),
     // b/c test properties can change after retries
     // especially annotations where we store bddData
@@ -85,6 +79,10 @@ export class MessagesBuilder {
   onEnd(fullResult: pw.FullResult) {
     this.fullResult = fullResult;
     this.onEndPromiseResolve();
+  }
+
+  onError(error: pw.TestError) {
+    this.testRun.registerGlobalError(error);
   }
 
   /**

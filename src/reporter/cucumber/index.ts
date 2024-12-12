@@ -59,8 +59,11 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
     this.messagesBuilderRef.onTestEnd(test, result);
   }
 
-  onError(_error: TestError): void {
-    // todo: implement
+  /**
+   * Error not related to any test, e.g. worker teardown.
+   */
+  onError(error: TestError) {
+    this.messagesBuilderRef.onError(error);
   }
 
   async onEnd(result: FullResult) {

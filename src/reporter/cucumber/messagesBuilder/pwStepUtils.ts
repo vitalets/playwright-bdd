@@ -102,3 +102,13 @@ export function areTestErrorsEqual(e1: pw.TestError, e2: pw.TestError) {
 export function isTopLevelStep(pwStep: pw.TestStep) {
   return !pwStep.parent;
 }
+
+/**
+ * When calling test.skip() in Playwright test, it throws an error with message:
+ * "Test is skipped".
+ * This error exists in step, but it is not a real error, it is a skipped step.
+ * See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L223
+ */
+export function isSkippedError(error?: pw.TestError) {
+  return Boolean(error?.message?.includes('Test is skipped:'));
+}

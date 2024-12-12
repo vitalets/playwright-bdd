@@ -9,10 +9,11 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { stripAnsiEscapes } from '../../../utils/stripAnsiEscapes.js';
 import { TestCaseRun } from './TestCaseRun';
 import { toCucumberTimestamp } from './timing';
 import { TestStepAttachments } from './TestStepAttachments';
+import { isSkippedError } from './pwStepUtils';
+import { buildErrorMessage, buildException } from './error';
 
 export type TestStepRunEnvelope = Pick<
   messages.Envelope,
@@ -77,8 +78,8 @@ export class TestStepRun {
         // 'message' is deprecated since cucumber 10.4 in favor of 'exception' field
         // But we keep both for compatibility with other reporters.
         // See: https://github.com/cucumber/react-components/pull/345
-        message: isFailed(status) && error ? buildErrorMessage(error) : undefined,
-        exception: isFailed(status) && error ? buildException(error) : undefined,
+        message: isStepFailed(status) && error ? buildErrorMessage(error) : undefined,
+        exception: isStepFailed(status) && error ? buildException(error) : undefined,
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };
@@ -109,36 +110,6 @@ export class TestStepRun {
   }
 }
 
-function buildErrorMessage(error: pw.TestError) {
-  return stripAnsiEscapes([error.message, error.snippet].filter(Boolean).join('\n'));
-}
-
-function buildException(error: pw.TestError): messages.Exception {
-  return {
-    type: 'Error',
-    message: buildErrorMessage(error),
-    // todo: extract only trace?
-    stackTrace: error.stack ? extractStackTrace(stripAnsiEscapes(error.stack)) : undefined,
-  };
-}
-
-function extractStackTrace(errorStack: string) {
-  return errorStack
-    .split('\n')
-    .filter((line) => line.match(/^\s+at .*/))
-    .join('\n');
-}
-
-/**
- * When calling test.skip() in Playwright test, it throws an error with message:
- * "Test is skipped".
- * This error exists in step, but it is not a real error, it is a skipped step.
- * See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/worker/testInfo.ts#L223
- */
-function isSkippedError(error?: pw.TestError) {
-  return Boolean(error?.message?.includes('Test is skipped:'));
-}
-
-function isFailed(status: messages.TestStepResultStatus) {
+function isStepFailed(status: messages.TestStepResultStatus) {
   return status === messages.TestStepResultStatus.FAILED;
 }
