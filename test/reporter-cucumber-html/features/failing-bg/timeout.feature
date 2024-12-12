@@ -1,7 +1,7 @@
 Feature: timeout-in-bg
 
   Background:
-    Given step with page
+    Given Action 0
     Given timeouted step
 
   Scenario: scenario 1

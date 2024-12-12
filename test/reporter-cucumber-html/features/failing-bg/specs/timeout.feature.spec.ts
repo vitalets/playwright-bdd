@@ -4,7 +4,7 @@ import { test } from '../../../check-report/fixtures';
 test('timeout in bg', async ({ feature }) => {
   const background = feature.getBackground();
   await expect(background.getSteps()).toContainText([
-    'Givenstep with page', // prettier-ignore
+    'GivenAction 0', // prettier-ignore
     'Giventimeouted step',
   ]);
   await expect(background.getSteps('failed')).toHaveCount(1);
@@ -16,7 +16,7 @@ test('timeout in bg', async ({ feature }) => {
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 1', // prettier-ignore
-    'screenshotDownload trace',
+    'Download trace',
   ]);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
   // Can't ensure that there will be no errors.
@@ -28,7 +28,7 @@ test('scenario 1', async ({ scenario }) => {
 test('scenario 2', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 2', // prettier-ignore
-    'screenshotDownload trace',
+    'Download trace',
   ]);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
   // Can't ensure that there will be no errors.

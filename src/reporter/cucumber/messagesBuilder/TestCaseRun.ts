@@ -125,7 +125,7 @@ export class TestCaseRun {
   }
 
   private fillExecutedHooks(hookType: HookType) {
-    return new TestCaseRunHooks(this, hookType).fill(this.executedBddSteps);
+    return new TestCaseRunHooks(this, hookType, this.bgSteps).fill();
   }
 
   registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {

@@ -24,7 +24,7 @@ import {
   findDeepestStepWithUnknownDuration,
   findAllStepsWith,
 } from './pwStepUtils';
-import { ExecutedBddStepInfo, TestCaseRun } from './TestCaseRun';
+import { TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 
 type ExecutedHookInfo = {
@@ -34,22 +34,22 @@ type ExecutedHookInfo = {
 
 export class TestCaseRunHooks {
   private rootPwStep?: pw.TestStep;
-  private hookSteps = new Set<pw.TestStep>();
+  private hookPwSteps = new Set<pw.TestStep>();
   executedHooks = new Map</* internalId */ string, ExecutedHookInfo>();
 
   constructor(
     private testCaseRun: TestCaseRun,
     private hookType: HookType,
+    private bgSteps: Set<pw.TestStep>,
   ) {}
 
-  fill(mainSteps: ExecutedBddStepInfo[]) {
+  fill() {
     this.setRootStep();
     this.addStepsWithName();
     this.addStepWithTimeout();
     this.addStepWithError();
     this.addStepWithErrorFallback();
     this.addStepsWithAttachment();
-    this.excludeMainSteps(mainSteps);
     this.setExecutedHooks();
     return this;
   }
@@ -87,7 +87,9 @@ export class TestCaseRunHooks {
       return pwStep.category === 'test.step' && pwStep.title;
     });
 
-    stepsWithName.forEach((pwStep) => this.hookSteps.add(pwStep));
+    stepsWithName
+      .filter((pwStep) => !this.isBackgroundStep(pwStep))
+      .forEach((pwStep) => this.hookPwSteps.add(pwStep));
   }
 
   private addStepsWithAttachment() {
@@ -98,7 +100,9 @@ export class TestCaseRunHooks {
       return attachmentMapper.getStepAttachments(pwStep).length > 0;
     });
 
-    stepsWithAttachment.forEach((pwStep) => this.hookSteps.add(pwStep));
+    stepsWithAttachment
+      .filter((pwStep) => !this.isBackgroundStep(pwStep))
+      .forEach((pwStep) => this.hookPwSteps.add(pwStep));
   }
 
   private addStepWithTimeout() {
@@ -109,9 +113,9 @@ export class TestCaseRunHooks {
     // This is not 100% method, sometimes timeouted steps have real duration value.
     // But allows to better place timeout error message in report.
     const timeoutedStep = findDeepestStepWithUnknownDuration(this.rootPwStep);
-    if (!timeoutedStep) return;
+    if (!timeoutedStep || this.isBackgroundStep(timeoutedStep)) return;
 
-    this.hookSteps.add(timeoutedStep);
+    this.hookPwSteps.add(timeoutedStep);
     this.testCaseRun.registerTimeoutedStep(timeoutedStep);
   }
 
@@ -122,7 +126,7 @@ export class TestCaseRunHooks {
     // Here we find only first step with error.
     // Todo: find and show all errors for after hooks.
     const stepWithError = findDeepestStepWithError(this.rootPwStep);
-    if (!stepWithError) return;
+    if (!stepWithError || this.isBackgroundStep(stepWithError)) return;
 
     // If step is already added to errorSteps, don't register it as hookStep.
     // This is mainly for timeout steps in hooks or bg:
@@ -154,20 +158,8 @@ export class TestCaseRunHooks {
     }
   }
 
-  private excludeMainSteps(mainSteps: ExecutedBddStepInfo[]) {
-    // - exclude background steps, b/c they are in pickle and should not be in hooks.
-    // - exclude other test.step items that are bdd steps and should not be in hooks.
-    // Important to run this fn after this.fillExecutedSteps()
-    // as we assume steps are already populated
-    mainSteps.forEach((stepInfo) => {
-      if (stepInfo.pwStep) {
-        this.hookSteps.delete(stepInfo.pwStep);
-      }
-    });
-  }
-
   private setExecutedHooks() {
-    this.hookSteps.forEach((pwStep) => {
+    this.hookPwSteps.forEach((pwStep) => {
       const internalId = Hook.getInternalId(pwStep);
       const hook = this.getOrRegisterHook(pwStep);
       this.executedHooks.set(internalId, { hook, pwStep });
@@ -183,8 +175,12 @@ export class TestCaseRunHooks {
   }
 
   private registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {
-    this.hookSteps.add(pwStep);
+    this.hookPwSteps.add(pwStep);
     this.testCaseRun.registerErrorStep(pwStep, error);
+  }
+
+  private isBackgroundStep(pwStep: pw.TestStep) {
+    return this.bgSteps.has(pwStep);
   }
 }
 

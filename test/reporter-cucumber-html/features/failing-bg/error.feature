@@ -1,7 +1,8 @@
 Feature: error-in-bg
 
+  # don't use 'step with page' here, as page sometimes can't initialize due to timeout
   Background:
-    Given step with page
+    Given Action 0
     Given failing step
 
   Scenario: scenario 1
