@@ -46,9 +46,9 @@ Run tests:
 ```
 npm t
 ```
-Check if Playwright version is deprecated:
+Show deprecated Playwright versions:
 ```
-npm show @playwright/test@1.40 deprecated
+npm show @playwright/test@1 deprecated
 ```
 
 ## Run tests on different Cucumber version
