@@ -1,7 +1,5 @@
 # Migration to v7
 
-?> Your feedback on **v7** is really appreciated ❤️
-
 Playwright-bdd **v7** introduces several significant improvements. The root one is **removing dependency on Cucumber runner** ([#136](https://github.com/vitalets/playwright-bdd/issues/136)). Now features and steps are handled directly without involving `@cucumber/cucumber` package. That gives many advantages for dev experience, performance and future maintenance of `playwright-bdd`. This guide will go through all the changes and provide necessary actions.
 
 The guide consists of two parts, depending on steps style you are using:
