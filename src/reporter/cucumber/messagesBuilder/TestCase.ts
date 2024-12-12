@@ -12,7 +12,7 @@
  */
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
-import { Hook, HookType } from './Hook';
+import { Hook, HooksGroup } from './Hook';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/types';
 import { ProjectInfo } from './Projects';
 
@@ -56,7 +56,7 @@ export class TestCase {
     this.addStepsArgumentsLists(testCaseRun);
   }
 
-  getHooks(hookType: HookType) {
+  getHooks(hookType: HooksGroup) {
     return hookType == 'before' ? this.beforeHooks : this.afterHooks;
   }
 
@@ -83,7 +83,7 @@ export class TestCase {
   /**
    * We collect hooks from all runs of this test case, avoiding duplicates.
    */
-  private addHooks(testCaseRun: TestCaseRun, hookType: HookType) {
+  private addHooks(testCaseRun: TestCaseRun, hookType: HooksGroup) {
     const testCaseHooks = hookType === 'before' ? this.beforeHooks : this.afterHooks;
     const testCaseRunHooks = testCaseRun.getExecutedHooks(hookType);
 

@@ -3,7 +3,7 @@
  */
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
-import { Hook, HookType } from './Hook';
+import { Hook, HooksGroup } from './Hook';
 import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap.js';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
@@ -88,7 +88,7 @@ export class TestCaseRun {
     ];
   }
 
-  getExecutedHooks(hookType: HookType) {
+  getExecutedHooks(hookType: HooksGroup) {
     return hookType === 'before'
       ? this.executedBeforeHooks.executedHooks
       : this.executedAfterHooks.executedHooks;
@@ -124,7 +124,7 @@ export class TestCaseRun {
     return { bddStep, pwStep };
   }
 
-  private fillExecutedHooks(hookType: HookType) {
+  private fillExecutedHooks(hookType: HooksGroup) {
     return new TestCaseRunHooks(this, hookType, this.bgSteps).fill();
   }
 

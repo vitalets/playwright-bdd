@@ -17,7 +17,7 @@
  */
 
 import * as pw from '@playwright/test/reporter';
-import { Hook, HookType } from './Hook';
+import { Hook, HooksGroup } from './Hook';
 import {
   getHooksRootPwStep,
   findDeepestStepWithError,
@@ -39,7 +39,7 @@ export class TestCaseRunHooks {
 
   constructor(
     private testCaseRun: TestCaseRun,
-    private hookType: HookType,
+    private hookType: HooksGroup,
     private bgSteps: Set<pw.TestStep>,
   ) {}
 

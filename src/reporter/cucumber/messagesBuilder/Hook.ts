@@ -15,7 +15,7 @@ import { findParent } from './pwStepUtils';
 
 // We don't distinguish between BeforeAll / Before hooks here (and AfterAll / After)
 // Do it only when building cucumber message: setting messages.HookType.
-export type HookType = 'before' | 'after';
+export type HooksGroup = 'before' | 'after';
 
 export class Hook {
   // persistent hook ID to avoid hook duplicates due to several run of hook.
@@ -29,12 +29,12 @@ export class Hook {
 
   constructor(
     public internalId: string,
-    hookType: HookType,
+    group: HooksGroup,
     /* one of pwSteps for this hook */
     private pwStep: pw.TestStep,
   ) {
     this.id = randomUUID();
-    this.hookType = hookType === 'before' ? this.getBeforeType() : this.getAfterType();
+    this.hookType = group === 'before' ? this.getBeforeHookType() : this.getAfterHookType();
   }
 
   buildMessage() {
@@ -56,7 +56,7 @@ export class Hook {
     return this.pwStep.title;
   }
 
-  private getBeforeType(): messages.HookType {
+  private getBeforeHookType(): messages.HookType {
     // beforeEach hooks are located inside the hooks group created by test.beforeEach()
     const beforeHooksGroupStep = findParent(this.pwStep, (step) => {
       return step.category === 'hook' && step.title === BEFORE_EACH_HOOKS_GROUP_NAME;
@@ -67,7 +67,7 @@ export class Hook {
       : messages.HookType.BEFORE_TEST_RUN;
   }
 
-  private getAfterType(): messages.HookType {
+  private getAfterHookType(): messages.HookType {
     // afterEach hooks are NOT located inside the hooks group created by test.afterEach()
     // possibly bug in the Playwright.
     // We distinguish them by the fact, that worker hooks are not executed via test.step()
