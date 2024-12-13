@@ -1,6 +1,6 @@
 # Getting started
 
-Welcome to Playwright-bdd!
+Welcome to Playwright-BDD!
 
 This tutorial introduces you to the essentials of BDD testing with Playwright. It includes the following steps:
 

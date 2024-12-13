@@ -1,6 +1,6 @@
 # Debugging
 
-Playwright-bdd outputs regular Playwright test files. You can use any of [Playwright debugging methods](https://playwright.dev/docs/debug) for BDD tests.
+Playwright-BDD outputs regular Playwright test files. You can use any of [Playwright debugging methods](https://playwright.dev/docs/debug) for BDD tests.
 
 #### Run tests with `--debug` flag
 This command opens browser and allows step-by-step evaluation:

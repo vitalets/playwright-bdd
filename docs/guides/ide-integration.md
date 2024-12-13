@@ -1,5 +1,5 @@
 # IDE integration
-One of Playwright-bdd goals is to support all Playwright IDE integrations. It is the main reason for pre-generating test files as regular Playwright test files.
+One of Playwright-BDD goals is to support all Playwright IDE integrations. It is the main reason for pre-generating test files as regular Playwright test files.
 
 ## VS Code
 

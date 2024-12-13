@@ -1,7 +1,7 @@
-# Playwright-bdd fixtures
-Playwright-bdd provides special fixtures for convenient development.
+# Playwright-BDD fixtures
+Playwright-BDD provides special fixtures for convenient development.
 
-?> All Playwright-bdd fixtures are prefixed with `$` to avoid name collision with user-defined fixtures.
+?> All Playwright-BDD fixtures are prefixed with `$` to avoid name collision with user-defined fixtures.
 
 ## `$test` and `$testInfo`
 You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:

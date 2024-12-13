@@ -1,5 +1,5 @@
 # Decorators
-Playwright-bdd supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). 
+Playwright-BDD supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). 
 
 Decorators are imported from `playwright-bdd/decorators`:
 ```ts
@@ -94,7 +94,7 @@ Scenario: Adding todos
   When I add todo "foo"   # <- step defined in AdminTodoPage
 ```
 
-Here `playwright-bdd` will use single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
+Here Playwright-BDD will use single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
 
 In some cases you may want to force usage of particular fixture.
 For that you can apply special tag `@fixture:%name%`:

@@ -1,8 +1,8 @@
 # Write first BDD test
 
-Follow the steps below to create and run first BDD test with `playwright-bdd`.
+Follow the steps below to create and run your first BDD test with `playwright-bdd`.
 
-?> In this guide we use JavaScript for simplicity, but you can use TypeScript as well
+?> This guide uses JavaScript for simplicity, but you can use TypeScript as well
 
 1. Create the following `playwright.config.js` in the project root:
    ```js
@@ -80,4 +80,4 @@ Follow the steps below to create and run first BDD test with `playwright-bdd`.
 
 !> If your project uses [ES Modules](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md)
 
-?> There is fully working Playwright-bdd example project [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
+?> Here is fully working Playwright-BDD example project: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)

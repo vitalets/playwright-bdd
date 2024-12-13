@@ -1,5 +1,5 @@
 # Component tests
-Playwright-bdd supports [component tests](https://playwright.dev/docs/test-components)
+Playwright-BDD supports [component tests](https://playwright.dev/docs/test-components)
 since Playwright **1.39**.
 
 Initialize components testing [per instruction](https://playwright.dev/docs/test-components#how-to-get-started):
@@ -7,7 +7,7 @@ Initialize components testing [per instruction](https://playwright.dev/docs/test
 npm init playwright@latest -- --ct
 ```
 
-Add `playwright-bdd` configuration to `playwright-ct.config.ts`:
+Add Playwright-BDD configuration to `playwright-ct.config.ts`:
 ```ts
 import { defineConfig, devices } from '@playwright/experimental-ct-react';
 import { defineBddConfig } from 'playwright-bdd';

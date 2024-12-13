@@ -1,5 +1,5 @@
 # Using `DataTables`
-Playwright-bdd provides full support of [`DataTables`](https://cucumber.io/docs/gherkin/reference/#data-tables).
+Playwright-BDD provides full support of [`DataTables`](https://cucumber.io/docs/gherkin/reference/#data-tables).
 For example:
 ```gherkin
 Feature: Some feature

@@ -1,13 +1,21 @@
 <!-- this file differs from README.md in project root -->
 
-# playwright-bdd
+<div align="center">
+  <a href="/">
+    <img width="128" alt="Playwright-BDD" src="logo.svg">
+  </a>
+</div>
 
-Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
+<h1 align="center">Playwright-BDD</h1>
 
-> 🔥 **Playwright-bdd v7 is released!** Dropped Cucumber package dependency, simpler configuration and other improvements. [Try it out](https://vitalets.github.io/playwright-bdd/#/guides/migration-v7) and share the feedback!
+<div align="center">
+
+Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner
+
+</div>
 
 ## Quick start
-Jump to [getting started](getting-started/index.md) or read below about `playwright-bdd` architecture.
+Jump to [getting started](getting-started/index.md) or read below some technical details of Playwright-BDD.
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
@@ -23,8 +31,8 @@ Such approach brings all the benefits of Playwright runner:
 * Power of Playwright fixtures
 * [...a lot more](https://playwright.dev/docs/library#key-differences)
 
-## How playwright-bdd works
-Typical command to run tests with `playwright-bdd` is the following:
+## How Playwright-BDD works
+Typical command to run tests with Playwright-BDD is the following:
 ```
 npx bddgen && npx playwright test
 ```
@@ -59,7 +67,7 @@ test.describe('Playwright site', () => {
 
 ### Phase 2: Run tests
 CLI command `npx playwright test` runs generated test files with Playwright runner.
-Playwright-bdd makes Playwright API available in step definitions (`page`, `browser`, etc):
+Playwright-BDD makes Playwright API available in step definitions (`page`, `browser`, etc):
 
 ```js
 Given('I open url {string}', async ({ page }, url) => {

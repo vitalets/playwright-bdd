@@ -70,7 +70,7 @@ Creates functions for defining steps and hooks.
 
 **Usage:** `createBdd([test][, options])`
 
-> Before playwright-bdd **v7** second parameter was `WorldConstructor`
+> Before Playwright-BDD **v7** second parameter was `WorldConstructor`
 
 **Params:**
   * `test` *object* - test instance to provide access to custom fixtures in steps

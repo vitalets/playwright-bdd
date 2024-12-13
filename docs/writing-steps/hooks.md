@@ -71,7 +71,7 @@ The benefits of using fixture:
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-Playwright-bdd supports worker-level hook `BeforeWorker` (aliased as `BeforeAll`). It runs **once in each worker, before all scenarios**. 
+Playwright-BDD supports worker-level hook `BeforeWorker` (aliased as `BeforeAll`). It runs **once in each worker, before all scenarios**. 
 
 ?> Although `BeforeAll` is more used name, `BeforeWorker` better expresses when the hook runs.
 
@@ -86,7 +86,7 @@ BeforeWorker(async ({ $workerInfo, browser }) => {
 });
 ```
 
-Since playwright-bdd **v8** you can target worker hook to particular features by `tags`:
+Since Playwright-BDD **v8** you can target worker hook to particular features by `tags`:
 
 ```ts
 BeforeWorker({ tags: '@auth' }, async () => { ... });
@@ -147,7 +147,7 @@ BeforeWorker(async ({ myWorkerFixture }) => {
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-Playwright-bdd supports worker-level hook `AfterWorker` (aliased as `AfterAll`).
+Playwright-BDD supports worker-level hook `AfterWorker` (aliased as `AfterAll`).
 It runs **once in each worker, after all scenarios**. 
 
 ?> Although `AfterAll` is more used name, `AfterWorker` better expresses when the hook runs.
@@ -169,7 +169,7 @@ All options and behavior are similar to [BeforeWorker / BeforeAll](#beforeworker
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-Playwright-bdd supports scenario-level hook `BeforeScenario` (aliased as `Before`). It runs **before each scenario**. 
+Playwright-BDD supports scenario-level hook `BeforeScenario` (aliased as `Before`). It runs **before each scenario**. 
 
 ?> Although `Before` is more used name, `BeforeScenario` better expresses when the hook runs.
 
@@ -184,7 +184,7 @@ BeforeScenario(async () => {
 });
 ```
 
-Since playwright-bdd **v8** you can target scenario hook to particular features/scenarios by `tags`:
+Since Playwright-BDD **v8** you can target scenario hook to particular features/scenarios by `tags`:
 
 ```ts
 BeforeScenario({ tags: '@mobile and not @slow' }, async function () {
@@ -257,7 +257,7 @@ BeforeScenario(async ({ myFixture }) => {
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-Playwright-bdd supports scenario-level hook `AfterScenario` (aliased as `After`). It runs **after each scenario**. 
+Playwright-BDD supports scenario-level hook `AfterScenario` (aliased as `After`). It runs **after each scenario**. 
 
 ?> Although `After` is more used name, `AfterScenario` better expresses when the hook runs.
 

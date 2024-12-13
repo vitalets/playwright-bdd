@@ -11,7 +11,7 @@ successfully matches definition with `When`:
 When('a step', () => { ... });
 ```
 
-In some cases, you may want to restrict such behavior and require keywords matching additionally to step text. Since playwright-bdd v8 you can enable that with [`matchKeywords`](configuration/options.md#matchkeywords) option:
+In some cases, you may want to restrict such behavior and require keywords matching additionally to step text. Since Playwright-BDD v8 you can enable that with [`matchKeywords`](configuration/options.md#matchkeywords) option:
 
 ```js
 // playwright.config.js

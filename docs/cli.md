@@ -57,7 +57,7 @@ $ npx bddgen env
 ```
 Example output:
 ```
-Playwright-bdd environment info:
+Playwright-BDD environment info:
 
 platform: darwin
 node: v18.16.0

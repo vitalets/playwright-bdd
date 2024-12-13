@@ -1,6 +1,6 @@
 # Cucumber reporters
 
-Playwright-bdd provides special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
+Playwright-BDD provides special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
 
 Currently, the following reporters are supported:
 
@@ -11,7 +11,7 @@ Currently, the following reporters are supported:
 * [custom](#custom)
 
 #### Automatic screenshots / videos / traces
-Playwright-bdd fully supports auto-attaching of **screenshots**, **videos** and **traces** to all Cucumber reports. All you need is to [enable these options](https://playwright.dev/docs/test-use-options#recording-options) in Playwright config.
+Playwright-BDD fully supports auto-attaching of **screenshots**, **videos** and **traces** to all Cucumber reports. All you need is to [enable these options](https://playwright.dev/docs/test-use-options#recording-options) in Playwright config.
 
 <details><summary>Example of HTML report with attached screenshot, video and trace</summary>
 
@@ -21,7 +21,7 @@ Playwright-bdd fully supports auto-attaching of **screenshots**, **videos** and 
 
 #### Projects
 
-Cucumber formatters don't natively support [projects concept](https://playwright.dev/docs/test-projects#introduction) that exists in Playwright. Nevertheless, playwright-bdd adopts test results to show projects in a Cucumber report.
+Cucumber formatters don't natively support [projects concept](https://playwright.dev/docs/test-projects#introduction) that exists in Playwright. Nevertheless, Playwright-BDD adopts test results to show projects in a Cucumber report.
 
 The final output depends on the particular reporter. For example, in HTML reporter project name is prepended to the feature file path:
 
@@ -273,7 +273,7 @@ export default defineConfig({
 > If they are required for your report feel free to [open an issue](https://github.com/vitalets/playwright-bdd/issues). 
 
 ## custom
-Playwright-bdd supports [custom Cucumber formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/custom_formatters.md). 
+Playwright-BDD supports [custom Cucumber formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/custom_formatters.md). 
 
 Create custom reporter file, e.g. `my-reporter.ts`:
 ```ts
@@ -314,7 +314,7 @@ All options passed to `cucumberReporter()` will be available as `options.parsedA
 
 ## Merge reports
 
-Since Playwright **1.37** there is a [merge-reports](https://playwright.dev/docs/test-sharding#merging-reports-from-multiple-shards) command that outputs combined report from several shards. Playwright-bdd supports this feature as well and can produce combined Cucumber reports.
+Since Playwright **1.37** there is a [merge-reports](https://playwright.dev/docs/test-sharding#merging-reports-from-multiple-shards) command that outputs combined report from several shards. Playwright-BDD supports this feature as well and can produce combined Cucumber reports.
 
 Add configuration to `playwright.config.ts`:
 ```ts

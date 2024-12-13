@@ -2,7 +2,7 @@
 
 By default, step definitions are global and [not bound to a particular feature](https://cucumber.io/docs/cucumber/step-definitions/?lang=javascript#scope). Although that is encouraged by Cucumber design, in big projects it can be tricky to keep steps unique for all possible domains.
 
-Playwright-bdd provides a way to scope step definition to a particular feature or scenario. It works similar to hooks - you can pass `tags` option to step definition, and it will be used only for features matching these tags:
+Playwright-BDD provides a way to scope step definition to a particular feature or scenario. It works similar to hooks - you can pass `tags` option to step definition, and it will be used only for features matching these tags:
 ```js
 Given('a step', { tags: '@foo' }, async () => {
   // ...

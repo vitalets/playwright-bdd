@@ -2,7 +2,7 @@
 
 ## features
 
-?> Since playwright-bdd **v7** this option has replaced Cucumber's option `paths`.
+?> Since Playwright-BDD **v7** this option has replaced Cucumber's option `paths`.
 
 - Type: `string | string[]`
 - Default: `undefined`
@@ -12,7 +12,7 @@ Example: `features/**/*.feature`.
 If you don't specify file extension, default is `*.feature`.
 Resolved relative to config file location.
 
-> Since playwright-bdd **v8**, you can omit `features` option and define `featuresRoot`, that serves as a common base directory for both features and steps. Features glob pattern will be calculated as `{featuresRoot} + /**/*.feature`.
+> Since Playwright-BDD **v8**, you can omit `features` option and define `featuresRoot`, that serves as a common base directory for both features and steps. Features glob pattern will be calculated as `{featuresRoot} + /**/*.feature`.
 
 ## steps
 
@@ -26,7 +26,7 @@ Example: `steps/**/*.ts`.
 If you don't specify file extension, default is `*.{js,mjs,cjs,ts,mts,cts}`.
 Resolved relative to config file location.
 
-> Since playwright-bdd **v8**, you can omit `steps` option and define `featuresRoot`, that serves as a common base directory for both features and steps. Steps glob pattern will be calculated as `{featuresRoot} + /**/*.{js,mjs,cjs,ts,mts,cts}`.
+> Since Playwright-BDD **v8**, you can omit `steps` option and define `featuresRoot`, that serves as a common base directory for both features and steps. Steps glob pattern will be calculated as `{featuresRoot} + /**/*.{js,mjs,cjs,ts,mts,cts}`.
 
 ## outputDir
 
@@ -75,7 +75,7 @@ The behavior is similar to TypeScript [rootDir](https://www.typescriptlang.org/t
   ```
 </details>
 
-Since playwright-bdd **v8**, `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined. This allows to have more concise configurations:
+Since Playwright-BDD **v8**, `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined. This allows to have more concise configurations:
 <details>
   <summary>Example</summary>
 
@@ -158,12 +158,12 @@ Verbose output.
 
 ## enrichReporterData
 
-!> Since Playwright-bdd **v8** this option is not needed and will be removed in the future
+!> Since Playwright-BDD **v8** this option is not needed and will be removed in the future
 
 - Type: `boolean`
 - Default: `undefined`
 
-If this option is enabled, playwright-bdd will add special attachments with BDD data, required for Cucumber reports. It gets enabled automatically, when you use `cucumberReporter()` helper. But for scenarios with [reports merging](reporters/cucumber.md#merge-reports), you need to manually set `enrichReporterData: true` when generating **blob** report.
+If this option is enabled, Playwright-BDD will add special attachments with BDD data, required for Cucumber reports. It gets enabled automatically, when you use `cucumberReporter()` helper. But for scenarios with [reports merging](reporters/cucumber.md#merge-reports), you need to manually set `enrichReporterData: true` when generating **blob** report.
 
 ## statefulPoms
 
@@ -218,7 +218,7 @@ Paths to feature files. [More in Cucumber docs](https://github.com/cucumber/cucu
 
 Paths to step definitions in **CommonJS**. [More in Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code).
 
-> Cucumber's option `requireModule: ['ts-node/register']` is not recommended for playwright-bdd. TypeScript compilation is performed with Playwright's built-in loader.
+> Cucumber's option `requireModule: ['ts-node/register']` is not recommended for Playwright-BDD. TypeScript compilation is performed with Playwright's built-in loader.
 
 ## import
 

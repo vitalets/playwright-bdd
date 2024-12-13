@@ -1,7 +1,6 @@
 # Usage with Nx
 
-Since [Nx](https://nx.dev) has [@nx/playwright](https://nx.dev/nx-api/playwright) plugin,
-it is possible to run BDD tests with `nx` and `playwright-bdd`.
+You can run Playwright-BDD tests with [Nx](https://nx.dev) and [@nx/playwright](https://nx.dev/nx-api/playwright) plugin.
 
 Imagine the following workspace structure:
 ```

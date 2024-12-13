@@ -1,6 +1,6 @@
 # Migration to v7
 
-Playwright-bdd **v7** introduces several significant improvements. The root one is **removing dependency on Cucumber runner** ([#136](https://github.com/vitalets/playwright-bdd/issues/136)). Now features and steps are handled directly without involving `@cucumber/cucumber` package. That gives many advantages for dev experience, performance and future maintenance of `playwright-bdd`. This guide will go through all the changes and provide necessary actions.
+Playwright-BDD **v7** introduces several significant improvements. The root one is **removing dependency on Cucumber runner** ([#136](https://github.com/vitalets/playwright-bdd/issues/136)). Now features and steps are handled directly without involving `@cucumber/cucumber` package. That gives many advantages for dev experience, performance and future maintenance of Playwright-BDD. This guide will go through all the changes and provide necessary actions.
 
 The guide consists of two parts, depending on steps style you are using:
 1. actions for **all users**
@@ -55,7 +55,7 @@ const testDir = defineBddConfig({
 > `paths` option is still allowed in BDD configuration, but under the hood it is converted into `features` and will be removed in the future.
 
 ### Omit `importTestFrom`
-Since v7 config option `importTestFrom` can be omitted in most cases. Now playwright-bdd automatically checks step definitions and detects optimal file to import test from. The only requirement - you should include fixture files in `steps` option.
+Since v7 config option `importTestFrom` can be omitted in most cases. Now Playwright-BDD automatically checks step definitions and detects optimal file to import test from. The only requirement - you should include fixture files in `steps` option.
 
 Before:
 ```ts
@@ -83,7 +83,7 @@ Before v7, if there was `cucumber.js` file, it was loaded and merged into BDD co
 > If you need Cucumber option that is not supported, feel free to request it in [issues](https://github.com/vitalets/playwright-bdd/issues).
 
 ### Snippets
-Before v7, you could configure [snippets](https://github.com/cucumber/cucumber-js/blob/main/docs/snippets.md) via Cucumber options `snippetInterface` / `snippetSyntax`. Now these options are dropped from BDD configuration. Playwright-bdd automatically detects style of your steps (playwright-style / cucumber-style / decorators) and shows proper syntax for missing steps.
+Before v7, you could configure [snippets](https://github.com/cucumber/cucumber-js/blob/main/docs/snippets.md) via Cucumber options `snippetInterface` / `snippetSyntax`. Now these options are dropped from BDD configuration. Playwright-BDD automatically detects style of your steps (playwright-style / cucumber-style / decorators) and shows proper syntax for missing steps.
 
 Example of Playwright-style snippet:
 ```

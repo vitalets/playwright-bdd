@@ -8,7 +8,7 @@ Cucumber-style step definitions are compatible with CucumberJS.
 
 In terms of Playwright, World is just a test-scoped fixture, that is automatically provided to all step definitions.
 
-Since `playwright-bdd` v7 you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures as world props and use them in step definitions.
+Since Playwright-BDD **v7** you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures as world props and use them in step definitions.
 
 **Example of cucumber-style setup:**
 

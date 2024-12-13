@@ -9,7 +9,9 @@ The recommended setup is to call `createBdd(test)` in the same file where you de
 import { test as base, createBdd } from 'playwright-bdd';
 
 export const test = base.extend({
-  myFixture: // ... define your fixture here
+  myFixture: async ({ page }, use) => {
+    // ... define your fixture here
+  }
 });
 
 export const { Given, When, Then } = createBdd(test);

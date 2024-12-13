@@ -1,6 +1,6 @@
 # Env variables
 
-To pass environment variables to both Playwright and Playwright-bdd,
+To pass environment variables to both Playwright and Playwright-BDD,
 you can use `cross-env-shell` command from [cross-env](https://github.com/kentcdodds/cross-env?tab=readme-ov-file#cross-env-vs-cross-env-shell) package:
 
 ```
