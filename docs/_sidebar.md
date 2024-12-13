@@ -42,6 +42,7 @@
   - [IDE integration](guides/ide-integration.md)
   - [Usage with Nx](guides/usage-with-nx.md)
 
+* [**Blog**](blog/index.md)
 * [**API**](api.md)
 * [**CLI**](cli.md)
 * [**FAQ**](faq.md)
