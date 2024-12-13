@@ -1,8 +1,3 @@
-dist
-.features-gen
-.cache
-playwright-report
-actual-reports
 **/*.md
 test/parse-error/sample.feature
 test/i18n/features/*.feature
