@@ -36,7 +36,7 @@
     "README.md"
   ],
   "scripts": {
-    "prepare": "git config core.hooksPath .hooks",
+    "prepare": "git config core.hooksPath scripts/git-hooks",
     "lint": "eslint .",
     "tsc": "tsc",
     "knip": "knip -c knip.config.mts --tsConfig tsconfig.build.json",
@@ -44,7 +44,6 @@
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
     "test:smoke": "node test/setup.mjs && node --test $(node scripts/smoke-tests.mjs)",
-    "test:clear-cache": "npx playwright clear-cache",
     "only": "node test/setup.mjs && node --test",
     "only:d": "node test/setup.mjs && TEST_DEBUG=1 node --test",
     "build": "bash scripts/build.sh",
@@ -56,6 +55,7 @@
     "docs:validate": "ts-node scripts/validate-docs.ts",
     "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
     "browsers": "npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 playwright install chromium",
+    "pw:clear-cache": "npx playwright clear-cache",
     "release": "bash scripts/release.sh"
   },
   "dependencies": {
