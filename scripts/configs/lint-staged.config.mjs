@@ -1,6 +1,6 @@
 import path from 'node:path';
 import micromatch from 'micromatch';
-import { getSmokeTestDirs } from './scripts/smoke-tests.mjs';
+import { getSmokeTestDirs } from '../smoke-tests.mjs';
 
 export default {
   '**': (changedFiles) => {
