@@ -38,28 +38,28 @@ npx bddgen && npx playwright test
 ```
 
 ### Phase 1: Generate tests
-CLI command `npx bddgen` generates intermediate test files from BDD feature files. For example:
+CLI command `npx bddgen` generates test files from BDD feature files. For example:
 
 From
 ```gherkin
-Feature: Playwright site
+Feature: Playwright Home Page
 
     Scenario: Check title
-        Given I open url "https://playwright.dev"
+        Given I am on Playwright home page
         When I click link "Get started"
-        Then I see in title "Playwright"
+        Then I see in title "Installation"
 ```
 
 To
 ```js
 import { test } from 'playwright-bdd';
 
-test.describe('Playwright site', () => {
+test.describe('Playwright Home Page', () => {
 
   test('Check title', async ({ Given, When, Then }) => {
-    await Given('I open url "https://playwright.dev"');
+    await Given('I am on Playwright home page');
     await When('I click link "Get started"');
-    await Then('I see in title "Playwright"');
+    await Then('I see in title "Installation"');
   });
 
 });    
@@ -67,11 +67,11 @@ test.describe('Playwright site', () => {
 
 ### Phase 2: Run tests
 CLI command `npx playwright test` runs generated test files with Playwright runner.
-Playwright-BDD makes Playwright API available in step definitions (`page`, `browser`, etc):
+Playwright-BDD makes Playwright API available in step definitions:
 
 ```js
-Given('I open url {string}', async ({ page }, url) => {
-  await page.goto(url);
+Given('I am on Playwright home page', async ({ page }) => {
+  await page.goto('https://playwright.dev');
 });
 
 When('I click link {string}', async ({ page }, name) => {
@@ -83,4 +83,8 @@ Then('I see in title {string}', async ({ page }, text) => {
 });  
 ```
 
-To try it in action proceed to [installation guide](getting-started/installation.md).
+HTML report after running this test:
+
+![Playwright html report](reporters/_media/pw-html-report.png)
+
+Proceed to [installation guide](getting-started/installation.md) and try it yourself.
