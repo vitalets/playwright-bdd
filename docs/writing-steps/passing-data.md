@@ -12,7 +12,7 @@ Feature: home page
     Then new tab is opened
 ```
 
-Typically, in Cucumber `world` is used as a container for such data. World is created for each scenario and persists across all steps. One step can write data to the `world` object, and another can read from it.
+Typically, in Cucumber a `world` is used as a container for such data. World is created for each scenario and persists between all steps. One step can write data to the `world` object, and another can read from it.
 
 In Playwright, any test-scoped fixture can be used as a cross-step context. You can name it `ctx` (for brevity) and initialize with empty object `{}`. For example:
 
