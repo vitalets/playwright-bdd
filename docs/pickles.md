@@ -1,4 +1,7 @@
+<!-- Technical details about Cucumber pickles, not linked from docs -->
+
 # Pickles
+
 Relation between Cucumber pickles and Gherkin scenarios is quite tricky, especially when there are background and examples. THe breakdown below helps to understand that.
 
 Imagine the following feature file:
