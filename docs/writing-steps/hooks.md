@@ -227,7 +227,7 @@ BeforeScenario({ name: 'my hook', timeout: 5000 }, async function () {
 ```
 
 Hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
-You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/builtin-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
+You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
 
 #### Example of using `BeforeScenario` with custom fixture
 

@@ -24,7 +24,7 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
-To conditionally skip scenario use [$test and $tags fixtures](writing-steps/builtin-fixtures.md#test-and-testinfo).
+To conditionally skip scenario use [$test and $tags fixtures](writing-steps/bdd-fixtures.md#test-and-testinfo).
 
 ## @fail
 Use `@fail` tag to mark feature / scenario as [failing](https://playwright.dev/docs/api/class-test#test-fail):

@@ -11,7 +11,7 @@ The main reason of generating Playwright test files from BDD scenarios - you can
 Moreover, it provides more transparency on how Playwright **see** your BDD scenarios. If for some reasons you don't want pre-generation - check out [gherkin-wrapper](https://github.com/Niitch/gherkin-wrapper) project, it runs BDD scenarios on-the-fly.
 
 ### Is it possible to apply `test.use()` in a generated test file?
-Test file generation is a fully automated process with no manual intervention required. Instead of using test.use, which affects all tests in a file, you can [utilize tags](writing-steps/builtin-fixtures.md#tags) with custom fixtures. This approach is more flexible and allows for selectively changing settings for specific scenarios or tests.
+Test file generation is a fully automated process with no manual intervention required. Instead of using test.use, which affects all tests in a file, you can [utilize tags](writing-steps/bdd-fixtures.md#tags) with custom fixtures. This approach is more flexible and allows for selectively changing settings for specific scenarios or tests.
 
 ### Is it possible to run BDD tests with a single command? 
 This approach was initially implemented: test files were generated during the first execution of `playwright.config.ts`. It allowed to run tests with `npx playwright test` instead of two commands `npx bddgen && npx playwright test`. But later several issues appeared:

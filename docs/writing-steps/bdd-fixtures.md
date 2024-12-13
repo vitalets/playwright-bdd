@@ -1,5 +1,5 @@
 # Playwright-BDD fixtures
-Playwright-BDD provides special fixtures for convenient development.
+Playwright-BDD provides built-in fixtures for convenient development.
 
 ?> All Playwright-BDD fixtures are prefixed with `$` to avoid name collision with user-defined fixtures.
 
