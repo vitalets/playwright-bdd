@@ -1,5 +1,5 @@
 <div align="center">
-  <a href="https://github.com/vitalets/playwright-bdd">
+  <a href="https://vitalets.github.io/playwright-bdd">
     <img width="128" alt="playwright-bdd" src="./docs/logo.svg">
   </a>
 </div>
