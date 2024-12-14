@@ -4,11 +4,10 @@
 
 **Playwright-BDD v8** is packed with many updates to improve your BDD testing experience.
 
-Here are the highlights:
-
 ## Tagging Enhancements
 
-### Support for tags from path
+### Tags from path
+
 Tags can now be derived from feature file paths, allowing for better organization and filtering of tests. This feature helps teams categorize and run tests more efficiently.
 
 Full documentation: [tags from path](writing-features/tags-from-path.md).
@@ -32,7 +31,7 @@ BeforeAll({ name: 'SetupDatabase', tags: ['@db'] }, async () => {
 ### `featuresRoot` as default directory
 Simplify your setup by using `featuresRoot` as the default directory for both features and steps unless explicitly defined.
 
-### New `missingSteps` option
+### New option: `missingSteps`
 Define custom behaviors for scenarios where step definitions are missing. This could range from logging a warning to throwing an error. For example:
 
 ```javascript
@@ -41,7 +40,7 @@ module.exports = {
 };
 ```
 
-### New `matchKeywords` option
+### New option: `matchKeywords`
 Enable keyword matching when searching for step definitions, making step discovery more intuitive. Here’s a sample configuration:
 
 ```javascript
@@ -50,19 +49,19 @@ module.exports = {
 };
 ```
 
-### Default `quote` value set to `single`
+### Default value for `quote` set to `single`
 Generated files now use single quotes by default, reducing the need for escape characters and making files cleaner.
 
 
 ## Other Changes
 
-### New hook aliases
+### Hook aliases
 Introducing new aliases for hooks: `BeforeWorker`, `AfterWorker`, `BeforeScenario`, and `AfterScenario`. These provide clearer semantics for managing different lifecycle stages.
 
-### Localized step titles in reporter
+### Localized step titles
 Full localized step titles are now displayed in the Playwright HTML reporter, improving readability and debugging. This ensures your reports are as informative as possible.
 
-### Minimal Playwright version update
+### Playwright version update
 Minimal Playwright version was updated to the earliest non-deprecated: **1.41**.
 
 > Check out the [changelog](changelog) for the full list of changes.

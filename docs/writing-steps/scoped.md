@@ -1,13 +1,16 @@
 # Scoped step definitions
 
-By default, step definitions are global and [not bound to a particular feature](https://cucumber.io/docs/cucumber/step-definitions/?lang=javascript#scope). Although that is encouraged by Cucumber design, in big projects it can be tricky to keep steps unique for all possible domains.
+By default, step definitions are global and [not bound to a particular feature](https://cucumber.io/docs/cucumber/step-definitions/?lang=javascript#scope). Although it follows Cucumber design, in large projects it can be tricky to keep steps unique for all possible domains.
 
-Playwright-BDD provides a way to scope step definition to a particular feature or scenario. It works similar to hooks - you can pass `tags` option to step definition, and it will be used only for features matching these tags:
+Playwright-BDD provides a way to scope step definition to a particular feature or scenario. You can pass `tags` expression, narrowing the scope of the definition:
+
 ```js
 Given('a step', { tags: '@foo' }, async () => {
   // ...
 });
 ```
+
+This definition of `a step` will be used only for features/scenarios with `@foo` tag. It allows to have multiple definitions of the same step in a project.
 
 #### Example
 Imagine there are two features *game* and *video-player*, both having a step `I click the PLAY button`:
@@ -100,7 +103,7 @@ When('I click the PLAY button', async () => {
 ```
 
 ## Tags from path
-You can provide default tags for step definitions and hooks via `@`-prefixed directory or file names. It is a convenient way for binding your steps and features.
+You can provide default tags for step definitions and hooks via **`@`-prefixed directories or filenames**. It is a convenient way for binding your steps and features.
 
 Example:
 ```
@@ -116,8 +119,8 @@ This is equivalent of having `@game` tag explicitly defined in the `game.feature
 ```ts
 // @game/steps.ts
 
-When('I click the PLAY button', async () => {
-  // actions for game.feature
+When('I click the PLAY button', /* { tags: '@game' }, */ async () => {
+  // ...
 });
 ```
 

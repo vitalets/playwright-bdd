@@ -1,6 +1,6 @@
 # Tags from path
 
-**Tags from path** is a powerful way to assign tags to features via `@`-prefixed directories or filenames. It allows to bind feature with step definitions without explicitly defining tags in the code.
+Tags from path is a powerful way to automatically assign tags to features via **`@`-prefixed directories or filenames**. It allows to bind features to step definitions and reduce explicit tagging.
 
 Example:
 ```
@@ -13,14 +13,37 @@ features
     └── steps.ts
 ```
 
-Storing `game.feature` inside `@game` directory is equivalent to having that tag defined in the feature file:
+The path `features/@game/game.feature` automatically assigns `@game` tag to the feature. It's equivalent to:
 ```gherkin
 @game
 Feature: Game
 
-  Scenario: Start playing
-    ... 
-    When I click the PLAY button
+  ...
 ```
 
-Step definitions inside `@`-directories are also [automatically tagged and scoped](writing-steps/scoped.md#tags-from-path) to the related features.
+This works with filenames too:
+```
+features
+├── @game.feature
+├── @video-player.feature
+└── ...
+```
+
+Step definitions inside `@`-directories are also [automatically tagged and scoped](writing-steps/scoped.md#tags-from-path) to the related features. All definitions from `@game/steps.ts` are scoped to `@game/game.feature`. 
+
+This technique opens new possibilities for tests organizing and isolation. 
+
+Moreover, you can utilize [special tags](writing-features/special-tags.md) as directory names:
+
+```
+features
+└── @game
+    ├── @slow                <- for features that need more time
+    │   └── feature1.feature
+    ├── @skip                <- for features that are not ready
+    │   └── feature2.feature 
+    ├── @mode:serial         <- for features to run in serial mode
+    │   └── feature3.feature
+    ├── game.feature
+    └── steps.ts
+```
