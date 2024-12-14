@@ -98,12 +98,17 @@ Documentation for [`featuresRoot`](configuration/options.md#featuresroot).
 
 ### New option: `missingSteps`
 In some projects, features are written far earlier than step definitions. 
-Until v8, if Playwright-BDD detected feature with missing steps, it exited and showed step snippets.
-With new `missingSteps` option you can control this behavior:
+When Playwright-BDD finds scenario with missing steps, it does not run tests, but exits with code snippets. This may be not a suitable behavior.
+With new `missingSteps` option, you can control how Playwright-BDD handles scenarios with missing steps: 
 
+- `fail-on-gen` *(default)* - fail during test generation
+- `fail-on-run` - fail during test run
+- `skip-scenario` - mark such scenarios as skipped
+
+Example:
 ```ts
 const testDir = defineBddConfig({
-  missingSteps: 'fail-on-gen', // can be 'fail-on-gen', 'fail-on-run' or 'skip-scenario'
+  missingSteps: 'skip-scenario',
   // ...
 });
 ```
