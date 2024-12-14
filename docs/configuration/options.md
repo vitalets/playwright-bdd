@@ -75,25 +75,31 @@ The behavior is similar to TypeScript [rootDir](https://www.typescriptlang.org/t
   ```
 </details>
 
-Since Playwright-BDD **v8**, `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined. This allows to have more concise configurations:
-<details>
-  <summary>Example</summary>
+Since **Playwright-BDD v8**, `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined. This allows to have more concise configurations.
 
-  Before:
-  ```js
-  const testDir = defineBddConfig({
-    features: './features/**/*.feature',
-    steps: './features/steps/**/*.js',
-    featuresRoot: './features',
-  });
-  ```
-  Since v8 the config with the same effect:
-  ```js
-  const testDir = defineBddConfig({
-    featuresRoot: './features',
-  });
-  ```
-</details>
+Before v8:
+```js
+const testDir = defineBddConfig({
+  features: './features/**/*.feature',
+  steps: './features/steps/**/*.js',
+  featuresRoot: './features',
+});
+```
+
+Since v8:
+```js
+const testDir = defineBddConfig({
+  featuresRoot: './features',
+});
+```
+
+You can still run a subset of features if needed:
+```js
+const testDir = defineBddConfig({
+  featuresRoot: './features',
+  features: './features/game/*.feature', // <- run only these features
+});
+```
 
 ## language
 
@@ -158,7 +164,7 @@ Verbose output.
 
 ## enrichReporterData
 
-!> Since Playwright-BDD **v8** this option is not needed and will be removed in the future
+!> Since Playwright-BDD **v8** this option is not used and will be removed in the future
 
 - Type: `boolean`
 - Default: `undefined`

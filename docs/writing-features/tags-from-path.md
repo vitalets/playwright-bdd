@@ -5,10 +5,10 @@ Tags from path is a powerful way to automatically assign tags to features via **
 Example:
 ```
 features
-├── @game
+├── @game                     <- sets @game tag to all files inside
 │   ├── game.feature
 │   └── steps.ts
-└── @video-player
+└── @video-player             <- sets @video-player tag to all files inside
     ├── video-player.feature
     └── steps.ts
 ```
