@@ -56,7 +56,7 @@ Let's make playwright-bdd awesome together!
 * 🆕 Join [Playwright-bdd Discord Server](https://discord.gg/5rwa7TAGUr) to connect with other developers, ask questions and share your experience or showcase
 
 ## Changelog
-Check out the latest changes in the [CHANGELOG.md](https://vitalets.github.io/playwright-bdd/#/changelog).
+Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
 
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
