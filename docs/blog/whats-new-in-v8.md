@@ -1,6 +1,6 @@
 # What's new in Playwright-BDD v8
 
-<div style="color: grey; font-style: italic">14-DEC-2024</div>
+<div style="color: grey; font-style: italic">16-DEC-2024</div>
 
 ?> :fire: **Playwright-BDD v8** is packed with many updates to improve your BDD testing experience.
 
