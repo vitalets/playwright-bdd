@@ -18,7 +18,7 @@
 
 <div align="center">
 
-Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
+Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner
 
 </div>
 
@@ -41,14 +41,14 @@ This package offers **an alternative way**: convert BDD scenarios into Playwrigh
 ## Extras
 Some features were developed in Playwright-BDD on top of Playwright and BDD approaches:
 
-* Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
-* [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods
-* [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)
-* [Export steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI
-* [Re-using step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)
+* 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
+* 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods
+* 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)
+* ✨ [Export steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI
+* ♻️ [Re-using step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)
 
 ## Documentation
-Check out [documentation website](https://vitalets.github.io/playwright-bdd/#/).
+Check out the [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 
 ## Examples
 There are several examples in [`examples`](/examples) folder and a separate fully working repo [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
