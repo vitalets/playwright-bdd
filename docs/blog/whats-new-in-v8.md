@@ -4,10 +4,22 @@
 
 ?> :fire: **Playwright-BDD v8** is packed with many updates to improve your BDD testing experience.
 
-Here are the highlights:
-
-
-
+<!-- doc-gen TOC maxDepth="3" excludeText="Index" -->
+- [Tagging Enhancements](#tagging-enhancements)
+  - [Tags from path](#tags-from-path)
+  - [Scoped step definitions](#scoped-step-definitions)
+  - [Tagged `BeforeAll` and `AfterAll`](#tagged-beforeall-and-afterall)
+  - [Default tags](#default-tags)
+- [Improved Configuration Options](#improved-configuration-options)
+  - [`featuresRoot` as a default directory](#featuresroot-as-a-default-directory)
+  - [New option: `missingSteps`](#new-option-missingsteps)
+  - [New option: `matchKeywords`](#new-option-matchkeywords)
+  - [Default value for `quotes` set to `single`](#default-value-for-quotes-set-to-single)
+- [Other Changes](#other-changes)
+  - [New Hook aliases](#new-hook-aliases)
+  - [Localized step titles](#localized-step-titles)
+  - [Playwright version update](#playwright-version-update)
+- [Getting Started with v8](#getting-started-with-v8)<!-- end-doc-gen -->
 
 ## Tagging Enhancements
 
@@ -48,7 +60,7 @@ When('start playing', { tags: '@video-player' }, async () => { ... });
 
 Full documentation: [scoped step definitions](writing-steps/scoped.md).
 
-### Tagged BeforeAll / AfterAll
+### Tagged `BeforeAll` and `AfterAll`
 Hooks `BeforeAll` and `AfterAll` now support `name` and `tags` options:
 
 ```ts
