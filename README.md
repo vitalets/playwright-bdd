@@ -16,7 +16,11 @@
 
 </div>
 
+<div align="center">
+
 Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner.
+
+</div>
 
 > [!TIP]
 > :fire: [What's new in Playwright-BDD v8](https://vitalets.github.io/playwright-bdd/#/blog/whats-new-in-v8)
