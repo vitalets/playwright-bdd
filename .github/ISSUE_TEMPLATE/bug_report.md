@@ -8,7 +8,17 @@ assignees: ''
 ---
 
 **Given**
-<!-- What is your setup: paste your playwright config, feature file and directories structure -->
+<!-- 
+What is your setup: paste your playwright config, feature file and directories structure.
+
+Use backticks to format code snippets with syntax highlight:
+```gherkin
+// your feature here...
+```
+```ts
+// your typescript code here...
+```
+-->
 
 **When**
 <!-- What command did you run / any other actions? -->
