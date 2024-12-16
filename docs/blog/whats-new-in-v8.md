@@ -4,6 +4,7 @@
 
 ?> :fire: **Playwright-BDD v8** is packed with many updates to improve your BDD testing experience.
 
+<!-- command to generate toc in this file: md-magic --files docs/blog/whats-new-in-v8.md -->
 <!-- doc-gen TOC maxDepth="3" excludeText="Index" -->
 - [Tagging Enhancements](#tagging-enhancements)
   - [Tags from path](#tags-from-path)
