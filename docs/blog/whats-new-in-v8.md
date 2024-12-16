@@ -58,23 +58,27 @@ AfterAll({ tags: '@game' }, async () => {
 });
 ```
 
-Please keep in mind, that these hooks **run in each worker**, like Playwright hooks do.
+Tagged hooks will be executed, only if corresponding feature is executed. 
+
+?> Please keep in mind, that these hooks **run in each worker**, similar to Playwright worker hooks.
 
 Full documentation: [Hooks](writing-steps/hooks.md).
 
 ### Default tags
 
-If multiple step definitions and hooks should have common tags, you can provide these tags via `createBdd()` option:
+If multiple step definitions and hooks should have the same tags, you can provide these default tags via `createBdd()` option:
 
 ```ts
-const { BeforeAll, Before, Given } = createBdd(test, { tags: '@game' });
+const { BeforeAll, Before, Given } = createBdd(test, { 
+  tags: '@game' // <- default tag for all steps and hooks
+});
 
-BeforeAll(async () => { ... });       // <- tagged with '@game'
-Before(async () => { ... });          // <- tagged with '@game'
-Given('a step', async () => { ... }); // <- tagged with '@game'
+BeforeAll(async () => { ... });
+Before(async () => { ... });
+Given('a step', async () => { ... });
 ```
 
-Full list for [createBdd() options](api.md#createbdd).
+Full list of [createBdd() options](api.md#createbdd).
 
 ## Improved Configuration Options
 
@@ -97,13 +101,13 @@ const testDir = defineBddConfig({
 Documentation for [`featuresRoot`](configuration/options.md#featuresroot).
 
 ### New option: `missingSteps`
-In some projects, features are written far earlier than step definitions. 
-When Playwright-BDD finds scenario with missing steps, it does not run tests, but exits with code snippets. This may be not a suitable behavior.
-With new `missingSteps` option, you can control how Playwright-BDD handles scenarios with missing steps: 
+In some projects, scenarios are written in advance and may remain without step definitions for a long time. When Playwright-BDD encounters a scenario with missing steps, it doesn't execute the tests but instead exits with generated code snippets. This behavior might not always be desirable. 
 
-- `fail-on-gen` *(default)* - fail during test generation
-- `fail-on-run` - fail during test run
-- `skip-scenario` - mark such scenarios as skipped
+With the new `missingSteps` option, you can now customize how Playwright-BDD handles scenarios with missing steps:
+
+- `fail-on-gen` *(default)*: Fail during test generation.
+- `fail-on-run`: Fail during test execution.
+- `skip-scenario`: Mark such scenarios as skipped.
 
 Example:
 ```ts
@@ -116,13 +120,24 @@ const testDir = defineBddConfig({
 Documentation for [`missingSteps`](configuration/options.md#missingsteps).
 
 ### New option: `matchKeywords`
-Enable keyword matching when searching for step definitions, making step discovery more intuitive. Here’s a sample configuration:
 
-```javascript
-module.exports = {
-  matchKeywords: true, // Matches keywords like Given, When, Then
-};
+When writing step definitions, we use different keyword functions: `Given()`, `When()` and `Then()`. Did you know, that by default all these functions are just aliases? Keyword is not used for matching with scenario steps:
+```ts
+// This step matches "Given a step", "When a step", "Then a step"
+Given('a step', () => { ... });
 ```
+Some users want a stricter setup. Once new option `matchKeywords` is enabled, step definitions are matched against steps with exact the same keyword:
+```ts
+const testDir = defineBddConfig({
+  matchKeywords: true,
+  // ...
+});
+
+// This step matches only "Given a step"
+Given('a step', () => { ... });
+```
+
+More details on [Keywords matching](writing-steps/keywords-matching.md).
 
 ### Default value for `quote` set to `single`
 Generated files now use single quotes by default, reducing the need for escape characters and making files cleaner.

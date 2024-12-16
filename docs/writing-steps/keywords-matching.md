@@ -1,17 +1,19 @@
 # Keywords matching
 
-By default, the keyword of the step definition (e.g. `Given` vs `When` vs `Then`) [is not considered](https://cucumber.io/docs/gherkin/reference/#steps) when matching with scenario step. 
+By default, a keyword of the step definition (e.g. `Given` vs `When` vs `Then`) [is not considered](https://cucumber.io/docs/gherkin/reference/#steps) when matching with scenario steps. 
 
 For example, the following definition with `Given`:
 ```js
 Given('a step', () => { ... });
 ```
-successfully matches the scenario step with `When`:
+successfully matches any of these steps:
 ```gherkin
+Given a step
 When a step
+Then a step
 ```
 
-In some cases, you may want to restrict such behavior and require keywords matching additionally to step text. Since **Playwright-BDD v8** you can enable that with [`matchKeywords`](configuration/options.md#matchkeywords) option:
+In some cases, you may want to restrict such behavior and require keywords matching additionally to step pattern. Since **Playwright-BDD v8** you can enable that with [`matchKeywords`](configuration/options.md#matchkeywords) option:
 
 ```js
 // playwright.config.js
@@ -19,8 +21,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  // ...
   matchKeywords: true,
+  // ...
 });
 
 export default defineConfig({
