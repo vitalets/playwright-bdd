@@ -34,6 +34,8 @@ Then('attach stdout', async () => {
 // See: https://github.com/vitalets/playwright-bdd/issues/250
 Then('attach buffer as stdout', async () => {
   execSync('echo "logs from exec"', { stdio: 'inherit' });
+  // wait some time, b/c these logs sometimes attach to another scenario
+  await new Promise((resolve) => setTimeout(resolve, 500));
 });
 
 Before({ name: 'success before hook', tags: '@success-before-hook' }, async ({}) => {});
