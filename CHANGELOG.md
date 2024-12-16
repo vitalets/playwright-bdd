@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 8.0.0
 * support tags from path ([#217](https://github.com/vitalets/playwright-bdd/issues/217))
 * support scoped step definitions by tags ([#205](https://github.com/vitalets/playwright-bdd/issues/205))
 * new config option `missingSteps` to setup different behavior when step definitions are missing ([#158](https://github.com/vitalets/playwright-bdd/issues/158))
