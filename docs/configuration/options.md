@@ -118,7 +118,7 @@ Title format for `Scenario Outline` examples in generated test files.
 ## quotes
 
 - Type: `'single' | 'double' | 'backtick'`
-- Default: `'double'`
+- Default: `'single'`
 
 Quotes style in generated test files.
 

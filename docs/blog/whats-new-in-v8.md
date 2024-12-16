@@ -2,13 +2,18 @@
 
 <div style="color: grey; font-style: italic">14-DEC-2024</div>
 
-**Playwright-BDD v8** is packed with many updates to improve your BDD testing experience.
+?> :fire: **Playwright-BDD v8** is packed with many updates to improve your BDD testing experience.
+
+Here are the highlights:
+
+
+
 
 ## Tagging Enhancements
 
 ### Tags from path
 
-Tags can now be derived from file paths, if there are **`@`-prefixed directories or filenames**:
+Managing test features and step definitions just got easier. In v8, you can now automatically assign tags to features and steps using **@-prefixed directory or file names**. For instance:
 
 ```
 features
@@ -20,8 +25,7 @@ features
     └── steps.ts
 ```    
 
-Step definitions and hooks inside `@`-prefixed directory become scoped to the related features.
-This technique allows to isolate your BDD tests into separate domains.
+In this setup, `@game` and `@video-player` tags are automatically applied to respective features and steps. This eliminates the need for repetitive manual tagging and helps to bind features with steps.
 
 See more details in the documentation: [tags from path](writing-features/tags-from-path.md).
 
@@ -35,7 +39,7 @@ When('I click the PLAY button', { tags: '@game' }, async () => {
 });
 ```
 
-With tags, you can have multiple definitions of the same step, that is crucial for large applications:
+This ensures that the same step can coexist in multiple features, making it easier to maintain large projects:
 
 ```ts
 When('start playing', { tags: '@game' }, async () => { ... });
@@ -45,15 +49,14 @@ When('start playing', { tags: '@video-player' }, async () => { ... });
 Full documentation: [scoped step definitions](writing-steps/scoped.md).
 
 ### Tagged BeforeAll / AfterAll
-Until Playwright-BDD v8, you could set tags only to scenario-level hooks `Before / After`.
-Now worker-level hooks `BeforeAll / AfterAll` are also can be tagged:
+Hooks `BeforeAll` and `AfterAll` now support `name` and `tags` options:
 
 ```ts
-BeforeAll({ tags: '@game' }, async () => {
+BeforeAll({ name: 'populate db', tags: '@game' }, async () => {
   // worker setup for game
 });
 
-AfterAll({ tags: '@game' }, async () => {
+AfterAll({ name: 'cleanup db', tags: '@game' }, async () => {
   // worker teardown for game
 });
 ```
@@ -70,9 +73,10 @@ If multiple step definitions and hooks should have the same tags, you can provid
 
 ```ts
 const { BeforeAll, Before, Given } = createBdd(test, { 
-  tags: '@game' // <- default tag for all steps and hooks
+  tags: '@game' // <- default tag
 });
 
+// all function below are tagged with `@game`
 BeforeAll(async () => { ... });
 Before(async () => { ... });
 Given('a step', async () => { ... });
@@ -101,13 +105,12 @@ const testDir = defineBddConfig({
 Documentation for [`featuresRoot`](configuration/options.md#featuresroot).
 
 ### New option: `missingSteps`
-In some projects, scenarios are written in advance and may remain without step definitions for a long time. When Playwright-BDD encounters a scenario with missing steps, it doesn't execute the tests but instead exits with generated code snippets. This behavior might not always be desirable. 
 
-With the new `missingSteps` option, you can now customize how Playwright-BDD handles scenarios with missing steps:
+Control the behavior when step definitions are missing with the new `missingSteps` option. Choose between:
 
-- `fail-on-gen` *(default)*: Fail during test generation.
-- `fail-on-run`: Fail during test execution.
-- `skip-scenario`: Mark such scenarios as skipped.
+- `fail-on-gen` (default): Fails test generation.
+- `fail-on-run`: Allows generation but fails during execution.
+- `skip-scenario`: Marks the scenario as `fixme` and skips it.
 
 Example:
 ```ts
@@ -122,34 +125,48 @@ Documentation for [`missingSteps`](configuration/options.md#missingsteps).
 ### New option: `matchKeywords`
 
 When writing step definitions, we use different keyword functions: `Given()`, `When()` and `Then()`. Did you know, that by default all these functions are just aliases? Keyword is not used for matching with scenario steps:
-```ts
-// This step matches "Given a step", "When a step", "Then a step"
-Given('a step', () => { ... });
-```
-Some users want a stricter setup. Once new option `matchKeywords` is enabled, step definitions are matched against steps with exact the same keyword:
-```ts
-const testDir = defineBddConfig({
-  matchKeywords: true,
-  // ...
-});
 
-// This step matches only "Given a step"
-Given('a step', () => { ... });
-```
+Enable keyword-specific matching for step definitions with `matchKeywords` option. This enforces that `Given`, `When`, and `Then` strictly match their respective keywords in feature files.
+
+- `matchKeywords: false` (default): Step definition keyword is not considered for matching
+    ```ts
+    // matches "Given a step", "When a step", "Then a step"
+    Given('a step', () => { ... });
+    ```
+
+- `matchKeywords: true`: Step definition keyword is considered for matching
+    ```ts
+    // matches only "Given a step"
+    Given('a step', () => { ... });
+    ```
 
 More details on [Keywords matching](writing-steps/keywords-matching.md).
 
-### Default value for `quote` set to `single`
-Generated files now use single quotes by default, reducing the need for escape characters and making files cleaner.
-
+### Default value for `quotes` set to `single`
+Generated test files now use single quotes by default, reducing the need for escape characters and making files cleaner. To return to previous behavior, set `quotes` option manually:
+```ts
+const testDir = defineBddConfig({
+  quotes: 'double',
+  // ...
+});
+```
 
 ## Other Changes
 
-### Hook aliases
-Introducing new aliases for hooks: `BeforeWorker`, `AfterWorker`, `BeforeScenario`, and `AfterScenario`. These provide clearer semantics for managing different lifecycle stages.
+### New Hook aliases
+Introducing new aliases for hooks: 
+
+- `BeforeAll` → `BeforeWorker`
+- `AfterAll` → `AfterWorker`
+- `Before` → `BeforeScenario`
+- `After` → `AfterScenario`
+
+Usage of new aliases is encouraged, because they better express when the hook runs.
 
 ### Localized step titles
-Full localized step titles are now displayed in the Playwright HTML reporter, improving readability and debugging. This ensures your reports are as informative as possible.
+Playwright HTML reporter now shows localized step titles with keywords:
+
+![Localized HTML report](./_media/i18n-html-report.png)
 
 ### Playwright version update
 Minimal Playwright version was updated to the earliest non-deprecated: **1.41**.
