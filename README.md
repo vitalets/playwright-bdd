@@ -23,7 +23,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 </div>
 
 > [!TIP]
-> :fire: [What's new in Playwright-BDD v8](https://vitalets.github.io/playwright-bdd/#/blog/whats-new-in-v8)
+> :fire: Check out [what's new in Playwright-BDD v8](https://vitalets.github.io/playwright-bdd/#/blog/whats-new-in-v8)
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
