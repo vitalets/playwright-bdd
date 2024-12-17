@@ -13,11 +13,24 @@ const createTodo = When('I create todo {string}', async ({ page }, text: string)
   await page.getByRole('button').click();
 });
 
-When(
-  'I create 2 todos {string} and {string}',
-  async ({ page }, text1: string, text2: string) => {
-    await createTodo({ page }, text1);
-    await createTodo({ page }, text2);
-  },
-);
+When('I create 2 todos {string} and {string}', async ({ page }, text1: string, text2: string) => {
+  await createTodo({ page }, text1);
+  await createTodo({ page }, text2);
+});
+```
+
+#### Passing World
+
+For **cucumber-style steps** you should invoke step function via `.call()` to pass actual World:
+
+```js
+const createTodo = When('I create todo {string}', async function (text: string) {
+  await this.page.getByLabel('title').fill(text);
+  await this.page.getByRole('button').click();
+});
+
+When('I create 2 todos {string} and {string}', async function (text1: string, text2: string) {
+  await createTodo.call(this, text1);
+  await createTodo.call(this, text2);
+});
 ```
