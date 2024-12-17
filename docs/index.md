@@ -15,30 +15,30 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 </div>
 
 ## Quick start
-Jump to [getting started](getting-started/index.md) or read below some technical details of Playwright-BDD.
+Jump to the [getting started](getting-started/index.md) guide or read below some technical details about Playwright-BDD.
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
-You can use CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to test BDD scenarios.
-This package offers **alternative way**: convert BDD scenarios into Playwright tests and run them with Playwright runner as usual. 
-Such approach brings all the benefits of Playwright runner:
+You can use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to test BDD scenarios.
+This package offers an **alternative way**: convert BDD scenarios into Playwright tests and run them with the Playwright runner as usual. 
+This approach brings all the benefits of the Playwright runner:
 
 * Automatic browser initialization and cleanup
-* Auto-capture of screenshots, videos and traces
+* Auto-capture of screenshots, videos, and traces
 * Parallelization with sharding
 * Auto-waiting of page elements
 * Out-of-box visual comparison testing
 * Power of Playwright fixtures
-* [...a lot more](https://playwright.dev/docs/library#key-differences)
+* [...and much more](https://playwright.dev/docs/library#key-differences)
 
 ## How Playwright-BDD works
-Typical command to run tests with Playwright-BDD is the following:
+A typical command to run tests with Playwright-BDD is:
 ```
 npx bddgen && npx playwright test
 ```
 
 ### Phase 1: Generate tests
-CLI command `npx bddgen` generates test files from BDD feature files. For example:
+The first command `npx bddgen` generates test files from BDD feature files. For example:
 
 From
 ```gherkin
@@ -66,8 +66,8 @@ test.describe('Playwright Home Page', () => {
 ```
 
 ### Phase 2: Run tests
-CLI command `npx playwright test` runs generated test files with Playwright runner.
-Playwright-BDD makes Playwright API available in step definitions:
+The second command `npx playwright test` runs the generated files with the Playwright runner.
+Step definitions have access to the Playwright APIs and fixtures (e.g. `page`):
 
 ```js
 Given('I am on Playwright home page', async ({ page }) => {
@@ -83,8 +83,8 @@ Then('I see in title {string}', async ({ page }, text) => {
 });  
 ```
 
-HTML report after running this test:
+HTML report shows all scenarios and steps:
 
 ![Playwright html report](reporters/_media/pw-html-report.png)
 
-Proceed to [installation guide](getting-started/installation.md) and try it yourself.
+Proceed to the [installation guide](getting-started/installation.md) and try it yourself.

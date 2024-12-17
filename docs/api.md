@@ -92,7 +92,7 @@ Functions for step definitions.
  - `Step(pattern[, options], fn)`
 
 **Params:**
-  * `pattern` *string | regexp* - step pattern as [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp
+  * `pattern` *string | regexp* - step pattern as [cucumber expression](https://github.com/cucumber/cucumber-expressions) string or RegExp
   * `options` *object* - step options
     - `tags` *string* - [tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios
   * `fn` *function* - step function `(fixtures, ...args) => void`:

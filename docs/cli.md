@@ -1,24 +1,23 @@
 # CLI
-Command line `bddgen`.
 
 ## `bddgen test` (or just `bddgen`)
 Generates Playwright test files from Gherkin documents (`.feature` files).
-This command is typically followed by `npx playwright test` to run generated tests. 
-It also assumes that there is `playwright.config.(ts|js)` with one or several calls of [`defineBddConfig()`](configuration/index.md).
+This command is typically followed by `npx playwright test` to run the generated tests. 
+It also assumes that there is a `playwright.config.(ts|js)` with one or several calls of [`defineBddConfig()`](configuration/index.md).
 
 Examples:
 
-* Generate and run test files using `playwright.config.ts` in default location (working dir):
+* Generate and run test files using `playwright.config.ts` in the default location (working directory):
     ```
     npx bddgen && npx playwright test
     ```
     
-* Use `--tags` option to generate test with [filtering by tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
+* Use the `--tags` option to generate tests with [filtering by tags](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
     ```
     npx bddgen --tags "@foo and not @bar" && npx playwright test
     ```
 
-* Use `-c` / `--config` option to set custom config. Note: the same config should be provided to both `bddgen` and `playwright test` commands:
+* Use the `-c` / `--config` option to set a custom config. Note: the same config should be provided to both `bddgen` and `playwright test` commands:
     ```
     npx bddgen -c path/to/playwright.config.ts && npx playwright test -c path/to/playwright.config.ts
     ```
@@ -31,7 +30,7 @@ Examples:
     ```
 
 ## `bddgen export`
-Prints list of all found step definitions. 
+Prints a list of all found step definitions. 
 Useful for [generating BDD scenarios with ChatGPT](writing-features/chatgpt.md).
 ```
 $ npx bddgen export
@@ -51,7 +50,7 @@ List of all steps (4):
 * `--unused-steps` - output only unused steps
 
 ## `bddgen env`
-Displays info about current environment:
+Displays info about the current environment:
 ```
 $ npx bddgen env
 ```
