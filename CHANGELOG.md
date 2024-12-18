@@ -1,5 +1,8 @@
 # Changelog
 
+## Dev
+* fix default world in Playwright-style steps ([#255](https://github.com/vitalets/playwright-bdd/issues/255))
+
 ## 8.0.0
 * support tags from path ([#217](https://github.com/vitalets/playwright-bdd/issues/217))
 * support scoped step definitions by tags ([#205](https://github.com/vitalets/playwright-bdd/issues/205))

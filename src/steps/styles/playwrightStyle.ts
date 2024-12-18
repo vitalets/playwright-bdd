@@ -49,17 +49,27 @@ export function playwrightStepCtor(
  * See: https://github.com/vitalets/playwright-bdd/issues/110
  */
 function getCallableStepFn<StepFn extends AnyFunction>(pattern: StepPattern, fn: StepFn) {
-  // need Partial<...> here, otherwise TS requires all Playwright fixtures to be passed
-  return (fixtures: Partial<Parameters<StepFn>[0]>, ...args: ParametersExceptFirst<StepFn>) => {
+  // need Partial<...> here, otherwise TS requires _all_ Playwright fixtures to be passed
+  type StepFnArguments =
+    Parameters<StepFn> extends []
+      ? []
+      : [Partial<Parameters<StepFn>[0]>, ...ParametersExceptFirst<StepFn>];
+
+  // todo: move default world type somewhere
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  type DefaultWorld = any;
+
+  return function (this: DefaultWorld, ...args: StepFnArguments) {
+    const [fixtures, ...params] = args;
     assertStepIsCalledWithRequiredFixtures(pattern, fn, fixtures);
-    return fn(fixtures, ...args);
+    return fn.call(this, fixtures, ...params);
   };
 }
 
 function assertStepIsCalledWithRequiredFixtures<StepFn extends AnyFunction>(
   pattern: StepPattern,
   fn: StepFn,
-  passedFixtures: Partial<Parameters<StepFn>[0]>,
+  passedFixtures: Record<string, unknown> = {},
 ) {
   const requiredFixtures = fixtureParameterNames(fn);
   const missingFixtures = requiredFixtures.filter(

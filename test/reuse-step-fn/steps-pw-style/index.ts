@@ -33,3 +33,13 @@ When(
 Then('I see todos:', async ({ todos }, data: DataTable) => {
   expect(todos).toEqual(data.rows().flat());
 });
+
+// step without parameters - check typing
+
+const fn = When('a step', async () => {});
+
+// expectTypeOf(fn).parameters.toEqualTypeOf<[]>();
+
+Then('another step', async () => {
+  fn();
+});

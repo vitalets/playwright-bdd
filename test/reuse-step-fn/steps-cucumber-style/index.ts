@@ -21,3 +21,21 @@ When('I create 2 todos {string} and {string}', async function (text1: string, te
 Then('I see todos:', async function (data: DataTable) {
   expect(this.todos).toEqual(data.rows().flat());
 });
+
+When(
+  'I incorrectly create 2 todos {string} and {string}',
+  async function (_text1: string, _text2: string) {
+    // todo: incorrect invocation: forget to pass world
+    // await createTodo(text1, text2);
+  },
+);
+
+// step without parameters - check typing
+
+const fn = When('a step', async () => {});
+
+expectTypeOf(fn).parameters.toEqualTypeOf<[]>();
+
+Then('another step', async () => {
+  fn.call(this);
+});
