@@ -17,7 +17,7 @@ Imagine the following workspace structure:
 nx.json
 ```
 
-To be able to run e2e tests inside `app1` or `app2` you can add targets to `project.json` of every app: 
+To run e2e tests inside `app1` or `app2`, add targets to the `project.json` of each app:
 ```json
 {
   "targets": {
@@ -38,13 +38,14 @@ To be able to run e2e tests inside `app1` or `app2` you can add targets to `proj
 }
 ```
 
-Now from workspace root you can run:
+Now, from the workspace root you can run:
 ```bash
 npx nx e2e app1
 # or
 npx nx e2e app2
 ```
-Also run e2e in **both** `app1` and `app2`:
+
+To run e2e tests in **both** `app1` and `app2`:
 ```bash
 npx nx run-many -t e2e -p app1 app2
 ```
@@ -69,7 +70,8 @@ If there are many projects with the same e2e setup, you can move default setting
   }
 }
 ```
-Then in `project.json` just keep empty targets:
+
+Then, in `project.json` keep empty targets:
 ```json
 {
   "targets": {
@@ -79,4 +81,4 @@ Then in `project.json` just keep empty targets:
 }
 ```
 
-Check out [working example with Nx and playwright-bdd](https://github.com/vitalets/playwright-bdd-example/tree/nx).
+Check out the [working example with Nx and playwright-bdd](https://github.com/vitalets/playwright-bdd-example/tree/nx).

@@ -1,10 +1,11 @@
 # IDE integration
-One of Playwright-BDD goals is to support all Playwright IDE integrations. It is the main reason for pre-generating test files as regular Playwright test files.
+
+One of Playwright-BDD's goals is to support all Playwright IDE integrations. This is the main reason for pre-generating test files as regular Playwright test files.
 
 ## VS Code
 
 ### Official Playwright extension
-[Official Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) is supported. It automatically picks up generated test files from `.features-gen` directory. You run/debug tests by click:
+The [Official Playwright extension](https://marketplace.visualstudio.com/items?itemName=ms-playwright.playwright) is supported. It automatically picks up generated test files from the `.features-gen` directory. You can run/debug tests by click:
   <img width="70%" src="https://user-images.githubusercontent.com/1473072/229162634-8a801f6e-8a79-407b-889b-7769f957896a.png">
 
 ### Cucumber (Gherkin) Full Support
