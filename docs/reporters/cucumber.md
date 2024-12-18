@@ -1,6 +1,6 @@
-# Cucumber reporters
+# Cucumber Reporters
 
-Playwright-BDD provides special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
+Playwright-BDD provides a special adapter to output test results with [Cucumber reporters (formatters)](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md).
 
 Currently, the following reporters are supported:
 
@@ -11,9 +11,9 @@ Currently, the following reporters are supported:
 * [custom](#custom)
 
 #### Automatic screenshots / videos / traces
-Playwright-BDD fully supports auto-attaching of **screenshots**, **videos** and **traces** to all Cucumber reports. All you need is to [enable these options](https://playwright.dev/docs/test-use-options#recording-options) in Playwright config.
+Playwright-BDD fully supports auto-attaching of **screenshots**, **videos**, and **traces** to all Cucumber reports. Enable these options in the [Playwright config](https://playwright.dev/docs/test-use-options#recording-options).
 
-<details><summary>Example of HTML report with attached screenshot, video and trace</summary>
+<details><summary>Example of HTML report with attached screenshot, video, and trace</summary>
 
 ![html report](./_media/html-report-attachments.png)
 
@@ -21,9 +21,9 @@ Playwright-BDD fully supports auto-attaching of **screenshots**, **videos** and 
 
 #### Projects
 
-Cucumber formatters don't natively support [projects concept](https://playwright.dev/docs/test-projects#introduction) that exists in Playwright. Nevertheless, Playwright-BDD adopts test results to show projects in a Cucumber report.
+Cucumber formatters don't natively support the [projects concept](https://playwright.dev/docs/test-projects#introduction) in Playwright. However, Playwright-BDD adapts test results to show projects in a Cucumber report.
 
-The final output depends on the particular reporter. For example, in HTML reporter project name is prepended to the feature file path:
+The final output depends on the particular reporter. For example, in the HTML reporter, the project name is prepended to the feature file path:
 
 ![html report](./_media/html-report-projects.png)
 
@@ -36,7 +36,7 @@ import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 const testDir = defineBddConfig({
   features: 'features/*.feature',
   steps: 'features/steps/*.ts',
-}),
+});
 
 export default defineConfig({
   testDir,
@@ -88,11 +88,11 @@ export default defineConfig({
 
 ##### Reporter options
 
-* **outputFile** `string` - path to output html file
-* **skipAttachments** `boolean | string[]` (default: `false`) - allows to exclude attachments from report to have smaller file size. Can be boolean or array of content types to skip.
-  * Use `image/png` to skip Playwright's screenshots
-  * Use `video/webm` to skip Playwright's video recordings
-  * Use `application/zip` to skip Playwright's trace files
+* **outputFile** `string` - Path to output HTML file.
+* **skipAttachments** `boolean | string[]` (default: `false`) - Exclude attachments from the report to reduce file size. Can be boolean or an array of content types to skip.
+  * Use `image/png` to skip Playwright's screenshots.
+  * Use `video/webm` to skip Playwright's video recordings.
+  * Use `application/zip` to skip Playwright's trace files.
 
   ```js
   export default defineConfig({
@@ -104,11 +104,11 @@ export default defineConfig({
       ],
     });
   ```
-* **externalAttachments** `boolean` - if enabled, attachments will be stored as separate files in `data` directory next to the report file. This can significantly reduce report size.
-* **attachmentsBaseURL** `string` - A separate location where attachments from the `data` subdirectory are uploaded. Only needed when you upload report and data separately to different locations. The same as `attachmentsBaseURL` of Playwright's [HTML reporter](https://playwright.dev/docs/test-reporters#html-reporter).
+* **externalAttachments** `boolean` - Store attachments as separate files in the `data` directory next to the report file. This can significantly reduce report size.
+* **attachmentsBaseURL** `string` - A separate location where attachments from the `data` subdirectory are uploaded. Only needed when you upload the report and data separately to different locations. The same as `attachmentsBaseURL` of Playwright's [HTML reporter](https://playwright.dev/docs/test-reporters#html-reporter).
 
 #### Trace viewer
-When you set `externalAttachments: true` and `attachmentsBaseURL`, Cucumber HTML report embeds Playwright [trace viewer](https://playwright.dev/docs/trace-viewer):
+When you set `externalAttachments: true` and `attachmentsBaseURL`, the Cucumber HTML report embeds the Playwright [trace viewer](https://playwright.dev/docs/trace-viewer):
 
 ```js
 export default defineConfig({
@@ -116,21 +116,21 @@ export default defineConfig({
     cucumberReporter('html', { 
       outputFile: 'cucumber-report/index.html',
       externalAttachments: true,
-      // URL depends on http server where you open the report
+      // URL depends on the HTTP server where you open the report
       attachmentsBaseURL: 'http://127.0.0.1:8080/data',
     }),
   ],
 });
 ```
 
-To view trace by click, you should open HTML report on `http(s)://` schema, not on `file://`. To achieve that on local machine, you can start http server by the following command:
+To view the trace by click, you should open the HTML report on the `http(s)://` schema, not on `file://`. To achieve that on a local machine, you can start an HTTP server with the following command:
 ```
 npx http-server ./cucumber-report -c-1 -o index.html
 ```
 
 ![html report with trace](./_media/html-report-with-trace.png)
 
-You can add that command to `package.json` scripts to open Cucumber report quickly:
+You can add that command to `package.json` scripts to open the Cucumber report quickly:
 ```json
 {
   "scripts": {
@@ -138,7 +138,7 @@ You can add that command to `package.json` scripts to open Cucumber report quick
   }
 }
 ```
-Open Cucumber report:
+Open the Cucumber report:
 ```
 npm run show-report
 ```
@@ -172,9 +172,9 @@ export default defineConfig({
 
 ##### Reporter options
 
-* **outputFile** `string` - path to output json file
-* **addProjectToFeatureName** `boolean` - if `true`, project name will be prepended to the feature name, recommended for multi-project run (default: `false`) 
-* **addMetadata** `none | list | object` - defines the shape of metadata to attach to feature element. Currently attached properties: `Project`, `Browser`. Useful for third-party reporters. Example of `list` metadata:
+* **outputFile** `string` - Path to output JSON file.
+* **addProjectToFeatureName** `boolean` - If `true`, the project name will be prepended to the feature name, recommended for multi-project runs (default: `false`).
+* **addMetadata** `none | list | object` - Defines the shape of metadata to attach to the feature element. Currently attached properties: `Project`, `Browser`. Useful for third-party reporters. Example of `list` metadata:
     ```json
       {
         "keyword": "Feature",
@@ -187,10 +187,9 @@ export default defineConfig({
       },
     ```
 
-* **skipAttachments** `boolean | string[]` (default: `false`) - see [skipAttachments](#reporter-options) in HTML report
+* **skipAttachments** `boolean | string[]` (default: `false`) - See [skipAttachments](#reporter-options) in the HTML report.
 
-Output of json reporter can be used to generate some third-party reports.
-Take a look on two these projects:
+Output of the JSON reporter can be used to generate some third-party reports. Take a look at these projects:
 
 * [WasiqB/multiple-cucumber-html-reporter](https://github.com/WasiqB/multiple-cucumber-html-reporter)
 * [gkushang/cucumber-html-reporter](https://github.com/gkushang/cucumber-html-reporter)
@@ -227,10 +226,10 @@ export default defineConfig({
 
 ##### Reporter options
 
-* **outputFile** `string` - path to output xml file
-* **suiteName** `string` - name attribute of the `testsuite` element 
+* **outputFile** `string` - Path to output XML file.
+* **suiteName** `string` - Name attribute of the `testsuite` element.
 
-> Junit reporter does not contain attachments
+> Junit reporter does not contain attachments.
 
 ## message
 Generates [Cucumber message](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#message) report.
@@ -261,8 +260,8 @@ export default defineConfig({
 
 ##### Reporter options
 
-* **outputFile** `string` - path to output ndjson file
-* **skipAttachments** `boolean | string[]` (default: `false`) - see [skipAttachments](#reporter-options) in HTML report
+* **outputFile** `string` - Path to output NDJSON file.
+* **skipAttachments** `boolean | string[]` (default: `false`) - See [skipAttachments](#reporter-options) in the HTML report.
 
 > Please note that these 4 [message types](https://github.com/cucumber/messages/blob/main/messages.md#envelope) are not supported yet:
 > - `parameterType`
@@ -270,12 +269,12 @@ export default defineConfig({
 > - `undefinedParameterType`
 > - `parseError`
 >
-> If they are required for your report feel free to [open an issue](https://github.com/vitalets/playwright-bdd/issues). 
+> If they are required for your report, feel free to [open an issue](https://github.com/vitalets/playwright-bdd/issues). 
 
 ## custom
 Playwright-BDD supports [custom Cucumber formatters](https://github.com/cucumber/cucumber-js/blob/main/docs/custom_formatters.md). 
 
-Create custom reporter file, e.g. `my-reporter.ts`:
+Create custom reporter file, e.g., `my-reporter.ts`:
 ```ts
 import * as messages from '@cucumber/messages';
 import { Formatter, IFormatterOptions } from '@cucumber/cucumber';
@@ -290,7 +289,7 @@ export default class CustomFormatter extends Formatter {
 }
 ```
 
-!> Please note that constructor options `colorFns`, `snippetBuilder` and `supportCodeLibrary` are passed as fake objects
+!> Please note that constructor options `colorFns`, `snippetBuilder`, and `supportCodeLibrary` are passed as fake objects.
 
 Configure reporter in `playwright.config.js`:
 ```js
@@ -314,7 +313,7 @@ All options passed to `cucumberReporter()` will be available as `options.parsedA
 
 ## Merge reports
 
-Since Playwright **1.37** there is a [merge-reports](https://playwright.dev/docs/test-sharding#merging-reports-from-multiple-shards) command that outputs combined report from several shards. Playwright-BDD supports this feature as well and can produce combined Cucumber reports.
+Since Playwright **1.37**, there is a [merge-reports](https://playwright.dev/docs/test-sharding#merging-reports-from-multiple-shards) command that outputs a combined report from several shards. Playwright-BDD supports this feature as well and can produce combined Cucumber reports.
 
 Add configuration to `playwright.config.ts`:
 ```ts
@@ -343,7 +342,7 @@ npx bddgen && npx playwright test --shard 1/2
 npx bddgen && npx playwright test --shard 2/2
 ```
 
-Merge reports (important to pass`--config` option pointing to `playwright.config.ts`):
+Merge reports (important to pass the `--config` option pointing to `playwright.config.ts`):
 ```
 npx playwright merge-reports --config playwright.config.ts ./blob-report
 ```

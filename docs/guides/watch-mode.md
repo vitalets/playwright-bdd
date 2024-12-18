@@ -1,10 +1,11 @@
 # Watch mode
-To watch feature / steps files and automatically regenerate tests you can use [nodemon](https://github.com/remy/nodemon):
+
+Use [nodemon](https://github.com/remy/nodemon) to watch features and steps files and automatically regenerate tests:
 ```
 npx nodemon -w ./features -w ./steps -e feature,js,ts --exec "npx bddgen"
 ```
 
-To automatically rerun tests after changes you can run the above command together with [Playwright `--ui` mode](https://playwright.dev/docs/test-ui-mode), utilizing [npm-run-all](https://github.com/mysticatea/npm-run-all). Example `package.json`:
+To automatically rerun tests after changes, run the above command together with [Playwright `--ui` mode](https://playwright.dev/docs/test-ui-mode), utilizing [npm-run-all](https://github.com/mysticatea/npm-run-all). Example `package.json`:
 
 ```json
 "scripts": {

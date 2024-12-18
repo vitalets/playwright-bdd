@@ -1,6 +1,6 @@
-# Allure reporter
+# Allure Reporter
 
-You can output test results with [allure-playwright](https://www.npmjs.com/package/allure-playwright) reporter (not `allure-cucumberjs`). Follow the instructions from allure website: [install](https://allurereport.org/docs/install/) allure itself, install allure-playwright and enable it in the config:
+You can output test results with the [allure-playwright](https://www.npmjs.com/package/allure-playwright) reporter (not `allure-cucumberjs`). Follow the instructions from the Allure website: [install](https://allurereport.org/docs/install/) Allure itself, install allure-playwright, and enable it in the config:
 
 ```js
 import { defineConfig } from '@playwright/test';

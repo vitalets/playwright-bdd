@@ -1,8 +1,10 @@
 # Add fixtures
 
-As your tests grow, you will most likely need some Playwright [fixtures](https://playwright.dev/docs/test-fixtures). That means you will use custom `test` instance, created with `test.extend()`. For such cases you should pass custom test instance into `createBdd()` function to have access to all your fixtures inside step definitions.
+As your tests grow, you will most likely need some Playwright [fixtures](https://playwright.dev/docs/test-fixtures). This means you will use a custom `test` instance, created with `test.extend()`. For such cases, you should pass the custom test instance into the `createBdd()` function to have access to all your fixtures inside step definitions.
 
-The recommended setup is to call `createBdd(test)` in the same file where you define custom test and export `test` and `Given / When / Then`:
+### Recommended setup
+
+Call `createBdd(test)` in the same file where you define the custom test and export `test` and `Given / When / Then`:
 
 ```ts
 // fixtures.ts
@@ -17,9 +19,10 @@ export const test = base.extend({
 export const { Given, When, Then } = createBdd(test);
 ```
 
-> Make sure to export `test` variable, because it is used in generated test files
+> Make sure to export the `test` variable, because it is used in generated test files.
 
 Now you can write step definitions with custom fixtures:
+
 ```ts
 // steps.ts
 

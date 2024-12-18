@@ -3,12 +3,12 @@
 Cucumber-style step definitions are compatible with CucumberJS.
 
  * step definitions use World (`this`) to interact with browser
- * step definitions receive only step parameters, don't receive custom fixtures as a first parameter
+ * step definitions receive only step parameters, don't receive custom fixtures as a first argument
  * step definitions can't be defined as arrow functions
 
 In terms of Playwright, World is just a test-scoped fixture, that is automatically provided to all step definitions.
 
-Since Playwright-BDD **v7** you can define World in a free form, without extending Cucumber World / BddWorld. The shape of world is up to you, you can pass any fixtures as world props and use them in step definitions.
+Since **Playwright-BDD v7** you can define World as a custom class, without extending Cucumber World. The shape of World is up to you, you can pass any fixtures as world properties and use them later in step definitions.
 
 **Example of cucumber-style setup:**
 
@@ -29,7 +29,7 @@ export class World {
 
 > No need to call `setWorldConstructor` as it was before for [CucumberJs custom world](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md#custom-worlds).
 
-2. Extend Playwright's test with world fixture and create `Given / When/ Then`:
+2. Extend Playwright test with `world` fixture and create `Given / When / Then`:
 
 ```ts
 // fixtures.ts
@@ -37,7 +37,10 @@ import { test as base } from 'playwright-bdd';
 import { World } from './world';
 
 export const test = base.extend<{ world: World }>({
-  world: ({ page }, use) => use(new World(page)),
+  world: async ({ page }, use) => {
+    const world = new World(page);
+    await use(world);
+  },
 });
 
 export const { Given, When, Then } = createBdd(test, { 
@@ -45,7 +48,7 @@ export const { Given, When, Then } = createBdd(test, {
 });
 ```
 
-> Make sure to export `test` instance, because it is used in generated test files
+> Make sure to export `test` instance, because it is used in the generated test files
 
 3. Use these `Given / When / Then` to define steps, world instance is available as `this`:
 
@@ -71,16 +74,16 @@ import { test as base } from 'playwright-bdd';
 
 type World = {
   page: Page;
-  myFixture: MyFixture; // <- custom fixture property in World
+  myFixture: MyFixture; // <- custom fixture property
 };
 
 export const test = base.extend<{ world: World }>({
-  myFixture: ({}, use) => {
-    // setup myFixture
+  myFixture: async ({}, use) => {
+    // setup myFixture...
   },
-  world: ({ page, myFixture }, use) => {
+  world: async ({ page, myFixture }, use) => {
     const world: World = { page, myFixture };
-    use(world);
+    await use(world);
   },
 });
 
@@ -99,14 +102,17 @@ Given('I am on home page', async function () {
 ```
 
 ### Is there default world?
-No. You define entire World yourself, providing only necessary fixtures.
+No. You define entire World from scratch.
 
-In the simplest case you can create a world with only `page` property:
+In the simplest case you can create a world as a plain object with `page` property:
 ```js
 import { test as base } from 'playwright-bdd';
 
 export const test = base.extend({
-  world: ({ page }, use) => use({ page }),
+  world: async ({ page }, use) => {
+    const world = { page };
+    await use(world);
+  },
 });
 
 export const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });

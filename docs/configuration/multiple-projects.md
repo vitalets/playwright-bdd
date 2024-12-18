@@ -2,7 +2,8 @@
 You can use Playwright-BDD with multiple [Playwright projects](https://playwright.dev/docs/test-projects). 
 
 ## Same feature files
-If all projects use **the same set of feature files**, you can define single `testDir` option on the root level of config:
+
+If all projects use **the same set of feature files**, you can define a single `testDir` option at the root level of the config:
 ```ts
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
@@ -28,7 +29,8 @@ export default defineConfig({
 ```
 
 ## Different feature files
-If projects use **different feature files**, you should define own `testDir` for each project:
+
+If projects use **different feature files**, you should define a separate `testDir` for each project:
 ```ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
@@ -55,9 +57,9 @@ export default defineConfig({
 });
 ```
 
-?> Please note, that you should also set unique `outputDir` for each project to avoid conflicts
+?> Please note that you should also set a unique `outputDir` for each project to avoid conflicts.
 
-For convenience, there is a helper function [`defineBddProject()`](api.md#definebddproject). In addition to the standard BDD config, it accepts a project name and automatically sets `outputDir` based on that name. The function returns an object `{ name, testDir }`, which can be merged into project config with spread operator.
+For convenience, there is a helper function [`defineBddProject()`](api.md#definebddproject). In addition to the standard BDD config, it accepts a project name and automatically sets `outputDir` based on that name. The function returns an object `{ name, testDir }`, which can be merged into the project config with the spread operator.
 
 ```ts
 import { defineConfig } from '@playwright/test';
@@ -83,13 +85,13 @@ export default defineConfig({
 });
 ```
 
-## Non-bdd projects
-You can have non-bdd projects in the same Playwright config.
-Just ensure that non-bdd projects have own `testDir`. See example in **Authentication** below. 
+## Non-BDD projects
+
+You can have non-BDD projects in the same Playwright config. Just ensure that non-BDD projects have their own `testDir`. See the example in **Authentication** below. 
 
 ## Authentication
 
-When using separate non-bdd project [for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
+When using a separate non-BDD project [for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
 
 ```ts
 import { defineConfig } from '@playwright/test';

@@ -1,6 +1,6 @@
-# Playwright reporters
+# Playwright Reporters
 
-All [Playwright reporters](https://playwright.dev/docs/test-reporters) are supported out-of-box. They are less BDD-adopted, but contain all the latest features of Playwright reporting.
+All [Playwright reporters](https://playwright.dev/docs/test-reporters) are supported out-of-box. They are less BDD-adopted but contain all the latest features of Playwright reporting.
 
 Example of enabling Playwright HTML reporter:
 ```js
@@ -28,5 +28,5 @@ Feature: Playwright Home Page
 Report:
 ![Playwright html report](./_media/pw-html-report.png)
 
-If you need more BDD-adopted reports, have a look on [Cucumber reporters](reporters/cucumber.md).
+If you need more BDD-adopted reports, have a look at [Cucumber reporters](reporters/cucumber.md).
 

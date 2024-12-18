@@ -44,7 +44,7 @@ See more details in the documentation: [tags from path](writing-features/tags-fr
 
 ### Scoped step definitions
 
-Now you can scope step definition to specific features or scenarios by tags. Just pass `tags` expression in the second argument:
+Now you can scope step definitions to specific features or scenarios by tags. Just pass the `tags` expression in the second argument:
 
 ```ts
 When('I click the PLAY button', { tags: '@game' }, async () => {
@@ -74,22 +74,22 @@ AfterAll({ name: 'cleanup db', tags: '@game' }, async () => {
 });
 ```
 
-Tagged hooks will be executed, only if corresponding feature is executed. 
+Tagged hooks will be executed only if the corresponding feature is executed.
 
-?> Please keep in mind, that these hooks **run in each worker**, similar to Playwright worker hooks.
+?> Please keep in mind that these hooks **run in each worker**, similar to Playwright worker hooks.
 
 Full documentation: [Hooks](writing-steps/hooks.md).
 
 ### Default tags
 
-If multiple step definitions and hooks should have the same tags, you can provide these default tags via `createBdd()` option:
+If multiple step definitions and hooks should have the same tags, you can provide these default tags via the `createBdd()` option:
 
 ```ts
 const { BeforeAll, Before, Given } = createBdd(test, { 
   tags: '@game' // <- default tag
 });
 
-// all function below are tagged with `@game`
+// all functions below are tagged with `@game`
 BeforeAll(async () => { ... });
 Before(async () => { ... });
 Given('a step', async () => { ... });
@@ -137,9 +137,7 @@ Documentation for [`missingSteps`](configuration/options.md#missingsteps).
 
 ### New option: `matchKeywords`
 
-When writing step definitions, we use different keyword functions: `Given()`, `When()` and `Then()`. Did you know, that by default all these functions are just aliases? Keyword is not used for matching with scenario steps:
-
-Enable keyword-specific matching for step definitions with `matchKeywords` option. This enforces that `Given`, `When`, and `Then` strictly match their respective keywords in feature files.
+New option `matchKeywords` toggles keyword-specific matching for step definitions. If enabled, `Given`, `When`, and `Then` in definitions strictly match their respective keywords in feature files.
 
 - `matchKeywords: false` (default): Step definition keyword is not considered for matching
     ```ts
@@ -156,7 +154,7 @@ Enable keyword-specific matching for step definitions with `matchKeywords` optio
 More details on [Keywords matching](writing-steps/keywords-matching.md).
 
 ### Default value for `quotes` set to `single`
-Generated test files now use single quotes by default, reducing the need for escape characters and making files cleaner. To return to previous behavior, set `quotes` option manually:
+Generated test files now use single quotes by default, reducing the need for escape characters and making files cleaner. To return to previous behavior, set the `quotes` option manually:
 ```ts
 const testDir = defineBddConfig({
   quotes: 'double',
@@ -174,7 +172,7 @@ Introducing new aliases for hooks:
 - `Before` → `BeforeScenario`
 - `After` → `AfterScenario`
 
-Usage of new aliases is encouraged, because they better express when the hook runs.
+Usage of new aliases is encouraged because they better express when the hook runs.
 
 ### Localized step titles
 Playwright HTML reporter now shows localized step titles with keywords:
@@ -183,7 +181,7 @@ Playwright HTML reporter now shows localized step titles with keywords:
 
 ### Playwright version update
 Minimal Playwright version was updated to the earliest non-deprecated: **1.41**.
-Please, update you `@playwright/test` dependency if needed.
+Please, update your `@playwright/test` dependency if needed.
 
 ?> You can check deprecated Playwright versions with the command: `npm show @playwright/test@1 deprecated`
 
@@ -205,7 +203,7 @@ To upgrade to v8, follow these steps:
 3. Review the [Changelog](changelog) for potential breaking changes and adapt your project accordingly.
 4. Run your tests to verify everything works as expected.
 
-> In case of any bugs or questions feel free to open [an issue](https://github.com/vitalets/playwright-bdd/issues) on GitHub.
+> In case of any bugs or questions, feel free to open [an issue](https://github.com/vitalets/playwright-bdd/issues) on GitHub.
 
 Happy testing ❤️
 
