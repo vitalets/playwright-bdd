@@ -3,7 +3,7 @@
 There are some special tags to improve your testing experience.
 
 ## @only
-Use `@only` tag to run a single feature / scenario:
+Use the `@only` tag to run a single feature or scenario:
 ```gherkin
 @only
 Feature: Playwright site
@@ -14,7 +14,7 @@ Feature: Playwright site
 ```
 
 ## @skip / @fixme
-Use `@skip` (or `@fixme`) tag to skip a particular feature / scenario:
+Use the `@skip` (or `@fixme`) tag to skip a particular feature or scenario:
 ```gherkin
 @skip
 Feature: Playwright site
@@ -24,10 +24,10 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
-To conditionally skip scenario use [$test and $tags fixtures](writing-steps/bdd-fixtures.md#test-and-testinfo).
+To conditionally skip a scenario, use [$test and $tags fixtures](writing-steps/bdd-fixtures.md#test-and-testinfo).
 
 ## @fail
-Use `@fail` tag to mark feature / scenario as [failing](https://playwright.dev/docs/api/class-test#test-fail):
+Use the `@fail` tag to mark a feature or scenario as [failing](https://playwright.dev/docs/api/class-test#test-fail):
 ```gherkin
 Feature: Playwright site
     
@@ -37,7 +37,7 @@ Feature: Playwright site
 ```
 
 ## @slow
-Use `@slow` tag to mark feature / scenario as [slow](https://playwright.dev/docs/api/class-test#test-slow) (timeout x 3):
+Use the `@slow` tag to mark a feature or scenario as [slow](https://playwright.dev/docs/api/class-test#test-slow) (timeout x 3):
 ```gherkin
 Feature: Playwright site
     
@@ -47,7 +47,7 @@ Feature: Playwright site
 ```
 
 ## @timeout:N
-Use `@timeout:N` tag to set scenario timeout:
+Use the `@timeout:N` tag to set a scenario timeout:
 ```gherkin
 Feature: Playwright site
     
@@ -55,7 +55,7 @@ Feature: Playwright site
     Scenario: Check title
         Given I open url "https://playwright.dev"
 ```
-If defined on a feature level, it sets timeout for **each scenario** inside, not for the feature itself. See [`test.describe.configure`](https://playwright.dev/docs/api/class-test#test-describe-configure) for details. Example:
+If defined on a feature level, it sets the timeout for **each scenario** inside, not for the feature itself. See [`test.describe.configure`](https://playwright.dev/docs/api/class-test#test-describe-configure) for details. Example:
 ```gherkin
 @timeout:5000
 Feature: Playwright site
@@ -68,7 +68,7 @@ Feature: Playwright site
 ```
 
 ## @retries:N
-Use `@retries:N` tag to set retries for all scenarios in a feature:
+Use the `@retries:N` tag to set retries for all scenarios in a feature:
 ```gherkin
 @retries:2
 Feature: Playwright site
@@ -84,10 +84,10 @@ Feature: Playwright site
     Scenario: Check title
         Given I open url "https://playwright.dev"
 ```
-> When `@retries` tag is applied to a single scenario, generated test is wrapped into *anonymous describe*, see [microsoft/playwright#10825](https://github.com/microsoft/playwright/issues/10825)
+> When the `@retries` tag is applied to a single scenario, the generated test is wrapped into an *anonymous describe*, see [microsoft/playwright#10825](https://github.com/microsoft/playwright/issues/10825)
 
 ## @mode:xxx
-Use one of the following tags to set [execution mode](https://playwright.dev/docs/test-parallel#parallelize-tests-in-a-single-file) for the feature or scenario outline:
+Use one of the following tags to set the [execution mode](https://playwright.dev/docs/test-parallel#parallelize-tests-in-a-single-file) for the feature or scenario outline:
 
 * `@mode:parallel`
 * `@mode:serial`
@@ -103,4 +103,4 @@ Feature: Playwright site
         Given I open url "https://playwright.dev"
 ```
 
-!> Please note that `@mode` tag is not applicable to a single scenario
+!> Please note that the `@mode` tag is not applicable to a single scenario

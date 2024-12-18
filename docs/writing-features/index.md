@@ -14,12 +14,12 @@ Feature: Playwright site
         Then I see in title "Playwright"
 ```
 
-Tags allow to run subset of tests using `--tags` option with [tags expression](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
+Tags allow running a subset of tests using the `--tags` option with [tags expression](https://cucumber.io/docs/cucumber/api/?lang=javascript#tag-expressions):
 ```
 npx bddgen --tags "@desktop and not @slow" && npx playwright test
 ```
 
 ?> Since Playwright **1.42** Gherkin tags are mapped to [Playwright tags](https://playwright.dev/docs/test-annotations#tag-tests)
 
-Also you can [access tags inside step definitions](writing-steps/bdd-fixtures.md#tags).
+You can also [access tags inside step definitions](writing-steps/bdd-fixtures.md#tags).
 

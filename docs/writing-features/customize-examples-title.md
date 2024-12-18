@@ -1,13 +1,13 @@
 # Customize examples title
-By default each examples row from `Scenario Outline` is converted into test with title `Example #{index}`.
-It can be not reliable for reporters that keep track of test history, because on every insertion / deletion of rows test titles will shift.
+By default, each example row from a `Scenario Outline` is converted into a test with the title `Example #{index}`.
+This can be unreliable for reporters that keep track of test history because, with every insertion or deletion of rows, test titles will shift.
 
-There are 3 ways to set consistent title for examples.
+There are three ways to set a consistent title for examples.
 
 #### 1. Use scenario name as a template
-You can add column names like `<column>` to the scenario name. In that case scenario name will be used as a title template for generated examples.
+You can add column names like `<column>` to the scenario name. In that case, the scenario name will be used as a title template for generated examples.
 
-!> Note that generated titles should be **unique** within scenario, otherwise Playwright will throw an error.
+!> Note that generated titles should be **unique** within a scenario; otherwise, Playwright will throw an error.
 
 Example:
 ```gherkin
@@ -47,7 +47,7 @@ test.describe(`Calculator`, () => {
 ```
 
 #### 2. Use special comment syntax
-You can provide own fixed title format by adding a special comment right above `Examples`. 
+You can provide your own fixed title format by adding a special comment right above `Examples`. 
 The comment should start with `# title-format:` and can reference column names as `<column>`. For example:
 ```gherkin
 Feature: Calculator
@@ -87,4 +87,4 @@ test.describe(`Calculator`, () => {
 ```
 
 #### 3. Use config option
-You can set config option [examplesTitleFormat](configuration/options.md#examplestitleformat) to define global template for examples title.
+You can set the config option [examplesTitleFormat](configuration/options.md#examplestitleformat) to define a global template for examples titles.
