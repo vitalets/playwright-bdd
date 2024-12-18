@@ -1,83 +1,98 @@
-# Write first BDD test
+# Write your first BDD test
 
 Follow the steps below to create and run your first BDD test with `playwright-bdd`.
 
-?> This guide uses JavaScript for simplicity, but you can use TypeScript as well
+?> This guide uses JavaScript for simplicity, but you can use TypeScript as well.
 
-1. Create the following `playwright.config.js` in the project root:
-   ```js
-   import { defineConfig } from '@playwright/test';
-   import { defineBddConfig } from 'playwright-bdd';
+### Step 1: create configuration file
 
-   const testDir = defineBddConfig({
-     features: 'sample.feature',
-     steps: 'steps.js',
-   });
+Create the following `playwright.config.js` in the project root:
 
-   export default defineConfig({
-     testDir,
-     reporter: 'html',
-   });
-   ```
+```js
+import { defineConfig } from '@playwright/test';
+import { defineBddConfig } from 'playwright-bdd';
 
-2. Create feature file `sample.feature`:
+const testDir = defineBddConfig({
+  features: 'sample.feature',
+  steps: 'steps.js',
+});
 
-   ```gherkin
-   Feature: Playwright site
+export default defineConfig({
+  testDir,
+  reporter: 'html',
+});
+```
 
-       Scenario: Check title
-           Given I open url "https://playwright.dev"
-           When I click link "Get started"
-           Then I see in title "Playwright"
-   ```
+### Step 2: create feature file
 
-3. Implement steps in `steps.js`:
-   ```ts
-   import { expect } from '@playwright/test';
-   import { createBdd } from 'playwright-bdd';
+Create a feature file named `sample.feature`:
 
-   const { Given, When, Then } = createBdd();
+```gherkin
+Feature: Playwright site
 
-   Given('I open url {string}', async ({ page }, url) => {
-     await page.goto(url);
-   });
+    Scenario: Check title
+        Given I open url "https://playwright.dev"
+        When I click link "Get started"
+        Then I see in title "Playwright"
+```
 
-   When('I click link {string}', async ({ page }, name) => {
-     await page.getByRole('link', { name }).click();
-   });
+### Step 3: implement steps
 
-   Then('I see in title {string}', async ({ page }, keyword) => {
-     await expect(page).toHaveTitle(new RegExp(keyword));
-   });
-   ```
+Implement the steps in `steps.js`:
 
-   > There are alternative ways of defining steps: [Decorators](writing-steps/decorators.md) and [Cucumber-style syntax](writing-steps/cucumber-style.md)
+```ts
+import { expect } from '@playwright/test';
+import { createBdd } from 'playwright-bdd';
 
-4. Generate and run tests:
+const { Given, When, Then } = createBdd();
 
-   ```
-   npx bddgen && npx playwright test
-   ```
+Given('I open url {string}', async ({ page }, url) => {
+  await page.goto(url);
+});
 
-   Output:
+When('I click link {string}', async ({ page }, name) => {
+  await page.getByRole('link', { name }).click();
+});
 
-   ```
-   Running 1 test using 1 worker
-   1 passed (2.0s)
+Then('I see in title {string}', async ({ page }, keyword) => {
+  await expect(page).toHaveTitle(new RegExp(keyword));
+});
+```
 
-   To open last HTML report run:
+> There are alternative ways of defining steps: [Decorators](writing-steps/decorators.md) and [Cucumber-style syntax](writing-steps/cucumber-style.md).
 
-   npx playwright show-report
-   ```
-   <details>
-     <summary>HTML report</summary>
-     <img width="80%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/e327d97c-bc67-4ba2-8660-650f1c479c62"/>
-   </details>
+### Step 4: generate and run tests
 
-5. (Optional) Check out `.features-gen` directory to see what generated tests look like ;)
+Generate and run the tests:
 
-> Don't forget to [git-ignore generated files](guides/ignore-generated-files.md)
+```
+npx bddgen && npx playwright test
+```
 
-!> If your project uses [ES Modules](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md)
+Output:
 
-?> Here is fully working Playwright-BDD example project: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
+```
+Running 1 test using 1 worker
+1 passed (2.0s)
+
+To open the last HTML report, run:
+
+npx playwright show-report
+```
+
+<details>
+  <summary>HTML report</summary>
+  <img width="80%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/e327d97c-bc67-4ba2-8660-650f1c479c62"/>
+</details>
+
+### Step 5: check generated tests (optional)
+
+Check out the `.features-gen` directory to see what the generated tests look like.
+
+?> Here is a fully working Playwright-BDD example project: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
+
+> Don't forget to [git-ignore generated files](guides/ignore-generated-files.md).
+
+!> If your project uses [ES Modules](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md).
+
+
