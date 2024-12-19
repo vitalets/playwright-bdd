@@ -2,7 +2,7 @@
 
 By default, step definitions are global and [not bound to a particular feature](https://cucumber.io/docs/cucumber/step-definitions/?lang=javascript#scope). Although it follows Cucumber design, in large projects it can be tricky to keep steps unique for all possible domains.
 
-Playwright-BDD provides a way to scope step definition to a particular feature or scenario. You can pass `tags` expression, narrowing the scope of the definition:
+Playwright-BDD provides a way to scope step definitions to a particular feature or scenario. You can pass a `tags` expression, narrowing the scope of the definition:
 
 ```js
 Given('a step', { tags: '@foo' }, async () => {
@@ -10,7 +10,7 @@ Given('a step', { tags: '@foo' }, async () => {
 });
 ```
 
-This definition of `a step` will be used only for features/scenarios with `@foo` tag. It allows to have multiple definitions of the same step in a project.
+This definition of `a step` will be used only for features/scenarios with the `@foo` tag. It allows having multiple definitions of the same step in a project.
 
 #### Example
 Imagine there are two features *game* and *video-player*, both having a step `I click the PLAY button`:
@@ -42,14 +42,14 @@ When('I click the PLAY button', async () => {
   // actions for video-player.feature
 });
 ```
-If I run the example as is, I will get an error:
+If you run the example as is, you will get an error:
 ```
 Error: Multiple definitions matched scenario step!
 Step: When I click the PLAY button # game.feature:6:5
   - When 'I click the PLAY button' # game.steps.js:5
   - When 'I click the PLAY button' # video-player.steps.js:5
 ```
-To solve the issue you can scope step definition to the corresponding feature by `tags`:
+To solve the issue, you can scope the step definition to the corresponding feature by `tags`:
 ```js
 // game.steps.js
 When('I click the PLAY button', { tags: '@game' }, async () => {
@@ -79,7 +79,7 @@ Feature: Video player
     ... 
     When I click the PLAY button
 ```
-Now code runs. Each feature uses respective step definition without conflicts.
+Now the code runs. Each feature uses the respective step definition without conflicts.
 
 ## Default tags
 You can provide default tags for step definitions and hooks via `createBdd()` options:
@@ -103,7 +103,7 @@ When('I click the PLAY button', async () => {
 ```
 
 ## Tags from path
-You can provide default tags for step definitions and hooks via **`@`-prefixed directories or filenames**. It is a convenient way for binding your steps and features.
+You can provide default tags for step definitions and hooks via **`@`-prefixed directories or filenames**. It is a convenient way to bind your steps and features.
 
 Example:
 ```
@@ -115,7 +115,7 @@ features
     ├── video-player.feature
     └── steps.ts
 ```
-This is equivalent of having `@game` tag explicitly defined in the `game.feature` and in all step definitions inside `@game/steps.ts`. With tagged directory you can omit tags from code - step definitions will be scoped automatically:
+This is equivalent to having the `@game` tag explicitly defined in the `game.feature` and in all step definitions inside `@game/steps.ts`. With a tagged directory, you can omit tags from the code - step definitions will be scoped automatically:
 ```ts
 // @game/steps.ts
 
@@ -124,7 +124,7 @@ When('I click the PLAY button', /* { tags: '@game' }, */ async () => {
 });
 ```
 
-You can also add shared steps, to be used in both features:
+You can also add shared steps to be used in both features:
 
 ```
 features
@@ -137,7 +137,7 @@ features
 └── shared-steps.ts
 ```
 
-You can use `@`-tagged filenames as well. It allows to store features and steps separately:
+You can use `@`-tagged filenames as well. It allows you to store features and steps separately:
 
 ```
 features
@@ -146,4 +146,4 @@ features
 steps
 ├── @game.ts
 └── @video-player.ts
-```   
+```

@@ -1,6 +1,6 @@
 # Snippets
 
-Snippets allow to quickly create definitions for missing steps.
+Snippets allow you to quickly create definitions for missing steps.
 
 Example:
 
@@ -13,11 +13,11 @@ Feature: Playwright site
         When I click link "Get started"
         Then I see in title "Playwright"
 ```
-And executed it without defining it's steps implementation:
+And executed it without defining its steps implementation:
 ```
 npx bddgen && npx playwright test
 ```
-The output shows an error and provides code snippets, that you can copy-paste to your codebase:
+The output shows an error and provides code snippets that you can copy-paste to your codebase:
 ```
 Missing step definitions: 3
 
@@ -36,7 +36,7 @@ Then('I see in title {string}', async ({}, arg) => {
   // From: features/homepage.feature:6:5
 });
 
-Use snippets above to create missing steps.
+Use the snippets above to create missing steps.
 ```
 
-> In some projects, features are written beforehand and step definitions come later. For such cases, you may need to allow generation of test files with missing steps and have them reported as failing (or fixme) scenarios. Check out [`missingSteps`](configuration/options.md#missingsteps) option to configure that behavior.
+> In some projects, features are written beforehand and step definitions come later. For such cases, you may need to allow the generation of test files with missing steps and have them reported as failing (or fixme) scenarios. Check out the [`missingSteps`](configuration/options.md#missingsteps) option to configure that behavior.

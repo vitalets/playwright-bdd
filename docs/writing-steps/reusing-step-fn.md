@@ -1,6 +1,6 @@
 # Re-using step function
 
-It is possible to re-use step function in other steps, to share common functionality. Save return value of `Given() / When() / Then()` and invoke it in other steps. Note that you should pass all required fixtures in the first argument.
+It is possible to re-use a step function in other steps to share common functionality. Save the return value of `Given() / When() / Then()` and invoke it in other steps. Note that you should pass all required fixtures in the first argument.
 
 Example:
 ```ts
@@ -21,7 +21,7 @@ When('I create 2 todos {string} and {string}', async ({ page }, text1: string, t
 
 #### Passing World
 
-For **cucumber-style steps** you should invoke step function via `.call()` to pass actual World:
+For **cucumber-style steps**, you should invoke the step function via `.call()` to pass the actual World:
 
 ```js
 const createTodo = When('I create todo {string}', async function (text: string) {

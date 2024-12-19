@@ -3,7 +3,7 @@
 There are 3 ways of writing steps in Playwright-BDD:
 
 1. [Playwright-style](writing-steps/playwright-style.md) - write steps like you write Playwright tests, recommended for new BDD projects or existing Playwright projects.
-2. [Cucumber-style](writing-steps/cucumber-style.md) - write steps in CucumberJS compatible way, use `this` to access world and Playwright fixtures. Recommended for migrating CucumberJS projects to Playwright runner.
+2. [Cucumber-style](writing-steps/cucumber-style.md) - write steps in a [CucumberJS](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/step_definitions.md) compatible way, use `this` to access the world and Playwright fixtures. Recommended for migrating CucumberJS projects to the Playwright runner.
 3. [Decorators](writing-steps/decorators.md) - mark class methods as steps, recommended for all projects.
 
 #### Examples

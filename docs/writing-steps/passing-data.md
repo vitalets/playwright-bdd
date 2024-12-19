@@ -2,7 +2,7 @@
 
 When writing BDD steps, you often need to pass data from one step to another.
 
-For example, in one step you click the link, and in another you want to check that new tab is opened:
+For example, in one step you click the link, and in another you want to check that a new tab is opened:
 
 ```gherkin
 Feature: home page
@@ -12,9 +12,9 @@ Feature: home page
     Then new tab is opened
 ```
 
-Typically, in Cucumber a `world` is used as a container for such data. World is created for each scenario and persists between all steps. One step can write data to the `world` object, and another can read from it.
+In Cucumber, a `world` is used as a container for such data. The world is created for each scenario and persists between all steps. One step can write data to the `world` object, and another can read from it.
 
-In Playwright, any test-scoped fixture can be used as a cross-step context. You can name it `ctx` (for brevity) and initialize with empty object `{}`. For example:
+In Playwright, any test-scoped fixture can be used as a cross-step context. You can name it `ctx` (for brevity) and initialize it with an empty object `{}`. For example:
 
 ```js
 import { test as base, createBdd } from 'playwright-bdd';
@@ -28,6 +28,7 @@ export const test = base.extend({
 
 export const { Given, When, Then } = createBdd(test);
 ```
+
 Now you can use `ctx` in steps to read and write data:
 
 ```js
@@ -44,7 +45,7 @@ When('new tab is opened', async ({ ctx }) => {
 });
 ```
 
-**For TypeScript users**: you can define type of `ctx` as `Record<string, any>` or make it more strict:
+**For TypeScript users**: you can define the type of `ctx` as `Record<string, any>` or make it more strict:
 
 ```ts
 type Ctx = {
@@ -61,6 +62,6 @@ export const test = base.extend<{ ctx: Ctx }>({
 export const { Given, When, Then } = createBdd(test);
 ```
 
-In Cucumber-style and decorator steps, use `this` to write and read data between steps, similar to previous example.
+In Cucumber-style and decorator steps, use `this` to write and read data between steps, similar to the previous example.
 
-?> Check out [API testing](https://github.com/vitalets/playwright-bdd/tree/main/examples/api-testing) example that uses cross-step data as well
+?> Check out the [API testing](https://github.com/vitalets/playwright-bdd/tree/main/examples/api-testing) example that uses cross-step data as well.

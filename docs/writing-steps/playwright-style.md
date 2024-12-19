@@ -1,11 +1,11 @@
 # Playwright-style steps
-Playwright-style allows you to write step definitions like a regular Playwright tests.
+Playwright-style allows you to write step definitions like regular Playwright tests.
 
-* step definitions accept custom fixtures as a first argument, and the rest are step parameters
-* step definitions don't use World (`this`)
-* step definitions can (and should) be defined as arrow functions
+* Step definitions accept custom fixtures as the first argument, and the rest are step parameters.
+* Step definitions don't use World (`this`).
+* Step definitions can (and should) be defined as arrow functions.
 
-To produce `Given / When / Then` for playwright-style with default fixtures, call `createBdd()` without any arguments:
+To produce `Given / When / Then` for Playwright-style with default fixtures, call `createBdd()` without any arguments:
 
 ```ts
 import { createBdd } from 'playwright-bdd';
@@ -21,14 +21,14 @@ When('I click link {string}', async ({ page }, name: string) => {
 });
 ```
 
-> Usually step functions are async, but they can be synchronous as well
+> Usually, step functions are async, but they can be synchronous as well.
 
 See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic-cjs).
 
 ## Custom fixtures
 You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions.
 
-1. First you should extend base test from `playwright-bdd` with custom fixtures:
+1. Extend the base `test` from `playwright-bdd` with custom fixtures:
     ```ts
     // fixtures.ts
     // Note: import base from playwright-bdd, not from @playwright/test!
@@ -40,9 +40,9 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
       }
     });
     ```
-  > Make sure to **export** test instance, because it is used in the generated files
+  > Make sure to **export** the `test` instance, because it is used in the generated files.
 
-2. From the same file you can export `Given / When / Then` bound to custom `test`:
+2. From the same file, export `Given / When / Then` bound to the custom `test`:
     ```ts
     // fixtures.ts
     // Note: import base from playwright-bdd, not from @playwright/test!
@@ -70,7 +70,7 @@ You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fix
 
 !> For TypeScript users: if you overwrite **only built-in** Playwright fixtures, you should pass `object` as a generic type parameter to `test.extend<object>()` to get proper typings.
 
-For example, if you overwrite only built-in `page` fixture:
+For example, if you overwrite only the built-in `page` fixture:
 ```ts
 // not valid: 
 // export const test = base.extend({ ... });
