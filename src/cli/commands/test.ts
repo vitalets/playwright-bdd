@@ -11,6 +11,7 @@ import { BDDConfig } from '../../config/types';
 import { defaults } from '../../config/defaults';
 import { forceExitIfNeeded } from '../helpers';
 import { showWarnings } from '../../config/warnings';
+import { Logger } from '../../utils/logger';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
@@ -29,8 +30,11 @@ export const testCommand = new Command('test')
     await loadPlaywrightConfig(opts.config);
     const configs = readConfigsFromEnv();
     mergeCliOptions(configs, opts);
+    const isVerbose = hasVerboseFlag(configs);
 
     await generateFilesForConfigs(configs);
+
+    if (isVerbose) printDone();
 
     forceExitIfNeeded();
   });
@@ -72,4 +76,14 @@ async function runInWorker(config: BDDConfig) {
 
   const [exitCode] = await once(worker, 'exit');
   if (exitCode) exit();
+}
+
+function hasVerboseFlag(configs: BDDConfig[]) {
+  return configs.some((config) => config.verbose);
+}
+
+function printDone() {
+  const logger = new Logger({ verbose: true });
+  const duration = process.uptime().toFixed(1);
+  logger.log(`Done (${duration}s).`);
 }

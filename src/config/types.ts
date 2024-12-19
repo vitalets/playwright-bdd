@@ -67,3 +67,5 @@ export type BDDConfig = BDDInputConfig &
     features: string | string[];
     steps: string | string[];
   };
+
+export type BDDProjectConfig = BDDInputConfig & { name: string };

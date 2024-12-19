@@ -40,8 +40,8 @@ export const test = base.extend<NonNullable<unknown>, BddWorkerFixtures>({
   $bddConfig: [
     async ({}, use, workerInfo) => {
       const bddConfig = getBddConfig(workerInfo.project.testDir);
-      const stepFiles = await resolveStepFiles(bddConfig.configDir, bddConfig.steps);
-      await loadSteps(stepFiles);
+      const { files } = await resolveStepFiles(bddConfig.configDir, bddConfig.steps);
+      await loadSteps(files);
       await use(bddConfig);
     },
     fixtureOptions,

@@ -9,8 +9,7 @@ export default defineConfig({
       ? [
           defineBddProject({
             name: 'project1',
-            features: 'features/*.feature',
-            steps: 'features/*.ts',
+            featuresRoot: 'project1',
           }),
         ]
       : []),
@@ -19,8 +18,9 @@ export default defineConfig({
       ? [
           defineBddProject({
             name: 'project2',
-            features: 'features/*.feature',
-            steps: 'features/*.ts',
+            featuresRoot: 'project2',
+            features: 'project2/*.feature',
+            steps: 'project2/*.ts',
           }),
         ]
       : []),

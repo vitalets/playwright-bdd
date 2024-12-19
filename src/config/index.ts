@@ -4,14 +4,14 @@
 import path from 'node:path';
 import { ImportTestFrom } from '../generate/formatter';
 import { getConfigDirFromEnv, saveConfigToEnv } from './env';
-import { BDDConfig, BDDInputConfig } from './types';
+import { BDDConfig, BDDInputConfig, BDDProjectConfig } from './types';
 import { defaults } from './defaults';
 import { removeUndefined } from '../utils';
 import { resolveConfigDir } from '../playwright/loadConfig';
 import { isDirectory } from '../utils/paths';
 import { exit } from '../utils/exit';
 
-export function defineBddProject(config: BDDInputConfig & { name: string }) {
+export function defineBddProject(config: BDDProjectConfig) {
   const { name, ...bddConfig } = config;
   if (name && !bddConfig.outputDir) {
     bddConfig.outputDir = path.join(defaults.outputDir, name);

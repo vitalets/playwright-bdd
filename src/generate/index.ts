@@ -56,11 +56,11 @@ export class TestFilesGenerator {
 
   private async loadFeatures() {
     const { configDir, features, language } = this.config;
-    const featureFiles = await resolveFeatureFiles(configDir, features);
-    this.logger.log(`Loading features: ${features}`);
-    this.logger.log(`Resolved feature files: ${featureFiles.length}`);
-    featureFiles.forEach((featureFile) => this.logger.log(`  ${relativeToCwd(featureFile)}`));
-    await this.featuresLoader.load(featureFiles, {
+    const { files, finalPatterns } = await resolveFeatureFiles(configDir, features);
+    this.logger.log(`Loading features: ${finalPatterns.join(', ')}`);
+    this.logger.log(`Found feature files: ${files.length}`);
+    files.forEach((featureFile) => this.logger.log(`  - ${relativeToCwd(featureFile)}`));
+    await this.featuresLoader.load(files, {
       relativeTo: configDir,
       defaultDialect: language,
     });
@@ -69,12 +69,11 @@ export class TestFilesGenerator {
 
   private async loadSteps() {
     const { configDir, steps } = this.config;
-    this.logger.log(`Loading steps: ${steps}`);
-    const stepFiles = await resolveStepFiles(configDir, steps);
-    this.logger.log(`Resolved step files: ${stepFiles.length}`);
-    stepFiles.forEach((stepFiles) => this.logger.log(`  ${relativeToCwd(stepFiles)}`));
-    await loadSteps(stepFiles);
-    this.logger.log(`Loaded steps: ${stepDefinitions.length}`);
+    const { files, finalPatterns } = await resolveStepFiles(configDir, steps);
+    this.logger.log(`Loading steps: ${finalPatterns.join(', ')}`);
+    this.logger.log(`Found step files: ${files.length}`);
+    await loadSteps(files);
+    this.logFoundSteps(files);
     await this.handleImportTestFrom();
   }
 
@@ -123,7 +122,7 @@ export class TestFilesGenerator {
     this.logger.log(`Generating Playwright tests: ${this.files.length}`);
     this.files.forEach((file) => {
       saveFileSync(file.outputPath, file.content);
-      this.logger.log(`  ${relativeToCwd(file.outputPath)}`);
+      this.logger.log(`  - ${relativeToCwd(file.outputPath)}`);
     });
   }
 
@@ -145,5 +144,14 @@ export class TestFilesGenerator {
         .join('\n');
       exit(message);
     }
+  }
+
+  private logFoundSteps(files: string[]) {
+    if (!this.config.verbose) return;
+    files.forEach((stepFile) => {
+      const definitions = stepDefinitions.filter((definition) => definition.uri === stepFile);
+      const suffix = definitions.length === 1 ? 'step' : 'steps';
+      this.logger.log(`  - ${relativeToCwd(stepFile)} (${definitions.length} ${suffix})`);
+    });
   }
 }
