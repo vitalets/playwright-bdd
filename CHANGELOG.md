@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 8.0.1
 * improve `--verbose` cli output ([#197](https://github.com/vitalets/playwright-bdd/issues/197))
 * fix default world in Playwright-style steps ([#255](https://github.com/vitalets/playwright-bdd/issues/255))
 
