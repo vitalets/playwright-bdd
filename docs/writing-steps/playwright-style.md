@@ -1,9 +1,9 @@
 # Playwright-style steps
 Playwright-style allows you to write step definitions like regular Playwright tests.
 
-* Step definitions accept custom fixtures as the first argument, and the rest are step parameters.
-* Step definitions don't use World (`this`).
-* Step definitions can (and should) be defined as arrow functions.
+* Step functions accept custom fixtures as the first argument, and the rest are step parameters.
+* Step functions don't use `this` (World).
+* Step functions can (and should) be defined as arrow functions.
 
 To produce `Given / When / Then` for Playwright-style with default fixtures, call `createBdd()` without any arguments:
 
@@ -82,3 +82,22 @@ export const test = base.extend<object>({  // <- notice <object> param
   },
 });
 ```
+
+## Default world
+
+Although it's not recommended to use `this` (World) in Playwright-style steps, some users still want it
+for gracefull migration from CucumberJS.
+For that reason, Playwright-BDD provides default world as an empty object `{}` to Playwright-style steps.
+You can use reguler functions (not arrows!) and access the default world via `this`:
+
+```ts
+Given('step 1', async function ({ page }) {
+  this.foo = 'bar';
+});
+
+Then('step 2', async function () {
+  expect(this.foo).toEqual('bar');
+});
+```
+
+> See also [Passing data between steps](writing-steps/passing-data.md).

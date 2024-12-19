@@ -14,7 +14,7 @@ Feature: home page
 
 In Cucumber, a `world` is used as a container for such data. The world is created for each scenario and persists between all steps. One step can write data to the `world` object, and another can read from it.
 
-In Playwright, any test-scoped fixture can be used as a cross-step context. You can name it `ctx` (for brevity) and initialize it with an empty object `{}`. For example:
+In Playwright, any [test-scoped fixture](https://playwright.dev/docs/test-fixtures#creating-a-fixture) can be used as a cross-step context. You can name it `ctx` (for brevity) and initialize it with an empty object `{}`. For example:
 
 ```js
 import { test as base, createBdd } from 'playwright-bdd';
@@ -39,13 +39,17 @@ When('I click the link', async ({ page, ctx }) => {
   await page.getByRole('link').click();
 });
 
-When('new tab is opened', async ({ ctx }) => {
+Then('new tab is opened', async ({ ctx }) => {
   const newTab = await ctx.newTapPromise;
   await expect(newTab).toHaveTitle(/.*checkout/);
 });
 ```
 
-**For TypeScript users**: you can define the type of `ctx` as `Record<string, any>` or make it more strict:
+?> Check out the [API testing](https://github.com/vitalets/playwright-bdd/tree/main/examples/api-testing) example as a show case of cross-step data passing.
+
+#### For TypeScript users
+
+You can define the type of `ctx` as `Record<string, any>` or make it more strict:
 
 ```ts
 type Ctx = {
@@ -62,6 +66,19 @@ export const test = base.extend<{ ctx: Ctx }>({
 export const { Given, When, Then } = createBdd(test);
 ```
 
-In Cucumber-style and decorator steps, use `this` to write and read data between steps, similar to the previous example.
+#### Cucumber-style
+In Cucumber-style steps, use `this` to write and read data between steps:
 
-?> Check out the [API testing](https://github.com/vitalets/playwright-bdd/tree/main/examples/api-testing) example that uses cross-step data as well.
+```js
+import { Given, When, Then } from './fixtures';
+
+When('I click the link', async function () {
+  this.newTapPromise = this.context.waitForEvent('page');
+  await this.page.getByRole('link').click();
+});
+
+Then('new tab is opened', async function () {
+  const newTab = await this.newTapPromise;
+  await expect(newTab).toHaveTitle(/.*checkout/);
+});
+```
