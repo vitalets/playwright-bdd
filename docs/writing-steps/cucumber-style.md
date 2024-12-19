@@ -2,7 +2,7 @@
 
 Cucumber-style step definitions are compatible with CucumberJS.
 
- * step definitions use World (`this`) to interact with browser
+ * step definitions use World (`this`) to interact with the browser
  * step definitions receive only step parameters, don't receive custom fixtures as a first argument
  * step definitions can't be defined as arrow functions
 
@@ -48,9 +48,9 @@ export const { Given, When, Then } = createBdd(test, {
 });
 ```
 
-> Make sure to export `test` instance, because it is used in the generated test files
+> Make sure to export the `test` instance, because it is used in the generated test files
 
-3. Use these `Given / When / Then` to define steps, world instance is available as `this`:
+3. Use these `Given / When / Then` to define steps, the world instance is available as `this`:
 
 ```ts
 // steps.ts
@@ -61,11 +61,11 @@ Given('I am on home page', async function () {
 });
 ```
 
-See [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
+See the [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
 
 ### Custom fixtures
 You can provide custom fixtures to cucumber-style steps.
-To achieve that, assign custom fixture to a property of World object 
+To achieve that, assign a custom fixture to a property of the World object 
 and then access it via `this`:
 
 ```ts

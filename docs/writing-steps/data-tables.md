@@ -30,4 +30,4 @@ When('I fill login form with values', async ({ page }, data: DataTable) => {
   */
 });
 ```
-Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/data_table_interface.md) in Cucumber docs.
+Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/data_table_interface.md) in the Cucumber docs.

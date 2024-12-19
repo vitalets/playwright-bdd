@@ -4,12 +4,12 @@ Playwright-BDD provides built-in fixtures for convenient development.
 ?> All Playwright-BDD fixtures are prefixed with `$` to avoid name collision with user-defined fixtures.
 
 ## `$test` and `$testInfo`
-You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. It allows to:
+You can access [`test`](https://playwright.dev/docs/api/class-test) and [`testInfo`](https://playwright.dev/docs/api/class-testinfo) in step body using special fixtures `$test` and `$testInfo` respectively. This allows you to:
 
   * change test timeout
   * conditionally skip tests
   * attach screenshots
-  * ...all other actions via `testInfo` object
+  * perform all other actions via the `testInfo` object
 
 Example - skip test for `firefox`:
 ```ts
@@ -20,8 +20,8 @@ Given('I do something', async ({ browserName, $test }) => {
 ```
 
 ## `$step`
-You can access current step info by special `$step` fixture.
-Currently, it contains only step title, but can be extended in the future.
+You can access current step info using the special `$step` fixture.
+Currently, it contains only the step title but can be extended in the future.
 
 ```ts
 Given('I open url {string}', async ({ $step }, url: string) => { 
@@ -31,13 +31,13 @@ Given('I open url {string}', async ({ $step }, url: string) => {
 ```
 
 #### Example
-Popular use-case for `$step` fixture - additional matching by the step title.
+A popular use-case for the `$step` fixture is additional matching by the step title.
 
-Imagine you have a universal step to checks whether element visible or hidden: 
+Imagine you have a universal step to check whether an element is visible or hidden: 
 ```ts
 Then('element with text {string} should( not) be displayed', ...)
 ```
-The pattern contains optional matching `should( not)`, that is [not available](https://github.com/cucumber/cucumber-expressions/issues/125) inside step function. The easiest way to additionally check for `( not)` is to use step title: 
+The pattern contains optional matching `should( not)`, which is [not available](https://github.com/cucumber/cucumber-expressions/issues/125) inside the step function. The easiest way to additionally check for `( not)` is to use the step title: 
 ```ts
 Then('element with text {string} should( not) be displayed', async ({ page, $step }, text: string) => {
   const negate = /should not/.test($step.title);
@@ -50,7 +50,7 @@ Then('element with text {string} should( not) be displayed', async ({ page, $ste
 ```
 
 ## `$tags`
-You can access current test tags by special `$tags` fixture:
+You can access current test tags using the special `$tags` fixture:
 
 ```gherkin
 @slow
@@ -61,7 +61,7 @@ Feature: Playwright site
       Given I do something
       ...
 ```
-In step definition:
+In the step definition:
 ```ts
 Given('I do something', async ({ $tags }) => {
   console.log($tags); // outputs ["@slow", "@jira:123"]
@@ -71,7 +71,7 @@ Given('I do something', async ({ $tags }) => {
 The most powerful usage of `$tags` is in your custom fixtures.
 
 ##### Example 1
-Run scenario only in Firefox if it has `@firefox` tag:
+Run the scenario only in Firefox if it has the `@firefox` tag:
 ```gherkin
 Feature: some feature
     
@@ -92,7 +92,7 @@ export const test = base.extend<{ firefoxOnly: void }>({
 ```
 
 ##### Example 2
-Overwrite locale to `fi` if test has a `@LocaleFi` tag:
+Overwrite the locale to `fi` if the test has a `@LocaleFi` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
 
@@ -107,7 +107,7 @@ export const test = base.extend({
 ```
 
 ##### Example 3
-Overwrite `viewport` for scenarios with `@mobile` tag:
+Overwrite the `viewport` for scenarios with the `@mobile` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
 
