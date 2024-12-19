@@ -119,7 +119,7 @@ export class TestFilesGenerator {
   }
 
   private async saveFiles() {
-    this.logger.log(`Generating Playwright tests: ${this.files.length}`);
+    this.logger.log(`Generating Playwright test files: ${this.files.length}`);
     this.files.forEach((file) => {
       saveFileSync(file.outputPath, file.content);
       this.logger.log(`  - ${relativeToCwd(file.outputPath)}`);

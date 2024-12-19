@@ -43,7 +43,7 @@ function assertProject1(stdout) {
 
   expect(stdout).toContain('Clearing output dir:');
 
-  expect(stdout).toContain('Generating Playwright tests: 1');
+  expect(stdout).toContain('Generating Playwright test files: 1');
   expect(stdout).toContain(normalize(`.features-gen/project1/sample.feature.spec.js`));
 }
 
@@ -59,6 +59,6 @@ function assertProject2(stdout) {
 
   expect(stdout).toContain('Clearing output dir:');
 
-  expect(stdout).toContain('Generating Playwright tests: 1');
+  expect(stdout).toContain('Generating Playwright test files: 1');
   expect(stdout).toContain(normalize(`.features-gen/project2/sample.feature.spec.js`));
 }
