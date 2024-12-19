@@ -15,7 +15,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 </div>
 
 ## Quick start
-Jump to the [getting started](getting-started/index.md) guide or read below some technical details about Playwright-BDD.
+Jump to the [getting started](getting-started/index.md) guide or read below the overview of Playwright-BDD project.
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
