@@ -10,7 +10,7 @@ import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit } from '../utils/exit';
 import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/loader';
-import { relativeToCwd } from '../utils/paths';
+import { relativeToCwd, toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/stepRegistry';
 import { saveFileSync } from '../utils';
@@ -73,7 +73,7 @@ export class TestFilesGenerator {
     this.logger.log(`Loading steps: ${finalPatterns.join(', ')}`);
     this.logger.log(`Found step files: ${files.length}`);
     await loadSteps(files);
-    this.logFoundSteps(files);
+    this.printFoundSteps(files);
     await this.handleImportTestFrom();
   }
 
@@ -146,10 +146,13 @@ export class TestFilesGenerator {
     }
   }
 
-  private logFoundSteps(files: string[]) {
+  private printFoundSteps(files: string[]) {
     if (!this.config.verbose) return;
     files.forEach((stepFile) => {
-      const definitions = stepDefinitions.filter((definition) => definition.uri === stepFile);
+      const normalizedStepFile = toPosixPath(stepFile);
+      const definitions = stepDefinitions.filter(
+        (definition) => toPosixPath(definition.uri) === normalizedStepFile,
+      );
       const suffix = definitions.length === 1 ? 'step' : 'steps';
       this.logger.log(`  - ${relativeToCwd(stepFile)} (${definitions.length} ${suffix})`);
     });
