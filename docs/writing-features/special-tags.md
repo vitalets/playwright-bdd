@@ -99,8 +99,15 @@ Example:
 @mode:parallel
 Feature: Playwright site
     
-    Scenario: Check title
+    Scenario: Scenario 1
         Given I open url "https://playwright.dev"
+
+    Scenario: Scenario 2
+        Given I open url "https://playwright.dev"        
 ```
+
+Both `Scenario 1` and `Scenario 2` will be executted in parallel in separate workers.
+
+When using `@mode:serial`, you can check [Passing data between scenarios](writing-steps/passing-data-between-scenarios.md).
 
 !> Please note that the `@mode` tag is not applicable to a single scenario

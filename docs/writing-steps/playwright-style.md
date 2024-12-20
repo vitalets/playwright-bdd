@@ -100,4 +100,4 @@ Then('step 2', async function () {
 });
 ```
 
-> See also [Passing data between steps](writing-steps/passing-data.md).
+> See also [Passing data between steps](writing-steps/passing-data-between-steps.md).
