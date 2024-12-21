@@ -28,9 +28,9 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 ## Why BDD?
 AI takes [BDD approach](https://cucumber.io/docs/bdd/) to the next level:
 
-- 🤖 **Easy to generate**: drop business requirements to AI chat and get structured, human-readable tests.
-- ✅ **Easy to validate**: refine BDD scenarios with subsequent prompts, check updates in clear text, no low-level syntax.
-- 🛠 **Easy to maintain**: instruct LLM model to [re-use existing steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt).
+- 🤖 **Generate instantly**: Use AI chat to turn business requirements into structured, human-readable features.
+- ✅ **Validate easily**: Check and refine test scenarios in plain text — no coding skills needed.
+- 🛠 **Maintain efficiently**: [Reuse existing steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) to prevent codebase growth.
 
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
