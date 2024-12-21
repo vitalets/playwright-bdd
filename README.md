@@ -25,9 +25,16 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 > [!TIP]
 > :fire: Check out [what's new in Playwright-BDD v8](https://vitalets.github.io/playwright-bdd/#/blog/whats-new-in-v8)
 
+## Why BDD?
+AI takes BDD approach to the next level:
+
+- 🤖 **Easy to generate**: drop business requirements to AI chat and get structured, human-readable tests.
+- ✅ **Easy to validate**: refine BDD scenarios with subsequent prompts, check updates in clear text, no low-level syntax.
+- 🛠 **Easy to maintain**: instruct LLM model to [re-use existing steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt).
+
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
-You can use CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to test BDD scenarios.
+You can use CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios.
 This package offers **an alternative way**: convert BDD scenarios into Playwright test files and run them with Playwright runner. Such approach brings all the benefits of Playwright runner:
 
 * Automatic browser initialization and cleanup

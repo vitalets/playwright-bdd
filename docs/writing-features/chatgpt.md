@@ -51,7 +51,7 @@ List of all steps found by config: playwright.config.ts
 
 And then use the following **ChatGPT prompt template**:
 ```
-Generate BDD scenarios for the following user story:
+Generate BDD scenarios in Gherkin for the following user story:
 
 {user story description}
 
