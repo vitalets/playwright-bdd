@@ -12,6 +12,7 @@
   - [Special tags](writing-features/special-tags.md)
   - [Tags from path](writing-features/tags-from-path.md)
   - [Localization](writing-features/i18n.md)
+  - [Auto-formatting](writing-features/auto-formatting.md)
   - [Customize examples title](writing-features/customize-examples-title.md)
   - [Use ChatGPT](writing-features/chatgpt.md)
 
