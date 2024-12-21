@@ -17,6 +17,14 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 ## Quick start
 Jump to the [getting started](getting-started/index.md) guide or read below the overview of Playwright-BDD project.
 
+<!-- Keep absolute urls to easily update from README.md -->
+## Why BDD?
+AI takes BDD approach to the next level:
+
+- 🤖 **Easy to generate**: drop business requirements to AI chat and get structured, human-readable tests.
+- ✅ **Easy to validate**: refine BDD scenarios with subsequent prompts, check updates in clear text, no low-level syntax.
+- 🛠 **Easy to maintain**: instruct LLM model to [re-use existing steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt).
+
 ## Why Playwright runner?
 Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. 
 You can use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to test BDD scenarios.
@@ -30,6 +38,16 @@ This approach brings all the benefits of the Playwright runner:
 * Out-of-box visual comparison testing
 * Power of Playwright fixtures
 * [...and much more](https://playwright.dev/docs/library#key-differences)
+
+<!-- Keep absolute urls to easily update from README.md -->
+## Extras
+Some features were developed in Playwright-BDD on top of Playwright and BDD approaches:
+
+* 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags).
+* 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods.
+* 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped).
+* ✨ [Export steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI.
+* ♻️ [Re-using step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn).
 
 ## How Playwright-BDD works
 A typical command to run tests with Playwright-BDD is:
