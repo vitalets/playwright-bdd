@@ -37,22 +37,22 @@ Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/c
 You can use CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios.
 This package offers **an alternative way**: convert BDD scenarios into Playwright test files and run them with Playwright runner. Such approach brings all the benefits of Playwright runner:
 
-* Automatic browser initialization and cleanup
-* Auto-capture of screenshots, videos and traces
-* Parallelization with sharding
-* Auto-waiting of page elements
-* Out-of-box visual comparison testing
-* Power of Playwright fixtures
-* [...a lot more](https://playwright.dev/docs/library#key-differences)
+* Automatic browser initialization and cleanup.
+* Auto-capture of screenshots, videos and traces.
+* Parallelization with sharding.
+* Auto-waiting of page elements.
+* Out-of-box visual comparison testing.
+* Power of Playwright fixtures.
+* [...a lot more](https://playwright.dev/docs/library#key-differences).
 
 ## Extras
 Some features were developed in Playwright-BDD on top of Playwright and BDD approaches:
 
-* 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
-* 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods
-* 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)
-* ✨ [Export steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI
-* ♻️ [Re-using step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)
+* 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags).
+* 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods.
+* 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped).
+* ✨ [Export steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI.
+* ♻️ [Re-using step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn).
 
 ## Documentation
 Check out the [documentation website](https://vitalets.github.io/playwright-bdd/#/).
