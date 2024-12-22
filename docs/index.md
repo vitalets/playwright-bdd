@@ -27,25 +27,25 @@ With AI, you can bring the [BDD approach](https://cucumber.io/docs/bdd/) to the 
 
 ## Why Playwright Runner?
 
-Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. One approach is to use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios. This package offers **an alternative**: convert BDD scenarios into test files and run them directly with Playwright. You gain all the advantages of the Playwright runner:
+Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. You can use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios. This package offers **an alternative**: convert BDD scenarios into test files and run them directly with Playwright. You gain all the advantages of the Playwright runner:
 
-- Automatic browser initialization and cleanup  
-- Auto-capture of screenshots, videos, and traces  
-- Parallelization with sharding  
-- Auto-waiting for page elements  
-- Built-in visual comparison testing  
-- Power of Playwright fixtures  
+- Automatic browser initialization and cleanup
+- Auto-capture of screenshots, videos, and traces
+- Parallelization with sharding
+- Auto-waiting for page elements
+- Built-in visual comparison testing
+- Power of Playwright fixtures
 - [...and more](https://playwright.dev/docs/library#key-differences)
 
 <!-- Keep absolute urls to easily update from README.md -->
 ## Extras
-Some features were developed in Playwright-BDD on top of Playwright and BDD approaches:
+Playwright-BDD extends Playwright with BDD capabilities, offering:
 
-* 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags).
-* 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods.
-* 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped).
-* ✨ [Export steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI.
-* ♻️ [Re-using step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn).
+- 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
+- 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods  
+- 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)  
+- ✨ [Exporting steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI  
+- ♻️ [Re-usable step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)  
 
 ## How Playwright-BDD works
 A typical command to run tests with Playwright-BDD is:
