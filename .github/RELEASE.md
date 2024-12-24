@@ -10,3 +10,10 @@ Currently release is performed from the local machine.
   - `git co docs && git pull && git merge main && git push && git co main`
   - check docs: https://vitalets.github.io/playwright-bdd/
 6. close relevant issues on GitHub by Changelog
+
+## Releasing docs
+
+The documentation website is generated from `*.md` files in the `./docs` directory using [Docsify](https://docsify.js.org/#/). 
+
+- **Stable documentation**: Served from the `docs` branch. Push updates here to fix issues like typos.  
+- **Upcoming features**: Documented in the `main` branch. Push changes here for features not yet released.

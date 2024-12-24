@@ -48,4 +48,5 @@
 * [**API**](api.md)
 * [**CLI**](cli.md)
 * [**FAQ**](faq.md)
+* [**Sponsors ❤️**](sponsors.md)
 * [**Changelog**](changelog)
