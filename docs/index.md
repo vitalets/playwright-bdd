@@ -78,7 +78,7 @@ test.describe('Playwright Home Page', () => {
     await Then('I see in title "Installation"');
   });
 
-});    
+});
 ```
 
 ### Phase 2: Run tests
