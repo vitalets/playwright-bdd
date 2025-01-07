@@ -1,13 +1,13 @@
 import { Page } from '@playwright/test';
 import { test as base, createBdd } from 'playwright-bdd';
 
-type AuthUser = { page: Page };
+type Ctx = { page: Page };
 
-export const test = base.extend<{ authUser: AuthUser }>({
-  authUser: async ({}, use) => {
-    const authUser = {} as AuthUser; // <- will be initialized in steps
-    await use(authUser);
-    await authUser.page?.context().close();
+export const test = base.extend<{ ctx: Ctx }>({
+  ctx: async ({}, use) => {
+    const ctx = {} as Ctx; // <- will be initialized in steps
+    await use(ctx);
+    await ctx.page?.context().close();
   },
 });
 

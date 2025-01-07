@@ -2,16 +2,16 @@ import { expect } from '@playwright/test';
 import { Given, Then } from './fixtures';
 import { AUTH_FILE } from '../../playwright.config';
 
-Given('I am logged in as {string}', async ({ browser, authUser }, userName: string) => {
+Given('I am logged in as {string}', async ({ browser, ctx }, userName: string) => {
   const storageState = AUTH_FILE.replace('{user}', userName);
   const context = await browser.newContext({ storageState });
-  authUser.page = await context.newPage();
+  ctx.page = await context.newPage();
 });
 
-Given('I am on homepage', async ({ authUser }) => {
-  await authUser.page.goto('https://authenticationtest.com/');
+Given('I am on homepage', async ({ ctx }) => {
+  await ctx.page.goto('https://authenticationtest.com/');
 });
 
-Then('I see {string} in navigation panel', async ({ authUser }, text: string) => {
-  await expect(authUser.page.getByRole('navigation')).toContainText(text);
+Then('I see {string} in navigation panel', async ({ ctx }, text: string) => {
+  await expect(ctx.page.getByRole('navigation')).toContainText(text);
 });
