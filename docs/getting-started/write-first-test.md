@@ -30,10 +30,10 @@ Create a feature file named `sample.feature`:
 ```gherkin
 Feature: Playwright site
 
-    Scenario: Check title
-        Given I open url "https://playwright.dev"
+    Scenario: Check get started link
+        Given I am on home page
         When I click link "Get started"
-        Then I see in title "Playwright"
+        Then I see in title "Installation"
 ```
 
 ### Step 3: implement steps
@@ -46,8 +46,8 @@ import { createBdd } from 'playwright-bdd';
 
 const { Given, When, Then } = createBdd();
 
-Given('I open url {string}', async ({ page }, url) => {
-  await page.goto(url);
+Given('I am on Playwright home page', async ({ page }) => {
+  await page.goto('https://playwright.dev');
 });
 
 When('I click link {string}', async ({ page }, name) => {
@@ -80,14 +80,28 @@ To open the last HTML report, run:
 npx playwright show-report
 ```
 
-<details>
-  <summary>HTML report</summary>
-  <img width="80%" src="https://github.com/vitalets/playwright-bdd/assets/1473072/e327d97c-bc67-4ba2-8660-650f1c479c62"/>
-</details>
+HTML report:
+
+![Playwright HTML report](./_media/playwright-report.png ':size=70%')
 
 ### Step 5: check generated tests (optional)
 
 Check out the `.features-gen` directory to see what the generated tests look like.
+You will see something like this:
+
+```js
+import { test } from 'playwright-bdd';
+
+test.describe('Playwright site', () => {
+
+  test('Check get started link', async ({ Given, When, Then }) => {
+    await Given('I am on home page');
+    await When('I click link "Get started"');
+    await Then('I see in title "Installation"');
+  });
+
+});
+```
 
 ?> Here is a fully working Playwright-BDD example project: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
 
