@@ -10,16 +10,15 @@ on:
 
 jobs:
   get-playwright-versions:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/github-script@v7
         id: get-versions
         with:
           script: |
-            console.log('cwd', process.cwd());
-            const packageJson = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
-            const minimalVersion = packageJson.peerDependencies['@playwright/test'].match(/\d+\.\d+/)[0];
+            const { peerDependencies } = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
+            const minimalVersion = peerDependencies['@playwright/test'].match(/\d+\.\d+/)[0];
             const { execSync } = require('node:child_process');
             const info = execSync('npm show --json @playwright/test').toString();
             const { versions } = JSON.parse(info);
