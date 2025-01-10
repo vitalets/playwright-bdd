@@ -26,7 +26,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 > :fire: Check out [what's new in Playwright-BDD v8](https://vitalets.github.io/playwright-bdd/#/blog/whats-new-in-v8)
 
 ## Why BDD?
-In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) to the next level:
+In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
 
 - 🤖 **Generate**: Drop business requirements to AI chat and get structured, human-readable features.
 - ✅ **Validate**: Refine the generated scenarios with AI or colleagues, collaborate in plain text instead of code.
