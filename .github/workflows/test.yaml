@@ -31,7 +31,9 @@ jobs:
 
   test:
     needs: get-playwright-versions
-    runs-on: ubuntu-24.04
+    # Older versions of PW don't support ubuntu-24.04
+    # See: https://github.com/microsoft/playwright/issues/30368
+    runs-on: ubuntu-22.04
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
