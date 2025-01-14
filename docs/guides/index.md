@@ -8,3 +8,4 @@
   - [Component tests](guides/component-tests.md)
   - [IDE integration](guides/ide-integration.md)
   - [Usage with Nx](guides/usage-with-nx.md)
+  - [Usage with SauceLabs](guides/usage-with-saucelabs.md)

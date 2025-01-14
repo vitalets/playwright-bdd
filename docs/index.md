@@ -19,7 +19,7 @@ Jump to the [getting started](getting-started/index.md) guide or read below the 
 
 <!-- Keep absolute urls to easily update from README.md -->
 ## Why BDD?
-With AI, you can bring the [BDD approach](https://cucumber.io/docs/bdd/) to the next level:
+In the era of AI, you can bring the [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
 
 - 🤖 **Generate**: Drop business requirements to AI chat and get structured, human-readable features.
 - ✅ **Validate**: Refine the generated scenarios with AI or colleagues, collaborate in plain text instead of code.
