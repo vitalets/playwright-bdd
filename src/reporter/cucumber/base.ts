@@ -8,26 +8,26 @@ import fs from 'node:fs';
 import { Writable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import { EventEmitter } from 'node:events';
-import EventDataCollector from '../../cucumber/formatter/EventDataCollector.js';
+import { MessagesBuilder } from './messagesBuilder';
 
 export type InternalOptions = {
   cwd: string;
-  eventBroadcaster: EventEmitter;
-  eventDataCollector: EventDataCollector;
+  messagesBuilder: MessagesBuilder;
 };
 
 export default class BaseReporter {
+  public eventBroadcaster = new EventEmitter();
   protected outputStream: Writable = process.stdout;
   protected outputDir = '';
 
   constructor(protected internalOptions: InternalOptions) {}
 
-  get eventBroadcaster() {
-    return this.internalOptions.eventBroadcaster;
+  protected get eventDataCollector() {
+    return this.internalOptions.messagesBuilder.eventDataCollector;
   }
 
-  get eventDataCollector() {
-    return this.internalOptions.eventDataCollector;
+  protected get messagesBuilder() {
+    return this.internalOptions.messagesBuilder;
   }
 
   printsToStdio() {

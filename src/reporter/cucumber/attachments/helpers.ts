@@ -16,3 +16,33 @@ export function getAttachmentBodyAsBase64(attachment: messages.Attachment) {
     ? attachment.body
     : Buffer.from(attachment.body).toString('base64');
 }
+
+export function createLinkAttachment(
+  testCaseStartedId: string | undefined,
+  testStepId: string | undefined,
+  href: string,
+) {
+  const attachment: messages.Attachment = {
+    testCaseStartedId,
+    testStepId,
+    mediaType: 'text/uri-list',
+    contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
+    body: href,
+  };
+  return { attachment };
+}
+
+export function createLogAttachment(
+  testCaseStartedId: string | undefined,
+  testStepId: string | undefined,
+  body: string,
+) {
+  const attachment: messages.Attachment = {
+    testCaseStartedId,
+    testStepId,
+    mediaType: 'text/x.cucumber.log+plain',
+    contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
+    body,
+  };
+  return { attachment };
+}

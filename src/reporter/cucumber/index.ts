@@ -1,7 +1,6 @@
 /**
  * Playwright reporter that generates different Cucumber reports.
  */
-import EventEmitter from 'node:events';
 import {
   FullConfig,
   FullResult,
@@ -47,6 +46,10 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
     this.reporter = this.createCucumberReporter();
   }
 
+  private get messagesBuilder() {
+    return this.messagesBuilderRef.builder;
+  }
+
   onBegin(config: FullConfig) {
     this.messagesBuilderRef.onBegin(config);
   }
@@ -71,8 +74,8 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
 
     await this.reporter.init();
 
-    await this.messagesBuilderRef.builder.buildMessages();
-    this.messagesBuilderRef.builder.emitMessages(this.reporter.eventBroadcaster);
+    await this.messagesBuilder.buildMessages();
+    this.messagesBuilder.emitMessages(this.reporter.eventBroadcaster);
 
     await this.reporter.finished();
   }
@@ -80,8 +83,7 @@ export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | 
   private createCucumberReporter() {
     const internalOptions: InternalOptions = {
       cwd: getConfigDirFromEnv(),
-      eventBroadcaster: new EventEmitter(),
-      eventDataCollector: this.messagesBuilderRef.builder.eventDataCollector,
+      messagesBuilder: this.messagesBuilder,
     };
 
     if (isBuiltInReporter(this.type)) {

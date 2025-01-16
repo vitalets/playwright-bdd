@@ -49,7 +49,7 @@ export class TestCaseRun {
 
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
-  private executedBddSteps: ExecutedBddStepInfo[];
+  public executedBddSteps: ExecutedBddStepInfo[];
   private bgSteps = new Set<pw.TestStep>();
 
   // eslint-disable-next-line max-params
@@ -60,7 +60,7 @@ export class TestCaseRun {
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
   ) {
-    this.id = this.generateTestRunId();
+    this.id = this.generateTestCaseRunId();
     this.projectInfo = getProjectInfo(this.test);
     // call order is important here
     this.attachmentMapper = new AttachmentMapper(this.result);
@@ -98,7 +98,7 @@ export class TestCaseRun {
     return this.errorSteps.get(pwStep);
   }
 
-  private generateTestRunId() {
+  private generateTestCaseRunId() {
     return `${this.test.id}-attempt-${this.result.retry}`;
   }
 

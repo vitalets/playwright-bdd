@@ -111,3 +111,12 @@ export function toBoolean<T>(value: T): value is NonNullable<T> {
 export function areSetsEqual<T>(set1: Set<T>, set2: Set<T>) {
   return set1.size === set2.size && [...set1].every((val) => set2.has(val));
 }
+
+export function escapeHtml(str: string) {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}

@@ -11,6 +11,7 @@ import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 import { BddContext, BddStepInfo } from './bddContext';
+import { PageAriaSnapshot } from '../ai/ariaSnapshot';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -39,6 +40,7 @@ export type BddTestFixtures = {
   $beforeEach: void;
   $afterEachFixtures: Record<string, unknown>;
   $afterEach: void;
+  $ariaSnapshot: PageAriaSnapshot;
 };
 
 export const test = base.extend<BddTestFixtures>({
@@ -148,6 +150,13 @@ export const test = base.extend<BddTestFixtures>({
     },
     fixtureOptions,
   ],
+  $ariaSnapshot: [async ({}, use, testInfo) => use(new PageAriaSnapshot(testInfo)), fixtureOptions],
+  // temp: auto capture aria snapshot
+  page: async ({ page, $ariaSnapshot }, use) => {
+    $ariaSnapshot.setPage(page);
+    await use(page);
+    await $ariaSnapshot.captureOnFail();
+  },
 });
 
 function errorBddTestDataNotFound(testInfo: TestInfo) {

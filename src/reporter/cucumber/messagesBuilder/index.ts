@@ -34,7 +34,7 @@ export class MessagesBuilder {
   private fullConfig!: pw.FullConfig;
   private fullResult!: pw.FullResult;
   private testRun = new TestRun();
-  private testCaseRuns: TestCaseRun[] = [];
+  public testCaseRuns: TestCaseRun[] = [];
   private testCases = new AutofillMap</* testId */ string, TestCase>();
   private hooks = new AutofillMap</* internalId */ string, Hook>();
   private gherkinDocuments = new GherkinDocuments();
@@ -43,6 +43,7 @@ export class MessagesBuilder {
   private onEndPromiseResolve = () => {};
   private buildMessagesPromise?: Promise<void>;
 
+  // eventDataCollector is needed for Cucumber reports like junit and json
   private eventDataCollectorEmitter = new EventEmitter();
   public eventDataCollector = new EventDataCollector(this.eventDataCollectorEmitter);
 

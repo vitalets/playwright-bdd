@@ -6,13 +6,18 @@
  */
 import fs from 'node:fs';
 import { finished } from 'node:stream/promises';
+import { Transform } from 'node:stream';
 import * as messages from '@cucumber/messages';
 import { CucumberHtmlStream } from '@cucumber/html-formatter';
 import { resolvePackageRoot } from '../../utils';
 import path from 'node:path';
 import BaseReporter, { InternalOptions } from './base';
 import { AttachmentEnvelope } from './messagesBuilder/types';
-import { isAttachmentEnvelope } from './attachments/helpers';
+import {
+  createLinkAttachment,
+  createLogAttachment,
+  isAttachmentEnvelope,
+} from './attachments/helpers';
 import { shouldSkipAttachment, SkipAttachments } from './attachments/skip';
 import {
   isTextAttachment,
@@ -20,12 +25,16 @@ import {
   toExternalAttachment,
 } from './attachments/external';
 import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './attachments/trace';
+import { buildPrompt } from './html/fixWithAi/prompt';
+import { getFixWithAiHtml } from './html/fixWithAi/button';
+import { fixWithAiCss, fixWithAiScript } from './html/fixWithAi/assets';
 
 type HtmlReporterOptions = {
   outputFile?: string;
   skipAttachments?: SkipAttachments;
   externalAttachments?: boolean;
   attachmentsBaseURL?: string;
+  fixWithAi?: boolean;
 };
 
 // store attachments in subdirectory to not accidentally
@@ -38,6 +47,8 @@ export default class HtmlReporter extends BaseReporter {
   protected attachmentsDir = '';
   protected attachmentsBaseURL = '';
   protected hasTraces = false;
+  protected transformStream: Transform;
+  protected receivedTestRunFinished = false;
 
   constructor(
     internalOptions: InternalOptions,
@@ -45,30 +56,41 @@ export default class HtmlReporter extends BaseReporter {
   ) {
     super(internalOptions);
     this.setOutputStream(this.userOptions.outputFile);
-    const packageRoot = resolvePackageRoot('@cucumber/html-formatter');
-    this.htmlStream = new CucumberHtmlStream(
-      path.join(packageRoot, 'dist/main.css'),
-      path.join(packageRoot, 'dist/main.js'),
-    );
+
     if (this.userOptions.externalAttachments) {
       this.setupAttachmentsDir();
       this.setupAttachmentsBaseURL();
     }
+
+    this.htmlStream = this.createCucumberHtmlStream();
+    this.transformStream = this.createTransformStream();
+
+    this.htmlStream.pipe(this.transformStream).pipe(this.outputStream);
+
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
+      if (this.userOptions.fixWithAi) this.handleFixWithAi(envelope);
       if (isAttachmentEnvelope(envelope)) {
         this.handleAttachment(envelope);
       } else {
         this.writeEnvelope(envelope);
       }
     });
-    this.htmlStream.pipe(this.outputStream);
   }
 
   async finished() {
     this.htmlStream.end();
     await finished(this.htmlStream);
+    await finished(this.transformStream);
     if (this.hasTraces) await copyTraceViewer(this.outputDir);
     await super.finished();
+  }
+
+  protected createCucumberHtmlStream() {
+    const packageRoot = resolvePackageRoot('@cucumber/html-formatter');
+    return new CucumberHtmlStream(
+      path.join(packageRoot, 'dist/main.css'),
+      path.join(packageRoot, 'dist/main.js'),
+    );
   }
 
   protected handleAttachment(envelope: AttachmentEnvelope) {
@@ -107,15 +129,10 @@ export default class HtmlReporter extends BaseReporter {
   protected handleTraceAttachment(attachment: messages.Attachment) {
     if (this.attachmentsBaseURL.startsWith('http') && isTraceAttachment(attachment)) {
       this.hasTraces = true;
-      this.writeEnvelope({
-        attachment: {
-          ...attachment,
-          contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
-          mediaType: 'text/uri-list',
-          body: generateTraceUrl(attachment),
-          url: undefined,
-        },
-      });
+      const { testCaseStartedId, testStepId } = attachment;
+      const href = generateTraceUrl(attachment);
+      const newEnvelope = createLinkAttachment(testCaseStartedId, testStepId, href);
+      this.writeEnvelope(newEnvelope);
     }
   }
 
@@ -132,6 +149,45 @@ export default class HtmlReporter extends BaseReporter {
     this.attachmentsBaseURL = removeTrailingSlash(
       this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR,
     );
+  }
+
+  private handleFixWithAi(envelope: messages.Envelope) {
+    if (envelope.testRunFinished) this.receivedTestRunFinished = true;
+    if (envelope.testStepFinished?.testStepResult?.status === 'FAILED') {
+      const { testCaseStartedId, testStepId } = envelope.testStepFinished;
+      const testCaseRun = this.messagesBuilder.testCaseRuns.find((t) => t.id === testCaseStartedId);
+      if (!testCaseRun) return;
+      const prompt = buildPrompt(testCaseRun);
+      if (!prompt) return;
+      const aiAttachmentEnvelope = createLogAttachment(
+        testCaseStartedId,
+        testStepId,
+        getFixWithAiHtml(prompt),
+      );
+      this.writeEnvelope(aiAttachmentEnvelope);
+    }
+  }
+
+  /**
+   * Special transform stream to inject custom script into the HTML.
+   */
+  private createTransformStream() {
+    return new Transform({
+      transform: (chunk, _encoding, callback) => {
+        const newChunk =
+          this.userOptions.fixWithAi && this.receivedTestRunFinished
+            ? this.injectCustomAssets(chunk)
+            : chunk;
+        callback(null, newChunk);
+      },
+    });
+  }
+
+  private injectCustomAssets(chunk: Buffer) {
+    const chunkStr = chunk.toString();
+    return chunkStr.includes('</body>')
+      ? chunkStr.replace('</body>', `${fixWithAiCss}${fixWithAiScript}</body>`)
+      : chunk;
   }
 }
 
