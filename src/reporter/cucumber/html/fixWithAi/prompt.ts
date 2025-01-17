@@ -5,24 +5,25 @@ import { TestCaseRun } from '../../messagesBuilder/TestCaseRun';
 import { extractAriaSnapshot } from '../../../../ai/ariaSnapshot';
 import { stripAnsiEscapes } from '../../../../utils/stripAnsiEscapes';
 import { defaultPromptTemplate } from './prompt.template';
+import { substitute } from '../../../../utils';
 
 // eslint-disable-next-line visual/complexity
 export function buildPrompt(testCaseRun: TestCaseRun, customPrompt?: string) {
   const scenarioName = testCaseRun.test.title;
-  const executedSteps = buildStepsList(testCaseRun);
-  const errorMessage = stripAnsiEscapes(testCaseRun.result.error?.message || '');
+  const steps = buildStepsList(testCaseRun);
+  const error = stripAnsiEscapes(testCaseRun.result.error?.message || '');
   const snippet = stripAnsiEscapes(testCaseRun.result.error?.snippet || '');
   const ariaSnapshot = extractAriaSnapshot(testCaseRun.test);
 
-  if (!ariaSnapshot || !errorMessage) return;
+  if (!ariaSnapshot || !error) return;
 
-  return (customPrompt || defaultPromptTemplate)
-    .replace('{scenarioName}', scenarioName)
-    .replace('{steps}', executedSteps)
-    .replace('{error}', errorMessage)
-    .replace('{snippet}', snippet)
-    .replace('{ariaSnapshot}', ariaSnapshot)
-    .trim();
+  return substitute(customPrompt || defaultPromptTemplate, {
+    scenarioName,
+    steps,
+    error,
+    snippet,
+    ariaSnapshot,
+  }).trim();
 }
 
 function buildStepsList(testCaseRun: TestCaseRun) {

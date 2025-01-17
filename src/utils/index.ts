@@ -120,3 +120,12 @@ export function escapeHtml(str: string) {
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#39;');
 }
+
+/**
+ * Replace placeholders in a template string.
+ * Example:
+ * 'Hello, {name}' + {name: 'John' } -> 'Hello, John'
+ */
+export function substitute(template: string, params: Record<string, string>) {
+  return template.replace(/{(\w+)}/g, (_, key) => params[key] ?? `{${key}}`);
+}
