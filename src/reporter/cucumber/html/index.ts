@@ -24,7 +24,7 @@ import {
   toEmbeddedAttachment,
   toExternalAttachment,
 } from '../attachments/external';
-import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from '../attachments/trace';
+import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './traceViewer';
 import { buildPrompt } from './fixWithAi/prompt';
 import { getFixWithAiHtml } from './fixWithAi/button';
 import { fixWithAiCss, fixWithAiScript } from './fixWithAi/assets';
