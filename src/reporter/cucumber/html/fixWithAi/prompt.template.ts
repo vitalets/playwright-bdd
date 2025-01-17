@@ -1,4 +1,4 @@
-export const promptTemplate = `
+export const defaultPromptTemplate = `
 You are an expert in Playwright BDD testing.
 Fix the error in the test.
 

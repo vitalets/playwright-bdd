@@ -12,5 +12,9 @@ export default defineConfig({
       outputFile: 'actual-reports/report.html',
       fixWithAi: true,
     }),
+    cucumberReporter('html', {
+      outputFile: 'actual-reports/report-custom-prompt.html',
+      fixWithAi: { prompt: 'My custom prompt' },
+    }),
   ],
 });

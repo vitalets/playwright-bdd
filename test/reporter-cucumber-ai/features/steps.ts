@@ -1,10 +1,11 @@
 import { expect } from '@playwright/test';
 import { createBdd } from 'playwright-bdd';
+import { pathToFileURL } from 'node:url';
 
 const { Given, Then } = createBdd();
 
 Given('I am on homepage', async ({ page }) => {
-  await page.goto('https://example.com');
+  await page.goto(pathToFileURL('example.html').toString());
 });
 
 Then('I see header {string}', async ({ page }, name: string) => {
