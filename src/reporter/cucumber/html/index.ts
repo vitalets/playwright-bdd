@@ -9,25 +9,25 @@ import { finished } from 'node:stream/promises';
 import { Transform } from 'node:stream';
 import * as messages from '@cucumber/messages';
 import { CucumberHtmlStream } from '@cucumber/html-formatter';
-import { resolvePackageRoot } from '../../utils';
+import { resolvePackageRoot } from '../../../utils';
 import path from 'node:path';
-import BaseReporter, { InternalOptions } from './base';
-import { AttachmentEnvelope } from './messagesBuilder/types';
+import BaseReporter, { InternalOptions } from '../base';
+import { AttachmentEnvelope } from '../messagesBuilder/types';
 import {
   createLinkAttachment,
   createLogAttachment,
   isAttachmentEnvelope,
-} from './attachments/helpers';
-import { shouldSkipAttachment, SkipAttachments } from './attachments/skip';
+} from '../attachments/helpers';
+import { shouldSkipAttachment, SkipAttachments } from '../attachments/skip';
 import {
   isTextAttachment,
   toEmbeddedAttachment,
   toExternalAttachment,
-} from './attachments/external';
-import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './attachments/trace';
-import { buildPrompt } from './html/fixWithAi/prompt';
-import { getFixWithAiHtml } from './html/fixWithAi/button';
-import { fixWithAiCss, fixWithAiScript } from './html/fixWithAi/assets';
+} from '../attachments/external';
+import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from '../attachments/trace';
+import { buildPrompt } from './fixWithAi/prompt';
+import { getFixWithAiHtml } from './fixWithAi/button';
+import { fixWithAiCss, fixWithAiScript } from './fixWithAi/assets';
 
 type HtmlReporterOptions = {
   outputFile?: string;
