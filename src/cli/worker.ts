@@ -5,7 +5,7 @@
 
 import { workerData } from 'node:worker_threads';
 import { TestFilesGenerator } from '../generate';
-import { forceExitIfNeeded } from './helpers';
+import { forceExitIfNeeded } from './helpers/forceExit';
 
 main();
 

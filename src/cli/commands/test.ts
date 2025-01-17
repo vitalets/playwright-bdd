@@ -9,7 +9,8 @@ import { ConfigOption } from '../options';
 import { exit } from '../../utils/exit';
 import { BDDConfig } from '../../config/types';
 import { defaults } from '../../config/defaults';
-import { forceExitIfNeeded } from '../helpers';
+import { forceExitIfNeeded } from '../helpers/forceExit';
+import { setBddGenPhase } from '../helpers/bddgenPhase';
 import { showWarnings } from '../../config/warnings';
 import { Logger } from '../../utils/logger';
 
@@ -27,6 +28,7 @@ export const testCommand = new Command('test')
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .action(async () => {
     const opts = testCommand.optsWithGlobals<TestCommandOptions>();
+    setBddGenPhase();
     await loadPlaywrightConfig(opts.config);
     const configs = readConfigsFromEnv();
     mergeCliOptions(configs, opts);

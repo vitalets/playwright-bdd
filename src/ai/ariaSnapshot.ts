@@ -3,6 +3,7 @@
  */
 import { Page, TestInfo } from '@playwright/test';
 import * as pw from '@playwright/test/reporter';
+import { supportedFeatures } from '../playwright/supportedFeatures';
 
 const ANNOTATION_NAME = '_ariaSnapshot';
 
@@ -16,7 +17,7 @@ export class PageAriaSnapshot {
   }
 
   async captureOnFail() {
-    if (this.page && this.isFailedTest()) {
+    if (supportedFeatures.ariaSnapshots && this.page && this.isFailedTest()) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore PW < 1.49 don't have .ariaSnapshot()
       const ariaSnapshot = await this.page.locator('html').ariaSnapshot();

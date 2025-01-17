@@ -9,7 +9,7 @@ import { assertConfigsCount } from './test';
 import { TestFilesGenerator } from '../../generate';
 import { relativeToCwd } from '../../utils/paths';
 import { BDDConfig } from '../../config/types';
-import { forceExitIfNeeded } from '../helpers';
+import { forceExitIfNeeded } from '../helpers/forceExit';
 import { StepDefinition } from '../../steps/stepDefinition';
 
 const logger = new Logger({ verbose: true });

@@ -28,6 +28,7 @@ import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './traceVie
 import { buildPrompt } from './fixWithAi/prompt';
 import { getFixWithAiHtml } from './fixWithAi/button';
 import { fixWithAiCss, fixWithAiScript } from './fixWithAi/assets';
+import { setFixWithAiEnabled } from '../../../config/fixWithAi';
 
 type HtmlReporterOptions = {
   outputFile?: string;
@@ -57,6 +58,7 @@ export default class HtmlReporter extends BaseReporter {
     super(internalOptions);
     this.setOutputStream(this.userOptions.outputFile);
 
+    if (this.userOptions.fixWithAi) setFixWithAiEnabled();
     if (this.userOptions.externalAttachments) {
       this.setupAttachmentsDir();
       this.setupAttachmentsBaseURL();

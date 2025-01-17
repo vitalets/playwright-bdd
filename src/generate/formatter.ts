@@ -166,6 +166,15 @@ export class Formatter {
     return [`$uri: ({}, use) => use(${this.quoted(featureUri)}),`];
   }
 
+  pageFixtureWithAriaSnapshot() {
+    return [
+      `page: async ({ page, $ariaSnapshot }, use) => {`,
+      `  $ariaSnapshot.setPage(page);`,
+      `  await use(page);`,
+      `},`,
+    ];
+  }
+
   scenarioHooksFixtures(type: ScenarioHookType, fixtureNames: string[]) {
     if (!fixtureNames.length) return [];
     const targetFixtureName = type === 'before' ? '$beforeEachFixtures' : '$afterEachFixtures';

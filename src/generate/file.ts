@@ -36,6 +36,8 @@ import { SourceMapper } from './sourceMapper';
 import { BddDataRenderer } from '../bddData/renderer';
 import { extractTagsFromPath } from '../steps/tags';
 import { removeDuplicates } from '../utils';
+import { isFixWithAiEnabled } from '../config/fixWithAi';
+import { supportedFeatures } from '../playwright/supportedFeatures';
 
 type TestFileOptions = {
   config: BDDConfig;
@@ -173,6 +175,9 @@ export class TestFile {
       ...this.formatter.scenarioHooksFixtures('before', this.hooks.before.getFixtureNames()),
       ...this.formatter.scenarioHooksFixtures('after', this.hooks.after.getFixtureNames()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
+      ...(supportedFeatures.ariaSnapshots && isFixWithAiEnabled()
+        ? this.formatter.pageFixtureWithAriaSnapshot()
+        : []),
     ]);
 
     return [

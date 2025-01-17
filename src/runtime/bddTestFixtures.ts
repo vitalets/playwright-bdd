@@ -12,6 +12,7 @@ import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 import { BddContext, BddStepInfo } from './bddContext';
 import { PageAriaSnapshot } from '../ai/ariaSnapshot';
+import { isFixWithAiEnabled } from '../config/fixWithAi';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -150,13 +151,14 @@ export const test = base.extend<BddTestFixtures>({
     },
     fixtureOptions,
   ],
-  $ariaSnapshot: [async ({}, use, testInfo) => use(new PageAriaSnapshot(testInfo)), fixtureOptions],
-  // temp: auto capture aria snapshot
-  page: async ({ page, $ariaSnapshot }, use) => {
-    $ariaSnapshot.setPage(page);
-    await use(page);
-    await $ariaSnapshot.captureOnFail();
-  },
+  $ariaSnapshot: [
+    async ({}, use, testInfo) => {
+      const ariaSnapshot = new PageAriaSnapshot(testInfo);
+      await use(ariaSnapshot);
+      if (isFixWithAiEnabled()) await ariaSnapshot.captureOnFail();
+    },
+    fixtureOptions,
+  ],
 });
 
 function errorBddTestDataNotFound(testInfo: TestInfo) {
