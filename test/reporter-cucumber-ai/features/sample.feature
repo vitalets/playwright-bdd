@@ -1,8 +1,7 @@
-Feature: Playwright homepage
+Feature: Example homepage
 
   Background:
-    Given I am on Playwright homepage
+    Given I am on homepage
 
-  Scenario: check get started link
-    When I click link "Get started"
-    Then I see header "About"
+  Scenario: validate header
+    Then I see header "xxx"
