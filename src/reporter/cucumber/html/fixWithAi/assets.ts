@@ -3,7 +3,9 @@
  */
 export const fixWithAiScript = `
 <script>
-function copyPrompt(button, originalText, prompt) {
+function copyPrompt(button, prompt) {
+  var originalText = button.textContent;
+  if (originalText === 'Copied') return;
   navigator.clipboard.writeText(prompt).then(() => {
     button.textContent = 'Copied';
     setTimeout(() => button.textContent = originalText, 2000);
