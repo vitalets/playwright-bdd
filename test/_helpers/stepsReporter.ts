@@ -9,7 +9,7 @@ import { stripAnsiEscapes } from '../../src/utils/stripAnsiEscapes';
 
 type StepsReporterOptions = {
   outputFile: string;
-  categories?: string[];
+  categories?: string[] | null;
   titles?: string[];
 };
 
@@ -65,7 +65,7 @@ export default class StepsReporter implements Reporter {
   }
 
   private shouldReportStep({ category, title }: TestStep) {
-    if (this.options.categories?.includes(category)) return true;
+    if (!this.options.categories || this.options.categories.includes(category)) return true;
     if (this.options.titles?.includes(title)) return true;
   }
 }

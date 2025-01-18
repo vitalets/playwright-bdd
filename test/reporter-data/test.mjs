@@ -8,14 +8,21 @@ import {
 
 const testDir = new TestDir(import.meta);
 
-// Since PW 1.46 there is a 'box' option for the fixture, that hides it from the report.
-// Till Pw 1.41 first trace was attached to BeforeAll hooks, not to top level test.steps.
-const expectedReportName =
-  playwrightVersion < '1.42'
-    ? 'report-till-1.42.txt'
-    : playwrightVersion < '1.46'
-      ? 'report-till-1.46.txt'
-      : 'report-current.txt';
+// - Till Pw 1.41 first trace was attached to BeforeAll hooks, not to top level test.steps.
+// - Since PW 1.46 there is a 'box' option for the fixture, that hides it from the report.
+// - Since PW 1.50 each step has 'attahcments' field, no 'attach' type steps in test result.
+function getExpectedReportName() {
+  switch (true) {
+    case playwrightVersion < '1.42':
+      return 'report-less-1.42.txt';
+    case playwrightVersion < '1.46':
+      return 'report-less-1.46.txt';
+    case playwrightVersion < '1.50':
+      return 'report-less-1.50.txt';
+    default:
+      return 'report-current.txt';
+  }
+}
 
 test(testDir.name, () => {
   testDir.clearDir('actual-reports');
@@ -26,7 +33,7 @@ test(testDir.name, () => {
 });
 
 function checkStepsTree() {
-  const expectedTree = testDir.getFileContents(`expected-reports/${expectedReportName}`);
+  const expectedTree = testDir.getFileContents(`expected-reports/${getExpectedReportName()}`);
   const actualTree = testDir.getFileContents('actual-reports/report.txt');
   expect(normalizeCRLF(actualTree)).toEqual(normalizeCRLF(expectedTree));
 }

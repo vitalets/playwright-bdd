@@ -4,11 +4,12 @@
  */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import * as cucumber from '@cucumber/cucumber';
+import { TestInfo } from '@playwright/test';
 import { test as base, createBdd } from 'playwright-bdd';
 
 export const isPlaywrightRun = Boolean(process.env.PLAYWRIGHT_BDD_CONFIGS);
 
-export const test = base.extend({
+export const test = base.extend<{ world: { testInfo: TestInfo } }>({
   world: ({}, use, testInfo) => use({ testInfo }),
 });
 const pwBdd = createBdd(test, { worldFixture: 'world' });
