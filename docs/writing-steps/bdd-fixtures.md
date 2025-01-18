@@ -70,8 +70,9 @@ Given('I do something', async ({ $tags }) => {
 
 The most powerful usage of `$tags` is in your custom fixtures.
 
-##### Example 1
-Run the scenario only in Firefox if it has the `@firefox` tag:
+##### Example 1: Run test in a specific browser
+
+Imagine you want to run scenario only in Firefox, if there is a `@firefox` tag:
 ```gherkin
 Feature: some feature
     
@@ -79,19 +80,23 @@ Feature: some feature
     Scenario: Runs only in Firefox
       ...
 ```
-Custom fixture:
+
+Setup custom fixture, that checks `$tags` and skips the test in non-firefox browser:
 ```ts
 import { test as base } from 'playwright-bdd';
 
 export const test = base.extend<{ firefoxOnly: void }>({
-  firefoxOnly: [async ({ $tags }, use, testInfo) => {
-    if ($tags.includes('@firefox')) testInfo.skip();
-    await use();
-  }, { auto: true }],
+  firefoxOnly: [
+    async ({ $tags, defaultBrowserType }, use, testInfo) => {
+      if ($tags.includes('@firefox') && defaultBrowserType !== 'firefox') testInfo.skip();
+      await use();
+    },
+    { auto: true },
+  ],
 });
 ```
 
-##### Example 2
+##### Example 2: Set locale for a test
 Overwrite the locale to `fi` if the test has a `@LocaleFi` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
@@ -106,7 +111,7 @@ export const test = base.extend({
 });
 ```
 
-##### Example 3
+##### Example 3: Switch to mobile viewport for a test
 Overwrite the `viewport` for scenarios with the `@mobile` tag:
 ```ts
 import { test as base } from 'playwright-bdd';
