@@ -8,8 +8,16 @@ const { When, Then, Before, After } = createBdd();
 When('Step with data table', () => {});
 When('Step with doc string', () => {});
 
-When('attach text', async ({ $testInfo }) => {
-  await $testInfo.attach('text attachment', { body: 'some text' });
+When('attach text via testInfo', async ({ $testInfo }) => {
+  await $testInfo.attach('text attachment via testInfo', { body: '|some text' });
+});
+
+When('attach text via attachments.push', async ({ $testInfo }) => {
+  $testInfo.attachments.push({
+    name: 'text attachment via attachments.push',
+    body: Buffer.from('|another text'),
+    contentType: 'text/plain',
+  });
 });
 
 When('attach image inline', async ({ $testInfo }) => {

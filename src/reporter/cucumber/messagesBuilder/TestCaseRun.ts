@@ -8,12 +8,7 @@ import { TestCase } from './TestCase';
 import { AutofillMap } from '../../../utils/AutofillMap.js';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
 import { toCucumberTimestamp } from './timing';
-import {
-  areTestErrorsEqual,
-  findAllStepsWithCategory,
-  isTopLevelStep,
-  isUnknownDuration,
-} from './pwStepUtils';
+import { areTestErrorsEqual, isTopLevelStep, isUnknownDuration, walkSteps } from './pwStepUtils';
 import { AttachmentMapper } from './AttachmentMapper';
 import { TestCaseRunHooks } from './TestCaseRunHooks';
 import { ProjectInfo, getProjectInfo } from './Projects';
@@ -50,7 +45,8 @@ export class TestCaseRun {
   private executedBeforeHooks: TestCaseRunHooks;
   private executedAfterHooks: TestCaseRunHooks;
   private executedBddSteps: ExecutedBddStepInfo[];
-  private bgSteps = new Set<pw.TestStep>();
+  // root bg steps (can be several for Rules)
+  private bgRoots = new Set<pw.TestStep>();
 
   // eslint-disable-next-line max-params
   constructor(
@@ -118,14 +114,18 @@ export class TestCaseRun {
     if (this.isTimeouted() && pwStep && isUnknownDuration(pwStep)) {
       this.registerTimeoutedStep(pwStep);
     }
-    if (pwStep && bddStep.isBg) {
-      this.bgSteps.add(pwStep);
+    if (pwStep?.parent && bddStep.isBg) {
+      this.bgRoots.add(pwStep.parent);
     }
+    if (pwStep) {
+      this.attachmentMapper.populateStepAttachments(pwStep);
+    }
+
     return { bddStep, pwStep };
   }
 
   private fillExecutedHooks(hookType: HooksGroup) {
-    return new TestCaseRunHooks(this, hookType, this.bgSteps).fill();
+    return new TestCaseRunHooks(this, hookType, this.bgRoots).fill();
   }
 
   registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {
@@ -134,7 +134,7 @@ export class TestCaseRun {
 
   hasRegisteredError(error: pw.TestError) {
     for (const registeredError of this.errorSteps.values()) {
-      if (registeredError === error) return true;
+      if (areTestErrorsEqual(registeredError, error)) return true;
     }
   }
 
@@ -211,6 +211,6 @@ export class TestCaseRun {
     // But it's more reliable to just collect all test.step items b/c some Playwright versions
     // move steps to fixtures (see: https://github.com/microsoft/playwright/issues/30075)
     // Collecting all test.step items should be ok, as later we anyway map them by location.
-    return findAllStepsWithCategory(this.result, 'test.step');
+    return walkSteps(this.result.steps).filter((pwStep) => pwStep.category === 'test.step');
   }
 }
