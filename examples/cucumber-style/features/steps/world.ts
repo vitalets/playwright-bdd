@@ -1,8 +1,10 @@
+import { Eyes } from '@applitools/eyes-playwright';
 import { Page, TestInfo } from '@playwright/test';
 
 export class World {
   constructor(
     public page: Page,
+    public eyes: Eyes,
     public testInfo: TestInfo,
   ) {}
 
