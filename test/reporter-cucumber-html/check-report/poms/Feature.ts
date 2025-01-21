@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test';
+import { expect, Locator, Page } from '@playwright/test';
 import { Scenario } from './Scenario';
 import path from 'node:path';
 
@@ -13,6 +13,13 @@ export class Feature {
       .locator('[data-accordion-component="AccordionItem"]')
       .filter({ has: this.getFileHeader() });
     this.root = container.locator('[data-accordion-component="AccordionItemPanel"]');
+  }
+
+  async ensureExpanded() {
+    await expect(this.getFileHeader()).toBeVisible();
+    if (await this.root.isHidden()) {
+      await this.getFileHeader().click();
+    }
   }
 
   getFileHeader() {

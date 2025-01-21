@@ -5,6 +5,8 @@
  * 2. comment checkHtmlReport() call in this file
  *    OR
  *    add `test.only` to the related spec file in check-report directory
+ * 3. if running only success test, use execPlaywrightTest() instead of execPlaywrightTestWithError()
+ *
  */
 import {
   test,
@@ -20,6 +22,8 @@ test(testDir.name, () => {
   testDir.clearDir('test-results');
 
   execPlaywrightTestWithError(testDir.name);
+  // useful for debug
+  // execPlaywrightTest(testDir.name);
 
   checkHtmlReport();
 });

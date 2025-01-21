@@ -21,7 +21,9 @@ export const test = base.extend<Fixtures>({
   featureUri: ['', { option: true }], // will be overwritten in test files
   feature: async ({ htmlReport }, use, testInfo) => {
     const featureUri = getFeatureUriFromTestFile(testInfo.file);
-    await use(htmlReport.getFeature(featureUri));
+    const feature = htmlReport.getFeature(featureUri);
+    await feature.ensureExpanded();
+    await use(feature);
   },
   scenario: async ({ feature }, use, testInfo) => {
     await use(feature.getScenario(testInfo.title));
