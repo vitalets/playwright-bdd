@@ -8,7 +8,6 @@ export default defineConfig({
   // testDir: '../features/background',
   outputDir: './test-results',
   reporter: 'dot',
-  timeout: 5000,
   use: {
     screenshot: 'only-on-failure',
     viewport: { width: 800, height: 720 },
