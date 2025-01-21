@@ -16,6 +16,13 @@ Before(
   },
 );
 
+Before({ tags: '@failing-before-hook-with-step' }, async ({ page, $test }) => {
+  await $test.step('my step', async () => {
+    await $test.info().attach('my attachment', { body: 'body' });
+    await expect(page).toHaveTitle('foo');
+  });
+});
+
 Before(
   { name: 'my timeouted hook', tags: '@before-hook-with-timeout' },
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

@@ -26,6 +26,17 @@ test('error in named before hook', async ({ scenario }) => {
   await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
 });
 
+test('error in nested step in before hook', async ({ scenario }) => {
+  await expect(scenario.getSteps()).toContainText([
+    `Hook "my step" failed: ${normalize('features/failing-before/steps.ts')}:`,
+    'GivenAction 1',
+    'screenshotDownload trace',
+  ]);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getSteps('skipped')).toHaveCount(1);
+  await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
+});
+
 test('error in fixture setup (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     `Hook "fixture: fixtureWithErrorInSetup" failed: ${normalize('features/failing-before/fixtures.ts')}:`,

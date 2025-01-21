@@ -17,6 +17,12 @@ After({ name: 'failing named after hook2', tags: '@failing-named-after-hook2' },
   expect(true).toBe(false);
 });
 
+After({ tags: '@failing-after-hook-with-step' }, async ({ page, $test }) => {
+  await $test.step('my step', async () => {
+    await expect(page).toHaveTitle('foo');
+  });
+});
+
 After({ name: 'my timeouted hook', tags: '@after-hook-with-timeout' }, async ({ $testInfo }) => {
   await new Promise((r) => setTimeout(r, $testInfo.timeout + 100));
 });

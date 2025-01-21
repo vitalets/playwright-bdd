@@ -37,6 +37,19 @@ test('error in named after hook', async ({ scenario }) => {
   await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
 });
 
+test('error in nested step in after hook', async ({ scenario }) => {
+  await expect(scenario.getSteps()).toContainText(
+    [
+      'Givenstep with page',
+      `Hook "my step" failed: ${normalize('features/failing-after/steps.ts')}:`,
+      hasScreenshotAfterHookError ? 'screenshotDownload trace' : '',
+    ].filter(Boolean),
+  );
+  await expect(scenario.getSteps('passed')).toHaveCount(1);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
+});
+
 test('error in fixture teardown (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'my attachment|before use',
