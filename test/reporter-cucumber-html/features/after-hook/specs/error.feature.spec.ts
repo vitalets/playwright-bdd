@@ -13,7 +13,7 @@ test('error in anonymous after hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText(
     [
       'Givenstep with page',
-      `Hook "AfterEach hook" failed: ${normalize('features/failing-after/steps.ts')}:`, // prettier-ignore
+      `Hook "AfterEach hook" failed: ${normalize('features/after-hook/steps.ts')}:`, // prettier-ignore
       hasScreenshotAfterHookError ? 'screenshotDownload trace' : '',
     ].filter(Boolean),
   );
@@ -27,7 +27,7 @@ test('error in named after hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText(
     [
       'Givenstep with page',
-      `Hook "failing named after hook" failed: ${normalize('features/failing-after/steps.ts')}:`,
+      `Hook "failing named after hook" failed: ${normalize('features/after-hook/steps.ts')}:`,
       hasScreenshotAfterHookError ? 'screenshotDownload trace' : '',
     ].filter(Boolean),
   );
@@ -41,7 +41,7 @@ test('error in nested step in after hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText(
     [
       'Givenstep with page',
-      `Hook "my step" failed: ${normalize('features/failing-after/steps.ts')}:`,
+      `Hook "my step" failed: ${normalize('features/after-hook/steps.ts')}:`,
       hasScreenshotAfterHookError ? 'screenshotDownload trace' : '',
     ].filter(Boolean),
   );
@@ -56,7 +56,7 @@ test('error in fixture teardown (no step)', async ({ scenario }) => {
     'Givenstep with page',
     'Givenstep that uses fixtureWithErrorInTeardown',
     'WhenAction 1',
-    `Hook "fixture: fixtureWithErrorInTeardown" failed: ${normalize('features/failing-after/fixtures.ts')}:`,
+    `Hook "fixture: fixtureWithErrorInTeardown" failed: ${normalize('features/after-hook/fixtures.ts')}:`,
   ]);
   if (hasScreenshotAfterHookError) {
     // position of screenshot item can vary
@@ -78,7 +78,7 @@ test('error in fixture teardown (with step)', async ({ scenario }) => {
     'Givenstep with page',
     'Givenstep that uses fixtureWithErrorInTeardownStep',
     'WhenAction 1',
-    `Hook "step inside fixture" failed: ${normalize('features/failing-after/fixtures.ts')}:`,
+    `Hook "step inside fixture" failed: ${normalize('features/after-hook/fixtures.ts')}:`,
     'my attachment|outside step (after use)',
   ]);
   if (hasScreenshotAfterHookError) {

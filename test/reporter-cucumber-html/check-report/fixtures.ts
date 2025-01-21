@@ -7,7 +7,6 @@ import path from 'node:path';
 
 type Fixtures = {
   htmlReport: HtmlReport;
-  featureUri: string;
   feature: Feature;
   scenario: Scenario;
 };
@@ -18,7 +17,6 @@ export const test = base.extend<Fixtures>({
     await use(page);
   },
   htmlReport: async ({ page }, use) => use(new HtmlReport(page)),
-  featureUri: ['', { option: true }], // will be overwritten in test files
   feature: async ({ htmlReport }, use, testInfo) => {
     const featureUri = getFeatureUriFromTestFile(testInfo.file);
     const feature = htmlReport.getFeature(featureUri);
