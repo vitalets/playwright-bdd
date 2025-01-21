@@ -1,6 +1,11 @@
 {
   "type": "commonjs",
   "scripts": {
-    "test": "npx bddgen && npx playwright test"
+    "test": "npm ci && npx bddgen && npx playwright test"
+  },
+  "devDependencies": {
+    "@applitools/eyes-playwright": "^1.35.1",
+    "@playwright/test": "^1.49.1",
+    "playwright-bdd": "^8.0.1"
   }
 }
