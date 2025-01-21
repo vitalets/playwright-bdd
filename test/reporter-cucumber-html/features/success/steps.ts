@@ -12,6 +12,12 @@ When('attach text via testInfo', async ({ $testInfo }) => {
   await $testInfo.attach('text attachment via testInfo', { body: '|some text' });
 });
 
+When('attach text in nested step', async ({ $test }) => {
+  await $test.step('my nested step', async () => {
+    await $test.info().attach('text attachment in nested step', { body: '|more text' });
+  });
+});
+
 When('attach text via attachments.push', async ({ $testInfo }) => {
   $testInfo.attachments.push({
     name: 'text attachment via attachments.push',

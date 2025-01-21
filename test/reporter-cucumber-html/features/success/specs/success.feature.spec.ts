@@ -39,14 +39,17 @@ test('Scenario with attachments', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'attach text via testInfo',
     'attach text via attachments.push',
+    'attach text in nested step',
     'attach image inline',
     'attach image as file',
     'attach stdout',
     'attach buffer as stdout',
   ]);
+  await expect(scenario.root).not.toContainText('my nested step');
   await expect(scenario.getAttachments()).toHaveText([
     'text attachment via testInfo|some text',
     'text attachment via attachments.push|another text',
+    'text attachment in nested step|more text',
     'image attachment inline',
     'image attachment as file',
   ]);
