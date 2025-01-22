@@ -59,6 +59,7 @@ export class PromptBuilder {
       .slice(0, this.bddContext.stepIndex + 1)
       .map((bddStep) => bddStep.textWithKeyword)
       .filter(Boolean)
+      .map((line) => `  ${line}`)
       .join('\n');
   }
 }
