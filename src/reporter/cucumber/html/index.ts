@@ -16,6 +16,7 @@ import { AttachmentEnvelope } from '../messagesBuilder/types';
 import {
   createLinkAttachment,
   createLogAttachment,
+  getAttachmentBodyAsBuffer,
   isAttachmentEnvelope,
 } from '../attachments/helpers';
 import { shouldSkipAttachment, SkipAttachments } from '../attachments/skip';
@@ -25,18 +26,15 @@ import {
   toExternalAttachment,
 } from '../attachments/external';
 import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './traceViewer';
-import { buildPrompt } from './fixWithAi/prompt';
-import { getFixWithAiHtml } from './fixWithAi/button';
-import { fixWithAiCss, fixWithAiScript } from './fixWithAi/assets';
-import { setFixWithAiEnabled } from '../../../config/fixWithAi';
-import { FixWithAiOption, resolveFixWithAiOption } from './fixWithAi/option';
+import { fixWithAiCss, fixWithAiScript } from './promptAttachment/assets';
+import { getPromptAttachmentButtonHtml } from './promptAttachment/button';
+import { isPromptAttachmentContentType } from '../../../ai/promptAttachment';
 
 type HtmlReporterOptions = {
   outputFile?: string;
   skipAttachments?: SkipAttachments;
   externalAttachments?: boolean;
   attachmentsBaseURL?: string;
-  fixWithAi?: FixWithAiOption;
 };
 
 // store attachments in subdirectory to not accidentally
@@ -51,15 +49,16 @@ export default class HtmlReporter extends BaseReporter {
   protected hasTraces = false;
   protected transformStream: Transform;
   protected receivedTestRunFinished = false;
-  protected options: ReturnType<HtmlReporter['resolveUserOptions']>;
+  protected hasPromptAttachments = false;
 
-  constructor(internalOptions: InternalOptions, userOptions: HtmlReporterOptions = {}) {
+  constructor(
+    internalOptions: InternalOptions,
+    protected userOptions: HtmlReporterOptions = {},
+  ) {
     super(internalOptions);
-    this.options = this.resolveUserOptions(userOptions);
-    this.setOutputStream(this.options.outputFile);
+    this.setOutputStream(this.userOptions.outputFile);
 
-    if (this.options.fixWithAi.enabled) setFixWithAiEnabled();
-    if (this.options.externalAttachments) {
+    if (this.userOptions.externalAttachments) {
       this.setupAttachmentsDir();
       this.setupAttachmentsBaseURL();
     }
@@ -70,7 +69,7 @@ export default class HtmlReporter extends BaseReporter {
     this.htmlStream.pipe(this.transformStream).pipe(this.outputStream);
 
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
-      if (this.options.fixWithAi.enabled) this.handleFixWithAi(envelope);
+      if (envelope.testRunFinished) this.receivedTestRunFinished = true;
       if (isAttachmentEnvelope(envelope)) {
         this.handleAttachment(envelope);
       } else {
@@ -87,13 +86,6 @@ export default class HtmlReporter extends BaseReporter {
     await super.finished();
   }
 
-  protected resolveUserOptions(userOptions: HtmlReporterOptions) {
-    return {
-      ...userOptions,
-      fixWithAi: resolveFixWithAiOption(userOptions.fixWithAi),
-    };
-  }
-
   protected createCucumberHtmlStream() {
     const packageRoot = resolvePackageRoot('@cucumber/html-formatter');
     return new CucumberHtmlStream(
@@ -103,26 +95,28 @@ export default class HtmlReporter extends BaseReporter {
   }
 
   protected handleAttachment(envelope: AttachmentEnvelope) {
-    if (shouldSkipAttachment(envelope, this.options.skipAttachments)) return;
+    if (shouldSkipAttachment(envelope, this.userOptions.skipAttachments)) return;
 
     // For now don't externalize text attachments, b/c they are not visible in the report.
     // In the future maybe handle separately 'text/x.cucumber.log+plain', 'text/uri-list'.
     // See: https://github.com/cucumber/cucumber-js/issues/2430
     // See: https://github.com/cucumber/react-components/blob/main/src/components/gherkin/attachment/Attachment.tsx#L32
 
-    const useExternalAttachment =
-      this.options.externalAttachments && !isTextAttachment(envelope.attachment);
+    const isExternalAttachment =
+      this.userOptions.externalAttachments && !isTextAttachment(envelope.attachment);
 
-    const newAttachment = useExternalAttachment
+    const newAttachment = isExternalAttachment
       ? toExternalAttachment(envelope.attachment, this.attachmentsDir, this.attachmentsBaseURL)
       : toEmbeddedAttachment(envelope.attachment);
 
-    if (useExternalAttachment) this.handleTraceAttachment(newAttachment);
+    if (isExternalAttachment) this.handleTraceAttachment(newAttachment);
 
     this.writeEnvelope({
       ...envelope,
       attachment: newAttachment,
     });
+
+    this.handlePromptAttachment(envelope);
   }
 
   protected writeEnvelope(envelope: messages.Envelope) {
@@ -156,24 +150,21 @@ export default class HtmlReporter extends BaseReporter {
 
   protected setupAttachmentsBaseURL() {
     this.attachmentsBaseURL = removeTrailingSlash(
-      this.options.attachmentsBaseURL || ATTACHMENTS_DIR,
+      this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR,
     );
   }
 
-  private handleFixWithAi(envelope: messages.Envelope) {
-    if (envelope.testRunFinished) this.receivedTestRunFinished = true;
-    if (envelope.testStepFinished?.testStepResult?.status === 'FAILED') {
-      const { testCaseStartedId, testStepId } = envelope.testStepFinished;
-      const testCaseRun = this.messagesBuilder.testCaseRuns.find((t) => t.id === testCaseStartedId);
-      if (!testCaseRun) return;
-      const prompt = buildPrompt(testCaseRun, this.options.fixWithAi.prompt);
-      if (!prompt) return;
-      const aiAttachmentEnvelope = createLogAttachment(
+  private handlePromptAttachment({ attachment }: AttachmentEnvelope) {
+    if (isPromptAttachmentContentType(attachment.mediaType)) {
+      this.hasPromptAttachments = true;
+      const { testCaseStartedId, testStepId } = attachment;
+      const prompt = getAttachmentBodyAsBuffer(attachment).toString();
+      const promptAttachmentWithButton = createLogAttachment(
         testCaseStartedId,
         testStepId,
-        getFixWithAiHtml(prompt),
+        getPromptAttachmentButtonHtml(prompt),
       );
-      this.writeEnvelope(aiAttachmentEnvelope);
+      this.writeEnvelope(promptAttachmentWithButton);
     }
   }
 
@@ -183,10 +174,8 @@ export default class HtmlReporter extends BaseReporter {
   private createTransformStream() {
     return new Transform({
       transform: (chunk, _encoding, callback) => {
-        const newChunk =
-          this.options.fixWithAi.enabled && this.receivedTestRunFinished
-            ? this.injectCustomAssets(chunk)
-            : chunk;
+        const shouldInjectCustomAssets = this.hasPromptAttachments && this.receivedTestRunFinished;
+        const newChunk = shouldInjectCustomAssets ? this.injectCustomAssets(chunk) : chunk;
         callback(null, newChunk);
       },
     });

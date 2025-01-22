@@ -1,6 +1,7 @@
 /**
  * Renders BDD data in test file.
  */
+import { getStepTextWithKeyword } from '../features/helpers';
 import { indent } from '../generate/formatter';
 import { SourceMapper } from '../generate/sourceMapper';
 import { TestGen } from '../generate/test';
@@ -36,8 +37,8 @@ export class BddDataRenderer {
         return {
           pwStepLine: this.sourceMapper.getPwStepLine(pickleStep),
           gherkinStepLine: gherkinStep.location.line,
-          keywordOrig: gherkinStep.keyword,
           keywordType: pickleStep.type,
+          textWithKeyword: getStepTextWithKeyword(gherkinStep.keyword, pickleStep.text),
           isBg: isBg || undefined,
           pomFixtureName,
           stepMatchArguments: matchedDefinition?.getStepMatchArguments(),

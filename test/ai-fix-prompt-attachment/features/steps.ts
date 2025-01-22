@@ -9,5 +9,5 @@ Given('I am on homepage', async ({ page }) => {
 });
 
 Then('I see header {string}', async ({ page }, name: string) => {
-  await expect(page.getByRole('heading', { name })).toBeVisible();
+  await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 500 });
 });

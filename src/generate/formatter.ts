@@ -166,10 +166,10 @@ export class Formatter {
     return [`$uri: ({}, use) => use(${this.quoted(featureUri)}),`];
   }
 
-  pageFixtureWithAriaSnapshot() {
+  pageFixtureWithPromptAttachment() {
     return [
-      `page: async ({ page, $ariaSnapshot }, use) => {`,
-      `  $ariaSnapshot.setPage(page);`,
+      `page: async ({ page, $promptAttachment }, use) => {`,
+      `  $promptAttachment.setPage(page);`,
       `  await use(page);`,
       `},`,
     ];

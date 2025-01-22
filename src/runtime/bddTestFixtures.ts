@@ -11,8 +11,7 @@ import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 import { BddContext, BddStepInfo } from './bddContext';
-import { PageAriaSnapshot } from '../ai/ariaSnapshot';
-import { isFixWithAiEnabled } from '../config/fixWithAi';
+import { PromptAttachment } from '../ai/promptAttachment';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -41,7 +40,7 @@ export type BddTestFixtures = {
   $beforeEach: void;
   $afterEachFixtures: Record<string, unknown>;
   $afterEach: void;
-  $ariaSnapshot: PageAriaSnapshot;
+  $promptAttachment: PromptAttachment;
 };
 
 export const test = base.extend<BddTestFixtures>({
@@ -151,11 +150,11 @@ export const test = base.extend<BddTestFixtures>({
     },
     fixtureOptions,
   ],
-  $ariaSnapshot: [
-    async ({}, use, testInfo) => {
-      const ariaSnapshot = new PageAriaSnapshot(testInfo);
-      await use(ariaSnapshot);
-      if (isFixWithAiEnabled()) await ariaSnapshot.captureOnFail();
+  $promptAttachment: [
+    async ({ $bddContext }, use) => {
+      const promptAttachment = new PromptAttachment($bddContext);
+      await use(promptAttachment);
+      await promptAttachment.attach();
     },
     fixtureOptions,
   ],

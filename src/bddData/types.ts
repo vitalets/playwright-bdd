@@ -27,8 +27,8 @@ export type BddTestData = {
 export type BddStepData = {
   pwStepLine: number;
   gherkinStepLine: number;
-  keywordOrig: string;
   keywordType: PickleStepType | undefined;
+  textWithKeyword: string;
   pomFixtureName?: string;
   stepMatchArguments?: StepMatchArgument[];
   isBg?: boolean;

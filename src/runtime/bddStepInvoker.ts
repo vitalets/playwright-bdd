@@ -8,7 +8,6 @@ import { DataTable } from '../cucumber/DataTable';
 import { getBddAutoInjectFixtures } from './bddTestFixturesAuto';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
-import { getStepTextWithKeyword } from '../features/helpers';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
 
@@ -32,8 +31,8 @@ export class BddStepInvoker {
     this.bddContext.stepIndex++;
     this.bddContext.step.title = stepText;
 
-    const matchedDefinition = this.findStepDefinition(stepText);
-    const stepTextWithKeyword = this.getStepTextWithKeyword(stepText);
+    const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
+    const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
 
     // Get location of step call in generated test file.
     // This call must be exactly here to have correct call stack (before async calls)
@@ -60,7 +59,7 @@ export class BddStepInvoker {
     });
   }
 
-  private findStepDefinition(stepText: string) {
+  private findStepDefinition(stepText: string, stepTextWithKeyword: string) {
     const { keywordType, gherkinStepLine } = this.getBddStepData();
     const stepDefinitions = this.stepFinder.findDefinitions(
       keywordType,
@@ -70,7 +69,6 @@ export class BddStepInvoker {
 
     if (stepDefinitions.length === 1) return stepDefinitions[0];
 
-    const stepTextWithKeyword = this.getStepTextWithKeyword(stepText);
     const fullStepLocation = `${this.bddContext.featureUri}:${gherkinStepLine}`;
 
     if (stepDefinitions.length === 0) {
@@ -115,11 +113,6 @@ export class BddStepInvoker {
     }
 
     return Object.assign({}, providedFixtures, getBddAutoInjectFixtures(this.bddContext));
-  }
-
-  private getStepTextWithKeyword(stepText: string) {
-    const { keywordOrig } = this.getBddStepData();
-    return getStepTextWithKeyword(keywordOrig, stepText);
   }
 
   private getBddStepData() {
