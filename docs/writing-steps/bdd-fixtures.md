@@ -88,7 +88,9 @@ import { test as base } from 'playwright-bdd';
 export const test = base.extend<{ firefoxOnly: void }>({
   firefoxOnly: [
     async ({ $tags, defaultBrowserType }, use, testInfo) => {
-      if ($tags.includes('@firefox') && defaultBrowserType !== 'firefox') testInfo.skip();
+      if ($tags.includes('@firefox') && defaultBrowserType !== 'firefox') {
+        testInfo.skip();
+      }
       await use();
     },
     { auto: true },

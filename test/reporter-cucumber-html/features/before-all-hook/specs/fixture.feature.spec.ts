@@ -4,7 +4,7 @@ import { test } from '../../../check-report/fixtures';
 
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "fixture: workerFixtureWithErrorInSetup" failed: ${normalize('features/failing-before-all/fixtures.ts')}:`,
+    `Hook "fixture: workerFixtureWithErrorInSetup" failed: ${normalize('features/before-all-hook/fixtures.ts')}:`,
     'GivenAction 1',
     'Givenstep that uses workerFixtureWithErrorInSetup',
     'Download trace',

@@ -20,36 +20,60 @@ import * as pw from '@playwright/test/reporter';
 import { Hook, HooksGroup } from './Hook';
 import {
   getHooksRootPwStep,
-  findDeepestStepWithError,
-  findDeepestStepWithUnknownDuration,
-  findAllStepsWith,
+  walkSteps,
+  findDeepestStepWith,
+  isUnknownDuration,
 } from './pwStepUtils';
 import { TestCaseRun } from './TestCaseRun';
 import { TestStepRun, TestStepRunEnvelope } from './TestStepRun';
+
+const PW_STEP_CATEGORIES_FOR_HOOKS = ['hook', 'fixture', 'test.step'];
 
 type ExecutedHookInfo = {
   hook: Hook;
   pwStep: pw.TestStep;
 };
 
+export function isHookCandidate(pwStep: pw.TestStep) {
+  return PW_STEP_CATEGORIES_FOR_HOOKS.includes(pwStep.category);
+}
+
 export class TestCaseRunHooks {
-  private rootPwStep?: pw.TestStep;
+  // rootPwStep is empty for skipped test, b/c there are no steps.
+  // todo: refactor to avoid "!"
+  private rootPwStep!: pw.TestStep;
+  private candidates: pw.TestStep[] = [];
   private hookPwSteps = new Set<pw.TestStep>();
+
   executedHooks = new Map</* internalId */ string, ExecutedHookInfo>();
+
+  static getRootPwStep(result: TestCaseRun, hookType: HooksGroup) {
+    return getHooksRootPwStep(result.result, hookType);
+  }
 
   constructor(
     private testCaseRun: TestCaseRun,
     private hookType: HooksGroup,
-    private bgSteps: Set<pw.TestStep>,
+    private bgRoots: Set<pw.TestStep>,
   ) {}
 
+  private get isAfterHooksType() {
+    return this.hookType === 'after';
+  }
+
   fill() {
-    this.setRootStep();
+    this.setRootPwStep();
+    // todo: refactor to this early return
+    if (!this.rootPwStep) return this;
+    this.setCandidates();
     this.addStepsWithName();
     this.addStepWithTimeout();
     this.addStepWithError();
-    this.addStepWithErrorFallback();
     this.addStepsWithAttachment();
+    if (this.isAfterHooksType) {
+      this.addUnprocessedErrors();
+      this.addUnprocessedAttachments();
+    }
     this.setExecutedHooks();
     return this;
   }
@@ -76,32 +100,21 @@ export class TestCaseRunHooks {
     return messages;
   }
 
-  private setRootStep() {
-    this.rootPwStep = getHooksRootPwStep(this.testCaseRun.result, this.hookType);
+  private setRootPwStep() {
+    // todo: refactor to better handle empty root step (e.g. skipped test)
+    this.rootPwStep = getHooksRootPwStep(this.testCaseRun.result, this.hookType)!;
+  }
+
+  private setCandidates() {
+    // collect steps, not entering into bg roots
+    this.candidates = walkSteps(this.rootPwStep, (pwStep) => !this.bgRoots.has(pwStep)).filter(
+      (pwStep) => isHookCandidate(pwStep),
+    );
   }
 
   private addStepsWithName() {
-    if (!this.rootPwStep) return;
-
-    const stepsWithName = findAllStepsWith(this.rootPwStep, (pwStep) => {
-      return pwStep.category === 'test.step' && pwStep.title;
-    });
-
-    stepsWithName
-      .filter((pwStep) => !this.isBackgroundStep(pwStep))
-      .forEach((pwStep) => this.hookPwSteps.add(pwStep));
-  }
-
-  private addStepsWithAttachment() {
-    if (!this.rootPwStep) return;
-
-    const { attachmentMapper } = this.testCaseRun;
-    const stepsWithAttachment = findAllStepsWith(this.rootPwStep, (pwStep) => {
-      return attachmentMapper.getStepAttachments(pwStep).length > 0;
-    });
-
-    stepsWithAttachment
-      .filter((pwStep) => !this.isBackgroundStep(pwStep))
+    this.candidates
+      .filter((pwStep) => pwStep.category === 'test.step' && pwStep.title)
       .forEach((pwStep) => this.hookPwSteps.add(pwStep));
   }
 
@@ -112,8 +125,10 @@ export class TestCaseRunHooks {
     // Search timeouted step by duration = -1.
     // This is not 100% method, sometimes timeouted steps have real duration value.
     // But allows to better place timeout error message in report.
-    const timeoutedStep = findDeepestStepWithUnknownDuration(this.rootPwStep);
-    if (!timeoutedStep || this.isBackgroundStep(timeoutedStep)) return;
+    const timeoutedStep = findDeepestStepWith(this.candidates, (pwStep) => {
+      return isUnknownDuration(pwStep);
+    });
+    if (!timeoutedStep) return;
 
     this.hookPwSteps.add(timeoutedStep);
     this.testCaseRun.registerTimeoutedStep(timeoutedStep);
@@ -125,24 +140,24 @@ export class TestCaseRunHooks {
     // but each hook step itself contains own error.
     // Here we find only first step with error.
     // Todo: find and show all errors for after hooks.
-    const stepWithError = findDeepestStepWithError(this.rootPwStep);
-    if (!stepWithError || this.isBackgroundStep(stepWithError)) return;
+    const stepWithError = findDeepestStepWith(this.candidates, (pwStep) => Boolean(pwStep.error));
+    if (!stepWithError) return;
+
+    const error = stepWithError.error!;
 
     // If step is already added to errorSteps, don't register it as hookStep.
     // This is mainly for timeout steps in hooks or bg:
     // They have duration -1 and no 'error' field, but their parent has 'error' field.
     // Here we find this parent again and avoid reporting the error twice.
-    if (!this.testCaseRun.hasRegisteredError(stepWithError.error)) {
-      this.registerErrorStep(stepWithError, stepWithError.error);
+    if (!this.testCaseRun.hasRegisteredError(error)) {
+      this.registerErrorStep(stepWithError, error);
     }
   }
 
-  // eslint-disable-next-line visual/complexity
-  private addStepWithErrorFallback() {
-    // if in 'after' hooks group there are unprocessed errors,
-    // attach them to After Hooks root step.
-    if (this.hookType !== 'after') return;
-
+  /**
+   * If there are unprocessed errors, attach them to After Hooks root step.
+   */
+  private addUnprocessedErrors() {
     const unprocessedErrors = this.testCaseRun.getUnprocessedErrors();
     if (unprocessedErrors.length === 0) return;
 
@@ -153,8 +168,24 @@ export class TestCaseRunHooks {
     const { timeoutedStep } = this.testCaseRun;
     if (timeoutedStep && !this.testCaseRun.getStepError(timeoutedStep)) {
       this.testCaseRun.registerErrorStep(timeoutedStep, error);
-    } else if (this.rootPwStep) {
+    } else {
       this.registerErrorStep(this.rootPwStep, error);
+    }
+  }
+
+  private addStepsWithAttachment() {
+    const { attachmentMapper } = this.testCaseRun;
+    this.candidates.forEach((pwStep) => {
+      const attachments = attachmentMapper.populateStepAttachments(pwStep, { fromHook: true });
+      if (attachments.length > 0) this.hookPwSteps.add(pwStep);
+    });
+  }
+
+  private addUnprocessedAttachments() {
+    const { attachmentMapper } = this.testCaseRun;
+    if (attachmentMapper.hasUnprocessedAttachments()) {
+      attachmentMapper.mapUnprocessedAttachments(this.rootPwStep);
+      this.hookPwSteps.add(this.rootPwStep);
     }
   }
 
@@ -177,10 +208,6 @@ export class TestCaseRunHooks {
   private registerErrorStep(pwStep: pw.TestStep, error: pw.TestError) {
     this.hookPwSteps.add(pwStep);
     this.testCaseRun.registerErrorStep(pwStep, error);
-  }
-
-  private isBackgroundStep(pwStep: pw.TestStep) {
-    return this.bgSteps.has(pwStep);
   }
 }
 

@@ -5,6 +5,7 @@ import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
   testDir: '../features',
+  // testDir: '../features/background',
   outputDir: './test-results',
   reporter: 'dot',
   use: {

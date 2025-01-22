@@ -6,11 +6,6 @@ import * as pw from '@playwright/test/reporter';
 import { HooksGroup } from './Hook';
 import { toArray } from '../../../utils';
 
-// Playwright step categories, that can be mapped to testStep / hook in Cucumber messages
-const MEANINGFUL_STEP_CATEGORIES = ['hook', 'fixture', 'test.step'];
-
-type StepWithError = pw.TestStep & Required<Pick<pw.TestStep, 'error'>>;
-
 /**
  * Returns root step for Before Hooks / After Hooks.
  * Strings 'Before Hooks' and 'After Hooks' are hardcoded in Playwright.
@@ -21,37 +16,25 @@ export function getHooksRootPwStep(result: pw.TestResult, type: HooksGroup) {
   return result.steps.find((step) => step.category === 'hook' && step.title === rootStepTitle);
 }
 
-export function findAllStepsWithCategory(result: pw.TestResult, category: string | string[]) {
-  const categories = Array.isArray(category) ? category : [category];
-  return findAllStepsWith(result.steps, (pwStep) => categories.includes(pwStep.category));
-}
-
-export function findDeepestStepWithError(root?: pw.TestStep) {
-  if (!root) return;
-  return findDeepestStepWith(root, (pwStep) => {
-    return Boolean(pwStep.error) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
-  }) as StepWithError | undefined;
-}
-
-export function findDeepestStepWithUnknownDuration(root?: pw.TestStep) {
-  if (!root) return;
-  return findDeepestStepWith(root, (pwStep) => {
-    return isUnknownDuration(pwStep) && MEANINGFUL_STEP_CATEGORIES.includes(pwStep.category);
-  });
-}
-
 /**
- * Finds the deepest step that satisfies predicate function.
+ * Traverse steps tree per shouldEnter fn, starting from root.
+ * Returns flat list of steps.
+ * Graph traversal is done in BFS manner.
  */
-function findDeepestStepWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep) => boolean) {
-  let result: pw.TestStep | undefined;
-  let curSteps = [root];
+export function walkSteps(
+  root: pw.TestStep | pw.TestStep[],
+  shouldEnter: (pwStep: pw.TestStep) => boolean | void = () => true,
+) {
+  const result: pw.TestStep[] = [];
+  let curSteps = toArray(root);
 
   while (curSteps.length) {
     const nextSteps: pw.TestStep[] = [];
     curSteps.forEach((pwStep) => {
-      if (predicate(pwStep)) result = pwStep;
-      nextSteps.push(...(pwStep.steps || []));
+      if (shouldEnter(pwStep)) {
+        result.push(pwStep);
+        nextSteps.push(...(pwStep.steps || []));
+      }
     });
     curSteps = nextSteps;
   }
@@ -60,23 +43,23 @@ function findDeepestStepWith(root: pw.TestStep, predicate: (pwStep: pw.TestStep)
 }
 
 /**
- * Find all steps that satisfies predicate function.
+ * Finds the deepest step that satisfies predicate function.
  */
-export function findAllStepsWith(
-  root: pw.TestStep | pw.TestStep[] | undefined,
-  predicate: (pwStep: pw.TestStep) => unknown,
+export function findDeepestStepWith(
+  pwSteps: pw.TestStep[],
+  predicate: (pwStep: pw.TestStep) => boolean | void,
 ) {
-  const result: pw.TestStep[] = [];
-  let curSteps = root ? toArray(root) : [];
+  let result: pw.TestStep | undefined;
+  let maxLevel = -1;
 
-  while (curSteps.length) {
-    const nextSteps: pw.TestStep[] = [];
-    curSteps.forEach((pwStep) => {
-      if (predicate(pwStep)) result.push(pwStep);
-      nextSteps.push(...(pwStep.steps || []));
-    });
-    curSteps = nextSteps;
-  }
+  pwSteps.forEach((pwStep) => {
+    if (!predicate(pwStep)) return;
+    const level = getStepLevel(pwStep);
+    if (level > maxLevel) {
+      maxLevel = level;
+      result = pwStep;
+    }
+  });
 
   return result;
 }
@@ -85,12 +68,24 @@ export function isUnknownDuration(pwStep: pw.TestStep) {
   return pwStep.duration === -1;
 }
 
-export function findParent(pwStep: pw.TestStep, predicate: (pwStep: pw.TestStep) => boolean) {
+export function findParentWith(pwStep: pw.TestStep, predicate: (pwStep: pw.TestStep) => boolean) {
   let parent = pwStep.parent;
   while (parent) {
     if (predicate(parent)) return parent;
     parent = parent.parent;
   }
+}
+
+function getStepLevel(pwStep: pw.TestStep) {
+  let level = 0;
+  let parent = pwStep.parent;
+
+  while (parent) {
+    level += 1;
+    parent = parent.parent;
+  }
+
+  return level;
 }
 
 export function areTestErrorsEqual(e1: pw.TestError, e2: pw.TestError) {

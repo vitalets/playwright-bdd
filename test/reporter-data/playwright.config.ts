@@ -13,6 +13,8 @@ export default defineConfig({
       {
         outputFile: 'actual-reports/report.txt',
         titles: ['fixture: $beforeEach', 'fixture: $afterEach', 'page.goto(https://example.com)'],
+        // useful to debug:
+        // categories: null,
       },
     ],
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),

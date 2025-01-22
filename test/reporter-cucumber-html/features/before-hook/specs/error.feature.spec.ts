@@ -4,7 +4,7 @@ import { test } from '../../../check-report/fixtures';
 
 test('error in anonymous before hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "BeforeEach hook" failed: ${normalize('features/failing-before/steps.ts')}:`, // prettier-ignore
+    `Hook "BeforeEach hook" failed: ${normalize('features/before-hook/steps.ts')}:`, // prettier-ignore
     'GivenAction 1',
     'screenshotDownload trace',
   ]);
@@ -16,7 +16,7 @@ test('error in anonymous before hook', async ({ scenario }) => {
 
 test('error in named before hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "failing named before hook" failed: ${normalize('features/failing-before/steps.ts')}:`,
+    `Hook "failing named before hook" failed: ${normalize('features/before-hook/steps.ts')}:`,
     'GivenAction 1',
     'screenshotDownload trace',
   ]);
@@ -26,9 +26,20 @@ test('error in named before hook', async ({ scenario }) => {
   await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
 });
 
+test('error in nested step in before hook', async ({ scenario }) => {
+  await expect(scenario.getSteps()).toContainText([
+    `Hook "my step" failed: ${normalize('features/before-hook/steps.ts')}:`,
+    'GivenAction 1',
+    'screenshotDownload trace',
+  ]);
+  await expect(scenario.getSteps('failed')).toHaveCount(1);
+  await expect(scenario.getSteps('skipped')).toHaveCount(1);
+  await expect(scenario.getErrors()).toContainText([`expect(page).toHaveTitle`]);
+});
+
 test('error in fixture setup (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "fixture: fixtureWithErrorInSetup" failed: ${normalize('features/failing-before/fixtures.ts')}:`,
+    `Hook "fixture: fixtureWithErrorInSetup" failed: ${normalize('features/before-hook/fixtures.ts')}:`,
     'Givenstep that uses fixtureWithErrorInSetup',
     'WhenAction 1',
     'screenshot',
@@ -45,7 +56,7 @@ test('error in fixture setup (no step)', async ({ scenario }) => {
 
 test('error in fixture setup (with step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "step inside fixture" failed: ${normalize('features/failing-before/fixtures.ts')}:`,
+    `Hook "step inside fixture" failed: ${normalize('features/before-hook/fixtures.ts')}:`,
     'Givenstep that uses fixtureWithErrorInSetupStep',
     'WhenAction 2',
     'screenshot',

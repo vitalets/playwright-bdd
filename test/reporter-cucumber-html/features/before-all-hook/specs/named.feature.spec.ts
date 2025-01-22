@@ -6,7 +6,7 @@ import { hasDownloadTrace } from './helpers';
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText(
     [
-      `Hook "my hook" failed: ${normalize('features/failing-before-all/steps.ts')}:`, // prettier-ignore
+      `Hook "my hook" failed: ${normalize('features/before-all-hook/steps.ts')}:`, // prettier-ignore
       'GivenAction 1',
       hasDownloadTrace ? 'Download trace' : '',
     ].filter(Boolean),

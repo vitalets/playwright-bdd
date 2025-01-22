@@ -11,7 +11,7 @@ import * as messages from '@cucumber/messages';
 import path from 'node:path';
 import { getConfigDirFromEnv } from '../../../config/env';
 import { BEFORE_EACH_HOOKS_GROUP_NAME } from '../../../hooks/const';
-import { findParent } from './pwStepUtils';
+import { findParentWith } from './pwStepUtils';
 
 // We don't distinguish between BeforeAll / Before hooks here (and AfterAll / After)
 // Do it only when building cucumber message: setting messages.HookType.
@@ -58,7 +58,7 @@ export class Hook {
 
   private getBeforeHookType(): messages.HookType {
     // beforeEach hooks are located inside the hooks group created by test.beforeEach()
-    const beforeHooksGroupStep = findParent(this.pwStep, (step) => {
+    const beforeHooksGroupStep = findParentWith(this.pwStep, (step) => {
       return step.category === 'hook' && step.title === BEFORE_EACH_HOOKS_GROUP_NAME;
     });
 
