@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 8.1.0
 * add "Fix with AI" feature
 * support attachments via `testInfo.attachments.push()`
 * update all dependencies
