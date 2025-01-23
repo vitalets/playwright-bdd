@@ -1,6 +1,6 @@
 # Fix with AI
 
-Playwright-BDD **v8.1.0** introduced a new reporters feature "Fix with AI" that helps you fix failing tests with AI.
+Playwright-BDD **v8.1.0** introduced a new feature **Fix with AI** that helps you fix failing tests with AI.
 
 When a test fails, Playwright-BDD pre-generates an AI prompt and attaches it to the report.
 You can copy-paste this prompt to your favorite AI chat and get suggestions on how to fix the test.

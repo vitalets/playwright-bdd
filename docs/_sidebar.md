@@ -34,9 +34,9 @@
   - [Playwright](reporters/playwright.md)
   - [Cucumber](reporters/cucumber.md)
   - [Allure](reporters/allure.md)
-  - [🤖 Fix with AI](reporters/fix-with-ai.md)
 
 * [**Guides**](guides/index.md)
+  - [🤖 Fix with AI](guides/fix-with-ai.md)
   - [Migration to v7](guides/migration-v7.md)
   - [Ignore generated files](guides/ignore-generated-files.md)
   - [Debugging](guides/debugging.md)
