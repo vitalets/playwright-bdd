@@ -4,7 +4,7 @@
 import fs from 'node:fs';
 import fg from 'fast-glob';
 import { TestFile } from './file';
-import { FeaturesLoader, resolveFeatureFiles } from '../gherkin/load';
+import { FeaturesLoader, resolveFeatureFiles } from '../gherkin/featuresLoader';
 import { Snippets } from '../snippets';
 import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';

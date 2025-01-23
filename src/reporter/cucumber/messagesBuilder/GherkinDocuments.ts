@@ -7,7 +7,7 @@ import path from 'node:path';
 import * as messages from '@cucumber/messages';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestCaseRun } from './TestCaseRun';
-import { FeaturesLoader } from '../../../gherkin/load';
+import { FeaturesLoader } from '../../../gherkin/featuresLoader';
 import { GherkinDocumentWithPickles } from '../../../gherkin/types';
 import { ConcreteEnvelope } from './types';
 import { GherkinDocumentClone } from './GherkinDocumentClone';
