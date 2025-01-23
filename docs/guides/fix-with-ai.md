@@ -53,10 +53,12 @@ ARIA snapshot of the page:
 
 ## How to enable
 
-1. **Ensure you’re on Playwright 1.49 or newer**. The Fix with AI feature requires [ARIA-snapshots](https://playwright.dev/docs/release-notes#aria-snapshots) 
+1. Ensure you’re on **Playwright v1.49** or newer. The Fix with AI feature requires [ARIA-snapshots](https://playwright.dev/docs/release-notes#aria-snapshots) 
 to be available. 
 
-2. Add the `aiFix` section to the BDD config:
+2. Ensure you’re on **Playwright-BDD v8.1.0** or newer
+
+3. Add the `aiFix` section to the BDD config:
     ```js
     const testDir = defineBddConfig({
       aiFix: {
