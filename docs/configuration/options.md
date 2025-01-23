@@ -108,6 +108,29 @@ const testDir = defineBddConfig({
 
 Default [language](https://cucumber.io/docs/gherkin/reference/#spoken-languages) for your feature files. 
 
+## aiFix
+
+- **Type:** `object`
+- **Default:** `undefined`
+
+A set of options for fixing failed tests with AI.
+
+#### Sub options
+  * `promptAttachment` *boolean* - Whether to attach AI prompt to failling tests
+  * `promptAttachmentName` *string* - Custom name for prompt attachment
+  * `promptTemplate` *string* - Custom template for prompt (here is [default](https://github.com/vitalets/playwright-bdd/blob/main/src/ai/promptTemplate.ts))
+
+Example:
+
+```js
+const testDir = defineBddConfig({
+  aiFix: {
+    promptAttachment: true,
+  },
+  // ...other options
+});
+```
+
 ## examplesTitleFormat
 
 - **Type:** `string`
