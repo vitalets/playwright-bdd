@@ -23,7 +23,7 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 </div>
 
 > [!TIP]
-> :fire: Check out [what's new in Playwright-BDD v8](https://vitalets.github.io/playwright-bdd/#/blog/whats-new-in-v8)
+> :robot: Try out [Fix with AI](https://vitalets.github.io/playwright-bdd/#/guides/fix-with-ai) button in HTML reporters
 
 ## Why BDD?
 In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
