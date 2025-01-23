@@ -11,7 +11,7 @@ import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 import { BddContext, BddStepInfo } from './bddContext';
-import { PromptAttachment } from '../ai/promptAttachment';
+import { PromptFixture } from '../ai/promptAttachment';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -40,7 +40,7 @@ export type BddTestFixtures = {
   $beforeEach: void;
   $afterEachFixtures: Record<string, unknown>;
   $afterEach: void;
-  $promptAttachment: PromptAttachment;
+  $prompt: PromptFixture;
 };
 
 export const test = base.extend<BddTestFixtures>({
@@ -150,11 +150,11 @@ export const test = base.extend<BddTestFixtures>({
     },
     fixtureOptions,
   ],
-  $promptAttachment: [
+  $prompt: [
     async ({ $bddContext }, use) => {
-      const promptAttachment = new PromptAttachment($bddContext);
-      await use(promptAttachment);
-      await promptAttachment.attach();
+      const prompt = new PromptFixture($bddContext);
+      await use(prompt);
+      await prompt.attach();
     },
     fixtureOptions,
   ],

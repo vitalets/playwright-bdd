@@ -168,8 +168,8 @@ export class Formatter {
 
   pageFixtureWithPromptAttachment() {
     return [
-      `page: async ({ page, $promptAttachment }, use) => {`,
-      `  $promptAttachment.setPage(page);`,
+      `page: async ({ page, $prompt }, use) => {`,
+      `  $prompt.setPage(page);`,
       `  await use(page);`,
       `},`,
     ];

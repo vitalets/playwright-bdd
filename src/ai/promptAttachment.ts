@@ -8,7 +8,7 @@ import { PromptBuilder } from './promptBuilder';
 const PROMPT_ATTACHMENT_NAME = '🤖 Fix with AI: copy prompt and paste to AI chat';
 const PROMPT_ATTACHMENT_CONTENT_TYPE = 'text/plain+prompt';
 
-export class PromptAttachment {
+export class PromptFixture {
   private page?: Page;
 
   constructor(private bddContext: BddContext) {}
