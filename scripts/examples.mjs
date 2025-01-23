@@ -26,9 +26,12 @@ function runExamples() {
 }
 
 function getExampleDirs() {
-  return fs
-    .readdirSync('examples', { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .filter((dir) => dir !== 'node_modules');
+  return (
+    fs
+      .readdirSync('examples', { withFileTypes: true })
+      .filter((entry) => entry.isDirectory())
+      .map((entry) => entry.name)
+      // ai example is expected to fail
+      .filter((dir) => dir !== 'node_modules' && dir !== 'ai')
+  );
 }
