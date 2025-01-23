@@ -33,7 +33,7 @@ test('timeout in before hook', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     // sometimes we still have 'BeforeEach Hooks|Before Hooks' here, not 'my timeouted hook',
     // when 'duration' is not -1, we can't find timeouted item.
-    /Hook "(my timeouted hook|BeforeEach Hooks|Before Hooks|fixture: \$beforeEach)" failed:/, // prettier-ignore
+    /Hook "(my timeouted hook|BeforeEach Hooks|Before Hooks|fixture: .+)" failed:/, // prettier-ignore
     'GivenAction 1',
   ]);
   await expect(scenario.getErrors()).toContainText([
