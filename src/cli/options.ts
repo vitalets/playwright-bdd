@@ -16,6 +16,7 @@ export const configOption = new Option(
 export function getCliConfigPath() {
   return new Command()
     .allowUnknownOption()
+    .allowExcessArguments()
     .addOption(configOption)
     .parse()
     .getOptionValue('config');

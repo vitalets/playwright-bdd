@@ -67,7 +67,7 @@
     "@cucumber/messages": "27.0.2",
     "@cucumber/tag-expressions": "6.1.1",
     "cli-table3": "0.6.5",
-    "commander": "12.1.0",
+    "commander": "^13.1.0",
     "fast-glob": "^3.3.3",
     "mime-types": "2.1.35",
     "xmlbuilder": "15.1.1"

@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { ConfigOption } from '../options';
 import { Logger } from '../../utils/logger';
 import { getPackageVersion } from '../../utils';
-import { resolveConfigFile } from '../../playwright/loadConfig.js';
+import { resolveConfigFile } from '../../playwright/loadConfig';
 import { relativeToCwd } from '../../utils/paths';
 
 const logger = new Logger({ verbose: true });
