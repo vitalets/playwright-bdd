@@ -9,7 +9,6 @@ import { finished } from 'node:stream/promises';
 import { Transform } from 'node:stream';
 import * as messages from '@cucumber/messages';
 import { CucumberHtmlStream } from '@cucumber/html-formatter';
-import { resolvePackageRoot } from '../../../utils';
 import path from 'node:path';
 import BaseReporter, { InternalOptions } from '../base';
 import { AttachmentEnvelope } from '../messagesBuilder/types';
@@ -63,7 +62,7 @@ export default class HtmlReporter extends BaseReporter {
       this.setupAttachmentsBaseURL();
     }
 
-    this.htmlStream = this.createCucumberHtmlStream();
+    this.htmlStream = new CucumberHtmlStream();
     this.transformStream = this.createTransformStream();
 
     this.htmlStream.pipe(this.transformStream).pipe(this.outputStream);
@@ -84,14 +83,6 @@ export default class HtmlReporter extends BaseReporter {
     await finished(this.transformStream);
     if (this.hasTraces) await copyTraceViewer(this.outputDir);
     await super.finished();
-  }
-
-  protected createCucumberHtmlStream() {
-    const packageRoot = resolvePackageRoot('@cucumber/html-formatter');
-    return new CucumberHtmlStream(
-      path.join(packageRoot, 'dist/main.css'),
-      path.join(packageRoot, 'dist/main.js'),
-    );
   }
 
   protected handleAttachment(envelope: AttachmentEnvelope) {
