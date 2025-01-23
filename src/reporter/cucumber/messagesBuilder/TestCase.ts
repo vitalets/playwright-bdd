@@ -13,7 +13,7 @@
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { Hook, HooksGroup } from './Hook';
-import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../features/types';
+import { GherkinDocumentWithPickles, PickleWithLocation } from '../../../gherkin/types';
 import { ProjectInfo } from './Projects';
 
 type HookWithStep = {

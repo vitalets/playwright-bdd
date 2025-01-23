@@ -1,7 +1,7 @@
 /**
  * Renders BDD data in test file.
  */
-import { getStepTextWithKeyword } from '../features/helpers';
+import { getStepTextWithKeyword } from '../gherkin/helpers';
 import { indent } from '../generate/formatter';
 import { SourceMapper } from '../generate/sourceMapper';
 import { TestGen } from '../generate/test';

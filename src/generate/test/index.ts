@@ -5,14 +5,14 @@ import { PickleStep, Step } from '@cucumber/messages';
 import { formatDuplicateStepsMessage, StepFinder } from '../../steps/finder';
 import { Formatter } from '../formatter';
 import { getKeywordEng, KeywordsMap } from '../i18n';
-import { getStepTextWithKeyword } from '../../features/helpers';
+import { getStepTextWithKeyword } from '../../gherkin/helpers';
 import { stringifyLocation } from '../../utils';
 import { exit } from '../../utils/exit';
 import { MatchedStepDefinition } from '../../steps/matchedStepDefinition';
 import { PomNode } from '../../steps/decorators/pomGraph';
 import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { isBddAutoInjectFixture } from '../../runtime/bddTestFixturesAuto';
-import { PickleWithLocation } from '../../features/types';
+import { PickleWithLocation } from '../../gherkin/types';
 import { BackgroundGen } from '../background';
 import { BDDConfig } from '../../config/types';
 import {

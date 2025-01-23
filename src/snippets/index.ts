@@ -6,7 +6,7 @@ import { logger } from '../utils/logger';
 import { stepDefinitions } from '../steps/stepRegistry';
 import { Snippet, SnippetOptions } from './snippet';
 import { StepData } from '../generate/test';
-import { getStepTextWithKeyword } from '../features/helpers';
+import { getStepTextWithKeyword } from '../gherkin/helpers';
 
 // if there are too many snippets, it's more like invalid configuration
 const MAX_SNIPPETS_TO_SHOW = 10;

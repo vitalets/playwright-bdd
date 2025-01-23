@@ -2,7 +2,7 @@
  * Class to build examples title.
  */
 import { Examples, Scenario, TableRow } from '@cucumber/messages';
-import { GherkinDocumentWithPickles } from '../features/types';
+import { GherkinDocumentWithPickles } from '../gherkin/types';
 import { BDDConfig } from '../config/types';
 import { GherkinTemplate } from '../utils/GherkinTemplate';
 
