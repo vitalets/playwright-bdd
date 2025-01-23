@@ -18,8 +18,9 @@ export function getCodeSnippet(error: TestInfoError) {
 
   const source = getFileContent(location.file);
   const lines = source.split('\n');
+  const snippetLines = lines.slice(location.line - 3, location.line + 4);
 
-  return lines.slice(location.line - 3, location.line + 4).join('\n');
+  return trimEmptyLines(snippetLines).join('\n');
 }
 
 /**
@@ -58,4 +59,10 @@ function readFileSyncSafe(file: string) {
 
 function belongsToNodeModules(file: string) {
   return file.includes(`${path.sep}node_modules${path.sep}`);
+}
+
+function trimEmptyLines(lines: string[]) {
+  const start = lines.findIndex((line) => !line.trim());
+  const end = lines.findLastIndex((line) => !line.trim());
+  return start === -1 ? [] : lines.slice(start, end + 1);
 }

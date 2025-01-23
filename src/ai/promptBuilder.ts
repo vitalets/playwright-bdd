@@ -25,7 +25,7 @@ export class PromptBuilder {
     const { error } = this.bddContext.testInfo;
     if (!error) return;
 
-    const errorMessage = stripAnsiEscapes(error.message || '');
+    const errorMessage = stripAnsiEscapes(error.message || '').trim();
     if (!errorMessage) return;
 
     const steps = this.buildStepsString();
