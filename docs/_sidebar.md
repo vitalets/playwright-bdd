@@ -45,6 +45,7 @@
   - [IDE integration](guides/ide-integration.md)
   - [Usage with Nx](guides/usage-with-nx.md)
   - [Usage with SauceLabs](guides/usage-with-saucelabs.md)
+  - [Usage with BrowserStack](guides/usage-with-browserstack.md)
 
 * [**Blog**](blog/index.md)
 * [**API**](api.md)

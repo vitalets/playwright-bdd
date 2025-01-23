@@ -104,7 +104,7 @@ Check out test results in [Sauce Labs dashboard](https://app.saucelabs.com/dashb
 
 ![Sauce Labs dashboard](./_media/saucelabs.png)
 
-> Here is the [working example of Playwright-BDD with SauceLabs](https://github.com/vitalets/playwright-bdd-example/tree/saucelabs).
+> Here is the [fully working example with SauceLabs](https://github.com/vitalets/playwright-bdd-example/tree/saucelabs).
 
 ## Limitations
 
