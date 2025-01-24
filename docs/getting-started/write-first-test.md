@@ -1,10 +1,10 @@
 # Write your first BDD test
 
-Follow the steps below to create and run your first BDD test with `playwright-bdd`.
+Follow the steps below to create and run your first BDD test with Playwright-BDD.
 
 ?> This guide uses JavaScript for simplicity, but you can use TypeScript as well.
 
-### Step 1: create configuration file
+### Step 1: Create configuration file
 
 Create the following `playwright.config.js` in the project root:
 
@@ -23,7 +23,7 @@ export default defineConfig({
 });
 ```
 
-### Step 2: create feature file
+### Step 2: Create feature file
 
 Create a feature file named `sample.feature`:
 
@@ -36,7 +36,7 @@ Feature: Playwright site
         Then I see in title "Installation"
 ```
 
-### Step 3: implement steps
+### Step 3: Implement steps
 
 Implement the steps in `steps.js`:
 
@@ -46,7 +46,7 @@ import { createBdd } from 'playwright-bdd';
 
 const { Given, When, Then } = createBdd();
 
-Given('I am on Playwright home page', async ({ page }) => {
+Given('I am on home page', async ({ page }) => {
   await page.goto('https://playwright.dev');
 });
 
@@ -61,7 +61,7 @@ Then('I see in title {string}', async ({ page }, keyword) => {
 
 > There are alternative ways of defining steps: [Decorators](writing-steps/decorators.md) and [Cucumber-style syntax](writing-steps/cucumber-style.md).
 
-### Step 4: generate and run tests
+### Step 4: Run tests
 
 Generate and run the tests:
 
@@ -84,12 +84,13 @@ HTML report:
 
 ![Playwright HTML report](./_media/playwright-report.png ':size=70%')
 
-### Step 5: check generated tests (optional)
+### Step 5: Check the generated tests (optional)
 
 Check out the `.features-gen` directory to see what the generated tests look like.
 You will see something like this:
 
 ```js
+// Generated from: sample.feature
 import { test } from 'playwright-bdd';
 
 test.describe('Playwright site', () => {
