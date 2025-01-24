@@ -92,7 +92,7 @@
     "globals": "^15.14.0",
     "json-paths": "0.1.2",
     "knip": "^5.43.1",
-    "lint-staged": "^15.4.1",
+    "lint-staged": "^15.4.2",
     "marked": "^15.0.6",
     "micromatch": "4.0.8",
     "np": "10.1.0",
