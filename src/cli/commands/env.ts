@@ -31,5 +31,6 @@ function showPackageVersion(packageName: string) {
 
 function showPlaywrightConfigPath(cliConfigPath?: string) {
   const resolvedConfigFile = resolveConfigFile(cliConfigPath);
-  logger.log(`Playwright config file: ${relativeToCwd(resolvedConfigFile)}`);
+  const configFileStr = resolvedConfigFile ? relativeToCwd(resolvedConfigFile) : 'none';
+  logger.log(`Playwright config file: ${configFileStr}`);
 }
