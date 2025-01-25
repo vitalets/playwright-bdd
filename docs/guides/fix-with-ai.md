@@ -1,6 +1,8 @@
 # Fix with AI
 
-Playwright-BDD **v8.1.0** introduced a new feature **Fix with AI** that helps you fix failing tests with AI.
+> This is an **experimental** feature, feel free to share your feedback in the [issues](https://github.com/vitalets/playwright-bdd/issues).
+
+Playwright-BDD **v8.1.0** introduced a new feature called **Fix with AI**. It helps you quickly fix failing tests with AI suggestions.
 
 When a test fails, Playwright-BDD pre-generates an AI prompt and attaches it to the report.
 You can copy-paste this prompt to your favorite AI chat and get suggestions on how to fix the test.
@@ -82,6 +84,12 @@ In the Cucumber HTML report, there are additional controls that help to copy the
 
 ![Copying prompt in the Cucumber HTML report](./_media/cucumber-html-report-prompt-copy.png)
 
+## Example response (ChatGPT)
+
+Here is an example response from ChatGPT that fixes the test:
+
+![ChatGPT fix](./_media/chatgpt-fix.png)
+
 ## Prompt customization
 
 You can customize the prompt template to get better results for your project:
@@ -104,25 +112,13 @@ Check out the [default prompt](https://github.com/vitalets/playwright-bdd/blob/m
 - `{snippet}`
 - `{ariaSnapshot}`
 
-?> If you get some awesome results with your custom prompt, feel free to share it with the community in the [issues](https://github.com/vitalets/playwright-bdd/issues) or [Discord](https://discord.gg/5rwa7TAGUr)!
+?> If you get some awesome results with your custom prompt, you are welcome to share it with the community!
 
-## Switching the page
+## Using non-default page
 
-By default, the prompt uses the ARIA snapshot for Playwright's built-in `page`.
-It may not be applicable in multi-page scenarios, where you create your own page instances. 
-For example:
-
-```js
-When('I open a new tab', async ({ page, context }) => {
-  const [newPage] = await Promise.all([
-    context.waitForEvent('page'),
-    page.getByRole('link').click(),
-  ]);
-  await expect(newPage.getByRole('heading')).toContainText('Another page');
-});
-```
-
-To handle this case, you can utilize the `$prompt` BDD fixture: 
+By default, the AI prompt captures the ARIA snapshot from Playwright's built-in `page` instance.
+If you use multi-page scenarios, you can manually set the `page` instance to capture the ARIA snapshot.
+For that, utilize the `$prompt` BDD fixture: 
 
 ```js
 When('I open a new tab', async ({ page, context, $prompt }) => { // <-- add $prompt fixture
@@ -134,3 +130,12 @@ When('I open a new tab', async ({ page, context, $prompt }) => { // <-- add $pro
   await expect(newPage.getByRole('heading')).toContainText('Another page');
 });
 ```
+
+## Limitations
+
+In some cases, the prompt is not generated:
+
+- Error occurred in hooks, before the `page` fixture was initialized
+- Your tests don't use the `page` fixture (e.g. API testing)
+
+If you expect the prompt to be attached, but it is not, try to reproduce your case on the [playwright-bdd-example "ai" branch](https://github.com/vitalets/playwright-bdd-example/tree/ai) and open an [issue](https://github.com/vitalets/playwright-bdd/issues).
