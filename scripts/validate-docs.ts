@@ -82,7 +82,7 @@ function validateLink(fileInfo: FileInfo, token: Tokens.Link, files: FileInfo[])
 
 function parseTokenHref(tokenHref: string) {
   // handling case [xxx](file.json ':include')
-  const [pathname, hash] = tokenHref.split(' ')[0].split('#');
+  const [pathname = '', hash = ''] = tokenHref.split(' ')[0]?.split('#') || [];
   return { pathname, hash };
 }
 
@@ -100,7 +100,7 @@ function getLocation(fileContent: string, text: string) {
   const index = fileContent.indexOf(text);
   const lines = fileContent.substring(0, index).split('\n');
   const line = lines.length;
-  const column = lines[line - 1].length + 1;
+  const column = (lines[line - 1]?.length ?? 0) + 1;
   return { line, column };
 }
 

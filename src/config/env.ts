@@ -31,7 +31,8 @@ let envConfigsCache: EnvConfigs;
 /**
  * Returns config dir for the first BDD config in env.
  */
-export function getConfigDirFromEnv({ throws = true } = {}) {
+// eslint-disable-next-line visual/complexity
+export function getConfigDirFromEnv<T extends boolean = true>({ throws = true as T } = {}) {
   const envConfigs = getEnvConfigs();
   const keys = Object.keys(envConfigs);
   if (throws && keys.length === 0) {
@@ -39,13 +40,13 @@ export function getConfigDirFromEnv({ throws = true } = {}) {
   }
 
   // Config dir is the same for all BDD configs, so use the first one.
-  const firstConfig = envConfigs[keys[0]];
+  const firstConfig = envConfigs[keys[0] ?? ''];
   const configDir = firstConfig?.configDir;
   if (throws && !configDir) {
     exit(`Something went wrong: empty 'configDir' in: ${JSON.stringify(firstConfig)}`);
   }
 
-  return configDir;
+  return configDir as T extends true ? string : string | undefined;
 }
 
 export function saveConfigToEnv(config: BDDConfig) {

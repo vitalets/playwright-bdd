@@ -32,7 +32,7 @@ export function defineBddConfig(inputConfig: BDDInputConfig) {
     saveConfigToEnv(config);
     return config.outputDir;
   } else {
-    const configDir = getConfigDirFromEnv();
+    const configDir = getConfigDirFromEnv({ throws: true });
     return resolveOutputDir(configDir, inputConfig?.outputDir);
   }
 }

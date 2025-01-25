@@ -4,6 +4,7 @@
     "module": "nodenext",
     "lib": ["esnext", "dom", "DOM.Iterable"],
     "strict": true,
+    // "noUncheckedIndexedAccess": true,
     "useUnknownInCatchVariables": false,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

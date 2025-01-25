@@ -31,7 +31,7 @@ export class BddDataExtractor {
   extractFeatureUri() {
     const prefix = '// Generated from:';
     const line = this.lines[0];
-    if (!line.startsWith(prefix))
+    if (!line?.startsWith(prefix))
       throw new Error(`Cannot find feature uri in file: ${this.filePath}`);
     const featureUri = line.slice(prefix.length).trim();
     if (!featureUri) throw new Error(`Empty feature uri in file: ${this.filePath}`);

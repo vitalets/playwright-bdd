@@ -295,10 +295,15 @@ export class TestFile {
 
   private findPickle(astNodeId: string, testTitle: string) {
     const pickles = this.gherkinDocumentQuery.getPickles(astNodeId);
-    if (pickles.length !== 1) {
-      exit(`Found ${pickles.length} pickle(s) for scenario: ${testTitle}`);
+    const pickle = pickles[0];
+
+    if (!pickle) {
+      exit(`Pickle not found for scenario: ${testTitle}`);
+    } else if (pickles.length > 1) {
+      exit(`Found ${pickles.length} pickles for scenario: ${testTitle}`);
     }
-    return pickles[0];
+
+    return pickle;
   }
 
   private isSkippedByTagsExpression(tags: string[]) {

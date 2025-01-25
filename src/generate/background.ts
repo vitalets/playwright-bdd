@@ -35,7 +35,7 @@ export class BackgroundGen {
   renderInplace(lines: string[]) {
     for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
       const line = lines[lineIndex];
-      const pos = line.indexOf(this.placeholder);
+      const pos = line?.indexOf(this.placeholder) ?? -1;
       if (pos >= 0) {
         const indent = ' '.repeat(pos);
         const bgLines = this.hasReferencedSteps() ? this.render().map((v) => `${indent}${v}`) : [];
@@ -51,10 +51,13 @@ export class BackgroundGen {
     const bgFixtureNames: string[] = [];
     const stepLines = this.bg.steps.map((gherkinStep) => {
       const keywordEng = getKeywordEng(this.i18nKeywordsMap, gherkinStep.keyword);
-      // bg step can have several stepData
+      // bg step can have several stepData - one per scenario that uses this bg
       const stepDataArr = this.steps.get(gherkinStep) || [];
       // take first, b/c for bg steps text and argument are the same in all pickle steps
-      const firstPickleStep = stepDataArr[0].pickleStep;
+      const firstPickleStep = stepDataArr[0]?.pickleStep;
+      if (!firstPickleStep) {
+        throw new Error(`Cannot find pickle step for background step: ${gherkinStep.id}`);
+      }
       const stepFixtureNames: string[] = [];
       stepDataArr.forEach(({ fixtureNames }) => stepFixtureNames.push(...fixtureNames));
       const pickleStepIds = stepDataArr.map(({ pickleStep }) => pickleStep.id) || [];
