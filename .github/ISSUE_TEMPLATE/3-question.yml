@@ -1,0 +1,22 @@
+name: Question ❓
+description: Ask a question about Playwright-BDD usage
+title: '[Question]: '
+labels: question
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## Need Help or Have a Question?  
+        Feel free to ask your question below. Be as specific and detailed as possible to help us provide a clear and helpful answer. 
+
+        **Note**: Use backticks (\`\`\`) to format code blocks for better readability.
+  - type: textarea
+    id: question
+    validations:
+      required: true
+    attributes:
+      label: Question
+      description: |
+        Describe your question in detail.  
+        Include any relevant context, code snippets, or links that might help clarify your question.
+      placeholder: Provide as much detail as possible.
