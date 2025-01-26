@@ -6,8 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        Please fill the bug report in the BDD style.
-        Use bakcticks to format code blocks.
+        ## Please fill in the bug details below in BDD style.
 
   - type: textarea
     id: given
@@ -16,14 +15,13 @@ body:
     attributes:
       label: Given
       description: |
-        What is your setup? 
-        Paste the relevant feature file, step definitions, playwright config, and directories structure if needed.
-      placeholder: |
+        Describe your setup. For example:
+        ````
         I have the following setup:
 
         Feature file:
         ```gherkin
-        // your feature here...
+        # your feature here...
         ```
 
         Step definitions:
@@ -35,6 +33,8 @@ body:
         ```javascript
         // your Playwright config here...
         ```
+        ````
+      placeholder: What is your setup?
 
   - type: textarea
     id: when
@@ -43,7 +43,7 @@ body:
     attributes:
       label: When
       description: |
-        What command did you run or actions did you perform?
+        What command did you run or what actions did you perform?
       placeholder: |
         I run the following command:
         ```shell
@@ -55,7 +55,7 @@ body:
     attributes:
       label: Then
       description: |
-        What did actually happen?
+        What actually happened?
       placeholder: |
         I see an error:
         ```
@@ -76,10 +76,10 @@ body:
   - type: input
     id: reproduction-url
     attributes:
-      label: Reproduction demo url
+      label: Reproduction demo URL
       description: |
         You are **highly encouraged** to try reproducing your bug on the [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
-        It significantly reduces the time, your issue gets resolved.
+        It significantly reduces the time it takes to resolve your issue.
       placeholder: https://github.com/%your-name%/playwright-bdd-example
 
   - type: textarea
