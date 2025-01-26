@@ -8,7 +8,7 @@ body:
       value: |
         ## Thank you for reporting a bug!
 
-        Please provide the bug details using the BDD style. Include as much information as possible to help us quickly identify and resolve the issue.
+        Please provide the bug details below. Include as much information as possible to help us quickly identify and resolve the issue.
 
         **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
         ````
