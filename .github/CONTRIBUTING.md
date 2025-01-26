@@ -5,20 +5,26 @@ This guide will help you get started with contributing.
 
 ## How Can I Contribute?
 
-### Bug Reports
-If you find a bug:
-1. Check if the issue is already reported in the [Issues](https://github.com/vitalets/playwright-bdd/issues).
-2. If not, create a new issue:
-   - Use a clear and descriptive title.
-   - Provide steps to reproduce the issue.
-   - Try to include demo and logs.
+There are different ways of contributions.
 
-### Feature Requests
-Have an idea for a feature?
-- Check if it's already proposed in the [Issues](https://github.com/vitalets/playwright-bdd/issues).
-- Open a new issue describing your idea and its potential benefits.
+### Showcase Your Expertise
 
-### Pull Requests
+We encourage you to share your experiences and insights about using **Playwright-BDD**! BDD workflows can vary widely, and your unique approach could inspire others in the community.  
+
+Here are some ways to share your knowledge:  
+- Write articles on platforms like [Dev.to](https://dev.to), [Medium](https://medium.com), or LinkedIn.  
+- Share interesting findings, tips, and best practices related to Playwright-BDD or end-to-end testing in general.  
+- Promote your content on the [Playwright Discord articles](https://discord.com/channels/807756831384403968/1065556692357619793) and your social networks to reach a broader audience.  
+
+By contributing to the conversation, you'll help grow the Playwright-BDD community and improve testing workflows for everyone!
+
+### Create Bug Reports and Feature Requests 
+If you find a bug or have an idea for a feature:
+1. Check if the issue is already exist in the [Issues](https://github.com/vitalets/playwright-bdd/issues).
+2. If not, create a new issue!
+
+### Contribute Code
+
 To contribute code:
 1. Fork the [playwright-bdd](https://github.com/vitalets/playwright-bdd) repo.
 2. Clone your fork to the local machine:
@@ -29,13 +35,13 @@ To contribute code:
    ```bash
    git checkout -b my-feature
    ```
-4. Perform [development setup](#development-setup) if needed.
+4. Perform the [development setup](#development-setup)
 5. Make and commit your changes.
 6. Push the changes to your fork:
    ```bash
    git push origin my-feature
    ```
-7. Open [a pull request](https://github.com/vitalets/playwright-bdd/pulls) to the `main` branch.   
+7. Open [a pull request](https://github.com/vitalets/playwright-bdd/pulls) to the `main` branch.
 
 ## Development Setup
 
