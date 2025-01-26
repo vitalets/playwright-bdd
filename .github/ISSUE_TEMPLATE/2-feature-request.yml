@@ -6,15 +6,16 @@ body:
   - type: markdown
     attributes:
       value: |
-        Thank you for suggesting a new feature! Please fill out the following details to help us understand your request.
+        ## Thank you for suggesting a new feature! 
+        Please fill out the following details to help us understand your request.
 
-        **Note:** Providing as much detail as possible helps us prioritize and design the feature effectively.
+        **Note**: Use backticks (\`\`\`) to format code blocks for better readability.
   - type: textarea
     id: problem
     attributes:
-      label: Describe the Problem
-      description: Explain the current issue or limitation you’re facing. What challenge does this create?
-      placeholder: Clearly describe the problem or limitation.
+      label: The Problem
+      description: Explain the current issue or limitation you’re facing.
+      placeholder: What challenges do you have now?
     validations:
       required: true
 
@@ -22,8 +23,8 @@ body:
     id: solution
     attributes:
       label: Proposed Solution
-      description: Describe your idea for addressing the problem. How do you envision this feature working?
-      placeholder: Detail the solution or feature you'd like to see.
+      description: Describe your idea for addressing the problem.
+      placeholder: How do you envision this feature working?
     validations:
       required: true
 
@@ -32,13 +33,13 @@ body:
     attributes:
       label: Additional Context
       description: Share any supporting information, such as screenshots, examples, or use cases.
-      placeholder: Provide any additional context or background information.
+      placeholder: Any additional context that could be helpful?
 
   - type: dropdown
     id: priority
     attributes:
       label: Priority Level
-      description: How urgent or important is this feature for you?
+      description: How urgent is this feature for you?
       options:
         - Low
         - Medium

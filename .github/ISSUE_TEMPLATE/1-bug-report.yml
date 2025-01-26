@@ -1,12 +1,15 @@
 name: Bug Report 🪲
-description: Report a bug to help us quickly identify and resolve issues.
+description: Create a bug report
 title: '[Bug]: '
 labels: bug
 body:
   - type: markdown
     attributes:
       value: |
-        ## Please fill in the bug details in BDD style.
+        ## Thank you for reporting a bug!
+
+        Please provide the bug details using the BDD style.
+        Include as much information as possible to help us quickly identify and resolve the issue.
 
         **Note**: Use backticks (\`\`\`) to format code blocks for better readability.
   - type: textarea
@@ -92,8 +95,10 @@ body:
       description: |
         You are **highly encouraged** to fork [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) and modify it to reproduce the issue.
         Then push the changes and share the link below.
-        It greatly speeds up issue resolution!
-      placeholder: https://github.com/johndoe/playwright-bdd-example
+
+        > [!IMPORTANT]
+        > Providing a demo greatly speeds up issue resolution!
+      placeholder: https://github.com/%yourname%/playwright-bdd-example
 
   - type: textarea
     id: envinfo
