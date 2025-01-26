@@ -85,4 +85,4 @@ Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id
 * [playwright-magic-steps](https://github.com/vitalets/playwright-magic-steps) - Auto-transform JavaScript comments into Playwright steps.
 
 ## License
-[MIT](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
+This project is licensed under the [MIT License](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE), allowing you to use, modify, and share the code freely, even for commercial purposes, with proper attribution. Enjoy building something amazing! 🎉
