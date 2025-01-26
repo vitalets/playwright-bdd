@@ -9,7 +9,18 @@ body:
         ## Need Help or Have a Question?  
         Feel free to ask your question below. Be as specific and detailed as possible to help us provide a clear and helpful answer. 
 
-        **Note**: Use backticks (\`\`\`) to format code blocks for better readability.
+        **Note**: Use backticks (\`\`\`) to format code blocks for better readability. For example:
+        ````
+        My feature file:
+        ```gherkin
+        # your feature in Gherkin...
+        ```
+
+        My step definitions:
+        ```javascript
+        // your code in JavaScript...
+        ```
+        ````
   - type: textarea
     id: question
     validations:
