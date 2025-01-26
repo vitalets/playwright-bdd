@@ -1,5 +1,5 @@
 name: Bug Report 🪲
-description: Create a bug report to help us improve
+description: Report a bug to help us quickly identify and resolve issues.
 title: '[Bug]: '
 labels: bug
 body:
@@ -15,7 +15,7 @@ body:
     attributes:
       label: Given
       description: |
-        Describe your setup. For example:
+        Provide details about your setup, feature files, step definitions, and configuration. For example:
         ````
         I have the following setup:
 
@@ -43,7 +43,7 @@ body:
     attributes:
       label: When
       description: |
-        Describe your actions. For example:
+        Describe the steps you performed to produce the issue. For example:
         ````
         I run the following command:
         ```shell
@@ -54,10 +54,12 @@ body:
 
   - type: textarea
     id: then
+    validations:
+      required: true
     attributes:
       label: Then
       description: |
-        Describe the **actual** result. For example:
+        Provide the **actual** outcome. For example:
         ````
         I see an error:
         ```
@@ -71,22 +73,25 @@ body:
     validations:
       required: true
     attributes:
-      label: But I expect
+      label: Expected Result
       description: |
         Describe the **expected** result. For example:
         ````
         I expect no errors and all tests to pass.
         ````
-      placeholder: What did you expect?
+      placeholder: What did you expect to happen?
 
   - type: input
     id: reproduction-url
+    validations:
+      required: false
     attributes:
-      label: Reproduction demo URL
+      label: Reproduction Demo URL
       description: |
-        You are **highly encouraged** to try reproducing your bug on the [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
-        It significantly reduces the time it takes to resolve your issue.
-      placeholder: https://github.com/%your-name%/playwright-bdd-example
+        You are **highly encouraged** to fork [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) and modify it to reproduce the issue.
+        Then push the changes and share the link below.
+        It greatly speeds up issue resolution!
+      placeholder: https://github.com/johndoe/playwright-bdd-example
 
   - type: textarea
     id: envinfo
@@ -105,4 +110,5 @@ body:
         @playwright/test: v1.49.1
         @cucumber/cucumber: none
         Playwright config file: playwright.config.ts
+
       render: shell
