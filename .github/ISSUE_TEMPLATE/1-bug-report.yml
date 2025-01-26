@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Please fill in the bug details below in BDD style.
+        ## Please fill in the bug details in BDD style.
 
   - type: textarea
     id: given
@@ -43,24 +43,28 @@ body:
     attributes:
       label: When
       description: |
-        What command did you run or what actions did you perform?
-      placeholder: |
+        Describe your actions. For example:
+        ````
         I run the following command:
         ```shell
         npx bddgen && npx playwright test
         ```
+        ````
+      placeholder: What actions did you perform?
 
   - type: textarea
     id: then
     attributes:
       label: Then
       description: |
-        What actually happened?
-      placeholder: |
+        Describe the **actual** result. For example:
+        ````
         I see an error:
         ```
         Error: something went wrong...
         ```
+        ````
+      placeholder: What actually happened?
 
   - type: textarea
     id: expected-result
@@ -69,9 +73,11 @@ body:
     attributes:
       label: But I expect
       description: |
-        What did you expect?
-      placeholder: |
+        Describe the **expected** result. For example:
+        ````
         I expect no errors and all tests to pass.
+        ````
+      placeholder: What did you expect?
 
   - type: input
     id: reproduction-url
