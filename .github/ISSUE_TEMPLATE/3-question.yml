@@ -6,7 +6,7 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Need Help or Have a Question?  
+        ## Need help or have a question?  
         Feel free to ask your question below. Provide as many details as possible to help us give a clear and helpful answer.
 
         **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
@@ -28,6 +28,6 @@ body:
     attributes:
       label: Question
       description: |
-        Describe your question in detail.  
+        Describe your question in detail.
         Include any relevant context, code snippets, or links that might help clarify your question.
       placeholder: Provide as much detail as possible.

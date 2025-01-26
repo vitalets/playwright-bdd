@@ -34,7 +34,7 @@ body:
     attributes:
       label: Given
       description: |
-        Provide details about your feature files, step definitions, directory structure, and Playwright configuration.
+        Provide details about your setup: feature files, step definitions, directory structure, and Playwright configuration.
       placeholder: What is your setup?
 
   - type: textarea
@@ -54,7 +54,7 @@ body:
     attributes:
       label: Then
       description: |
-        Provide the **actual** outcome. Include the error message, stack trace and screenshots.
+        Provide the **actual** outcome. If there is an error, include the error message, stack trace and screenshots.
       placeholder: What actually happened?
 
   - type: textarea
