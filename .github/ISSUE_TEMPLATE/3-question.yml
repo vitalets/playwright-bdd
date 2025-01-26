@@ -7,13 +7,13 @@ body:
     attributes:
       value: |
         ## Need Help or Have a Question?  
-        Feel free to ask your question below. Be as specific and detailed as possible to help us provide a clear and helpful answer. 
+        Feel free to ask your question below. Provide as many details as possible to help us give a clear and helpful answer.
 
-        **Note**: Use backticks (\`\`\`) to format code blocks for better readability. For example:
+        **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
         ````
         My feature file:
         ```gherkin
-        # your feature in Gherkin...
+        # your code in Gherkin...
         ```
 
         My step definitions:

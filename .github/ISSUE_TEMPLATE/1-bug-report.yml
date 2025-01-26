@@ -10,7 +10,23 @@ body:
 
         Please provide the bug details using the BDD style. Include as much information as possible to help us quickly identify and resolve the issue.
 
-        **Note**: Use backticks (\`\`\`) to format code blocks for better readability.
+        **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
+        ````
+        My feature file:
+        ```gherkin
+        # your code in Gherkin...
+        ```
+
+        My step definitions:
+        ```javascript
+        // your code in JavaScript...
+        ```
+
+        My command:
+        ```shell
+        npx bddgen && npx playwright test
+        ```
+        ````
   - type: textarea
     id: given
     validations:
@@ -18,26 +34,7 @@ body:
     attributes:
       label: Given
       description: |
-        Provide details about your setup, feature files, step definitions, and configuration. 
-        For example:
-        ````
-        I have the following setup:
-
-        Playwright config:
-        ```javascript
-        // relevant part of your BDD configuration...
-        ```
-
-        Feature file:
-        ```gherkin
-        # your feature here...
-        ```
-
-        Step definitions:
-        ```javascript
-        // your JavaScript code here...
-        ```
-        ````
+        Provide details about your feature files, step definitions, directory structure, and Playwright configuration.
       placeholder: What is your setup?
 
   - type: textarea
@@ -47,13 +44,7 @@ body:
     attributes:
       label: When
       description: |
-        Describe the actions you performed to produce the issue. For example:
-        ````
-        I run the following command:
-        ```shell
-        npx bddgen && npx playwright test
-        ```
-        ````
+        Describe the actions you performed to produce the issue.
       placeholder: What actions did you perform?
 
   - type: textarea
@@ -63,13 +54,7 @@ body:
     attributes:
       label: Then
       description: |
-        Provide the **actual** outcome. For example:
-        ````
-        I see an error:
-        ```
-        Error: something went wrong...
-        ```
-        ````
+        Provide the **actual** outcome. Include the error message, stack trace and screenshots.
       placeholder: What actually happened?
 
   - type: textarea
@@ -79,10 +64,7 @@ body:
     attributes:
       label: Expected Result
       description: |
-        Describe the **expected** result. For example:
-        ````
-        I expect no errors and all tests to pass.
-        ````
+        Describe the **expected** result.
       placeholder: What did you expect to happen?
 
   - type: input
@@ -116,3 +98,15 @@ body:
         @cucumber/cucumber: none
         Playwright config file: playwright.config.ts
       render: shell
+
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority Level
+      description: How urgent is this bug for you?
+      options:
+        - Low
+        - Medium
+        - High
+        - Critical
+      default: 1
