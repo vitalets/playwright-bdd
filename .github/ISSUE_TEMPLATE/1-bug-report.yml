@@ -1,0 +1,102 @@
+name: Bug Report 🪲
+description: Create a bug report to help us improve
+title: '[Bug]: '
+labels: bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please fill the bug report in the BDD style.
+        Use bakcticks to format code blocks.
+
+  - type: textarea
+    id: given
+    validations:
+      required: true
+    attributes:
+      label: Given
+      description: |
+        What is your setup? 
+        Paste the relevant feature file, step definitions, playwright config, and directories structure if needed.
+      placeholder: |
+        I have the following setup:
+
+        Feature file:
+        ```gherkin
+        // your feature here...
+        ```
+
+        Step definitions:
+        ```javascript
+        // your JavaScript code here...
+        ```
+
+        Playwright config:
+        ```javascript
+        // your Playwright config here...
+        ```
+
+  - type: textarea
+    id: when
+    validations:
+      required: true
+    attributes:
+      label: When
+      description: |
+        What command did you run or actions did you perform?
+      placeholder: |
+        I run the following command:
+        ```shell
+        npx bddgen && npx playwright test
+        ```
+
+  - type: textarea
+    id: then
+    attributes:
+      label: Then
+      description: |
+        What did actually happen?
+      placeholder: |
+        I see an error:
+        ```
+        Error: something went wrong...
+        ```
+
+  - type: textarea
+    id: expected-result
+    validations:
+      required: true
+    attributes:
+      label: But I expect
+      description: |
+        What did you expect?
+      placeholder: |
+        I expect no errors and all tests to pass.
+
+  - type: input
+    id: reproduction-url
+    attributes:
+      label: Reproduction demo url
+      description: |
+        You are **highly encouraged** to try reproducing your bug on the [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
+        It significantly reduces the time, your issue gets resolved.
+      placeholder: https://github.com/%your-name%/playwright-bdd-example
+
+  - type: textarea
+    id: envinfo
+    validations:
+      required: true
+    attributes:
+      label: Environment
+      description: |
+        Please run `npx bddgen env` in the terminal and paste the output here.
+      placeholder: |
+        Playwright-bdd environment info:
+
+        platform: darwin
+        node: v20.11.1
+        playwright-bdd: v8.1.0
+        @playwright/test: v1.49.1
+        @cucumber/cucumber: none
+        Playwright config file: playwright.config.ts
+      render: shell
