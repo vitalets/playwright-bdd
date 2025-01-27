@@ -1,6 +1,7 @@
 Feature: some feature
 
   Scenario: some scenario
+    Given open example site
     Given attach plain text
     Given attach console log
     Given attach json

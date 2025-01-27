@@ -1,12 +1,15 @@
 import path from 'node:path';
 import fs from 'node:fs';
 import { createBdd } from 'playwright-bdd';
+import { pathToFileURL } from 'node:url';
 
 const { Given } = createBdd();
 
-// we need page here to get video and trace by Playwright
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-Given('attach plain text', async ({ page, $testInfo }) => {
+Given('open example site', async ({ page }) => {
+  await page.goto(pathToFileURL('example.html').toString());
+});
+
+Given('attach plain text', async ({ $testInfo }) => {
   await $testInfo.attach('plain text', {
     body: 'foo',
   });
