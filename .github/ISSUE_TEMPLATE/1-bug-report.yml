@@ -18,13 +18,15 @@ body:
         ```
 
         My step definitions:
-        ```javascript
+        ```js
         // your code in JavaScript...
         ```
 
-        My command:
-        ```shell
+        My command and output:
+        ```
         npx bddgen && npx playwright test
+
+        Error: something went wrong...
         ```
         ````
   - type: textarea
