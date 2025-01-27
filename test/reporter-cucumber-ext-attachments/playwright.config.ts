@@ -14,7 +14,7 @@ export default defineConfig({
       externalAttachments: true,
       // to view report with traces:
       // npx http-server test/reporter-cucumber-ext-attachments/actual-reports -c-1 -a localhost -o index.html
-      attachmentsBaseURL: 'http://localhost:8080/data',
+      // attachmentsBaseURL: 'http://localhost:8080/data',
     }),
   ],
   use: {

@@ -12,22 +12,23 @@ import { CucumberHtmlStream } from '@cucumber/html-formatter';
 import path from 'node:path';
 import BaseReporter, { InternalOptions } from '../base';
 import { AttachmentEnvelope } from '../messagesBuilder/types';
-import {
-  createLinkAttachment,
-  createLogAttachment,
-  getAttachmentBodyAsBuffer,
-  isAttachmentEnvelope,
-} from '../attachments/helpers';
+import { getAttachmentBodyAsBuffer, isAttachmentEnvelope } from '../attachments/helpers';
 import { shouldSkipAttachment, SkipAttachments } from '../attachments/skip';
 import {
   isTextAttachment,
   toEmbeddedAttachment,
   toExternalAttachment,
 } from '../attachments/external';
-import { copyTraceViewer, generateTraceUrl, isTraceAttachment } from './traceViewer';
-import { fixWithAiCss, fixWithAiScript } from './promptAttachment/assets';
-import { getPromptAttachmentButtonHtml } from './promptAttachment/button';
+import {
+  copyTraceViewer,
+  createViewTraceLinkAttachment,
+  generateTraceUrl,
+  isTraceAttachment,
+  assetsViewTraceLinks,
+} from './traceViewer';
+import { createPromptAttachmentWithButton, scriptCopyPrompt } from './promptAttachment';
 import { isPromptAttachmentContentType } from '../../../ai/promptAttachment';
+import { throwIf } from '../../../utils';
 
 type HtmlReporterOptions = {
   outputFile?: string;
@@ -121,19 +122,20 @@ export default class HtmlReporter extends BaseReporter {
    * - attachmentsBaseURL should start with http(s) to be able to show traces.
    */
   protected handleTraceAttachment(attachment: messages.Attachment) {
-    if (this.attachmentsBaseURL.startsWith('http') && isTraceAttachment(attachment)) {
+    if (isTraceAttachment(attachment)) {
       this.hasTraces = true;
       const { testCaseStartedId, testStepId } = attachment;
       const href = generateTraceUrl(attachment);
-      const newEnvelope = createLinkAttachment(testCaseStartedId, testStepId, href);
+      const newEnvelope = createViewTraceLinkAttachment(testCaseStartedId, testStepId, href);
       this.writeEnvelope(newEnvelope);
     }
   }
 
   protected setupAttachmentsDir() {
-    if (!this.outputDir) {
-      throw new Error('Unable to externalize attachments when reporter is not writing to a file');
-    }
+    throwIf(
+      !this.outputDir,
+      'Unable to externalize attachments when reporter is not writing to a file',
+    );
     this.attachmentsDir = path.join(this.outputDir, ATTACHMENTS_DIR);
     if (fs.existsSync(this.attachmentsDir)) fs.rmSync(this.attachmentsDir, { recursive: true });
     fs.mkdirSync(this.attachmentsDir, { recursive: true });
@@ -141,7 +143,7 @@ export default class HtmlReporter extends BaseReporter {
 
   protected setupAttachmentsBaseURL() {
     this.attachmentsBaseURL = removeTrailingSlash(
-      this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR,
+      this.userOptions.attachmentsBaseURL || `/${ATTACHMENTS_DIR}`,
     );
   }
 
@@ -150,10 +152,10 @@ export default class HtmlReporter extends BaseReporter {
       this.hasPromptAttachments = true;
       const { testCaseStartedId, testStepId } = attachment;
       const prompt = getAttachmentBodyAsBuffer(attachment).toString();
-      const promptAttachmentWithButton = createLogAttachment(
+      const promptAttachmentWithButton = createPromptAttachmentWithButton(
         testCaseStartedId,
         testStepId,
-        getPromptAttachmentButtonHtml(prompt),
+        prompt,
       );
       this.writeEnvelope(promptAttachmentWithButton);
     }
@@ -165,8 +167,7 @@ export default class HtmlReporter extends BaseReporter {
   private createTransformStream() {
     return new Transform({
       transform: (chunk, _encoding, callback) => {
-        const shouldInjectCustomAssets = this.hasPromptAttachments && this.receivedTestRunFinished;
-        const newChunk = shouldInjectCustomAssets ? this.injectCustomAssets(chunk) : chunk;
+        const newChunk = this.receivedTestRunFinished ? this.injectCustomAssets(chunk) : chunk;
         callback(null, newChunk);
       },
     });
@@ -174,12 +175,33 @@ export default class HtmlReporter extends BaseReporter {
 
   private injectCustomAssets(chunk: Buffer) {
     const chunkStr = chunk.toString();
-    return chunkStr.includes('</body>')
-      ? chunkStr.replace('</body>', `${fixWithAiCss}${fixWithAiScript}</body>`)
-      : chunk;
+    if (chunkStr.includes('</body>')) {
+      const customAssets = [
+        cssHideLogForCustomHtml, // prettier-ignore
+        assetsViewTraceLinks,
+        scriptCopyPrompt,
+      ].join('\n');
+      return chunkStr.replace('</body>', `${customAssets}</body>`);
+    } else {
+      return chunk;
+    }
   }
 }
 
 function removeTrailingSlash(url: string) {
   return url.replace(/\/+$/, '');
 }
+
+/**
+ * Custom css - hide LOG for custom html.
+ */
+const cssHideLogForCustomHtml = `
+<style>
+pre:has([data-custom-html]) {
+  padding-left: 0.75em !important;
+}
+pre:has([data-custom-html])::before {
+  content: none !important;
+}
+</style>
+`;

@@ -6,6 +6,7 @@ import path from 'node:path';
 import fs from 'node:fs';
 import * as messages from '@cucumber/messages';
 import { copyFileAndMakeWritable } from '../../../utils/paths';
+import { createLogAttachment } from '../attachments/helpers';
 
 function getTraceViewerFolder() {
   const pwCorePath = require.resolve('playwright-core');
@@ -44,3 +45,44 @@ export function generateTraceUrl(attachment: messages.Attachment) {
   // https://github.com/microsoft/playwright/blob/8f3353865d8d98e9b40c15497e60d5e2583410b6/packages/html-reporter/src/links.tsx#L102
   return `trace/index.html?trace=${attachment.url}`;
 }
+
+export function createViewTraceLinkAttachment(
+  testCaseStartedId: string | undefined,
+  testStepId: string | undefined,
+  href: string,
+) {
+  // eslint-disable-next-line max-len
+  const html = `<a data-custom-html class="view-trace" href="${href}" onmousedown="updateTraceViewLink(this)">🔍 View trace</a>`;
+  return createLogAttachment(testCaseStartedId, testStepId, html);
+}
+
+/**
+ * Custom css and script for 'View trace' links.
+ * Update link href to pass full trace URL.
+ * Use 'onmousedown' to update href for right-click + open in new tab.
+ * Maybe it will be implemented in Playwright:
+ * https://github.com/microsoft/playwright/issues/34493
+ */
+export const assetsViewTraceLinks = `
+<style>
+a.view-trace {
+  text-decoration: none; 
+  color: #297bde;
+}
+
+a.view-trace:hover {
+  text-decoration: underline;
+}
+</style>
+<script>
+function updateTraceViewLink(link) {
+  var urlObj = new URL(link.href);
+  var traceUrl = urlObj.searchParams.get('trace') || '';
+  if (traceUrl.startsWith('/')) {
+    traceUrl = new URL(traceUrl, window.location.href).href;
+    urlObj.searchParams.set('trace', traceUrl);
+    link.href = urlObj.href;
+  }
+}
+</script>
+`;
