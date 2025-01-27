@@ -117,7 +117,7 @@ export default class HtmlReporter extends BaseReporter {
   /**
    * If there is trace attachment, copy trace-viewer to the report
    * and create additional attachment with trace view link.
-   * - implementation in PW: https://github.com/microsoft/playwright/blob/412073253f03099d0fe4081b26ad5f0494fea8d2/packages/playwright/src/reporters/html.ts#L414
+   * - implementation in PW: https://github.com/microsoft/playwright/blob/release-1.50/packages/playwright/src/reporters/html.ts#L434
    * - attachmentsBaseURL should start with http(s) to be able to show traces.
    */
   protected handleTraceAttachment(attachment: messages.Attachment) {
