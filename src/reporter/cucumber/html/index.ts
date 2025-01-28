@@ -50,7 +50,6 @@ export default class HtmlReporter extends BaseReporter {
   protected hasTraces = false;
   protected transformStream: Transform;
   protected receivedTestRunFinished = false;
-  protected hasPromptAttachments = false;
 
   constructor(
     internalOptions: InternalOptions,
@@ -152,7 +151,6 @@ export default class HtmlReporter extends BaseReporter {
 
   private handlePromptAttachment({ attachment }: AttachmentEnvelope) {
     if (isPromptAttachmentContentType(attachment.mediaType)) {
-      this.hasPromptAttachments = true;
       const { testCaseStartedId, testStepId } = attachment;
       const prompt = getAttachmentBodyAsBuffer(attachment).toString();
       const promptAttachmentWithButton = createPromptAttachmentWithButton(
