@@ -1,5 +1,8 @@
 # Changelog
 
+## Dev
+* improve Cucumber HTML reporter to show trace without explicit `attachmentsBaseURL`.
+
 ## 8.1.0
 * add "Fix with AI" feature
 * support attachments via `testInfo.attachments.push()`
