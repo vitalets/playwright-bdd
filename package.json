@@ -90,6 +90,7 @@
     "eslint-plugin-visual-complexity": "0.1.4",
     "expect-type": "1.1.0",
     "globals": "^15.14.0",
+    "http-server": "^14.1.1",
     "json-paths": "0.1.2",
     "knip": "^5.43.1",
     "lint-staged": "^15.4.2",

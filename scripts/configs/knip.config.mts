@@ -21,6 +21,7 @@ const config: KnipConfig = {
     'np',
     'npm-run-all',
     'publint',
+    'http-server',
   ],
 };
 
