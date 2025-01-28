@@ -108,7 +108,7 @@ export default defineConfig({
 * **attachmentsBaseURL** `string` - A separate location where attachments from the `data` subdirectory are uploaded. Only needed when you upload the report and data separately to different locations. The same as `attachmentsBaseURL` of Playwright's [HTML reporter](https://playwright.dev/docs/test-reporters#html-reporter).
 
 #### Trace viewer
-When you set `externalAttachments: true` and `attachmentsBaseURL`, the Cucumber HTML report embeds the Playwright [trace viewer](https://playwright.dev/docs/trace-viewer):
+When you set `externalAttachments: true`, the Cucumber HTML report embeds the Playwright [trace viewer](https://playwright.dev/docs/trace-viewer):
 
 ```js
 export default defineConfig({
@@ -116,8 +116,6 @@ export default defineConfig({
     cucumberReporter('html', { 
       outputFile: 'cucumber-report/index.html',
       externalAttachments: true,
-      // URL depends on the HTTP server where you open the report
-      attachmentsBaseURL: 'http://127.0.0.1:8080/data',
     }),
   ],
 });
@@ -125,7 +123,7 @@ export default defineConfig({
 
 To view the trace by click, you should open the HTML report on the `http(s)://` schema, not on `file://`. To achieve that on a local machine, you can start an HTTP server with the following command:
 ```
-npx http-server ./cucumber-report -c-1 -o index.html
+npx http-server ./cucumber-report -c-1 -a localhost -o index.html
 ```
 
 ![html report with trace](./_media/html-report-with-trace.png)
@@ -134,13 +132,13 @@ You can add that command to `package.json` scripts to open the Cucumber report q
 ```json
 {
   "scripts": {
-    "show-report": "npx http-server ./cucumber-report -c-1 -o index.html"
+    "report": "npx http-server ./cucumber-report -c-1 -a localhost -o index.html"
   }
 }
 ```
 Open the Cucumber report:
 ```
-npm run show-report
+npm run report
 ```
 
 ## json

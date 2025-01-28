@@ -2,7 +2,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "npx bddgen && npx playwright test",
-    "report": "npx http-server ./cucumber-report -c-1 -o index.html",
+    "report": "npx http-server ./cucumber-report -c-1 -a localhost -o index.html",
     "watch:bdd": "nodemon -w ./features -w ./steps -e feature,js,ts --exec \"npx bddgen\"",
     "watch:pw": "playwright test --ui",
     "watch": "run-p watch:*"
