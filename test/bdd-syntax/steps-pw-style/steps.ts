@@ -39,7 +39,7 @@ Then('Passed doc string to contain {string}', async ({}, arg: string, docString:
 Then(
   'Passed data table to have in row {int} col {string} value {string}',
   async ({}, row: number, col: string, value: string, table: DataTable) => {
-    expect(table.hashes()[row][col]).toEqual(value);
+    expect(table.hashes()[row]?.[col]).toEqual(value);
   },
 );
 

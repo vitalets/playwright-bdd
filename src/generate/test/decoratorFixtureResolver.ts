@@ -39,9 +39,7 @@ export class DecoratorFixtureResolver {
   private getFixtureName(pomNode: PomNode, stepData: StepData) {
     const resolvedFixtures = this.testPoms.getResolvedFixtures(pomNode);
 
-    if (resolvedFixtures.length === 0) {
-      return exitEmptyDecoratorFixture(stepData);
-    }
+    const firstFixture = resolvedFixtures[0];
 
     if (resolvedFixtures.length > 1) {
       if (this.config.statefulPoms) {
@@ -50,12 +48,16 @@ export class DecoratorFixtureResolver {
         // tagged fixture has priority
         const firstTaggedFixture = resolvedFixtures.find((f) => f.byTag);
         const firstFixtureWithName =
-          firstTaggedFixture?.name || pomNode.fixtureName || resolvedFixtures[0].name;
+          firstTaggedFixture?.name || pomNode.fixtureName || firstFixture?.name;
         return firstFixtureWithName || exitEmptyDecoratorFixture(stepData);
       }
     }
 
-    return resolvedFixtures[0].name;
+    if (!firstFixture) {
+      return exitEmptyDecoratorFixture(stepData);
+    }
+
+    return firstFixture.name;
   }
 }
 

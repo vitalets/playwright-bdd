@@ -98,12 +98,19 @@ export class Snippet {
     const cucumberExpressionGenerator = new CucumberExpressionGenerator(
       () => parameterTypeRegistry.parameterTypes,
     );
+
     const generatedExpressions = cucumberExpressionGenerator.generateExpressions(
       this.pickleStep.text,
     );
+
     // Always take only first generatedExpression
     // Other expressions are for int/float combinations
-    return generatedExpressions[0];
+    const firstExpression = generatedExpressions[0];
+    if (!firstExpression) {
+      throw new Error(`Could not generate expression for step: ${this.pickleStep.text}`);
+    }
+
+    return firstExpression;
   }
 }
 

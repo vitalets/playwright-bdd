@@ -75,7 +75,8 @@ function getFirstNonAutoInjectFixture(
     (fixtureName) => !isBddAutoInjectFixture(fixtureName),
   );
 
-  if (fixtureNames.length === 0) {
+  const firstFixtureName = fixtureNames[0];
+  if (!firstFixtureName) {
     throw new Error(`No suitable fixtures found for decorator step "${pattern}"`);
   }
 
@@ -83,7 +84,7 @@ function getFirstNonAutoInjectFixture(
     throw new Error(`Several suitable fixtures found for decorator step "${pattern}"`);
   }
 
-  return fixturesArg[fixtureNames[0]];
+  return fixturesArg[firstFixtureName];
 }
 
 function saveStepConfigToMethod(

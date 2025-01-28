@@ -212,8 +212,10 @@ export class TestCaseRunHooks {
 }
 
 function buildFallbackError(unprocessedErrors: pw.TestError[]) {
-  return unprocessedErrors.length === 1
-    ? unprocessedErrors[0]
+  const firstError = unprocessedErrors[0];
+
+  return firstError && unprocessedErrors.length === 1
+    ? firstError
     : buildConcatenatedError(unprocessedErrors);
 }
 

@@ -182,7 +182,7 @@ export class AttachmentMapper {
   private assignAttachment(index: number, pwStep: pw.TestStep) {
     // pick attachment from result.attachments array
     const [foundAttachment] = this.allAttachments.splice(index, 1);
-    this.stepAttachments.getOrCreate(pwStep, () => []).push(foundAttachment);
+    this.stepAttachments.getOrCreate(pwStep, () => []).push(foundAttachment!);
   }
 
   // private mapUnusedAttachments() {

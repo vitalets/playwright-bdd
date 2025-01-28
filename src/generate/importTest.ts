@@ -31,8 +31,9 @@ export class ImportTestGuesser {
     this.fillCustomTestsFromRegularSteps();
     this.fillCustomTestsFromDecoratorSteps();
     if (!this.hasCustomTests()) return;
-    if (!getExportedTestsCount()) this.throwCantGuessError();
-    const topmostTest = this.findTopmostTest();
+    if (getExportedTestsCount() === 0) this.throwCantGuessError();
+    // topmostTest must exist as we checked tests count above
+    const topmostTest = this.findTopmostTest()!;
     const { file, varName } = this.getExportedTestInfo(topmostTest);
     return { file, varName };
   }
@@ -66,7 +67,13 @@ export class ImportTestGuesser {
     let topmostTest = customTests[0];
 
     for (let i = 1; i < customTests.length; i++) {
-      const higherTest = selectHigherTestInstance(topmostTest, customTests[i]);
+      const customTest = customTests[i];
+      const higherTest = selectHigherTestInstance(topmostTest, customTest);
+      // todo: uncomment for noUncheckedIndexedAccess
+      // const higherTest =
+      //   topmostTest && customTest
+      //     ? selectHigherTestInstance(topmostTest, customTest)
+      //     : topmostTest || customTest;
       if (!higherTest) {
         exit(
           `Can't guess test instance for: ${this.featureUri}.`,
@@ -101,5 +108,5 @@ export class ImportTestGuesser {
 function selectHigherTestInstance(test1: TestTypeCommon, test2: TestTypeCommon) {
   if (isTestContainsSubtest(test1, test2)) return test1;
   if (isTestContainsSubtest(test2, test1)) return test2;
-  // Provided tests are no in parent-child relation
+  // Provided tests are not in parent-child relation
 }

@@ -21,7 +21,7 @@ Given('step with docString', ({}, docString: string) => {
 });
 
 Given('step with dataTable', ({}, table: DataTable) => {
-  const { value1, value2 } = table.hashes()[0];
+  const { value1, value2 } = table.hashes()[0] || {};
   expect(value1).toEqual('value with \'`" quotes');
   expect(value2).toEqual('value with\n newline');
 });

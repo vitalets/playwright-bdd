@@ -63,7 +63,7 @@ export class FeaturesLoader {
   }
 
   private getPickleWithLocation(pickle: Pickle) {
-    const lastAstNodeId = pickle.astNodeIds[pickle.astNodeIds.length - 1];
+    const lastAstNodeId = pickle.astNodeIds[pickle.astNodeIds.length - 1]!;
     const location = this.gherkinQuery.getLocation(lastAstNodeId);
     return { ...pickle, location };
   }

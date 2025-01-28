@@ -67,7 +67,8 @@ export class BddStepInvoker {
       this.bddContext.tags,
     );
 
-    if (stepDefinitions.length === 1) return stepDefinitions[0];
+    const firstFoundDefinition = stepDefinitions[0];
+    if (firstFoundDefinition && stepDefinitions.length === 1) return firstFoundDefinition;
 
     const fullStepLocation = `${this.bddContext.featureUri}:${gherkinStepLine}`;
 

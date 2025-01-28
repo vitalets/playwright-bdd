@@ -236,7 +236,7 @@ export function indent(value: string) {
 export function extractPickleIdFromLine(line: string) {
   const match = line.match(/\/\/ test: ([0-9a-f-]+)$/);
   if (match) {
-    return { pickleId: match[1], index: match.index };
+    return { pickleId: match[1]!, index: match.index };
   }
 }
 
