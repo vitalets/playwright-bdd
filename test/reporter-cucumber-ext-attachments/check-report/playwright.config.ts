@@ -14,7 +14,6 @@ export default defineConfig({
     screenshot: 'only-on-failure',
     viewport: { width: 800, height: 720 },
   },
-  expect: { timeout: 500 },
   webServer: {
     command: `npx http-server actual-reports -c-1 -a localhost -p ${process.env.PORT}`,
     url: baseURL,

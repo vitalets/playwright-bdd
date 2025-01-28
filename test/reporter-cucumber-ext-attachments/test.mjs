@@ -3,14 +3,6 @@ import path from 'node:path';
 
 const testDir = new TestDir(import.meta);
 
-test(`${testDir.name} (no attachments url)`, async () => {
-  testDir.clearDir('actual-reports');
-  execPlaywrightTest(testDir.name);
-
-  checkReport();
-  checkAttachmentFiles();
-});
-
 test(`${testDir.name} (with attachments url)`, async () => {
   testDir.clearDir('actual-reports');
   execPlaywrightTest(testDir.name, {
@@ -18,6 +10,14 @@ test(`${testDir.name} (with attachments url)`, async () => {
   });
 
   checkReport(`--grep-invert "protocol:file"`);
+  checkAttachmentFiles();
+});
+
+test(`${testDir.name} (no attachments url)`, async () => {
+  testDir.clearDir('actual-reports');
+  execPlaywrightTest(testDir.name);
+
+  checkReport();
   checkAttachmentFiles();
 });
 
