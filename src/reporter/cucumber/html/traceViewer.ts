@@ -76,13 +76,17 @@ a.view-trace:hover {
 </style>
 <script>
 function updateTraceViewLink(link) {
+  if (!isHttpUrl(window.location.href)) return;
   var urlObj = new URL(link.href);
   var traceUrl = urlObj.searchParams.get('trace') || '';
-  if (traceUrl.startsWith('/')) {
+  if (!isHttpUrl(traceUrl)) {
     traceUrl = new URL(traceUrl, window.location.href).href;
     urlObj.searchParams.set('trace', traceUrl);
     link.href = urlObj.href;
   }
 }
+function isHttpUrl(url) {
+  return url.startsWith('http://') || url.startsWith('https://');
+} 
 </script>
 `;

@@ -37,8 +37,9 @@ type HtmlReporterOptions = {
   attachmentsBaseURL?: string;
 };
 
-// store attachments in subdirectory to not accidentally
-// bloat working dir and make it easier to find report html file.
+// Directory for attahcments, relative to reportDir.
+// We store attachments in subdirectory to not accidentally
+// bloat the working dir and make it easier to find report html file.
 // 'data' name is also used in Playwright HTML reporter.
 const ATTACHMENTS_DIR = 'data';
 
@@ -143,7 +144,9 @@ export default class HtmlReporter extends BaseReporter {
 
   protected setupAttachmentsBaseURL() {
     this.attachmentsBaseURL = removeTrailingSlash(
-      this.userOptions.attachmentsBaseURL || `/${ATTACHMENTS_DIR}`,
+      // don't prepend '/' to ATTACHMENTS_DIR
+      // to make it work when reporter is opened from file:// protocol.
+      this.userOptions.attachmentsBaseURL || ATTACHMENTS_DIR,
     );
   }
 
