@@ -31,7 +31,7 @@ test('should show trace viewer', async ({ page, context }) => {
   // open page snapshot
   const [traceViewerPage] = await Promise.all([
     context.waitForEvent('page'),
-    page.getByLabel('Open snapshot').click(),
+    page.getByTitle('Open snapshot').click(),
   ]);
   await expect(traceViewerPage.getByRole('heading')).toContainText('Example Domain');
 });

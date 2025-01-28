@@ -24,6 +24,9 @@ test(`${testDir.name} (no attachments url)`, async () => {
 function checkReport(args = '') {
   testDir.expectFileNotEmpty('actual-reports/index.html');
   execPlaywrightTest(testDir.name, {
+    // for debug:
+    // cd test/reporter-cucumber-ext-attachments
+    // PORT=12345 npx playwright test --config check-report --debug
     cmd: `npx playwright test --config check-report ${args}`,
     env: { PORT: 12345 },
   });
