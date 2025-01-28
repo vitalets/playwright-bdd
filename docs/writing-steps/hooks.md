@@ -77,13 +77,22 @@ Playwright-BDD supports the worker-level hook `BeforeWorker` (aliased as `Before
 
 Usage:
 ```ts
-import { createBdd } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 
-const { BeforeWorker } = createBdd();
+export const test = base.extend({ /* ...your fixtures */ });
+
+const { BeforeWorker } = createBdd(test);
 
 BeforeWorker(async ({ $workerInfo, browser }) => {
   // runs when each worker starts
 });
+```
+
+If you don't use custom fixtures, you can create `BeforeWorker` without passing `test` argument:
+```ts
+import { createBdd } from 'playwright-bdd';
+
+const { BeforeWorker } = createBdd();
 ```
 
 Since Playwright-BDD **v8** you can target worker hook to particular features by `tags`:
@@ -150,9 +159,11 @@ It runs **once in each worker, after all scenarios**.
 
 Usage:
 ```ts
-import { createBdd } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 
-const { AfterWorker } = createBdd();
+export const test = base.extend({ /* ...your fixtures */ });
+
+const { AfterWorker } = createBdd(test);
 
 AfterWorker(async ({ $workerInfo, browser }) => {
   // runs when each worker ends
@@ -171,13 +182,22 @@ Playwright-BDD supports the scenario-level hook `BeforeScenario` (aliased as `Be
 
 Usage:
 ```ts
-import { createBdd } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 
-const { BeforeScenario } = createBdd();
+export const test = base.extend({ /* ...your fixtures */ });
+
+const { BeforeScenario } = createBdd(test);
 
 BeforeScenario(async () => {
   // runs before each scenario
 });
+```
+
+If you don't use custom fixtures, you can create `BeforeScenario` without passing `test` argument:
+```ts
+import { createBdd } from 'playwright-bdd';
+
+const { BeforeScenario } = createBdd();
 ```
 
 Since Playwright-BDD **v8** you can target scenario hook to particular features/scenarios by `tags`:
@@ -255,9 +275,11 @@ Playwright-BDD supports the scenario-level hook `AfterScenario` (aliased as `Aft
 
 Usage:
 ```ts
-import { createBdd } from 'playwright-bdd';
+import { test as base, createBdd } from 'playwright-bdd';
 
-const { AfterScenario } = createBdd();
+export const test = base.extend({ /* ...your fixtures */ });
+
+const { AfterScenario } = createBdd(test);
 
 AfterScenario(async () => {
   // runs after each scenario
