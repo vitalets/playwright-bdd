@@ -12,6 +12,7 @@ export default defineConfig({
     cucumberReporter('html', {
       outputFile: 'actual-reports/index.html',
       externalAttachments: true,
+      attachmentsBaseURL: process.env.ATTACHMENTS_BASE_URL,
     }),
   ],
   use: {

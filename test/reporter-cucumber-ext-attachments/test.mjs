@@ -3,7 +3,7 @@ import path from 'node:path';
 
 const testDir = new TestDir(import.meta);
 
-test(testDir.name, async () => {
+test(`${testDir.name} (no attachments url)`, async () => {
   testDir.clearDir('actual-reports');
   execPlaywrightTest(testDir.name);
 
@@ -11,10 +11,20 @@ test(testDir.name, async () => {
   checkAttachmentFiles();
 });
 
-function checkReport() {
+test(`${testDir.name} (with attachments url)`, async () => {
+  testDir.clearDir('actual-reports');
+  execPlaywrightTest(testDir.name, {
+    env: { ATTACHMENTS_BASE_URL: 'http://localhost:12345/data' },
+  });
+
+  checkReport(`--grep-invert "protocol:file"`);
+  checkAttachmentFiles();
+});
+
+function checkReport(args = '') {
   testDir.expectFileNotEmpty('actual-reports/index.html');
   execPlaywrightTest(testDir.name, {
-    cmd: 'npx playwright test --config check-report',
+    cmd: `npx playwright test --config check-report ${args}`,
     env: { PORT: 12345 },
   });
 }

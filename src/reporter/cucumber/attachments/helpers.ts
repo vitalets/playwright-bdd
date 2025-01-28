@@ -17,6 +17,9 @@ export function getAttachmentBodyAsBase64(attachment: messages.Attachment) {
     : Buffer.from(attachment.body).toString('base64');
 }
 
+/**
+ * @public
+ */
 export function createLinkAttachment(
   testCaseStartedId: string | undefined,
   testStepId: string | undefined,

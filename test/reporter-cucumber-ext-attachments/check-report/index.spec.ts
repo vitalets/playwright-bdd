@@ -2,8 +2,8 @@ import { test, expect, Page } from '@playwright/test';
 import { pathToFileURL } from 'node:url';
 
 for (const protocol of ['http', 'file'] as const) {
-  test(`should show all attachments: ${protocol}`, async ({ page }) => {
-    openHtmlReport(page, protocol);
+  test(`should show all attachments, protocol:${protocol}`, async ({ page }) => {
+    await openHtmlReport(page, protocol);
     await expect(page.locator('summary')).toContainText([
       'plain text',
       'json text',
@@ -22,7 +22,7 @@ for (const protocol of ['http', 'file'] as const) {
 }
 
 test('should show trace viewer', async ({ page, context }) => {
-  openHtmlReport(page, 'http');
+  await openHtmlReport(page, 'http');
   // open trace viewer
   await page.getByRole('link', { name: 'View trace' }).click();
   await expect(page).toHaveURL(/trace\/index\.html/);
