@@ -43,7 +43,7 @@ export const test = base.extend<{ world: World }>({
   },
 });
 
-export const { Given, When, Then } = createBdd(test, { 
+export const { Given, When, Then, Before, After } = createBdd(test, { 
   worldFixture: 'world' 
 });
 ```
@@ -87,7 +87,7 @@ export const test = base.extend<{ world: World }>({
   },
 });
 
-export const { Given, When, Then } = createBdd(test, { 
+export const { Given, When, Then, Before, After } = createBdd(test, { 
   worldFixture: 'world' 
 });
 ```
@@ -115,5 +115,5 @@ export const test = base.extend({
   },
 });
 
-export const { Given, When, Then } = createBdd(test, { worldFixture: 'world' });
+export const { Given, When, Then, Before, After } = createBdd(test, { worldFixture: 'world' });
 ```
