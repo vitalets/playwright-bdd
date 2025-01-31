@@ -69,6 +69,16 @@ Generate and run the tests:
 npx bddgen && npx playwright test
 ```
 
+Command for **Yarn**
+```
+yarn bddgen && yarn playwright test
+```
+
+Command for **pnpm**:
+```
+pnpm bddgen && pnpm playwright test
+```
+
 Output:
 
 ```
