@@ -24,6 +24,7 @@ import {
   playwrightStepCtor,
 } from './styles/playwrightStyle';
 import { BddWorkerFixtures } from '../runtime/bddWorkerFixtures';
+import { stepHookFactory } from '../hooks/step';
 
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
@@ -79,6 +80,8 @@ export function createBdd<
   const AfterAll = workerHookFactory<W>('afterAll', ctorOptions);
   const Before = scenarioHookFactory<T, W, World>('before', ctorOptions);
   const After = scenarioHookFactory<T, W, World>('after', ctorOptions);
+  const BeforeStep = stepHookFactory<T, W, World>('before', ctorOptions);
+  const AfterStep = stepHookFactory<T, W, World>('after', ctorOptions);
 
   // aliases
   const [BeforeWorker, AfterWorker] = [BeforeAll, AfterAll];
@@ -106,6 +109,8 @@ export function createBdd<
       AfterWorker,
       BeforeScenario,
       AfterScenario,
+      BeforeStep,
+      AfterStep,
     };
   }
 
@@ -128,6 +133,8 @@ export function createBdd<
     AfterWorker,
     BeforeScenario,
     AfterScenario,
+    BeforeStep,
+    AfterStep,
   };
 }
 
