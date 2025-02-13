@@ -54,7 +54,7 @@ export class BddStepInvoker {
       // See: https://github.com/vitalets/playwright-bdd/issues/208
       const beforeHooksToRun = getStepHooksToRun('before', this.bddContext.tags);
       await runStepHooks(beforeHooksToRun, { ...fixturesArg, $bddContext: this.bddContext });
-      const use = await matchedDefinition.definition.fn.call(
+      const result = await matchedDefinition.definition.fn.call(
         this.bddContext.world,
         fixturesArg,
         ...stepParameters,
@@ -62,7 +62,7 @@ export class BddStepInvoker {
       const afterHooksToRun = getStepHooksToRun('after', this.bddContext.tags);
       afterHooksToRun.reverse();
       await runStepHooks(afterHooksToRun, { ...fixturesArg, $bddContext: this.bddContext });
-      return use;
+      return result;
     });
   }
 

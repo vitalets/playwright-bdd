@@ -149,5 +149,5 @@ function getTimeoutMessage(hook: GeneralStepHook) {
 }
 
 function getHookStepTitle(hook: GeneralStepHook) {
-  return hook.options.name ?? (hook.type === 'before' ? 'BeforeEach hook' : 'AfterEach hook');
+  return hook.options.name ?? (hook.type === 'before' ? 'BeforeStep hook' : 'AfterStep hook');
 }
