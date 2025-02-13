@@ -3,9 +3,11 @@ Feature: sample
   Background: bg
     Given bg step
 
-  @scenario1
   Scenario: scenario 1
-    Given a step
+    Given step 1
+    Then step 2
 
+  @scenario2
   Scenario: scenario 2
-    Given a step
+    Given step 3
+    Then step 4

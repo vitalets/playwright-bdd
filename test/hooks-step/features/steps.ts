@@ -4,6 +4,6 @@ Given('bg step', async ({ log, $testInfo }) => {
   log(`bg step of ${$testInfo.title}`);
 });
 
-Given('a step', async ({ log, $testInfo }) => {
-  log(`a step of ${$testInfo.title}`);
+Given('step {int}', async ({ log }, n: number) => {
+  log(`step ${n}`);
 });

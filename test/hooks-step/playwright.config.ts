@@ -5,19 +5,15 @@ const testDir = defineBddConfig({
   featuresRoot: 'features',
 });
 
-const workers = Number(process.env.WORKERS);
-const fullyParallel = Boolean(process.env.FULLY_PARALLEL);
-
 export default defineConfig({
   testDir,
-  workers,
-  fullyParallel,
+  workers: 1,
   reporter: [
     cucumberReporter('message', {
-      outputFile: `actual-reports/report-workers-${workers}.jsonl`,
+      outputFile: `actual-reports/report.jsonl`,
     }),
     cucumberReporter('html', {
-      outputFile: `actual-reports/report-workers-${workers}.html`,
+      outputFile: `actual-reports/report.html`,
     }),
   ],
 });

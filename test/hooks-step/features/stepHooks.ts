@@ -9,8 +9,8 @@ BeforeStep(async ({ log }) => {
   log(`BeforeStep 2`);
 });
 
-BeforeStep({ tags: '@scenario1' }, async ({ log, testFixtureScenario1 }) => {
-  log(`BeforeStep 3 (@scenario1)`);
+BeforeStep({ tags: '@scenario2' }, async ({ log, testFixtureScenario2 }) => {
+  log(`BeforeStep 3 (@scenario2)`);
 });
 
 AfterStep(async ({ log, testFixtureCommon }) => {
@@ -21,6 +21,6 @@ AfterStep(async ({ log }) => {
   log(`AfterStep 2`);
 });
 
-AfterStep({ tags: '@scenario1' }, async ({ log, testFixtureScenario1 }) => {
-  log(`AfterStep 3 (@scenario1)`);
+AfterStep({ tags: '@scenario2' }, async ({ log, testFixtureScenario2 }) => {
+  log(`AfterStep 3 (@scenario2)`);
 });

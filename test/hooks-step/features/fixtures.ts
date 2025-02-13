@@ -4,7 +4,7 @@ import { testWithLog } from '../../_helpers/withLog';
 
 type TestFixtures = {
   testFixtureCommon: void;
-  testFixtureScenario1: void;
+  testFixtureScenario2: void;
 };
 
 export const test = testWithLog.extend<TestFixtures>({
@@ -13,12 +13,13 @@ export const test = testWithLog.extend<TestFixtures>({
     await use();
   },
 
-  testFixtureScenario1: async ({ log }, use) => {
-    // tiny delay to have always foo after bar
+  // this fixture is used only by step hooks tagged with @scenario2
+  testFixtureScenario2: async ({ log }, use) => {
+    // tiny delay to always setup this fixture after testFixtureCommon
     await timers.setTimeout(50);
-    log(`testFixtureScenario1 setup`);
+    log(`testFixtureScenario2 setup`);
     await use();
   },
 });
 
-export const { Given, Before, BeforeAll, After, AfterAll, BeforeStep, AfterStep } = createBdd(test);
+export const { Given, BeforeStep, AfterStep } = createBdd(test);
