@@ -1,24 +1,23 @@
 # Contributing to Playwright-BDD
 
-Thank you for considering contributing to Playwright-BDD! 🎉  
-This guide will help you get started with contributing.
+Thank you for considering contributing to Playwright-BDD 🎉 
 
 ## How Can I Contribute?
 
-There are different ways to contribute.
+There are different ways to contribute:
 
-### Showcase Your Expertise
+### Write an Article
 
-We encourage you to share your experiences and insights about using **Playwright-BDD**! BDD workflows can vary widely, and your unique approach could inspire others in the community.  
+We encourage you to share your experience with Playwright-BDD. BDD workflows vary widely from team to team, and your insights can be very helpful for community.  
 
-Here are some ways to share your knowledge:  
-- Write articles on platforms like [Dev.to](https://dev.to), [Medium](https://medium.com), or LinkedIn.  
-- Share interesting findings, tips, and best practices related to Playwright-BDD or end-to-end testing in general.  
-- Promote your content on the [Playwright Discord articles](https://discord.com/channels/807756831384403968/1065556692357619793) and your social networks to reach a broader audience.  
+Here are some good places to post:  
+- [#playwright](https://dev.to/t/playwright) on dev.to
+- [#software-testing](https://medium.com/tag/software-testing) on Medium 
+- [articles](https://discord.com/channels/807756831384403968/1065556692357619793) on Playwright Discord
+- [r/Playwright](https://www.reddit.com/r/Playwright/) on reddit
+- LinkedIn, X.com, etc
 
-By contributing to the conversation, you'll help grow the Playwright-BDD community and improve testing workflows for everyone!
-
-### Create Bug Reports and Feature Requests 
+### Report a Bug or Feature Request
 If you find a bug or have an idea for a feature:
 1. Check if the issue already exists in the [Issues](https://github.com/vitalets/playwright-bdd/issues).
 2. If not, create a new issue!
@@ -54,7 +53,11 @@ To contribute code:
     ```
     npx playwright install chromium
     ```
-3. Run tests:
+3. Build project:
+    ```
+    npm run build && npm run examples:build
+    ```
+4. Run tests:
     ```
     npm t
     ```
