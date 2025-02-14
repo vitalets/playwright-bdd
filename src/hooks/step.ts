@@ -1,5 +1,5 @@
 /**
- * Step level hooks: Before / After.
+ * Step level hooks: BeforeStep / AfterStep.
  */
 
 /* eslint-disable max-depth */
@@ -13,7 +13,7 @@ import { HookConstructorOptions, setTagsExpression } from './shared';
 import { TagsExpression } from '../steps/tags';
 import { BddContext } from '../runtime/bddContext';
 
-type StepHookType = 'before' | 'after';
+type StepHookType = 'beforeStep' | 'afterStep';
 
 type StepHookOptions = {
   name?: string;
@@ -40,7 +40,7 @@ type StepHook<Fixtures, World> = {
 };
 
 /**
- * When calling Before() / After() you can pass:
+ * When calling BeforeStep() / After() you can pass:
  * 1. hook fn
  * 2. tags string + hook fn
  * 3. options object + hook fn
@@ -53,12 +53,12 @@ type StepHookDefinitionArgs<Fixtures, World> =
   | [StepHookOptions, StepHookFn<Fixtures, World>];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-type GeneralStepHook = StepHook<any, any>;
+export type GeneralStepHook = StepHook<any, any>;
 
 const stepHooks: GeneralStepHook[] = [];
 
 /**
- * Returns Before() / After() functions.
+ * Returns BeforeStep() / AfterStep() functions.
  */
 export function stepHookFactory<
   TestFixtures extends KeyValue,
@@ -89,7 +89,7 @@ export async function runStepHooks(hooks: GeneralStepHook[], fixtures: StepHookF
     try {
       await runStepHook(hook, fixtures);
     } catch (e) {
-      if (hook.type === 'before') throw e;
+      if (hook.type === 'beforeStep') throw e;
       if (!error) error = e;
     }
   }
@@ -149,5 +149,5 @@ function getTimeoutMessage(hook: GeneralStepHook) {
 }
 
 function getHookStepTitle(hook: GeneralStepHook) {
-  return hook.options.name ?? (hook.type === 'before' ? 'BeforeStep hook' : 'AfterStep hook');
+  return hook.options.name ?? (hook.type === 'beforeStep' ? 'BeforeStep hook' : 'AfterStep hook');
 }

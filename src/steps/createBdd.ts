@@ -80,8 +80,8 @@ export function createBdd<
   const AfterAll = workerHookFactory<W>('afterAll', ctorOptions);
   const Before = scenarioHookFactory<T, W, World>('before', ctorOptions);
   const After = scenarioHookFactory<T, W, World>('after', ctorOptions);
-  const BeforeStep = stepHookFactory<T, W, World>('before', ctorOptions);
-  const AfterStep = stepHookFactory<T, W, World>('after', ctorOptions);
+  const BeforeStep = stepHookFactory<T, W, World>('beforeStep', ctorOptions);
+  const AfterStep = stepHookFactory<T, W, World>('afterStep', ctorOptions);
 
   // aliases
   const [BeforeWorker, AfterWorker] = [BeforeAll, AfterAll];

@@ -52,14 +52,14 @@ export class BddStepInvoker {
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
       // See: https://github.com/vitalets/playwright-bdd/issues/208
-      const beforeHooksToRun = getStepHooksToRun('before', this.bddContext.tags);
+      const beforeHooksToRun = getStepHooksToRun('beforeStep', this.bddContext.tags);
       await runStepHooks(beforeHooksToRun, { ...fixturesArg, $bddContext: this.bddContext });
       const result = await matchedDefinition.definition.fn.call(
         this.bddContext.world,
         fixturesArg,
         ...stepParameters,
       );
-      const afterHooksToRun = getStepHooksToRun('after', this.bddContext.tags);
+      const afterHooksToRun = getStepHooksToRun('afterStep', this.bddContext.tags);
       afterHooksToRun.reverse();
       await runStepHooks(afterHooksToRun, { ...fixturesArg, $bddContext: this.bddContext });
       return result;
