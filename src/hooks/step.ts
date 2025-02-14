@@ -8,10 +8,11 @@ import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/type
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
-import { getBddAutoInjectFixtures } from '../runtime/bddTestFixturesAuto';
+import { getBddAutoInjectFixtures, isBddAutoInjectFixture } from '../runtime/bddTestFixturesAuto';
 import { HookConstructorOptions, setTagsExpression } from './shared';
 import { TagsExpression } from '../steps/tags';
 import { BddContext } from '../runtime/bddContext';
+import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 
 type StepHookType = 'beforeStep' | 'afterStep';
 
@@ -96,10 +97,29 @@ export async function runStepHooks(hooks: GeneralStepHook[], fixtures: StepHookF
   if (error) throw error;
 }
 
+// todo: join with getScenarioHooksFixtureNames(),
+// make universal function getHooksFixtureNames()
+export function getStepHooksFixtureNames(hooks: GeneralStepHook[]) {
+  const fixtureNames = new Set<string>();
+
+  hooks.forEach((hook) => {
+    const hookFixtureNames = fixtureParameterNames(hook.fn);
+    hookFixtureNames.forEach((fixtureName) => fixtureNames.add(fixtureName));
+  });
+
+  return [...fixtureNames].filter((name) => !isBddAutoInjectFixture(name));
+}
+
 async function runStepHook(hook: GeneralStepHook, fixtures: StepHookFixtures) {
-  const fn = wrapHookFnWithTimeout(hook, fixtures);
-  const stepTitle = getHookStepTitle(hook);
-  await runStepWithLocation(fixtures.$bddContext.test, stepTitle, hook.location, fn);
+  const hookFn = wrapHookFnWithTimeout(hook, fixtures);
+  const stepTitle = hook.options.name;
+  // wrap hookFn call into test.step() only if user provided a name for the hook,
+  // otherwise run as is to avoid extra level in the steps structure.
+  if (stepTitle) {
+    await runStepWithLocation(fixtures.$bddContext.test, stepTitle, hook.location, hookFn);
+  } else {
+    await hookFn();
+  }
 }
 
 export function getStepHooksToRun(type: StepHookType, tags: string[] = []) {
@@ -146,8 +166,4 @@ function addHook(hook: GeneralStepHook) {
 function getTimeoutMessage(hook: GeneralStepHook) {
   const { timeout, name: hookName } = hook.options;
   return `${hook.type} hook ${hookName ? `"${hookName}" ` : ''}timeout (${timeout} ms)`;
-}
-
-function getHookStepTitle(hook: GeneralStepHook) {
-  return hook.options.name ?? (hook.type === 'beforeStep' ? 'BeforeStep hook' : 'AfterStep hook');
 }

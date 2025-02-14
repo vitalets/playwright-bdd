@@ -2,18 +2,14 @@ import { test, expectCalls, TestDir, execPlaywrightTest } from '../_helpers/inde
 
 const testDir = new TestDir(import.meta);
 
-test(testDir.name, () => {
-  const stdout = execPlaywrightTest(testDir.name);
+test(`${testDir.name} (simple)`, () => {
+  const stdout = execPlaywrightTest(testDir.name, {
+    env: { FEATURE: 'simple' },
+  });
+
   expectCalls('worker 0: ', stdout, [
     // scenario 1
-    // TODO: commented, b/c now fixtures don't initialize
-    // 'testFixtureCommon setup',
-
-    'BeforeStep 1',
-    'BeforeStep 2',
-    'bg step of scenario 1',
-    'AfterStep 2',
-    'AfterStep 1',
+    'testFixtureCommon setup',
 
     'BeforeStep 1',
     'BeforeStep 2',
@@ -28,16 +24,8 @@ test(testDir.name, () => {
     'AfterStep 1',
 
     // scenario 2
-    // TODO: commented, b/c now fixtures don't initialize
-    // 'testFixtureScenario2 setup',
-
-    'BeforeStep 1',
-    'BeforeStep 2',
-    'BeforeStep 3 (@scenario2)',
-    'bg step of scenario 2',
-    'AfterStep 3 (@scenario2)',
-    'AfterStep 2',
-    'AfterStep 1',
+    'testFixtureCommon setup',
+    'testFixtureScenario2 setup',
 
     'BeforeStep 1',
     'BeforeStep 2',
@@ -52,6 +40,50 @@ test(testDir.name, () => {
     'BeforeStep 3 (@scenario2)',
     'step 4',
     'AfterStep 3 (@scenario2)',
+    'AfterStep 2',
+    'AfterStep 1',
+  ]);
+});
+
+test(`${testDir.name} (with bg)`, () => {
+  const stdout = execPlaywrightTest(testDir.name, {
+    env: { FEATURE: 'with-bg' },
+  });
+
+  expectCalls('worker 0: ', stdout, [
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'bg step of scenario 1',
+    'AfterStep 2',
+    'AfterStep 1',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'step 1',
+    'AfterStep 2',
+    'AfterStep 1',
+  ]);
+});
+
+test(`${testDir.name} (decorators)`, () => {
+  const stdout = execPlaywrightTest(testDir.name, {
+    env: { FEATURE: 'decorators' },
+  });
+
+  expectCalls('worker 0: ', stdout, [
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'decorator step 1',
+    'AfterStep 2',
+    'AfterStep 1',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'decorator step 2',
     'AfterStep 2',
     'AfterStep 1',
   ]);

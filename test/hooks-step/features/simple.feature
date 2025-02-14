@@ -1,7 +1,4 @@
-Feature: sample
-
-  Background: bg
-    Given bg step
+Feature: simple
 
   Scenario: scenario 1
     Given step 1

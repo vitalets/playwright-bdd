@@ -1,10 +1,12 @@
 import timers from 'node:timers/promises';
 import { createBdd } from 'playwright-bdd';
-import { testWithLog } from '../../_helpers/withLog';
+import { testWithLog } from '../../../_helpers/withLog';
+import { TodoPage } from './TodoPage';
 
 type TestFixtures = {
   testFixtureCommon: void;
   testFixtureScenario2: void;
+  todoPage: TodoPage;
 };
 
 export const test = testWithLog.extend<TestFixtures>({
@@ -20,6 +22,8 @@ export const test = testWithLog.extend<TestFixtures>({
     log(`testFixtureScenario2 setup`);
     await use();
   },
+
+  todoPage: async ({ log }, use) => use(new TodoPage(log)),
 });
 
 export const { Given, BeforeStep, AfterStep } = createBdd(test);
