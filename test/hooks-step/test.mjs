@@ -1,4 +1,10 @@
-import { test, expectCalls, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
+import {
+  test,
+  expectCalls,
+  TestDir,
+  execPlaywrightTest,
+  execPlaywrightTestWithError,
+} from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -85,6 +91,32 @@ test(`${testDir.name} (decorators)`, () => {
     'BeforeStep 2',
     'decorator step 2',
     'AfterStep 2',
+    'AfterStep 1',
+  ]);
+});
+
+test(`${testDir.name} (error)`, () => {
+  const stdout = execPlaywrightTestWithError(testDir.name, '', {
+    env: { FEATURE: 'error' },
+  });
+
+  expectCalls('worker 0: ', stdout, [
+    // scenario 1
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep with error',
+  ]);
+
+  expectCalls('worker 1: ', stdout, [
+    // scenario 2
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'step 3',
+    'AfterStep 2',
+    'AfterStep with error',
     'AfterStep 1',
   ]);
 });
