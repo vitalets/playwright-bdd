@@ -314,7 +314,7 @@ import { createBdd } from 'playwright-bdd';
 const { BeforeStep } = createBdd();
 ```
 
-Since Playwright-BDD **v8** you can target scenario hook to particular features/scenarios by `tags`:
+You can target step hook to the steps of the specific feature/scenario by `tags`:
 
 ```ts
 BeforeStep({ tags: '@mobile and not @slow' }, async function () {
@@ -355,7 +355,7 @@ BeforeStep({ name: 'my hook', timeout: 5000 }, async function () {
 The hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
 You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
 
-#### Example of using `BeforeStep` with custom fixture
+#### Example of using `BeforeStep` to capture screenshot after each step
 
 Imagine you have defined a custom fixture `myFixture`:
 ```ts
