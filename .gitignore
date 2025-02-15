@@ -26,3 +26,5 @@ blob-report
 /test/reporter-cucumber-merge/.features-gen/features/sample.feature.spec.js-snapshots
 
 /examples/**/playwright/.auth
+
+.prototools
