@@ -355,30 +355,6 @@ BeforeStep({ name: 'my hook', timeout: 5000 }, async function () {
 The hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
 You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
 
-#### Example of using `BeforeStep` to capture screenshot after each step
-
-Imagine you have defined a custom fixture `myFixture`:
-```ts
-import { test as base, createBdd } from 'playwright-bdd';
-
-export const test = base.extend<{ myFixture: MyFixture }>({
-  myFixture: async ({ page }, use) => {
-    // ... setup myFixture
-  }
-});
-
-export const { BeforeStep } = createBdd(test);
-```
-
-Now you can use `myFixture` in the produced hooks:
-```ts
-import { BeforeStep } from './fixtures';
-
-BeforeStep(async ({ myFixture }) => {
-  // ... use myFixture in the hook
-});
-```
-
 ## AfterStep
 
 > Consider using [fixtures](#fixtures) instead of hooks.
@@ -399,3 +375,24 @@ AfterStep(async () => {
 ```
 
 All options and behavior are similar to [BeforeStep](#beforestep).
+
+#### Example of using `AfterStep` to capture screenshot after each step
+
+Create `fixtures.ts`:
+```ts
+export const { AfterStep } = createBdd(test);
+```
+
+Import `fixture.ts` in step definition
+```ts
+import { AfterStep } from './fixtures';
+
+AfterStep(async ({ page, $testInfo, $step }) => {
+  await $testInfo.attach(`screenshot after ${$step.title}`, {
+    contentType: 'image/png',
+    body: await page.screenshot()
+  });
+});
+
+// ...rest of the step definitions
+```
