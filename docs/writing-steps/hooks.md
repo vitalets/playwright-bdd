@@ -6,6 +6,8 @@ Hooks are functions that automatically run before/after workers or scenarios:
 * `AfterWorker / AfterAll` - runs **once in each worker**, after all scenarios
 * `BeforeScenario / Before` - runs **before each scenario**
 * `AfterScenario / After` -  runs **after each scenario**
+* `BeforeStep` - runs **before each step**
+* `AfterStep` -  runs **after each step**
 
 > If you need to run some code **before/after overall test execution**, check out Playwright's [project dependencies](https://playwright.dev/docs/test-global-setup-teardown#option-1-project-dependencies) or [global setup and teardown](https://playwright.dev/docs/test-global-setup-teardown#option-2-configure-globalsetup-and-globalteardown)
 
@@ -287,3 +289,113 @@ AfterScenario(async () => {
 ```
 
 All options and behavior are similar to [BeforeScenario / Before](#beforescenario-before).
+
+## BeforeStep
+
+Playwright-BDD supports the step-level hook `BeforeStep`. It runs **before each step**. 
+
+Usage:
+```ts
+import { test as base, createBdd } from 'playwright-bdd';
+
+export const test = base.extend({ /* ...your fixtures */ });
+
+const { BeforeStep } = createBdd(test);
+
+BeforeStep(async () => {
+  // runs before each step
+});
+```
+
+If you don't use custom fixtures, you can create `BeforeStep` without passing `test` argument:
+```ts
+import { createBdd } from 'playwright-bdd';
+
+const { BeforeStep } = createBdd();
+```
+
+Since Playwright-BDD **v8** you can target scenario hook to particular features/scenarios by `tags`:
+
+```ts
+BeforeStep({ tags: '@mobile and not @slow' }, async function () {
+  // runs for scenarios with @mobile and not @slow
+});
+```
+If you want to pass only tags, you can use a shortcut:
+```ts
+BeforeStep('@mobile and not @slow', async function () {
+  // runs for scenarios with @mobile and not @slow
+});
+```
+You can also provide default tags via `createBdd()`:
+```ts
+const { BeforeStep } = createBdd(test, { tags: '@mobile' });
+
+BeforeStep(async () => {
+  // runs only for scenarios with @mobile 
+});
+```
+
+If the hook has both default and own tags, they are combined using `AND` logic:
+```ts
+const { BeforeStep } = createBdd(test, { tags: '@mobile' });
+
+BeforeStep({ tags: '@slow' }, async function () {
+  // runs for scenarios with @mobile and @slow
+});
+```
+
+Additionally, you can set `name` and `timeout` for the hook:
+```ts
+BeforeStep({ name: 'my hook', timeout: 5000 }, async function () {
+  // ...
+});
+```
+
+The hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
+You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
+
+#### Example of using `BeforeStep` with custom fixture
+
+Imagine you have defined a custom fixture `myFixture`:
+```ts
+import { test as base, createBdd } from 'playwright-bdd';
+
+export const test = base.extend<{ myFixture: MyFixture }>({
+  myFixture: async ({ page }, use) => {
+    // ... setup myFixture
+  }
+});
+
+export const { BeforeStep } = createBdd(test);
+```
+
+Now you can use `myFixture` in the produced hooks:
+```ts
+import { BeforeStep } from './fixtures';
+
+BeforeStep(async ({ myFixture }) => {
+  // ... use myFixture in the hook
+});
+```
+
+## AfterStep
+
+> Consider using [fixtures](#fixtures) instead of hooks.
+
+Playwright-BDD supports the scenario-level hook `AfterStep`. It runs **after each step**. 
+
+Usage:
+```ts
+import { test as base, createBdd } from 'playwright-bdd';
+
+export const test = base.extend({ /* ...your fixtures */ });
+
+const { AfterStep } = createBdd(test);
+
+AfterStep(async () => {
+  // runs after each scenario
+});
+```
+
+All options and behavior are similar to [BeforeStep](#beforestep).

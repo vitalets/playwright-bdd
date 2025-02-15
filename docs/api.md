@@ -103,6 +103,40 @@ Functions for step definitions.
 
 **Returns:** *function* - A function to call this step from other steps.
 
+### BeforeStep
+
+Defines a hook that runs **before each step**. You can target the hook to specific step by providing the `tags` option.
+
+**Usage:** `BeforeStep([options,] hookFn)`
+
+**Params:**
+  * `options` *string | object*
+    - `tags` *string* - [Tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features/steps.
+    - `name` *string* - An optional name for this hook for reporting.
+    - `timeout` *number* - Timeout for this hook in milliseconds.
+  * `hookFn` *Function* - Hook function `(fixtures?) => void`:
+    - `fixtures` *object* - Playwright fixtures:
+      - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo).
+      - `$tags` *string[]* - List of tags for the current step.
+      - Any other built-in and custom fixtures.
+
+### AfterStep
+
+Defines a hook that runs **after each scenario**. You can target the hook to specific step by providing the `tags` option.
+
+**Usage:** `AfterStep([options,] hookFn)`
+
+**Params:**
+  * `options` *string | object*
+    - `tags` *string* - [Tag expression](https://github.com/cucumber/tag-expressions) to target this hook to specific features/steps.
+    - `name` *string* - An optional name for this hook for reporting.
+    - `timeout` *number* - Timeout for this hook in milliseconds.
+  * `hookFn` *Function* - Hook function `(fixtures?) => void`:
+    - `fixtures` *object* - Playwright fixtures:
+      - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo).
+      - `$tags` *string[]* - List of tags for the current step.
+      - Any other built-in and custom fixtures.
+
 ### BeforeScenario / Before
 
 Defines a hook that runs **before each scenario**. You can target the hook to specific scenarios by providing the `tags` option. `BeforeScenario` and `Before` are aliases.
