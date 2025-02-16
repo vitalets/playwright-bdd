@@ -383,7 +383,7 @@ Create `fixtures.ts`:
 export const { AfterStep } = createBdd(test);
 ```
 
-Import `fixture.ts` in step definition
+Import `fixtures.ts` in step definition
 ```ts
 import { AfterStep } from './fixtures';
 
