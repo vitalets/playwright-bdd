@@ -16,7 +16,13 @@ Currently release is performed from the local machine.
 To preview upcoming features, it's possible to release the current commit as a `next` tag.
 
 1. `npm run release`
-2. select `next` in the versions dialog
+2. select `prepatch / preminor / prerelease` in the versions dialog
+3. select `next` tag
+
+To install the next version, run:
+```sh
+npm i -D playwright-bdd@next
+```
 
 ## Releasing docs
 
