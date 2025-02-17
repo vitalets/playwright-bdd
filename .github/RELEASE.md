@@ -11,6 +11,13 @@ Currently release is performed from the local machine.
   - check docs: https://vitalets.github.io/playwright-bdd/
 6. close relevant issues on GitHub by Changelog
 
+## Releasing `next` tag
+
+To preview upcoming features, it's possible to release the current commit as a `next` tag.
+
+1. `npm run release`
+2. select `next` in the versions dialog
+
 ## Releasing docs
 
 The documentation website is generated from `*.md` files in the `./docs` directory using [Docsify](https://docsify.js.org/#/). 
