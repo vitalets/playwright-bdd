@@ -9,7 +9,8 @@ npm run knip
 npm ci
 npm run lint
 npm run prettier
+npm run build # call before tsc to get 'node_modules/playwright-bdd'
 npm run tsc
-npx npm test # 'npm run build' is called inside
+npx npm test
 npm run examples
 SKIP_GIT_HOOKS=1 npx np --yolo --no-release-draft --any-branch
