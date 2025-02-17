@@ -9,3 +9,6 @@ Feature: error
   Scenario: scenario 2
     Given step 3
     Then step 4
+
+  Scenario: scenario 3 error in step
+    Given step with error

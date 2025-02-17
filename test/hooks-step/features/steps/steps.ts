@@ -10,3 +10,8 @@ Given('step {int}', async ({ log }, n: number) => {
   log(`step ${n}`);
   expect(1).toBe(1);
 });
+
+Given('step with error', async ({ log }) => {
+  log(`step with error`);
+  expect(1).toBe(2);
+});

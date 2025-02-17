@@ -119,4 +119,14 @@ test(`${testDir.name} (error)`, () => {
     'AfterStep with error',
     'AfterStep 1',
   ]);
+
+  expectCalls('worker 2: ', stdout, [
+    // scenario 3
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'step with error',
+    // currently we don't run AfterStep hooks in case of step error
+  ]);
 });
