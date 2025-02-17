@@ -1,10 +1,11 @@
 import { expect } from '@playwright/test';
+import { pathToFileURL } from 'node:url';
 import { createBdd } from 'playwright-bdd';
 
 const { Given, Then } = createBdd();
 
 Given('I am on example.com', async ({ page }) => {
-  await page.goto('https://example.com');
+  await page.goto(pathToFileURL('example.html').toString());
 });
 
 Then('snapshot contains text {string}', async ({}, text: string) => {

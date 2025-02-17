@@ -8,7 +8,7 @@ class MyPage {
   constructor(private page: Page) {}
 
   async open() {
-    await this.page.goto('https://example.com');
+    await this.page.goto('about:blank');
   }
 
   @Given('decorator step')

@@ -10,7 +10,7 @@ Scenario 1
             [test.step] Given background step .features-gen/sample.feature.spec.js:7:11
             [test.step] And Action 00 .features-gen/sample.feature.spec.js:8:11
     [test.step] Given I am on home page .features-gen/sample.feature.spec.js:12:11
-        [pw:api] page.goto(https://example.com) features/pom.ts:11:21
+        [pw:api] page.goto(about:blank) features/pom.ts:11:21
     [test.step] And decorator step .features-gen/sample.feature.spec.js:13:11
     [test.step] And Action 1 .features-gen/sample.feature.spec.js:14:11
     [test.step] When Action 2 .features-gen/sample.feature.spec.js:15:11
