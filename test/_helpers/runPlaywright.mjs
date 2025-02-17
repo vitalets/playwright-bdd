@@ -6,7 +6,7 @@ import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
 
-export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
+export const BDDGEN_CMD = 'node ../../node_modules/playwright-bdd/dist/cli';
 export const PLAYWRIGHT_CMD = 'npx playwright test';
 export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
 

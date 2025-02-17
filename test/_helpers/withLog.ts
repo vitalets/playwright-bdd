@@ -5,9 +5,7 @@
  * Because Playwright's default reporter may overwrite the console.log output on CI.
  */
 
-// Important to import from ../node_modules/playwright-bdd,
-// Otherwise there is error: createBdd() should use 'test' extended from "playwright-bdd"
-import { test as base } from '../node_modules/playwright-bdd';
+import { test as base } from 'playwright-bdd';
 
 const logger = console;
 

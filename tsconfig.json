@@ -10,7 +10,14 @@
     "skipLibCheck": true,
     "noEmit": true,
     "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    // Resolve 'playwright-bdd' from 'node_modules/playwright-bdd' (in tests) during 'npm run tsc'.
+    // ('node_modules/playwright-bdd' is generated during build)
+    // Otherwise, 'playwright-bdd' is resolved to root dir (as there is package.json with name=playwright-bdd).
+    // This causes errors when comiling tests and examples.
+    "paths": {
+      "playwright-bdd": ["./node_modules/playwright-bdd"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
   "exclude": ["dist", "test/types-non-strict", "test/types-merge-tests"]
