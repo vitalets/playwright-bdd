@@ -21,6 +21,7 @@ import {
   SpecialTags,
 } from '../specialTags';
 import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
+import { getStepHooksFixtureNames, getStepHooksToRun } from '../../hooks/step';
 
 export type StepData = {
   pickleStep: PickleStep;
@@ -44,6 +45,7 @@ export class TestGen {
   public skippedByTag: boolean;
   private skippedByMissingSteps = false;
   public slow: boolean;
+  private stepHooksFixtureNames: string[] = [];
 
   // eslint-disable-next-line max-params
   constructor(
@@ -62,6 +64,7 @@ export class TestGen {
     this.specialTags = new SpecialTags(ownTestTags);
     this.skippedByTag = isTestSkippedByCollectedTags(this.tags);
     this.slow = isTestSlowByCollectedTags(this.tags);
+    this.fillStepHooksFixtureNames();
     this.fillStepsData();
     this.resolveFixtureNamesForDecoratorSteps();
   }
@@ -110,6 +113,7 @@ export class TestGen {
       const location = `${this.featureUri}:${stringifyLocation(gherkinStep.location)}`;
       const matchedDefinition = this.findMatchedDefinition(pickleStep, gherkinStep);
       const fixtureNames = this.getStepFixtureNames(matchedDefinition);
+      fixtureNames.push(...this.stepHooksFixtureNames);
       const pomNode = matchedDefinition?.definition.pomNode;
       const stepData: StepData = {
         pickleStep,
@@ -124,6 +128,15 @@ export class TestGen {
       this.stepsData.set(pickleStep.id, stepData);
       bg?.addStepData(stepData);
     });
+  }
+
+  private fillStepHooksFixtureNames() {
+    const beforeStepHooksToRun = getStepHooksToRun('beforeStep', this.tags);
+    const afterStepHooksToRun = getStepHooksToRun('afterStep', this.tags);
+    this.stepHooksFixtureNames = getStepHooksFixtureNames([
+      ...beforeStepHooksToRun,
+      ...afterStepHooksToRun,
+    ]);
   }
 
   private handleMissingDefinitions() {

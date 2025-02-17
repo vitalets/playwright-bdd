@@ -5,11 +5,12 @@
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
-import { getBddAutoInjectFixtures } from './bddTestFixturesAuto';
+import { BddAutoInjectFixtures, getBddAutoInjectFixtures } from './bddTestFixturesAuto';
 import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
+import { getStepHooksToRun, runStepHooks } from '../hooks/step';
 
 export type BddStepFn = BddStepInvoker['invoke'];
 
@@ -26,7 +27,7 @@ export class BddStepInvoker {
   async invoke(
     stepText: string, // step text without keyword
     argument?: PickleStepArgument | null,
-    stepFixtures?: Record<string, unknown>,
+    providedFixtures?: Record<string, unknown>,
   ) {
     this.bddContext.stepIndex++;
     this.bddContext.step.title = stepText;
@@ -44,19 +45,38 @@ export class BddStepInvoker {
       argument || undefined,
     );
 
-    const fixturesArg = this.getStepFixtures(stepFixtures || {});
+    const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
+    const stepFixtures = this.getStepFixtures(providedFixtures || {});
 
-    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, () => {
+    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, async () => {
       // Although pw-style does not expect usage of world / this in steps,
       // some projects request it for better migration process from cucumber.
       // Here, for pw-style we pass empty object as world.
       // See: https://github.com/vitalets/playwright-bdd/issues/208
-      return matchedDefinition.definition.fn.call(
+      await this.runBeforeStepHooks(stepHookFixtures);
+      const result = await matchedDefinition.definition.fn.call(
         this.bddContext.world,
-        fixturesArg,
+        stepFixtures,
         ...stepParameters,
       );
+      await this.runAfterStepHooks(stepHookFixtures);
+      return result;
     });
+  }
+
+  private async runBeforeStepHooks(
+    stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
+  ) {
+    const beforeHooksToRun = getStepHooksToRun('beforeStep', this.bddContext.tags);
+    await runStepHooks(beforeHooksToRun, stepHookFixtures);
+  }
+
+  private async runAfterStepHooks(
+    stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
+  ) {
+    const afterHooksToRun = getStepHooksToRun('afterStep', this.bddContext.tags);
+    afterHooksToRun.reverse();
+    await runStepHooks(afterHooksToRun, stepHookFixtures);
   }
 
   private findStepDefinition(stepText: string, stepTextWithKeyword: string) {
@@ -113,6 +133,10 @@ export class BddStepInvoker {
       providedFixtures = { [pomFixtureName]: pomFixture };
     }
 
+    return Object.assign({}, providedFixtures, getBddAutoInjectFixtures(this.bddContext));
+  }
+
+  private getStepHookFixtures(providedFixtures: Record<string, unknown>) {
     return Object.assign({}, providedFixtures, getBddAutoInjectFixtures(this.bddContext));
   }
 

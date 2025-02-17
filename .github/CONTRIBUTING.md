@@ -45,22 +45,31 @@ To contribute code:
 ## Development Setup
 
 1. Install dependencies:
-    ```
+    ```sh
     cd playwright-bdd
     npm install
     ```
 2. Install Playwright browsers:
-    ```
+    ```sh
     npx playwright install chromium
     ```
 3. Build project:
     ```
-    npm run build && npm run examples:build
+    npm run build
     ```
 4. Run tests:
-    ```
+    ```sh
     npm t
+    # run specific test
+    npm run only test/<test-name-in-directory>
     ```
+5. Run examples:
+    ```sh
+    npm run examples
+    # run specific example
+    npm run examples examples/<example-name-in-directory>
+    ```
+    Note: you may need to run `npm run examples` before commiting, as some pre-commit checks rely on its generated output.
 
 ## Useful Dev Commands
 

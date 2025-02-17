@@ -24,6 +24,10 @@ export default class RawJsonReporter implements Reporter {
     fs.writeFileSync(filePath, content);
   }
 
+  printsToStdio() {
+    return false;
+  }
+
   private buildFilePathForTest(test: TestCase) {
     const fileName = test
       .titlePath()
