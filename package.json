@@ -56,6 +56,7 @@
     "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
     "pw:browsers": "npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium",
     "pw:clear-cache": "npx playwright clear-cache",
+    "postversion": "node scripts/postversion.mjs",
     "release": "bash scripts/release.sh"
   },
   "dependencies": {
