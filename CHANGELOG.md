@@ -1,6 +1,6 @@
 # Changelog
 
-## Dev
+## 8.2.0
 * improve Cucumber HTML reporter to show trace without explicit `attachmentsBaseURL`.
 * introduce `BeforeStep` / `AfterStep` hooks ([#280](https://github.com/vitalets/playwright-bdd/issues/280), thanks to [@the3dsandwich](https://github.com/the3dsandwich)).
 
