@@ -22,4 +22,4 @@ This command runs BDD tests in UI mode:
 npx bddgen && npx playwright test --ui
 ```
 
-For more details on UI mode, see [watch mode](guides/watch-mode.md).
+More details on [UI mode](guides/ui-mode.md).
