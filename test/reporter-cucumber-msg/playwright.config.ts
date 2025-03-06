@@ -25,6 +25,10 @@ export default defineConfig({
     cucumberReporter('json', {
       outputFile: `features/${featureDir}/actual-reports/json-report.json`,
     }),
+    [
+      '../_helpers/rawJsonReporter.ts',
+      { outputDir: `features/${featureDir}/actual-reports/raw-json` },
+    ] as const,
     featureDir === 'attachments' ? jsonReporterNoAttachments() : null,
   ].filter((r): r is NonNullable<typeof r> => Boolean(r)),
 });

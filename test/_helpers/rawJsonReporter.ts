@@ -1,5 +1,9 @@
 /**
  * Custom reporter that prints Playwright test results JSON into file.
+ * Usage:
+ * reporter: [
+ *  ['../_helpers/rawJsonReporter.ts', { outputDir: 'actual-reports/raw-json' }] as const,
+ * ]
  */
 import fs from 'node:fs';
 import path from 'node:path';

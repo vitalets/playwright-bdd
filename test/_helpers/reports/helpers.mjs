@@ -1,11 +1,12 @@
 import path from 'node:path';
-import assert from 'node:assert/strict';
+import { expect } from '@playwright/test';
 import { jsonPaths } from 'json-paths';
 
 export function assertJsonPaths(actualJson, expectedJson, rules) {
   const actualShape = jsonPaths(actualJson, rules);
   const expectedShape = jsonPaths(expectedJson, rules);
-  assert.deepEqual(actualShape, expectedShape);
+  // Playwright's expect shows better diff
+  expect(actualShape).toEqual(expectedShape);
 }
 
 /**

@@ -79,8 +79,12 @@ export class AttachmentMapper {
   private stepAttachments = new AutofillMap<pw.TestStep, PwAttachment[]>();
 
   constructor(private result: pw.TestResult) {
+    // Playwright hides "_" prefixed attachments, we do the same.
+    // See: https://github.com/microsoft/playwright/pull/35044
+    const visibleAttachments = this.result.attachments.filter((a) => !a.name.startsWith('_'));
+
     this.allAttachments = [
-      ...this.result.attachments, // prettier-ignore
+      ...visibleAttachments, // prettier-ignore
       ...this.getStdioAttachments(),
     ];
   }

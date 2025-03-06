@@ -57,9 +57,9 @@ async function checkFeature(featureDir) {
     }
   }
 
-  assertMessagesReport(featureDir);
   assertJsonReport(featureDir);
   assertJsonReportNoAttachments(featureDir);
+  assertMessagesReport(featureDir);
 }
 
 function assertMessagesReport(featureDir) {
