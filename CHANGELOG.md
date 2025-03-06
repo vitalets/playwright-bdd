@@ -1,6 +1,7 @@
 # Changelog
 
 ## Dev
+* adopt to Playwright 1.51, improve stack trace parsing.
 * hide "_" prefixed attachments.
 
 ## 8.2.0

@@ -2,7 +2,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { TestInfoError } from '@playwright/test';
 import { stripAnsiEscapes } from '../utils/stripAnsiEscapes';
-import { parseStackTraceLine } from '../playwright/parseStackTraceLine';
+import { parseStackFrame } from '../playwright/stackTrace';
 
 const filesCache = new Map<string, string>();
 
@@ -34,7 +34,7 @@ function getErrorLocation(error: TestInfoError) {
   if (firstStackLine === -1) firstStackLine = lines.length;
   const stackLines = lines.slice(firstStackLine);
   for (const line of stackLines) {
-    const frame = parseStackTraceLine(line);
+    const frame = parseStackFrame(line, path.sep, false);
     if (!frame || !frame.file || belongsToNodeModules(frame.file)) continue;
     return { file: frame.file, column: frame.column || 0, line: frame.line || 0 };
   }

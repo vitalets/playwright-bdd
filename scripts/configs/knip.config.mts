@@ -10,6 +10,8 @@ const config: KnipConfig = {
     'scripts/**',
     'examples/**',
     'test/**',
+    // this file is copied from playwright, so keep all exports as is
+    'src/playwright/stackTrace.ts',
   ],
   ignore: ['**/*.d.ts', '**/.features-gen/**'],
   ignoreBinaries: ['docsify'],
