@@ -1,6 +1,6 @@
 # Cucumber-style steps
 
-Cucumber-style step definitions are compatible with CucumberJS.
+Cucumber-style step definitions are compatible with [CucumberJS](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/step_definitions.md).
 
  * step definitions use World (`this`) to interact with the browser
  * step definitions receive only step parameters, don't receive custom fixtures as a first argument

@@ -1,5 +1,5 @@
 # Decorators
-Playwright-BDD supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models](https://playwright.dev/docs/pom). 
+Playwright-BDD supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models (POM)](https://playwright.dev/docs/pom). 
 
 Decorators are imported from `playwright-bdd/decorators`:
 ```ts
