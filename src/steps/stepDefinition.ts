@@ -129,7 +129,7 @@ export class StepDefinition {
       case 'And':
         return keywordType === PickleStepType.CONTEXT;
       case 'But':
-        return keywordType === PickleStepType.CONTEXT;
+        return keywordType === PickleStepType.OUTCOME;
       default: // Unknown
         return true;
     }
