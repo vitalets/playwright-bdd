@@ -11,7 +11,7 @@ import { MatchedStepDefinition } from './matchedStepDefinition';
 import { buildTagsExpression, extractTagsFromPath, TagsExpression } from './tags';
 import { relativeToCwd } from '../utils/paths';
 
-export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
+export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then' | 'And' | 'But';
 export type StepPattern = string | RegExp;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyFunction = (...args: any[]) => unknown;
