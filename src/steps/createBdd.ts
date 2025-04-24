@@ -95,11 +95,15 @@ export function createBdd<
     const Given = cucumberStepCtor('Given', ctorOptions) as StepCtor;
     const When = cucumberStepCtor('When', ctorOptions) as StepCtor;
     const Then = cucumberStepCtor('Then', ctorOptions) as StepCtor;
+    const And = cucumberStepCtor('And', ctorOptions) as StepCtor;
+    const But = cucumberStepCtor('But', ctorOptions) as StepCtor;
     const Step = cucumberStepCtor('Unknown', ctorOptions) as StepCtor;
     return {
       Given,
       When,
       Then,
+      And,
+      But,
       Step,
       BeforeAll,
       AfterAll,
@@ -118,12 +122,16 @@ export function createBdd<
   const Given = playwrightStepCtor('Given', ctorOptions) as StepCtor;
   const When = playwrightStepCtor('When', ctorOptions) as StepCtor;
   const Then = playwrightStepCtor('Then', ctorOptions) as StepCtor;
+  const And = playwrightStepCtor('And', ctorOptions) as StepCtor;
+  const But = playwrightStepCtor('But', ctorOptions) as StepCtor;
   const Step = playwrightStepCtor('Unknown', ctorOptions) as StepCtor;
 
   return {
     Given,
     When,
     Then,
+    And,
+    But,
     Step,
     BeforeAll,
     AfterAll,
