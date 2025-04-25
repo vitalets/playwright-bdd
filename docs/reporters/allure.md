@@ -1,20 +1,31 @@
 # Allure Reporter
 
-You can output test results with the [allure-playwright](https://www.npmjs.com/package/allure-playwright) reporter (not `allure-cucumberjs`). Follow the instructions from the Allure website: [install](https://allurereport.org/docs/install/) Allure itself, install allure-playwright, and enable it in the config:
+You can output test results with the **allure-playwright** reporter (not `allure-cucumberjs`). Follow the instructions below:
 
-```js
-import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+1. [Install Allure](https://allurereport.org/docs/install/)
 
-const testDir = defineBddConfig({ /* BDD config */ });
+2. [Install Allure-Playwright](https://allurereport.org/docs/playwright/)
 
-export default defineConfig({
-  testDir,
-  reporter: 'allure-playwright', // <- enable allure reporter
-});
+3. Enable `allure-reporter` in the Playwright config:
+
+    ```js
+    import { defineConfig } from '@playwright/test';
+    import { defineBddConfig } from 'playwright-bdd';
+
+    const testDir = defineBddConfig({ /* BDD config */ });
+
+    export default defineConfig({
+      testDir,
+      reporter: 'allure-playwright', // <- enable allure reporter
+    });
+    ```
+
+Now run tests as usual:
+```
+npx bddgen && npx playwright test
 ```
 
-Feature file:
+Example feature file:
 ```gherkin
 Feature: Playwright Home Page
 
@@ -24,5 +35,5 @@ Feature: Playwright Home Page
         Then I see in title "Installation"
 ```
 
-Allure report:
+Example report:
 ![Allure report](./_media/allure-report.png)
