@@ -19,6 +19,14 @@ test(`${testDir.name} (custom prompt)`, { skip }, async () => {
   checkReports('(custom prompt)');
 });
 
+test(`${testDir.name} (custom page)`, { skip }, async () => {
+  execPlaywrightTestWithError(testDir.name, '', {
+    env: { FEATURES: 'features/custom-page.feature' },
+  });
+
+  checkReports('(custom page)');
+});
+
 // run default prompt last to keep it in report files, for manual checking prompt
 test(`${testDir.name} (default prompt)`, { skip }, async () => {
   execPlaywrightTestWithError(testDir.name);

@@ -22,3 +22,11 @@ test('Fix with AI attachment (custom prompt)', async ({ page }) => {
   const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
   expect(clipboardContent).toContain('my custom prompt');
 });
+
+test('Fix with AI attachment (custom page)', async ({ page }) => {
+  await expect(page.getByText('Fix with AI')).toBeVisible();
+  await expect(page.getByRole('link', { name: 'Open ChatGPT' })).toBeVisible();
+  await page.getByRole('button', { name: 'Copy prompt' }).click();
+  const clipboardContent = await page.evaluate(() => navigator.clipboard.readText());
+  expect(clipboardContent).toContain('failing test on custom page fixture');
+});

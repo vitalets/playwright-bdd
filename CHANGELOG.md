@@ -1,5 +1,8 @@
 # Changelog
 
+## Dev
+* Fix snippet clearing for AI
+
 ## 8.2.1
 * adopt to Playwright 1.51, improve stack trace parsing.
 * hide "_" prefixed attachments.

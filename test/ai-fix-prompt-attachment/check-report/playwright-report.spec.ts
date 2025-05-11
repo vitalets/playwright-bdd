@@ -26,3 +26,13 @@ test('Fix with AI attachment (custom prompt)', async ({ page }) => {
   const attachmentBody = page.locator('.attachment-body');
   await expect(attachmentBody).toContainText('my custom prompt');
 });
+
+test('Fix with AI attachment (custom page)', async ({ page }) => {
+  await page.getByRole('link', { name: 'Scenario 1' }).click();
+
+  await expect(page.getByText('Fix with AI')).toBeVisible();
+  await page.getByText('Fix with AI').click();
+
+  const attachmentBody = page.locator('.attachment-body');
+  await expect(attachmentBody).toContainText('failing test on custom page fixture');
+});
