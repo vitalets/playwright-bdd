@@ -2,8 +2,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: process.env.FEATURES || 'features/sample.feature',
-  steps: 'features/*.ts',
+  featuresRoot: 'features',
+  tags: process.env.TAGS,
   aiFix: {
     promptAttachment: true,
     promptTemplate: process.env.PROMPT_TEMPLATE,
