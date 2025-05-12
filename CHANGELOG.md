@@ -1,7 +1,8 @@
 # Changelog
 
 ## Dev
-* Fix snippet clearing for AI
+* fix: improve snippet clearing for Fix with AI
+* fix: handle closed page for Fix with AI ([#308](https://github.com/vitalets/playwright-bdd/issues/308))
 
 ## 8.2.1
 * adopt to Playwright 1.51, improve stack trace parsing.

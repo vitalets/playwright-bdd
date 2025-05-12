@@ -48,9 +48,15 @@ export class PromptBuilder {
 
   private async captureAriaSnapshot() {
     if (supportedFeatures.ariaSnapshots && this.page) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore PW < 1.49 don't have .ariaSnapshot()
-      return this.page.locator('html').ariaSnapshot();
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore PW < 1.49 don't have .ariaSnapshot()
+        return await this.page.locator('html').ariaSnapshot();
+      } catch {
+        // Page can be already closed
+        // See: https://github.com/vitalets/playwright-bdd/issues/308
+        return '';
+      }
     }
   }
 
