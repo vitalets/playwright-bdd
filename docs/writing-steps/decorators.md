@@ -109,3 +109,44 @@ Feature: Some feature
     Scenario: Adding todos
       When I add todo "foo"   # <- will use AdminTodoPage
 ```
+
+## Accessing BDD fixtures
+
+Decorator steps accept only step parameters. To access any custom or BDD fixture, you should manually pass the required fixtures to the POM constructor and access them via `this` keyword.
+
+**Example**
+
+1. Define `$tags` and `$test` fixtures as constructor arguments and use them in the step:
+
+```ts
+// TodoPage.ts
+import { Page, expect } from '@playwright/test';
+import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
+import { test } from './fixtures';
+
+export @Fixture<typeof test>('todoPage') class TodoPage {
+  constructor(
+    public page: Page, 
+    protected $tags: string[], 
+    protected $test: typeof test
+  ) {}
+
+  @Given('I am on todo page')
+  async open() {
+    if (this.$tags.includes('firefox')) {
+      this.$test.skip();
+    }
+  }
+```
+
+2. Pass `$tags` and `$test` to the POM constructor:
+
+```ts
+// fixtures.ts
+export const test = base.extend<{ todoPage: TodoPage }>({
+  todoPage: ({ page, $tags, $test }, use) => {
+    const todoPage = new TodoPage(page, $tags, $test as typeof test);
+    await use(todoPage);
+  },
+});
+```
