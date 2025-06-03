@@ -1,7 +1,7 @@
-# Multiple projects
+# Projects
 You can use Playwright-BDD with multiple [Playwright projects](https://playwright.dev/docs/test-projects). 
 
-## Same feature files
+## Shared feature files
 
 If all projects use **the same set of feature files**, you can define a single `testDir` option at the root level of the config:
 ```ts

@@ -5,7 +5,7 @@
 
 * [**Configuration**](configuration/index.md)
   - [Options](configuration/options.md)
-  - [Multiple projects](configuration/multiple-projects.md)
+  - [Projects](configuration/multiple-projects.md)
   - [ESM](configuration/esm.md)
 
 * [**Writing features**](writing-features/index.md)
