@@ -33,7 +33,7 @@ export type StepDefinitionOptions = {
 
 export class StepDefinition {
   #expression?: Expression;
-  #tagsExpression?: TagsExpression;
+  tagsExpression?: TagsExpression;
 
   constructor(private options: StepDefinitionOptions) {
     this.buildTagsExpression();
@@ -112,10 +112,6 @@ export class StepDefinition {
     }
   }
 
-  matchesTags(tags: string[]) {
-    return this.#tagsExpression ? this.#tagsExpression.evaluate(tags) : true;
-  }
-
   // eslint-disable-next-line visual/complexity
   matchesKeywordType(keywordType: PickleStepType | undefined) {
     if (!keywordType || keywordType === PickleStepType.UNKNOWN) return true;
@@ -136,7 +132,7 @@ export class StepDefinition {
     // Possibly, we should use relative to configDir
     const relFilePath = relativeToCwd(location.file);
     const tagsFromPath = extractTagsFromPath(relFilePath);
-    this.#tagsExpression = buildTagsExpression([
+    this.tagsExpression = buildTagsExpression([
       ...tagsFromPath,
       defaultTags,
       providedOptions?.tags,

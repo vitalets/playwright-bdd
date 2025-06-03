@@ -5,10 +5,14 @@ const testDir = new TestDir(import.meta);
 test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name);
 
+  // scenario @foo
   expect(stdout).toContain('scenario foo: step without tags');
+  expect(stdout).toContain('scenario foo: step with and without tag (@foo)');
   expect(stdout).toContain('scenario foo: step for @foo');
 
+  // scenario @bar
   expect(stdout).toContain('scenario bar: step without tags');
+  expect(stdout).toContain('scenario bar: step with and without tag (no tags)');
   expect(stdout).toContain('scenario bar: step for @bar');
 
   // fixtureBg2 is also executed for baz1 although it is not used in the test.

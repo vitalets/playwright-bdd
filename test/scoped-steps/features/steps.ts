@@ -29,3 +29,11 @@ Given('bg step bound to scenario', { tags: '@baz1' }, async ({ $testInfo, fixtur
 Given('bg step bound to scenario', { tags: '@baz2' }, async ({ $testInfo, fixtureBg2 }) => {
   logger.log(`${$testInfo.title}: bg step for @baz2`);
 });
+
+Given('step with and without tag', async ({ $testInfo, $step }) => {
+  logger.log(`${$testInfo.title}: ${$step.title} (no tags)`);
+});
+
+Given('step with and without tag', { tags: '@foo' }, async ({ $testInfo, $step }) => {
+  logger.log(`${$testInfo.title}: ${$step.title} (@foo)`);
+});

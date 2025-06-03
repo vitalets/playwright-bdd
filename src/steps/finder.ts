@@ -5,7 +5,6 @@ import { PickleStepType } from '@cucumber/messages';
 import { relativeToCwd } from '../utils/paths';
 import { stepDefinitions } from './stepRegistry';
 import { BDDConfig } from '../config/types';
-// import { KeywordType } from '../cucumber/keywordType';
 import { StepDefinition } from './stepDefinition';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { toBoolean } from '../utils';
@@ -20,7 +19,7 @@ export class StepFinder {
       definitions = this.filterByKeyword(definitions, keywordType);
     }
 
-    if (tags) {
+    if (tags?.length) {
       definitions = this.filterByTags(definitions, tags);
     }
 
@@ -42,8 +41,21 @@ export class StepFinder {
     );
   }
 
-  private filterByTags(matchedDefinitions: MatchedStepDefinition[], tags: string[]) {
-    return matchedDefinitions.filter(({ definition }) => definition.matchesTags(tags));
+  private filterByTags(definitions: MatchedStepDefinition[], tags: string[]) {
+    const definitionsWithoutTags = definitions.filter(({ definition }) => {
+      const { tagsExpression } = definition;
+      return !tagsExpression;
+    });
+
+    const matchedDefinitions = definitions.filter(({ definition }) => {
+      const { tagsExpression } = definition;
+      return tagsExpression && tagsExpression.evaluate(tags);
+    });
+
+    // If some definitions with tags matched, use them.
+    // Otherwise return all definitions without tags.
+    // See: https://github.com/vitalets/playwright-bdd/issues/300#issuecomment-2811845157
+    return matchedDefinitions.length ? matchedDefinitions : definitionsWithoutTags;
   }
 }
 
