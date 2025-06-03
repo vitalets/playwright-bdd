@@ -1,6 +1,6 @@
 # Scoped step definitions
 
-By default, step definitions are global and [not bound to a particular feature](https://cucumber.io/docs/cucumber/step-definitions/?lang=javascript#scope). Although it follows Cucumber design, in large projects it can be tricky to keep steps unique for all possible domains.
+By default, step definitions are global and [not bound to a particular feature](https://cucumber.io/docs/guides/anti-patterns/#feature-coupled-step-definitions). Although it follows Cucumber design, in large projects it can be tricky to keep steps unique for all possible domains.
 
 Playwright-BDD provides a way to scope step definitions to a particular feature or scenario. You can pass a `tags` expression, narrowing the scope of the definition:
 

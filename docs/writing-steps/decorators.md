@@ -96,6 +96,8 @@ Scenario: Adding todos
 
 Here Playwright-BDD will use a single fixture `AdminTodoPage` for both steps instead of creating two separate fixtures.
 
+?> 👉 Please ensure that both parent and child POMs are covered by the `steps` pattern in the config.
+
 In some cases, you may want to force the usage of a particular fixture.
 For that, you can apply the special tag `@fixture:%name%`:
 
