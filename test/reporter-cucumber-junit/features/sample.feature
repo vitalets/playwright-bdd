@@ -19,3 +19,8 @@ Feature: some feature
     Examples:
       | start | end |
       | 4     | 8   |
+
+  Rule: some rule
+
+    Scenario: scenario with rule
+      Given success step 1

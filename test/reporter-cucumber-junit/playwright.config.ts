@@ -10,7 +10,7 @@ export default defineConfig({
   fullyParallel: true,
   reporter: [
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
-    cucumberReporter('junit', { outputFile: 'actual-reports/report.xml', suiteName: 'My suite' }),
+    cucumberReporter('junit', { outputFile: 'actual-reports/junit.xml', suiteName: 'My suite' }),
   ],
   use: {
     screenshot: 'only-on-failure',

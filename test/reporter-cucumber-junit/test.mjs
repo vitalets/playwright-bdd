@@ -6,5 +6,5 @@ test(testDir.name, async () => {
   testDir.clearDir('actual-reports');
   execPlaywrightTestWithError(testDir.name);
 
-  await testDir.assertJunitReport(`actual-reports/report.xml`, `expected-reports/report.xml`);
+  await testDir.assertJunitReport(`actual-reports/junit.xml`, `expected-reports/junit.xml`);
 });
