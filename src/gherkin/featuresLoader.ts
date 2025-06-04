@@ -5,9 +5,17 @@
  * See: https://github.com/cucumber/cucumber-js/blob/main/src/api/gherkin.ts
  */
 
-import { GherkinStreams, IGherkinStreamOptions } from '@cucumber/gherkin-streams';
+import fs from 'node:fs';
+import path from 'node:path';
+import { generateMessages } from '@cucumber/gherkin';
 import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
-import { Envelope, ParseError, Pickle, GherkinDocument } from '@cucumber/messages';
+import {
+  ParseError,
+  Pickle,
+  GherkinDocument,
+  IdGenerator,
+  SourceMediaType,
+} from '@cucumber/messages';
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
 import { GherkinDocumentWithPickles } from './types';
@@ -16,32 +24,31 @@ export function resolveFeatureFiles(cwd: string, patterns: string | string[]) {
   return resolveFiles(cwd, toArray(patterns), 'feature');
 }
 
+type LoadFeaturesOptions = {
+  // Default is 'en'.
+  // See: https://github.com/cucumber/gherkin-streams/blob/main/src/makeGherkinOptions.ts#L5
+  defaultDialect?: string;
+  // If relativeTo is provided, uri in gherkin documents will be relative to it.
+  // See: https://github.com/cucumber/gherkin-streams/blob/main/src/SourceMessageStream.ts#L31
+  relativeTo?: string;
+};
+
+const newId = IdGenerator.uuid();
+
 export class FeaturesLoader {
   gherkinQuery = new GherkinQuery();
   parseErrors: ParseError[] = [];
 
-  /**
-   * Loads and parses feature files.
-   * - featureFiles should be absolute.
-   *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/GherkinStreams.ts#L36
-   * - if options.relativeTo is provided, uri in gherkin documents will be relative to it.
-   *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/SourceMessageStream.ts#L31
-   * - options.defaultDialect is 'en' by default.
-   *   See: https://github.com/cucumber/gherkin-streams/blob/main/src/makeGherkinOptions.ts#L5
-   */
-  async load(featureFiles: string[], options: IGherkinStreamOptions) {
+  async load(absFeatureFiles: string[], options: LoadFeaturesOptions) {
     this.gherkinQuery = new GherkinQuery();
     this.parseErrors = [];
-    // Without this early return gherkinFromPaths() produced weird behavior
-    // for reporters: it does not keep exit code
-    // See: https://github.com/vitalets/playwright-bdd/issues/200
-    if (!featureFiles.length) return;
-    await gherkinFromPaths(featureFiles, options, (envelope) => {
-      this.gherkinQuery.update(envelope);
-      if (envelope.parseError) {
-        this.parseErrors.push(envelope.parseError);
-      }
-    });
+
+    // Load features sequentially (as it was in gherkin-streams).
+    // Potentially it can be parallelized in the future.
+    // See: https://github.com/cucumber/gherkin-streams/blob/main/src/GherkinStreams.ts#L30
+    for (const featureFile of absFeatureFiles) {
+      await this.loadFeature(featureFile, options);
+    }
   }
 
   getDocumentsCount() {
@@ -52,6 +59,26 @@ export class FeaturesLoader {
     return this.gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
       const pickles = this.getDocumentPickles(gherkinDocument);
       return { ...gherkinDocument, pickles };
+    });
+  }
+
+  private async loadFeature(featureFile: string, options: LoadFeaturesOptions) {
+    const uri = getFeatureUri(featureFile, options);
+    const gherkinSource = await fs.promises.readFile(featureFile, 'utf8');
+    const gherkinOptions = makeGherkinOptions(options);
+
+    const envelopes = generateMessages(
+      gherkinSource,
+      uri,
+      SourceMediaType.TEXT_X_CUCUMBER_GHERKIN_PLAIN,
+      gherkinOptions,
+    );
+
+    envelopes.forEach((envelope) => {
+      this.gherkinQuery.update(envelope);
+      if (envelope.parseError) {
+        this.parseErrors.push(envelope.parseError);
+      }
     });
   }
 
@@ -69,15 +96,16 @@ export class FeaturesLoader {
   }
 }
 
-async function gherkinFromPaths(
-  paths: string[],
-  options: IGherkinStreamOptions,
-  onEnvelope: (envelope: Envelope) => void,
-): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const gherkinMessageStream = GherkinStreams.fromPaths(paths, options);
-    gherkinMessageStream.on('data', onEnvelope);
-    gherkinMessageStream.on('end', resolve);
-    gherkinMessageStream.on('error', reject);
-  });
+function makeGherkinOptions(options: LoadFeaturesOptions) {
+  return {
+    defaultDialect: options.defaultDialect,
+    includeSource: true,
+    includeGherkinDocument: true,
+    includePickles: true,
+    newId,
+  };
+}
+
+function getFeatureUri(featureFile: string, options: LoadFeaturesOptions) {
+  return options.relativeTo ? path.relative(options.relativeTo, featureFile) : featureFile;
 }
