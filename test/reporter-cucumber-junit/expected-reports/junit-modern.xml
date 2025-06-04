@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<testsuite name="My suite" time="0.462010009" tests="6" skipped="0" failures="1" errors="0" timestamp="2025-06-04T06:38:01.423Z">
+  <testcase classname="some feature" name="chromium - some feature - scenario with examples - #2.1: scenario with examples" time="0.018">
+    <system-out><![CDATA[Given success step 4........................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="some feature" name="chromium - some feature - scenario with examples - #1.1: scenario with examples" time="0.017">
+    <system-out><![CDATA[Given success step 2........................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="some feature" name="chromium - some feature - scenario with examples - #1.2: scenario with examples" time="0.018">
+    <system-out><![CDATA[Given success step 3........................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="some feature" name="chromium - some feature - success scenario" time="0.018">
+    <system-out><![CDATA[Given success step 1........................................................passed
+And success step 2..........................................................passed]]></system-out>
+  </testcase>
+  <testcase classname="some feature" name="chromium - some feature - failing scenario" time="0.022">
+    <failure type="Error" message="Error: expect(received).toEqual(expected) // deep equality&#xA;&#xA;Expected: &quot;bar&quot;&#xA;Received: &quot;foo&quot;&#xA;   at features/steps.ts:11&#xA;&#xA;   9 |&#xA;  10 | Given('failing step', async ({}) => {&#xA;> 11 |   expect('foo').toEqual('bar');&#xA;     |                 ^&#xA;  12 | });&#xA;  13 |"><![CDATA[    at Object.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/features/steps.ts:11:17)
+    at /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/.features-gen/features/sample.feature.spec.js:13:5]]></failure>
+    <system-out><![CDATA[Given success step 1........................................................passed
+And failing step............................................................failed]]></system-out>
+  </testcase>
+  <testcase classname="some feature" name="chromium - some feature - some rule - scenario with rule" time="0.002">
+    <system-out><![CDATA[Given success step 1........................................................passed]]></system-out>
+  </testcase>
+</testsuite>

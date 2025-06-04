@@ -4,6 +4,7 @@
 * fix: improve snippet clearing for Fix with AI
 * fix: handle closed page for Fix with AI ([#308](https://github.com/vitalets/playwright-bdd/issues/308))
 * feat: prioritize steps with tags ([#300](https://github.com/vitalets/playwright-bdd/issues/300))
+* feat: add `junit-modern` reporter based on [@cucumber/junit-xml-formatter](https://github.com/cucumber/junit-xml-formatter)
 
 ## 8.2.1
 * adopt to Playwright 1.51, improve stack trace parsing.
