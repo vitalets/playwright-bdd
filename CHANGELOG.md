@@ -1,6 +1,8 @@
 # Changelog
 
-## Dev
+> This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
+
+## [Unreleased]
 * fix: improve snippet clearing for Fix with AI
 * fix: handle closed page for Fix with AI ([#308](https://github.com/vitalets/playwright-bdd/issues/308))
 * feat: prioritize steps with tags ([#300](https://github.com/vitalets/playwright-bdd/issues/300))
@@ -8,6 +10,7 @@
 * feat: update Cucumber HTML reporter with new header block ([cucumber/react-components#381](https://github.com/cucumber/react-components/pull/381))
 * chore: remove `@cucumber/gherkin-streams` dependency in favor of loading features with `@cucumber/gherkin`
 * chore: set minimal Playwright version 1.42
+* chore: release via `release-it` instead of `np`
 
 ## 8.2.1
 * adopt to Playwright 1.51, improve stack trace parsing.

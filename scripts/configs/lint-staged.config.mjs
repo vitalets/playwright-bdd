@@ -10,7 +10,10 @@ export default {
       ...test(changedFiles),
     ];
   },
-  '**/*.ts': () => `npm run tsc`,
+  // we need to build the project before running tsc,
+  // because node_modules/playwright-bdd can be removed after npm install
+  // todo: better solution?
+  '**/*.ts': () => ['npm run build', 'npm run tsc'],
   '**/*.feature': 'node scripts/no-only-in-features.mjs',
   'docs/**': () => 'npm run docs:validate',
 };

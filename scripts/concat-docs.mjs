@@ -1,6 +1,8 @@
 /**
  * Concatenate all docs into single markdown file.
  * node ./scripts/concat-docs.mjs
+ *
+ * Why is it needed? :)
  */
 import fs from 'fs';
 import path from 'path';
