@@ -1,8 +1,5 @@
 import { expect } from '@playwright/test';
 import { test } from '../../../check-report/fixtures';
-import { getPackageVersion } from '../../../../../src/utils';
-
-const playwrightVersion = getPackageVersion('@playwright/test');
 
 test('timeout in fixture setup', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
@@ -27,9 +24,6 @@ test('timeout in fixture setup', async ({ scenario }) => {
 });
 
 test('timeout in before hook', async ({ scenario }) => {
-  // In PW 1.41 sometime none of before hook entries has error or duretion -1,
-  // so timeout error is attachmed to After Hooks.
-  test.skip(playwrightVersion < '1.42.0');
   await expect(scenario.getSteps()).toContainText([
     // sometimes we still have 'BeforeEach Hooks|Before Hooks' here, not 'my timeouted hook',
     // when 'duration' is not -1, we can't find timeouted item.

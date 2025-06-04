@@ -4,7 +4,6 @@
 
 import { PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
-import { playwrightVersion } from '../playwright/utils';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
 import { BDDConfig } from '../config/types';
@@ -17,8 +16,6 @@ import {
   BEFORE_ALL_HOOKS_GROUP_NAME,
   BEFORE_EACH_HOOKS_GROUP_NAME,
 } from '../hooks/const';
-
-const supportsTags = playwrightVersion >= '1.42.0';
 
 type StepFixtureName = 'Given' | 'When' | 'Then' | 'And' | 'But';
 export type ImportTestFrom = {
@@ -213,9 +210,7 @@ export class Formatter {
   }
 
   private testTags(tags: string[]) {
-    return supportsTags && tags.length
-      ? `{ tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}] }, `
-      : '';
+    return tags.length ? `{ tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}] }, ` : '';
   }
 
   /**

@@ -8,13 +8,10 @@ import {
 
 const testDir = new TestDir(import.meta);
 
-// - Till Pw 1.41 first trace was attached to BeforeAll hooks, not to top level test.steps.
 // - Since PW 1.46 there is a 'box' option for the fixture, that hides it from the report.
 // - Since PW 1.50 each step has 'attahcments' field, no 'attach' type steps in test result.
 function getExpectedReportName() {
   switch (true) {
-    case playwrightVersion < '1.42':
-      return 'report-less-1.42.txt';
     case playwrightVersion < '1.46':
       return 'report-less-1.46.txt';
     case playwrightVersion < '1.50':

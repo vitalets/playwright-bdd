@@ -7,6 +7,7 @@
 * feat: add `junit-modern` reporter based on [@cucumber/junit-xml-formatter](https://github.com/cucumber/junit-xml-formatter)
 * feat: update Cucumber HTML reporter with new header block ([cucumber/react-components#381](https://github.com/cucumber/react-components/pull/381))
 * chore: remove `@cucumber/gherkin-streams` dependency in favor of loading features with `@cucumber/gherkin`
+* chore: set minimal Playwright version 1.42
 
 ## 8.2.1
 * adopt to Playwright 1.51, improve stack trace parsing.

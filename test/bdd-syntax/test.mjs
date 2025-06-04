@@ -1,11 +1,4 @@
-import {
-  test,
-  TestDir,
-  expect,
-  execPlaywrightTest,
-  playwrightVersion,
-  DEFAULT_CMD,
-} from '../_helpers/index.mjs';
+import { test, TestDir, expect, execPlaywrightTest, DEFAULT_CMD } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -39,17 +32,10 @@ function checkBackgroundWithoutScenarios(outDir) {
 }
 
 function checkTags(outDir) {
-  if (playwrightVersion >= '1.42.0') {
-    testDir.expectFileContains(`${outDir}/tags.feature.spec.js`, [
-      'test("Simple scenario", { tag: ["@foo", "@bar", "@baz", "@jira:123"] }, async',
-      'test("Example #1", { tag: ["@foo", "@bar", "@scenario-outline", "@scenario-outline-examples1"] }, async',
-    ]);
-  } else {
-    testDir.expectFileContains(`${outDir}/tags.feature.spec.js`, [
-      'test("Simple scenario", async',
-      'test("Example #1", async',
-    ]);
-  }
+  testDir.expectFileContains(`${outDir}/tags.feature.spec.js`, [
+    'test("Simple scenario", { tag: ["@foo", "@bar", "@baz", "@jira:123"] }, async',
+    'test("Example #1", { tag: ["@foo", "@bar", "@scenario-outline", "@scenario-outline-examples1"] }, async',
+  ]);
 }
 
 function checkScenarioOutline(outDir) {
