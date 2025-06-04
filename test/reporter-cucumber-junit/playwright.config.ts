@@ -7,7 +7,6 @@ const testDir = defineBddConfig({
 });
 
 export default defineConfig({
-  testDir,
   fullyParallel: true,
   reporter: [
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
@@ -19,4 +18,10 @@ export default defineConfig({
   expect: {
     timeout: 1,
   },
+  projects: [
+    {
+      name: 'chromium',
+      testDir,
+    },
+  ],
 });
