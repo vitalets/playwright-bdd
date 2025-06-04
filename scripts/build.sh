@@ -11,6 +11,9 @@ npx tsc -p tsconfig.build.json
 # TS finds playwright-bdd typings in 'examples/node_modules/playwright-bdd' 
 # instead of 'test/node_modules/playwright-bdd'. 
 # If types change, TS may show type errors in tests until examples re-build (it's unconvenient).
+
+# Currently there is another problem: after 'npm install <module>', node_modules/playwright-bdd is removed
+# and 'npm run tsc' does not pass. To fix it, we should run `npm run build`.
 rm -rf ./node_modules/playwright-bdd
 mkdir -p ./node_modules/playwright-bdd
 cp -R ./dist ./node_modules/playwright-bdd/
