@@ -37,5 +37,5 @@ function checkAttachmentFiles() {
     .getAllFiles('actual-reports/data')
     .map((file) => path.extname(file))
     .sort();
-  expect(extensions).toEqual(['.jpeg', '.png', '.png', '.webm', '.zip']);
+  expect(extensions).toEqual(['.jpg', '.png', '.png', '.webm', '.zip']);
 }
