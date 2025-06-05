@@ -9,13 +9,16 @@ import {
 const testDir = new TestDir(import.meta);
 
 // - Since PW 1.46 there is a 'box' option for the fixture, that hides it from the report.
-// - Since PW 1.50 each step has 'attahcments' field, no 'attach' type steps in test result.
+// - Since PW 1.50 each step has 'attachments' field, no 'attach' type steps in test result.
 function getExpectedReportName() {
   switch (true) {
     case playwrightVersion < '1.46':
       return 'report-less-1.46.txt';
     case playwrightVersion < '1.50':
       return 'report-less-1.50.txt';
+    // Since pw 1.53 'page.goto("about:blank")' step title is replaced with 'Navigate "about:blank"'
+    case playwrightVersion < '1.53':
+      return 'report-less-1.53.txt';
     default:
       return 'report-current.txt';
   }

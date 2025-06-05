@@ -64,9 +64,10 @@ export default class StepsReporter implements Reporter {
     return lines;
   }
 
-  private shouldReportStep({ category, title }: TestStep) {
+  private shouldReportStep(step: TestStep) {
+    const { category, title } = step;
     if (!this.options.categories || this.options.categories.includes(category)) return true;
-    if (this.options.titles?.includes(title)) return true;
+    if (this.options.titles?.some((t) => title.includes(t))) return true;
   }
 }
 

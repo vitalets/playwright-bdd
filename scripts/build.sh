@@ -14,7 +14,14 @@ npx tsc -p tsconfig.build.json
 
 # Currently there is another problem: after 'npm install <module>', node_modules/playwright-bdd is removed
 # and 'npm run tsc' does not pass. To fix it, we should run `npm run build`.
-rm -rf ./node_modules/playwright-bdd
-mkdir -p ./node_modules/playwright-bdd
-cp -R ./dist ./node_modules/playwright-bdd/
-cp ./package.json ./node_modules/playwright-bdd/package.json
+# It's annoying b/c every time I swtich PW version, I need to run `npm run build`.
+
+# rm -rf ./node_modules/playwright-bdd
+# mkdir -p ./node_modules/playwright-bdd
+# cp -R ./dist ./node_modules/playwright-bdd/
+# cp ./package.json ./node_modules/playwright-bdd/package.json
+
+rm -rf ./test/node_modules/playwright-bdd
+mkdir -p ./test/node_modules/playwright-bdd
+cp -R ./dist ./test/node_modules/playwright-bdd/
+cp ./package.json ./test/node_modules/playwright-bdd/

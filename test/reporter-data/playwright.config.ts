@@ -12,7 +12,7 @@ export default defineConfig({
       '../_helpers/stepsReporter.ts',
       {
         outputFile: 'actual-reports/report.txt',
-        titles: ['fixture: $beforeEach', 'fixture: $afterEach', 'page.goto(about:blank)'],
+        titles: ['fixture: $beforeEach', 'fixture: $afterEach', 'page.goto', 'Navigate'],
         // useful to debug:
         // categories: null,
       },
