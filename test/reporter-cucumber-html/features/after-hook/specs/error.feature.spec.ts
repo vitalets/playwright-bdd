@@ -43,8 +43,10 @@ test('error in fixture teardown (no step)', async ({ scenario }) => {
     'Givenstep with page',
     'Givenstep that uses fixtureWithErrorInTeardown',
     'WhenAction 1',
-    `Hook "fixture: fixtureWithErrorInTeardown" failed: ${normalize('features/after-hook/fixtures.ts')}:`,
+    // fixture: prefix was removed in pw 1.53
+    /Hook "(fixture: )?fixtureWithErrorInTeardown" failed:/,
   ]);
+  await expect(scenario.getSteps()).toContainText([normalize('features/after-hook/fixtures.ts')]);
   await expect(scenario.getSteps()).toContainText(['screenshot']);
   await expect(scenario.getAttachments()).toContainText([
     'my attachment|before use', // prettier-ignore

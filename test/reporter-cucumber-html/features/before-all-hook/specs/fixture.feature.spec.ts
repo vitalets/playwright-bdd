@@ -4,10 +4,14 @@ import { test } from '../../../check-report/fixtures';
 
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "fixture: workerFixtureWithErrorInSetup" failed: ${normalize('features/before-all-hook/fixtures.ts')}:`,
+    // fixture: prefix was removed in pw 1.53
+    /Hook "(fixture: )?workerFixtureWithErrorInSetup" failed:/,
     'GivenAction 1',
     'Givenstep that uses workerFixtureWithErrorInSetup',
     'Download trace',
+  ]);
+  await expect(scenario.getSteps()).toContainText([
+    normalize('features/before-all-hook/fixtures.ts'),
   ]);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(2);

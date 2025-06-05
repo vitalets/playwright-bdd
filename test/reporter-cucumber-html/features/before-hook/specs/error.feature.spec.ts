@@ -39,11 +39,13 @@ test('error in nested step in before hook', async ({ scenario }) => {
 
 test('error in fixture setup (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    `Hook "fixture: fixtureWithErrorInSetup" failed: ${normalize('features/before-hook/fixtures.ts')}:`,
+    // fixture: prefix was removed in pw 1.53
+    /Hook "(fixture: )?fixtureWithErrorInSetup" failed:/,
     'Givenstep that uses fixtureWithErrorInSetup',
     'WhenAction 1',
     'screenshot',
   ]);
+  await expect(scenario.getSteps()).toContainText([normalize('features/before-hook/fixtures.ts')]);
   await expect(scenario.getAttachments()).toHaveText([
     'my attachment|outside step',
     'my attachment|in step',

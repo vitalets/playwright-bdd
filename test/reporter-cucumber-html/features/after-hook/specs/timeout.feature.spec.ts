@@ -6,7 +6,8 @@ test('timeout in fixture teardown', async ({ scenario }) => {
     'GivenAction 0',
     'Givenstep that uses fixtureWithTimeoutInTeardown',
     'WhenAction 1',
-    /Hook "(After Hooks|fixture: fixtureWithTimeoutInTeardown)" failed/,
+    // fixture: prefix was removed in pw 1.53
+    /Hook "(After Hooks|(fixture: )?fixtureWithTimeoutInTeardown)" failed/,
   ]);
   // don't check screenshot as it's not reliable in timeouts
   await expect(scenario.getSteps('passed')).toHaveCount(3);
