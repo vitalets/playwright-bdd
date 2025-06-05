@@ -2,11 +2,7 @@ import type { KnipConfig } from 'knip';
 
 const config: KnipConfig = {
   entry: [
-    'src/cli/index.ts', // prettier-ignore
-    'src/cli/worker.ts',
-    'src/index.ts',
-    'src/decorators.ts',
-    'src/reporter/cucumber/index.ts',
+    'src/cli/worker.ts', // prettier-ignore
     'scripts/**',
     'examples/**',
     'test/**',
@@ -20,9 +16,7 @@ const config: KnipConfig = {
     '@cucumber/pretty-formatter',
     'playwright-core',
     'lint-staged',
-    'np',
     'npm-run-all',
-    'publint',
     'http-server',
   ],
 };
