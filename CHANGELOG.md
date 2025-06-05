@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [8.3.0] - 2025-06-05
 * fix: improve snippet clearing for Fix with AI
 * fix: handle closed page for Fix with AI ([#308](https://github.com/vitalets/playwright-bdd/issues/308))
 * feat: prioritize steps with tags ([#300](https://github.com/vitalets/playwright-bdd/issues/300))
@@ -268,3 +270,6 @@ Version v3 has several major updates based on the feedback.
 
 ## 1.2.0
 * Initial public release
+
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v8.3.0...HEAD
+[8.3.0]: https://github.com/vitalets/playwright-bdd/compare/v8.2.1...v8.3.0
