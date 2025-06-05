@@ -4,6 +4,10 @@ export default {
   git: {
     requireCleanWorkingDir: true,
   },
+  github: {
+    release: true,
+    web: true,
+  },
   hooks: {
     'before:init': [
       'npm run docs:validate',
@@ -12,7 +16,7 @@ export default {
       'npm ci',
       'npm run lint',
       'npm run prettier',
-      'npm run build', // call before tsc to get 'node_modules/playwright-bdd'
+      'npm run build',
       'npm run tsc',
       'npx npm test',
       'npm run examples',
