@@ -3,7 +3,6 @@
 Currently release is performed from the local machine.
 
 1. push `main` branch to GitHub and wait all checks to pass
-1. bump version in changelog
 2. `npm run release`
 3. update playwright-bdd-example: `npm i -D playwright-bdd@latest`
 4. merge `main` branch to `docs` to update documentation website:
