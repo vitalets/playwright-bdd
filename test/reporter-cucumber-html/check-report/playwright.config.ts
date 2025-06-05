@@ -10,6 +10,7 @@ export default defineConfig({
   reporter: 'dot',
   use: {
     screenshot: 'only-on-failure',
+    trace: 'retain-on-failure',
     viewport: { width: 800, height: 720 },
   },
   expect: { timeout: 500 },
