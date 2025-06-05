@@ -10,14 +10,14 @@ import { stripAnsiEscapes } from '../../src/utils/stripAnsiEscapes';
 type StepsReporterOptions = {
   outputFile: string;
   categories?: string[] | null;
-  titles?: string[];
+  titles?: (string | RegExp)[];
 };
 
 const defaults: Pick<StepsReporterOptions, 'categories' | 'titles'> = {
   // step category and titles to include in report
   // add 'fixture' to debug
   categories: ['hook', 'test.step', 'attach'],
-  titles: ['fixture: $beforeEach', 'fixture: $afterEach'],
+  titles: [/fixture: \$beforeEach$/, /fixture: \$afterEach$/],
 };
 
 export default class StepsReporter implements Reporter {
@@ -67,7 +67,13 @@ export default class StepsReporter implements Reporter {
   private shouldReportStep(step: TestStep) {
     const { category, title } = step;
     if (!this.options.categories || this.options.categories.includes(category)) return true;
-    if (this.options.titles?.some((t) => title.includes(t))) return true;
+    if (this.isTitleMatched(title)) return true;
+  }
+
+  private isTitleMatched(title: string) {
+    return this.options.titles?.some((t) => {
+      return typeof t === 'string' ? title.includes(t) : t.test(title);
+    });
   }
 }
 
