@@ -11,7 +11,7 @@ export default defineConfig({
   reporter: 'dot',
   use: {
     baseURL,
-    screenshot: 'only-on-failure',
+    screenshot: { mode: 'only-on-failure', fullPage: true },
     viewport: { width: 800, height: 720 },
   },
   webServer: {

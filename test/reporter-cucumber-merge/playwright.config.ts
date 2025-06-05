@@ -19,7 +19,7 @@ export default defineConfig({
         ['../_helpers/rawJsonReporter.ts', { outputDir: 'actual-reports/raw-json' }],
       ],
   use: {
-    screenshot: 'only-on-failure',
+    screenshot: { mode: 'only-on-failure', fullPage: true },
     trace: 'retain-on-failure',
   },
   timeout: testTimeout,

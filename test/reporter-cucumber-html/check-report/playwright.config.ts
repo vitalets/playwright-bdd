@@ -9,7 +9,7 @@ export default defineConfig({
   outputDir: './test-results',
   reporter: 'dot',
   use: {
-    screenshot: 'only-on-failure',
+    screenshot: { mode: 'only-on-failure', fullPage: true },
     trace: 'retain-on-failure',
     viewport: { width: 800, height: 720 },
   },

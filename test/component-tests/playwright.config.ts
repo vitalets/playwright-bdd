@@ -10,7 +10,7 @@ export default defineConfig({
   testDir,
   timeout: 5 * 1000,
   use: {
-    screenshot: 'only-on-failure',
+    screenshot: { mode: 'only-on-failure', fullPage: true },
   },
   reporter: [cucumberReporter('html', { outputFile: 'actual-reports/report.html' })],
 });

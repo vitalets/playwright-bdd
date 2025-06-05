@@ -21,7 +21,7 @@ export default defineConfig({
     ['html', { open: 'never' }],
   ],
   use: {
-    screenshot: 'on',
+    screenshot: { mode: 'on', fullPage: true },
     trace: 'on',
   },
 });

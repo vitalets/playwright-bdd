@@ -17,7 +17,7 @@ export default defineConfig({
     }),
   ],
   use: {
-    screenshot: 'only-on-failure',
+    screenshot: { mode: 'only-on-failure', fullPage: true },
   },
   expect: {
     timeout: 1,

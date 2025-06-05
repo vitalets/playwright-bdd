@@ -9,7 +9,7 @@ export default defineConfig({
   reporter: 'dot',
   use: {
     actionTimeout: 3000,
-    screenshot: 'only-on-failure',
+    screenshot: { mode: 'only-on-failure', fullPage: true },
     viewport: { width: 800, height: 720 },
     permissions: ['clipboard-read', 'clipboard-write'],
   },

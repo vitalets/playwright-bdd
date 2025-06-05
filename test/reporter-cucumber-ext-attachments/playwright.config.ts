@@ -17,7 +17,7 @@ export default defineConfig({
   ],
   use: {
     video: 'on',
-    screenshot: 'on',
+    screenshot: { mode: 'on', fullPage: true },
     trace: 'on',
   },
 });
