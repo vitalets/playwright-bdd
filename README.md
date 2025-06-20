@@ -28,8 +28,8 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 ## Why BDD?
 In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
 
-- 🤖 **Generate**: Drop business requirements into an AI chat and instantly generate feature files.
-- ✅ **Validate**: Refine the generated scenarios with AI or colleagues, collaborate in plain text instead of code.
+- 🤖 **Generate**: Ask any AI model to generate feature files by raw business requirements.
+- ✅ **Validate**: Refine the generated scenarios with AI or colleagues, collaborate in human language instead of code.
 - 🛠 **Automate**: [Use existing steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) to run the tests and prevent codebase growth.
 
 ## Why Playwright Runner?
