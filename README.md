@@ -45,7 +45,7 @@ Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/c
 - [...and more](https://playwright.dev/docs/library#key-differences)
 
 ## Extras
-Playwright-BDD extends Playwright with BDD capabilities, offering:
+Playwright-BDD has several unique features:
 
 - 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
 - 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods  
@@ -57,13 +57,16 @@ Playwright-BDD extends Playwright with BDD capabilities, offering:
 Check out the [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 
 ## Examples
-There are several examples in [`examples`](/examples) folder and a separate fully working repo [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
 
-## Community
-Feel free to get in touch:
+- Check out [`examples`](/examples) folder
+- Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
-* Open an [issue on GitHub](https://github.com/vitalets/playwright-bdd/issues) to report a bug or propose a new feature
-* Join [Playwright-BDD Discord server](https://discord.gg/5rwa7TAGUr) to connect with other developers, ask questions and share your BDD experience
+## Feedbak & Community
+
+Feel free to report a bug, propose a feature or share your experience:
+
+* [GitHub issues](https://github.com/vitalets/playwright-bdd/issues)
+* [Playwright-BDD Discord](https://discord.gg/5rwa7TAGUr)
 
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
