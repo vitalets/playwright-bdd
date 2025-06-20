@@ -86,12 +86,13 @@ export function scenarioHookFactory<
 // eslint-disable-next-line visual/complexity
 export async function runScenarioHooks(
   hooks: GeneralScenarioHook[],
+  world: unknown,
   fixtures: ScenarioHookFixtures,
 ) {
   let error;
   for (const hook of hooks) {
     try {
-      await runScenarioHook(hook, fixtures);
+      await runScenarioHook(hook, world, fixtures);
     } catch (e) {
       if (hook.type === 'before') throw e;
       if (!error) error = e;
@@ -100,8 +101,12 @@ export async function runScenarioHooks(
   if (error) throw error;
 }
 
-async function runScenarioHook(hook: GeneralScenarioHook, fixtures: ScenarioHookFixtures) {
-  const fn = wrapHookFnWithTimeout(hook, fixtures);
+async function runScenarioHook(
+  hook: GeneralScenarioHook,
+  world: unknown,
+  fixtures: ScenarioHookFixtures,
+) {
+  const fn = wrapHookFnWithTimeout(hook, world, fixtures);
   const stepTitle = getHookStepTitle(hook);
   await runStepWithLocation(fixtures.$bddContext.test, stepTitle, hook.location, fn);
 }
@@ -126,7 +131,11 @@ export function getScenarioHooksToRun(type: ScenarioHookType, tags: string[] = [
 /**
  * Wraps hook fn with timeout.
  */
-function wrapHookFnWithTimeout(hook: GeneralScenarioHook, fixtures: ScenarioHookFixtures) {
+function wrapHookFnWithTimeout(
+  hook: GeneralScenarioHook,
+  world: unknown,
+  fixtures: ScenarioHookFixtures,
+) {
   const { timeout } = hook.options;
   const { $bddContext } = fixtures;
   const fixturesArg = {
@@ -135,11 +144,7 @@ function wrapHookFnWithTimeout(hook: GeneralScenarioHook, fixtures: ScenarioHook
   };
 
   return async () => {
-    await callWithTimeout(
-      () => hook.fn.call($bddContext.world, fixturesArg),
-      timeout,
-      getTimeoutMessage(hook),
-    );
+    await callWithTimeout(() => hook.fn.call(world, fixturesArg), timeout, getTimeoutMessage(hook));
   };
 }
 

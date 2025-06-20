@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* bug: enabling aiFix causes dependency cycle ([#319](https://github.com/vitalets/playwright-bdd/issues/319))
 
 ## [8.3.0] - 2025-06-05
 * fix: improve snippet clearing for Fix with AI

@@ -19,6 +19,7 @@ export type BddContext = {
   tags: string[];
   step: BddStepInfo;
   stepIndex: number; // step index in pickle (differs from index in scenario, b/c bg steps)
-  world: unknown;
   bddTestData: BddTestData;
+  // We don't store 'world' fixture here, as world can depend on page and lead to circular dependency.
+  // See: https://github.com/vitalets/playwright-bdd/issues/319
 };

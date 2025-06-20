@@ -55,7 +55,7 @@ export const test = base.extend<BddTestFixtures>({
     fixtureOptions,
   ],
   $bddContext: [
-    async ({ $tags, $test, $bddConfig, $bddTestData, $uri, $step, $world }, use, testInfo) => {
+    async ({ $tags, $test, $bddConfig, $bddTestData, $uri, $step }, use, testInfo) => {
       if (!$bddTestData) throw errorBddTestDataNotFound(testInfo);
 
       await use({
@@ -66,21 +66,23 @@ export const test = base.extend<BddTestFixtures>({
         tags: $tags,
         step: $step,
         stepIndex: -1,
-        world: $world,
         bddTestData: $bddTestData,
       });
     },
     fixtureOptions,
   ],
 
+  // Important to pass $world dependency here, not via $bddContext
+  // to avoid circular dependency, see #319.
+  //
   // Unused fixtures here are important:
   // - $applySpecialTags: to apply special tags before test run
   // - $beforeEach: to not run any steps in background's test.beforeEach
   //   because Playwright runs all before* hooks even in case of error in one of them
   //   See: https://github.com/microsoft/playwright/issues/28285
   Given: [
-    async ({ $bddContext, $applySpecialTags, $beforeEach }, use) => {
-      const invoker = new BddStepInvoker($bddContext);
+    async ({ $bddContext, $world, $applySpecialTags, $beforeEach }, use) => {
+      const invoker = new BddStepInvoker($bddContext, $world);
       await use(invoker.invoke.bind(invoker));
     },
     fixtureOptions,
@@ -133,20 +135,20 @@ export const test = base.extend<BddTestFixtures>({
   $afterEachFixtures: [({}, use) => use({}), fixtureOptions],
   // runs beforeEach hooks
   $beforeEach: [
-    async ({ $bddContext, $beforeEachFixtures }, use) => {
+    async ({ $bddContext, $world, $beforeEachFixtures }, use) => {
       const hooksToRun = getScenarioHooksToRun('before', $bddContext.tags);
-      await runScenarioHooks(hooksToRun, { $bddContext, ...$beforeEachFixtures });
+      await runScenarioHooks(hooksToRun, $world, { $bddContext, ...$beforeEachFixtures });
       await use();
     },
     fixtureOptions,
   ],
   // runs afterEach hooks
   $afterEach: [
-    async ({ $bddContext, $afterEachFixtures }, use) => {
+    async ({ $bddContext, $world, $afterEachFixtures }, use) => {
       await use();
       const hooksToRun = getScenarioHooksToRun('after', $bddContext.tags);
       hooksToRun.reverse();
-      await runScenarioHooks(hooksToRun, { $bddContext, ...$afterEachFixtures });
+      await runScenarioHooks(hooksToRun, $world, { $bddContext, ...$afterEachFixtures });
     },
     fixtureOptions,
   ],

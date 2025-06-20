@@ -5,7 +5,6 @@
  */
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
-import { BddAutoInjectFixtures } from '../../runtime/bddTestFixturesAuto';
 import { AnyFunction, GherkinStepKeyword } from '../stepDefinition';
 import { parseStepDefinitionArgs, StepConstructorOptions, StepDefinitionArgs } from './shared';
 
@@ -31,9 +30,11 @@ export function cucumberStepCtor(
       worldFixture,
       defaultTags,
       providedOptions,
+      // Here we define step function in Playwright-style,
+      // and it internally calls the original cucumber-style function with world context.
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      fn: ({ $bddContext }: BddAutoInjectFixtures, ...args: any[]) => {
-        return fn.call($bddContext.world, ...args);
+      fn: function (_fixtures: unknown, ...args: any[]) {
+        return fn.call(this, ...args);
       },
     });
 

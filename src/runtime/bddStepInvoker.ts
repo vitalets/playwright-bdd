@@ -16,7 +16,10 @@ export type BddStepFn = BddStepInvoker['invoke'];
 
 export class BddStepInvoker {
   private stepFinder: StepFinder;
-  constructor(private bddContext: BddContext) {
+  constructor(
+    private bddContext: BddContext,
+    private world: unknown,
+  ) {
     this.stepFinder = new StepFinder(bddContext.config);
   }
 
@@ -55,7 +58,7 @@ export class BddStepInvoker {
       // See: https://github.com/vitalets/playwright-bdd/issues/208
       await this.runBeforeStepHooks(stepHookFixtures);
       const result = await matchedDefinition.definition.fn.call(
-        this.bddContext.world,
+        this.world,
         stepFixtures,
         ...stepParameters,
       );
@@ -68,7 +71,7 @@ export class BddStepInvoker {
     stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
   ) {
     const beforeHooksToRun = getStepHooksToRun('beforeStep', this.bddContext.tags);
-    await runStepHooks(beforeHooksToRun, stepHookFixtures);
+    await runStepHooks(beforeHooksToRun, this.world, stepHookFixtures);
   }
 
   private async runAfterStepHooks(
@@ -76,7 +79,7 @@ export class BddStepInvoker {
   ) {
     const afterHooksToRun = getStepHooksToRun('afterStep', this.bddContext.tags);
     afterHooksToRun.reverse();
-    await runStepHooks(afterHooksToRun, stepHookFixtures);
+    await runStepHooks(afterHooksToRun, this.world, stepHookFixtures);
   }
 
   private findStepDefinition(stepText: string, stepTextWithKeyword: string) {
