@@ -44,6 +44,10 @@ Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/c
 - Power of Playwright fixtures
 - [...and more](https://playwright.dev/docs/library#key-differences)
 
+## How It Works
+
+<img align="center" src="https://github.com/user-attachments/assets/3289f06c-6e75-4063-a973-17360f49d9a7"/>
+
 ## Extras
 Playwright-BDD has several unique features:
 
@@ -61,7 +65,7 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
-## Feedbak & Community
+## Feedback & Community
 
 Feel free to report a bug, propose a feature or share your experience:
 
