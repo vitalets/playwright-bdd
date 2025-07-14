@@ -66,17 +66,17 @@ Then('I see in title {string}', async ({ page }, keyword) => {
 Generate and run the tests:
 
 ```
-npx bddgen && npx playwright test
+npx bddgen && npx playwright install && npx playwright test
 ```
 
 Command for **Yarn**
 ```
-yarn bddgen && yarn playwright test
+yarn bddgen && yarn playwright install && yarn playwright test
 ```
 
 Command for **pnpm**:
 ```
-pnpm bddgen && pnpm playwright test
+pnpm bddgen && pnpm playwright install && pnpm playwright test
 ```
 
 Output:
