@@ -1,5 +1,17 @@
 # Component tests
 
+!> Not supported
+
+Although component tests work in simple cases with Playwribght-BDD, actually this feature is not usable in real-life projects.
+
+There are two main limitations:
+
+1. All components used in steps must be registered and bundled for the client side. In Node.js, they are replaced with Playwright reference objects.
+2. All non-JS imports (e.g., CSS or images) must be removed from steps, as Node.js cannot process them.
+
+You can find more details in [#331](https://github.com/vitalets/playwright-bdd/issues/331) and [playwright#22302](https://github.com/microsoft/playwright/issues/22302).
+
+<!-- 
 Playwright-BDD supports [component tests](https://playwright.dev/docs/test-components) since Playwright **1.39**.
 
 #### Initialize components testing
@@ -90,3 +102,4 @@ Run `bddgen` before running Playwright:
 ```
 npm run test-ct
 ```
+-->
