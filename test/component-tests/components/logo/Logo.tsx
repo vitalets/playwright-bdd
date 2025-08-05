@@ -1,7 +1,6 @@
-import React from 'react';
 import CucumberLogo from './cucumber.png';
 
-export function Image() {
+export function Logo() {
   return (
     <div>
       <img src={CucumberLogo} />

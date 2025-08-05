@@ -1,9 +1,14 @@
 Feature: component-tests
 
-  Scenario: Mount component and interact with it
+  Scenario: Mount input tag and interact with it
     Given Mounted input component
-    When I type "ABC"
-    Then input field has "ABC"
+    When I type into field "textField" value "ABC"
+    Then Field "textField" has value "ABC"
+
+  Scenario: Mount custom component
+    Given Mounted custom textarea
+    When I type into field "custom-textarea" value "123"
+    Then Field "custom-textarea" has value "123"
 
   Scenario: Using event handler in a component
     Given Mounted button with an event handler that record how many times it was pressed
