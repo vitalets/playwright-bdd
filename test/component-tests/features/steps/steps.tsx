@@ -1,9 +1,6 @@
-import React from 'react';
 import { expect } from '@playwright/test';
-import { createBdd } from 'playwright-bdd';
-import { test } from './fixtures';
-
-const { Given, When, Then } = createBdd(test);
+import { Given, When, Then } from './fixtures';
+import { CustomTextarea } from './components';
 
 Given('Mounted input component', async ({ mount }) => {
   // use <textarea> instead of <input>
@@ -11,12 +8,15 @@ Given('Mounted input component', async ({ mount }) => {
   await mount(<textarea data-testid="textField" />);
 });
 
-When('I type {string}', async ({ page }, arg) => {
-  await page.getByTestId('textField').fill(arg);
-});
+When(
+  'I type into field {string} value {string}',
+  async ({ page }, testId: string, value: string) => {
+    await page.getByTestId(testId).fill(value);
+  },
+);
 
-Then('input field has {string}', async ({ page }, arg) => {
-  await expect(page.getByTestId('textField')).toHaveValue(arg);
+Then('Field {string} has value {string}', async ({ page }, testId: string, value: string) => {
+  await expect(page.getByTestId(testId)).toHaveValue(value);
 });
 
 Given(
@@ -36,6 +36,12 @@ Then('the recorded number of times the button was pressed is {int}', async ({ wo
   expect(world.clickedTimes).toBe(arg);
 });
 
-// Given('Mounted Image component', async ({ mount }) => {
-//   await mount(<Image />);
-// });
+Given('Mounted custom textarea', async ({ mount }) => {
+  // limitation: use Component function call instead of JSX render: mount(<CustomTextarea />)
+  await mount(
+    CustomTextarea({
+      style: { color: 'green' },
+      'data-testid': 'custom-textarea',
+    }),
+  );
+});
