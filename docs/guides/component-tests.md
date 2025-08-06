@@ -11,6 +11,8 @@ There are two main limitations:
 
 You can find more details in [#331](https://github.com/vitalets/playwright-bdd/issues/331) and [playwright#22302](https://github.com/microsoft/playwright/issues/22302).
 
+?> **Alternative solution:** serve component variations via [Storybook](https://storybook.js.org/) and run Playwright-BDD tests on those.
+
 <!-- 
 Playwright-BDD supports [component tests](https://playwright.dev/docs/test-components) since Playwright **1.39**.
 
