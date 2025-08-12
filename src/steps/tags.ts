@@ -26,10 +26,12 @@ export function extractTagsFromPath(filePath: string) {
   // for filename take first part before dot to omit extension and sub-extension.
   const fileNamePart = path.basename(filePath).split('.')[0] || '';
   const dirParts = path.dirname(filePath).split(path.sep);
-  [...dirParts, fileNamePart].forEach((part) => {
-    // consider any @-prefixed symbols as tag
-    const partTags = part.match(/@[^@\s]+/g) || [];
-    tags.push(...partTags);
-  });
+  if (!filePath.includes(`node_modules${path.sep}`)) {
+    [...dirParts, fileNamePart].forEach((part) => {
+      // consider any @-prefixed symbols as tag
+      const partTags = part.match(/@[^@\s]+/g) || [];
+      tags.push(...partTags);
+    });
+  }
   return tags;
 }
