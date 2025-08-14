@@ -23,10 +23,10 @@ export function buildTagsExpression(tagStrings: TagString[]): TagsExpression | u
  */
 export function extractTagsFromPath(filePath: string) {
   const tags: string[] = [];
-  // for filename take first part before dot to omit extension and sub-extension.
-  const fileNamePart = path.basename(filePath).split('.')[0] || '';
-  const dirParts = path.dirname(filePath).split(path.sep);
   if (!filePath.includes(`node_modules${path.sep}`)) {
+    // for filename take first part before dot to omit extension and sub-extension.
+    const fileNamePart = path.basename(filePath).split('.')[0] || '';
+    const dirParts = path.dirname(filePath).split(path.sep);
     [...dirParts, fileNamePart].forEach((part) => {
       // consider any @-prefixed symbols as tag
       const partTags = part.match(/@[^@\s]+/g) || [];

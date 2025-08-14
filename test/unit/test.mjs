@@ -43,6 +43,7 @@ test(`${testDir.name} (extractTagsFromPath)`, async () => {
   expect(extractTagsFromPath(normalize('node_modules/@foo,@bar/'))).toEqual([]);
   expect(extractTagsFromPath(normalize('node_modules/@foo,bar/'))).toEqual([]);
   expect(extractTagsFromPath(normalize('node_modules/@foo:123/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules_foo/@foo:123'))).toEqual(['@foo:123']);
 
   expect(extractTagsFromPath(normalize('features/'))).toEqual([]);
   expect(extractTagsFromPath(normalize('features/@/'))).toEqual([]);
