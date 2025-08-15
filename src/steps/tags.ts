@@ -1,5 +1,6 @@
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { removeDuplicates } from '../utils';
+import { belongsToNodeModules } from '../utils/paths';
 import path from 'node:path';
 
 type TagString = string | undefined;
@@ -23,7 +24,7 @@ export function buildTagsExpression(tagStrings: TagString[]): TagsExpression | u
  */
 export function extractTagsFromPath(filePath: string) {
   const tags: string[] = [];
-  if (!filePath.includes(`node_modules${path.sep}`)) {
+  if (!belongsToNodeModules(filePath)) {
     // for filename take first part before dot to omit extension and sub-extension.
     const fileNamePart = path.basename(filePath).split('.')[0] || '';
     const dirParts = path.dirname(filePath).split(path.sep);

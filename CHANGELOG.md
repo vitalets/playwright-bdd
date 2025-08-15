@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* improve 'Tags From Path' by excluding the `node_modules` dir from the feature's extraction method. ([#323](https://github.com/vitalets/playwright-bdd/issues/323))
 
 ## [8.3.1] - 2025-06-20
 * bug: enabling aiFix causes dependency cycle ([#319](https://github.com/vitalets/playwright-bdd/issues/319))
