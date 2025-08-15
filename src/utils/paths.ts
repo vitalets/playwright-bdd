@@ -72,3 +72,15 @@ export function isDirectory(directoryPath: string) {
     return false;
   }
 }
+
+/**
+ * Identifies based on filepath whether a directory is a part of node_modules.
+ * Intended for use with extractTagsFromPath to prevent including path names containing '@' that aren't test tags.
+ * See: https://github.com/vitalets/playwright-bdd/blob/main/src/steps/tags.ts
+ */
+export function belongsToNodeModules(filePath: string) {
+  return (
+    filePath.startsWith(`node_modules${path.sep}`) ||
+    filePath.includes(`${path.sep}node_modules${path.sep}`)
+  );
+}
