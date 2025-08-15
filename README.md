@@ -46,7 +46,7 @@ Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/c
 
 ## How It Works
 
-<img align="center" src="https://github.com/user-attachments/assets/3289f06c-6e75-4063-a973-17360f49d9a7"/>
+<img align="center" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/schema.png"/>
 
 ## Extras
 Playwright-BDD has several unique features:
