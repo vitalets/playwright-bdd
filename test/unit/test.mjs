@@ -36,6 +36,29 @@ test(`${testDir.name} (extractTagsFromPath)`, async () => {
   expect(extractTagsFromPath(normalize('features/@foo,@bar/'))).toEqual(['@foo,', '@bar']);
   expect(extractTagsFromPath(normalize('features/@foo,bar/'))).toEqual(['@foo,bar']);
   expect(extractTagsFromPath(normalize('features/@foo:123/'))).toEqual(['@foo:123']);
+  expect(extractTagsFromPath(normalize('foo/node_modules/@foo/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('@bar/node_modules/@foo/@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/@foo/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/@foo/@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/@foo @bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/tag @foo and @bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/auth@foo@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/@foo,@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/@foo,bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('/node_modules/@foo:123/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('@foo/node_modules_bar/@bar:123'))).toEqual([
+    '@foo',
+    '@bar:123',
+  ]);
+  expect(extractTagsFromPath(normalize('node_modules/@foo/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/@foo/@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/@foo @bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/tag @foo and @bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/auth@foo@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/@foo,@bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/@foo,bar/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules/@foo:123/'))).toEqual([]);
+  expect(extractTagsFromPath(normalize('node_modules_foo/@bar:123'))).toEqual(['@bar:123']);
 
   expect(extractTagsFromPath(normalize('features/'))).toEqual([]);
   expect(extractTagsFromPath(normalize('features/@/'))).toEqual([]);
