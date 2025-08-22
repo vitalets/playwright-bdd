@@ -2,6 +2,8 @@
  * Helper to format Playwright test file.
  */
 
+/* eslint-disable max-lines */
+
 import { PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { DescribeConfigureOptions } from '../playwright/types';
@@ -24,7 +26,11 @@ export type ImportTestFrom = {
 };
 
 export class Formatter {
-  constructor(private config: BDDConfig) {}
+  private fixtureOptions: string;
+
+  constructor(private config: BDDConfig) {
+    this.fixtureOptions = `{ scope: ${this.quoted('test')}, box: true }`;
+  }
 
   fileHeader(featureUri: string, importTestFrom?: ImportTestFrom) {
     // always use "/" for imports, see #91
@@ -158,15 +164,17 @@ export class Formatter {
   }
 
   worldFixture(worldFixtureName: string) {
-    return [`$world: ({ ${worldFixtureName} }, use) => use(${worldFixtureName}),`];
+    return [
+      `$world: [({ ${worldFixtureName} }, use) => use(${worldFixtureName}), ${this.fixtureOptions}],`,
+    ];
   }
 
   testFixture() {
-    return [`$test: ({}, use) => use(test),`];
+    return [`$test: [({}, use) => use(test), ${this.fixtureOptions}],`];
   }
 
   uriFixture(featureUri: string) {
-    return [`$uri: ({}, use) => use(${this.quoted(featureUri)}),`];
+    return [`$uri: [({}, use) => use(${this.quoted(featureUri)}), ${this.fixtureOptions}],`];
   }
 
   pageFixtureWithPromptAttachment() {

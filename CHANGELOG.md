@@ -7,6 +7,7 @@
 * support Playwright 1.55
 * increase minimal Playwright version from 1.42 to 1.44
 * sort fixture names deterministically in generated files
+* hide in-file BDD fixtures from the report
 
 ## [8.3.1] - 2025-06-20
 * bug: enabling aiFix causes dependency cycle ([#319](https://github.com/vitalets/playwright-bdd/issues/319))

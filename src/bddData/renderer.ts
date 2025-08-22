@@ -16,7 +16,9 @@ export class BddDataRenderer {
   ) {}
 
   renderFixture() {
-    return [`$bddFileData: ({}, use) => use(${BddDataRenderer.varName}),`];
+    return [
+      `$bddFileData: [({}, use) => use(${BddDataRenderer.varName}), { scope: "test", box: true }],`,
+    ];
   }
 
   renderVariable() {
