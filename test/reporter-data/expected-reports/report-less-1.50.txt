@@ -21,8 +21,8 @@ Scenario 1
     [hook] After Hooks
         [attach] attach "screenshot"
         [hook] AfterEach Hooks .features-gen/sample.feature.spec.js:41:6
-        [test.step] AfterEach hook features/steps.ts:19:1
-        [test.step] named After hook features/steps.ts:18:1
+            [test.step] AfterEach hook features/steps.ts:19:1
+            [test.step] named After hook features/steps.ts:18:1
     [attach] attach "trace"
 
 Example #1
@@ -36,8 +36,8 @@ Example #1
     [test.step] Given Action 44 .features-gen/sample.feature.spec.js:25:13
     [hook] After Hooks
         [hook] AfterEach Hooks .features-gen/sample.feature.spec.js:41:6
-        [test.step] AfterEach hook features/steps.ts:19:1
-        [test.step] named After hook features/steps.ts:18:1
+            [test.step] AfterEach hook features/steps.ts:19:1
+            [test.step] named After hook features/steps.ts:18:1
     [attach] attach "trace"
 
 Example #2
@@ -51,7 +51,7 @@ Example #2
     [test.step] Given Action 55 .features-gen/sample.feature.spec.js:29:13
     [hook] After Hooks
         [hook] AfterEach Hooks .features-gen/sample.feature.spec.js:41:6
-        [test.step] AfterEach hook features/steps.ts:19:1
-        [test.step] named After hook features/steps.ts:18:1
+            [test.step] AfterEach hook features/steps.ts:19:1
+            [test.step] named After hook features/steps.ts:18:1
         [hook] AfterAll Hooks .features-gen/sample.feature.spec.js:39:6
     [attach] attach "trace"
