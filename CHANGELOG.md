@@ -6,6 +6,7 @@
 * improve 'Tags From Path' by excluding the `node_modules` dir from the feature's extraction method. ([#323](https://github.com/vitalets/playwright-bdd/issues/323))
 * support Playwright 1.55
 * increase minimal Playwright version from 1.42 to 1.44
+* sort fixture names deterministically in generated files
 
 ## [8.3.1] - 2025-06-20
 * bug: enabling aiFix causes dependency cycle ([#319](https://github.com/vitalets/playwright-bdd/issues/319))

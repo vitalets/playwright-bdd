@@ -9,8 +9,8 @@ test(`${testDir.name} (1 worker)`, () => {
   const stdout = execPlaywrightTest(testDir.name, { env: { WORKERS: 1 } });
 
   expectCalls('worker 0: ', stdout, [
-    'workerFixtureCommon setup',
     'workerFixture1 setup',
+    'workerFixtureCommon setup',
     'BeforeAll 1',
     'BeforeAll 2',
     'BeforeAll 3 (@feature1)',
@@ -31,8 +31,8 @@ test(`${testDir.name} (2 workers)`, () => {
   const stdout = execPlaywrightTest(testDir.name, { env: { WORKERS: 2 } });
 
   expectCalls('worker 0: ', stdout, [
-    'workerFixtureCommon setup',
     'workerFixture1 setup',
+    'workerFixtureCommon setup',
     'BeforeAll 1',
     'BeforeAll 2',
     'BeforeAll 3 (@feature1)',
@@ -43,8 +43,8 @@ test(`${testDir.name} (2 workers)`, () => {
   ]);
 
   expectCalls('worker 1: ', stdout, [
-    'workerFixtureCommon setup',
     'workerFixture2 setup',
+    'workerFixtureCommon setup',
     'BeforeAll 1',
     'BeforeAll 2',
     'BeforeAll 4 (not @feature1)',

@@ -60,7 +60,7 @@ export class Formatter {
   // todo: rename to background, as it's specific for bg (if (testInfo.error) return;)
   beforeEach(title: string, fixtures: Set<string>, children: string[]) {
     const titleStr = title ? `${this.quoted(title)}, ` : '';
-    const fixturesStr = [...fixtures].join(', ');
+    const fixturesStr = sortFixtureNames([...fixtures]).join(', ');
     return [
       `test.beforeEach(${titleStr}async ({ ${fixturesStr} }, testInfo) => { if (testInfo.error) return;`,
       ...children.map(indent),
@@ -73,8 +73,9 @@ export class Formatter {
     const method = type === 'before' ? 'test.beforeEach' : 'test.afterEach';
     const title = type === 'before' ? BEFORE_EACH_HOOKS_GROUP_NAME : AFTER_EACH_HOOKS_GROUP_NAME;
     const runScenarioHooks = '$runScenarioHooks';
-    const fixturesStr = [...fixturesNames].join(', ');
-    const allFixturesStr = [runScenarioHooks, ...fixturesNames].join(', ');
+    const sortedFixturesNames = sortFixtureNames([...fixturesNames]);
+    const fixturesStr = sortedFixturesNames.join(', ');
+    const allFixturesStr = [runScenarioHooks, ...sortedFixturesNames].join(', ');
     const fn = `({ ${allFixturesStr} }) => ${runScenarioHooks}(${this.quoted(type)}, { ${fixturesStr} })`;
 
     return [`${method}(${this.quoted(title)}, ${fn});`];
@@ -84,8 +85,9 @@ export class Formatter {
     // For beforeAll we run hooks, but for afterAll just register, and run on worker teardown.
     const method = type === 'beforeAll' ? 'test.beforeAll' : 'test.afterAll';
     const runWorkerHooks = type === 'beforeAll' ? '$runBeforeAllHooks' : '$registerAfterAllHooks';
-    const fixturesStr = [...fixturesNames].join(', ');
-    const allFixturesStr = [runWorkerHooks, ...fixturesNames].join(', ');
+    const sortedFixturesNames = sortFixtureNames([...fixturesNames]);
+    const fixturesStr = sortedFixturesNames.join(', ');
+    const allFixturesStr = [runWorkerHooks, ...sortedFixturesNames].join(', ');
     const title = type === 'beforeAll' ? BEFORE_ALL_HOOKS_GROUP_NAME : AFTER_ALL_HOOKS_GROUP_NAME;
     const fn = `({ ${allFixturesStr} }) => ${runWorkerHooks}(test, { ${fixturesStr} }, ${bddDataVar})`;
 
@@ -103,7 +105,7 @@ export class Formatter {
   ) {
     const titleStr = this.quoted(title);
     const tagsStr = this.testTags(tags);
-    const fixturesStr = [...fixtures].join(', ');
+    const fixturesStr = sortFixtureNames([...fixtures]).join(', ');
     const fn = this.withSubFunction('test', specialTags);
     const firstLine = `${fn}(${titleStr}, ${tagsStr}async ({ ${fixturesStr} }) => { // test: ${pickleId}`;
     const lines = [
@@ -136,7 +138,9 @@ export class Formatter {
     pickleStepIds: string[],
   ) {
     const textArg = this.quoted(stepText);
-    const fixtures = fixtureNames.size ? `{ ${[...fixtureNames].join(', ')} }` : '';
+    const fixtures = fixtureNames.size
+      ? `{ ${sortFixtureNames([...fixtureNames]).join(', ')} }`
+      : '';
     const argumentArg = argument ? JSON.stringify(argument) : fixtures ? 'null' : '';
     const args = [textArg, argumentArg, fixtures].filter((arg) => arg !== '').join(', ');
     return `await ${keywordEng}(${args}); // step: ${pickleStepIds.join(',')}`;
@@ -172,13 +176,6 @@ export class Formatter {
       `  await use(page);`,
       `},`,
     ];
-  }
-
-  scenarioHooksFixtures(type: ScenarioHookType, fixtureNames: string[]) {
-    if (!fixtureNames.length) return [];
-    const targetFixtureName = type === 'before' ? '$beforeEachFixtures' : '$afterEachFixtures';
-    const fixturesStr = fixtureNames.join(', ');
-    return [`${targetFixtureName}: ({ ${fixturesStr} }, use) => use({ ${fixturesStr} }),`];
   }
 
   private withSubFunction(baseFn: 'test' | 'describe', specialTags: SpecialTags) {
@@ -250,4 +247,19 @@ export function extractPickleStepIdsFromLine(line: string) {
   if (match) {
     return { pickleStepIds: match[1].split(','), index: match.index };
   }
+}
+
+/**
+ * Show (Given, When, Then, And, But) first, then user fixtures in alphabetical order.
+ */
+function sortFixtureNames(fixtureNames: string[]) {
+  const stepFixtureNamesOrder = ['Given', 'When', 'Then', 'And', 'But'];
+  return fixtureNames.sort((a, b) => {
+    const indexA = stepFixtureNamesOrder.indexOf(a);
+    const indexB = stepFixtureNamesOrder.indexOf(b);
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return a.localeCompare(b);
+  });
 }
