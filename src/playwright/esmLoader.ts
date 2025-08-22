@@ -5,7 +5,6 @@ import { getPlaywrightModulePath, requirePlaywrightModule } from './utils';
 import fs from 'node:fs';
 
 let called = false;
-export let esmLoaderInstalled = false;
 
 export async function installEsmLoaderIfNeeded() {
   if (called) return;
@@ -19,7 +18,6 @@ export async function installEsmLoaderIfNeeded() {
   // PW has older way with process restart that is complicated.
   // see: https://github.com/microsoft/playwright/pull/28526/files#diff-490565cd49c7e9417108773db457433c2af9a123443be8b5dae11be091107d65
   if (registerESMLoader) {
-    esmLoaderInstalled = true;
     await registerESMLoader();
   }
 }

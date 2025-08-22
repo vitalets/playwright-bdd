@@ -5,7 +5,6 @@
 
 import { workerData } from 'node:worker_threads';
 import { TestFilesGenerator } from '../generate';
-import { forceExitIfNeeded } from './helpers/forceExit';
 
 main();
 
@@ -17,5 +16,4 @@ async function main() {
     if (e.message) console.error(e.message);
     process.exitCode = 1;
   }
-  forceExitIfNeeded();
 }

@@ -1,15 +1,4 @@
-import {
-  test,
-  TestDir,
-  playwrightVersion,
-  expect,
-  execPlaywrightTest,
-} from '../_helpers/index.mjs';
-
-// Since Playwright 1.43.0, SkipError thrown by testInfo.skip() is available
-// in test result in reporter.
-// Before that test result looks like passed, we can't determine that.
-const skip = playwrightVersion < '1.43.0';
+import { test, TestDir, expect, execPlaywrightTest } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -19,7 +8,7 @@ function runInDir(dir) {
   return JSON.parse(testDir.getFileContents(`actual-reports/${dir}/report.json`));
 }
 
-test(`${testDir.name} (skip in step)`, { skip }, async () => {
+test(`${testDir.name} (skip in step)`, async () => {
   const report = runInDir('skip-in-step');
 
   const scenario1 = report[0].elements[0];
@@ -41,7 +30,7 @@ test(`${testDir.name} (skip in step)`, { skip }, async () => {
   });
 });
 
-test(`${testDir.name} (skip in before hook)`, { skip }, async () => {
+test(`${testDir.name} (skip in before hook)`, async () => {
   const report = runInDir('skip-in-before-hook');
 
   const scenario1 = report[0].elements[0];
@@ -67,7 +56,7 @@ test(`${testDir.name} (skip in before hook)`, { skip }, async () => {
   });
 });
 
-test(`${testDir.name} (skip in after hook)`, { skip }, async () => {
+test(`${testDir.name} (skip in after hook)`, async () => {
   const report = runInDir('skip-in-after-hook');
 
   const scenario1 = report[0].elements[0];

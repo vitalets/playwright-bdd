@@ -9,7 +9,6 @@ import { ConfigOption } from '../options';
 import { exit } from '../../utils/exit';
 import { BDDConfig } from '../../config/types';
 import { defaults } from '../../config/defaults';
-import { forceExitIfNeeded } from '../helpers/forceExit';
 import { setBddGenPhase } from '../helpers/bddgenPhase';
 import { showWarnings } from '../../config/warnings';
 import { Logger } from '../../utils/logger';
@@ -37,8 +36,6 @@ export const testCommand = new Command('test')
     await generateFilesForConfigs(configs);
 
     if (isVerbose) printDone();
-
-    forceExitIfNeeded();
   });
 
 function readConfigsFromEnv() {
