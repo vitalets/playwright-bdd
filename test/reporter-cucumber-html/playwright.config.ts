@@ -5,6 +5,8 @@ import { testTimeout } from './timeout';
 const testDir = defineBddConfig({
   featuresRoot: './features',
   steps: ['./features/**/*.ts', '!**/*.spec.ts'],
+  // usefull for debug
+  // features: './features/after-hook',
 });
 
 export default defineConfig({

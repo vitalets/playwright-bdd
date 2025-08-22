@@ -57,37 +57,39 @@ export class Formatter {
     ];
   }
 
+  // todo: rename to background, as it's specific for bg (if (testInfo.error) return;)
   beforeEach(title: string, fixtures: Set<string>, children: string[]) {
     const titleStr = title ? `${this.quoted(title)}, ` : '';
     const fixturesStr = [...fixtures].join(', ');
     return [
-      `test.beforeEach(${titleStr}async ({ ${fixturesStr} }) => {`,
+      `test.beforeEach(${titleStr}async ({ ${fixturesStr} }, testInfo) => { if (testInfo.error) return;`,
       ...children.map(indent),
       `});`,
       '',
     ];
   }
 
-  scenarioHooksCall(type: ScenarioHookType) {
+  scenarioHooksCall(type: ScenarioHookType, fixturesNames: Set<string>) {
+    const method = type === 'before' ? 'test.beforeEach' : 'test.afterEach';
     const title = type === 'before' ? BEFORE_EACH_HOOKS_GROUP_NAME : AFTER_EACH_HOOKS_GROUP_NAME;
-    return [
-      type === 'before'
-        ? `test.beforeEach(${this.quoted(title)}, ({ $beforeEach }) => {});`
-        : `test.afterEach(${this.quoted(title)}, ({ $afterEach }) => {});`,
-    ];
+    const runScenarioHooks = '$runScenarioHooks';
+    const fixturesStr = [...fixturesNames].join(', ');
+    const allFixturesStr = [runScenarioHooks, ...fixturesNames].join(', ');
+    const fn = `({ ${allFixturesStr} }) => ${runScenarioHooks}(${this.quoted(type)}, { ${fixturesStr} })`;
+
+    return [`${method}(${this.quoted(title)}, ${fn});`];
   }
 
   workerHooksCall(type: WorkerHookType, fixturesNames: Set<string>, bddDataVar: string) {
     // For beforeAll we run hooks, but for afterAll just register, and run on worker teardown.
-    const runWorkerHooksFixture =
-      type === 'beforeAll' ? '$runBeforeAllHooks' : '$registerAfterAllHooks';
+    const method = type === 'beforeAll' ? 'test.beforeAll' : 'test.afterAll';
+    const runWorkerHooks = type === 'beforeAll' ? '$runBeforeAllHooks' : '$registerAfterAllHooks';
     const fixturesStr = [...fixturesNames].join(', ');
-    const allFixturesStr = [runWorkerHooksFixture, ...fixturesNames].join(', ');
+    const allFixturesStr = [runWorkerHooks, ...fixturesNames].join(', ');
     const title = type === 'beforeAll' ? BEFORE_ALL_HOOKS_GROUP_NAME : AFTER_ALL_HOOKS_GROUP_NAME;
-    return [
-      // eslint-disable-next-line max-len
-      `test.${type}(${this.quoted(title)}, ({ ${allFixturesStr} }) => ${runWorkerHooksFixture}(test, { ${fixturesStr} }, ${bddDataVar}));`,
-    ];
+    const fn = `({ ${allFixturesStr} }) => ${runWorkerHooks}(test, { ${fixturesStr} }, ${bddDataVar})`;
+
+    return [`${method}(${this.quoted(title)}, ${fn});`];
   }
 
   // eslint-disable-next-line max-params

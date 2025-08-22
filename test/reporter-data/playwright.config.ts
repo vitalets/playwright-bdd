@@ -12,11 +12,12 @@ export default defineConfig({
       '../_helpers/stepsReporter.ts',
       {
         outputFile: 'actual-reports/report.txt',
-        titles: [/fixture: \$beforeEach$/, /fixture: \$afterEach$/, 'page.goto', 'Navigate'],
+        titles: ['page.goto', 'Navigate'],
         // useful to debug:
         // categories: null,
       },
     ],
+    ['../_helpers/rawJsonReporter.ts', { outputDir: 'actual-reports/raw-json' }],
     cucumberReporter('html', { outputFile: 'actual-reports/report.html' }),
     ['html', { open: 'never' }],
   ],

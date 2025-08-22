@@ -1,19 +1,23 @@
 import { expect } from '@playwright/test';
 import { test } from '../../../check-report/fixtures';
 
+// pw 1.53 -> "fixture: " prefix removed
+// pw 1.55 -> format changed to "Fixture "name""
+const fixtureTimeoutRegexp =
+  /Hook "(After Hooks|AfterEach Hooks|.+fixtureWithTimeoutInTeardown.+)" failed/i;
+
 test('timeout in fixture teardown', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     'GivenAction 0',
     'Givenstep that uses fixtureWithTimeoutInTeardown',
     'WhenAction 1',
-    // fixture: prefix was removed in pw 1.53
-    /Hook "(After Hooks|(fixture: )?fixtureWithTimeoutInTeardown)" failed/,
+    fixtureTimeoutRegexp,
   ]);
   // don't check screenshot as it's not reliable in timeouts
   await expect(scenario.getSteps('passed')).toHaveCount(3);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getErrors()).toContainText([
-    /but tearing down "fixtureWithTimeoutInTeardown" ran out of time|Tearing down "fixtureWithTimeoutInTeardown" exceeded the test timeout/,
+    /tearing down "fixtureWithTimeoutInTeardown"/i,
   ]);
 });
 
@@ -23,7 +27,7 @@ test('timeout in step and in fixture teardown', async ({ scenario }) => {
     'Giventimeouted step',
     'WhenAction 1',
     'Givenstep that uses fixtureWithTimeoutInTeardown',
-    /Hook "(After Hooks|fixture: fixtureWithTimeoutInTeardown)" failed/,
+    fixtureTimeoutRegexp,
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
   // Don't check exact failed steps, it depends on PW version.
@@ -44,9 +48,7 @@ test('timeout in after hook', async ({ scenario }) => {
     'Givenstep with page',
     // sometimes we still have "After Hooks" here,
     // when duration = -1 is not in after hooks, and we cant detect which fixture timed out
-    /Hook "(my timeouted hook|After Hooks|fixture: \$afterEach)" failed/,
+    /Hook "(my timeouted hook|After Hooks|AfterEach Hooks)" failed/i,
   ]);
-  await expect(scenario.getErrors()).toContainText([
-    /but tearing down "\$afterEach" ran out of time|Tearing down "\$afterEach" exceeded the test timeout/,
-  ]);
+  await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
 });

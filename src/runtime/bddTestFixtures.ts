@@ -5,7 +5,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { test as base } from './bddWorkerFixtures';
-import { getScenarioHooksToRun, runScenarioHooks } from '../hooks/scenario';
+import { getScenarioHooksToRun, runScenarioHooks, ScenarioHookType } from '../hooks/scenario';
 import { BddStepInvoker, BddStepFn } from './bddStepInvoker';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
@@ -36,10 +36,10 @@ export type BddTestFixtures = {
   $uri: string;
   $applySpecialTags: void;
   $world: unknown;
-  $beforeEachFixtures: Record<string, unknown>;
-  $beforeEach: void;
-  $afterEachFixtures: Record<string, unknown>;
-  $afterEach: void;
+  $runScenarioHooks: (
+    type: ScenarioHookType,
+    customFixtures: Record<string, unknown>,
+  ) => Promise<void>;
   $prompt: PromptFixture;
 };
 
@@ -81,7 +81,7 @@ export const test = base.extend<BddTestFixtures>({
   //   because Playwright runs all before* hooks even in case of error in one of them
   //   See: https://github.com/microsoft/playwright/issues/28285
   Given: [
-    async ({ $bddContext, $world, $applySpecialTags, $beforeEach }, use) => {
+    async ({ $bddContext, $world, $applySpecialTags }, use) => {
       const invoker = new BddStepInvoker($bddContext, $world);
       await use(invoker.invoke.bind(invoker));
     },
@@ -129,36 +129,29 @@ export const test = base.extend<BddTestFixtures>({
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],
 
-  // can be overwritten in test file if there are fixtures for beforeEach hooks
-  $beforeEachFixtures: [({}, use) => use({}), fixtureOptions],
-  // can be overwritten in test file if there are fixtures for afterEach hooks
-  $afterEachFixtures: [({}, use) => use({}), fixtureOptions],
-  // runs beforeEach hooks
-  $beforeEach: [
-    async ({ $bddContext, $world, $beforeEachFixtures }, use) => {
-      const hooksToRun = getScenarioHooksToRun('before', $bddContext.tags);
-      await runScenarioHooks(hooksToRun, $world, { $bddContext, ...$beforeEachFixtures });
-      await use();
+  // This fixture is used inside test.beforeEach() / test.afterEach() to run scenario hooks.
+  $runScenarioHooks: [
+    async ({ $bddContext, $world }, use) => {
+      await use(async (type, customFixtures) => {
+        const hooksToRun = getScenarioHooksToRun(type, $bddContext.tags);
+        if (type === 'after') hooksToRun.reverse();
+        await runScenarioHooks(hooksToRun, $world, { $bddContext, ...customFixtures });
+      });
     },
     fixtureOptions,
   ],
-  // runs afterEach hooks
-  $afterEach: [
-    async ({ $bddContext, $world, $afterEachFixtures }, use) => {
-      await use();
-      const hooksToRun = getScenarioHooksToRun('after', $bddContext.tags);
-      hooksToRun.reverse();
-      await runScenarioHooks(hooksToRun, $world, { $bddContext, ...$afterEachFixtures });
-    },
-    fixtureOptions,
-  ],
+
+  // "Fix with AI" helper fixture
   $prompt: [
     async ({ $bddContext }, use) => {
       const prompt = new PromptFixture($bddContext);
       await use(prompt);
       await prompt.attach();
     },
-    fixtureOptions,
+    // Temporarily un-box $prompt fixture to avoid warning from PW.
+    // See: https://github.com/microsoft/playwright/issues/37147
+    // TODO: revert to fixtureOptions (e.g. box=true) when fixed in Playwright.
+    { scope: 'test' },
   ],
 });
 

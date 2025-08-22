@@ -5,7 +5,9 @@ import { test as base, createBdd } from 'playwright-bdd';
 // important: import all components here to make them registered in client-side bundle.
 import './components';
 
-export const test = mergeTests(ctBase, base).extend({
+type World = { clickedTimes: number };
+
+export const test = mergeTests(ctBase, base).extend<{ world: World }>({
   world: ({}, use) => use({ clickedTimes: 0 }),
 });
 

@@ -171,8 +171,6 @@ export class TestFile {
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
       ...bddDataRenderer.renderFixture(),
-      ...this.formatter.scenarioHooksFixtures('before', this.hooks.before.getFixtureNames()),
-      ...this.formatter.scenarioHooksFixtures('after', this.hooks.after.getFixtureNames()),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
       ...(supportedFeatures.ariaSnapshots && this.config.aiFix?.promptAttachment
         ? this.formatter.pageFixtureWithPromptAttachment()

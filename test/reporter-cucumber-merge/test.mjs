@@ -4,10 +4,16 @@ import {
   TestDir,
   execPlaywrightTest,
   execPlaywrightTestWithError,
+  playwrightVersion,
   DEFAULT_CMD,
 } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
+
+// In PW 1.55 there is a warning in stdout
+// See: https://github.com/microsoft/playwright/issues/37147
+// TODO: remove this workaround when fixed in Playwright
+const error = playwrightVersion >= '1.55' ? 'Internal error: step id not found' : '';
 
 test(testDir.name, () => {
   testDir.clearDir('actual-reports');
@@ -25,7 +31,7 @@ test(testDir.name, () => {
 });
 
 function execShard1() {
-  execPlaywrightTestWithError(testDir.name, '', {
+  execPlaywrightTestWithError(testDir.name, error, {
     cmd: `${DEFAULT_CMD} --shard=1/2`,
     env: { PWTEST_BLOB_DO_NOT_REMOVE: '1' },
   });
