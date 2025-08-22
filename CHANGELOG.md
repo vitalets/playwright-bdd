@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [8.4.0] - 2025-08-22
 * improve 'Tags From Path' by excluding the `node_modules` dir from the feature's extraction method. ([#323](https://github.com/vitalets/playwright-bdd/issues/323))
 * support Playwright 1.55
 * increase minimal Playwright version from 1.42 to 1.44
@@ -279,6 +281,7 @@ Version v3 has several major updates based on the feedback.
 ## 1.2.0
 * Initial public release
 
-[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v8.3.1...HEAD
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...HEAD
+[8.4.0]: https://github.com/vitalets/playwright-bdd/compare/v8.3.1...v8.4.0
 [8.3.1]: https://github.com/vitalets/playwright-bdd/compare/v8.3.0...v8.3.1
 [8.3.0]: https://github.com/vitalets/playwright-bdd/compare/v8.2.1...v8.3.0
