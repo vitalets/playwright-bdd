@@ -4,7 +4,7 @@ import { test } from '../../../check-report/fixtures';
 // pw 1.53 -> "fixture: " prefix removed
 // pw 1.55 -> format changed to "Fixture "name""
 const fixtureTimeoutRegexp =
-  /Hook "(After Hooks|AfterEach Hooks|.+fixtureWithTimeoutInTeardown.+)" failed/i;
+  /Hook "(After Hooks|AfterEach Hooks|.*fixtureWithTimeoutInTeardown.*)" failed/i;
 
 test('timeout in fixture teardown', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([

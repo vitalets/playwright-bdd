@@ -5,7 +5,7 @@ import { test } from '../../../check-report/fixtures';
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
     // fixture: prefix was removed in pw 1.53
-    /Hook ".+workerFixtureWithErrorInSetup.+" failed:/,
+    /Hook ".*workerFixtureWithErrorInSetup.*" failed:/,
     'GivenAction 1',
     'Givenstep that uses workerFixtureWithErrorInSetup',
     'Download trace',

@@ -39,7 +39,7 @@ test('error in nested step in before hook', async ({ scenario }) => {
 
 test('error in fixture setup (no step)', async ({ scenario }) => {
   await expect(scenario.getSteps()).toContainText([
-    /Hook ".+fixtureWithErrorInSetup.+" failed:/,
+    /Hook ".*fixtureWithErrorInSetup.*" failed:/,
     'Givenstep that uses fixtureWithErrorInSetup',
     'WhenAction 1',
     'screenshot',
