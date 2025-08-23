@@ -189,6 +189,8 @@ Defines a hook that runs **once in each worker**, before all scenarios. You can 
       - `$workerInfo` *object* - Playwright [workerInfo](https://playwright.dev/docs/api/class-workerinfo).
       - Any other built-in and custom **worker-scoped** fixtures.
 
+?> If you need to run hook **once for all workers**, check out [Running hook once](writing-steps/hooks.md#running-hook-once).
+
 ### AfterWorker / AfterAll
 
 Defines a hook that runs **once in each worker**, after all scenarios. You can target the hook to specific scenarios by providing the `tags` option. `AfterWorker` and `AfterAll` are aliases.

@@ -77,27 +77,31 @@ Playwright-BDD supports the worker-level hook `BeforeWorker` (aliased as `Before
 
 ?> Although `BeforeAll` is a more used name, `BeforeWorker` better expresses when the hook runs.
 
-Usage:
-```ts
-import { test as base, createBdd } from 'playwright-bdd';
+#### Usage
 
-export const test = base.extend({ /* ...your fixtures */ });
+1. Create and export `BeforeWorker` function:
 
-const { BeforeWorker } = createBdd(test);
+    ```ts
+    // fixtures.ts
+    import { test as base, createBdd } from 'playwright-bdd';
 
-BeforeWorker(async ({ $workerInfo, browser }) => {
-  // runs when each worker starts
-});
-```
+    export const test = base.extend({ /* ...your fixtures */ });
 
-If you don't use custom fixtures, you can create `BeforeWorker` without passing `test` argument:
-```ts
-import { createBdd } from 'playwright-bdd';
+    export const { BeforeWorker } = createBdd(test);
+    ```
 
-const { BeforeWorker } = createBdd();
-```
+2. Define hooks:
 
-Since Playwright-BDD **v8** you can target worker hook to particular features by `tags`:
+    ```ts
+    // hooks.ts
+    import { BeforeWorker } from './fixtures';
+
+    BeforeWorker(async ({ $workerInfo, browser }) => {
+      // ...this code runs once in each worker and uses worker-scoped fixtures
+    });
+    ```
+
+Since Playwright-BDD **v8** you can bind worker hook to particular features by `tags`:
 
 ```ts
 BeforeWorker({ tags: '@auth' }, async () => { ... });
@@ -150,6 +154,8 @@ BeforeWorker(async ({ myWorkerFixture }) => {
 
 > Note that there is **no access to World** in `BeforeWorker / AfterWorker` hooks because World is re-created for every test. Here is a [discussion](https://github.com/cucumber/cucumber-js/issues/1393) in the Cucumber repo.
 
+?> If you need to run hook **once for all workers**, check out [Running hook once](#running-hook-once).
+
 ## AfterWorker / AfterAll
 
 > Consider using [fixtures](#fixtures) instead of hooks.
@@ -182,39 +188,47 @@ Playwright-BDD supports the scenario-level hook `BeforeScenario` (aliased as `Be
 
 ?> Although `Before` is a more used name, `BeforeScenario` better expresses when the hook runs.
 
-Usage:
-```ts
-import { test as base, createBdd } from 'playwright-bdd';
 
-export const test = base.extend({ /* ...your fixtures */ });
 
-const { BeforeScenario } = createBdd(test);
+#### Usage
 
-BeforeScenario(async () => {
-  // runs before each scenario
-});
-```
+1. Create and export `BeforeScenario` function:
 
-If you don't use custom fixtures, you can create `BeforeScenario` without passing `test` argument:
-```ts
-import { createBdd } from 'playwright-bdd';
+    ```ts
+    // fixtures.ts
+    import { test as base, createBdd } from 'playwright-bdd';
 
-const { BeforeScenario } = createBdd();
-```
+    export const test = base.extend({ /* ...your fixtures */ });
+
+    export const { BeforeScenario } = createBdd(test);
+    ```
+
+2. Define scenario hooks:
+
+    ```ts
+    // hooks.ts
+    import { BeforeScenario } from './fixtures';
+
+    BeforeScenario(async () => {
+      // runs before each scenario
+    });
+    ```
 
 Since Playwright-BDD **v8** you can target scenario hook to particular features/scenarios by `tags`:
 
 ```ts
-BeforeScenario({ tags: '@mobile and not @slow' }, async function () {
-  // runs for scenarios with @mobile and not @slow
+BeforeScenario({ tags: '@mobile and not @slow' }, async () => {
+  // runs before scenarios with @mobile and not @slow tags
 });
 ```
+
 If you want to pass only tags, you can use a shortcut:
 ```ts
-BeforeScenario('@mobile and not @slow', async function () {
+BeforeScenario('@mobile and not @slow', async () => {
   // runs for scenarios with @mobile and not @slow
 });
 ```
+
 You can also provide default tags via `createBdd()`:
 ```ts
 const { BeforeScenario } = createBdd(test, { tags: '@mobile' });
@@ -240,8 +254,7 @@ BeforeScenario({ name: 'my hook', timeout: 5000 }, async function () {
 });
 ```
 
-The hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
-You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
+The hook function accepts **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures). You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
 
 #### Example of using `BeforeScenario` with custom fixture
 
@@ -250,8 +263,8 @@ Imagine you have defined a custom fixture `myFixture`:
 import { test as base, createBdd } from 'playwright-bdd';
 
 export const test = base.extend<{ myFixture: MyFixture }>({
-  myFixture: async ({ page }, use) => {
-    // ... setup myFixture
+  myFixture: async ({ page }, use) => { // <-- custom fixture
+    // ...
   }
 });
 
@@ -307,13 +320,6 @@ BeforeStep(async () => {
 });
 ```
 
-If you don't use custom fixtures, you can create `BeforeStep` without passing `test` argument:
-```ts
-import { createBdd } from 'playwright-bdd';
-
-const { BeforeStep } = createBdd();
-```
-
 You can target step hook to the steps of the specific feature/scenario by `tags`:
 
 ```ts
@@ -352,8 +358,7 @@ BeforeStep({ name: 'my hook', timeout: 5000 }, async function () {
 });
 ```
 
-The hook function can accept **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures).
-You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
+The hook function accepts **1 argument** - [test-scoped fixtures](https://playwright.dev/docs/test-fixtures#built-in-fixtures). You can access [$testInfo](https://playwright.dev/docs/api/class-testinfo), [$tags](writing-steps/bdd-fixtures.md#tags) and any built-in or custom fixtures. See more details in [BeforeScenario / Before API](api.md#beforescenario-before).
 
 ## AfterStep
 
@@ -396,3 +401,69 @@ AfterStep(async ({ page, $testInfo, $step }) => {
 
 // ...rest of the step definitions
 ```
+
+## Running hook once
+
+`BeforeAll` / `AfterAll` run **once per worker**, not once for the entire test run. This may not be what you want. For example, if you populate a database with test data, there’s no need to repopulate it in every worker:
+
+```ts
+import { BeforeWorker } from './fixtures';
+
+BeforeWorker(async () => {
+  await populateDatabase(); // <-- runs in every worker
+});
+```
+
+To run code inside a hook exactly once, you can use [@vitalets/global-cache](https://github.com/vitalets/global-cache). It lets you cache and reuse any serializable data across all workers:
+
+```ts
+import { BeforeWorker } from './fixtures';
+import { globalCache } from '@vitalets/global-cache';
+
+BeforeWorker(async () => {
+  await globalCache.get('populate-db', async () => {
+    await populateDatabase(); // <-- runs once
+  });
+});
+```
+
+> See the global-cache [README](https://github.com/vitalets/global-cache) for setup instructions.
+
+You can also use this approach in `BeforeScenario` hooks to store data and [reuse](writing-steps/passing-data-between-steps.md) it in steps:
+
+```ts
+BeforeScenario(async ({ ctx }) => {
+  ctx.userIds = await globalCache.get('user-ids', async () => {
+    const userIds = await populateDatabase();
+    return userIds;
+  });
+});
+```
+
+You can use the global cache in fixtures as well. For example, wrap the code in `storageState` fixture to authenticate only when needed and cache for 1 hour:
+
+```ts
+// fixtures.ts
+import { test as base, createBdd } from 'playwright-bdd';
+import { globalCache } from '@vitalets/global-cache';
+
+export const test = base.extend({
+  storageState: async ({ storageState, browser }, use, testInfo) => {
+    // Skip authentication for scenarios tagged @no-auth
+    if (testInfo.tags.includes('@no-auth')) return use(storageState);
+
+    // Get auth state once and cache it for 1 hour
+    const authState = await globalCache.get('auth-state', { ttl: '1 hour' }, async () => {
+      const loginPage = await browser.newPage();
+      // ...authenticate
+      return loginPage.context().storageState();
+    });
+
+    await use(authState);
+  },
+});
+
+export const { Given, When, Then } = createBdd(test);
+```
+
+This can significantly speed up your tests in fully parallel and sharded runs.
