@@ -10,10 +10,12 @@ Call `createBdd(test)` in the same file where you define the custom test and exp
 // fixtures.ts
 import { test as base, createBdd } from 'playwright-bdd';
 
-export const test = base.extend({
-  myFixture: async ({ page }, use) => {
-    // ... define your fixture here
-  }
+type Fixtures = {
+  // ...set types of your custom fixtures
+};
+
+export const test = base.extend<Fixtures>({
+  // ...implement your custom fixtures
 });
 
 export const { Given, When, Then } = createBdd(test);
@@ -29,6 +31,6 @@ Now you can write step definitions with custom fixtures:
 import { Given, When, Then } from './fixtures';
 
 Given('My step', async ({ myFixture }) => {
-  // step code that uses myFixture
+  // ...step code that uses myFixture
 });
 ```
