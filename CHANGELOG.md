@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* feat: explicitly export types ([#322](https://github.com/vitalets/playwright-bdd/issues/322), [#330](https://github.com/vitalets/playwright-bdd/issues/330))
 
 ## [8.4.0] - 2025-08-22
 * improve 'Tags From Path' by excluding the `node_modules` dir from the feature's extraction method. ([#323](https://github.com/vitalets/playwright-bdd/issues/323))
