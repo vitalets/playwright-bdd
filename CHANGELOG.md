@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [8.4.1] - 2025-09-03
 * feat: explicitly export types ([#322](https://github.com/vitalets/playwright-bdd/issues/322), [#330](https://github.com/vitalets/playwright-bdd/issues/330))
 
 ## [8.4.0] - 2025-08-22
@@ -282,7 +284,8 @@ Version v3 has several major updates based on the feedback.
 ## 1.2.0
 * Initial public release
 
-[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v8.4.1-0...HEAD
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v8.4.1...HEAD
+[8.4.1]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...v8.4.1
 [8.4.1-0]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...v8.4.1-0
 [8.4.0]: https://github.com/vitalets/playwright-bdd/compare/v8.3.1...v8.4.0
 [8.3.1]: https://github.com/vitalets/playwright-bdd/compare/v8.3.0...v8.3.1
