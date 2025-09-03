@@ -78,10 +78,13 @@ Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/p
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## Sponsors
-Many thanks to our sponsors for their generous support ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
+## 💖 Sponsors
+
+A big thank you to all the **amazing people and companies** already supporting Playwright-BDD! Your help keeps the project alive and growing:
 
 <!-- sponsors --><a href="https://github.com/currents-dev"><img src="https:&#x2F;&#x2F;github.com&#x2F;currents-dev.png" width="60px" alt="User avatar: Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https:&#x2F;&#x2F;github.com&#x2F;jzaratei.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/alescinskis"><img src="https:&#x2F;&#x2F;github.com&#x2F;alescinskis.png" width="60px" alt="User avatar: Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https:&#x2F;&#x2F;github.com&#x2F;kahuna227.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/alexhvastovich"><img src="https:&#x2F;&#x2F;github.com&#x2F;alexhvastovich.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/FrancescoBorzi"><img src="https:&#x2F;&#x2F;github.com&#x2F;FrancescoBorzi.png" width="60px" alt="User avatar: Francesco Borzì" /></a><a href="https://github.com/Niansuh"><img src="https:&#x2F;&#x2F;github.com&#x2F;Niansuh.png" width="60px" alt="User avatar: Husnain" /></a><!-- sponsors -->
+
+If you find Playwright-BDD useful in your personal or work projects, consider [becoming a sponsor](https://github.com/sponsors/vitalets). Even small contributions help me dedicate more time to maintenance, new features, and community support.
 
 ## How to make BDD valuable for my project?
 
