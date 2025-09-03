@@ -11,6 +11,7 @@ export default [
       'dist',
       '*.config.js',
       'test/**/.cache',
+      'test/**/dist',
       '**/.features-gen/**',
       '**/actual-reports/**',
       '**/playwright-report/**',
