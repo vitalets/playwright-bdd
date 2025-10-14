@@ -2,3 +2,4 @@
 **/*.feature.spec.js
 test/parse-error/sample.feature
 test/i18n/features/*.feature
+package-lock.json
