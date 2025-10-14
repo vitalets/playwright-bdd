@@ -5,6 +5,11 @@
 </div>
 
 <h2 align="center">Playwright-BDD</h2>
+<div align="center">
+
+Run BDD tests with Playwright runner
+
+</div>
 
 <div align="center">
 
@@ -16,11 +21,11 @@
 
 </div>
 
-<div align="center">
-
-Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner
-
-</div>
+<p align="center">
+  <a href="https://vitalets.github.io/playwright-bdd/">Documentation</a> |
+  <a href="https://github.com/vitalets/playwright-bdd-example">Example</a> |
+  <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
+</p>
 
 > [!TIP]
 > [BDD + MCP: Your thoughts?](https://github.com/vitalets/playwright-bdd/issues/321)
