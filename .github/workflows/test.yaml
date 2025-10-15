@@ -2,6 +2,9 @@ name: test
 
 on:
   push:
+    # Define all branches explicitly to not trigger actions on tag creation
+    # See: https://github.com/orgs/community/discussions/25615
+    branches: ['**']
   pull_request:
     branches: [main, beta]
   schedule:
