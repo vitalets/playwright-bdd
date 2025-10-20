@@ -54,7 +54,7 @@
     "docs": "docsify serve ./docs",
     "docs:validate": "ts-node scripts/validate-docs.ts",
     "pw": "npm i --no-save @playwright/test@$PW @playwright/experimental-ct-react@$PW",
-    "pw:browsers": "npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium",
+    "pw:install": "npx cross-env PLAYWRIGHT_SKIP_BROWSER_GC=1 npx playwright install chromium",
     "pw:clear-cache": "npx playwright clear-cache",
     "release": "release-it"
   },

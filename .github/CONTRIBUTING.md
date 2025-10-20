@@ -107,7 +107,7 @@ npx cross-env PW=1.45 npm run pw
 ### Install Playwright browsers
 This command will install `chromium` for the current Playwright version, without clearing previous browsers:
 ```
-npm run pw:browsers
+npm run pw:install
 ```
 
 ### Check deprecated Playwright versions
