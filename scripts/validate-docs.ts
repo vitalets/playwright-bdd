@@ -45,10 +45,14 @@ function fillFileInfo(relPath: string) {
     marked.parse(fileInfo.content, {
       walkTokens: (token) => {
         if (token.type === 'heading') {
-          const anchor = slugify(token.text, {
+          const m = /<a id="([^"]+)"/.exec(token.text);
+
+          const anchor = m ? m[1] : slugify(token.text, {
             lower: true,
             strict: true,
+            locale: 'en',
           });
+          
           fileInfo.anchors.push(anchor);
         }
         if (token.type === 'link' && !/^https?:\/\//.test(token.href)) {
