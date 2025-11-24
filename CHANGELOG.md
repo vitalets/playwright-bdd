@@ -5,6 +5,7 @@
 ## [Unreleased]
 * feat: support multiple step decorators on a single method ([#340](https://github.com/vitalets/playwright-bdd/issues/340))
 * minor: evaluate Playwright config for better compatibility ([#352](https://github.com/vitalets/playwright-bdd/issues/352))
+* setup trusted publishing
 
 ## [8.4.1] - 2025-09-03
 * feat: explicitly export types ([#322](https://github.com/vitalets/playwright-bdd/issues/322), [#330](https://github.com/vitalets/playwright-bdd/issues/330))
