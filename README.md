@@ -70,6 +70,13 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
+## Playwright Versions Support
+
+`playwright-bdd` supports all **non-deprecated** versions of Playwright. To check which Playwright versions are currently deprecated, run:
+```bash
+npm show @playwright/test@1 deprecated
+```
+
 ## Feedback & Community
 
 Feel free to report a bug, propose a feature or share your experience:
