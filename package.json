@@ -39,7 +39,7 @@
     "prepare": "git config core.hooksPath scripts/git-hooks",
     "lint": "eslint .",
     "tsc": "tsc",
-    "knip": "knip -c scripts/configs/knip.config.mts --tsConfig tsconfig.build.json",
+    "knip": "knip -c knip.config.mts --tsConfig tsconfig.build.json",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
     "test": "node test/setup.mjs && node --test test/**/test.mjs",
