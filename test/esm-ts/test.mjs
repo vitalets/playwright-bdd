@@ -4,17 +4,7 @@ import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
 const testDir = new TestDir(import.meta);
 
-test(`${testDir.name} (ts-node)`, () => {
-  const stdout = execPlaywrightTest(testDir.name, {
-    env: { NODE_OPTIONS: '--loader ts-node/esm --no-warnings' },
-  });
-
-  expect(stdout).toContain(
-    `Given State 1 ${normalize('.features-gen/one/sample.feature.spec.js')}:7:11`,
-  );
-});
-
-test(`${testDir.name} (pw native)`, () => {
+test(testDir.name, () => {
   const stdout = execPlaywrightTest(testDir.name);
 
   expect(stdout).toContain(

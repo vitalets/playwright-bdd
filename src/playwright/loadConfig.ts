@@ -2,52 +2,33 @@
  * Loading Playwright config.
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright-test/src/common/configLoader.ts
  */
-import path from 'node:path';
-import fs from 'node:fs';
-import { requirePlaywrightModule } from './utils';
-import { exit } from '../utils/exit';
-import { requireOrImport } from './requireOrImport';
-import { getCliConfigPath } from '../cli/options';
+import { registerESMLoader } from './esmLoader';
+import { requirePlaywrightModule, playwrightVersion } from './utils';
 
 export async function loadConfig(cliConfigPath?: string) {
-  const resolvedConfigFile = resolveConfigFile(cliConfigPath);
-  assertConfigFileExists(resolvedConfigFile, cliConfigPath);
-  await requireOrImport(resolvedConfigFile);
-  return { resolvedConfigFile };
+  const { loadConfig } = requirePlaywrightModule('lib/common/configLoader.js');
+  const configLocation = resolveConfigLocation(cliConfigPath);
+
+  // Since PW 1.53 registerEsmLoader is called inside loadConfig.
+  // See: https://github.com/microsoft/playwright/commit/b536b38a788b309c019beedd72b25c3d94d7689d
+  if (playwrightVersion < '1.53') registerESMLoader();
+
+  // We perform full config processing from Playwright,
+  // to correctly set ESM loader configuration.
+  const fullConfig = await loadConfig(configLocation);
+
+  return {
+    ...configLocation,
+    fullConfig,
+  };
 }
 
-/**
- * Returns Playwright config dir considering cli --config option.
- * Note: This fn must be called only in main process, because in workers
- * process.argv is different.
- */
-export function resolveConfigDir() {
-  const cliConfigPath = getCliConfigPath();
-  const playwrightConfigFileFromCli = resolveConfigFile(cliConfigPath);
-  return playwrightConfigFileFromCli ? path.dirname(playwrightConfigFileFromCli) : process.cwd();
-}
-
-export function resolveConfigFile(cliConfigPath?: string): string {
-  const { resolveConfigFile, resolveConfigLocation } = requirePlaywrightModule(
-    'lib/common/configLoader.js',
-  );
-  // Since Playwright 1.44 configLoader.js exports resolveConfigLocation()
-  // See: https://github.com/microsoft/playwright/pull/30275
-  if (typeof resolveConfigLocation === 'function') {
-    return resolveConfigLocation(cliConfigPath).resolvedConfigFile || '';
-  } else {
-    const configFileOrDirectory = getConfigFilePath(cliConfigPath);
-    return resolveConfigFile(configFileOrDirectory) || '';
-  }
-}
-
-function getConfigFilePath(cliConfigPath?: string) {
-  return cliConfigPath ? path.resolve(process.cwd(), cliConfigPath) : process.cwd();
-}
-
-function assertConfigFileExists(resolvedConfigFile: string | null, cliConfigPath?: string) {
-  if (!resolvedConfigFile || !fs.existsSync(resolvedConfigFile)) {
-    const configFilePath = getConfigFilePath(cliConfigPath);
-    exit(`Can't find Playwright config file in: ${configFilePath}`);
-  }
+export function resolveConfigLocation(cliConfigPath?: string) {
+  const { resolveConfigLocation } = requirePlaywrightModule('lib/common/configLoader.js');
+  return resolveConfigLocation(cliConfigPath) as {
+    configDir: string;
+    // Playwright allows empty resolvedConfigFile, but for playwright-bdd we need it to exist,
+    // to get BDD config from there.
+    resolvedConfigFile: string;
+  };
 }

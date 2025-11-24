@@ -18,6 +18,8 @@ const config: KnipConfig = {
     'lint-staged',
     'npm-run-all',
     'http-server',
+    // Used in test/decorators-js to pass custom babel config
+    '@babel/plugin-proposal-decorators',
   ],
 };
 
