@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* feat: support multiple step decorators on a single method ([#340](https://github.com/vitalets/playwright-bdd/issues/340))
 * minor: evaluate Playwright config for better compatibility ([#352](https://github.com/vitalets/playwright-bdd/issues/352))
 
 ## [8.4.1] - 2025-09-03

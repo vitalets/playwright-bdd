@@ -245,3 +245,24 @@ A decorator to mark a method as a BDD step.
   * `pattern` *string | regexp* - Step pattern as a [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp.
   * `options` *object* - Step options:
     - `tags` *string* - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
+
+**Multiple decorators:**
+
+You can apply multiple step decorators to the same method to support different phrasings:
+
+```ts
+@Fixture('todoPage')
+export class TodoPage {
+  @When('a item {string} exists')
+  @When('a item called {string} is added')
+  async addItem(itemName: string) {
+    await this.inputField.fill(itemName);
+    await this.addItemButton.click();
+  }
+}
+```
+
+Each decorator registers a separate step definition that points to the same implementation. This is useful for:
+- Supporting natural language variations
+- Accommodating different team members' writing styles
+- Avoiding complex regex patterns

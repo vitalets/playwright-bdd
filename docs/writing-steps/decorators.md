@@ -68,6 +68,46 @@ Check out the [full example of using decorators](https://github.com/vitalets/pla
 
 > To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
 
+## Multiple decorators per method
+
+You can apply multiple step decorators to the same method to support different natural language phrasings:
+
+```ts
+export @Fixture('todoPage') class TodoPage {
+  @When('a item {string} exists')
+  @When('a item called {string} is added')
+  async addItem(itemName: string) {
+    await this.inputField.fill(itemName);
+    await this.addItemButton.click();
+  }
+
+  @Then('result is {int}')
+  @Then('I see result {int}')
+  async checkResult(value: number) {
+    await expect(this.resultElement).toHaveText(String(value));
+  }
+}
+```
+
+This is equivalent to defining two separate methods but reduces code duplication. Each decorator registers a separate step definition that points to the same implementation.
+
+You can also mix different step keywords:
+
+```ts
+export @Fixture('todoPage') class TodoPage {
+  @Given('I have item {string}')
+  @When('I add item {string}')
+  async setupItem(itemName: string) {
+    await this.addItem(itemName);
+  }
+}
+```
+
+This approach is especially useful for:
+- Supporting natural language variations without complex regex
+- Accommodating different team members' writing preferences
+- Making tests more readable and maintainable
+
 ## Inheritance
 When one Page Object is inherited from another, `playwright-bdd` can automatically guess
 what fixture to use in a particular scenario. Imagine two parent-child classes with decorator steps:

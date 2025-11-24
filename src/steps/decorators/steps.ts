@@ -18,7 +18,7 @@ import {
 // initially we store step data inside method,
 // and then extract it in @Fixture decorator call
 const decoratedStepSymbol = Symbol('decoratedStep');
-type DecoratedMethod = Function & { [decoratedStepSymbol]: StepDefinitionOptions };
+type DecoratedMethod = Function & { [decoratedStepSymbol]: StepDefinitionOptions[] };
 
 /**
  * Creates @Given, @When, @Then decorators.
@@ -44,11 +44,15 @@ export function linkStepsWithPomNode(Ctor: Function, pomNode: PomNode) {
   if (!Ctor?.prototype) return;
   const propertyDescriptors = Object.getOwnPropertyDescriptors(Ctor.prototype);
   return Object.values(propertyDescriptors).forEach((descriptor) => {
-    const stepOptions = getStepOptionsFromMethod(descriptor);
-    if (!stepOptions) return;
-    stepOptions.pomNode = pomNode;
-    stepOptions.defaultTags = pomNode.fixtureTags;
-    registerDecoratorStep(stepOptions);
+    const stepOptionsArray = getStepOptionsFromMethod(descriptor);
+    if (!stepOptionsArray) return;
+
+    // Register each step definition from the array
+    stepOptionsArray.forEach((stepOptions) => {
+      stepOptions.pomNode = pomNode;
+      stepOptions.defaultTags = pomNode.fixtureTags;
+      registerDecoratorStep(stepOptions);
+    });
   });
 }
 
@@ -91,7 +95,14 @@ function saveStepConfigToMethod(
   method: StepDefinitionOptions['fn'],
   stepConfig: StepDefinitionOptions,
 ) {
-  (method as unknown as DecoratedMethod)[decoratedStepSymbol] = stepConfig;
+  const decoratedMethod = method as unknown as DecoratedMethod;
+
+  // Support multiple decorators by storing array of step configs
+  if (!decoratedMethod[decoratedStepSymbol]) {
+    decoratedMethod[decoratedStepSymbol] = [];
+  }
+
+  decoratedMethod[decoratedStepSymbol].push(stepConfig);
 }
 
 function getStepOptionsFromMethod(descriptor: PropertyDescriptor) {
