@@ -41,13 +41,13 @@ jobs:
           node-version: 22
           registry-url: 'https://registry.npmjs.org'
       - run: npm ci
-      - run: npm run docs:validate
-      - run: npx publint
       - run: npm run knip
       - run: npm run lint
       - run: npm run prettier
+      - run: npm run docs:validate
       - run: npm run build
       - run: npm run tsc
+      - run: npx publint
 
       # - run: |
       #     git config user.name "github-actions[bot]"
