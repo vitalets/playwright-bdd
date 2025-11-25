@@ -27,6 +27,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v4
+
       - name: Check test workflows passed
         run: |
           gh run list --workflow=test.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
@@ -34,8 +36,6 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Checkout
-        uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
