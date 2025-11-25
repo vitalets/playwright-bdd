@@ -1,6 +1,6 @@
 # Component tests
 
-!> Not supported
+!> Component tests are not supported yet.
 
 Although component tests work in simple cases with Playwribght-BDD, actually this feature is not usable in real-life projects.
 
