@@ -31,6 +31,7 @@ jobs:
 
       - name: Check test workflows passed
         run: |
+          gh run list --workflow=lint.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
           gh run list --workflow=test.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
           gh run list --workflow=examples.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Examples must pass before publishing" && exit 1)
         env:
@@ -46,7 +47,7 @@ jobs:
       - run: npm run prettier
       - run: npm run docs:validate
       - run: npm run build
-      - run: npm run tsc
+      - run: npm run tsc:all
       - run: npx publint
 
       # - run: |
