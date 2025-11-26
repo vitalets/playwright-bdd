@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [8.4.2] - 2025-11-26
 * feat: support multiple step decorators on a single method ([#340](https://github.com/vitalets/playwright-bdd/issues/340))
 * minor: evaluate Playwright config for better compatibility ([#352](https://github.com/vitalets/playwright-bdd/issues/352))
 * setup trusted publishing
@@ -287,9 +289,11 @@ Version v3 has several major updates based on the feedback.
 ## 1.2.0
 * Initial public release
 
-[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v8.4.1...HEAD
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/8.4.2...HEAD
 [8.4.1]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...v8.4.1
 [8.4.1-0]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...v8.4.1-0
 [8.4.0]: https://github.com/vitalets/playwright-bdd/compare/v8.3.1...v8.4.0
 [8.3.1]: https://github.com/vitalets/playwright-bdd/compare/v8.3.0...v8.3.1
 [8.3.0]: https://github.com/vitalets/playwright-bdd/compare/v8.2.1...v8.3.0
+
+[8.4.2]: https://github.com/vitalets/playwright-bdd/releases/tag/8.4.2
