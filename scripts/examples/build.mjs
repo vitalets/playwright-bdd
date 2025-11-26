@@ -22,8 +22,8 @@ function buildAndInstallPlaywrightBdd() {
       // remove node_modules to check that playwright-bdd brings all needed dependencies
       fs.rmSync('node_modules', { recursive: true });
       // install playwright-bdd with peer dependencies (Playwright)
-      // install typescript to be able to run tsc in examples
-      runCmd(`npm install --no-save ../${generatedTar} typescript`, { cwd });
+      // install typescript + @types/node to be able to run tsc in examples
+      runCmd(`npm install --no-save ../${generatedTar} typescript @types/node`, { cwd });
       // install playwright browsers
       runCmd(`npx playwright install --with-deps chromium`, { cwd });
     } else {
