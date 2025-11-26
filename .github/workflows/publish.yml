@@ -54,9 +54,9 @@ jobs:
       - run: npm run tsc:all
       - run: npx publint
 
-      # - run: |
-      #     git config user.name "github-actions[bot]"
-      #     git config user.email "github-actions[bot]@users.noreply.github.com"
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - run: |
           if [ "${{ inputs.prerelease }}" = "true" ]; then
