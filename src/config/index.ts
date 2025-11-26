@@ -7,9 +7,10 @@ import { getConfigDirFromEnv, saveConfigToEnv } from './env';
 import { BDDConfig, BDDInputConfig, BDDProjectConfig } from './types';
 import { defaults } from './defaults';
 import { removeUndefined } from '../utils';
-import { resolveConfigDir } from '../playwright/loadConfig';
+import { resolveConfigLocation } from '../playwright/loadConfig';
 import { isDirectory } from '../utils/paths';
 import { exit } from '../utils/exit';
+import { getCliConfigPath } from '../cli/options';
 
 export function defineBddProject(config: BDDProjectConfig) {
   const { name, ...bddConfig } = config;
@@ -66,6 +67,15 @@ function getConfig(configDir: string, inputConfig: BDDInputConfig): BDDConfig {
     outputDir: resolveOutputDir(configDir, config.outputDir),
     importTestFrom: resolveImportTestFrom(configDir, config.importTestFrom),
   };
+}
+
+/**
+ * Returns Playwright config dir considering cli --config option.
+ * Note: This fn must be called only in main process, because in workers
+ * process.argv is different.
+ */
+function resolveConfigDir() {
+  return resolveConfigLocation(getCliConfigPath()).configDir;
 }
 
 /**

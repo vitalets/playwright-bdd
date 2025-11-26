@@ -2,11 +2,11 @@
  * Universal requireOrImport function that can import any file (js/ts, cjs/esm)
  */
 import { requirePlaywrightModule } from './utils';
-import { installEsmLoaderIfNeeded } from './esmLoader';
+import { registerESMLoader } from './esmLoader';
 import { relativeToCwd } from '../utils/paths';
 
 export async function requireOrImport(file: string) {
-  await installEsmLoaderIfNeeded();
+  registerESMLoader();
   const transform = requirePlaywrightModule('lib/transform/transform.js');
   return transform.requireOrImport(file);
 }

@@ -1,6 +1,6 @@
 import path from 'node:path';
 import micromatch from 'micromatch';
-import { getSmokeTestDirs } from '../smoke-tests.mjs';
+import { getSmokeTestDirs } from './scripts/smoke-tests.mjs';
 
 export default {
   '**': (changedFiles) => {
@@ -10,7 +10,8 @@ export default {
       ...test(changedFiles),
     ];
   },
-  '**/*.ts': () => 'npm run tsc',
+  '!(test|examples)/**/*.ts': () => 'npm run tsc',
+  'test/**/*.ts': () => 'npm run tsc:test',
   '**/*.feature': 'node scripts/no-only-in-features.mjs',
   'docs/**': () => 'npm run docs:validate',
 };

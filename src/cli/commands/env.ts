@@ -2,7 +2,7 @@ import { Command } from 'commander';
 import { ConfigOption } from '../options';
 import { Logger } from '../../utils/logger';
 import { getPackageVersion } from '../../utils';
-import { resolveConfigFile } from '../../playwright/loadConfig';
+import { resolveConfigLocation } from '../../playwright/loadConfig';
 import { relativeToCwd } from '../../utils/paths';
 
 const logger = new Logger({ verbose: true });
@@ -30,7 +30,7 @@ function showPackageVersion(packageName: string) {
 }
 
 function showPlaywrightConfigPath(cliConfigPath?: string) {
-  const resolvedConfigFile = resolveConfigFile(cliConfigPath);
+  const { resolvedConfigFile } = resolveConfigLocation(cliConfigPath);
   const configFileStr = resolvedConfigFile ? relativeToCwd(resolvedConfigFile) : 'none';
   logger.log(`Playwright config file: ${configFileStr}`);
 }

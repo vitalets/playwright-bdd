@@ -5,6 +5,11 @@
 </div>
 
 <h2 align="center">Playwright-BDD</h2>
+<div align="center">
+
+Run BDD tests with Playwright runner
+
+</div>
 
 <div align="center">
 
@@ -12,15 +17,15 @@
 [![test](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml/badge.svg)](https://github.com/vitalets/playwright-bdd/actions/workflows/test.yaml)
 [![npm version](https://img.shields.io/npm/v/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
 [![npm downloads](https://img.shields.io/npm/dw/playwright-bdd)](https://www.npmjs.com/package/playwright-bdd)
-[![license](https://img.shields.io/npm/l/playwright-bdd)](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE)
+![license](https://img.shields.io/github/license/vitalets/global-cache)
 
 </div>
 
-<div align="center">
-
-Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwright.dev/) runner
-
-</div>
+<p align="center">
+  <a href="https://vitalets.github.io/playwright-bdd/">Documentation</a> |
+  <a href="https://github.com/vitalets/playwright-bdd-example">Example</a> |
+  <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
+</p>
 
 > [!TIP]
 > [BDD + MCP: Your thoughts?](https://github.com/vitalets/playwright-bdd/issues/321)
@@ -28,9 +33,9 @@ Run [BDD](https://cucumber.io/docs/bdd/) tests with [Playwright](https://playwri
 ## Why BDD?
 In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
 
-- 🤖 **Generate**: Ask any AI model to generate feature files by raw business requirements.
-- ✅ **Validate**: Refine the generated scenarios with AI or colleagues, collaborate in human language instead of code.
-- 🛠 **Automate**: [Use existing steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) to run the tests and prevent codebase growth.
+- 🤖 **Generate** feature files from raw business requirements using AI.
+- ✅ **Refine** scenarios with colleagues or AI in plain human language.
+- 🛠 **Automate** test execution using the Playwright runner.
 
 ## Why Playwright Runner?
 
@@ -65,6 +70,13 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
+## Playwright Versions Support
+
+`playwright-bdd` supports all **non-deprecated** versions of Playwright. To check which Playwright versions are currently deprecated, run:
+```bash
+npm show @playwright/test@1 deprecated
+```
+
 ## Feedback & Community
 
 Feel free to report a bug, propose a feature or share your experience:
@@ -78,10 +90,13 @@ Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/p
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## Sponsors
-Many thanks to our sponsors for their generous support ❤️ [Become a sponsor](https://github.com/sponsors/vitalets)
+## 💖 Sponsors
 
-<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https:&#x2F;&#x2F;github.com&#x2F;currents-dev.png" width="60px" alt="User avatar: Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https:&#x2F;&#x2F;github.com&#x2F;jzaratei.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/alescinskis"><img src="https:&#x2F;&#x2F;github.com&#x2F;alescinskis.png" width="60px" alt="User avatar: Arturs Leščinskis" /></a><a href="https://github.com/kahuna227"><img src="https:&#x2F;&#x2F;github.com&#x2F;kahuna227.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/alexhvastovich"><img src="https:&#x2F;&#x2F;github.com&#x2F;alexhvastovich.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/FrancescoBorzi"><img src="https:&#x2F;&#x2F;github.com&#x2F;FrancescoBorzi.png" width="60px" alt="User avatar: Francesco Borzì" /></a><!-- sponsors -->
+A big thank you to all the **amazing people and companies** already supporting Playwright-BDD! Your help keeps the project alive and growing:
+
+<!-- sponsors --><a href="https://github.com/currents-dev"><img src="https:&#x2F;&#x2F;github.com&#x2F;currents-dev.png" width="60px" alt="User avatar: Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https:&#x2F;&#x2F;github.com&#x2F;jzaratei.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/alescinskis"><img src="https:&#x2F;&#x2F;github.com&#x2F;alescinskis.png" width="60px" alt="User avatar: Arturs Leščinskis" /></a><a href="https://github.com/alexhvastovich"><img src="https:&#x2F;&#x2F;github.com&#x2F;alexhvastovich.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/FrancescoBorzi"><img src="https:&#x2F;&#x2F;github.com&#x2F;FrancescoBorzi.png" width="60px" alt="User avatar: Francesco Borzì" /></a><!-- sponsors -->
+
+If you find Playwright-BDD useful in your personal or work projects, consider [becoming a sponsor](https://github.com/sponsors/vitalets). Even small contributions help me dedicate more time to maintenance, new features, and community support.
 
 ## How to make BDD valuable for my project?
 
@@ -89,7 +104,7 @@ Have a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id
 
 ## My other Playwright tools
 
-* [@vitalets/global-cache](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
+* [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
 * [request-mocking-protocol](https://github.com/vitalets/request-mocking-protocol) - Mock server-side API calls in Playwright.
 * [playwright-network-cache](https://github.com/vitalets/playwright-network-cache) - Speed up Playwright tests by caching network requests on the filesystem.
 * [playwright-magic-steps](https://github.com/vitalets/playwright-magic-steps) - Auto-transform JavaScript comments into Playwright steps.

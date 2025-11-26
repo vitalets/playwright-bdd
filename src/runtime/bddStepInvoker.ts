@@ -25,7 +25,6 @@ export class BddStepInvoker {
 
   /**
    * Invokes particular step.
-   * See: https://github.com/cucumber/cucumber-js/blob/main/src/runtime/test_case_runner.ts#L299
    */
   async invoke(
     stepText: string, // step text without keyword

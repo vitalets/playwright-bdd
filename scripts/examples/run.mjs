@@ -20,7 +20,8 @@ runExamples();
 function runExamples() {
   dirs.forEach((dir) => {
     const cwd = path.join('examples', dir);
-    logger.log(cwd);
+    logger.log(`Running example: ${cwd}`);
+    execSync(`npx tsc`, { cwd, stdio: 'inherit' });
     execSync(`npm test`, { cwd, stdio: 'inherit' });
   });
 }

@@ -1,0 +1,77 @@
+name: Publish to npm
+
+on:
+  workflow_dispatch:
+    inputs:
+      release-version:
+        description: Release version type
+        required: true
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+        default: patch
+      prerelease:
+        description: Pre-release (beta)
+        required: false
+        type: boolean
+        default: false
+      skip-npm-publish:
+        description: Skip NPM publish
+        required: false
+        type: boolean
+        default: false
+      dry-run:
+        description: Dry run
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write # For git operations (commit, tag, push)
+  id-token: write # Required for OIDC trusted publishing
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check test workflows passed
+        run: |
+          gh run list --workflow=lint.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
+          gh run list --workflow=test.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
+          gh run list --workflow=examples.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Examples must pass before publishing" && exit 1)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          registry-url: 'https://registry.npmjs.org'
+
+      # Ensure npm 11.5.1 or later for trusted publishing
+      - run: npm install -g npm@latest
+
+      - run: npm ci
+      - run: npm run knip
+      - run: npm run lint
+      - run: npm run prettier
+      - run: npm run docs:validate
+      - run: npm run build
+      - run: npm run tsc:all
+      - run: npx publint
+
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - run: >
+          npx release-it ${{ inputs.release-version }} --ci
+          ${{ inputs.prerelease && '--preRelease=beta' || '' }}
+          ${{ inputs.skip-npm-publish && '--no-npm' || '' }}
+          ${{ inputs.dry-run && '--dry-run' || '' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

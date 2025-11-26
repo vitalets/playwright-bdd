@@ -247,8 +247,6 @@ Paths to feature files. [More in Cucumber docs](https://github.com/cucumber/cucu
 
 Paths to step definitions in **CommonJS**. [More in Cucumber docs](https://github.com/cucumber/cucumber-js/blob/main/docs/configuration.md#finding-your-code).
 
-> Cucumber's option `requireModule: ['ts-node/register']` is not recommended for Playwright-BDD. TypeScript compilation is performed with Playwright's built-in loader.
-
 ## import
 
 !> Deprecated, use [`steps`](#steps) instead.

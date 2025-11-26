@@ -14,6 +14,10 @@ export function requirePlaywrightModule(modulePath: string) {
   return require(absPath);
 }
 
+/**
+ * Not used now. Kept for potential use.
+ * @public
+ */
 export function getPlaywrightModulePath(relativePath: string) {
   return path.join(getPlaywrightRoot(), relativePath);
 }

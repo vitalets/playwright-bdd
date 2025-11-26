@@ -5,4 +5,4 @@ set -euo pipefail
 
 if [[ -n "${SKIP_GIT_HOOKS-}" ]]; then exit 0; fi
 
-npx lint-staged --relative --config scripts/configs/lint-staged.config.mjs
+npx lint-staged --relative

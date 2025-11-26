@@ -29,11 +29,15 @@ test('should show trace viewer', async ({ page, context }) => {
   await expect(page.getByText('sample.feature.spec.js')).toContainText('some scenario');
 
   // open page snapshot
-  const [traceViewerPage] = await Promise.all([
+  const [snapshotPage] = await Promise.all([
     context.waitForEvent('page'),
     page.getByTitle('Open snapshot').click(),
   ]);
-  await expect(traceViewerPage.getByRole('heading')).toContainText('Example Domain');
+  await expect(snapshotPage).toHaveURL(/snapshot/);
+  // Since PW 1.57 the actual snapshot is rendered in iframe, so we take the last entry from frames(),
+  // that will be either the main frame (PW <1.57) or the iframe (PW >=1.57)
+  const frame = snapshotPage.frames().pop()!;
+  await expect(frame.getByRole('heading')).toContainText('Example Domain');
 });
 
 async function openHtmlReport(page: Page, protocol: 'http' | 'file') {

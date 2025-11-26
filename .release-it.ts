@@ -1,26 +1,15 @@
 import type { Config } from 'release-it';
 
 export default {
-  git: {
-    requireCleanWorkingDir: true,
-  },
   github: {
     release: true,
-    web: true,
   },
-  hooks: {
-    'before:init': [
-      'npm run docs:validate',
-      'npx publint',
-      'npm run knip',
-      'npm ci',
-      'npm run lint',
-      'npm run prettier',
-      'npm run build',
-      'npm run tsc',
-      'npx npm test',
-      'npm run examples',
-    ],
+  npm: {
+    skipChecks: true, // Required for trusted publishing with OIDC
+  },
+  git: {
+    commitArgs: ['--no-verify'],
+    pushArgs: ['--no-verify'],
   },
   plugins: {
     '@release-it/keep-a-changelog': {

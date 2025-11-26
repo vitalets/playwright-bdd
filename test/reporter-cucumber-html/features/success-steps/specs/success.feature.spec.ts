@@ -82,7 +82,7 @@ test('Check doubled', async ({ feature }) => {
     'GivenAction <start>', // prettier-ignore
     'ThenAction <end>',
   ]);
-  await expect(scenario.getExamples().nth(0).getByRole('cell')).toContainText([
+  await expect(scenario.getExamples().nth(0).locator('th,td')).toContainText([
     ' ',
     'start',
     'end',
@@ -93,7 +93,7 @@ test('Check doubled', async ({ feature }) => {
     '3',
     '6',
   ]);
-  await expect(scenario.getExamples().nth(1).getByRole('cell')).toContainText([
+  await expect(scenario.getExamples().nth(1).locator('th,td')).toContainText([
     ' ',
     'start',
     'end',
