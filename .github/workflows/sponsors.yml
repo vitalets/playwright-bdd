@@ -1,4 +1,3 @@
-# Update sponsors in README.md
 name: update-sponsors
 on:
   workflow_dispatch:
@@ -6,23 +5,26 @@ on:
     # run daily at 00:00
     - cron: 0 0 * * *
 
-permissions: write-all
+permissions:
+  contents: write
 
 jobs:
   update-sponsors:
+    if: github.ref_name == 'main'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
       - name: Update sponsors in README.md
-        uses: JamesIves/github-sponsors-readme-action@v1
+        uses: JamesIves/github-sponsors-readme-action@1a120c92d5067dafeaedb33916301fd61338883d
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           file: README.md
 
-      - name: Push changes to main branch
-        # See: https://github.com/JamesIves/github-pages-deploy-action/issues/1697
-        uses: JamesIves/github-pages-deploy-action@v4.6.4
-        with:
-          branch: main
-          folder: '.'
+      - name: Commit and push changes to the main branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore: update sponsors" || echo "No changes to commit"
+          git push
