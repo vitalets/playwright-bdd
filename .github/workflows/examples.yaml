@@ -20,7 +20,7 @@ jobs:
         # Older versions of PW don't support ubuntu-24.04
         # See: https://github.com/microsoft/playwright/issues/30368
         os: [ubuntu-22.04, windows-latest]
-        node-version: [18, 20]
+        node-version: [20]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
