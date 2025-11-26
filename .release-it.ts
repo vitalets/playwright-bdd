@@ -7,6 +7,10 @@ export default {
   npm: {
     skipChecks: true, // Required for trusted publishing with OIDC
   },
+  git: {
+    commitArgs: ['--no-verify'],
+    pushArgs: ['--no-verify'],
+  },
   plugins: {
     '@release-it/keep-a-changelog': {
       filename: 'CHANGELOG.md',
