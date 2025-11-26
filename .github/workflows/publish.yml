@@ -46,8 +46,6 @@ jobs:
       - run: npm run prettier
       - run: npm run docs:validate
       - run: npm run build
-      # Build examples to let tsc pass
-      - run: npm run examples:build
       - run: npm run tsc
       - run: npx publint
 

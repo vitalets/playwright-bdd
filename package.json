@@ -39,6 +39,8 @@
     "prepare": "git config core.hooksPath scripts/git-hooks",
     "lint": "eslint .",
     "tsc": "tsc",
+    "tsc:test": "tsc -p test/tsconfig.json",
+    "tsc:all": "npm run tsc && npm run tsc:test",
     "knip": "knip -c knip.config.mts --tsConfig tsconfig.build.json",
     "prettier": "prettier --check --ignore-unknown .",
     "prettier:w": "prettier --write --ignore-unknown .",
