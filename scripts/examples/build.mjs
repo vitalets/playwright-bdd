@@ -17,11 +17,19 @@ function buildAndInstallPlaywrightBdd() {
   try {
     runCmd('npm run build');
     runCmd('npm pack --loglevel=error');
-    // on CI remove node_modules to check that playwright-bdd brings all needed dependencies
-    if (isCI) fs.rmSync('node_modules', { recursive: true });
-    if (!isCI) runCmd(`npm install --omit=peer --no-save ../${generatedTar}`, { cwd: 'examples' });
-    if (isCI) runCmd(`npm install --no-save ../${generatedTar}`, { cwd: 'examples' });
-    if (isCI) runCmd(`npx playwright install --with-deps chromium`, { cwd: 'examples' });
+    const cwd = 'examples';
+    if (isCI) {
+      // remove node_modules to check that playwright-bdd brings all needed dependencies
+      fs.rmSync('node_modules', { recursive: true });
+      // install playwright-bdd with peer dependencies (Playwright)
+      // install typescript to be able to run tsc in examples
+      runCmd(`npm install --no-save ../${generatedTar} typescript`, { cwd });
+      // install playwright browsers
+      runCmd(`npx playwright install --with-deps chromium`, { cwd });
+    } else {
+      // locally install playwright-bdd without peer dependencies to speed up installation
+      runCmd(`npm install --omit=peer --no-save ../${generatedTar}`, { cwd });
+    }
   } finally {
     fs.rmSync(generatedTar, { force: true });
   }
