@@ -8,7 +8,7 @@
     "url": "git+https://github.com/vitalets/playwright-bdd.git"
   },
   "bin": {
-    "bddgen": "./dist/cli/index.js"
+    "bddgen": "dist/cli/index.js"
   },
   "engines": {
     "node": ">=18"
