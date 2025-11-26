@@ -22,6 +22,11 @@ on:
         required: false
         type: boolean
         default: false
+      dry-run:
+        description: Dry run
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write # For git operations (commit, tag, push)
@@ -64,8 +69,9 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
       - run: >
-          npx release-it ${{ inputs.release-version }} --ci
+          npx release-it ${{ inputs.release-version }} --ci --dry-run
           ${{ inputs.prerelease && '--preRelease=beta' || '' }}
           ${{ inputs.skip-npm-publish && '--no-npm' || '' }}
+          ${{ inputs.dry-run && '--dry-run' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
