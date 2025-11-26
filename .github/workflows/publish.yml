@@ -65,7 +65,7 @@ jobs:
 
       - run: >
           npx release-it ${{ inputs.release-version }} --ci
-          ${{ inputs.prerelease == 'true' && '--preRelease=beta' || '' }}
-          ${{ inputs.skip-npm-publish == 'true' && '--no-npm' || '' }}
+          ${{ inputs.prerelease && '--preRelease=beta' || '' }}
+          ${{ inputs.skip-npm-publish && '--no-npm' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
