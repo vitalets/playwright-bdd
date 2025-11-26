@@ -17,6 +17,11 @@ on:
         required: false
         type: boolean
         default: false
+      skip-npm-publish:
+        description: Skip NPM publish
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write # For git operations (commit, tag, push)
@@ -58,11 +63,9 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - run: |
-          if [ "${{ inputs.prerelease }}" = "true" ]; then
-            npx release-it ${{ inputs.release-version }} --ci --preRelease=beta
-          else
-            npx release-it ${{ inputs.release-version }} --ci
-          fi
+      - run: >
+          npx release-it ${{ inputs.release-version }} --ci
+          ${{ inputs.prerelease == 'true' && '--preRelease=beta' || '' }}
+          ${{ inputs.skip-npm-publish == 'true' && '--no-npm' || '' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
