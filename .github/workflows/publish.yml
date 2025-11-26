@@ -60,9 +60,9 @@ jobs:
 
       - run: |
           if [ "${{ inputs.prerelease }}" = "true" ]; then
-            npx release-it ${{ inputs.release-version }} --ci --increment --preRelease=beta
+            npx release-it ${{ inputs.release-version }} --ci --preRelease=beta
           else
-            npx release-it ${{ inputs.release-version }} --ci --increment
+            npx release-it ${{ inputs.release-version }} --ci
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
