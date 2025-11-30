@@ -1,0 +1,3 @@
+- Translations
+  - [English](/index.md)
+  - [Русский](/ru/index.md)
