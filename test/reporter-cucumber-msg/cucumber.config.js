@@ -1,7 +1,7 @@
 /**
  * This Cucumber config is used to generate expected messages report.
  * Keep the name cucumber.config.js (not cucumber.js)
- * to avoid automatic reauire by Cucumber inside playwright-bdd.
+ * to avoid automatic require by Cucumber inside playwright-bdd.
  *
  * Usage:
  * node test/reporter-cucumber-msg/helpers/run-c.mjs <featureDir>

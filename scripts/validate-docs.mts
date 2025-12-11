@@ -1,14 +1,17 @@
 /**
  * Script to validate relative links in docs.
  * Usage:
- * npx ts-node scripts/validate-docs.ts
+ * npx tsx scripts/validate-docs.mts
  */
 
 import fs from 'node:fs';
 import fg from 'fast-glob';
 import path from 'node:path';
 import { marked, Tokens } from 'marked';
-import slugify from 'slugify';
+import slugifyPkg from 'slugify';
+
+// See: https://github.com/simov/slugify/issues/196
+const slugify = slugifyPkg.default;
 
 // without this '$' is translated to 'dollar'
 slugify.extend({ $: '' });
