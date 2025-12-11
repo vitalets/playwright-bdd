@@ -18,7 +18,12 @@ const config: KnipConfig = {
   ],
   // this is a knip default, keep it here for readability
   project: ['**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}!'],
-  ignoreBinaries: ['docsify'],
+  ignoreBinaries: [
+    // binaries that used ad-hoc with npx
+    'docsify',
+    'tsx',
+    'npm-check-updates',
+  ],
   ignoreDependencies: [
     // Keep @cucumber/compatibility-kit to inspec their tests manually
     '@cucumber/compatibility-kit',
@@ -39,6 +44,8 @@ const config: KnipConfig = {
     'react-dom',
     '@types/react',
     '@types/react-dom',
+    // used programmatically in tests
+    'ts-node',
   ],
 };
 
