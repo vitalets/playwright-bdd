@@ -51,6 +51,7 @@ export class BddDataRenderer {
     return {
       pwTestLine: this.sourceMapper.getPwTestLine(test.pickle),
       pickleLine: test.pickle.location.line,
+      testTitle: test.testTitle, // store test title for reliable matching in reporter
       skipped: test.skipped || undefined,
       timeout: test.ownTimeout,
       slow: test.slow || undefined,
