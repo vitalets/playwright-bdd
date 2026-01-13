@@ -1,8 +1,9 @@
 import { expect } from '@playwright/test';
-import { DataTable, defineParameterType } from 'playwright-bdd';
+import { DataTable } from 'playwright-bdd';
 import { Given, When, Then } from './fixtures';
 import { expectTypeOf } from 'expect-type';
 import { World } from './world';
+import { Color } from '../shared/parameterTypes';
 
 Given('State {int}', async function () {
   expectTypeOf(this).toEqualTypeOf<World>();
@@ -29,15 +30,12 @@ Then('Passed int arg {int} to equal 42', async function (arg: number) {
   expect(arg).toEqual(42);
 });
 
-type Color = 'red' | 'blue' | 'yellow';
-defineParameterType({
-  name: 'color',
-  regexp: /red|blue|yellow/,
-  transformer: (s) => s.toLowerCase() as Color,
-});
-
 Then('Passed custom type arg {color} to equal "red"', function (color: Color) {
   expect(color).toEqual('red');
+});
+
+Then('Custom param-no-transformer is {param-no-transformer}', function (param: string) {
+  expect(param).toEqual('dog');
 });
 
 Then('Passed doc string to contain {string}', async function (arg: string, docString: string) {

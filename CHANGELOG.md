@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* Document `defineParameterType` helper.
 
 ## [8.4.2] - 2025-11-26
 * feat: support multiple step decorators on a single method ([#340](https://github.com/vitalets/playwright-bdd/issues/340))

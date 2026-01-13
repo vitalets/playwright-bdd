@@ -8,7 +8,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/pw-style',
         features: 'features',
-        steps: 'steps-pw-style/*.ts',
+        steps: ['shared', 'steps-pw-style/*.ts'],
         quotes: 'double',
       }),
     },
@@ -17,7 +17,7 @@ export default defineConfig({
       testDir: defineBddConfig({
         outputDir: '.features-gen/cucumber-style',
         features: 'features',
-        steps: 'steps-cucumber-style/*.ts',
+        steps: ['shared', 'steps-cucumber-style/*.ts'],
         quotes: 'double',
       }),
     },

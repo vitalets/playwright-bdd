@@ -2,6 +2,7 @@ import { expect, Page } from '@playwright/test';
 import { DataTable } from 'playwright-bdd';
 import { Given, When, Then, Step } from './fixtures';
 import { expectTypeOf } from 'expect-type';
+import { Color } from '../shared/parameterTypes';
 
 Given('State {int}', async () => {
   // noop
@@ -28,8 +29,12 @@ Then('Passed int arg {int} to equal 42', ({}, arg: number) => {
   expect(arg).toEqual(42);
 });
 
-Then('Passed custom type arg {color} to equal "red"', ({}, color: string) => {
+Then('Passed custom type arg {color} to equal "red"', ({}, color: Color) => {
   expect(color).toEqual('red');
+});
+
+Then('Custom param-no-transformer is {param-no-transformer}', ({}, param: string) => {
+  expect(param).toEqual('dog');
 });
 
 Then('Passed doc string to contain {string}', async ({}, arg: string, docString: string) => {

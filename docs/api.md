@@ -103,6 +103,35 @@ Functions for step definitions.
 
 **Returns:** *function* - A function to call this step from other steps.
 
+### defineParameterType
+
+Defines a custom parameter type using a regular expression and an optional transformer function.
+
+**Signature:** `defineParameterType(options)`
+
+**Params:**
+  * `options` *object*
+    - `name` *string* - Name to refer to this type in cucumber expressions.
+    - `regexp` *RegExp* - A regular expression to match the parameter.
+    - `transformer` *Function* - An optional function which transforms the captured argument from a string into another type. If no transform function is specified, the captured argument is left as a string.
+
+**Usage:**
+
+```ts
+import { defineParameterType } from 'playwright-bdd';
+
+type Color = 'red' | 'blue' | 'yellow';
+defineParameterType({
+  name: 'color',
+  regexp: /red|blue|yellow/,
+  transformer: (s) => s.toLowerCase() as Color,
+});
+
+Then('The color is {color}', async ({}, color: Color) => {
+  // ...
+});
+```
+
 ### BeforeStep
 
 Defines a hook that runs **before each step**. You can target the hook to specific step by providing the `tags` option.

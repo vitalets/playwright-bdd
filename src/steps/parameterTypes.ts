@@ -12,7 +12,7 @@ export const parameterTypeRegistry = new SourcedParameterTypeRegistry();
 export interface IParameterTypeDefinition<T> {
   name: string;
   regexp: readonly RegExp[] | readonly string[] | RegExp | string;
-  transformer: (...match: string[]) => T;
+  transformer?: (...match: string[]) => T;
   useForSnippets?: boolean;
   preferForRegexpMatch?: boolean;
 }
