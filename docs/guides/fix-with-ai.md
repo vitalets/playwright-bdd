@@ -1,7 +1,5 @@
 # Fix with AI
 
-> This is an **experimental** feature, feel free to share your feedback in the [issues](https://github.com/vitalets/playwright-bdd/issues).
-
 Playwright-BDD **v8.1.0** introduced a new feature called **Fix with AI**. It helps you quickly fix failing tests with AI suggestions.
 
 When a test fails, Playwright-BDD pre-generates an AI prompt and attaches it to the report.

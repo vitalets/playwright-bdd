@@ -414,11 +414,11 @@ BeforeWorker(async () => {
 });
 ```
 
-To run code inside a hook exactly once, you can use [@vitalets/global-cache](https://github.com/vitalets/global-cache). It lets you cache and reuse any serializable data across all workers:
+To run code inside a hook exactly once, you can use [@global-cache/playwright](https://github.com/vitalets/global-cache). It lets you cache and reuse any serializable data across all workers:
 
 ```ts
 import { BeforeWorker } from './fixtures';
-import { globalCache } from '@vitalets/global-cache';
+import { globalCache } from '@global-cache/playwright';
 
 BeforeWorker(async () => {
   await globalCache.get('populate-db', async () => {
@@ -440,12 +440,12 @@ BeforeScenario(async ({ ctx }) => {
 });
 ```
 
-You can use the global cache in fixtures as well. For example, wrap the code in `storageState` fixture to authenticate only when needed and cache for 1 hour:
+You can use Global Cache in fixtures as well. For example, wrap the code in `storageState` fixture to authenticate only when needed and cache for 1 hour:
 
 ```ts
 // fixtures.ts
 import { test as base, createBdd } from 'playwright-bdd';
-import { globalCache } from '@vitalets/global-cache';
+import { globalCache } from '@global-cache/playwright';
 
 export const test = base.extend({
   storageState: async ({ storageState, browser }, use, testInfo) => {
