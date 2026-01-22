@@ -21,16 +21,17 @@
  * cd test/reporter-cucumber-msg
  * FEATURE_DIR=minimal npx playwright test
  */
-import fg from 'fast-glob';
 import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../_helpers/index.mjs';
 import { getJsonFromFile } from '../_helpers/reports/json.mjs';
+import { globSync } from 'tinyglobby';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
 const skipDirs = [
   // For skipped scenarios Playwright does not even run fixtures.
   // We can't align here with Cucumber.
   'skipped',
+  'skipped/',
 ];
 
 const testDir = new TestDir(import.meta);
@@ -106,11 +107,11 @@ function assertJsonReportNoAttachments(featureDir) {
  * Returns all feature dirs.
  */
 function readAllFeatureDirs() {
-  return fg
-    .sync('**', {
-      cwd: testDir.getAbsPath('features'),
-      deep: 1,
-      onlyDirectories: true,
-    })
-    .filter((dir) => !skipDirs.includes(dir));
+  return globSync('**', {
+    cwd: testDir.getAbsPath('features'),
+    deep: 0,
+    onlyDirectories: true,
+  })
+    .filter((dir) => !skipDirs.includes(dir))
+    .map((dir) => dir.replace(/\/$|\\$/, ''));
 }
