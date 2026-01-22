@@ -46,7 +46,7 @@ export class TestDir {
 
   getAllFiles(relativePath) {
     const cwd = this.getAbsPath(relativePath);
-    return globSync('**', { cwd });
+    return globSync('**', { cwd, expandDirectories: false });
   }
 
   expectFileContains(relativePath, substr) {

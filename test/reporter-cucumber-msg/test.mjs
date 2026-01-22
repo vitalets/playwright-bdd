@@ -111,6 +111,7 @@ function readAllFeatureDirs() {
     cwd: testDir.getAbsPath('features'),
     deep: 0,
     onlyDirectories: true,
+    expandDirectories: false,
   })
     .filter((dir) => !skipDirs.includes(dir))
     .map((dir) => dir.replace(/\/$|\\$/, ''));

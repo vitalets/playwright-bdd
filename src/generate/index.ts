@@ -128,7 +128,7 @@ export class TestFilesGenerator {
 
   private async clearOutputDir() {
     const pattern = `${tg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
-    const testFiles = await tg.glob(pattern);
+    const testFiles = await tg.glob(pattern, { expandDirectories: false });
     this.logger.log(`Clearing output dir: ${relativeToCwd(pattern)}`);
     const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
     await Promise.all(tasks);

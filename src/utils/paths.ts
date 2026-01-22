@@ -25,7 +25,12 @@ export function relativeToCwd(absPath: string) {
  */
 export async function resolveFiles(cwd: string, patterns: string[], extension: string) {
   const finalPatterns = patterns.map((pattern) => finalizePattern(pattern, extension));
-  const files = await tg.glob(finalPatterns, { cwd, absolute: true, dot: true });
+  const files = await tg.glob(finalPatterns, {
+    cwd,
+    absolute: true,
+    dot: true,
+    expandDirectories: false,
+  });
   return { files, finalPatterns };
 }
 
