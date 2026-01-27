@@ -32,9 +32,9 @@ export type CucumberReporterOptions<T> = T extends keyof BuiltinReporters
   ? ConstructorParameters<BuiltinReporters[T]>[1]
   : CustomReporterOptions;
 
-export default class CucumberReporterAdapter<
-  T extends keyof BuiltinReporters | string,
-> implements PlaywrightReporter {
+export default class CucumberReporterAdapter<T extends keyof BuiltinReporters | string>
+  implements PlaywrightReporter
+{
   private messagesBuilderRef: MessagesBuilderRef;
   private type: T;
   private userOptions: CucumberReporterOptions<T>;
