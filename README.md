@@ -106,9 +106,9 @@ Great thanks to the **amazing people and companies** already supporting Playwrig
 <div align="center" style="margin-bottom: 16px">
 <a href="https://www.testmuai.com/?utm_source=playwrightbdd&utm_medium=sponsor" target="_blank">
     <picture>
-      <source media="(prefers-color-scheme: dark)" srcset="./docs/_media/sponsors/testmu-ai-black.svg" />
-      <source media="(prefers-color-scheme: light)" srcset="./docs/_media/sponsors/testmu-ai-white.svg" />
-      <img src="./docs/_media/sponsors/testmu-ai-white.svg" alt="TestMu AI" width="200">
+      <source media="(prefers-color-scheme: dark)" srcset="./docs/_media/sponsors/testmu-ai-white.svg" />
+      <source media="(prefers-color-scheme: light)" srcset="./docs/_media/sponsors/testmu-ai-black.svg" />
+      <img src="./docs/_media/sponsors/testmu-ai-black.svg" alt="TestMu AI" width="200">
     </picture>
   </a>
 </div>
