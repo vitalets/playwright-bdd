@@ -19,6 +19,7 @@ jobs:
         uses: JamesIves/github-sponsors-readme-action@1a120c92d5067dafeaedb33916301fd61338883d
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          maximum: 4999
           file: README.md
 
       - name: Commit and push changes to the main branch
