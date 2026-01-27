@@ -95,31 +95,31 @@ Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.c
 
 Great thanks to the **amazing people and companies** already supporting Playwright-BDD! Your help keeps the project alive and growing:
 
-<h3 align="center" style="color: grey">Gold Sponsors</h3>
+<h3 align="center">Gold Sponsors</h3>
 
-<div align="center" style="margin-bottom: 16px">
+<p align="center">
   <a href="https://currents.dev/" target="_blank">
-    <img src="./docs/_media/sponsors/currents.svg" alt="Currents" width="200" />
+    <img src="./docs/_media/sponsors/currents.svg" alt="Currents" width="300" />
   </a>
-</div>
+</p>
 
-<div align="center" style="margin-bottom: 16px">
+<p align="center">
 <a href="https://www.testmuai.com/?utm_source=playwrightbdd&utm_medium=sponsor" target="_blank">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./docs/_media/sponsors/testmu-ai-white.svg" />
       <source media="(prefers-color-scheme: light)" srcset="./docs/_media/sponsors/testmu-ai-black.svg" />
-      <img src="./docs/_media/sponsors/testmu-ai-black.svg" alt="TestMu AI" width="200">
+      <img src="./docs/_media/sponsors/testmu-ai-black.svg" alt="TestMu AI" width="300">
     </picture>
   </a>
-</div>
+</p>
 
-<h3 align="center" style="color: grey">Silver Sponsors</h3>
+<h3 align="center">Silver Sponsors</h3>
 
-<div align="center" style="margin-bottom: 16px">
+<p align="center">
 
 <!-- sponsors --><a href="https://github.com/currents-dev"><img src="https:&#x2F;&#x2F;github.com&#x2F;currents-dev.png" width="60px" alt="User avatar: Currents.dev" /></a><a href="https://github.com/jzaratei"><img src="https:&#x2F;&#x2F;github.com&#x2F;jzaratei.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/alescinskis"><img src="https:&#x2F;&#x2F;github.com&#x2F;alescinskis.png" width="60px" alt="User avatar: Arturs Leščinskis" /></a><a href="https://github.com/alexhvastovich"><img src="https:&#x2F;&#x2F;github.com&#x2F;alexhvastovich.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/FrancescoBorzi"><img src="https:&#x2F;&#x2F;github.com&#x2F;FrancescoBorzi.png" width="60px" alt="User avatar: Francesco Borzì" /></a><a href="https://github.com/LambdaTest-Inc"><img src="https:&#x2F;&#x2F;github.com&#x2F;LambdaTest-Inc.png" width="60px" alt="User avatar: LambdaTest" /></a><!-- sponsors -->
 
-</div>
+</p>
 
 If you find Playwright-BDD useful in your personal or work projects, consider [becoming a sponsor](https://github.com/sponsors/vitalets). Even small contributions help me dedicate more time to maintenance, new features, and community support.
 
