@@ -19,7 +19,7 @@ export function getSmokeTestDirs() {
         return pkg.smoke;
       }
     })
-    .map((dir) => path.join('test', dir));
+    .map((dir) => path.join('test', dir, 'test.mjs'));
 }
 
 if (isCalledFromCli()) {

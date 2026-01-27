@@ -1,11 +1,9 @@
 # Releasing Playwright-BDD
 
-Currently release is performed from the local machine.
-
 1. Push `main` branch to GitHub and wait all checks to pass.
 2. Manually run [publish.yml](https://github.com/vitalets/playwright-bdd/actions/workflows/publish.yml) workflow.
 3. Update playwright-bdd-example: `npm i -D playwright-bdd@latest`, run `npm test` to ensure tests pass.
-4. close relevant issues on GitHub by the changelog.
+4. Close relevant issues on GitHub by the changelog.
 
 ## Releasing the docs
 
@@ -26,7 +24,7 @@ git checkout main \
 && git pull \
 && git checkout docs \
 && git pull \
-&& git merge main -m'merge main' \
+&& git merge main \
 && git push \
 && git checkout main
 ```
