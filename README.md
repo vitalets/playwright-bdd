@@ -88,9 +88,6 @@ Feel free to report a bug, propose a feature or share your experience:
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
 
-## Contributing
-Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
-
 ## 💖 Sponsors
 
 Great thanks to the **amazing people and companies** already supporting Playwright-BDD! Your help keeps the project alive and growing:
@@ -122,6 +119,9 @@ Great thanks to the **amazing people and companies** already supporting Playwrig
 </p>
 
 If you find Playwright-BDD useful in your personal or work projects, consider [becoming a sponsor](https://github.com/sponsors/vitalets). Even small contributions help me dedicate more time to maintenance, new features, and community support.
+
+## Contributing
+Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
 ## How to make BDD valuable for my project?
 
