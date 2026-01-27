@@ -40,7 +40,7 @@ In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to 
 
 ## Why Playwright Runner?
 
-Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. You can use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios. This package offers **an alternative**: convert BDD scenarios into test files and run them directly with Playwright. You gain all the advantages of the Playwright runner:
+Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. You can use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios. This package offers **an alternative**: convert BDD scenarios into Playwright test files and run them as regular tests. You gain all the advantages of the Playwright runner:
 
 - Automatic browser initialization and cleanup
 - Auto-capture of screenshots, videos, and traces
