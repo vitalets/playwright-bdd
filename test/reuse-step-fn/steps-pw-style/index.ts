@@ -5,6 +5,14 @@ import { expectTypeOf } from 'expect-type';
 
 const { When, Then } = createBdd(test);
 
+/**
+ * Creates a todo item with the given text.
+ *
+ * @param {Object} fixtures - The test fixtures
+ * @param {string[]} fixtures.todos - Array of todo items
+ * @param {import('@playwright/test').TestInfo} fixtures.$testInfo - Playwright test info
+ * @param {string} text - The text content for the todo item
+ */
 const createTodo = When('I create todo {string}', async ({ todos, $testInfo }, text: string) => {
   todos.push(`${$testInfo.title} - ${text}`);
 });
