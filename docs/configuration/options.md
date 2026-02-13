@@ -2,8 +2,6 @@
 
 ## features
 
-?> Since Playwright-BDD **v7**, this option has replaced Cucumber's `paths`.
-
 - **Type:** `string | string[]`
 - **Default:** `undefined`
 
@@ -15,8 +13,6 @@ Resolved relative to the config file location.
 > Since Playwright-BDD **v8**, you can omit the `features` option and define [`featuresRoot`](#featuresroot), which serves as a common base directory for both features and steps. The features glob pattern will be calculated as `{featuresRoot} + /**/*.feature`.
 
 ## steps
-
-?> Since v7, this option replaced Cucumber's `require`, `import`, and `requireModule`.
 
 - **Type:** `string | string[]`
 - **Default:** `undefined`

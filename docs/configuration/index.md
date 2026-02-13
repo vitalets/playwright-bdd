@@ -1,5 +1,7 @@
 # Configuration
 
+> [List of available options](configuration/options.md).
+
 Configuration is passed to `defineBddConfig()` inside the Playwright config file.
 The return value of `defineBddConfig()` is a resolved output directory where test files will be generated. It is convenient to use it as the `testDir` option for Playwright.
 
@@ -16,6 +18,7 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  // ...other playwright options
 });
 ```
 
