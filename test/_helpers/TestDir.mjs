@@ -4,12 +4,12 @@
 import assert from 'node:assert/strict';
 import path from 'node:path';
 import fs from 'node:fs';
-import fg from 'fast-glob';
 import { fileURLToPath } from 'node:url';
 import { expect } from '@playwright/test';
 import { assertMessagesReport } from './reports/messages.mjs';
 import { assertJsonReport } from './reports/json.mjs';
 import { assertJunitReport } from './reports/junit.mjs';
+import { globSync } from 'tinyglobby';
 
 export class TestDir {
   constructor(importMeta) {
@@ -46,7 +46,7 @@ export class TestDir {
 
   getAllFiles(relativePath) {
     const cwd = this.getAbsPath(relativePath);
-    return fg.sync('**', { cwd });
+    return globSync('**', { cwd, expandDirectories: false });
   }
 
   expectFileContains(relativePath, substr) {

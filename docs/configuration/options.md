@@ -5,7 +5,7 @@
 - **Type:** `string | string[]`
 - **Default:** `undefined`
 
-Path(s) to feature files. Can be a directory or [glob pattern](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax).
+Path(s) to feature files. Can be a directory or [glob pattern](https://github.com/micromatch/picomatch?tab=readme-ov-file#globbing-features).
 Example: `features/**/*.feature`.
 If you don't specify a file extension, the default is `*.feature`.
 Resolved relative to the config file location.
@@ -17,7 +17,7 @@ Resolved relative to the config file location.
 - **Type:** `string | string[]`
 - **Default:** `undefined`
 
-Path(s) to step definitions. Can be a directory or [glob pattern](https://github.com/mrmlnc/fast-glob?tab=readme-ov-file#pattern-syntax).
+Path(s) to step definitions. Can be a directory or [glob pattern](https://github.com/micromatch/picomatch?tab=readme-ov-file#globbing-features).
 Example: `steps/**/*.ts`.
 If you don't specify a file extension, the default is `*.{js,mjs,cjs,ts,mts,cts}`.
 Resolved relative to the config file location.

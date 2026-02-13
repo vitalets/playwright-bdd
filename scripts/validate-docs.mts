@@ -5,10 +5,10 @@
  */
 
 import fs from 'node:fs';
-import fg from 'fast-glob';
 import path from 'node:path';
 import { marked, Tokens } from 'marked';
 import slugifyPkg from 'slugify';
+import { globSync } from 'tinyglobby';
 
 // See: https://github.com/simov/slugify/issues/196
 const slugify = slugifyPkg.default;
@@ -28,7 +28,9 @@ type FileInfo = {
 const DOCS_DIR = 'docs';
 const IGNORE_LINKS = ['docs/changelog', 'docs/license'];
 
-const files = fg.sync('**', { cwd: DOCS_DIR, onlyFiles: true }).map(fillFileInfo);
+const files = globSync('**', { cwd: DOCS_DIR, onlyFiles: true, expandDirectories: false }).map(
+  fillFileInfo,
+);
 const errors = files.map(validateFile).flat().filter(Boolean);
 
 logger.log(`Validating docs: ${files.length} files...`);
