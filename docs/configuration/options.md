@@ -38,40 +38,26 @@ Directory to output generated test files. Resolved relative to the config file l
 
 Base directory to construct generated file paths inside `outputDir`. Resolved relative to the config file location. Note that `featuresRoot` is a directory and cannot contain glob patterns (`*`).
 
-The behavior is similar to TypeScript's [rootDir](https://www.typescriptlang.org/tsconfig#rootDir) option, which sets a common parent for all `.ts` files and defines the `outDir` structure.
-
-<details>
-  <summary>Example</summary>
-
-  Imagine the following project structure:
+  When playwright-bdd generates a test file for the feature file, it attaches the path to `.features-gen`
 
   ```
-  features
-    feature1.feature
-    subdir
-      feature2.feature
-  playwright.config.ts 
+  features/path/to/my-feature.feature
+  -->
+  .features-gen/features/path/to/my-feature.feature.spec.js
   ```
 
-  If you generate tests without `featuresRoot`, you will get the following output:
+  If you want to exclude the `features` part from the output, you can set `featuresRoot: 'features'` and then all output paths will be **resolved from it**:
   ```
-  .features-gen
-    features
-      feature1.feature.spec.js
-      subdir
-        feature2.feature.spec.js
+  featuresRoot='features':
+  
+  features/path/to/my-feature.feature
+  -->
+  .features-gen/path/to/my-feature.feature.spec.js
   ```
 
-  If you don't want to include the `features` directory in the output, you can set `featuresRoot: './features'` and then all output paths will be resolved from it:
-  ```
-  .features-gen
-    feature1.feature.spec.js
-    subdir
-      feature2.feature.spec.js
-  ```
-</details>
+> The behavior is similar to TypeScript's [rootDir](https://www.typescriptlang.org/tsconfig#rootDir) option, which sets a common parent for all `.ts` files and defines the `outDir` structure.
 
-Since **Playwright-BDD v8**, `featuresRoot` serves as a default directory for both `features` and `steps`, if these options are not explicitly defined. This allows for more concise configurations.
+Since **Playwright-BDD v8**, `featuresRoot` serves as a default directory for both `features` and `steps` if these options are not explicitly defined. This allows for more concise configurations.
 
 Before v8:
 ```js
