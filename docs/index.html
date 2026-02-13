@@ -22,7 +22,24 @@
         homepage: 'index.md',
         auto2top: true,
         loadSidebar: true,
+        loadNavbar: true,
         subMaxLevel: 3,
+        fallbackLanguages: ['en'],
+        nameLink: {
+          '/ru/': '/',
+          '/': '/',
+        },
+        search: {
+          placeholder: {
+            '/ru/': 'Поиск',
+            '/': 'Search',
+          },
+          noData: {
+            '/ru/': 'Нет результатов',
+            '/': 'No Results',
+          },
+          pathNamespaces: ['/ru'],
+        },
         topBanner: {
           position: 'relative',
           zIndex: '-1',
@@ -42,7 +59,9 @@
           '.*?/changelog':
             'https://raw.githubusercontent.com/vitalets/playwright-bdd/docs/CHANGELOG.md',
           '.*?/license': 'https://raw.githubusercontent.com/vitalets/playwright-bdd/docs/LICENSE',
+          '^/ru(/.*|)/_sidebar.md': '/ru/_sidebar_ru.md',
           '/.*/_sidebar.md': '/_sidebar.md',
+          '/.*/_navbar.md': '/_navbar.md',
         },
       };
     </script>
@@ -67,6 +86,17 @@
       }
       gtag('js', new Date());
       gtag('config', 'G-KFTCRSQYLJ');
+    </script>
+    <script>
+      // Set html "lang" attribute based on URL
+      (function () {
+        const lang = location.hash.match(/#\/(ru)\//);
+        if (lang) {
+          document.documentElement.setAttribute('lang', lang[1]);
+        } else {
+          document.documentElement.setAttribute('lang', 'en');
+        }
+      })();
     </script>
   </body>
 </html>
