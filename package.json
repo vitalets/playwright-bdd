@@ -70,8 +70,8 @@
     "@cucumber/tag-expressions": "^6.2.0",
     "cli-table3": "0.6.5",
     "commander": "^13.1.0",
-    "fast-glob": "^3.3.3",
     "mime-types": "^3.0.2",
+    "tinyglobby": "0.2.15",
     "xmlbuilder": "15.1.1"
   },
   "devDependencies": {

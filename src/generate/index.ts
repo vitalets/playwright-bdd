@@ -2,7 +2,7 @@
  * Generate playwright test files from Gherkin documents.
  */
 import fs from 'node:fs';
-import fg from 'fast-glob';
+import tg from 'tinyglobby';
 import { TestFile } from './file';
 import { FeaturesLoader, resolveFeatureFiles } from '../gherkin/featuresLoader';
 import { Snippets } from '../snippets';
@@ -127,8 +127,8 @@ export class TestFilesGenerator {
   }
 
   private async clearOutputDir() {
-    const pattern = `${fg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
-    const testFiles = await fg(pattern);
+    const pattern = `${tg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
+    const testFiles = await tg.glob(pattern, { expandDirectories: false });
     this.logger.log(`Clearing output dir: ${relativeToCwd(pattern)}`);
     const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
     await Promise.all(tasks);
