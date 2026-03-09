@@ -28,13 +28,13 @@ on:
         type: boolean
         default: false
 
-permissions:
-  contents: write # For git operations (commit, tag, push)
-  id-token: write # Required for OIDC trusted publishing
-
 jobs:
   publish:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write # For git operations (commit, tag, push)
+      id-token: write # Required for OIDC trusted publishing
 
     steps:
       - uses: actions/checkout@v4
