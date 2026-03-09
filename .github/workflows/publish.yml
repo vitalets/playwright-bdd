@@ -49,11 +49,8 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           registry-url: 'https://registry.npmjs.org'
-
-      # Ensure npm 11.5.1 or later for trusted publishing
-      - run: npm install -g npm@latest
 
       - run: npm ci
       - run: npm run knip
