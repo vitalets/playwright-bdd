@@ -6,25 +6,25 @@ import fg from 'fast-glob';
 import { TestFile } from './file';
 import { FeaturesLoader, resolveFeatureFiles } from '../gherkin/featuresLoader';
 import { Snippets } from '../snippets';
-import { Logger } from '../utils/logger';
 import parseTagsExpression from '@cucumber/tag-expressions';
 import { exit } from '../utils/exit';
 import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/loader';
-import { relativeToCwd, toPosixPath } from '../utils/paths';
+import { relativeToCwd } from '../utils/paths';
 import { BDDConfig } from '../config/types';
 import { stepDefinitions } from '../steps/stepRegistry';
 import { saveFileSync } from '../utils';
 import { StepDefinition } from '../steps/stepDefinition';
 import { StepData } from './test';
+import { TestFilesGeneratorLogger } from './logger';
 
 export class TestFilesGenerator {
   private featuresLoader = new FeaturesLoader();
   private files: TestFile[] = [];
   private tagsExpression?: ReturnType<typeof parseTagsExpression>;
-  private logger: Logger;
+  private logger: TestFilesGeneratorLogger;
 
   constructor(private config: BDDConfig) {
-    this.logger = new Logger({ verbose: config.verbose });
+    this.logger = new TestFilesGeneratorLogger({ verbose: config.verbose });
     if (config.tags) this.tagsExpression = parseTagsExpression(config.tags);
   }
 
@@ -57,9 +57,7 @@ export class TestFilesGenerator {
   private async loadFeatures() {
     const { configDir, features, language } = this.config;
     const { files, finalPatterns } = await resolveFeatureFiles(configDir, features);
-    this.logger.log(`Loading features: ${finalPatterns.join(', ')}`);
-    this.logger.log(`Found feature files: ${files.length}`);
-    files.forEach((featureFile) => this.logger.log(`  - ${relativeToCwd(featureFile)}`));
+    this.logger.logLoadingFeatures(files, finalPatterns);
     await this.featuresLoader.load(files, {
       relativeTo: configDir,
       defaultDialect: language,
@@ -70,10 +68,9 @@ export class TestFilesGenerator {
   private async loadSteps() {
     const { configDir, steps } = this.config;
     const { files, finalPatterns } = await resolveStepFiles(configDir, steps);
-    this.logger.log(`Loading steps: ${finalPatterns.join(', ')}`);
-    this.logger.log(`Found step files: ${files.length}`);
+    this.logger.logLoadingSteps(files, finalPatterns);
     await loadSteps(files);
-    this.printFoundSteps(files);
+    this.logger.logLoadedSteps(files, stepDefinitions);
     await this.handleImportTestFrom();
   }
 
@@ -119,17 +116,14 @@ export class TestFilesGenerator {
   }
 
   private async saveFiles() {
-    this.logger.log(`Generating Playwright test files: ${this.files.length}`);
-    this.files.forEach((file) => {
-      saveFileSync(file.outputPath, file.content);
-      this.logger.log(`  - ${relativeToCwd(file.outputPath)}`);
-    });
+    this.files.forEach((file) => saveFileSync(file.outputPath, file.content));
+    this.logger.logGeneratedTestFiles(this.files);
   }
 
   private async clearOutputDir() {
     const pattern = `${fg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
     const testFiles = await fg(pattern);
-    this.logger.log(`Clearing output dir: ${relativeToCwd(pattern)}`);
+    this.logger.logClearingOutputDir(pattern);
     const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
     await Promise.all(tasks);
   }
@@ -144,17 +138,5 @@ export class TestFilesGenerator {
         .join('\n');
       exit(message);
     }
-  }
-
-  private printFoundSteps(files: string[]) {
-    if (!this.config.verbose) return;
-    files.forEach((stepFile) => {
-      const normalizedStepFile = toPosixPath(stepFile);
-      const definitions = stepDefinitions.filter(
-        (definition) => toPosixPath(definition.uri) === normalizedStepFile,
-      );
-      const suffix = definitions.length === 1 ? 'step' : 'steps';
-      this.logger.log(`  - ${relativeToCwd(stepFile)} (${definitions.length} ${suffix})`);
-    });
   }
 }

@@ -31,3 +31,10 @@ export function expectCalls(prefix, stdout, expectedCalls) {
 export function countOfSubstring(str, substr) {
   return str.split(substr).length - 1;
 }
+
+export function expectSubstringLines(actual, expected) {
+  const expectedLines = expected.trim().split(/\r?\n/);
+  for (const line of expectedLines) {
+    expect(actual).toContain(line);
+  }
+}

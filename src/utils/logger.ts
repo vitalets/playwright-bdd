@@ -11,8 +11,12 @@ type LoggerOptions = {
 export class Logger {
   constructor(private options: LoggerOptions = {}) {}
 
+  get enabled() {
+    return this.options.verbose;
+  }
+
   log(...args: unknown[]) {
-    if (this.options.verbose) console.log(...args);
+    if (this.enabled) console.log(...args);
   }
 
   warn(...args: unknown[]) {

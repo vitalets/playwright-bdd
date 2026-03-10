@@ -1,7 +1,6 @@
 import {
   test,
-  normalize,
-  expect,
+  expectSubstringLines,
   execPlaywrightTest,
   TestDir,
   BDDGEN_CMD,
@@ -15,9 +14,23 @@ test(`${testDir.name} (one project)`, () => {
     env: { PROJECTS: 'project1' },
   });
 
-  assertProject1(stdout);
-
-  expect(stdout).toContain('Done');
+  expectSubstringLines(
+    stdout,
+    `
+Checking feature files at:
+  - project1/**/*.feature
+Found feature files (1):
+  - project1/sample.feature
+Checking step files at:
+  - project1/**/*.{js,mjs,cjs,ts,mts,cts}
+Found step files (1):
+  - project1/steps.ts (1 step)
+Clearing output directory: .features-gen/project1/**/*.spec.js
+Generating Playwright test files (1):
+  - .features-gen/project1/sample.feature.spec.js
+Done
+  `,
+  );
 });
 
 test(`${testDir.name} (two projects)`, () => {
@@ -26,39 +39,33 @@ test(`${testDir.name} (two projects)`, () => {
     env: { PROJECTS: 'project1,project2' },
   });
 
-  assertProject1(stdout);
-  assertProject2(stdout);
-
-  expect(stdout).toContain('Done');
+  expectSubstringLines(
+    stdout,
+    `
+Checking step files at:
+  - project1/**/*.{js,mjs,cjs,ts,mts,cts}
+Found step files (1):
+  - project1/steps.ts (1 step)
+Checking feature files at:
+  - project1/**/*.feature
+Found feature files (1):
+  - project1/sample.feature
+Clearing output directory: .features-gen/project1/**/*.spec.js
+Generating Playwright test files (1):
+  - .features-gen/project1/sample.feature.spec.js
+Checking feature files at:
+  - project2/*.feature
+Found feature files (1):
+  - project2/sample.feature
+Checking step files at:
+  - project2/*.ts
+Found step files (2):
+  - project2/steps1.ts (1 step)
+  - project2/steps2.ts (2 steps)
+Clearing output directory: .features-gen/project2/**/*.spec.js
+Generating Playwright test files (1):
+  - .features-gen/project2/sample.feature.spec.js
+Done
+  `,
+  );
 });
-
-function assertProject1(stdout) {
-  expect(stdout).toContain(`Loading features: project1/**/*.feature`);
-  expect(stdout).toContain('Found feature files: 1');
-  expect(stdout).toContain(normalize(`project1/sample.feature`));
-
-  expect(stdout).toContain(`Loading steps: project1/**/*.{js,mjs,cjs,ts,mts,cts}`);
-  expect(stdout).toContain('Found step files: 1');
-  expect(stdout).toContain(`${normalize(`project1/steps.ts`)} (1 step)`);
-
-  expect(stdout).toContain('Clearing output dir:');
-
-  expect(stdout).toContain('Generating Playwright test files: 1');
-  expect(stdout).toContain(normalize(`.features-gen/project1/sample.feature.spec.js`));
-}
-
-function assertProject2(stdout) {
-  expect(stdout).toContain(`Loading features: project2/*.feature`);
-  expect(stdout).toContain('Found feature files: 1');
-  expect(stdout).toContain(normalize(`project2/sample.feature`));
-
-  expect(stdout).toContain(`Loading steps: project2/*.ts`);
-  expect(stdout).toContain('Found step files: 2');
-  expect(stdout).toContain(`${normalize(`project2/steps1.ts`)} (1 step)`);
-  expect(stdout).toContain(`${normalize(`project2/steps2.ts`)} (2 steps)`);
-
-  expect(stdout).toContain('Clearing output dir:');
-
-  expect(stdout).toContain('Generating Playwright test files: 1');
-  expect(stdout).toContain(normalize(`.features-gen/project2/sample.feature.spec.js`));
-}

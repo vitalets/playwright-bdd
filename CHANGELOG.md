@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 * Document `defineParameterType` helper.
+* Improve verbose mode output.
 
 ## [8.4.2] - 2025-11-26
 * feat: support multiple step decorators on a single method ([#340](https://github.com/vitalets/playwright-bdd/issues/340))
