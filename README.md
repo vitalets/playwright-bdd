@@ -24,7 +24,7 @@ Run BDD tests with Playwright runner
 <p align="center">
   🚀 <a href="https://vitalets.github.io/playwright-bdd/#/getting-started/index">Getting Started</a>&nbsp;
   📚 <a href="https://vitalets.github.io/playwright-bdd/">Documentation</a>&nbsp;
-  💡 <a href="https://github.com/vitalets/playwright-bdd-example">Example</a>&nbsp;
+  ▶️ <a href="https://github.com/vitalets/playwright-bdd-example">Example</a>&nbsp;
   📝 <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
 </p>
 
