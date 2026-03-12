@@ -33,6 +33,8 @@ export function countOfSubstring(str, substr) {
 }
 
 export function expectSubstringLines(actual, expected) {
+  // normalize paths on Windows
+  actual = actual.replaceAll('\\', '/');
   const expectedLines = expected.trim().split(/\r?\n/);
   for (const line of expectedLines) {
     expect(actual).toContain(line);
