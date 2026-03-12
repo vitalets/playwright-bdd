@@ -34,7 +34,7 @@ Run BDD tests with Playwright runner
 ## Why BDD?
 In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
 
-- 🤖 **Generate** feature files from raw business requirements using AI.
+- 🤖 **Generate** feature files from raw business requirements.
 - ✅ **Refine** scenarios with colleagues or AI in plain human language.
 - 🛠 **Automate** test execution using the Playwright runner.
 
