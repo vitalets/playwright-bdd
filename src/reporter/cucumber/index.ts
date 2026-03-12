@@ -1,5 +1,11 @@
 /**
  * Playwright reporter that generates different Cucumber reports.
+ *
+ * If there are multiple Cucumber reporters, they all generate the same Playwright messages,
+ * targeting messagesBuilder. The messagesBuilder performs heavy operations (like reading feature files),
+ * so we should build Cucumber messages only once. To achieve that, we keep track
+ * of the reporters count in teh reporters-registry and send Playwright events only from the first reporter.
+ * In onEnd, all reporters wait for messages to get built and emit them to the Cucumber reporter implementation.
  */
 import {
   FullConfig,
@@ -9,7 +15,6 @@ import {
   TestError,
   TestResult,
 } from '@playwright/test/reporter';
-import { getMessagesBuilderRef, MessagesBuilderRef } from './messagesBuilder/ref';
 import BaseReporter, { InternalOptions } from './base';
 import MessageReporter from './message';
 import HtmlReporter from './html';
@@ -18,6 +23,7 @@ import JunitReporterModern from './junit-modern';
 import JsonReporter from './json';
 import CustomReporter, { CustomReporterOptions } from './custom';
 import { getConfigDirFromEnv } from '../../config/env';
+import { getMessagesBuilder, registerReporter, unregisterReporter } from './reporters-registry';
 
 const builtinReporters = {
   html: HtmlReporter,
@@ -35,25 +41,21 @@ export type CucumberReporterOptions<T> = T extends keyof BuiltinReporters
 export default class CucumberReporterAdapter<
   T extends keyof BuiltinReporters | string,
 > implements PlaywrightReporter {
-  private messagesBuilderRef: MessagesBuilderRef;
   private type: T;
   private userOptions: CucumberReporterOptions<T>;
   private reporter: BaseReporter;
+  private isFirstReporter: boolean;
 
   constructor(fullOptions: { $type: T } & CucumberReporterOptions<T>) {
     const { $type, ...userOptions } = fullOptions;
     this.type = $type;
     this.userOptions = userOptions as unknown as CucumberReporterOptions<T>;
-    this.messagesBuilderRef = getMessagesBuilderRef();
     this.reporter = this.createCucumberReporter();
-  }
-
-  private get messagesBuilder() {
-    return this.messagesBuilderRef.builder;
+    this.isFirstReporter = registerReporter();
   }
 
   onBegin(config: FullConfig) {
-    this.messagesBuilderRef.onBegin(config);
+    if (this.isFirstReporter) getMessagesBuilder().onBegin(config);
   }
 
   printsToStdio() {
@@ -61,31 +63,35 @@ export default class CucumberReporterAdapter<
   }
 
   onTestEnd(test: TestCase, result: TestResult) {
-    this.messagesBuilderRef.onTestEnd(test, result);
+    if (this.isFirstReporter) getMessagesBuilder().onTestEnd(test, result);
   }
 
   /**
    * Error not related to any test, e.g. worker teardown.
    */
   onError(error: TestError) {
-    this.messagesBuilderRef.onError(error);
+    if (this.isFirstReporter) getMessagesBuilder().onError(error);
   }
 
   async onEnd(result: FullResult) {
-    this.messagesBuilderRef.onEnd(result);
+    try {
+      if (this.isFirstReporter) await getMessagesBuilder().onEnd(result);
 
-    await this.reporter.init();
+      await this.reporter.init();
 
-    await this.messagesBuilder.buildMessages();
-    this.messagesBuilder.emitMessages(this.reporter.eventBroadcaster);
+      await getMessagesBuilder().finished;
+      getMessagesBuilder().emitMessages(this.reporter.eventBroadcaster);
 
-    await this.reporter.finished();
+      await this.reporter.finished();
+    } finally {
+      unregisterReporter();
+    }
   }
 
   private createCucumberReporter() {
     const internalOptions: InternalOptions = {
       cwd: getConfigDirFromEnv(),
-      messagesBuilder: this.messagesBuilder,
+      messagesBuilder: getMessagesBuilder(),
     };
 
     if (isBuiltInReporter(this.type)) {

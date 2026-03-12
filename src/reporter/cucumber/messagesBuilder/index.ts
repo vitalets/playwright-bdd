@@ -39,16 +39,15 @@ export class MessagesBuilder {
   private hooks = new AutofillMap</* internalId */ string, Hook>();
   private gherkinDocuments = new GherkinDocuments();
   private testFiles = new TestFiles();
-  private onEndPromise: Promise<void>;
   private onEndPromiseResolve = () => {};
-  private buildMessagesPromise?: Promise<void>;
+  finished: Promise<void>;
 
   // eventDataCollector is needed for Cucumber reports like junit and json
   private eventDataCollectorEmitter = new EventEmitter();
   public eventDataCollector = new EventDataCollector(this.eventDataCollectorEmitter);
 
   constructor() {
-    this.onEndPromise = new Promise((resolve) => (this.onEndPromiseResolve = resolve));
+    this.finished = new Promise((resolve) => (this.onEndPromiseResolve = resolve));
   }
 
   onBegin(config: pw.FullConfig) {
@@ -77,27 +76,25 @@ export class MessagesBuilder {
     this.testCaseRuns.push(testCaseRun);
   }
 
-  onEnd(fullResult: pw.FullResult) {
-    this.fullResult = fullResult;
-    this.onEndPromiseResolve();
-  }
-
   onError(error: pw.TestError) {
     this.testRun.registerGlobalError(error);
   }
 
-  /**
-   * Builds Cucumber messages.
-   * Note: wrapped into promise to build messages once for all reporters.
-   */
-  async buildMessages() {
-    if (!this.buildMessagesPromise) this.buildMessagesPromise = this.doBuildMessages();
-    return this.buildMessagesPromise;
+  async onEnd(fullResult: pw.FullResult) {
+    this.fullResult = fullResult;
+    await this.buildMessages();
+    this.onEndPromiseResolve();
   }
 
-  private async doBuildMessages() {
-    await this.onEndPromise;
+  emitMessages(eventBroadcaster: EventEmitter) {
+    Object.values(this.report).forEach((value) => {
+      if (!value) return;
+      const messages = Array.isArray(value) ? value : [value];
+      messages.forEach((message) => eventBroadcaster.emit('envelope', message));
+    });
+  }
 
+  private async buildMessages() {
     // order here is important
     await this.loadFeatures();
     this.createTestCases();
@@ -111,14 +108,6 @@ export class MessagesBuilder {
     this.addTestCaseRuns();
 
     this.buildEventDataCollector();
-  }
-
-  emitMessages(eventBroadcaster: EventEmitter) {
-    Object.values(this.report).forEach((value) => {
-      if (!value) return;
-      const messages = Array.isArray(value) ? value : [value];
-      messages.forEach((message) => eventBroadcaster.emit('envelope', message));
-    });
   }
 
   private createTestCases() {
