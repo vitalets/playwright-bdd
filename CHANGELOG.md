@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [8.5.0] - 2026-03-13
 * docs: document `defineParameterType` helper
 * cli: improve verbose mode output
 * bug: fix Cucumber reporter generation in VS Code runs ([#373](https://github.com/vitalets/playwright-bdd/issues/373))
@@ -293,7 +295,7 @@ Version v3 has several major updates based on the feedback.
 ## 1.2.0
 * Initial public release
 
-[unreleased]: https://github.com/vitalets/playwright-bdd/compare/8.4.2...HEAD
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/8.5.0...HEAD
 [8.4.1]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...v8.4.1
 [8.4.1-0]: https://github.com/vitalets/playwright-bdd/compare/v8.4.0...v8.4.1-0
 [8.4.0]: https://github.com/vitalets/playwright-bdd/compare/v8.3.1...v8.4.0
@@ -301,3 +303,5 @@ Version v3 has several major updates based on the feedback.
 [8.3.0]: https://github.com/vitalets/playwright-bdd/compare/v8.2.1...v8.3.0
 
 [8.4.2]: https://github.com/vitalets/playwright-bdd/releases/tag/8.4.2
+
+[8.5.0]: https://github.com/vitalets/playwright-bdd/releases/tag/8.5.0
