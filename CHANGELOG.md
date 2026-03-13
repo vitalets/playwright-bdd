@@ -3,8 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
-* Document `defineParameterType` helper.
-* Improve verbose mode output.
+* docs: document `defineParameterType` helper
+* cli: improve verbose mode output
 * bug: fix Cucumber reporter generation in VS Code runs ([#373](https://github.com/vitalets/playwright-bdd/issues/373))
 * docs: improve step patterns documentation ([#368](https://github.com/vitalets/playwright-bdd/issues/368))
 
