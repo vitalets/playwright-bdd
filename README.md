@@ -92,8 +92,6 @@ Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/p
 
 Great thanks to the **amazing people and companies** already supporting Playwright-BDD! Your help keeps the project alive and growing:
 
-<h3 align="center">Gold Sponsors</h3>
-
 <p align="center">
   <a href="https://currents.dev/" target="_blank">
     <img src="./docs/_media/sponsors/currents.svg" alt="Currents" width="300" />
@@ -109,8 +107,6 @@ Great thanks to the **amazing people and companies** already supporting Playwrig
     </picture>
   </a>
 </p>
-
-<h3 align="center">Silver Sponsors</h3>
 
 <p align="center">
 
