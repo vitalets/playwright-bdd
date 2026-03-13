@@ -23,7 +23,33 @@ When('I click link {string}', async ({ page }, name: string) => {
 
 > Usually, step functions are async, but they can be synchronous as well.
 
-See [full example of Playwright-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic-cjs).
+## Step patterns
+
+Each step is defined with a **pattern** that matches a Gherkin step text. The pattern can be either a Cucumber expression or a regular expression.
+
+#### Cucumber expression
+A [Cucumber expression](https://github.com/cucumber/cucumber-expressions) is a string pattern with typed parameters such as `{string}`, `{int}`, `{float}`, etc.:
+
+```ts
+Given('I open url {string}', async ({ page }, url: string) => {
+  await page.goto(url);
+});
+
+When('I click link {string}', async ({ page }, name: string) => {
+  await page.getByRole('link', { name }).click();
+});
+```
+
+#### Regular expression
+A regular expression can be used for more complex matching. Capture groups become step parameters:
+
+```ts
+Then(/I should see (success|error) message/, async ({ page }, status: string) => {
+  await expect(page.getByRole('alert')).toHaveText(status);
+});
+```
+
+> See a [full example](https://github.com/vitalets/playwright-bdd/tree/main/examples/basic-cjs) of the Playwright-style steps project.
 
 ## Custom fixtures
 You can use [custom fixtures](https://playwright.dev/docs/test-fixtures#with-fixtures) in step definitions.
