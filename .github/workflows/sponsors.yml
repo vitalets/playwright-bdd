@@ -13,7 +13,7 @@ jobs:
     if: github.ref_name == 'main'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Update sponsors in README.md
         uses: JamesIves/github-sponsors-readme-action@1a120c92d5067dafeaedb33916301fd61338883d
