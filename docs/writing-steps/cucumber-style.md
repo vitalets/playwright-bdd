@@ -6,9 +6,7 @@ Cucumber-style step definitions are compatible with [CucumberJS](https://github.
  * step definitions receive only step parameters, don't receive custom fixtures as a first argument
  * step definitions can't be defined as arrow functions
 
-In terms of Playwright, World is just a test-scoped fixture, that is automatically provided to all step definitions.
-
-Since **Playwright-BDD v7** you can define World as a custom class, without extending Cucumber World. The shape of World is up to you, you can pass any fixtures as world properties and use them later in step definitions.
+In terms of Playwright, **World is just a test-scoped [fixture](https://playwright.dev/docs/test-fixtures)**, that is automatically provided to all steps. The shape of World is up to you, you can pass any objects as world properties and use them later in step definitions.
 
 **Example of cucumber-style setup:**
 
@@ -27,7 +25,7 @@ export class World {
 }
 ```
 
-> No need to call `setWorldConstructor` as it was before for [CucumberJs custom world](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/world.md#custom-worlds).
+> No need to call `setWorldConstructor` as in CucumberJS.
 
 2. Extend Playwright test with `world` fixture and create `Given / When / Then`:
 
@@ -37,14 +35,14 @@ import { test as base } from 'playwright-bdd';
 import { World } from './world';
 
 export const test = base.extend<{ world: World }>({
-  world: async ({ page }, use) => {
+  world: async ({ page }, use) => { // <-- define world fixture in Playwright
     const world = new World(page);
     await use(world);
   },
 });
 
 export const { Given, When, Then, Before, After } = createBdd(test, { 
-  worldFixture: 'world' 
+  worldFixture: 'world' // <-- let steps know the world fixture name
 });
 ```
 
@@ -62,6 +60,32 @@ Given('I am on home page', async function () {
 ```
 
 See the [full example of Cucumber-style](https://github.com/vitalets/playwright-bdd/tree/main/examples/cucumber-style).
+
+## Step patterns
+
+Each step is defined with a **pattern** that matches a Gherkin step text. The pattern can be either a Cucumber expression or a regular expression.
+
+#### Cucumber expression
+A [Cucumber expression](https://github.com/cucumber/cucumber-expressions) is a string pattern with typed parameters such as `{string}`, `{int}`, `{float}`, etc.:
+
+```ts
+Given('I open url {string}', async function (url: string) {
+  await this.page.goto(url);
+});
+
+When('I click link {string}', async function (name: string) {
+  await this.page.getByRole('link', { name }).click();
+});
+```
+
+#### Regular expression
+A regular expression can be used for more complex matching. Capture groups become step parameters:
+
+```ts
+Then(/I should see (success|error) message/, async function (status: string) {
+  await expect(this.page.getByRole('alert')).toHaveText(status);
+});
+```
 
 ### Custom fixtures
 You can provide custom fixtures to cucumber-style steps.
