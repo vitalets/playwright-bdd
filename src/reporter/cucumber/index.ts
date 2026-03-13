@@ -77,11 +77,10 @@ export default class CucumberReporterAdapter<
     try {
       if (this.isFirstReporter) await getMessagesBuilder().onEnd(result);
 
-      await this.reporter.init();
-
       await getMessagesBuilder().finished;
-      getMessagesBuilder().emitMessages(this.reporter.eventBroadcaster);
 
+      await this.reporter.init();
+      getMessagesBuilder().emitMessages(this.reporter.eventBroadcaster);
       await this.reporter.finished();
     } finally {
       unregisterReporter();
