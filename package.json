@@ -11,7 +11,7 @@
     "bddgen": "dist/cli/index.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.44"
@@ -85,7 +85,7 @@
     "@release-it/keep-a-changelog": "^7.0.0",
     "@types/micromatch": "^4.0.10",
     "@types/mime-types": "^3.0.1",
-    "@types/node": "^18.15.0",
+    "@types/node": "^20.0.0",
     "@types/react": "^19.2.6",
     "@types/react-dom": "^19.2.3",
     "cross-env": "^10.1.0",

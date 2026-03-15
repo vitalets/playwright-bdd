@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* chore: set minimal Node.js version to 20
 
 ## [8.5.0] - 2026-03-13
 * docs: document `defineParameterType` helper

@@ -59,7 +59,7 @@ Example output:
 Playwright-BDD environment info:
 
 platform: darwin
-node: v18.16.0
+node: v20.0.0
 playwright-bdd: v5.1.1
 @playwright/test: v1.36.2
 @cucumber/cucumber: v9.2.0
