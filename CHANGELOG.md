@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 * chore: set minimal Node.js version to 20
+* chore: replace `fast-glob` with `tinyglobby` ([#366](https://github.com/vitalets/playwright-bdd/pull/366))
 
 ## [8.5.0] - 2026-03-13
 * docs: document `defineParameterType` helper
