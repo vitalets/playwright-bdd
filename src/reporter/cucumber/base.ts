@@ -8,6 +8,7 @@ import fs from 'node:fs';
 import { Writable } from 'node:stream';
 import { finished } from 'node:stream/promises';
 import { EventEmitter } from 'node:events';
+import * as messages from '@cucumber/messages';
 import { MessagesBuilder } from './messagesBuilder';
 
 export type InternalOptions = {
@@ -16,7 +17,7 @@ export type InternalOptions = {
 };
 
 export default class BaseReporter {
-  public eventBroadcaster = new EventEmitter();
+  public eventBroadcaster = new EventEmitter<Record<'envelope', [messages.Envelope]>>();
   protected outputStream: Writable = process.stdout;
   protected outputDir = '';
 
