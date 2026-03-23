@@ -56,8 +56,21 @@ export class FeaturesLoader {
   }
 
   getDocumentsWithPickles(): GherkinDocumentWithPickles[] {
+    const picklesByUri = new Map<string, Pickle[]>();
+    for (const pickle of this.gherkinQuery.getPickles()) {
+      const uri = pickle.uri!;
+      let arr = picklesByUri.get(uri);
+      if (!arr) {
+        arr = [];
+        picklesByUri.set(uri, arr);
+      }
+      arr.push(pickle);
+    }
+
     return this.gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
-      const pickles = this.getDocumentPickles(gherkinDocument);
+      const pickles = (picklesByUri.get(gherkinDocument.uri!) ?? []).map((pickle) =>
+        this.getPickleWithLocation(pickle),
+      );
       return { ...gherkinDocument, pickles };
     });
   }
@@ -80,13 +93,6 @@ export class FeaturesLoader {
         this.parseErrors.push(envelope.parseError);
       }
     });
-  }
-
-  private getDocumentPickles(gherkinDocument: GherkinDocument) {
-    return this.gherkinQuery
-      .getPickles()
-      .filter((pickle) => gherkinDocument.uri === pickle.uri)
-      .map((pickle) => this.getPickleWithLocation(pickle));
   }
 
   private getPickleWithLocation(pickle: Pickle) {
