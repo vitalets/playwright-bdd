@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import { execSync } from 'node:child_process';
 
 const pkg = JSON.parse(fs.readFileSync('./package.json'));
+const examplesPkgPath = './examples/package.json';
 const isCI = Boolean(process.env.CI);
 const generatedTar = `playwright-bdd-${pkg.version}.tgz`;
 const logger = console;
@@ -21,12 +22,9 @@ function buildAndInstallPlaywrightBdd() {
     if (isCI) {
       // remove node_modules to check that playwright-bdd brings all needed dependencies
       fs.rmSync('node_modules', { recursive: true });
-      // install playwright-bdd with peer dependencies (Playwright)
-      // install typescript + @types/node to be able to run tsc in examples
-      runCmd(
-        `npm install --no-save ../${generatedTar} typescript @types/node@${getMajorNodeVersion()}`,
-        { cwd },
-      );
+      // install playwright-bdd, typescript and @types/node at top level using versions from the root package.json
+      updateExamplesPackageJsonForCI();
+      runCmd('npm install', { cwd });
       // install playwright browsers
       runCmd(`npx playwright install --with-deps chromium`, { cwd });
     } else {
@@ -43,6 +41,16 @@ function runCmd(cmd, opts = {}) {
   execSync(cmd, { ...opts, stdio: 'inherit' });
 }
 
-function getMajorNodeVersion() {
-  return process.versions.node.split('.')[0];
+function updateExamplesPackageJsonForCI() {
+  const examplesPkg = JSON.parse(fs.readFileSync(examplesPkgPath));
+
+  examplesPkg.dependencies = {
+    ...examplesPkg.dependencies,
+    'playwright-bdd': `file:../${generatedTar}`,
+    typescript: pkg.devDependencies.typescript,
+    '@types/node': pkg.devDependencies['@types/node'],
+  };
+  delete examplesPkg.devDependencies;
+
+  fs.writeFileSync(examplesPkgPath, `${JSON.stringify(examplesPkg, null, 2)}\n`);
 }
