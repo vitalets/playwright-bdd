@@ -12,7 +12,6 @@ import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
 import {
   ParseError,
   Pickle,
-  GherkinDocument,
   IdGenerator,
   SourceMediaType,
 } from '@cucumber/messages';
