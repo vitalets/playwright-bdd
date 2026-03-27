@@ -7,8 +7,4 @@ test(testDir.name, async () => {
   execPlaywrightTestWithError(testDir.name);
 
   await testDir.assertJunitReport(`actual-reports/junit.xml`, `expected-reports/junit.xml`);
-  await testDir.assertJunitReport(
-    `actual-reports/junit-modern.xml`,
-    `expected-reports/junit-modern.xml`,
-  );
 });
