@@ -70,8 +70,7 @@ export class MessagesBuilder {
     }
 
     // Important to create TestCaseRun in this method (not later),
-    // b/c test properties can change after retries
-    // especially annotations where we store bddData
+    // b/c test properties can change after retries.
     const testCaseRun = new TestCaseRun(bddTestData, featureUri, test, result, this.hooks);
     this.testCaseRuns.push(testCaseRun);
   }
