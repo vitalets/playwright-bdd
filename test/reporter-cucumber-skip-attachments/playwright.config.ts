@@ -15,7 +15,7 @@ export default defineConfig({
     }),
     cucumberReporter('json', {
       outputFile: 'actual-reports/no-attachments.json',
-      skipAttachments: true,
+      // skipAttachments is true by default for json reporter
     }),
     cucumberReporter('json', {
       outputFile: 'actual-reports/filter-attachments.json',

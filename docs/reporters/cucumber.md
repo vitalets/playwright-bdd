@@ -185,7 +185,7 @@ export default defineConfig({
       },
     ```
 
-* **skipAttachments** `boolean | string[]` (default: `false`) - See [skipAttachments](#reporter-options) in the HTML report.
+* **skipAttachments** `boolean | string[]` (default: `true`) - See [skipAttachments](#reporter-options) in the HTML report. The JSON reporter skips attachments by default to avoid oversized reports from embedded screenshots, videos, and traces. Set `skipAttachments: false` to include them.
 
 Output of the JSON reporter can be used to generate some third-party reports. Take a look at these projects:
 

@@ -45,6 +45,12 @@ type JsonReporterOptions = {
   addMetadata?: 'object' | 'list';
 };
 
+const defaults: JsonReporterOptions = {
+  // By default skip all attachments as they can be large and cause issues with some json parsers.
+  // See: https://github.com/vitalets/playwright-bdd/issues/320#issuecomment-4054312644
+  skipAttachments: true,
+};
+
 interface IJsonFeature {
   description: string;
   elements: IJsonScenario[];
@@ -124,12 +130,11 @@ export default class JsonReporter extends BaseReporter {
   // private supportCodeLibrary: Pick<ISupportCodeLibrary, 'stepDefinitions'> = {
   //   stepDefinitions: [],
   // };
+  protected userOptions: JsonReporterOptions;
 
-  constructor(
-    internalOptions: InternalOptions,
-    protected userOptions: JsonReporterOptions = {},
-  ) {
+  constructor(internalOptions: InternalOptions, userOptions: JsonReporterOptions = {}) {
     super(internalOptions);
+    this.userOptions = { ...defaults, ...userOptions };
     this.setOutputStream(this.userOptions.outputFile);
     this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
       if (doesHaveValue(envelope.testRunFinished)) {

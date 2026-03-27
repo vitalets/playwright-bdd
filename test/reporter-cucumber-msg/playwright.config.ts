@@ -24,6 +24,7 @@ export default defineConfig({
     }),
     cucumberReporter('json', {
       outputFile: `features/${featureDir}/actual-reports/json-report.json`,
+      skipAttachments: false,
     }),
     [
       '../_helpers/rawJsonReporter.ts',

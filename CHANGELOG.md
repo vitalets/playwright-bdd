@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* reporter: skip attachments by default in the Cucumber JSON reporter
 * chore: set minimal Node.js version to 20
 * chore: replace `fast-glob` with `tinyglobby` ([#366](https://github.com/vitalets/playwright-bdd/pull/366))
 
