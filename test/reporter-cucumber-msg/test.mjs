@@ -21,9 +21,7 @@
  * cd test/reporter-cucumber-msg
  * FEATURE_DIR=minimal npx playwright test
  */
-import { expect } from '@playwright/test';
 import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../_helpers/index.mjs';
-import { getJsonFromFile } from '../_helpers/reports/json.mjs';
 import { globSync } from 'tinyglobby';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
@@ -58,8 +56,6 @@ async function checkFeature(featureDir) {
     }
   }
 
-  assertJsonReport(featureDir);
-  assertJsonReportNoAttachments(featureDir);
   assertMessagesReport(featureDir);
 }
 
@@ -84,23 +80,6 @@ function assertMessagesReport(featureDir) {
       'testCase.testRunStartedId': null,
     },
   );
-}
-
-function assertJsonReport(featureDir) {
-  testDir.assertJsonReport(
-    `features/${featureDir}/actual-reports/json-report.json`,
-    `features/${featureDir}/expected-reports/json-report.json`,
-  );
-}
-
-function assertJsonReportNoAttachments(featureDir) {
-  if (featureDir === 'attachments') {
-    const reportAbsPath = testDir.getAbsPath(
-      `features/${featureDir}/actual-reports/json-report-no-attachments.json`,
-    );
-    const actualJson = getJsonFromFile(reportAbsPath);
-    expect(JSON.stringify(actualJson, null, 2)).not.toContain('embeddings');
-  }
 }
 
 /**

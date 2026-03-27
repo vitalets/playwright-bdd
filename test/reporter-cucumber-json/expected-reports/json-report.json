@@ -1,0 +1,208 @@
+[
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
+        "id": "some-feature;success-scenario",
+        "keyword": "Scenario",
+        "line": 3,
+        "name": "success scenario",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "success step 1",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 5,
+            "name": "success step 2",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "some-feature;failing-scenario",
+        "keyword": "Scenario",
+        "line": 7,
+        "name": "failing scenario",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 8,
+            "name": "success step 1",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 9,
+            "name": "failing step",
+            "result": {
+              "status": "failed",
+              "duration": 4000000,
+              "error_message": "Error: expect(received).toEqual(expected) // deep equality\n\nExpected: \"bar\"\nReceived: \"foo\"\n   at features/steps.ts:11\n\n   9 |\n  10 | Given('failing step', async ({}) => {\n> 11 |   expect('foo').toEqual('bar');\n     |                 ^\n  12 | });\n  13 |"
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "some-feature;scenario-with-examples",
+        "keyword": "Scenario Outline",
+        "line": 16,
+        "name": "scenario with examples",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 1000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "success step 2",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "some-feature;scenario-with-examples",
+        "keyword": "Scenario Outline",
+        "line": 17,
+        "name": "scenario with examples",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "success step 3",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "some-feature;scenario-with-examples",
+        "keyword": "Scenario Outline",
+        "line": 21,
+        "name": "scenario with examples",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 12,
+            "name": "success step 4",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "some-feature;some-rule;scenario-with-rule",
+        "keyword": "Scenario",
+        "line": 25,
+        "name": "scenario with rule",
+        "steps": [
+          {
+            "keyword": "Before",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 26,
+            "name": "success step 1",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "chromium-›-some-feature",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "some feature",
+    "tags": [],
+    "uri": "features/sample.feature"
+  }
+]

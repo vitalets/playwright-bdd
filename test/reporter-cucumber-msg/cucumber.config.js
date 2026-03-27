@@ -17,9 +17,6 @@ module.exports = {
     require: [`features/${featureDir}/common.steps.ts`, `features/${featureDir}/cucumber.steps.ts`],
     requireModule: ['ts-node/register'],
     retry: featureDir === 'retry' ? 2 : 0,
-    format: [
-      ['message', `features/${featureDir}/expected-reports/messages.ndjson`],
-      ['json', `features/${featureDir}/expected-reports/json-report.json`],
-    ],
+    format: [['message', `features/${featureDir}/expected-reports/messages.ndjson`]],
   },
 };

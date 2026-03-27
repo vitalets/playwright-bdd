@@ -22,21 +22,9 @@ export default defineConfig({
     cucumberReporter('message', {
       outputFile: `features/${featureDir}/actual-reports/messages.ndjson`,
     }),
-    cucumberReporter('json', {
-      outputFile: `features/${featureDir}/actual-reports/json-report.json`,
-      skipAttachments: false,
-    }),
     [
       '../_helpers/rawJsonReporter.ts',
       { outputDir: `features/${featureDir}/actual-reports/raw-json` },
     ] as const,
-    featureDir === 'attachments' ? jsonReporterNoAttachments() : null,
   ].filter((r): r is NonNullable<typeof r> => Boolean(r)),
 });
-
-function jsonReporterNoAttachments() {
-  return cucumberReporter('json', {
-    outputFile: `features/${featureDir}/actual-reports/json-report-no-attachments.json`,
-    skipAttachments: true,
-  });
-}
