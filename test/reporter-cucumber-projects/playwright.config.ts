@@ -14,6 +14,11 @@ export default defineConfig({
       outputFile: 'actual-reports/report.xml',
       suiteName: 'my suite',
     }),
+    cucumberReporter('junit', {
+      outputFile: 'actual-reports/report-playwright.xml',
+      suiteName: 'my suite',
+      nameFormat: 'playwright',
+    }),
   ],
   projects: [
     {

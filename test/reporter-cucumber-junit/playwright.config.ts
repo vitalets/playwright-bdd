@@ -11,6 +11,11 @@ export default defineConfig({
   reporter: [
     cucumberReporter('message', { outputFile: 'actual-reports/message.ndjson' }),
     cucumberReporter('junit', { outputFile: 'actual-reports/junit.xml', suiteName: 'My suite' }),
+    cucumberReporter('junit', {
+      outputFile: 'actual-reports/junit-playwright.xml',
+      suiteName: 'My suite',
+      nameFormat: 'playwright',
+    }),
   ],
   use: {
     screenshot: { mode: 'only-on-failure', fullPage: true },

@@ -1,13 +1,11 @@
 /**
  * Cucumber JUnit reporter.
  *
- * Uses @cucumber/junit-xml-formatter.
- * See: https://github.com/cucumber/junit-xml-formatter
- * See: https://github.com/cucumber/cucumber-js/pull/2445
- * See: https://github.com/cucumber/cucumber-js/blob/main/src/plugin/plugin_manager.ts#L41
+ * Uses https://github.com/cucumber/junit-xml-formatter.
  */
 
 import * as messages from '@cucumber/messages';
+import { NamingStrategy, Lineage } from '@cucumber/query';
 import junitFormatterPlugin from '@cucumber/junit-xml-formatter';
 import BaseReporter, { InternalOptions } from './base';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
@@ -15,6 +13,7 @@ import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 type JunitReporterOptions = {
   outputFile?: string;
   suiteName?: string;
+  nameFormat?: 'cucumber' | 'playwright';
 };
 
 export default class JunitReporter extends BaseReporter {
@@ -28,36 +27,42 @@ export default class JunitReporter extends BaseReporter {
 
   async init() {
     junitFormatterPlugin.formatter({
-      options: { suiteName: this.userOptions.suiteName },
-      on: (_type, handler) =>
-        this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
-          if (envelope.gherkinDocument) {
-            // Add project and feature name to testcase name.
-            // See: https://github.com/microsoft/playwright/issues/23432
-            // Todo: https://github.com/cucumber/junit-xml-formatter/issues/74
-            envelope = { gherkinDocument: addPrefixToNames(envelope.gherkinDocument) };
-          }
-
-          handler(envelope);
-        }),
+      options: {
+        suiteName: this.userOptions.suiteName,
+        testNamingStrategy: this.getNamingStrategy(),
+      },
+      on: (_type, handler) => this.eventBroadcaster.on('envelope', handler),
       write: (data) => this.outputStream.write(data),
     });
   }
+
+  private getNamingStrategy() {
+    return this.userOptions.nameFormat === 'playwright'
+      ? new PlaywrightNamingStrategy()
+      : undefined;
+  }
 }
 
-function addPrefixToNames(gherkinDocument: messages.GherkinDocument) {
-  const meta = GherkinDocumentMessage.extractMeta(gherkinDocument);
-  const gherkinDocumentClone = JSON.parse(
-    JSON.stringify(gherkinDocument),
-  ) as messages.GherkinDocument;
+class PlaywrightNamingStrategy implements NamingStrategy {
+  reduce(lineage: Lineage, pickle: messages.Pickle): string {
+    const meta = lineage.gherkinDocument
+      ? GherkinDocumentMessage.extractMeta(lineage.gherkinDocument)
+      : undefined;
+    const scenarioName = lineage.scenario?.name ?? pickle.name;
+    const pickleName = pickle.name;
 
-  const buildPrefixedName = (name: string) =>
-    [meta.projectName, gherkinDocumentClone?.feature?.name, name].filter(Boolean).join(' - ');
+    return [
+      meta?.projectName, // prettier-ignore
+      lineage.feature?.name,
+      lineage.rule?.name,
+      !hasPlaceholders(scenarioName) ? scenarioName : undefined,
+      pickleName !== scenarioName ? pickleName : undefined,
+    ]
+      .filter(Boolean)
+      .join(' - ');
+  }
+}
 
-  gherkinDocumentClone.feature?.children.forEach((child) => {
-    if (child.rule) child.rule.name = buildPrefixedName(child.rule.name);
-    if (child.scenario) child.scenario.name = buildPrefixedName(child.scenario.name);
-  });
-
-  return gherkinDocumentClone;
+function hasPlaceholders(value: string) {
+  return /<[^>]+>/.test(value);
 }

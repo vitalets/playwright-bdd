@@ -212,12 +212,7 @@ export default defineConfig({
   reporter: [
     cucumberReporter('junit', {
       outputFile: 'cucumber-report/report.xml',
-      suiteName: 'my suite'
-    }),
-    // deprecated alias
-    cucumberReporter('junit-modern', {
-      outputFile: 'cucumber-report/report.xml',
-      suiteName: 'my suite'
+      suiteName: 'my suite',
     }),
   ],
 });
@@ -233,6 +228,26 @@ export default defineConfig({
 
 * **outputFile** `string` - Path to output XML file.
 * **suiteName** `string` - Name attribute of the `testsuite` element.
+* **nameFormat** `'cucumber' | 'playwright'` - Format for the `name` attribute of the `<testcase>` tag:
+  - `cucumber` (default) - uses the [default Cucumber naming](https://github.com/cucumber/junit-xml-formatter?tab=readme-ov-file#naming-rules-and-examples) and is recommended for tools that parse scenario names from JUnit XML.
+  - `playwright` - prefixes the test name with the Playwright project and feature name.
+
+Examples:
+Simple scenario:
+`cucumber`: `applies promo code`
+`playwright`: `chromium - Checkout - applies promo code`
+
+Rule scenario:
+`cucumber`: `Checkout - Discounts - applies promo code`
+`playwright`: `chromium - Checkout - Discounts - applies promo code`
+
+Scenario Outline example:
+`cucumber`: `Checkout - pay with <method> - #1.1: pay with card`
+`playwright`: `chromium - Checkout - pay with card`
+
+Scenario Outline without placeholders in the scenario name:
+`cucumber`: `Checkout - payment scenarios - #1.1: pay with card`
+`playwright`: `chromium - Checkout - payment scenarios - pay with card`
 
 > Junit reporter does not contain attachments.
 

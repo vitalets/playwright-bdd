@@ -23,4 +23,8 @@ function assertJsonReport() {
 
 async function assertJunitReport() {
   await testDir.assertJunitReport(`actual-reports/report.xml`, `expected-reports/junit-report.xml`);
+  await testDir.assertJunitReport(
+    `actual-reports/report-playwright.xml`,
+    `expected-reports/junit-report-playwright.xml`,
+  );
 }

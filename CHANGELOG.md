@@ -5,6 +5,7 @@
 ## [Unreleased]
 * reporter: skip attachments by default in the Cucumber JSON reporter
 * reporter: make `junit` the canonical JUnit reporter and deprecate `junit-modern` alias
+* reporter: add JUnit `nameFormat` option and make Cucumber-compatible testcase naming the default ([#375](https://github.com/vitalets/playwright-bdd/issues/375))
 * chore: set minimal Node.js version to 20
 * chore: replace `fast-glob` with `tinyglobby` ([#366](https://github.com/vitalets/playwright-bdd/pull/366))
 
