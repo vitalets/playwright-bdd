@@ -1,52 +1,44 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite failures="1" skipped="0" name="my suite" time="0.026000000000000002" tests="9">
-  <testcase classname="feature two" name="project two › feature two › scenario of project two" time="0.001">
-    <system-out><![CDATA[Given Another state 1.....................................................passed]]></system-out>
+<?xml version="1.0"?>
+<testsuite name="my suite" time="1.516464111" tests="9" skipped="0" failures="1" errors="0" timestamp="2026-03-27T08:27:49.482Z">
+  <testcase classname="feature one" name="project one copy - feature one - scenario of project one" time="0.027">
+    <failure type="Error" message="Error: expect(received).not.toEqual(expected) // deep equality&#xA;&#xA;Expected: not &quot;project one copy&quot;&#xA;&#xA;   at features-one/steps/steps.ts:12&#xA;&#xA;  10 |&#xA;  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {&#xA;> 12 |   expect($testInfo.project.name).not.toEqual(projectName);&#xA;     |                                      ^&#xA;  13 | });&#xA;  14 |"><![CDATA[    at Object.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-projects/features-one/steps/steps.ts:12:38)
+    at /Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
+    at BddStepInvoker.invoke (/Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+    at /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-projects/.features-gen/one-copy/features-one/sample.feature.spec.js:8:5]]></failure>
+    <system-out><![CDATA[Given State 1...............................................................passed
+And Fails for project "project one copy"....................................failed
+And TodoPage: step..........................................................skipped]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one › feature one › scenario of project one" time="0.005">
-    <system-out><![CDATA[Given State 1.............................................................passed
-And Fails for project "project one copy"..................................passed
-And TodoPage: step........................................................passed]]></system-out>
+  <testcase classname="feature one" name="project one copy - feature one - scenario with examples - #1.1: scenario with examples" time="0.019">
+    <system-out><![CDATA[Given State 2...............................................................passed
+And State 4.................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one copy › feature one › scenario of project one" time="0.006">
-    <failure type="Error" message="Error: expect(received).not.toEqual(expected) // deep equality&#xA;&#xA;Expected: not &quot;project one copy&quot;&#xA;"><![CDATA[Error: expect(received).not.toEqual(expected) // deep equality
-
-Expected: not "project one copy"
-
-   at features-one/steps/steps.ts:12
-
-  10 |
-  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {
-> 12 |   expect($testInfo.project.name).not.toEqual(projectName);
-     |                                      ^
-  13 | });
-  14 |]]></failure>
-    <system-out><![CDATA[Given State 1.............................................................passed
-And Fails for project "project one copy"..................................failed
-And TodoPage: step.......................................................skipped]]></system-out>
+  <testcase classname="feature one" name="project one copy - feature one - scenario with examples - #1.2: scenario with examples" time="0.005">
+    <system-out><![CDATA[Given State 3...............................................................passed
+And State 6.................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one › feature one › scenario with examples" time="0.002">
-    <system-out><![CDATA[Given State 2.............................................................passed
-And State 4...............................................................passed]]></system-out>
+  <testcase classname="feature one" name="project one copy - feature one - scenario with examples - #2.1: scenario with examples" time="0.005">
+    <system-out><![CDATA[Given State 4...............................................................passed
+And State 8.................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one › feature one › scenario with examples [1]" time="0.002">
-    <system-out><![CDATA[Given State 3.............................................................passed
-And State 6...............................................................passed]]></system-out>
+  <testcase classname="feature one" name="project one - feature one - scenario of project one" time="0.023">
+    <system-out><![CDATA[Given State 1...............................................................passed
+And Fails for project "project one copy"....................................passed
+And TodoPage: step..........................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one › feature one › scenario with examples [2]" time="0.001">
-    <system-out><![CDATA[Given State 4.............................................................passed
-And State 8...............................................................passed]]></system-out>
+  <testcase classname="feature one" name="project one - feature one - scenario with examples - #1.1: scenario with examples" time="0.008">
+    <system-out><![CDATA[Given State 2...............................................................passed
+And State 4.................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one copy › feature one › scenario with examples" time="0.003">
-    <system-out><![CDATA[Given State 2.............................................................passed
-And State 4...............................................................passed]]></system-out>
+  <testcase classname="feature one" name="project one - feature one - scenario with examples - #1.2: scenario with examples" time="0.006">
+    <system-out><![CDATA[Given State 3...............................................................passed
+And State 6.................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one copy › feature one › scenario with examples [1]" time="0.001">
-    <system-out><![CDATA[Given State 3.............................................................passed
-And State 6...............................................................passed]]></system-out>
+  <testcase classname="feature one" name="project one - feature one - scenario with examples - #2.1: scenario with examples" time="0.002">
+    <system-out><![CDATA[Given State 4...............................................................passed
+And State 8.................................................................passed]]></system-out>
   </testcase>
-  <testcase classname="feature one" name="project one copy › feature one › scenario with examples [2]" time="0.005">
-    <system-out><![CDATA[Given State 4.............................................................passed
-And State 8...............................................................passed]]></system-out>
+  <testcase classname="feature two" name="project two - feature two - scenario of project two" time="0.026">
+    <system-out><![CDATA[Given Another state 1.......................................................passed]]></system-out>
   </testcase>
 </testsuite>

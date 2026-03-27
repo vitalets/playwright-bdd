@@ -19,7 +19,6 @@ import BaseReporter, { InternalOptions } from './base';
 import MessageReporter from './message';
 import HtmlReporter from './html';
 import JunitReporter from './junit';
-import JunitReporterModern from './junit-modern';
 import JsonReporter from './json';
 import CustomReporter, { CustomReporterOptions } from './custom';
 import { getConfigDirFromEnv } from '../../config/env';
@@ -29,7 +28,7 @@ const builtinReporters = {
   html: HtmlReporter,
   message: MessageReporter,
   junit: JunitReporter,
-  'junit-modern': JunitReporterModern, // New Junit reporter using @cucumber/junit-xml-formatter
+  'junit-modern': JunitReporter, // Deprecated alias for junit
   json: JsonReporter,
 } as const;
 
