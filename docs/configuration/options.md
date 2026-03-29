@@ -79,7 +79,7 @@ You can still run a subset of features if needed:
 ```js
 const testDir = defineBddConfig({
   featuresRoot: './features',
-  features: './features/game/*.feature', // <- run only these features
+  features: './features/game/**/*.feature', // <- run only these features
 });
 ```
 

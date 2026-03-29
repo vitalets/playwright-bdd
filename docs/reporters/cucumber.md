@@ -34,8 +34,8 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
-  steps: 'features/steps/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'features/steps/**/*.ts',
 });
 
 export default defineConfig({
@@ -68,8 +68,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
-  steps: 'steps/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'steps/**/*.ts',
 });
 
 export default defineConfig({
@@ -150,8 +150,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['steps/*.ts'],
+  features: ['features/**/*.feature'],
+  steps: ['steps/**/*.ts'],
 });
 
 export default defineConfig({
@@ -203,8 +203,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['steps/*.ts'],
+  features: 'features/**/*.feature',
+  steps: 'steps/**/*.ts',
 });
 
 export default defineConfig({
@@ -260,8 +260,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
-  steps: ['steps/*.ts'],
+  features: ['features/**/*.feature'],
+  steps: ['steps/**/*.ts'],
 });
 
 export default defineConfig({
@@ -317,8 +317,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
-  steps: 'steps/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'steps/**/*.ts',
 });
 
 export default defineConfig({
@@ -341,8 +341,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
-  steps: 'features/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'features/**/*.ts',
 });
 
 // Distinguish shard runs from regular local runs and merge-reports run

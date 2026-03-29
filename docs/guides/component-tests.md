@@ -33,7 +33,7 @@ import { defineConfig, devices } from '@playwright/experimental-ct-react';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: ['features/*.feature'],
+  features: ['features/**/*.feature'],
   steps: ['fixtures.ts', 'steps.tsx'],
 });
 

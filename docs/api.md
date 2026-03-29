@@ -33,8 +33,8 @@ export default defineConfig({
     {
       ...defineBddProject({
         name: 'foo',
-        features: '*.feature',
-        steps: 'steps/*.ts',
+        features: 'features/**/*.feature',
+        steps: 'steps/**/*.ts',
       }), // -> { name: 'foo', testDir: '.features-gen/foo' }
     },
   ]

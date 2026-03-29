@@ -38,8 +38,8 @@ const currentsConfig: CurrentsConfig = {
 };
 
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
-  steps: 'features/steps/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'features/steps/**/*.ts',
 });
 
 export default defineConfig({

@@ -9,7 +9,7 @@ import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: 'feature/*.feature',
+  features: 'features/**/*.feature',
   steps: 'steps/**/*.ts',
 });
 
@@ -41,16 +41,16 @@ export default defineConfig({
       name: 'project-one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        features: 'project-one/*.feature',
-        steps: 'project-one/steps/*.ts',
+        features: 'project-one/**/*.feature',
+        steps: 'project-one/steps/**/*.ts',
       }),
     },
     {
       name: 'project-two',
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        features: 'project-two/*.feature',
-        steps: 'project-two/steps/*.ts',
+        features: 'project-two/**/*.feature',
+        steps: 'project-two/steps/**/*.ts',
       }),
     },
   ],
@@ -70,15 +70,15 @@ export default defineConfig({
     {
       ...defineBddProject({
         name: 'project-one',
-        features: 'project-one/*.feature',
-        steps: 'project-one/steps/*.ts',
+        features: 'project-one/**/*.feature',
+        steps: 'project-one/steps/**/*.ts',
       }),
     },
     {
       ...defineBddProject({
         name: 'project-two',
-        features: 'project-two/*.feature',
-        steps: 'project-two/steps/*.ts',
+        features: 'project-two/**/*.feature',
+        steps: 'project-two/steps/**/*.ts',
       }),
     },
   ],
@@ -98,8 +98,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
-  steps: 'steps/*.ts',
+  features: 'features/**/*.feature',
+  steps: 'steps/**/*.ts',
 });
 
 export default defineConfig({

@@ -30,7 +30,7 @@ const testDir = defineBddConfig({
 Since v7:
 ```ts
 const testDir = defineBddConfig({
-  steps: 'steps/*.ts'
+  steps: 'steps/**/*.ts'
 });
 ```
 
@@ -48,7 +48,7 @@ const testDir = defineBddConfig({
 Since v7:
 ```ts
 const testDir = defineBddConfig({
-  features: 'features/*.feature',
+  features: 'features/**/*.feature',
 });
 ```
 
@@ -71,7 +71,7 @@ const testDir = defineBddConfig({
 });
 // OR
 const testDir = defineBddConfig({
-  steps: 'steps/*.ts'
+  steps: 'steps/**/*.ts'
 });
 ```
 
