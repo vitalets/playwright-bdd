@@ -12,6 +12,8 @@ Given('a step', { tags: '@foo' }, async () => {
 
 This definition of `a step` will be used only for features/scenarios with the `@foo` tag. It allows having multiple definitions of the same step in a project.
 
+> You can use the [Tags from path](writing-features/tags-from-path.md) approach to automatically bind step definitions to features without adding explicit tags.
+
 #### Example
 Imagine there are two features *game* and *video-player*, both having a step `I click the PLAY button`:
 ```gherkin
