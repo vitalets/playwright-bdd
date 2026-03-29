@@ -10,6 +10,9 @@ import junitFormatterPlugin from '@cucumber/junit-xml-formatter';
 import BaseReporter, { InternalOptions } from './base';
 import { GherkinDocumentMessage } from './messagesBuilder/GherkinDocument';
 
+// title separator used in Playwright
+const PLAYWRIGHT_TITLE_SEPARATOR = ' › ';
+
 type JunitReporterOptions = {
   outputFile?: string;
   suiteName?: string;
@@ -59,7 +62,7 @@ class PlaywrightNamingStrategy implements NamingStrategy {
       pickleName !== scenarioName ? pickleName : undefined,
     ]
       .filter(Boolean)
-      .join(' - ');
+      .join(PLAYWRIGHT_TITLE_SEPARATOR);
   }
 }
 

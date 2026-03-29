@@ -12,7 +12,7 @@ export type ProjectInfo = {
 };
 
 // title separator used in Playwright
-export const TITLE_SEPARATOR = ' › ';
+const PLAYWRIGHT_TITLE_SEPARATOR = ' › ';
 
 const projectsMap = new AutofillMap<string | undefined, ProjectInfo>();
 
@@ -47,5 +47,5 @@ export function getFeatureNameWithProject(
   projectName: ProjectInfo['projectName'],
   featureName: string,
 ) {
-  return projectName ? `${projectName}${TITLE_SEPARATOR}${featureName}` : featureName;
+  return projectName ? `${projectName}${PLAYWRIGHT_TITLE_SEPARATOR}${featureName}` : featureName;
 }
