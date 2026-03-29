@@ -4,6 +4,7 @@
 import * as pw from '@playwright/test/reporter';
 import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
+import { toCucumberTimestamp } from './timing';
 import { PwAttachment } from '../../../playwright/types.js';
 
 export class TestStepAttachments {
@@ -28,11 +29,11 @@ export class TestStepAttachments {
       fileName: pwAttachment.name,
       body: '',
       contentEncoding: messages.AttachmentContentEncoding.IDENTITY,
-      // For attachments from global hooks (BeforeAll / AfterAll)
-      // cucumber added 'testRunStartedId' field to associate attachment with test run.
-      // This is not finalized yet, see: https://github.com/cucumber/cucumber-js/issues/1394
-      // Playwright does not allow to attach files in global hooks,
-      // b/c there is not testInfo.attach().
+      // Use step start time as attachment timestamp (per-attachment timing is not available in Playwright).
+      timestamp: toCucumberTimestamp(this.pwStep!.startTime.getTime()),
+      // Note: 'testRunHookStartedId' (added in @cucumber/messages v28) could be used to
+      // associate attachments from global hooks (BeforeAll/AfterAll) with TestRunHookStarted.
+      // We don't emit TestRunHookStarted/Finished messages yet, so this field is not populated.
     };
 
     if (pwAttachment.path) {

@@ -16,7 +16,7 @@ import {
 import path from 'node:path';
 import { Formatter } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
-import parseTagsExpression from '@cucumber/tag-expressions';
+import { parse as parseTagsExpression } from '@cucumber/tag-expressions';
 import { LANG_EN, isEnglish } from '../config/lang';
 import { GherkinDocumentWithPickles, PickleWithLocation } from '../gherkin/types';
 import { BDDConfig } from '../config/types';

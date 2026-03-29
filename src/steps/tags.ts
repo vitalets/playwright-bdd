@@ -1,4 +1,4 @@
-import parseTagsExpression from '@cucumber/tag-expressions';
+import { parse as parseTagsExpression } from '@cucumber/tag-expressions';
 import { removeDuplicates } from '../utils';
 import { belongsToNodeModules } from '../utils/paths';
 import path from 'node:path';

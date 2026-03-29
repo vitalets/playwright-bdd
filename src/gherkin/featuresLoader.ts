@@ -9,16 +9,10 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { generateMessages } from '@cucumber/gherkin';
 import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
-import {
-  ParseError,
-  Pickle,
-  GherkinDocument,
-  IdGenerator,
-  SourceMediaType,
-} from '@cucumber/messages';
+import { ParseError, GherkinDocument, IdGenerator, SourceMediaType } from '@cucumber/messages';
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
-import { GherkinDocumentWithPickles } from './types';
+import { GherkinDocumentWithPickles, PickleWithLocation } from './types';
 
 export function resolveFeatureFiles(cwd: string, patterns: string | string[]) {
   return resolveFiles(cwd, toArray(patterns), 'feature');
@@ -83,16 +77,14 @@ export class FeaturesLoader {
   }
 
   private getDocumentPickles(gherkinDocument: GherkinDocument) {
-    return this.gherkinQuery
-      .getPickles()
-      .filter((pickle) => gherkinDocument.uri === pickle.uri)
-      .map((pickle) => this.getPickleWithLocation(pickle));
-  }
-
-  private getPickleWithLocation(pickle: Pickle) {
-    const lastAstNodeId = pickle.astNodeIds[pickle.astNodeIds.length - 1]!;
-    const location = this.gherkinQuery.getLocation(lastAstNodeId);
-    return { ...pickle, location };
+    return (
+      this.gherkinQuery
+        .getPickles()
+        .filter((pickle) => gherkinDocument.uri === pickle.uri)
+        // Pickle.location is optional in @cucumber/messages, but @cucumber/gherkin
+        // always populates it (added in gherkin v37). Safe to assert as PickleWithLocation.
+        .map((pickle) => pickle as PickleWithLocation)
+    );
   }
 }
 

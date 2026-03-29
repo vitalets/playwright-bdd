@@ -2,7 +2,6 @@
  * Builds Pickle messages.
  */
 import * as messages from '@cucumber/messages';
-import { omit } from '../../../utils';
 import { AutofillMap } from '../../../utils/AutofillMap';
 import { TestCase } from './TestCase';
 import { ConcreteEnvelope } from './types';
@@ -19,7 +18,7 @@ export class Pickles {
 
   private buildPickleMessage(testCase: TestCase) {
     const pickle: messages.Pickle = {
-      ...omit(testCase.pickle, 'location'),
+      ...testCase.pickle,
       uri: getFeatureUriWithProject(testCase.projectInfo, testCase.pickle.uri),
     };
     return { pickle };

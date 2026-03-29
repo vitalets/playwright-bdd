@@ -14,10 +14,9 @@ export default defineConfig({
       foo: 'bar',
     }),
     cucumberReporter('@cucumber/pretty-formatter', {
-      colorsEnabled: true,
       theme: {
-        'scenario name': ['blue'],
-        'step text': ['magenta'],
+        scenario: { name: ['blue'] },
+        step: { text: ['magenta'] },
         tag: ['green'],
       },
     }),

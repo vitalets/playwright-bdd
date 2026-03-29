@@ -11,5 +11,6 @@ test(testDir.name, async () => {
 });
 
 function checkPrettyFormatter(stdout) {
-  expect(stdout).toContain(`Feature: a feature # ${path.normalize('features/sample.feature')}:1`);
+  expect(stdout).toContain('Feature: a feature');
+  expect(stdout).toContain(`# ${path.normalize('features/sample.feature')}:3`);
 }

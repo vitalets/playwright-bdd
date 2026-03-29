@@ -63,8 +63,9 @@ function assertMessagesReport(featureDir) {
   let expectedFile = `features/${featureDir}/expected-reports/messages.ndjson`;
 
   if (featureDir === 'hooks') {
-    // for 'hooks' we use golden messages.ndjson not from cucumber-js,
-    // b/c it does not generate newest nook.type field.
+    // For 'hooks' we use our own golden file because playwright-bdd intentionally doesn't emit
+    // TestRunHookStarted/TestRunHookFinished messages (before/after run hooks are included
+    // as test case steps instead), whereas cucumber-js does emit them.
     expectedFile = `features/${featureDir}/expected-reports/messages-own.ndjson`;
   }
 

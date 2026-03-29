@@ -6,7 +6,7 @@ import tg from 'tinyglobby';
 import { TestFile } from './file';
 import { FeaturesLoader, resolveFeatureFiles } from '../gherkin/featuresLoader';
 import { Snippets } from '../snippets';
-import parseTagsExpression from '@cucumber/tag-expressions';
+import { parse as parseTagsExpression } from '@cucumber/tag-expressions';
 import { exit } from '../utils/exit';
 import { loadSteps, loadStepsFromFile, resolveStepFiles } from '../steps/loader';
 import { relativeToCwd } from '../utils/paths';
