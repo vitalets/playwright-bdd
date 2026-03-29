@@ -53,8 +53,9 @@ test('Scenario with attachments', async ({ scenario }) => {
     'image attachment inline',
     'image attachment as file',
   ]);
-  await expect(scenario.getLogs()).toContainText(/123 some logs/);
-  await expect(scenario.getLogs()).toContainText(/logs from exec/);
+  const logs = (await scenario.getLogs().allTextContents()).join('\n');
+  expect(logs).toContain('123 some logs');
+  expect(logs).toContain('logs from exec');
 });
 
 test('Scenario with all keywords and success hooks', async ({ scenario }) => {
