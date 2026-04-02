@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import { expectAttachmentTexts } from '../../../check-report/helpers';
 import { test } from '../../../check-report/fixtures';
 
 test('error in step', async ({ scenario }) => {
@@ -22,7 +23,7 @@ test('failing match snapshot', async ({ scenario }) => {
     'Thenerror in match snapshot',
   ]);
   await scenario.expandAttachment();
-  await expect(scenario.getAttachments()).toHaveText([
+  await expectAttachmentTexts(scenario.getAttachments(), [
     'error-in-step-failing-match-snapshot-1-expected.txtbla-bla',
     'error-in-step-failing-match-snapshot-1-actual.txtExample Domain',
     'screenshot',

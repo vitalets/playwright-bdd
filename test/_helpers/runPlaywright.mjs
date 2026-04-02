@@ -5,6 +5,7 @@
 import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { stripVTControlCharacters } from 'node:util';
 
 export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
 export const PLAYWRIGHT_CMD = 'npx playwright test';
@@ -46,8 +47,8 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
     if (!error) {
       // if error is not set, check that e.message equals exactly command
       // to distinguish from other unexpected errors.
-      // Strip Node.js warnings (e.g. TimeoutNegativeWarning) that may appear in the message.
-      const actualMessage = e.message.replace(/\(node:\d+\) \w+Warning:.*\n.*/g, '').trim();
+      // Strip Node.js warnings that may be injected before/after the command failure line.
+      const actualMessage = stripNodeWarnings(e.message).trim();
       const expectedOutput = `Command failed: ${getCmdStr(cmd)}`;
       if (actualMessage !== expectedOutput) {
         logger.log(`Command exited with incorrect error.`);
@@ -94,4 +95,16 @@ export function execPlaywrightTestInternal(dir, cmd) {
 
 function getCmdStr(cmd) {
   return (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
+}
+
+function stripNodeWarnings(message) {
+  return stripVTControlCharacters(message)
+    .split('\n')
+    .filter((line) => {
+      return (
+        !line.match(/^\(node:\d+\) (?:\w+Warning|Warning):/) &&
+        line !== '(Use `node --trace-warnings ...` to show where the warning was created)'
+      );
+    })
+    .join('\n');
 }
