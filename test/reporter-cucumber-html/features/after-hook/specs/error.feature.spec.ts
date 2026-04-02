@@ -1,5 +1,6 @@
 import { normalize } from 'node:path';
 import { expect } from '@playwright/test';
+import { fixtureHookTitleRegexp } from '../../../check-report/helpers';
 import { test } from '../../../check-report/fixtures';
 
 test('error in anonymous after hook', async ({ scenario }) => {
@@ -48,7 +49,7 @@ test('error in fixture teardown (no step)', async ({ scenario }) => {
     'Givenstep with page',
     'Givenstep that uses fixtureWithErrorInTeardown',
     'WhenAction 1',
-    'AfterAll: Fixture "fixtureWithErrorInTeardown"',
+    fixtureHookTitleRegexp('AfterAll', 'fixtureWithErrorInTeardown'),
   ]);
   await scenario.expandHooks('after');
   await expect(scenario.root).toContainText(normalize('features/after-hook/fixtures.ts'));

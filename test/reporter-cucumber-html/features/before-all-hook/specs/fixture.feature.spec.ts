@@ -1,10 +1,11 @@
 import { normalize } from 'node:path';
 import { expect } from '@playwright/test';
+import { fixtureHookTitleRegexp } from '../../../check-report/helpers';
 import { test } from '../../../check-report/fixtures';
 
 test('scenario 1', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toContainText([
-    'BeforeAll: Fixture "workerFixtureWithErrorInSetup"',
+    fixtureHookTitleRegexp('BeforeAll', 'workerFixtureWithErrorInSetup'),
     'GivenAction 1',
     'Givenstep that uses workerFixtureWithErrorInSetup',
   ]);
