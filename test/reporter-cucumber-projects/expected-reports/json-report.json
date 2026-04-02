@@ -4,19 +4,183 @@
     "elements": [
       {
         "description": "",
+        "id": "feature-one;scenario-of-project-one",
+        "keyword": "Scenario",
+        "line": 3,
+        "name": "scenario of project one",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 4,
+            "name": "State 1",
+            "result": {
+              "status": "passed",
+              "duration": 7000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 5,
+            "name": "Fails for project \"project one copy\"",
+            "result": {
+              "status": "failed",
+              "duration": 2000000,
+              "error_message": "Error: expect(received).not.toEqual(expected) // deep equality\n\nExpected: not \"project one copy\"\n\n   at features-one/steps/steps.ts:12\n\n  10 |\n  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {\n> 12 |   expect($testInfo.project.name).not.toEqual(projectName);\n     |                                      ^\n  13 | });\n  14 |"
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 6,
+            "name": "TodoPage: step",
+            "result": {
+              "status": "skipped",
+              "duration": 0
+            }
+          },
+          {
+            "keyword": "After",
+            "hidden": true,
+            "result": {
+              "status": "passed",
+              "duration": 7000000
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "feature-one;scenario-with-examples",
+        "keyword": "Scenario Outline",
+        "line": 14,
+        "name": "scenario with examples",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "State 2",
+            "result": {
+              "status": "passed",
+              "duration": 3000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "State 4",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "feature-one;scenario-with-examples",
+        "keyword": "Scenario Outline",
+        "line": 15,
+        "name": "scenario with examples",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "State 3",
+            "result": {
+              "status": "passed",
+              "duration": 1000000
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "State 6",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      },
+      {
+        "description": "",
+        "id": "feature-one;scenario-with-examples",
+        "keyword": "Scenario Outline",
+        "line": 19,
+        "name": "scenario with examples",
+        "steps": [
+          {
+            "arguments": [],
+            "keyword": "Given ",
+            "line": 9,
+            "name": "State 4",
+            "result": {
+              "status": "passed",
+              "duration": 0
+            }
+          },
+          {
+            "arguments": [],
+            "keyword": "And ",
+            "line": 10,
+            "name": "State 8",
+            "result": {
+              "status": "passed",
+              "duration": 1000000
+            }
+          }
+        ],
+        "tags": [],
+        "type": "scenario"
+      }
+    ],
+    "id": "project-one-copy-›-feature-one",
+    "line": 1,
+    "keyword": "Feature",
+    "name": "project one copy › feature one",
+    "tags": [],
+    "uri": "features-one/sample.feature",
+    "metadata": [
+      {
+        "name": "Project",
+        "value": "project one copy"
+      },
+      {
+        "name": "Browser",
+        "value": ""
+      }
+    ]
+  },
+  {
+    "description": "",
+    "elements": [
+      {
+        "description": "",
         "id": "feature-two;scenario-of-project-two",
         "keyword": "Scenario",
-        "line": 2,
+        "line": 3,
         "name": "scenario of project two",
         "steps": [
           {
             "arguments": [],
             "keyword": "Given ",
-            "line": 3,
+            "line": 4,
             "name": "Another state 1",
             "result": {
               "status": "passed",
-              "duration": 1000000
+              "duration": 0
             }
           }
         ],
@@ -58,7 +222,7 @@
             "name": "State 1",
             "result": {
               "status": "passed",
-              "duration": 4000000
+              "duration": 6000000
             }
           },
           {
@@ -78,7 +242,7 @@
             "name": "TodoPage: step",
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 1000000
             }
           }
         ],
@@ -109,7 +273,7 @@
             "name": "State 4",
             "result": {
               "status": "passed",
-              "duration": 1000000
+              "duration": 3000000
             }
           }
         ],
@@ -130,7 +294,7 @@
             "name": "State 3",
             "result": {
               "status": "passed",
-              "duration": 2000000
+              "duration": 1000000
             }
           },
           {
@@ -140,7 +304,7 @@
             "name": "State 6",
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 1000000
             }
           }
         ],
@@ -171,7 +335,7 @@
             "name": "State 8",
             "result": {
               "status": "passed",
-              "duration": 1000000
+              "duration": 0
             }
           }
         ],
@@ -193,162 +357,6 @@
       {
         "name": "Browser",
         "value": "chromium"
-      }
-    ]
-  },
-  {
-    "description": "",
-    "elements": [
-      {
-        "description": "",
-        "id": "feature-one;scenario-of-project-one",
-        "keyword": "Scenario",
-        "line": 3,
-        "name": "scenario of project one",
-        "steps": [
-          {
-            "arguments": [],
-            "keyword": "Given ",
-            "line": 4,
-            "name": "State 1",
-            "result": {
-              "status": "passed",
-              "duration": 4000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 5,
-            "name": "Fails for project \"project one copy\"",
-            "result": {
-              "status": "failed",
-              "duration": 2000000,
-              "error_message": "Error: expect(received).not.toEqual(expected) // deep equality\n\nExpected: not \"project one copy\"\n\n   at features-one/steps/steps.ts:12\n\n  10 |\n  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {\n> 12 |   expect($testInfo.project.name).not.toEqual(projectName);\n     |                                      ^\n  13 | });\n  14 |"
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 6,
-            "name": "TodoPage: step",
-            "result": {
-              "status": "skipped",
-              "duration": 0
-            }
-          }
-        ],
-        "tags": [],
-        "type": "scenario"
-      },
-      {
-        "description": "",
-        "id": "feature-one;scenario-with-examples",
-        "keyword": "Scenario Outline",
-        "line": 14,
-        "name": "scenario with examples",
-        "steps": [
-          {
-            "arguments": [],
-            "keyword": "Given ",
-            "line": 9,
-            "name": "State 2",
-            "result": {
-              "status": "passed",
-              "duration": 2000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 10,
-            "name": "State 4",
-            "result": {
-              "status": "passed",
-              "duration": 1000000
-            }
-          }
-        ],
-        "tags": [],
-        "type": "scenario"
-      },
-      {
-        "description": "",
-        "id": "feature-one;scenario-with-examples",
-        "keyword": "Scenario Outline",
-        "line": 15,
-        "name": "scenario with examples",
-        "steps": [
-          {
-            "arguments": [],
-            "keyword": "Given ",
-            "line": 9,
-            "name": "State 3",
-            "result": {
-              "status": "passed",
-              "duration": 1000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 10,
-            "name": "State 6",
-            "result": {
-              "status": "passed",
-              "duration": 0
-            }
-          }
-        ],
-        "tags": [],
-        "type": "scenario"
-      },
-      {
-        "description": "",
-        "id": "feature-one;scenario-with-examples",
-        "keyword": "Scenario Outline",
-        "line": 19,
-        "name": "scenario with examples",
-        "steps": [
-          {
-            "arguments": [],
-            "keyword": "Given ",
-            "line": 9,
-            "name": "State 4",
-            "result": {
-              "status": "passed",
-              "duration": 4000000
-            }
-          },
-          {
-            "arguments": [],
-            "keyword": "And ",
-            "line": 10,
-            "name": "State 8",
-            "result": {
-              "status": "passed",
-              "duration": 1000000
-            }
-          }
-        ],
-        "tags": [],
-        "type": "scenario"
-      }
-    ],
-    "id": "project-one-copy-›-feature-one",
-    "line": 1,
-    "keyword": "Feature",
-    "name": "project one copy › feature one",
-    "tags": [],
-    "uri": "features-one/sample.feature",
-    "metadata": [
-      {
-        "name": "Project",
-        "value": "project one copy"
-      },
-      {
-        "name": "Browser",
-        "value": ""
       }
     ]
   }
