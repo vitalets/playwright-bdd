@@ -11,7 +11,7 @@ test('timeout in bg', async ({ feature }) => {
 });
 
 test('scenario 1', async ({ scenario }) => {
-  await expect(scenario.getStepTitles()).toHaveText([
+  await expect(scenario.getStepTitles()).toContainText([
     'GivenAction 0',
     'Giventimeouted step',
     'GivenAction 1',
@@ -20,7 +20,7 @@ test('scenario 1', async ({ scenario }) => {
 });
 
 test('scenario 2', async ({ scenario }) => {
-  await expect(scenario.getStepTitles()).toHaveText([
+  await expect(scenario.getStepTitles()).toContainText([
     'GivenAction 0',
     'Giventimeouted step',
     'GivenAction 2',

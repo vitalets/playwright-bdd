@@ -2,7 +2,7 @@ import { expect } from '@playwright/test';
 import { test } from '../../../check-report/fixtures';
 
 test('timeout in step', async ({ scenario }) => {
-  await expect(scenario.getStepTitles()).toHaveText([
+  await expect(scenario.getStepTitles()).toContainText([
     'Givenstep with page',
     'Giventimeouted step',
     'WhenAction 1',

@@ -47,10 +47,12 @@ async function openReport(page: Page, reportPath: string) {
 function getScenario(page: Page, scenarioName: string) {
   return page
     .locator('section section')
+    .filter({ hasNot: page.getByRole('heading', { level: 1 }) })
     .filter({ has: page.getByRole('heading', { name: scenarioName }) });
 }
 
 async function copyPromptToClipboard(scenario: Locator) {
+  await scenario.locator('article > button').click(); // expand hooks
   await expect(scenario.getByText('Fix with AI')).toBeVisible();
   await expect(scenario.getByRole('link', { name: 'Open ChatGPT' })).toBeVisible();
   await scenario.getByRole('button', { name: 'Copy prompt' }).click();
