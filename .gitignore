@@ -29,3 +29,4 @@ blob-report
 /examples/**/playwright/.auth
 
 .prototools
+.playwright-cli

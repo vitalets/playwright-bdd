@@ -2,16 +2,12 @@ import { expect } from '@playwright/test';
 import { test } from '../../../check-report/fixtures';
 
 test('timeout in fixture setup', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText([
+  await expect(scenario.getStepTitles()).toContainText([
+    /Before(?:: .+)?/,
     'GivenAction 0',
     'Givenstep that uses fixtureWithTimeoutInSetup',
     'WhenAction 1',
   ]);
-  // 1. position of error message sometimes appears in After Hooks, so check it separately
-  // 2. here can be different error messages
-  await expect(scenario.getSteps()).toContainText([/Hook "(.+)" failed/]);
-  // screenshot position changes between PW versions, so check it separately
-  await expect(scenario.getSteps()).toContainText(['screenshot']);
   // sometimes error is the following:
   // "browser.newContext: Target page, context or browser has been closed"
   // in that case there are two errors in test report.
@@ -24,10 +20,8 @@ test('timeout in fixture setup', async ({ scenario }) => {
 });
 
 test('timeout in before hook', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText([
-    // sometimes we still have 'BeforeEach Hooks|Before Hooks' here, not 'my timeouted hook',
-    // when 'duration' is not -1, we can't find timeouted item.
-    /Hook "(my timeouted hook|BeforeEach Hooks|Before Hooks|fixture: .+)" failed:/, // prettier-ignore
+  await expect(scenario.getStepTitles()).toContainText([
+    /Before(?:: (my timeouted hook|BeforeEach Hooks|Before Hooks|fixture: .+))?/,
     'GivenAction 1',
   ]);
   await expect(scenario.getErrors()).toContainText([

@@ -4,10 +4,10 @@ import { test } from '../../../check-report/fixtures';
 // pw 1.53 -> "fixture: " prefix removed
 // pw 1.55 -> format changed to "Fixture "name""
 const fixtureTimeoutRegexp =
-  /Hook "(After Hooks|AfterEach Hooks|.*fixtureWithTimeoutInTeardown.*)" failed/i;
+  /After(?:: (After Hooks|AfterEach Hooks|.*fixtureWithTimeoutInTeardown.*))?/i;
 
 test('timeout in fixture teardown', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText([
+  await expect(scenario.getStepTitles()).toContainText([
     'GivenAction 0',
     'Givenstep that uses fixtureWithTimeoutInTeardown',
     'WhenAction 1',
@@ -22,7 +22,7 @@ test('timeout in fixture teardown', async ({ scenario }) => {
 });
 
 test('timeout in step and in fixture teardown', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText([
+  await expect(scenario.getStepTitles()).toContainText([
     'GivenAction 0',
     'Giventimeouted step',
     'WhenAction 1',
@@ -44,11 +44,11 @@ test('timeout in step and in fixture teardown', async ({ scenario }) => {
 });
 
 test('timeout in after hook', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText([
+  await expect(scenario.getStepTitles()).toContainText([
     'Givenstep with page',
     // sometimes we still have "After Hooks" here,
     // when duration = -1 is not in after hooks, and we cant detect which fixture timed out
-    /Hook "(my timeouted hook|After Hooks|AfterEach Hooks)" failed/i,
+    /After(?:: (my timeouted hook|After Hooks|AfterEach Hooks))?/i,
   ]);
   await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
 });

@@ -3,6 +3,10 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* test: refactor Cucumber HTML reporter test POM — rename `expandStep` to `expandHooks(type)` and add `expandAttachment()`
+* test: fix `reporter-cucumber-ext-attachments` tests for new Cucumber HTML reporter DOM structure
+* fix: update lint-staged to pass `test.mjs` paths instead of directory paths to `node --test`
+* fix: strip Node.js warnings from error message in `execPlaywrightTestWithError` helper
 * chore: upgrade Cucumber ecosystem dependencies to latest versions
   - `@cucumber/messages`: 27.x → 32.x — populate `Pickle.location` and `Attachment.timestamp` in the messages report
   - `@cucumber/gherkin`: 32.x → 39.x — `Pickle.location` is now populated natively by gherkin (since v37)

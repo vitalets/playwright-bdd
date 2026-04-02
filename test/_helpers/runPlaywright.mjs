@@ -45,9 +45,11 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
     const stderr = e.stderr?.toString().trim() || '';
     if (!error) {
       // if error is not set, check that e.message equals exactly command
-      // to distinguish from other unexpected errors
+      // to distinguish from other unexpected errors.
+      // Strip Node.js warnings (e.g. TimeoutNegativeWarning) that may appear in the message.
+      const actualMessage = e.message.replace(/\(node:\d+\) \w+Warning:.*\n.*/g, '').trim();
       const expectedOutput = `Command failed: ${getCmdStr(cmd)}`;
-      if (e.message !== expectedOutput) {
+      if (actualMessage !== expectedOutput) {
         logger.log(`Command exited with incorrect error.`);
         logger.log(`Expected:\n${expectedOutput}`);
         logger.log(`Actual:\n${e.message}`);

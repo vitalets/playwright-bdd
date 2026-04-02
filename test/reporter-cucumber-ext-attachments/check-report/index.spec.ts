@@ -24,7 +24,7 @@ for (const protocol of ['http', 'file'] as const) {
 test('should show trace viewer', async ({ page, context }) => {
   await openHtmlReport(page, 'http');
   // open trace viewer
-  await page.getByRole('link', { name: 'View trace' }).click();
+  await page.getByRole('link', { name: /View trace/ }).click();
   await expect(page).toHaveURL(/trace\/index\.html/);
   await expect(page.getByText('sample.feature.spec.js')).toContainText('some scenario');
 
@@ -44,6 +44,8 @@ async function openHtmlReport(page: Page, protocol: 'http' | 'file') {
   const url = protocol === 'http' ? '/' : pathToFileURL('actual-reports/index.html').href;
   await page.goto(url);
   await page.getByText('sample.feature').click();
+  // screenshot, video and trace are inside the after-hooks step, expand it
+  await page.getByRole('button', { name: /hooks/ }).click();
 }
 
 async function checkImageAttachment(page: Page, name: string) {

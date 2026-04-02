@@ -8,18 +8,17 @@ test('Feature tags', async ({ feature }) => {
 // Cucumber html-formatter does not show failed retries
 // See: https://github.com/cucumber/react-components/issues/75
 test('Scenario with retries', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toHaveText([
+  await expect(scenario.getStepTitles()).toHaveText([
     'GivenAction 1',
     'Andfails until retry 1',
     'AndAction 2',
-    '', // empty step b/c we have 'After Hooks' hook added to the testCase b/c of screenshot in failed attempt
   ]);
-  await expect(scenario.getSteps()).toHaveCount(4);
+  await expect(scenario.getSteps()).toHaveCount(3);
   await expect(scenario.getSteps('passed')).toHaveCount(3);
 });
 
 test('Scenario with data table', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText(['Step with data table']);
+  await expect(scenario.getStepTitles()).toContainText(['Step with data table']);
   await expect(scenario.getDataTable().getByRole('cell')).toHaveText([
     'name',
     'value',
@@ -31,19 +30,19 @@ test('Scenario with data table', async ({ scenario }) => {
 });
 
 test('Scenario with doc string', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText(['Step with doc string']);
+  await expect(scenario.getStepTitles()).toContainText(['Step with doc string']);
   await expect(scenario.getDocString()).toHaveText('some text');
 });
 
 test('Scenario with attachments', async ({ scenario }) => {
-  await expect(scenario.getSteps()).toContainText([
-    'attach text via testInfo',
-    'attach text via attachments.push',
-    'attach text in nested step',
-    'attach image inline',
-    'attach image as file',
-    'attach stdout',
-    'attach buffer as stdout',
+  await expect(scenario.getStepTitles()).toHaveText([
+    'Givenattach text via testInfo',
+    'Andattach text via attachments.push',
+    'Andattach text in nested step',
+    'Andattach image inline',
+    'Andattach image as file',
+    'Andattach stdout',
+    'Andattach buffer as stdout',
   ]);
   await expect(scenario.root).not.toContainText('my nested step');
   await expect(scenario.getAttachments()).toHaveText([
@@ -53,6 +52,7 @@ test('Scenario with attachments', async ({ scenario }) => {
     'image attachment inline',
     'image attachment as file',
   ]);
+  await scenario.expandAttachment();
   const logs = (await scenario.getLogs().allTextContents()).join('\n');
   expect(logs).toContain('123 some logs');
   expect(logs).toContain('logs from exec');
@@ -60,8 +60,7 @@ test('Scenario with attachments', async ({ scenario }) => {
 
 test('Scenario with all keywords and success hooks', async ({ scenario }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(7);
-  await expect(scenario.getSteps()).toHaveText([
-    '', // before hook
+  await expect(scenario.getStepTitles()).toHaveText([
     'GivenAction 1',
     'AndAction 2',
     'WhenAction 3',
@@ -69,7 +68,6 @@ test('Scenario with all keywords and success hooks', async ({ scenario }) => {
     'ThenAction 5',
     'ButAction 6',
     '*Action 7',
-    '', // after hook
   ]);
 });
 
@@ -79,27 +77,12 @@ test('Skipped scenario', async ({ scenario }) => {
 
 test('Check doubled', async ({ feature }) => {
   const scenario = feature.getScenarioOutline('Check doubled');
-  await expect(scenario.getSteps()).toContainText([
-    'GivenAction <start>', // prettier-ignore
-    'ThenAction <end>',
-  ]);
-  await expect(scenario.getExamples().nth(0).locator('th,td')).toContainText([
-    ' ',
-    'start',
-    'end',
-    '',
-    '2',
-    '4',
-    '',
-    '3',
-    '6',
-  ]);
-  await expect(scenario.getExamples().nth(1).locator('th,td')).toContainText([
-    ' ',
-    'start',
-    'end',
-    '',
-    '10',
-    '20',
+  await expect(scenario.getStepTitles()).toHaveText([
+    'GivenAction 2',
+    'ThenAction 4',
+    'GivenAction 3',
+    'ThenAction 6',
+    'GivenAction 10',
+    'ThenAction 20',
   ]);
 });
