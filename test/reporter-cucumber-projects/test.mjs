@@ -17,7 +17,7 @@ test(testDir.name, async () => {
 
 function assertMessagesReport() {
   const expectedReport =
-    playwrightVersion >= '1.59' ? 'messages.ndjson' : 'messages-untill-pw-1.59.ndjson';
+    playwrightVersion >= '1.59' ? 'messages.ndjson' : 'messages-until-pw-1.59.ndjson';
   testDir.assertMessagesReport(
     `actual-reports/messages.ndjson`,
     `expected-reports/${expectedReport}`,
@@ -26,7 +26,7 @@ function assertMessagesReport() {
 
 function assertJsonReport() {
   const expectedReport =
-    playwrightVersion >= '1.59' ? 'json-report.json' : 'json-report-untill-pw-1.59.json';
+    playwrightVersion >= '1.59' ? 'json-report.json' : 'json-report-until-pw-1.59.json';
   testDir.assertJsonReport(`actual-reports/report.json`, `expected-reports/${expectedReport}`);
 }
 

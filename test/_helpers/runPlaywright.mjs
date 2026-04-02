@@ -97,6 +97,10 @@ function getCmdStr(cmd) {
   return (typeof cmd === 'string' ? cmd : cmd?.cmd) || DEFAULT_CMD;
 }
 
+export function normalizeExecErrorMessage(message) {
+  return stripNodeWarnings(message).trim();
+}
+
 function stripNodeWarnings(message) {
   return stripVTControlCharacters(message)
     .split('\n')

@@ -21,7 +21,14 @@
  * cd test/reporter-cucumber-msg
  * FEATURE_DIR=minimal npx playwright test
  */
-import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../_helpers/index.mjs';
+import {
+  test,
+  TestDir,
+  execPlaywrightTestInternal,
+  DEFAULT_CMD,
+  playwrightVersion,
+  normalizeExecErrorMessage,
+} from '../_helpers/index.mjs';
 import { globSync } from 'tinyglobby';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
@@ -51,7 +58,7 @@ async function checkFeature(featureDir) {
     execPlaywrightTestInternal(testDir.name, { env: { FEATURE_DIR: featureDir } });
   } catch (e) {
     // some features normally exit with error
-    if (e.message.trim() !== `Command failed: ${DEFAULT_CMD}`) {
+    if (normalizeExecErrorMessage(e.message) !== `Command failed: ${DEFAULT_CMD}`) {
       throw e;
     }
   }
@@ -60,14 +67,7 @@ async function checkFeature(featureDir) {
 }
 
 function assertMessagesReport(featureDir) {
-  let expectedFile = `features/${featureDir}/expected-reports/messages.ndjson`;
-
-  if (featureDir === 'hooks') {
-    // For 'hooks' we use our own golden file because playwright-bdd intentionally doesn't emit
-    // TestRunHookStarted/TestRunHookFinished messages (before/after run hooks are included
-    // as test case steps instead), whereas cucumber-js does emit them.
-    expectedFile = `features/${featureDir}/expected-reports/messages-own.ndjson`;
-  }
+  const expectedFile = getExpectedMessagesReportPath(featureDir);
 
   testDir.assertMessagesReport(
     `features/${featureDir}/actual-reports/messages.ndjson`,
@@ -81,6 +81,28 @@ function assertMessagesReport(featureDir) {
       'testCase.testRunStartedId': null,
     },
   );
+}
+
+function getExpectedMessagesReportPath(featureDir) {
+  if (featureDir === 'hooks') {
+    // For 'hooks' we use our own golden file because playwright-bdd intentionally doesn't emit
+    // TestRunHookStarted/TestRunHookFinished messages (before/after run hooks are included
+    // as test case steps instead), whereas cucumber-js does emit them.
+    return playwrightVersion >= '1.59'
+      ? `features/${featureDir}/expected-reports/messages-own.ndjson`
+      : `features/${featureDir}/expected-reports/messages-own-until-pw-1.59.ndjson`;
+  }
+
+  switch (featureDir) {
+    case 'examples-tables':
+    case 'retry':
+    case 'stack-traces':
+      return playwrightVersion >= '1.59'
+        ? `features/${featureDir}/expected-reports/messages.ndjson`
+        : `features/${featureDir}/expected-reports/messages-until-pw-1.59.ndjson`;
+  }
+
+  return `features/${featureDir}/expected-reports/messages.ndjson`;
 }
 
 /**

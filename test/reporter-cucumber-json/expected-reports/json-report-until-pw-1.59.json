@@ -14,7 +14,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 1000000
             }
           },
           {
@@ -73,16 +73,8 @@
             "name": "failing step",
             "result": {
               "status": "failed",
-              "duration": 12000000,
+              "duration": 4000000,
               "error_message": "Error: expect(received).toEqual(expected) // deep equality\n\nExpected: \"bar\"\nReceived: \"foo\"\n   at features/steps.ts:11\n\n   9 |\n  10 | Given('failing step', async ({}) => {\n> 11 |   expect('foo').toEqual('bar');\n     |                 ^\n  12 | });\n  13 |"
-            }
-          },
-          {
-            "keyword": "After",
-            "hidden": true,
-            "result": {
-              "status": "passed",
-              "duration": 16000000
             }
           }
         ],
@@ -101,7 +93,7 @@
             "hidden": true,
             "result": {
               "status": "passed",
-              "duration": 0
+              "duration": 1000000
             }
           },
           {
