@@ -1,6 +1,8 @@
 ---
 name: debug-cucumber-html-report
 description: "Debug or inspect the Cucumber HTML reporter output in the playwright-bdd project. Use when: investigating DOM structure changes in the Cucumber HTML reporter, updating test selectors or POMs after reporter upgrades, verifying what attachments/hooks/steps look like in the generated HTML report."
+metadata:
+  internal: true
 ---
 
 # Debug Cucumber HTML Report
