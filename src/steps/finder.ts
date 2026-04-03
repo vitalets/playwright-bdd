@@ -66,7 +66,10 @@ export function formatDuplicateStepsMessage(
 ) {
   const variants = matchedDefinitions.map(({ definition }) => {
     const file = definition.uri ? relativeToCwd(definition.uri) : '';
-    return `  - ${definition.keyword} '${definition.patternString}' # ${file}:${definition.line}`;
+    const tags = definition.tagsExpression
+      ? ` [tags: ${definition.tagsExpression.toString()}]`
+      : '';
+    return `  - ${definition.keyword} '${definition.patternString}' # ${file}:${definition.line}${tags}`;
   });
 
   return [

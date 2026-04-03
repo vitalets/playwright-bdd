@@ -49,3 +49,16 @@ test(`${testDir.name} (worker - regular steps)`, () => {
     env: { PROJECTS: 'no-duplicates,duplicate-regular-steps' },
   });
 });
+
+test(`${testDir.name} (main thread - tagged steps)`, () => {
+  const error = [
+    `Multiple definitions matched scenario step`,
+    `Step: Given duplicate tagged step # ${normalize('features/sample.feature:13:5')}`,
+    `  - Given 'duplicate tagged step' # ${normalize('steps/steps.ts')}:9 [tags: @duplicate-tagged-steps]`,
+    `  - Given 'duplicate tagged step' # ${normalize('steps/steps.ts')}:10 [tags: @duplicate-tagged-steps]`,
+  ];
+  execPlaywrightTestWithError(testDir.name, error, {
+    cmd: BDDGEN_CMD,
+    env: { PROJECTS: 'duplicate-tagged-steps' },
+  });
+});

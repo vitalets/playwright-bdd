@@ -9,6 +9,7 @@ export default defineConfig({
     ...(PROJECTS.includes('no-duplicates') ? [noDuplicates()] : []),
     ...(PROJECTS.includes('duplicate-regular-steps') ? [duplicateRegularSteps()] : []),
     ...(PROJECTS.includes('duplicate-decorator-steps') ? [duplicateDecoratorSteps()] : []),
+    ...(PROJECTS.includes('duplicate-tagged-steps') ? [duplicateTaggedSteps()] : []),
   ],
 });
 
@@ -44,6 +45,18 @@ function duplicateDecoratorSteps(): Project {
       paths: ['features/*.feature'],
       steps: 'steps/fixtures.ts',
       tags: '@duplicate-decorator-steps',
+    }),
+  };
+}
+
+function duplicateTaggedSteps(): Project {
+  return {
+    name: 'duplicate-tagged-steps',
+    testDir: defineBddConfig({
+      outputDir: `.features-gen/tagged`,
+      paths: ['features/*.feature'],
+      steps: ['steps/steps.ts'],
+      tags: '@duplicate-tagged-steps',
     }),
   };
 }
