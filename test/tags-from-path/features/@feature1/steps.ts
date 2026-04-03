@@ -1,7 +1,8 @@
 import { createBdd } from 'playwright-bdd';
 import { test } from '../shared-steps';
 
-const { BeforeWorker, AfterWorker, BeforeScenario, AfterScenario, Given } = createBdd(test);
+const { BeforeWorker, AfterWorker, BeforeScenario, AfterScenario, BeforeStep, AfterStep, Given } =
+  createBdd(test);
 
 BeforeWorker(async ({ log }) => {
   log(`BeforeWorker 1`);
@@ -17,6 +18,14 @@ BeforeScenario(async ({ log }) => {
 
 AfterScenario(async ({ log }) => {
   log(`AfterScenario 1`);
+});
+
+BeforeStep(async ({ log }) => {
+  log(`BeforeStep 1`);
+});
+
+AfterStep(async ({ log }) => {
+  log(`AfterStep 1`);
 });
 
 Given('a step', async ({ log, $testInfo }) => {
