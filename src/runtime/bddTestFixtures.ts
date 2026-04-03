@@ -12,6 +12,7 @@ import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 import { BddContext, BddStepInfo } from './bddContext';
 import { PromptFixture } from '../ai/promptAttachment';
+import { supportedFeatures } from '../playwright/supportedFeatures';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -148,10 +149,10 @@ export const test = base.extend<BddTestFixtures>({
       await use(prompt);
       await prompt.attach();
     },
-    // Temporarily un-box $prompt fixture to avoid warning from PW.
+    // $prompt is never used in a regular BDD test (only when the user opts into AI fix feature),
+    // so it triggers an incorrect warning in PW 1.55/1.56 for unused boxed fixtures. Un-box for those versions.
     // See: https://github.com/microsoft/playwright/issues/37147
-    // TODO: revert to fixtureOptions (e.g. box=true) when fixed in Playwright.
-    { scope: 'test' },
+    supportedFeatures.boxedFixturesWarning ? { scope: 'test' } : fixtureOptions,
   ],
 });
 
