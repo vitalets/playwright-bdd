@@ -28,5 +28,27 @@ Write BDD examples together with your team during calls and discussions. Use it 
 
 For more information, check out [this post](https://news.ycombinator.com/item?id=10194242) by the Cucumber creator and the [Real-World BDD article](https://www.serenity-dojo.com/minimal-bdd).
 
+### ESLint reports `no-empty-pattern` error in step files
+When a step doesn't use any fixtures, Playwright requires the first argument to be an empty object destructuring pattern `{}`:
+
+```ts
+Given('step without fixtures', async ({}, param: string) => {
+  // ...
+});
+```
+
+ESLint's [`no-empty-pattern`](https://eslint.org/docs/latest/rules/no-empty-pattern) rule flags `{}` as an error. However, you cannot replace `{}` with `_` — Playwright enforces that the first argument uses object destructuring syntax (see [microsoft/playwright#8798](https://github.com/microsoft/playwright/issues/8798)).
+
+The solution is to disable the `no-empty-pattern` rule for your step files. For example, in `eslint.config.mjs`:
+```js
+export default [
+  {
+    files: ['features/steps/**'],
+    rules: {
+      'no-empty-pattern': 'off',
+    },
+  },
+];
+```
 
 
