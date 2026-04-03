@@ -9,7 +9,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { generateMessages } from '@cucumber/gherkin';
 import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
-import { ParseError, GherkinDocument, IdGenerator, SourceMediaType } from '@cucumber/messages';
+import {
+  ParseError,
+  Pickle,
+  IdGenerator,
+  SourceMediaType,
+} from '@cucumber/messages';
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
 import { GherkinDocumentWithPickles, PickleWithLocation } from './types';
@@ -50,8 +55,21 @@ export class FeaturesLoader {
   }
 
   getDocumentsWithPickles(): GherkinDocumentWithPickles[] {
+    const picklesByUri = new Map<string, Pickle[]>();
+    for (const pickle of this.gherkinQuery.getPickles()) {
+      const uri = pickle.uri!;
+      let arr = picklesByUri.get(uri);
+      if (!arr) {
+        arr = [];
+        picklesByUri.set(uri, arr);
+      }
+      arr.push(pickle);
+    }
+
     return this.gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
-      const pickles = this.getDocumentPickles(gherkinDocument);
+      const pickles = (picklesByUri.get(gherkinDocument.uri!) ?? []).map((pickle) =>
+        this.getPickleWithLocation(pickle),
+      );
       return { ...gherkinDocument, pickles };
     });
   }
@@ -76,15 +94,12 @@ export class FeaturesLoader {
     });
   }
 
-  private getDocumentPickles(gherkinDocument: GherkinDocument) {
-    return (
-      this.gherkinQuery
-        .getPickles()
-        .filter((pickle) => gherkinDocument.uri === pickle.uri)
-        // Pickle.location is optional in @cucumber/messages, but @cucumber/gherkin
-        // always populates it (added in gherkin v37). Safe to assert as PickleWithLocation.
-        .map((pickle) => pickle as PickleWithLocation)
-    );
+  private getPickleWithLocation(pickle: Pickle): PickleWithLocation {
+    const lastAstNodeId = pickle.astNodeIds[pickle.astNodeIds.length - 1]!;
+    // Pickle.location is optional in @cucumber/messages, but @cucumber/gherkin
+    // always populates it (added in gherkin v37). Safe to assert non-null.
+    const location = this.gherkinQuery.getLocation(lastAstNodeId)!;
+    return { ...pickle, location };
   }
 }
 

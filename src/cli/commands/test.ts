@@ -1,5 +1,6 @@
 import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
+import os from 'node:os';
 import path from 'node:path';
 import { Command } from 'commander';
 import { TestFilesGenerator } from '../../generate';
@@ -14,10 +15,12 @@ import { showWarnings } from '../../config/warnings';
 import { Logger } from '../../utils/logger';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
+const DEFAULT_WORKERS = Math.max(1, Math.floor((os.availableParallelism?.() ?? os.cpus().length) / 2));
 
 type TestCommandOptions = ConfigOption & {
   tags?: string;
   verbose?: string;
+  workers?: string;
 };
 
 export const testCommand = new Command('test')
@@ -25,6 +28,7 @@ export const testCommand = new Command('test')
   .configureHelp({ showGlobalOptions: true })
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
+  .option('--workers <number>', `Max parallel worker threads for generation (default: ${DEFAULT_WORKERS})`)
   .action(async () => {
     const opts = testCommand.optsWithGlobals<TestCommandOptions>();
     setBddGenPhase();
@@ -32,8 +36,9 @@ export const testCommand = new Command('test')
     const configs = readConfigsFromEnv();
     mergeCliOptions(configs, opts);
     const isVerbose = hasVerboseFlag(configs);
+    const workers = parseWorkers(opts.workers);
 
-    await generateFilesForConfigs(configs);
+    await generateFilesForConfigs(configs, workers);
 
     if (isVerbose) printDone();
   });
@@ -58,14 +63,24 @@ export function assertConfigsCount(configs: unknown[]) {
   }
 }
 
-async function generateFilesForConfigs(configs: BDDConfig[]) {
+async function generateFilesForConfigs(configs: BDDConfig[], concurrency: number) {
   // run first config in main thread and other in workers (to have fresh require cache)
   // See: https://github.com/vitalets/playwright-bdd/issues/32
-  const tasks = configs.map((config, index) => {
-    return index === 0 ? new TestFilesGenerator(config).generate() : runInWorker(config);
-  });
+  const { default: pMap } = await import('p-map');
+  const [firstConfig, ...restConfigs] = configs;
+  await new TestFilesGenerator(firstConfig!).generate();
+  if (restConfigs.length > 0) {
+    await pMap(restConfigs, (config) => runInWorker(config), { concurrency });
+  }
+}
 
-  return Promise.all(tasks);
+function parseWorkers(value: string | undefined): number {
+  if (value === undefined) return DEFAULT_WORKERS;
+  const n = parseInt(value, 10);
+  if (isNaN(n) || n < 1) {
+    exit(`Invalid --workers value: "${value}". Must be a positive integer.`);
+  }
+  return n;
 }
 
 async function runInWorker(config: BDDConfig) {
