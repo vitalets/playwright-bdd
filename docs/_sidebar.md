@@ -2,6 +2,7 @@
   - [Installation](getting-started/installation.md)
   - [Write first BDD test](getting-started/write-first-test.md)
   - [Add fixtures](getting-started/add-fixtures.md)
+  - [🤖 Agent Skill](getting-started/agent-skill.md)
 
 * [**Configuration**](configuration/index.md)
   - [Options](configuration/options.md)
