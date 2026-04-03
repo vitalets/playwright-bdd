@@ -42,14 +42,30 @@ export class TestStepAttachments {
       // or read attachment content and delete 'url' field.
       attachment.url = pwAttachment.path;
     } else if (pwAttachment.body) {
-      // for now always attach as base64
-      // todo: for text/plain and application/json use raw to save some bytes
-      attachment.body = pwAttachment.body.toString('base64');
-      attachment.contentEncoding = messages.AttachmentContentEncoding.BASE64;
+      // Use IDENTITY (raw UTF-8) for text types so the Cucumber HTML report can display
+      // non-ASCII characters correctly. atob() in the browser decodes base64 as Latin-1,
+      // so base64-encoding a UTF-8 string produces garbled output for multi-byte characters.
+      // See: https://github.com/vitalets/playwright-bdd/issues/379
+      if (isTextContentType(pwAttachment.contentType)) {
+        attachment.body = pwAttachment.body.toString('utf8');
+        attachment.contentEncoding = messages.AttachmentContentEncoding.IDENTITY;
+      } else {
+        // for now always attach as base64
+        // todo: for text/plain and application/json use raw to save some bytes
+        attachment.body = pwAttachment.body.toString('base64');
+        attachment.contentEncoding = messages.AttachmentContentEncoding.BASE64;
+      }
     } else {
       throw new Error(`Playwright attachment without path and body`);
     }
 
     return { attachment };
   }
+}
+
+// Same pattern as isTextAttachment() in external.ts.
+// Text content types use IDENTITY encoding so non-ASCII characters are preserved
+// (base64 + browser atob() interprets bytes as Latin-1, not UTF-8).
+function isTextContentType(contentType: string) {
+  return /^(text\/|application\/json)/.test(contentType);
 }

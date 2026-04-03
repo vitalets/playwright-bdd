@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* bug: fix non-ASCII characters in text attachments being garbled in the Cucumber HTML report ([#379](https://github.com/vitalets/playwright-bdd/issues/379))
 * test: refactor Cucumber HTML reporter test POM — rename `expandStep` to `expandHooks(type)` and add `expandAttachment()`
 * test: fix `reporter-cucumber-ext-attachments` tests for new Cucumber HTML reporter DOM structure
 * fix: update lint-staged to pass `test.mjs` paths instead of directory paths to `node --test`

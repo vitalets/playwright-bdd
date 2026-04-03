@@ -38,6 +38,7 @@ test('Scenario with attachments', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toHaveText([
     'Givenattach text via testInfo',
     'Andattach text via attachments.push',
+    'Andattach non-ASCII text',
     'Andattach text in nested step',
     'Andattach image inline',
     'Andattach image as file',
@@ -48,6 +49,7 @@ test('Scenario with attachments', async ({ scenario }) => {
   await expect(scenario.getAttachments()).toHaveText([
     'text attachment via testInfo|some text',
     'text attachment via attachments.push|another text',
+    'non-ASCII attachment|Falló el caso',
     'text attachment in nested step|more text',
     'image attachment inline',
     'image attachment as file',

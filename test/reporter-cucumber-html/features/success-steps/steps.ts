@@ -26,6 +26,13 @@ When('attach text via attachments.push', async ({ $testInfo }) => {
   });
 });
 
+When('attach non-ASCII text', async ({ $testInfo }) => {
+  await $testInfo.attach('non-ASCII attachment', {
+    body: '|Falló el caso',
+    contentType: 'text/plain',
+  });
+});
+
 When('attach image inline', async ({ $testInfo }) => {
   await $testInfo.attach('image attachment inline', {
     body: fs.readFileSync(path.join(__dirname, 'cucumber.png')),

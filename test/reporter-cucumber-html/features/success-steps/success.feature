@@ -22,6 +22,7 @@ Feature: success
   Scenario: Scenario with attachments
     Given attach text via testInfo
     And attach text via attachments.push
+    And attach non-ASCII text
     And attach text in nested step
     And attach image inline
     And attach image as file
