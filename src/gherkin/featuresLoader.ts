@@ -9,12 +9,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { generateMessages } from '@cucumber/gherkin';
 import { Query as GherkinQuery } from '@cucumber/gherkin-utils';
-import {
-  ParseError,
-  Pickle,
-  IdGenerator,
-  SourceMediaType,
-} from '@cucumber/messages';
+import { ParseError, Pickle, IdGenerator, SourceMediaType } from '@cucumber/messages';
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
 import { GherkinDocumentWithPickles, PickleWithLocation } from './types';
