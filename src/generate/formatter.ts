@@ -252,8 +252,9 @@ export function extractPickleIdFromLine(line: string) {
  */
 export function extractPickleStepIdsFromLine(line: string) {
   const match = line.match(/\/\/ step: ([0-9a-f-,]+)$/);
-  if (match) {
-    return { pickleStepIds: match[1].split(','), index: match.index };
+  const matchedString = match?.[1];
+  if (matchedString) {
+    return { pickleStepIds: matchedString.split(','), index: match.index };
   }
 }
 

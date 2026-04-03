@@ -65,7 +65,7 @@ function belongsToNodeModules(file: string) {
 function trimEmptyLines(lines: string[]) {
   let start = 0;
   let end = lines.length - 1;
-  while (start <= end && !lines[start].trim()) start++;
-  while (end >= start && !lines[end].trim()) end--;
+  while (start <= end && !lines[start]?.trim()) start++;
+  while (end >= start && !lines[end]?.trim()) end--;
   return lines.slice(start, end + 1);
 }
