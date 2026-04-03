@@ -1,5 +1,6 @@
 # Guides
 
+  - [Authentication](guides/authentication.md)
   - [🤖 Fix with AI](guides/fix-with-ai.md)
   - [Migration to v7](guides/migration-v7.md)
   - [Ignore generated files](guides/ignore-generated-files.md)

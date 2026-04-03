@@ -87,36 +87,6 @@ export default defineConfig({
 
 ## Non-BDD projects
 
-You can have non-BDD projects in the same Playwright config. Just ensure that non-BDD projects have their own `testDir`. See the example in **Authentication** below. 
+You can have non-BDD projects in the same Playwright config. Just ensure that non-BDD projects have their own `testDir`.
 
-## Authentication
-
-When using a separate non-BDD project [for authentication](https://playwright.dev/docs/auth#basic-shared-account-in-all-tests), it is important to explicitly set `testDir` for it:
-
-```ts
-import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
-
-const testDir = defineBddConfig({
-  features: 'features/**/*.feature',
-  steps: 'steps/**/*.ts',
-});
-
-export default defineConfig({
-  testDir,
-  projects: [
-    {
-      name: 'setup',
-      testDir: './setup-steps', // <-- set testDir for setup project
-      testMatch: /setup\.ts/,
-    },
-    {
-      name: 'chromium',
-      dependencies: ['setup'],
-      use: {
-        storageState: 'playwright/.auth/user.json',
-      },      
-    },
-  ],
-});
-```
+A typical use case is an **authentication setup project**. See [Authentication](guides/authentication.md) for a full guide.
