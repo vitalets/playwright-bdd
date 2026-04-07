@@ -7,13 +7,13 @@ import { assertJsonPaths, toPosixPath } from './helpers.mjs';
 export function assertMessagesReport(actualFile, expectedFile, extraRules = {}) {
   const actualMessages = getMessagesFromFile(actualFile);
   const expectedMessages = getMessagesFromFile(expectedFile);
-  assertJsonPaths(actualMessages, expectedMessages, { ...rules, ...extraRules });
+  assertJsonPaths(actualMessages, expectedMessages, { ...DEFAULT_RULES, ...extraRules });
 }
 
 /**
  * Reads messages from ndjson file and returns as array.
  */
-function getMessagesFromFile(file) {
+export function getMessagesFromFile(file) {
   return fs
     .readFileSync(file, 'utf8')
     .split('\n')
@@ -21,7 +21,7 @@ function getMessagesFromFile(file) {
     .map((line) => JSON.parse(line));
 }
 
-const rules = {
+export const DEFAULT_RULES = {
   // in playwright-bdd we add only named hooks, so ignore hook.name from comparison
   'hook.name': null,
   // Cucumber does not log hook location column, but playwright-bdd does
