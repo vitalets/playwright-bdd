@@ -93,10 +93,20 @@ export class TestStepRun {
         return messages.TestStepResultStatus.SKIPPED;
       case Boolean(error):
         return messages.TestStepResultStatus.FAILED;
-      // For hooks that were not executed we return PASSED, not SKIPPED.
-      // Because these hooks can be from another run attempt of this testCase.
-      // If marked as skipped, the whole run is marked as skipped in reporter.
-      case !this.isHook() && !this.wasExecuted():
+      // Steps (and hooks) that have no corresponding Playwright step were not executed
+      // in this particular attempt and should be reported as SKIPPED.
+      //
+      // For scenario steps this happens when a prior step failed — subsequent steps have no pwStep.
+      //
+      // For BEFORE_TEST_RUN hooks (BeforeAll) this can happen on a retry: PW runs BeforeAll only
+      // once per worker (credited to the first scenario). If scenario B fails and is retried, its
+      // attempt 1 runs BeforeAll in the new worker (has a real pwStep). When TestCase.addHooks()
+      // processes attempt 1, it adds BeforeAll to the shared TestCase used for all attempts.
+      // Then buildMessages() for attempt 0 finds BeforeAll in the TestCase but has no matching
+      // pwStep (BeforeAll was credited to scenario A in the original worker). Emitting SKIPPED is
+      // correct: the hook was a declared prerequisite, but was already handled by a prior scenario
+      // in the same worker and therefore did not execute as part of this attempt.
+      case !this.wasExecuted():
         return messages.TestStepResultStatus.SKIPPED;
       default:
         return messages.TestStepResultStatus.PASSED;

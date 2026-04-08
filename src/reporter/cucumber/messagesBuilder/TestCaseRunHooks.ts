@@ -85,15 +85,15 @@ export class TestCaseRunHooks {
       .getHooks(this.hookType)
       .forEach((hookInfo) => {
         const executedHook = this.executedHooks.get(hookInfo.hook.internalId);
-        // todo: if pwStep is not found in this.executedBeforeHooks,
-        // it means that this hook comes from another attempt of this test case.
-        // We can still try to find it in test result, as otherwise it will be marked as skipped,
-        // but actually it was executed.
-        const testStepRun = new TestStepRun(
-          this.testCaseRun,
-          hookInfo.testStep,
-          executedHook?.pwStep,
-        );
+        // If no pwStep is found for this hook, it means the hook was not executed in this attempt.
+        // This happens for BEFORE_TEST_RUN (BeforeAll) hooks on retries: PW credits BeforeAll to the
+        // first scenario in each worker. When a later scenario is retried, its attempt 1 runs BeforeAll
+        // in the new worker (and has a real pwStep), which causes TestCase.addHooks() to add BeforeAll
+        // to the shared TestCase object. buildMessages() for attempt 0 then finds BeforeAll in the
+        // TestCase but has no matching pwStep. Passing undefined pwStep lets TestStepRun emit SKIPPED,
+        // which correctly reflects that the hook ran for a different scenario in the same worker.
+        const pwStep = executedHook?.pwStep;
+        const testStepRun = new TestStepRun(this.testCaseRun, hookInfo.testStep, pwStep);
         messages.push(...testStepRun.buildMessages());
       });
 
