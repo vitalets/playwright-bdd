@@ -125,6 +125,7 @@ Take a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id
 
 ## My other Playwright tools
 
+* [playwright-timeline-reporter](https://github.com/vitalets/playwright-timeline-reporter) - Interactive timeline report for Playwright test runs.
 * [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
 * [request-mocking-protocol](https://github.com/vitalets/request-mocking-protocol) - Mock server-side API calls in Playwright.
 * [playwright-network-cache](https://github.com/vitalets/playwright-network-cache) - Speed up Playwright tests by caching network requests on the filesystem.
