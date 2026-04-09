@@ -50,8 +50,6 @@ export class TestStepAttachments {
         attachment.body = pwAttachment.body.toString('utf8');
         attachment.contentEncoding = messages.AttachmentContentEncoding.IDENTITY;
       } else {
-        // for now always attach as base64
-        // todo: for text/plain and application/json use raw to save some bytes
         attachment.body = pwAttachment.body.toString('base64');
         attachment.contentEncoding = messages.AttachmentContentEncoding.BASE64;
       }
