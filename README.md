@@ -28,9 +28,6 @@ Run BDD tests with Playwright runner
   📝 <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
 </p>
 
-> [!TIP]
-> [BDD + MCP: Your thoughts?](https://github.com/vitalets/playwright-bdd/issues/321)
-
 ## Why BDD?
 In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
 
