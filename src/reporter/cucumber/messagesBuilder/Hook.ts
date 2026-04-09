@@ -57,6 +57,8 @@ export class Hook {
   }
 
   private getBeforeHookType(): messages.HookType {
+    // Hooks outside Playwright's beforeEach group are worker hooks (BeforeAll),
+    // so we represent them as BEFORE_TEST_RUN in cucumber messages.
     // beforeEach hooks are located inside the hooks group created by test.beforeEach()
     const beforeHooksGroupStep = findParentWith(this.pwStep, (step) => {
       return step.category === 'hook' && step.title === BEFORE_EACH_HOOKS_GROUP_NAME;
@@ -68,6 +70,8 @@ export class Hook {
   }
 
   private getAfterHookType(): messages.HookType {
+    // Playwright does not expose afterAll via test.step(), so we distinguish
+    // afterEach vs afterAll by step shape and map non-test.step hooks to AFTER_TEST_RUN.
     // afterEach hooks are NOT located inside the hooks group created by test.afterEach()
     // possibly bug in the Playwright.
     // We distinguish them by the fact, that worker hooks are not executed via test.step()

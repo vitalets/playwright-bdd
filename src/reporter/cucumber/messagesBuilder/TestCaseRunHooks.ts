@@ -11,8 +11,9 @@
  * See: https://github.com/cucumber/messages/pull/102
  *
  * In playwright-bdd:
- * As of now, we don't emit TestRunHookStarted / TestRunHookFinished messages,
- * but include worker-level hooks into testCase steps.
+ * We do map worker-level hooks to BEFORE_TEST_RUN / AFTER_TEST_RUN hook types,
+ * but we don't emit TestRunHookStarted / TestRunHookFinished messages.
+ * Instead, these hooks are attached to per-scenario testCase steps in the report.
  * This could be changed in the future, when cucumber-js will add it.
  */
 
