@@ -13,10 +13,8 @@
   - `@cucumber/messages`: 27.x → 32.x — populate `Pickle.location` and `Attachment.timestamp` in the messages report
   - `@cucumber/gherkin`: 32.x → 39.x — `Pickle.location` is now populated natively by gherkin (since v37)
   - `@cucumber/gherkin-utils`: 9.x → 11.x
-  - `@cucumber/cucumber`: 11.x → 12.x
   - `@cucumber/cucumber-expressions`: 18.x → 19.x
   - `@cucumber/tag-expressions`: 6.x → 9.x
-  - `@cucumber/pretty-formatter`: 1.x → 3.x — support new `PrettyPrinter` message-based API
 * reporter: skip attachments by default in the Cucumber JSON reporter
 * reporter: make `junit` the canonical JUnit reporter and deprecate `junit-modern` alias
 * reporter: add JUnit `nameFormat` option and make Cucumber-compatible testcase naming the default ([#375](https://github.com/vitalets/playwright-bdd/issues/375))
