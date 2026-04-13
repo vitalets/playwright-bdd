@@ -7,9 +7,13 @@
  * as part of that specific attempt.
  */
 import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest, playwrightVersion } from '../_helpers/index.mjs';
 import { getMessagesFromFile } from '../_helpers/reports/messages.mjs';
 import { formatMessagesReport } from '../_helpers/reports/messages-formatter.mjs';
+
+// PW >= 1.59 emits an "After Hooks" root step for AfterAll (Worker Cleanup).
+// Earlier versions omit it, so the AfterAll hook step is absent from the results.
+const hasAfterHooks = playwrightVersion >= '1.59';
 
 const testDir = new TestDir(import.meta);
 
@@ -32,11 +36,13 @@ function assertReport() {
       'Scenario: scenario that fails first time [attempt 0]',
       '  SKIP setup all', // BeforeAll SKIPPED — ran in worker 1 but credited to scenario A, not B
       '  FAIL a step that passes the second time',
-      '  PASS After Hooks',
+      hasAfterHooks && '  PASS After Hooks',
       'Scenario: scenario that fails first time [attempt 1]',
       '  PASS setup all',
       '  PASS a step that passes the second time',
-      '  SKIP After Hooks', // AfterAll SKIPPED — PW omits Worker Cleanup for passing tests (microsoft/playwright#38350)
-    ].join('\n'),
+      hasAfterHooks && '  SKIP After Hooks', // AfterAll SKIPPED — PW omits Worker Cleanup for passing tests (microsoft/playwright#38350)
+    ]
+      .filter(Boolean)
+      .join('\n'),
   );
 }
