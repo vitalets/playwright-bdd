@@ -29,6 +29,7 @@ import {
 import { createPromptAttachmentWithButton, scriptCopyPrompt } from './promptAttachment';
 import { isPromptAttachmentContentType } from '../../../ai/promptAttachment';
 import { throwIf } from '../../../utils';
+import { EnvelopesTransformer } from './envelopesTransformer';
 
 type HtmlReporterOptions = {
   outputFile?: string;
@@ -67,8 +68,15 @@ export default class HtmlReporter extends BaseReporter {
     this.transformStream = this.createTransformStream();
 
     this.htmlStream.pipe(this.transformStream).pipe(this.outputStream);
+  }
 
-    this.eventBroadcaster.on('envelope', (envelope: messages.Envelope) => {
+  async init() {
+    const envelopesTransformer = new EnvelopesTransformer(this.messagesBuilder);
+    this.messagesBuilder.getMessages().forEach((origEnvelope) => {
+      // filter out retries, except the last one
+      const envelope = envelopesTransformer.transformEnvelope(origEnvelope);
+      if (!envelope) return;
+
       if (envelope.testRunFinished) this.receivedTestRunFinished = true;
       if (isAttachmentEnvelope(envelope)) {
         this.handleAttachment(envelope);

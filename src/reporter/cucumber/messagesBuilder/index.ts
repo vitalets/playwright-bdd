@@ -2,6 +2,7 @@
  * Builds cucumber messages from Playwright test results.
  */
 import * as pw from '@playwright/test/reporter';
+import * as messages from '@cucumber/messages';
 import { TestCaseRun, TestCaseRunEnvelope } from './TestCaseRun';
 import { TestCase } from './TestCase';
 import { Meta } from './Meta';
@@ -33,7 +34,7 @@ export class MessagesBuilder {
 
   private fullConfig!: pw.FullConfig;
   private fullResult!: pw.FullResult;
-  private testRun = new TestRun();
+  public testRun = new TestRun();
   public testCaseRuns: TestCaseRun[] = [];
   private testCases = new AutofillMap</* testId */ string, TestCase>();
   private hooks = new AutofillMap</* internalId */ string, Hook>();
@@ -85,12 +86,15 @@ export class MessagesBuilder {
     this.onEndPromiseResolve();
   }
 
-  emitMessages(eventBroadcaster: EventEmitter) {
-    Object.values(this.report).forEach((value) => {
-      if (!value) return;
-      const messages = Array.isArray(value) ? value : [value];
-      messages.forEach((message) => eventBroadcaster.emit('envelope', message));
+  getMessages() {
+    return Object.values(this.report).flatMap((value): messages.Envelope[] => {
+      if (!value) return [];
+      return Array.isArray(value) ? value : [value];
     });
+  }
+
+  emitMessages(eventBroadcaster: EventEmitter) {
+    this.getMessages().forEach((message) => eventBroadcaster.emit('envelope', message));
   }
 
   private async buildMessages() {
@@ -169,6 +173,8 @@ export class MessagesBuilder {
   }
 
   private buildEventDataCollector() {
-    this.emitMessages(this.eventDataCollectorEmitter);
+    this.getMessages().forEach((message) =>
+      this.eventDataCollectorEmitter.emit('envelope', message),
+    );
   }
 }

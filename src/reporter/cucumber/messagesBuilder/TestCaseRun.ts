@@ -74,6 +74,10 @@ export class TestCaseRun {
     return this.result.status === 'timedOut';
   }
 
+  willBeRetried() {
+    return Boolean(this.result.error && this.result.retry < this.test.retries);
+  }
+
   buildMessages() {
     return [
       this.buildTestCaseStarted(),
@@ -190,7 +194,7 @@ export class TestCaseRun {
     const { startTime, duration } = this.result;
     const testCaseFinished: messages.TestCaseFinished = {
       testCaseStartedId: this.id,
-      willBeRetried: Boolean(this.result.error && this.result.retry < this.test.retries),
+      willBeRetried: this.willBeRetried(),
       timestamp: toCucumberTimestamp(startTime.getTime() + duration),
     };
     return { testCaseFinished };
