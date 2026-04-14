@@ -26,7 +26,10 @@ type FileInfo = {
 };
 
 const DOCS_DIR = 'docs';
-const IGNORE_LINKS = ['docs/changelog', 'docs/license'];
+const IGNORE_PATHS = [
+  path.join(DOCS_DIR, 'changelog'), // prettier-ignore
+  path.join(DOCS_DIR, 'license'),
+];
 
 const files = globSync('**', { cwd: DOCS_DIR, onlyFiles: true, expandDirectories: false }).map(
   fillFileInfo,
@@ -75,7 +78,7 @@ function validateLink(fileInfo: FileInfo, token: Tokens.Link, files: FileInfo[])
     return formatError('Links with ".." are not supported', fileInfo, token.raw);
   }
   const targetPath = resolvePathname(fileInfo, pathname);
-  if (IGNORE_LINKS.includes(targetPath)) return;
+  if (IGNORE_PATHS.includes(targetPath)) return;
   const targetFileInfo = files.find((fileInfo) => fileInfo.path === targetPath);
   if (!targetFileInfo) {
     return formatError('Invalid path', fileInfo, token.raw);
