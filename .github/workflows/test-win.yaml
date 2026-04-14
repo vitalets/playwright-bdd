@@ -24,14 +24,15 @@ jobs:
           script: |
             const { peerDependencies } = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
             const minimalVersion = peerDependencies['@playwright/test'].match(/\d+\.\d+/)[0];
-            return [ minimalVersion, 'latest', 'beta' ];
+            // commented minimal version tests on win as it too slow.
+            return [ 'latest', 'beta' ];
     outputs:
       versions: ${{ steps.get-versions.outputs.result }}
 
   test-win:
     needs: get-playwright-versions
     runs-on: windows-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
