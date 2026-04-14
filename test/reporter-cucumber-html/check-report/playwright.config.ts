@@ -8,6 +8,8 @@ export default defineConfig({
   // testDir: '../features/background',
   outputDir: './test-results',
   reporter: 'dot',
+  // Use single worker to avoid flakiness on CI due to low resources.
+  workers: process.env.CI ? 1 : undefined,
   use: {
     screenshot: { mode: 'only-on-failure', fullPage: true },
     trace: 'retain-on-failure',
