@@ -95,10 +95,13 @@ function getExpectedMessagesReportPath(featureDir) {
 
   switch (featureDir) {
     case 'examples-tables':
-    case 'retry':
     case 'stack-traces':
       return playwrightVersion >= '1.59'
         ? `features/${featureDir}/expected-reports/messages.ndjson`
+        : `features/${featureDir}/expected-reports/messages-until-pw-1.59.ndjson`;
+    case 'retry':
+      return playwrightVersion >= '1.59'
+        ? `features/${featureDir}/expected-reports/messages-from-pw-1.59.ndjson`
         : `features/${featureDir}/expected-reports/messages-until-pw-1.59.ndjson`;
   }
 
