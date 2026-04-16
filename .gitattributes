@@ -1,0 +1,2 @@
+# Auto-detect text files and ensure LF line endings in the repository
+* text=auto
