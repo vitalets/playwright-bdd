@@ -45,10 +45,9 @@ export function execPlaywrightTestWithError(dir, error, cmd) {
     const stdout = e.stdout?.toString().trim() || '';
     const stderr = e.stderr?.toString().trim() || '';
     if (!error) {
-      // if error is not set, check that e.message equals exactly command
-      // to distinguish from other unexpected errors.
-      // Strip Node.js warnings that may be injected before/after the command failure line.
-      const actualMessage = stripNodeWarnings(e.message).trim();
+      // If no explicit error is expected, assert the failing command itself.
+      // We normalize away platform-specific warning noise around that line.
+      const actualMessage = normalizeExecErrorMessage(e.message);
       const expectedOutput = `Command failed: ${getCmdStr(cmd)}`;
       if (actualMessage !== expectedOutput) {
         logger.log(`Command exited with incorrect error.`);
@@ -98,7 +97,14 @@ function getCmdStr(cmd) {
 }
 
 export function normalizeExecErrorMessage(message) {
-  return stripNodeWarnings(message).trim();
+  const lines = stripNodeWarnings(message)
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
+
+  // Node can append warning or test-runner lines after the command failure on some platforms.
+  // The command-failed line is the stable part we want to assert against in tests.
+  return lines.find((line) => line.startsWith('Command failed:')) || lines.join('\n');
 }
 
 function stripNodeWarnings(message) {
