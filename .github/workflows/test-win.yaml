@@ -16,21 +16,26 @@ concurrency:
 jobs:
   get-playwright-versions:
     runs-on: ubuntu-24.04
+    outputs:
+      versions: ${{ steps.get-versions.outputs.versions }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/github-script@v8
-        id: get-versions
+      - uses: actions/setup-node@v6
         with:
-          script: |
-            const { peerDependencies } = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
-            const minimalVersion = peerDependencies['@playwright/test'].match(/\d+\.\d+/)[0];
-            // commented minimal version tests on win as it too slow.
-            return [ 'latest', 'beta' ];
-    outputs:
-      versions: ${{ steps.get-versions.outputs.result }}
+          node-version: 24
+      - id: get-versions
+        run: |
+          # Scheduled runs should cover only a real beta and skip when beta is already obsolete.
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            versions=$(node scripts/get-pw-versions.ts beta)
+          else
+            versions=$(node scripts/get-pw-versions.ts latest)
+          fi
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
 
   test-win:
     needs: get-playwright-versions
+    if: needs.get-playwright-versions.outputs.versions != '[]'
     runs-on: windows-latest
     timeout-minutes: 20
     strategy:

@@ -18,26 +18,30 @@ concurrency:
 jobs:
   get-playwright-versions:
     runs-on: ubuntu-24.04
+    outputs:
+      versions: ${{ steps.get-versions.outputs.versions }}
     steps:
       - uses: actions/checkout@v6
-      - uses: actions/github-script@v8
-        id: get-versions
+      - uses: actions/setup-node@v6
         with:
-          script: |
-            const { peerDependencies } = JSON.parse(require('fs').readFileSync('package.json', 'utf8'));
-            const minimalVersion = peerDependencies['@playwright/test'].match(/\d+\.\d+/)[0];
-            const { execSync } = require('node:child_process');
-            const info = execSync('npm show --json @playwright/test').toString();
-            const { versions } = JSON.parse(info);
-            return versions
-              .filter((v) => v.match(/\.0$/) && v >= minimalVersion)
-              .map((v) => v.replace(/\.0$/, ''))
-              .concat([ 'beta' ]);
-    outputs:
-      versions: ${{ steps.get-versions.outputs.result }}
+          node-version: 24
+      - id: get-min-pw-version
+        run: echo "value=$(node -p \"require('./package.json').peerDependencies['@playwright/test'].match(/\\d+\\.\\d+/)[0]\")" >> "$GITHUB_OUTPUT"
+      - id: get-versions
+        env:
+          MIN_PW_VERSION: ${{ steps.get-min-pw-version.outputs.value }}
+        run: |
+          # Scheduled runs should cover only a real beta and skip when beta is already obsolete.
+          if [[ "${{ github.event_name }}" == "schedule" ]]; then
+            versions=$(node scripts/get-pw-versions.ts beta)
+          else
+            versions=$(node scripts/get-pw-versions.ts "$MIN_PW_VERSION")
+          fi
+          echo "versions=$versions" >> "$GITHUB_OUTPUT"
 
   test:
     needs: get-playwright-versions
+    if: needs.get-playwright-versions.outputs.versions != '[]'
     # Older versions of PW don't support ubuntu-24.04
     # See: https://github.com/microsoft/playwright/issues/30368
     runs-on: ubuntu-22.04
@@ -52,8 +56,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: >
-          npm install
-          @playwright/test@${{ matrix.playwrightVersion }}
+          npm install @playwright/test@${{ matrix.playwrightVersion }}
           @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
 
       - run: npx playwright install --with-deps chromium
