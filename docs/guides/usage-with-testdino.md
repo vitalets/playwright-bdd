@@ -13,7 +13,7 @@ Create an organization and project from your dashboard, then generate an API key
 Install the TestDino reporter:
 
 ```sh
-npm i -D @playwright/test playwright-bdd @testdino/playwright
+npm i -D @testdino/playwright
 ```
 
 Install [dotenv](https://www.npmjs.com/package/dotenv) to load the API key from a local `.env` file:
