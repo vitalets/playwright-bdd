@@ -61,6 +61,10 @@ export class BddStepInvoker {
         stepFixtures,
         ...stepParameters,
       );
+      // We intentionally run AfterStep hooks only after successful step execution.
+      // A naive try/finally would change error precedence and would need careful handling
+      // of Playwright control-flow errors such as skip and timeout.
+      // See: https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382
       await this.runAfterStepHooks(stepHookFixtures);
       return result;
     });

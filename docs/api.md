@@ -151,7 +151,10 @@ Defines a hook that runs **before each step**. You can target the hook to specif
 
 ### AfterStep
 
-Defines a hook that runs **after each scenario**. You can target the hook to specific step by providing the `tags` option.
+Defines a hook that runs **after each successful step**. You can target the hook to specific step by providing the `tags` option.
+
+> `AfterStep` currently does **not** run when the step itself fails.
+> See [#383](https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382) for the rationale and caveats.
 
 **Usage:** `AfterStep([options,] hookFn)`
 

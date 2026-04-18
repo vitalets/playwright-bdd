@@ -127,6 +127,7 @@ test(`${testDir.name} (error)`, () => {
     'BeforeStep 1',
     'BeforeStep 2',
     'step with error',
-    // currently we don't run AfterStep hooks in case of step error
+    // AfterStep does not run after a failing step.
+    // See: https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382
   ]);
 });

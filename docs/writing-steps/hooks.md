@@ -364,7 +364,14 @@ The hook function accepts **1 argument** - [test-scoped fixtures](https://playwr
 
 > Consider using [fixtures](#fixtures) instead of hooks.
 
-Playwright-BDD supports the scenario-level hook `AfterStep`. It runs **after each step**. 
+Playwright-BDD supports the step-level hook `AfterStep`. It runs **after each successful step**.
+
+> `AfterStep` currently does **not** run when the step itself fails.
+> This differs from Cucumber semantics and is documented intentionally.
+> The obvious `try/finally` implementation is not enough here because it would need to preserve
+> the original step error, keep Playwright `skip` semantics intact, and avoid interfering with
+> timeout / interruption behavior.
+> See the discussion in [issue #383](https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382).
 
 Usage:
 ```ts
@@ -375,7 +382,7 @@ export const test = base.extend({ /* ...your fixtures */ });
 const { AfterStep } = createBdd(test);
 
 AfterStep(async () => {
-  // runs after each scenario
+  // runs after each successful step
 });
 ```
 
