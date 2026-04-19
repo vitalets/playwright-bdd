@@ -130,4 +130,24 @@ test(`${testDir.name} (error)`, () => {
     // AfterStep does not run after a failing step.
     // See: https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382
   ]);
+
+  expectCalls('worker 3: ', stdout, [
+    // scenario 4
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'step with skip',
+    // AfterStep does not run after a step skipped with $testInfo.skip().
+    // The following BDD step is skipped by Playwright and is not invoked.
+
+    // scenario 5
+    'testFixtureCommon setup',
+
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'step with timeout',
+    // AfterStep does not run after a step timeout.
+    // The following BDD step is skipped by Playwright and is not invoked.
+  ]);
 });

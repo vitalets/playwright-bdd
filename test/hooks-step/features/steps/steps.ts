@@ -1,4 +1,5 @@
 import { expect } from '@playwright/test';
+import timers from 'node:timers/promises';
 import { Given } from './fixtures';
 
 Given('bg step', async ({ log, $testInfo }) => {
@@ -14,4 +15,14 @@ Given('step {int}', async ({ log }, n: number) => {
 Given('step with error', async ({ log }) => {
   log(`step with error`);
   expect(1).toBe(2);
+});
+
+Given('step with skip', async ({ log, $testInfo }) => {
+  log(`step with skip`);
+  $testInfo.skip();
+});
+
+Given('step with timeout', async ({ log, $testInfo }) => {
+  log(`step with timeout`);
+  await timers.setTimeout($testInfo.timeout + 100);
 });
