@@ -1,2 +1,6 @@
 # Auto-detect text files and ensure LF line endings in the repository
 * text=auto
+
+# Shell scripts must keep LF on checkout, otherwise Bash sees CRLF as syntax.
+*.sh text eol=lf
+scripts/git-hooks/* text eol=lf
