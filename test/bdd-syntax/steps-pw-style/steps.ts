@@ -37,9 +37,13 @@ Then('Custom param-no-transformer is {param-no-transformer}', ({}, param: string
   expect(param).toEqual('dog');
 });
 
-Then('Passed doc string to contain {string}', async ({}, arg: string, docString: string) => {
-  expect(docString).toContain(arg);
-});
+Then(
+  'Passed doc string has media type {string} and contains {string}',
+  ({ $step }, mediaType: string, content: string, docString: string) => {
+    expect($step.docStringType).toEqual(mediaType);
+    expect(docString).toContain(content);
+  },
+);
 
 Then(
   'Passed data table to have in row {int} col {string} value {string}',

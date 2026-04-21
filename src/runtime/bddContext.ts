@@ -9,6 +9,7 @@ import { BddTestData } from '../bddData/types';
 
 export type BddStepInfo = {
   title: string;
+  docStringType?: string;
 };
 
 export type BddContext = {

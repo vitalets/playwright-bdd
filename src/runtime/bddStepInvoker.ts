@@ -33,6 +33,7 @@ export class BddStepInvoker {
   ) {
     this.bddContext.stepIndex++;
     this.bddContext.step.title = stepText;
+    this.bddContext.step.docStringType = undefined;
 
     const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
     const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
@@ -122,6 +123,7 @@ export class BddStepInvoker {
       parameters.push(new DataTable(argument.dataTable));
     } else if (argument?.docString) {
       parameters.push(argument.docString.content);
+      this.bddContext.step.docStringType = argument.docString.mediaType;
     }
 
     // todo: handle invalid code length

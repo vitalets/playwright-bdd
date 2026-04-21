@@ -23,7 +23,8 @@
 * chore: replace `fast-glob` with `tinyglobby` ([#366](https://github.com/vitalets/playwright-bdd/pull/366))
 * perf: limit `bddgen` worker concurrency to `cpus/2` to prevent OOM in memory-constrained CI environments ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
 * perf: optimize pickle lookup in `FeaturesLoader` from O(N×M) to O(N+M) using URI-indexed map ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
-* fix: correct handling of retries in the Cucumber HTML reporter 
+* fix: correct handling of retries in the Cucumber HTML reporter
+* feat: doc string media types added to `$step` fixture as `docStringType` ([#380](https://github.com/vitalets/playwright-bdd/issues/380))
 
 ## [8.5.0] - 2026-03-13
 * docs: document `defineParameterType` helper

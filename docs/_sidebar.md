@@ -29,6 +29,7 @@
   - [Keywords matching](writing-steps/keywords-matching.md)
   - [Re-using step function](writing-steps/reusing-step-fn.md)
   - [Data tables](writing-steps/data-tables.md)
+  - [Doc strings](writing-steps/doc-strings.md)
   - [Snippets](writing-steps/snippets.md)
 
 * [**Reporters**](reporters/index.md)
