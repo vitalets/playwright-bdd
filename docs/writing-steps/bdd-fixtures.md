@@ -23,7 +23,13 @@ Given('I do something', async ({ browserName, $test }) => {
 
 ## `$step`
 You can access current step info using the special `$step` fixture.
-Currently, it contains only the step title but can be extended in the future.
+
+It exposes the following fields:
+
+| Field | Type | Description |
+|---|---|---|
+| `title` | `string` | Step title without the keyword, e.g. `I open url "https://playwright.dev"` |
+| `docStringType` | `string \| undefined` | Media type of the doc string argument, if present. See [Doc strings](writing-steps/doc-strings.md). |
 
 ```ts
 Given('I open url {string}', async ({ $step }, url: string) => { 
