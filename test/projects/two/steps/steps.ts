@@ -9,4 +9,4 @@ Given('Unique step of project two', async ({ option, secondOption }) => {
   expect(secondOption).toEqual('bar');
 });
 
-Given('Step defined in both projects', async () => {});
+Given('Step defined in both projects', async ({}) => {});

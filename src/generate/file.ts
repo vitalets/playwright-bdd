@@ -151,6 +151,10 @@ export class TestFile {
     return usedDefinitions;
   }
 
+  getStepDefinitionArityErrors() {
+    return this.tests.flatMap((test) => test.arityChecker.errors);
+  }
+
   private renderFileHeader() {
     const importTestFrom = this.resolveImportTestFrom();
     return this.formatter.fileHeader(this.featureUri, importTestFrom);

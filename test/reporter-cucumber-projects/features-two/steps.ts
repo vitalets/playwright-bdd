@@ -2,4 +2,4 @@ import { createBdd } from 'playwright-bdd';
 
 const { Given } = createBdd();
 
-Given('Another state {int}', async () => {});
+Given('Another state {int}', async ({}, _state: number) => {});

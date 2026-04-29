@@ -33,6 +33,7 @@ export function playwrightStepCtor(
     registerStepDefinition({
       keyword,
       pattern,
+      arity: fn.length,
       fn,
       location: getLocationByOffset(3),
       customTest,

@@ -14,9 +14,9 @@ Then('fixtures available in normal fn', async function ({ page, testScopedFixtur
   expect(testScopedFixture).toBeDefined();
 });
 
-Then('empty fixtures in arrow fn', async () => {});
+Then('empty fixtures in arrow fn', async ({}) => {});
 Then('empty fixtures 2 in arrow fn', async ({}) => {});
-Then('empty fixtures in normal fn', function () {});
+Then('empty fixtures in normal fn', function ({}) {});
 Then('empty fixtures 2 in normal fn', function ({}) {});
 Then('empty fixtures with int param {int}', ({}, n: number) => {
   expect(typeof n).toEqual('number');

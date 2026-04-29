@@ -1,7 +1,7 @@
 import { expect } from '@playwright/test';
 import { Given, BeforeAll, Before } from './fixtures';
 
-Given('step {int}', async ({ option1 }) => {
+Given('step {int}', async ({ option1 }, _step: number) => {
   expect(option1).toEqual('foo');
 });
 

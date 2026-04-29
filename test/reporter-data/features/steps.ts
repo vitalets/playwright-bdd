@@ -4,11 +4,11 @@ import { test } from './fixtures';
 
 const { Given, When, Before, After, BeforeAll, AfterAll } = createBdd(test);
 
-Given('background step', async () => {});
+Given('background step', async ({}) => {});
 Given('I am on home page', async ({ myPage }) => {
   await myPage.open();
 });
-When('Action {int}', () => {});
+When('Action {int}', ({}, _action: number) => {});
 Before({ name: 'named Before hook' }, async () => {});
 Before(async () => {});
 BeforeAll(async () => {});

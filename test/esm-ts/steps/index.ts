@@ -4,6 +4,6 @@ import test from './fixtures1.js';
 
 const { Given } = createBdd(test);
 
-Given('State {int}', async ({ someOption }) => {
+Given('State {int}', async ({ someOption }, _state: number) => {
   expect(someOption).toEqual('foo');
 });

@@ -3,7 +3,7 @@ import { createBdd, DataTable } from 'playwright-bdd';
 
 const { Given } = createBdd();
 
-Given('step with quotes in title \'`"', () => {
+Given('step with quotes in title \'`"', ({}) => {
   // noop
 });
 

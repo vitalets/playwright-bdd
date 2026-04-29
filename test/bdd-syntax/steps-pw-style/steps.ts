@@ -4,7 +4,7 @@ import { Given, When, Then, Step } from './fixtures';
 import { expectTypeOf } from 'expect-type';
 import { Color } from '../shared/parameterTypes';
 
-Given('State {int}', async () => {
+Given('State {int}', async ({}, _state: number) => {
   // noop
 });
 
@@ -13,7 +13,7 @@ Given('Set context prop {string} = {string}', async function ({ ctx }, key: stri
   this[key] = value;
 });
 
-When('Action {int}', () => {
+When('Action {int}', ({}, _action: number) => {
   // noop
 });
 

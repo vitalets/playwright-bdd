@@ -3,15 +3,15 @@ import { createBdd } from 'playwright-bdd';
 
 const { Given, When, Then } = createBdd();
 
-Given('Состояние {int}', async function () {
+Given('Состояние {int}', async function ({}, _state: number) {
   // noop
 });
 
-When('Действие {int}', async function () {
+When('Действие {int}', async function ({}, _action: number) {
   // noop
 });
 
-Then('Результат {int}', async function () {
+Then('Результат {int}', async function ({}, _result: number) {
   // noop
 });
 

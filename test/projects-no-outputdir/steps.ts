@@ -4,7 +4,7 @@ import { test } from './fixtures';
 
 const { Given } = createBdd(test);
 
-Given('State {int}', async ({ page, option }) => {
+Given('State {int}', async ({ page, option }, _state: number) => {
   expect(page).toBeDefined();
   expect(option).toBeDefined();
 });

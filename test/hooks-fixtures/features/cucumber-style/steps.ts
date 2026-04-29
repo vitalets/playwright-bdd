@@ -34,6 +34,6 @@ AfterAll({}, async ({ someWorkerFixture }) => {
   expect(someWorkerFixture).toEqual('someWorkerFixture');
 });
 
-Given('State {int}', async function () {
+Given('State {int}', async function (_state: number) {
   expect(this.foo).toEqual('bar');
 });

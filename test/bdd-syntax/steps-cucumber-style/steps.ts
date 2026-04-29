@@ -5,7 +5,7 @@ import { expectTypeOf } from 'expect-type';
 import { World } from './world';
 import { Color } from '../shared/parameterTypes';
 
-Given('State {int}', async function () {
+Given('State {int}', async function (_state: number) {
   expectTypeOf(this).toEqualTypeOf<World>();
   // noop
 });
@@ -14,7 +14,7 @@ Given('Set context prop {string} = {string}', async function (key: string, value
   this[key] = value;
 });
 
-When('Action {int}', async function () {
+When('Action {int}', async function (_action: number) {
   // noop
 });
 

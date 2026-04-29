@@ -5,7 +5,7 @@ const { Given, Before } = createBdd();
 
 Before({ name: 'named before hook' }, async ({}) => {});
 
-Given('success step {int}', async ({}) => {});
+Given('success step {int}', async ({}, _step: number) => {});
 
 Given('failing step', async ({}) => {
   expect('foo').toEqual('bar');

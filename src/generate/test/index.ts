@@ -22,6 +22,7 @@ import {
 } from '../specialTags';
 import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
 import { getStepHooksFixtureNames, getStepHooksToRun } from '../../hooks/step';
+import { ArityChecker } from './arity-checker';
 
 export type StepData = {
   pickleStep: PickleStep;
@@ -46,6 +47,7 @@ export class TestGen {
   private skippedByMissingSteps = false;
   public slow: boolean;
   private stepHooksFixtureNames: string[] = [];
+  public readonly arityChecker: ArityChecker;
 
   // eslint-disable-next-line max-params
   constructor(
@@ -64,6 +66,7 @@ export class TestGen {
     this.specialTags = new SpecialTags(ownTestTags);
     this.skippedByTag = isTestSkippedByCollectedTags(this.tags);
     this.slow = isTestSlowByCollectedTags(this.tags);
+    this.arityChecker = new ArityChecker(this.featureUri);
     this.fillStepHooksFixtureNames();
     this.fillStepsData();
     this.resolveFixtureNamesForDecoratorSteps();
@@ -191,7 +194,10 @@ export class TestGen {
       exit(formatDuplicateStepsMessage(matchedDefinitions, stepTextWithKeyword, stepLocation));
     }
 
-    return matchedDefinitions[0];
+    const matchedDefinition = matchedDefinitions[0];
+    this.arityChecker.checkStepDefinitionArity(matchedDefinition, pickleStep, gherkinStep);
+
+    return matchedDefinition;
   }
 
   private resolveFixtureNamesForDecoratorSteps() {

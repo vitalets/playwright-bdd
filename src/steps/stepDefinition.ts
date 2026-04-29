@@ -23,6 +23,8 @@ export type StepDefinitionOptions = {
   keyword: GherkinStepKeyword;
   pattern: StepPattern;
   fn: AnyFunction;
+  // Keep user-defined function arity for checks when runtime wrapper is used.
+  arity: number;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
   pomNode?: PomNode; // for decorator steps
@@ -49,6 +51,10 @@ export class StepDefinition {
 
   get fn() {
     return this.options.fn;
+  }
+
+  get arity() {
+    return this.options.arity;
   }
 
   get uri() {

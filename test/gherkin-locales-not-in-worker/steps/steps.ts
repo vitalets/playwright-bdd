@@ -11,7 +11,7 @@ function isModuleLoaded(moduleName: string) {
   );
 }
 
-Given('gherkin library is not loaded in worker', () => {
+Given('gherkin library is not loaded in worker', ({}) => {
   // @cucumber/messages IS used by the runtime, so it must be loaded (proves the cache check works)
   expect(
     isModuleLoaded('@cucumber/messages'),

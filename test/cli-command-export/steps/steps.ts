@@ -6,7 +6,7 @@ Given('I am on todo page', async () => {
   // noop
 });
 
-When('I add todo {string}', async () => {
+When('I add todo {string}', async ({}, _todo: string) => {
   // noop
 });
 

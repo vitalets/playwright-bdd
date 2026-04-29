@@ -4,7 +4,7 @@ const { test } = require('./fixtures');
 
 const { Given } = createBdd(test);
 
-Given('State {int}', async ({ foo, todoPage }) => {
+Given('State {int}', async ({ foo, todoPage }, _state) => {
   expect(foo).toEqual('bar');
   expect(todoPage).toBeDefined();
 });

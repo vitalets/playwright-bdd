@@ -7,6 +7,6 @@ Given('I am on another todo page', async () => {
 });
 
 // keep this step text equal to steps.ts
-When('I add todo {string}', async () => {
+When('I add todo {string}', async ({}, _todo: string) => {
   // noop
 });

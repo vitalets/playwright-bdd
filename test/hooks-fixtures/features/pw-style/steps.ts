@@ -33,6 +33,6 @@ AfterAll({}, async ({ $workerInfo, someWorkerFixture }) => {
   expect(someWorkerFixture).toEqual('someWorkerFixture');
 });
 
-Given('State {int}', async ({ someTestFixture }) => {
+Given('State {int}', async ({ someTestFixture }, _state: number) => {
   expect(someTestFixture).toEqual('someTestFixture');
 });

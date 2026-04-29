@@ -3,9 +3,9 @@ import { expect } from '@playwright/test';
 
 const { Given, When } = createBdd();
 
-When('Action {int}', () => {});
+When('Action {int}', ({}, _action: number) => {});
 
-Given('failing step', async () => {
+Given('failing step', async ({}) => {
   expect(true).toBe(false);
 });
 

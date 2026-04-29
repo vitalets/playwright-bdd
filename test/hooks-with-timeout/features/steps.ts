@@ -47,7 +47,7 @@ After({ timeout: 5 }, async ({ $testInfo, log }) => {
 
 // step
 
-Given('State {int}', async ({ $testInfo, log }) => {
+Given('State {int}', async ({ $testInfo, log }, _state: number) => {
   log(`Step ${$testInfo.title}`);
 });
 

@@ -5,8 +5,8 @@ import { createBdd } from 'playwright-bdd';
 
 const { When, Then, Before, After } = createBdd();
 
-When('Step with data table', () => {});
-When('Step with doc string', () => {});
+When('Step with data table', ({}, _dataTable) => {});
+When('Step with doc string', ({}, _docString: string) => {});
 
 When('attach text via testInfo', async ({ $testInfo }) => {
   await $testInfo.attach('text attachment via testInfo', { body: '|some text' });
@@ -47,13 +47,13 @@ Then('attach image as file', async ({ $testInfo }) => {
   });
 });
 
-Then('attach stdout', async () => {
+Then('attach stdout', async ({}) => {
   console.log(123, 'some logs'); // eslint-disable-line no-console
   // don't test console.error b/c it poisons the output
 });
 
 // See: https://github.com/vitalets/playwright-bdd/issues/250
-Then('attach buffer as stdout', async () => {
+Then('attach buffer as stdout', async ({}) => {
   execSync('echo "logs from exec"', { stdio: 'inherit' });
   // wait some time, b/c these logs sometimes attach to another scenario
   await new Promise((resolve) => setTimeout(resolve, 500));

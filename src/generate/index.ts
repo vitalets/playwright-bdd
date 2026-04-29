@@ -31,6 +31,7 @@ export class TestFilesGenerator {
   async generate() {
     await Promise.all([this.loadFeatures(), this.loadSteps()]);
     this.buildFiles();
+    this.checkStepDefinitionArityErrors();
     this.checkMissingSteps();
     await this.clearOutputDir();
     await this.saveFiles();
@@ -95,6 +96,20 @@ export class TestFilesGenerator {
     if (missingSteps.length) {
       new Snippets(missingSteps).print();
       exit();
+    }
+  }
+
+  private checkStepDefinitionArityErrors() {
+    const stepDefinitionArityErrors = this.files.flatMap((file) =>
+      file.getStepDefinitionArityErrors(),
+    );
+    if (stepDefinitionArityErrors.length) {
+      const uniqueErrors = [...new Set(stepDefinitionArityErrors)];
+      exit(
+        `Found step definitions with incorrect arguments: ${uniqueErrors.length}`,
+        '',
+        uniqueErrors.join('\n\n'),
+      );
     }
   }
 

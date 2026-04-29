@@ -17,6 +17,6 @@ When('fails until retry {int}', async ({ $testInfo }, retry: number) => {
   }
 });
 
-Then('error in match snapshot', async () => {
+Then('error in match snapshot', async ({}) => {
   expect('Example Domain').toMatchSnapshot();
 });

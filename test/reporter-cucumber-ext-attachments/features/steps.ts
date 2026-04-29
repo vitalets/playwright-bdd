@@ -15,7 +15,7 @@ Given('attach plain text', async ({ $testInfo }) => {
   });
 });
 
-Given('attach console log', async () => {
+Given('attach console log', async ({}) => {
   // eslint-disable-next-line no-console
   console.log('console log text');
 });
