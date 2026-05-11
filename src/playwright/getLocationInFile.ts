@@ -1,5 +1,5 @@
 import url from 'url';
-import { requirePlaywrightModule } from './utils';
+import { requirePlaywrightModule, playwrightVersion } from './utils';
 import { PlaywrightLocation } from './types';
 
 /**
@@ -42,7 +42,7 @@ export function getLocationByOffset(offset: number) {
  * See: https://github.com/microsoft/playwright/blob/main/packages/playwright/src/transform/transform.ts#L261
  */
 function getLocationBy(findFrame: (stackFrame: NodeJS.CallSite[]) => NodeJS.CallSite | undefined) {
-  const { sourceMapSupport } = requirePlaywrightModule('lib/utilsBundle.js');
+  const { sourceMapSupport } = getUtilsBundleMethods();
   const oldPrepareStackTrace = Error.prepareStackTrace;
   // modify prepareStackTrace to return Location object instead of string
   Error.prepareStackTrace = (_error, stackFrames) => {
@@ -75,4 +75,14 @@ function getLocationBy(findFrame: (stackFrame: NodeJS.CallSite[]) => NodeJS.Call
   // Error.stackTraceLimit = oldStackTraceLimit;
   Error.prepareStackTrace = oldPrepareStackTrace;
   return location;
+}
+
+function getUtilsBundleMethods() {
+  // Since PW 1.60 utilsBundle moved to playwright-core.
+  const { sourceMapSupport } =
+    playwrightVersion >= '1.60.0'
+      ? require('playwright-core/lib/utilsBundle')
+      : requirePlaywrightModule('lib/utilsBundle.js');
+
+  return { sourceMapSupport };
 }
