@@ -1,14 +1,14 @@
 /**
  * Universal requireOrImport function that can import any file (js/ts, cjs/esm)
  */
-import { requirePlaywrightModule } from './utils';
+import { requirePlaywrightModule, playwrightVersion } from './utils';
 import { registerESMLoader } from './esmLoader';
 import { relativeToCwd } from '../utils/paths';
 
 export async function requireOrImport(file: string) {
   registerESMLoader();
-  const transform = requirePlaywrightModule('lib/transform/transform.js');
-  return transform.requireOrImport(file);
+  const { requireOrImport: pwRequireOrImport } = getTransformMethods();
+  return pwRequireOrImport(file);
 }
 
 // eslint-disable-next-line visual/complexity
@@ -21,4 +21,14 @@ export async function requireOrImportDefaultFunction(file: string, expectConstru
     );
   }
   return func;
+}
+
+function getTransformMethods() {
+  // Since PW 1.60 there is an index.js file with all exports.
+  const { requireOrImport } =
+    playwrightVersion >= '1.60.0'
+      ? requirePlaywrightModule('lib/common/index.js').transform
+      : requirePlaywrightModule('lib/transform/transform.js');
+
+  return { requireOrImport };
 }
