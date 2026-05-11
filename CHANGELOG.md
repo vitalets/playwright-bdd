@@ -6,10 +6,6 @@
 * fix: validate used step definitions with strict Cucumber-compatible arity checks
 * feat: add `playwright-bdd` agent skill for generating Gherkin feature files and step definitions ([#377](https://github.com/vitalets/playwright-bdd/issues/377))
 * bug: fix non-ASCII characters in text attachments being garbled in the Cucumber HTML report ([#379](https://github.com/vitalets/playwright-bdd/issues/379))
-* test: refactor Cucumber HTML reporter test POM — rename `expandStep` to `expandHooks(type)` and add `expandAttachment()`
-* test: fix `reporter-cucumber-ext-attachments` tests for new Cucumber HTML reporter DOM structure
-* fix: update lint-staged to pass `test.mjs` paths instead of directory paths to `node --test`
-* fix: strip Node.js warnings from error message in `execPlaywrightTestWithError` helper
 * chore: upgrade Cucumber ecosystem dependencies to latest versions
   - `@cucumber/messages`: 27.x → 32.x — populate `Pickle.location` and `Attachment.timestamp` in the messages report
   - `@cucumber/gherkin`: 32.x → 39.x — `Pickle.location` is now populated natively by gherkin (since v37)
@@ -23,8 +19,9 @@
 * chore: set minimal Node.js version to 20
 * chore: replace `fast-glob` with `tinyglobby` ([#366](https://github.com/vitalets/playwright-bdd/pull/366))
 * perf: limit `bddgen` worker concurrency to `cpus/2` to prevent OOM in memory-constrained CI environments ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
-* perf: optimize pickle lookup in `FeaturesLoader` from O(N×M) to O(N+M) using URI-indexed map ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
+* perf: optimize pickle lookup in `FeaturesLoader` using URI-indexed map ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
 * feat: doc string media types added to `$step` fixture as `docStringType` ([#380](https://github.com/vitalets/playwright-bdd/issues/380))
+* support Playwright 1.60+.
 
 ## [8.5.0] - 2026-03-13
 * docs: document `defineParameterType` helper
