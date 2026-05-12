@@ -39,11 +39,11 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Check test workflows passed
+      - name: Ensure lint/test/examples workflows passed
         run: |
-          gh run list --workflow=lint.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
-          gh run list --workflow=test.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Tests must pass before publishing" && exit 1)
-          gh run list --workflow=examples.yaml --branch=main --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "Examples must pass before publishing" && exit 1)
+          gh run list --workflow=lint.yaml --branch=${{ github.ref_name }} --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "lint.yaml workflow must pass before publishing" && exit 1)
+          gh run list --workflow=test.yaml --branch=${{ github.ref_name }} --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "test.yaml workflow must pass before publishing" && exit 1)
+          gh run list --workflow=examples.yaml --branch=${{ github.ref_name }} --limit=1 --json conclusion --jq '.[0].conclusion' | grep -q "success" || (echo "examples.yaml workflow must pass before publishing" && exit 1)
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
