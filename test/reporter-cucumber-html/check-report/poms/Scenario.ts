@@ -64,15 +64,15 @@ export class Scenario {
   }
 
   getLogs() {
-    return this.getSteps().locator('> :nth-child(2) ol > li > pre');
+    // Log attachments in the new reporter are 'div > pre' inside ol > li (no 'details' wrapper).
+    return this.getSteps().locator('> :nth-child(2) ol > li > div > pre');
   }
 
   getErrors() {
-    return this.getSteps()
-      .locator('div > pre')
-      .filter({
-        hasText: /error|timeout|expected|browser .*?closed/i,
-      });
+    // Error section is a direct 'div > pre' child of the step content area (:nth-child(2)).
+    // In the new reporter, only the callstack is shown for assertion/fixture errors;
+    // timeout errors show '<strong>Error</strong>' + message text.
+    return this.getSteps().locator('> :nth-child(2) > div > pre');
   }
 
   getTags() {

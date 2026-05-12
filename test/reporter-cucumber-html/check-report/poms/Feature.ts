@@ -9,21 +9,23 @@ export class Feature {
     public page: Page,
     public featureUri: string,
   ) {
-    const container = page
-      .locator('[data-accordion-component="AccordionItem"]')
-      .filter({ has: this.getFileHeader() });
-    this.root = container.locator('[data-accordion-component="AccordionItemPanel"]');
+    // Parent of the h3 heading is the disclosure container, which also holds the panel
+    const container = this.getFileHeader().locator('..');
+    this.root = container.locator('[role="group"]');
   }
 
   async ensureExpanded() {
     await expect(this.getFileHeader()).toBeVisible();
-    if (await this.root.isHidden()) {
-      await this.getFileHeader().click();
+    // Use aria-expanded since hidden='until-found' panels have display:block,
+    // making isHidden() return false even when the panel is collapsed
+    const button = this.getFileHeader().getByRole('button');
+    if ((await button.getAttribute('aria-expanded')) !== 'true') {
+      await button.click();
     }
   }
 
   getFileHeader() {
-    return this.page.locator('[data-accordion-component="AccordionItemHeading"]', {
+    return this.page.getByRole('heading', { level: 3 }).filter({
       hasText: path.normalize(this.featureUri),
     });
   }
@@ -37,14 +39,14 @@ export class Feature {
   }
 
   getScenario(title: string) {
-    return new Scenario(this, `Scenario:${title}`);
+    return new Scenario(this, `Scenario: ${title}`);
   }
 
   getScenarioOutline(title: string) {
-    return new Scenario(this, `Scenario Outline:${title}`);
+    return new Scenario(this, `Scenario Outline: ${title}`);
   }
 
   getTags() {
-    return this.root.locator('> section > [aria-label="Tags"]').getByRole('listitem');
+    return this.root.locator('> div > section > [aria-label="Tags"]').getByRole('listitem');
   }
 }

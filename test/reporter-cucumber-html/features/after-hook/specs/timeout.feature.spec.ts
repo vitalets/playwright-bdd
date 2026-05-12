@@ -8,9 +8,9 @@ const fixtureTimeoutRegexp =
 
 test('timeout in fixture teardown', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toContainText([
-    'GivenAction 0',
-    'Givenstep that uses fixtureWithTimeoutInTeardown',
-    'WhenAction 1',
+    'Given Action 0',
+    'Given step that uses fixtureWithTimeoutInTeardown',
+    'When Action 1',
     fixtureTimeoutRegexp,
   ]);
   // don't check screenshot as it's not reliable in timeouts
@@ -23,10 +23,10 @@ test('timeout in fixture teardown', async ({ scenario }) => {
 
 test('timeout in step and in fixture teardown', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toContainText([
-    'GivenAction 0',
-    'Giventimeouted step',
-    'WhenAction 1',
-    'Givenstep that uses fixtureWithTimeoutInTeardown',
+    'Given Action 0',
+    'Given timeouted step',
+    'When Action 1',
+    'Given step that uses fixtureWithTimeoutInTeardown',
     fixtureTimeoutRegexp,
   ]);
   await expect(scenario.getSteps('passed')).toHaveCount(4);
@@ -45,10 +45,13 @@ test('timeout in step and in fixture teardown', async ({ scenario }) => {
 
 test('timeout in after hook', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toContainText([
-    'Givenstep with page',
+    'Given step with page',
     // sometimes we still have "After Hooks" here,
     // when duration = -1 is not in after hooks, and we cant detect which fixture timed out
     /After(?:: (my timeouted hook|After Hooks|AfterEach Hooks))?/i,
   ]);
-  await expect(scenario.getErrors()).toContainText([/Test timeout of \d+ms exceeded/]);
+  await expect(scenario.getErrors()).toContainText([
+    // New reporter only shows callstack for hook timeouts (no message text)
+    /timeout\.feature\.spec/,
+  ]);
 });

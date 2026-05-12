@@ -6,10 +6,10 @@ test('scenario 1', async ({ scenario }) => {
     // Sometimes we still have 'BeforeAll Hooks' here, not 'my timeouted hook'.
     // It is when 'duration' != -1 -> no way to find exact timeouted item.
     /BeforeAll(?:: (my timeouted hook|BeforeAll Hooks))?/, // prettier-ignore
-    'GivenAction 1',
+    'Given Action 1',
   ]);
   await expect(scenario.getErrors()).toContainText([
-    // here can be different error messages
-    /("beforeAll" hook timeout of \d+ms exceeded)|(browser has been closed)|(Browser closed)/,
+    // New reporter only shows callstack for beforeAll hook timeouts (no message text)
+    /timeout\.feature\.spec/,
   ]);
 });

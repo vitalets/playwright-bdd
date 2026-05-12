@@ -58,7 +58,7 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - run: >
-          npm install @playwright/test@${{ matrix.playwrightVersion }}
+          npm install --min-release-age=0 @playwright/test@${{ matrix.playwrightVersion }}
           @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
 
       - run: npx playwright install --with-deps chromium

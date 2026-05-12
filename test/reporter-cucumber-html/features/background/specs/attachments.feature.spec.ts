@@ -6,16 +6,16 @@ test('attachment in bg', async ({ feature }) => {
   const scenario2 = feature.getScenario('scenario 2');
 
   await expect(scenario1.getStepTitles()).toHaveText([
-    'Givenstep with attachment',
-    'GivenAction 1',
+    'Given step with attachment',
+    'Given Action 1',
   ]);
   await expect(scenario1.getAttachments()).toHaveText([
     'step with attachment|attachment for scenario scenario 1',
   ]);
 
   await expect(scenario2.getStepTitles()).toHaveText([
-    'Givenstep with attachment',
-    'GivenAction 2',
+    'Given step with attachment',
+    'Given Action 2',
   ]);
   await expect(scenario2.getAttachments()).toHaveText([
     'step with attachment|attachment for scenario scenario 2',

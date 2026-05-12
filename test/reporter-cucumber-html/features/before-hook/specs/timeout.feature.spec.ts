@@ -4,9 +4,9 @@ import { test } from '../../../check-report/fixtures';
 test('timeout in fixture setup', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toContainText([
     /Before(?:: .+)?/,
-    'GivenAction 0',
-    'Givenstep that uses fixtureWithTimeoutInSetup',
-    'WhenAction 1',
+    'Given Action 0',
+    'Given step that uses fixtureWithTimeoutInSetup',
+    'When Action 1',
   ]);
   // sometimes error is the following:
   // "browser.newContext: Target page, context or browser has been closed"
@@ -22,10 +22,10 @@ test('timeout in fixture setup', async ({ scenario }) => {
 test('timeout in before hook', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toContainText([
     /Before(?:: (my timeouted hook|BeforeEach Hooks|Before Hooks|fixture: .+))?/,
-    'GivenAction 1',
+    'Given Action 1',
   ]);
   await expect(scenario.getErrors()).toContainText([
-    // here can be different error messages
-    /(Test timeout of \d+ms exceeded while running "beforeEach" hook)|(browser has been closed)|(Browser closed)|(Page closed)/,
+    // New reporter only shows callstack for hook timeouts (no message text)
+    /timeout\.feature\.spec/,
   ]);
 });
