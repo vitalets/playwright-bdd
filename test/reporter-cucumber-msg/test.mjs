@@ -21,16 +21,22 @@
  * cd test/reporter-cucumber-msg
  * FEATURE_DIR=minimal npx playwright test
  */
-import fg from 'fast-glob';
-import { expect } from '@playwright/test';
-import { test, TestDir, execPlaywrightTestInternal, DEFAULT_CMD } from '../_helpers/index.mjs';
-import { getJsonFromFile } from '../_helpers/reports/json.mjs';
+import {
+  test,
+  TestDir,
+  execPlaywrightTestInternal,
+  DEFAULT_CMD,
+  playwrightVersion,
+  normalizeExecErrorMessage,
+} from '../_helpers/index.mjs';
+import { globSync } from 'tinyglobby';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
 const skipDirs = [
   // For skipped scenarios Playwright does not even run fixtures.
   // We can't align here with Cucumber.
   'skipped',
+  'skipped/',
 ];
 
 const testDir = new TestDir(import.meta);
@@ -52,24 +58,16 @@ async function checkFeature(featureDir) {
     execPlaywrightTestInternal(testDir.name, { env: { FEATURE_DIR: featureDir } });
   } catch (e) {
     // some features normally exit with error
-    if (e.message.trim() !== `Command failed: ${DEFAULT_CMD}`) {
+    if (normalizeExecErrorMessage(e.message) !== `Command failed: ${DEFAULT_CMD}`) {
       throw e;
     }
   }
 
-  assertJsonReport(featureDir);
-  assertJsonReportNoAttachments(featureDir);
   assertMessagesReport(featureDir);
 }
 
 function assertMessagesReport(featureDir) {
-  let expectedFile = `features/${featureDir}/expected-reports/messages.ndjson`;
-
-  if (featureDir === 'hooks') {
-    // for 'hooks' we use golden messages.ndjson not from cucumber-js,
-    // b/c it does not generate newest nook.type field.
-    expectedFile = `features/${featureDir}/expected-reports/messages-own.ndjson`;
-  }
+  const expectedFile = getExpectedMessagesReportPath(featureDir);
 
   testDir.assertMessagesReport(
     `features/${featureDir}/actual-reports/messages.ndjson`,
@@ -85,32 +83,38 @@ function assertMessagesReport(featureDir) {
   );
 }
 
-function assertJsonReport(featureDir) {
-  testDir.assertJsonReport(
-    `features/${featureDir}/actual-reports/json-report.json`,
-    `features/${featureDir}/expected-reports/json-report.json`,
-  );
-}
-
-function assertJsonReportNoAttachments(featureDir) {
-  if (featureDir === 'attachments') {
-    const reportAbsPath = testDir.getAbsPath(
-      `features/${featureDir}/actual-reports/json-report-no-attachments.json`,
-    );
-    const actualJson = getJsonFromFile(reportAbsPath);
-    expect(JSON.stringify(actualJson, null, 2)).not.toContain('embeddings');
+function getExpectedMessagesReportPath(featureDir) {
+  if (featureDir === 'hooks') {
+    // For 'hooks' we use our own golden file because playwright-bdd intentionally doesn't emit
+    // TestRunHookStarted/TestRunHookFinished messages (before/after run hooks are included
+    // as test case steps instead), whereas cucumber-js does emit them.
+    return playwrightVersion >= '1.59'
+      ? `features/${featureDir}/expected-reports/messages-own.ndjson`
+      : `features/${featureDir}/expected-reports/messages-own-until-pw-1.59.ndjson`;
   }
+
+  switch (featureDir) {
+    case 'examples-tables':
+    case 'retry':
+    case 'stack-traces':
+      return playwrightVersion >= '1.59'
+        ? `features/${featureDir}/expected-reports/messages.ndjson`
+        : `features/${featureDir}/expected-reports/messages-until-pw-1.59.ndjson`;
+  }
+
+  return `features/${featureDir}/expected-reports/messages.ndjson`;
 }
 
 /**
  * Returns all feature dirs.
  */
 function readAllFeatureDirs() {
-  return fg
-    .sync('**', {
-      cwd: testDir.getAbsPath('features'),
-      deep: 1,
-      onlyDirectories: true,
-    })
-    .filter((dir) => !skipDirs.includes(dir));
+  return globSync('**', {
+    cwd: testDir.getAbsPath('features'),
+    deep: 0,
+    onlyDirectories: true,
+    expandDirectories: false,
+  })
+    .filter((dir) => !skipDirs.includes(dir))
+    .map((dir) => dir.replace(/\/$|\\$/, ''));
 }

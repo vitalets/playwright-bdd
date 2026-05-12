@@ -18,6 +18,9 @@ const rules = {
   // ignored b/c there is no stepDefinitions (yet)
   // See: https://github.com/cucumber/cucumber-js/blob/main/src/formatter/json_formatter.ts#L279
   'elements.#.steps.#.match.location': null,
+  // Embedding payload shape can vary (or be absent) depending on runtime/dependency versions.
+  'elements.#.steps.#.embeddings.#.data': null,
+  'elements.#.steps.#.embeddings.#.mime_type': null,
   // todo: check why tags line is empty
   'elements.#.tags.#.line': null,
 

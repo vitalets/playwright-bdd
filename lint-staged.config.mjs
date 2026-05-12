@@ -37,6 +37,6 @@ function test(changedFiles) {
   if (testHelpersChanged || srcFiles.length || packageFiles.length) {
     testDirs.push(...getSmokeTestDirs());
   }
-  const uniqueTestDirs = [...new Set(testDirs)];
-  return uniqueTestDirs.length ? [`npm run only ${uniqueTestDirs.join(' ')}`] : [];
+  const uniqueTestPaths = [...new Set(testDirs)].map((dir) => path.join(dir, 'test.mjs'));
+  return uniqueTestPaths.length ? [`npm run only ${uniqueTestPaths.join(' ')}`] : [];
 }

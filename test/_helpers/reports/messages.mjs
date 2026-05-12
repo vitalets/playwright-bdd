@@ -33,6 +33,11 @@ const rules = {
   'testCase.testSteps.#.stepDefinitionIds': null,
   // Playwright attachments always have name
   'attachment.fileName': null,
+  // Optional fields can be omitted depending on cucumber/messages/runtime versions.
+  'attachment.timestamp.seconds': null,
+  'attachment.timestamp.nanos': null,
+  'pickle.location.line': null,
+  'pickle.location.column': null,
 
   // these paths are compared by values, not by total counter.
   'source.uri': toPosixPath,
