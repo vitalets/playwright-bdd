@@ -5,6 +5,10 @@ on:
     # Define all branches explicitly to not trigger actions on tag creation
     # See: https://github.com/orgs/community/discussions/25615
     branches: ['**']
+    paths-ignore:
+      - 'docs/**'
+      - 'examples/**'
+      - '**/*.md'
   pull_request:
     branches: [main, beta]
   schedule:
