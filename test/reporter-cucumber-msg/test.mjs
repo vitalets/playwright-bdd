@@ -29,7 +29,7 @@ import {
   playwrightVersion,
   normalizeExecErrorMessage,
 } from '../_helpers/index.mjs';
-import { globSync } from 'tinyglobby';
+import fg from 'fast-glob';
 
 const onlyFeatureDir = process.env.FEATURE_DIR;
 const skipDirs = [
@@ -109,12 +109,12 @@ function getExpectedMessagesReportPath(featureDir) {
  * Returns all feature dirs.
  */
 function readAllFeatureDirs() {
-  return globSync('**', {
-    cwd: testDir.getAbsPath('features'),
-    deep: 0,
-    onlyDirectories: true,
-    expandDirectories: false,
-  })
+  return fg
+    .sync('**', {
+      cwd: testDir.getAbsPath('features'),
+      deep: 0,
+      onlyDirectories: true,
+    })
     .filter((dir) => !skipDirs.includes(dir))
     .map((dir) => dir.replace(/\/$|\\$/, ''));
 }
