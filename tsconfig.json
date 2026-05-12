@@ -3,6 +3,7 @@
     "target": "es2021",
     "module": "nodenext",
     "lib": ["esnext", "dom", "DOM.Iterable"],
+    "types": ["node"],
     "strict": true,
     // "noUncheckedIndexedAccess": true,
     "useUnknownInCatchVariables": false,

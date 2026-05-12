@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "es2021",
     "module": "nodenext",
+    "types": ["node"],
     "strict": true,
     "noEmit": true
   },
