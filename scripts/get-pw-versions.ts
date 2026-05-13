@@ -1,14 +1,15 @@
 /**
- * Fetches stable @playwright/test versions from npm and outputs a JSON array
- * of unique major.minor versions above the given minimum, or only the latest.
- * Excludes any pre-release versions (beta, rc, alpha).
+ * Fetches @playwright/test versions from npm and outputs a JSON array
+ * of unique major.minor versions above the given minimum.
+ *
+ * The benefit compared to short inline script is auto-exclusion of 'beta' version if it is covered by stable versions.
  *
  * Examples:
- * node scripts/get-pw-versions.ts 1.45
- * node scripts/get-pw-versions.ts latest
- * node scripts/get-pw-versions.ts beta
+ * npx tsx scripts/pw-versions.ts 1.45
+ * npx tsx scripts/pw-versions.ts latest
+ * npx tsx scripts/pw-versions.ts beta
  */
-const { execSync } = require('node:child_process') as typeof import('node:child_process');
+import { execSync } from 'node:child_process';
 
 const sinceVersion = process.argv[2];
 const logger = console;
@@ -58,10 +59,7 @@ function getLastBetaVersion(rawVersions: string[]): VersionInfo | undefined {
   return lastBetaVersion ? parseVersion(lastBetaVersion) : undefined;
 }
 
-function isRealBetaVersion(
-  stableVersions: VersionInfo[],
-  lastBetaVersion: VersionInfo | undefined,
-): boolean {
+function isRealBetaVersion(stableVersions: VersionInfo[], lastBetaVersion?: VersionInfo) {
   return (
     !!lastBetaVersion &&
     !stableVersions.find(
