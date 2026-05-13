@@ -39,9 +39,9 @@ jobs:
         run: |
           # Scheduled runs should cover only a real beta and skip when beta is already obsolete.
           if [[ "${{ github.event_name }}" == "schedule" ]]; then
-            versions=$(node scripts/get-pw-versions.ts beta)
+            versions=$(node scripts/get-pw-versions.mts beta)
           else
-            versions=$(node scripts/get-pw-versions.ts "$MIN_PW_VERSION")
+            versions=$(node scripts/get-pw-versions.mts "$MIN_PW_VERSION")
           fi
           echo "versions=$versions" >> "$GITHUB_OUTPUT"
 
