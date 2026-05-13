@@ -5,9 +5,9 @@
  * The benefit compared to short inline script is auto-exclusion of 'beta' version if it is covered by stable versions.
  *
  * Examples:
- * npx tsx scripts/pw-versions.ts 1.45
- * npx tsx scripts/pw-versions.ts latest
- * npx tsx scripts/pw-versions.ts beta
+ * npx tsx scripts/get-pw-versions.mts 1.45
+ * npx tsx scripts/get-pw-versions.mts latest
+ * npx tsx scripts/get-pw-versions.mts beta
  */
 import { execSync } from 'node:child_process';
 
