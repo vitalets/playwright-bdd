@@ -48,7 +48,7 @@ function getScenario(page: Page, scenarioName: string) {
 }
 
 async function assertFixWithAiAttachment(scenario: Locator, prompt: string) {
-  await scenario.getByRole('button', { name: '1 hooks' }).click();
+  await scenario.getByRole('button', { name: 'hooks' }).click();
 
   const firstAttachment = scenario.locator('details').first();
   await expect(firstAttachment).toContainText('Fix with AI');

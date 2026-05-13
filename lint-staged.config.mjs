@@ -33,9 +33,7 @@ function test(changedFiles) {
   const packageFiles = micromatch(changedFiles, 'package*.json');
   // lint-staged normalizes paths to forward slashes on all platforms,
   // so we must split on '/' (not path.sep which is '\' on Windows)
-  const testDirs = testDirFiles.map((file) =>
-    path.join(...file.split('/').slice(0, 2), 'test.mjs'),
-  );
+  const testDirs = testDirFiles.map((file) => path.join(...file.split('/').slice(0, 2)));
   // if changes only in test/* -> run only these tests
   // if changes in src|package.json -> run tests on test dirs + smoke test dirs
   if (testHelpersChanged || srcFiles.length || packageFiles.length) {
