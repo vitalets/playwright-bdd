@@ -44,8 +44,6 @@ const config: KnipConfig = {
     'react-dom',
     '@types/react',
     '@types/react-dom',
-    // used programmatically in tests
-    'ts-node',
   ],
 };
 

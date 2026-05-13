@@ -27,7 +27,7 @@ function generateGoldenMessagesReport(featureDir) {
   try {
     // eslint-disable-next-line no-console
     console.log(`Generating: features/${featureDir}/expected-reports/messages.ndjson`);
-    execSync(`npx cucumber-js -c cucumber.config.js`, {
+    execSync(`npx cucumber-js --require-module tsx/cjs -c cucumber.config.js`, {
       stdio: 'inherit',
       cwd: 'test/reporter-cucumber-msg',
       env: {

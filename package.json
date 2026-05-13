@@ -105,7 +105,7 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "slugify": "1.6.9",
-    "ts-node": "^10.9.2",
+    "tsx": "4.21.0",
     "typescript": "5.5.4",
     "typescript-eslint": "^8.59.2",
     "xml2js": "0.6.2"

@@ -15,7 +15,7 @@ module.exports = {
   default: {
     paths: [`features/${featureDir}`],
     require: [`features/${featureDir}/common.steps.ts`, `features/${featureDir}/cucumber.steps.ts`],
-    requireModule: ['ts-node/register'],
+    requireModule: ['tsx/cjs'],
     retry: featureDir === 'retry' ? 2 : 0,
     format: [['message', `features/${featureDir}/expected-reports/messages.ndjson`]],
   },
