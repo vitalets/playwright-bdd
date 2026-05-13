@@ -21,8 +21,8 @@ const config: KnipConfig = {
   ignoreBinaries: [
     // binaries that used ad-hoc with npx
     'docsify',
-    'tsx',
     'npm-check-updates',
+    'publint',
   ],
   ignoreDependencies: [
     // Keep @cucumber/compatibility-kit to inspec their tests manually

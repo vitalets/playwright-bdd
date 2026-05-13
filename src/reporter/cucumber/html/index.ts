@@ -12,7 +12,7 @@ import { CucumberHtmlStream } from '@cucumber/html-formatter';
 import path from 'node:path';
 import BaseReporter, { InternalOptions } from '../base';
 import { AttachmentEnvelope } from '../messagesBuilder/types';
-import { getAttachmentBodyAsBuffer, isAttachmentEnvelope } from '../attachments/helpers';
+import { isAttachmentEnvelope } from '../attachments/helpers';
 import { shouldSkipAttachment, SkipAttachments } from '../attachments/skip';
 import {
   isTextAttachment,
@@ -26,8 +26,6 @@ import {
   isTraceAttachment,
   assetsViewTraceLinks,
 } from './traceViewer';
-import { createPromptAttachmentWithButton, scriptCopyPrompt } from './promptAttachment';
-import { isPromptAttachmentContentType } from '../../../ai/promptAttachment';
 import { throwIf } from '../../../utils';
 import { EnvelopesTransformer } from './envelopesTransformer';
 
@@ -78,6 +76,7 @@ export default class HtmlReporter extends BaseReporter {
       if (!envelope) return;
 
       if (envelope.testRunFinished) this.receivedTestRunFinished = true;
+
       if (isAttachmentEnvelope(envelope)) {
         this.handleAttachment(envelope);
       } else {
@@ -115,8 +114,6 @@ export default class HtmlReporter extends BaseReporter {
       ...envelope,
       attachment: newAttachment,
     });
-
-    this.handlePromptAttachment(envelope);
   }
 
   protected writeEnvelope(envelope: messages.Envelope) {
@@ -157,19 +154,6 @@ export default class HtmlReporter extends BaseReporter {
     );
   }
 
-  private handlePromptAttachment({ attachment }: AttachmentEnvelope) {
-    if (isPromptAttachmentContentType(attachment.mediaType)) {
-      const { testCaseStartedId, testStepId } = attachment;
-      const prompt = getAttachmentBodyAsBuffer(attachment).toString();
-      const promptAttachmentWithButton = createPromptAttachmentWithButton(
-        testCaseStartedId,
-        testStepId,
-        prompt,
-      );
-      this.writeEnvelope(promptAttachmentWithButton);
-    }
-  }
-
   /**
    * Special transform stream to inject custom script into the HTML.
    */
@@ -188,7 +172,6 @@ export default class HtmlReporter extends BaseReporter {
       const customAssets = [
         cssHideLogForCustomHtml, // prettier-ignore
         assetsViewTraceLinks,
-        scriptCopyPrompt,
       ].join('\n');
       return chunkStr.replace('</body>', `${customAssets}</body>`);
     } else {

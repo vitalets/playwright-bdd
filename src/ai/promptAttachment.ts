@@ -50,6 +50,7 @@ export class PromptFixture {
   }
 }
 
-export function isPromptAttachmentContentType(contentType: string) {
-  return contentType === PROMPT_ATTACHMENT_CONTENT_TYPE;
-}
+// Was used before for showing on "Copy Prompt" button.
+// export function isPromptAttachmentContentType(contentType: string) {
+//   return contentType === PROMPT_ATTACHMENT_CONTENT_TYPE;
+// }

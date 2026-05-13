@@ -112,6 +112,9 @@ export function areSetsEqual<T>(set1: Set<T>, set2: Set<T>) {
   return set1.size === set2.size && [...set1].every((val) => set2.has(val));
 }
 
+/**
+ * @public
+ */
 export function escapeHtml(str: string) {
   return str
     .replace(/&/g, '&amp;')

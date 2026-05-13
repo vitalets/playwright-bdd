@@ -9,13 +9,10 @@ test.describe('(default-prompt)', () => {
   test('Default page ok', async ({ page }) => {
     const scenario = getScenario(page, 'Default page ok');
     await expect(scenario).toBeVisible();
-    const clipboardContent = await copyPromptToClipboard(scenario);
-    expect(clipboardContent).toContain('You are an expert');
-    expect(clipboardContent).toContain('I am on homepage');
-    expect(clipboardContent).toContain('failing step');
+    await assertFixWithAiAttachment(scenario, 'You are an expert');
   });
 
-  // 'Custom page' and 'Default page closed' can be checkedonly in one report (pw)
+  // 'Custom page' and 'Default page closed' can be checked only in one report (pw)
   // test('Custom page', async ({ page }) => {
   //   const clipboardContent = await copyPromptToClipboard(page);
   //   expect(clipboardContent).toContain('failing step on custom page fixture');
@@ -35,8 +32,7 @@ test.describe('(custom-prompt)', () => {
 
   test('Scenario 1', async ({ page }) => {
     const scenario = getScenario(page, 'Scenario 1');
-    const clipboardContent = await copyPromptToClipboard(scenario);
-    expect(clipboardContent).toContain('my custom prompt');
+    await assertFixWithAiAttachment(scenario, 'my custom prompt');
   });
 });
 
@@ -51,11 +47,10 @@ function getScenario(page: Page, scenarioName: string) {
     .filter({ has: page.getByRole('heading', { name: scenarioName }) });
 }
 
-async function copyPromptToClipboard(scenario: Locator) {
-  await scenario.locator('article > button').click(); // expand hooks
-  await expect(scenario.getByText('Fix with AI')).toBeVisible();
-  await expect(scenario.getByRole('link', { name: 'Open ChatGPT' })).toBeVisible();
-  await scenario.getByRole('button', { name: 'Copy prompt' }).click();
+async function assertFixWithAiAttachment(scenario: Locator, prompt: string) {
+  await scenario.getByRole('button', { name: '1 hooks' }).click();
 
-  return scenario.page().evaluate(() => navigator.clipboard.readText());
+  const firstAttachment = scenario.locator('details').first();
+  await expect(firstAttachment).toContainText('Fix with AI');
+  await expect(firstAttachment).toContainText(prompt);
 }

@@ -21,7 +21,7 @@
 * perf: limit `bddgen` worker concurrency to `cpus/2` to prevent OOM in memory-constrained CI environments ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
 * perf: optimize pickle lookup in `FeaturesLoader` using URI-indexed map ([#376](https://github.com/vitalets/playwright-bdd/pull/376))
 * feat: doc string media types added to `$step` fixture as `docStringType` ([#380](https://github.com/vitalets/playwright-bdd/issues/380))
-* support Playwright 1.60+.
+* chore: remove the "Copy Prompt" button from Cucumber HTML report in favor of built-in copy-to-clipboard button.
 
 ## [8.5.1] - 2026-05-12
 * fix: support Playwright 1.60+.
