@@ -81,7 +81,10 @@ jobs:
       # TODO: replace scripts/changelog.ts with keep-a-changelog CLI once it supports
       # --release + --create in one step and --latest-release-full for extracting notes.
       # Tracked at: https://github.com/oscarotero/keep-a-changelog/issues/65
+      # Skipped for pre-releases: the [Unreleased] section keeps accumulating changes
+      # so that the next stable release includes the full changelog.
       - name: Update changelog and extract release notes
+        if: ${{ !inputs.prerelease }}
         run: |
           NOTES=$(node scripts/changelog.mts ${{ env.VERSION }})
           echo "NOTES<<EOF" >> $GITHUB_ENV
@@ -105,8 +108,10 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      # Skipped for pre-releases: GitHub releases are only created for stable versions
+      # to keep the release list clean and avoid misleading users.
       - name: Create GitHub Release
-        if: ${{ !inputs.dry-run }}
+        if: ${{ !inputs.dry-run && !inputs.prerelease }}
         run: echo "$NOTES" | gh release create "v$VERSION" --title "v$VERSION" --notes-file -
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

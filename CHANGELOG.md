@@ -3,8 +3,6 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
-
-## [9.0.0-beta.0] - 2026-05-13
 * fix: validate used step definitions with strict Cucumber-compatible arity checks
 * feat: add `playwright-bdd` agent skill for generating Gherkin feature files and step definitions ([#377](https://github.com/vitalets/playwright-bdd/issues/377))
 * bug: fix non-ASCII characters in text attachments being garbled in the Cucumber HTML report ([#379](https://github.com/vitalets/playwright-bdd/issues/379))
