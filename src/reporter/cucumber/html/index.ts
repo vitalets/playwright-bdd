@@ -185,15 +185,24 @@ function removeTrailingSlash(url: string) {
 }
 
 /**
- * Custom css - hide LOG for custom html.
+ * Custom css to adjust log entries for showing custom HTML:
+ * - hide LOG label (it's a ::before pseudo-element)
+ * - hide copy button
+ * - adjust padding
  */
 const cssHideLogForCustomHtml = `
 <style>
-pre:has([data-custom-html]) {
-  padding-left: 0.75em !important;
+div:has(> pre > span > [data-custom-html])::before {
+  display: none !important;
 }
-pre:has([data-custom-html])::before {
-  content: none !important;
+div:has(> pre > span > [data-custom-html]) > button {
+  display: none !important;
+}
+div:has(> pre > span > [data-custom-html]) {
+  padding-left: 0 !important;
+}
+div:has(> pre > span > [data-custom-html]) > pre {
+  padding: .666em .75em !important;
 }
 </style>
 `;
