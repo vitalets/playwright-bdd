@@ -13,7 +13,7 @@ import { TestCaseRun } from './TestCaseRun';
 import { toCucumberTimestamp } from './timing';
 import { TestStepAttachments } from './TestStepAttachments';
 import { isSkippedError } from './pwStepUtils';
-import { buildErrorMessage, buildException } from './error';
+import { buildException } from './Exception';
 
 export type TestStepRunEnvelope = Pick<
   messages.Envelope,
@@ -69,17 +69,35 @@ export class TestStepRun {
   private buildTestStepFinished() {
     const error = this.getStepError();
     const status = this.getStatus(error);
+    const exception = isStepFailed(status) && error ? buildException(error) : undefined;
     const testStepFinished: messages.TestStepFinished = {
       testCaseStartedId: this.testCaseRun.id,
       testStepId: this.testStep.id,
       testStepResult: {
         duration: messages.TimeConversion.millisecondsToDuration(this.duration),
         status,
-        // 'message' is deprecated since cucumber 10.4 in favor of 'exception' field
-        // But we keep both for compatibility with other reporters.
-        // See: https://github.com/cucumber/react-components/pull/345
-        message: isStepFailed(status) && error ? buildErrorMessage(error) : undefined,
-        exception: isStepFailed(status) && error ? buildException(error) : undefined,
+        // There are two fields for error info:
+        // - 'message': string message + stack.
+        //    https://github.com/cucumber/messages/blob/main/jsonschema/messages.md#teststepresultmessage
+        // - 'exception': added in cucumber 10.4, contains structured error details.
+        //    https://github.com/cucumber/messages/blob/main/jsonschema/messages.md#exception
+        //
+        // Different Cucumber reporters handle these fields differently:
+        // - html reporter: shows only exception.stackTrace,
+        //   then (exception.type + exception.message), then result.message.
+        //   https://github.com/cucumber/react-components/blob/main/src/components/results/FailedResult.tsx#L10
+        // - json reporter: shows only result.message
+        //   https://github.com/cucumber/cucumber-js/blob/main/src/formatter/json_formatter.ts#L270
+        // - junit reporter: shows exception.type, exception.message and (exception.stackTrace or result.message)
+        //   https://github.com/cucumber/junit-xml-formatter/blob/main/javascript/src/JUnitXmlPrinter.ts#L89
+        //   https://github.com/cucumber/junit-xml-formatter/blob/main/javascript/src/JUnitXmlPrinter.ts#L179
+        //
+        // So we should set both fields carefully:
+        // - result.message = exception.stackTrace to show full error details in json reporter
+        //
+        // See also: https://github.com/cucumber/react-components/pull/345
+        exception,
+        message: exception?.stackTrace,
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };

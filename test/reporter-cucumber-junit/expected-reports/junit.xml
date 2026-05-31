@@ -14,7 +14,23 @@
 And success step 2..........................................................passed]]></system-out>
   </testcase>
   <testcase classname="some feature" name="failing scenario" time="0.022">
-    <failure type="Error" message="Error: expect(received).toEqual(expected) // deep equality&#xA;&#xA;Expected: &quot;bar&quot;&#xA;Received: &quot;foo&quot;&#xA;   at features/steps.ts:11&#xA;&#xA;   9 |&#xA;  10 | Given('failing step', async ({}) => {&#xA;> 11 |   expect('foo').toEqual('bar');&#xA;     |                 ^&#xA;  12 | });&#xA;  13 |"><![CDATA[    at Object.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/features/steps.ts:11:17)
+    <failure type="Error" message="Error: expect(received).toEqual(expected) // deep equality&#xA;&#xA;Expected: &quot;bar&quot;&#xA;Received: &quot;foo&quot;"><![CDATA[Error: expect(received).toEqual(expected) // deep equality
+
+Expected: "bar"
+Received: "foo"
+
+   at features/steps.ts:11
+
+   9 |
+  10 | Given('failing step', async ({}) => {
+> 11 |   expect('foo').toEqual('bar');
+     |                 ^
+  12 | });
+  13 |
+
+    at Object.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/features/steps.ts:11:17)
+    at /Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:60:60
+    at BddStepInvoker.invoke (/Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:54:5)
     at /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-junit/.features-gen/features/sample.feature.spec.js:13:5]]></failure>
     <system-out><![CDATA[Given success step 1........................................................passed
 And failing step............................................................failed]]></system-out>

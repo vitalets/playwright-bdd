@@ -6,7 +6,7 @@ import * as messages from '@cucumber/messages';
 import * as pw from '@playwright/test/reporter';
 import { randomUUID } from 'node:crypto';
 import { toCucumberTimestamp } from './timing';
-import { buildException } from './error';
+import { buildException } from './Exception';
 
 export class TestRun {
   public id = randomUUID();

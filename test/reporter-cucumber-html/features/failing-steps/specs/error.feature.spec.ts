@@ -14,7 +14,12 @@ test('error in step', async ({ scenario }) => {
   await expect(scenario.getSteps('passed')).toHaveCount(2);
   await expect(scenario.getSteps('failed')).toHaveCount(1);
   await expect(scenario.getSteps('skipped')).toHaveCount(1);
-  await expect(scenario.getErrors()).toContainText(['shared.steps.ts']);
+  // message
+  await expect(scenario.getErrors()).toContainText('expect(received)');
+  // snippet
+  await expect(scenario.getErrors()).toContainText("Given('failing step', async ({}) => {");
+  // stack
+  await expect(scenario.getErrors()).toContainText('at Object.');
 });
 
 test('failing match snapshot', async ({ scenario }) => {

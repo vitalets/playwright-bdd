@@ -1,9 +1,22 @@
 <?xml version="1.0"?>
 <testsuite name="my suite" time="1.516464111" tests="9" skipped="0" failures="1" errors="0" timestamp="2026-03-27T08:27:49.482Z">
   <testcase classname="feature one" name="scenario of project one" time="0.027">
-    <failure type="Error" message="Error: expect(received).not.toEqual(expected) // deep equality&#xA;&#xA;Expected: not &quot;project one copy&quot;&#xA;&#xA;   at features-one/steps/steps.ts:12&#xA;&#xA;  10 |&#xA;  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {&#xA;> 12 |   expect($testInfo.project.name).not.toEqual(projectName);&#xA;     |                                      ^&#xA;  13 | });&#xA;  14 |"><![CDATA[    at Object.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-projects/features-one/steps/steps.ts:12:38)
-    at /Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:59:60
-    at BddStepInvoker.invoke (/Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:53:5)
+    <failure type="Error" message="Error: expect(received).not.toEqual(expected) // deep equality&#xA;&#xA;Expected: not &quot;project one copy&quot;&#xA;&#xA;   at features-one/steps/steps.ts:12&#xA;&#xA;  10 |&#xA;  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {&#xA;> 12 |   expect($testInfo.project.name).not.toEqual(projectName);&#xA;     |                                      ^&#xA;  13 | });&#xA;  14 |"><![CDATA[Error: expect(received).not.toEqual(expected) // deep equality
+
+Expected: not "project one copy"
+
+   at features-one/steps/steps.ts:12
+
+  10 |
+  11 | Given('Fails for project {string}', async ({ $testInfo }, projectName: string) => {
+> 12 |   expect($testInfo.project.name).not.toEqual(projectName);
+     |                                      ^
+  13 | });
+  14 |
+
+    at Object.<anonymous> (/Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-projects/features-one/steps/steps.ts:12:38)
+    at /Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:60:60
+    at BddStepInvoker.invoke (/Users/vitalets/projects/playwright-bdd/test/node_modules/playwright-bdd/src/runtime/bddStepInvoker.ts:54:5)
     at /Users/vitalets/projects/playwright-bdd/test/reporter-cucumber-projects/.features-gen/one-copy/features-one/sample.feature.spec.js:8:5]]></failure>
     <system-out><![CDATA[Given State 1...............................................................passed
 And Fails for project "project one copy"....................................failed
