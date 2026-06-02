@@ -34,7 +34,7 @@ Run BDD tests with Playwright runner
 
 ## Why Playwright Runner?
 
-Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. But it is most powerful when used with the Playwright test runner. This package converts BDD scenarios into native Playwright test files, so you get all Playwright runner features out of the box:
+Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. But it is most powerful when used with the Playwright test runner. This package converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
 
 - Automatic browser setup and cleanup
 - Auto-waiting for page elements
@@ -60,7 +60,7 @@ Playwright-BDD has several unique features:
 ## Documentation
 Check out the [documentation website](https://vitalets.github.io/playwright-bdd/#/).
 
-## Examples
+## Demos
 
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
@@ -71,13 +71,6 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 ```bash
 npm show @playwright/test@1 deprecated
 ```
-
-## Feedback & Community
-
-Feel free to report a bug, propose a feature or share your experience:
-
-* [GitHub issues](https://github.com/vitalets/playwright-bdd/issues)
-* [Playwright-BDD Discord](https://discord.gg/5rwa7TAGUr)
 
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
@@ -110,14 +103,17 @@ Great thanks to the **amazing people and companies** already supporting Playwrig
 
 If you find Playwright-BDD useful in your personal or work projects, consider [becoming a sponsor](https://github.com/sponsors/vitalets). Even small contributions help me dedicate more time to maintenance, new features, and community support.
 
+## Feedback & Community
+
+Feel free to report a bug, propose a feature or share your experience:
+
+* [GitHub issues](https://github.com/vitalets/playwright-bdd/issues)
+* [Playwright-BDD Discord](https://discord.gg/5rwa7TAGUr)
+
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## How to make BDD valuable for my project?
-
-Take a look on [this section](https://vitalets.github.io/playwright-bdd/#/faq?id=how-to-make-bdd-valuable-for-my-project).
-
-## My other Playwright tools
+## Other Playwright tools
 
 * [playwright-timeline-reporter](https://github.com/vitalets/playwright-timeline-reporter) - Interactive timeline report for Playwright test runs.
 * [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
