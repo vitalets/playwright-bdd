@@ -18,10 +18,9 @@ npx skills add vitalets/playwright-bdd
 
 ## Usage
 
-Once installed, you can ask your AI agent things like:
-- *Create a feature file for the login flow*
-- *Add a scenario for the checkout page*
-- *Write BDD tests for the search functionality*
+Once the skill installed, the agent follows a structured BDD workflow:
 
-The agent will inspect your Playwright BDD configuration, list available steps, and produce a `.feature` file that fits your project. If any required steps are missing, it will also suggest their implementations.
+1. **Planning** — Drafts BDD scenarios and asks for your approval. You can iterate on them to clarify the expected outcome before any code is written.
+2. **Implementation** — Builds the feature and wires up step definitions that match your existing code style.
+3. **Verification** — Runs the generated tests to confirm everything passes.
 
