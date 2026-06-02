@@ -28,23 +28,20 @@ Run BDD tests with Playwright runner
   📝 <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
 </p>
 
-## Why BDD?
-In the era of AI, you can take [BDD](https://cucumber.io/docs/bdd/) approach to the next level:
+## Why BDD in the Era of AI?
 
-- 🤖 **Generate** feature files from raw business requirements.
-- ✅ **Refine** scenarios with colleagues or AI in plain human language.
-- 🛠 **Automate** test execution using the Playwright runner.
+[BDD](https://cucumber.io/docs/bdd/) scenarios describe behavior through `Given / When / Then` steps, giving AI agents a clear, executable target. These sceanrios are easy to read and refine for both humans and agents. They run as tests, so they stay aligned with the codebase over time, unlike plain Markdown specs that tend to drift.
 
 ## Why Playwright Runner?
 
-Both [Playwright](https://playwright.dev/) and [CucumberJS](https://github.com/cucumber/cucumber-js) have their own test runners. You can use the CucumberJS runner with [Playwright as a library](https://playwright.dev/docs/library) to execute BDD scenarios. This package offers **an alternative**: convert BDD scenarios into Playwright test files and run them as regular tests. You gain all the advantages of the Playwright runner:
+Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. But it is most powerful when used with the Playwright test runner. This package converts BDD scenarios into native Playwright test files, so you get all Playwright runner features out of the box:
 
-- Automatic browser initialization and cleanup
-- Auto-capture of screenshots, videos, and traces
-- Parallelization with sharding
+- Automatic browser setup and cleanup
 - Auto-waiting for page elements
-- Built-in visual comparison testing
-- Power of Playwright fixtures
+- Auto-capture of screenshots, videos, and traces
+- Parallel execution and sharding
+- Built-in reports and visual comparison testing
+- Playwright fixtures
 - [...and more](https://playwright.dev/docs/library#key-differences)
 
 ## How It Works
