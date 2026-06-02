@@ -1,6 +1,6 @@
 # Environment variables
 
-You can use environment varibales inside step definitions:
+You can use environment variables inside step definitions:
 ```js
 When('I log in', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Username' }).fill(process.env.USERNAME);
