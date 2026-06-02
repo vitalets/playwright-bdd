@@ -40,6 +40,7 @@
 * [**Guides**](guides/index.md)
   - [Authentication](guides/authentication.md)
   - [🤖 Fix with AI](guides/fix-with-ai.md)
+  - [Migration to v9](guides/migration-v9.md)
   - [Migration to v7](guides/migration-v7.md)
   - [Ignore generated files](guides/ignore-generated-files.md)
   - [UI Mode & Watch](guides/ui-mode.md)
