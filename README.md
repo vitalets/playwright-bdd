@@ -36,7 +36,7 @@ Try the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getti
 
 ## Why Playwright Runner?
 
-Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. But it is most powerful when used with the Playwright test runner. This package converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
+Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. However, it is most powerful when used with the **Playwright test runner**. Playwright-BDD converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
 
 - Automatic browser setup and cleanup
 - Auto-waiting for page elements
