@@ -53,7 +53,7 @@
     "examples": "npm run examples:build && node scripts/examples/run.mjs",
     "help": "npx tsx src/cli -h",
     "env": "npx tsx src/cli env",
-    "docs": "docsify serve ./docs",
+    "docs": "npx docsify-cli serve ./docs",
     "docs:validate": "npx tsx scripts/validate-docs.mts",
     "deps": "npx npm-check-updates -i --format group,dep,repo --cooldown 5",
     "pw": "npm i --no-save --min-release-age=0 @playwright/test@$PW @playwright/experimental-ct-react@$PW",
