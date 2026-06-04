@@ -28,7 +28,7 @@ When('I click link {string}', async ({ page }, name: string) => {
 Each step is defined with a **pattern** that matches a Gherkin step text. The pattern can be either a Cucumber expression or a regular expression.
 
 #### Cucumber expression
-A [Cucumber expression](https://github.com/cucumber/cucumber-expressions) is a string pattern with typed parameters such as `{string}`, `{int}`, `{float}`, etc.:
+A [Cucumber expression](https://github.com/cucumber/cucumber-expressions) is a string pattern with typed parameters such as `{string}`, `{int}`, `{float}`, etc.
 
 ```ts
 Given('I open url {string}', async ({ page }, url: string) => {
@@ -39,6 +39,8 @@ When('I click link {string}', async ({ page }, name: string) => {
   await page.getByRole('link', { name }).click();
 });
 ```
+
+?> You can [try Cucumber expressions online](https://cucumber.github.io/try-cucumber-expressions).
 
 #### Regular expression
 A regular expression can be used for more complex matching. Capture groups become step parameters:

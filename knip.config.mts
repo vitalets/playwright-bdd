@@ -20,7 +20,7 @@ const config: KnipConfig = {
   project: ['**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}!'],
   ignoreBinaries: [
     // binaries that used ad-hoc with npx
-    'docsify',
+    'docsify-cli',
     'npm-check-updates',
     'publint',
   ],
