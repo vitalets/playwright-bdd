@@ -1,0 +1,25 @@
+.sidebar-nav li.sidebar-folder > ul {
+  display: none;
+}
+
+.sidebar-nav li.sidebar-folder.open > ul {
+  display: block;
+}
+
+.sidebar-nav li.sidebar-folder > strong,
+.sidebar-nav li.sidebar-folder > p > strong {
+  cursor: pointer;
+  user-select: none;
+}
+
+.sidebar-nav li.sidebar-folder > strong::before,
+.sidebar-nav li.sidebar-folder > p > strong::before {
+  content: '▸';
+  display: inline-block;
+  width: 1em;
+}
+
+.sidebar-nav li.sidebar-folder.open > strong::before,
+.sidebar-nav li.sidebar-folder.open > p > strong::before {
+  content: '▾';
+}

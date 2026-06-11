@@ -78,7 +78,7 @@ Tagged hooks will be executed only if the corresponding feature is executed.
 
 ?> Please keep in mind that these hooks **run in each worker**, similar to Playwright worker hooks.
 
-Full documentation: [Hooks](writing-steps/hooks.md).
+Full documentation: [Worker hooks](writing-steps/hooks/worker-hooks.md).
 
 ### Default tags
 
@@ -206,4 +206,3 @@ To upgrade to v8, follow these steps:
 > In case of any bugs or questions, feel free to open [an issue](https://github.com/vitalets/playwright-bdd/issues) on GitHub.
 
 Happy testing ❤️
-

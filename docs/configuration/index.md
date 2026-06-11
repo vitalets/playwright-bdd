@@ -2,11 +2,11 @@
 
 > [List of available options](configuration/options.md).
 
-Configuration is passed to `defineBddConfig()` inside the Playwright config file.
-The return value of `defineBddConfig()` is a resolved output directory where test files will be generated. It is convenient to use it as the `testDir` option for Playwright.
+Playwright-BDD is configured in the Playwright config file, e.g. `playwright.config.ts|js`. You pass options to `defineBddConfig()`, that returns a `testDir` output path, where test files will be generated.
 
-Example configuration in `playwright.config.ts`:
+Example:
 ```ts
+// playwright.config.ts
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 

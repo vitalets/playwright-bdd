@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* docs: add collapsable sections
 
 ## [9.0.0] - 2026-06-02
 * fix: validate used step definitions with strict Cucumber-compatible arity checks
