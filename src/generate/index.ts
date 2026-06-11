@@ -106,9 +106,10 @@ export class TestFilesGenerator {
     if (stepDefinitionArityErrors.length) {
       const uniqueErrors = [...new Set(stepDefinitionArityErrors)];
       exit(
-        `Found step definitions with incorrect arguments: ${uniqueErrors.length}`,
-        '',
-        uniqueErrors.join('\n\n'),
+        [
+          `Found step definitions with incorrect arguments: ${uniqueErrors.length}`,
+          uniqueErrors.join('\n\n'),
+        ].join('\n'),
       );
     }
   }
