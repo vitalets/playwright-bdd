@@ -1,5 +1,6 @@
 import {
   test,
+  expect,
   expectCalls,
   TestDir,
   execPlaywrightTest,
@@ -115,6 +116,7 @@ test(`${testDir.name} (error)`, () => {
     'BeforeStep 1',
     'BeforeStep 2',
     'step 3',
+    'AfterStep error: unset',
     'AfterStep 2',
     'AfterStep with error',
     'AfterStep 1',
@@ -127,8 +129,10 @@ test(`${testDir.name} (error)`, () => {
     'BeforeStep 1',
     'BeforeStep 2',
     'step with error',
-    // AfterStep does not run after a failing step.
-    // See: https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382
+    'AfterStep error: set',
+    'AfterStep 2',
+    'AfterStep with error',
+    'AfterStep 1',
   ]);
 
   expectCalls('worker 3: ', stdout, [
@@ -138,7 +142,9 @@ test(`${testDir.name} (error)`, () => {
     'BeforeStep 1',
     'BeforeStep 2',
     'step with skip',
-    // AfterStep does not run after a step skipped with $testInfo.skip().
+    'AfterStep error: set',
+    'AfterStep 2',
+    'AfterStep 1',
     // The following BDD step is skipped by Playwright and is not invoked.
 
     // scenario 5
@@ -147,7 +153,25 @@ test(`${testDir.name} (error)`, () => {
     'BeforeStep 1',
     'BeforeStep 2',
     'step with timeout',
-    // AfterStep does not run after a step timeout.
+    // Playwright interrupts on test timeout before AfterStep can run.
     // The following BDD step is skipped by Playwright and is not invoked.
+  ]);
+});
+
+test(`${testDir.name} (error precedence)`, () => {
+  const stdout = execPlaywrightTestWithError(testDir.name, 'Original step error', {
+    env: { FEATURE: 'error-precedence' },
+  });
+
+  expect(stdout).not.toContain('AfterStep hook error');
+
+  expectCalls('worker 0: ', stdout, [
+    'testFixtureCommon setup',
+    'BeforeStep 1',
+    'BeforeStep 2',
+    'step with original error',
+    'AfterStep 2',
+    'AfterStep with error',
+    'AfterStep 1',
   ]);
 });

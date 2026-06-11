@@ -61,16 +61,16 @@ The hook function accepts **1 argument** - [test-scoped fixtures](https://playwr
 
 ## AfterStep
 
-> Consider using [fixtures](writing-steps/hooks/fixtures.md) instead of hooks.
+Playwright-BDD supports the step-level hook `AfterStep`. It runs **after each invoked step**.
 
-Playwright-BDD supports the step-level hook `AfterStep`. It runs **after each successful step**.
+If the step body throws, the thrown value is available as `$step.error` inside `AfterStep`.
+If a `BeforeStep` hook fails, the step body is not invoked and `AfterStep` does not run for that step.
+Playwright hard timeouts and interruptions can still abort execution before `AfterStep` runs.
 
-> `AfterStep` currently does **not** run when the step itself fails.
-> This differs from Cucumber semantics and is documented intentionally.
-> The obvious `try/finally` implementation is not enough here because it would need to preserve
-> the original step error, keep Playwright `skip` semantics intact, and avoid interfering with
-> timeout / interruption behavior.
-> See the discussion in [issue #383](https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382).
+> Do not rely on `$testInfo.status` inside `AfterStep` to detect whether the current step failed.
+> Playwright may still expose `status: "passed"` while the step error is being handled.
+> Use `$step.error` instead, and handle skipped or other control-flow errors according to your
+> project needs.
 
 Usage:
 ```ts
@@ -81,11 +81,11 @@ export const test = base.extend({ /* ...your fixtures */ });
 const { AfterStep } = createBdd(test);
 
 AfterStep(async () => {
-  // runs after each successful step
+  // runs after each invoked step when Playwright allows execution to continue
 });
 ```
 
-All options and behavior are similar to [BeforeStep](#beforestep).
+All options are similar to [BeforeStep](#beforestep).
 
 #### Example of using `AfterStep` to capture screenshot after each step
 
@@ -106,4 +106,35 @@ AfterStep(async ({ page, $testInfo, $step }) => {
 });
 
 // ...rest of the step definitions
+```
+
+#### Example of using `AfterStep` only for failed steps
+
+Create `fixtures.ts`:
+```ts
+export const { AfterStep } = createBdd(test);
+```
+
+Import `fixtures.ts` in step definition:
+```ts
+import { AfterStep } from './fixtures';
+
+AfterStep(async ({ $testInfo, $step }) => {
+  if (!$step.error) return;
+
+  if (isSkippedStepError($step.error)) {
+    // A skipped step is exposed as an error by Playwright.
+    // Decide whether to attach diagnostics for skipped steps in your project.
+    return;
+  }
+
+  await $testInfo.attach(`logs for ${$step.title}`, {
+    contentType: 'text/plain',
+    body: getLogsForCurrentStep(),
+  });
+});
+
+function isSkippedStepError(error: unknown) {
+  return error instanceof Error && error.message.includes('Test is skipped');
+}
 ```

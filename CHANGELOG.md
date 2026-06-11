@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 * docs: add collapsable sections
+* fix: run `AfterStep` after failed steps and expose the step failure via `$step.error` ([#383](https://github.com/vitalets/playwright-bdd/issues/383))
 
 ## [9.0.0] - 2026-06-02
 * fix: validate used step definitions with strict Cucumber-compatible arity checks

@@ -30,6 +30,7 @@ It exposes the following fields:
 |---|---|---|
 | `title` | `string` | Step title without the keyword, e.g. `I open url "https://playwright.dev"` |
 | `docStringType` | `string \| undefined` | Media type of the doc string argument, if present. See [Doc strings](writing-steps/doc-strings.md). |
+| `error` | `unknown \| undefined` | Error thrown by the current step body, available in `AfterStep`. It is `undefined` for successful steps. |
 
 ```ts
 Given('I open url {string}', async ({ $step }, url: string) => { 
@@ -37,6 +38,8 @@ Given('I open url {string}', async ({ $step }, url: string) => {
   // ...
 });
 ```
+
+`$step.error` is mainly useful in [AfterStep hooks](writing-steps/hooks/step-hooks.md#afterstep). Use it instead of `$testInfo.status` when you need per-step failure handling.
 
 #### Example
 A popular use-case for the `$step` fixture is additional matching by the step title.

@@ -151,10 +151,10 @@ Defines a hook that runs **before each step**. You can target the hook to specif
 
 ### AfterStep
 
-Defines a hook that runs **after each successful step**. You can target the hook to specific step by providing the `tags` option.
+Defines a hook that runs **after each invoked step**. You can target the hook to specific step by providing the `tags` option.
 
-> `AfterStep` currently does **not** run when the step itself fails.
-> See [#383](https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382) for the rationale and caveats.
+If the step body throws, the thrown value is available as `$step.error` inside `AfterStep`. Use `$step.error` instead of `$testInfo.status` for per-step failure handling, and handle skipped or other control-flow errors according to your project needs. Playwright hard timeouts and
+interruptions can still abort execution before `AfterStep` runs.
 
 **Usage:** `AfterStep([options,] hookFn)`
 
@@ -167,6 +167,7 @@ Defines a hook that runs **after each successful step**. You can target the hook
     - `fixtures` *object* - Playwright fixtures:
       - `$testInfo` *object* - Playwright [testInfo](https://playwright.dev/docs/api/class-testinfo).
       - `$tags` *string[]* - List of tags for the current step.
+      - `$step` *object* - Current step info, including `$step.error` when the step body throws.
       - Any other built-in and custom fixtures.
 
 ### BeforeScenario / Before

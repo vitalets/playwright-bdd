@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { expect } from '@playwright/test';
 import { AfterStep } from './fixtures';
 
 // Order of calls is important here!
@@ -13,7 +12,7 @@ AfterStep(async ({ log, testFixtureCommon, $testInfo }) => {
 // runs after steps of scenario with tag: @error-in-after-step-hook
 AfterStep({ tags: '@error-in-after-step-hook' }, async ({ log }) => {
   log(`AfterStep with error`);
-  expect(1).toBe(2);
+  throw new Error('AfterStep hook error');
 });
 
 // runs after each step
@@ -24,4 +23,8 @@ AfterStep({ name: 'named AfterStep' }, async ({ log, $testInfo }) => {
 // runs after steps of scenario with tag: @scenario2
 AfterStep({ tags: '@scenario2' }, async ({ log, testFixtureScenario2 }) => {
   log(`AfterStep 3 (@scenario2)`);
+});
+
+AfterStep({ tags: '@log-step-error' }, ({ log, $step }) => {
+  log(`AfterStep error: ${$step.error ? 'set' : 'unset'}`);
 });

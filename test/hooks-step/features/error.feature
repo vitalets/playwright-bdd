@@ -6,17 +6,22 @@ Feature: error
     Then step 2
 
   @error-in-after-step-hook
+  @log-step-error
   Scenario: scenario 2
     Given step 3
     Then step 4
 
+  @error-in-after-step-hook
+  @log-step-error
   Scenario: scenario 3 error in step
     Given step with error
 
+  @log-step-error
   Scenario: scenario 4 skip in step
     Given step with skip
     Then step 5
 
+  @log-step-error
   @timeout:500
   Scenario: scenario 5 timeout in step
     Given step with timeout

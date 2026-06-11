@@ -17,6 +17,11 @@ Given('step with error', async ({ log }) => {
   expect(1).toBe(2);
 });
 
+Given('step with original error', async ({ log }) => {
+  log(`step with original error`);
+  throw new Error('Original step error');
+});
+
 Given('step with skip', async ({ log, $testInfo }) => {
   log(`step with skip`);
   $testInfo.skip();

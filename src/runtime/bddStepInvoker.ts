@@ -34,6 +34,7 @@ export class BddStepInvoker {
     this.bddContext.stepIndex++;
     this.bddContext.step.title = stepText;
     this.bddContext.step.docStringType = undefined;
+    this.bddContext.step.error = undefined;
 
     const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
     const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
@@ -52,23 +53,47 @@ export class BddStepInvoker {
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
 
     await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, async () => {
-      // Although pw-style does not expect usage of world / this in steps,
-      // some projects request it for better migration process from cucumber.
-      // Here, for pw-style we pass empty object as world.
-      // See: https://github.com/vitalets/playwright-bdd/issues/208
       await this.runBeforeStepHooks(stepHookFixtures);
-      const result = await matchedDefinition.definition.fn.call(
-        this.world,
-        stepFixtures,
-        ...stepParameters,
-      );
-      // We intentionally run AfterStep hooks only after successful step execution.
-      // A naive try/finally would change error precedence and would need careful handling
-      // of Playwright control-flow errors such as skip and timeout.
-      // See: https://github.com/vitalets/playwright-bdd/issues/383#issuecomment-4273815382
-      await this.runAfterStepHooks(stepHookFixtures);
-      return result;
+      return this.runWithAfterStepHooks(stepHookFixtures, () => {
+        return matchedDefinition.definition.fn.call(
+          // Although pw-style does not expect usage of world / this in steps,
+          // some projects request it for better migration process from cucumber.
+          // Here, for pw-style we pass empty object as world.
+          // See: https://github.com/vitalets/playwright-bdd/issues/208
+          this.world,
+          stepFixtures,
+          ...stepParameters,
+        );
+      });
     });
+  }
+
+  // eslint-disable-next-line max-statements
+  private async runWithAfterStepHooks<T>(
+    stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
+    fn: () => T | Promise<T>,
+  ) {
+    let stepError: unknown;
+    // we use a separate variable, because JS can throw undefined.
+    let hasStepError = false;
+    let result: T;
+
+    try {
+      result = await fn();
+    } catch (e) {
+      stepError = e;
+      hasStepError = true;
+      this.bddContext.step.error = e;
+    }
+
+    try {
+      await this.runAfterStepHooks(stepHookFixtures);
+    } catch (e) {
+      if (!hasStepError) throw e;
+    }
+
+    if (hasStepError) throw stepError;
+    return result!;
   }
 
   private async runBeforeStepHooks(
