@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 * docs: add collapsable sections
+* fix: support `# title-format` comments above tagged `Examples` blocks ([#390](https://github.com/vitalets/playwright-bdd/issues/390))
 * fix: run `AfterStep` after failed steps and expose the step failure via `$step.error` ([#383](https://github.com/vitalets/playwright-bdd/issues/383))
 
 ## [9.0.0] - 2026-06-02

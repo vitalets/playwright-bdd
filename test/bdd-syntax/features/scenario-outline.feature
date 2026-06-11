@@ -30,6 +30,12 @@ Feature: scenario-outline
       | 2     | 4   |
       | 3     | 6   |
 
+    # title-format: title format over tag, start is <start>
+    @tag1
+    Examples:
+      | start | end |
+      | 4     | 8   |
+
   # see: https://github.com/vitalets/playwright-bdd/issues/67
   Scenario Outline: Custom examples title via scenario name with <start> and "<end>", extra <, without <notexist>
     Given State <start>

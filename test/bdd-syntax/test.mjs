@@ -56,6 +56,7 @@ function checkScenarioOutline(outDir) {
   // Custom examples title via comment
   expect(content).toContain(`test("Test with 2 and \\"4\\", extra >, without <notexist>",`);
   expect(content).toContain(`test("Test with 3 and \\"6\\", extra >, without <notexist>",`);
+  expect(content).toContain(`test("title format over tag, start is 4",`);
 
   // Custom examples title via scenario name
   expect(content).toContain(

@@ -49,8 +49,9 @@ export class ExamplesTitleBuilder {
 
   private getTitleFromComment(examples: Examples) {
     const { gherkinDocument } = this.options;
-    const { line } = examples.location;
-    const titleFormatCommentLine = line - 1;
+    const firstTagLine = Math.min(...examples.tags.map((tag) => tag.location.line));
+    const titleFormatCommentLine =
+      (Number.isFinite(firstTagLine) ? firstTagLine : examples.location.line) - 1;
     const comment = gherkinDocument.comments.find((c) => {
       return c.location.line === titleFormatCommentLine;
     });
