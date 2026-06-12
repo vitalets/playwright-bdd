@@ -34,9 +34,8 @@ import { BackgroundGen } from './background';
 import { StepData, TestGen } from './test';
 import { SourceMapper } from './sourceMapper';
 import { BddDataRenderer } from '../bddData/renderer';
-import { extractTagsFromPath } from '../steps/tags';
-import { removeDuplicates } from '../utils';
 import { supportedFeatures } from '../playwright/supportedFeatures';
+import { removeDuplicates } from '../utils';
 
 type TestFileOptions = {
   config: BDDConfig;
@@ -53,7 +52,6 @@ export class TestFile {
   private hooks: TestFileHooks;
   private backgrounds: BackgroundGen[] = [];
   private tests: TestGen[] = [];
-  private tagsFromPath: string[];
 
   public outputPath: string;
 
@@ -63,7 +61,6 @@ export class TestFile {
     this.gherkinDocumentQuery = new GherkinDocumentQuery(this.gherkinDocument);
     this.stepFinder = new StepFinder(options.config);
     this.hooks = new TestFileHooks(this.formatter);
-    this.tagsFromPath = extractTagsFromPath(this.featureUri);
   }
 
   get gherkinDocument() {
@@ -274,7 +271,7 @@ export class TestFile {
     ownTestTags: string[],
     gherkinSteps: readonly Step[],
   ) {
-    const testTags = removeDuplicates([...this.tagsFromPath, ...getTagNames(pickle.tags)]);
+    const testTags = removeDuplicates(getTagNames(pickle.tags));
     if (this.isSkippedByTagsExpression(testTags)) return [];
 
     const test = new TestGen(

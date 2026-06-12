@@ -28,12 +28,19 @@ export class GherkinDocumentClone {
     copiedDoc.pickles.forEach((pickle) => {
       pickle.astNodeIds = pickle.astNodeIds.map((oldId) => this.getNewId(oldId));
       this.remapPickleStepsAstNodeIds(pickle);
+      this.remapPickleTagsAstNodeIds(pickle);
     });
   }
 
   private remapPickleStepsAstNodeIds(pickle: PickleWithLocation) {
     pickle.steps.forEach((step) => {
       step.astNodeIds = step.astNodeIds.map((oldId) => this.getNewId(oldId));
+    });
+  }
+
+  private remapPickleTagsAstNodeIds(pickle: PickleWithLocation) {
+    pickle.tags.forEach((tag) => {
+      tag.astNodeId = this.getNewId(tag.astNodeId);
     });
   }
 

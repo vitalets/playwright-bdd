@@ -1,5 +1,5 @@
 import { defineConfig } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { cucumberReporter, defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
   featuresRoot: 'features',
@@ -7,5 +7,6 @@ const testDir = defineBddConfig({
 
 export default defineConfig({
   testDir,
+  reporter: [cucumberReporter('message', { outputFile: 'actual-reports/messages.ndjson' })],
   workers: Number(process.env.WORKERS) || undefined,
 });

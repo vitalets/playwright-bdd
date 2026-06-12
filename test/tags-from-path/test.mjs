@@ -1,8 +1,11 @@
-import { test, TestDir, execPlaywrightTest, expectCalls } from '../_helpers/index.mjs';
+import { test, TestDir, execPlaywrightTest, expectCalls, expect } from '../_helpers/index.mjs';
+import { getMessagesFromFile } from '../_helpers/reports/messages.mjs';
+import { jsonPaths } from 'json-paths';
 
 const testDir = new TestDir(import.meta);
 
 test(`${testDir.name} (1 worker)`, () => {
+  testDir.clearDir('actual-reports');
   const stdout = execPlaywrightTest(testDir.name, { env: { WORKERS: 1 } });
 
   expectCalls('worker 0: ', stdout, [
@@ -27,9 +30,12 @@ test(`${testDir.name} (1 worker)`, () => {
     'AfterWorker 2',
     'AfterWorker 1',
   ]);
+
+  assertCucumberMessages();
 });
 
 test(`${testDir.name} (2 workers)`, () => {
+  testDir.clearDir('actual-reports');
   const stdout = execPlaywrightTest(testDir.name, { env: { WORKERS: 2 } });
 
   expectCalls('worker 0: ', stdout, [
@@ -58,3 +64,22 @@ test(`${testDir.name} (2 workers)`, () => {
     'AfterWorker 2',
   ]);
 });
+
+function assertCucumberMessages() {
+  const messages = getMessagesFromFile(testDir.getAbsPath('actual-reports/messages.ndjson'));
+  const actualJson = jsonPaths(messages, {
+    'gherkinDocument.feature.tags.#.name': 'value',
+    'pickle.tags.#.name': 'value',
+  });
+
+  expect(actualJson).toMatchObject({
+    'gherkinDocument.feature.tags.#.name': {
+      '@feature1': 1,
+      '@feature2': 1,
+    },
+    'pickle.tags.#.name': {
+      '@feature1': 1,
+      '@feature2': 1,
+    },
+  });
+}

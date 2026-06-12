@@ -13,6 +13,8 @@ import { ParseError, Pickle, IdGenerator, SourceMediaType } from '@cucumber/mess
 import { resolveFiles } from '../utils/paths';
 import { toArray } from '../utils';
 import { GherkinDocumentWithPickles, PickleWithLocation } from './types';
+import { TagsFromPathInjector } from './TagsFromPathInjector';
+import { AutofillMap } from '../utils/AutofillMap';
 
 export function resolveFeatureFiles(cwd: string, patterns: string | string[]) {
   return resolveFiles(cwd, toArray(patterns), 'feature');
@@ -32,6 +34,7 @@ const newId = IdGenerator.uuid();
 export class FeaturesLoader {
   gherkinQuery = new GherkinQuery();
   parseErrors: ParseError[] = [];
+  private tagsFromPathInjector = new TagsFromPathInjector(newId);
 
   async load(absFeatureFiles: string[], options: LoadFeaturesOptions) {
     this.gherkinQuery = new GherkinQuery();
@@ -50,22 +53,17 @@ export class FeaturesLoader {
   }
 
   getDocumentsWithPickles(): GherkinDocumentWithPickles[] {
-    const picklesByUri = new Map<string, Pickle[]>();
+    const picklesByUri = new AutofillMap<string, Pickle[]>();
     for (const pickle of this.gherkinQuery.getPickles()) {
       const uri = pickle.uri!;
-      let arr = picklesByUri.get(uri);
-      if (!arr) {
-        arr = [];
-        picklesByUri.set(uri, arr);
-      }
-      arr.push(pickle);
+      picklesByUri.getOrCreate(uri, () => []).push(pickle);
     }
 
     return this.gherkinQuery.getGherkinDocuments().map((gherkinDocument) => {
       const pickles = (picklesByUri.get(gherkinDocument.uri!) ?? []).map((pickle) =>
         this.getPickleWithLocation(pickle),
       );
-      return { ...gherkinDocument, pickles };
+      return this.tagsFromPathInjector.inject({ ...gherkinDocument, pickles });
     });
   }
 
