@@ -2,6 +2,7 @@
   "compilerOptions": {
     "declaration": true,
     "outDir": "dist",
+    "rootDir": "steps",
     "target": "es2021",
     "module": "nodenext",
     "strict": true,
