@@ -1,8 +1,10 @@
 /**
  * Builds meta message.
- * See: https://github.com/cucumber/cucumber-js/blob/main/src/cli/helpers.ts#L100
+ * See: https://github.com/cucumber/messages/blob/main/jsonschema/messages.md#meta
+ * See: https://github.com/cucumber/cucumber-js/blob/main/src/api/emit_support_code_messages.ts#L15
  */
 import os from 'node:os';
+import detectCiEnvironment from '@cucumber/ci-environment';
 import * as messages from '@cucumber/messages';
 import { getPackageVersion } from '../../../utils/index.js';
 
@@ -27,6 +29,7 @@ export class Meta {
         name: 'node.js',
         version: process.versions.node,
       },
+      ci: detectCiEnvironment(process.env),
     };
 
     return { meta };

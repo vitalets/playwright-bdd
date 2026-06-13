@@ -61,6 +61,7 @@
     "pw:clear-cache": "npx playwright clear-cache"
   },
   "dependencies": {
+    "@cucumber/ci-environment": "^13.0.0",
     "@cucumber/cucumber-expressions": "19.0.0",
     "@cucumber/gherkin": "^39.1.0",
     "@cucumber/gherkin-utils": "^11.0.0",

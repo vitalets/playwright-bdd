@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* feat: include CI information in Cucumber reports
 
 ## [9.1.0] - 2026-06-13
 * docs: add collapsable sections

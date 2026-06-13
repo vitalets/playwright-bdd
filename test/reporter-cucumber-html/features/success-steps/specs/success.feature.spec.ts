@@ -88,3 +88,17 @@ test('Check doubled', async ({ feature }) => {
     'Then Action 20',
   ]);
 });
+
+test('CI metadata', async ({ htmlReport }) => {
+  const ciSummary = htmlReport.page.getByTestId('cucumber.summary.ci');
+  const gitSummary = htmlReport.page.getByTestId('cucumber.summary.git');
+  await expect(ciSummary.getByRole('link', { name: 'GitHub Actions' })).toHaveAttribute(
+    'href',
+    'https://github.com/vitalets/playwright-bdd/actions/runs/12345',
+  );
+  await expect(gitSummary.getByRole('link', { name: 'abcdef1' })).toHaveAttribute(
+    'href',
+    'https://github.com/vitalets/playwright-bdd/commit/abcdef1234567890',
+  );
+  await expect(gitSummary).toContainText('my-feature-branch');
+});

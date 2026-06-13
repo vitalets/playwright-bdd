@@ -29,7 +29,7 @@ test(testDir.name, () => {
   testDir.clearDir('actual-reports');
   testDir.clearDir('test-results');
 
-  execPlaywrightTestWithError(testDir.name, error);
+  execPlaywrightTestWithError(testDir.name, error, { env: getFakeGithubEnv() });
   // useful for debug
   // execPlaywrightTest(testDir.name);
 
@@ -39,4 +39,16 @@ test(testDir.name, () => {
 function checkHtmlReport() {
   testDir.expectFileNotEmpty('actual-reports/report.html');
   execPlaywrightTest(testDir.name, 'npx playwright test --config check-report');
+}
+
+function getFakeGithubEnv() {
+  return {
+    GITHUB_SERVER_URL: 'https://github.com',
+    GITHUB_REPOSITORY: 'vitalets/playwright-bdd',
+    GITHUB_RUN_ID: '12345',
+    GITHUB_SHA: 'abcdef1234567890',
+    GITHUB_HEAD_REF: 'my-feature-branch',
+    GITHUB_REF: 'refs/heads/my-feature-branch',
+    GITHUB_EVENT_NAME: 'push',
+  };
 }
