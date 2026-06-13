@@ -8,6 +8,9 @@ import { requirePlaywrightModule, playwrightVersion } from './utils';
 // PW has older way with process restart that is complicated.
 // see: https://github.com/microsoft/playwright/pull/28526/files#diff-490565cd49c7e9417108773db457433c2af9a123443be8b5dae11be091107d65
 export function registerESMLoader() {
+  // Since PW 1.61 requireOrImport registers the ESM loader internally.
+  if (playwrightVersion >= '1.61.0') return;
+
   const { registerESMLoader } = getESMLoaderMethods();
   registerESMLoader();
 }
