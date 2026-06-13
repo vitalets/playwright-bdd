@@ -9,6 +9,7 @@ const config: KnipConfig = {
     // We need to check all files until we create a playwright-bdd knip plugin
     'examples/**',
     'test/**',
+    'docs/assets/**',
     // Exlcude generated files and folders
     '!**/.features-gen/**',
     '!**/{cucumber-report,actual-reports}/**',
@@ -23,6 +24,7 @@ const config: KnipConfig = {
     'docsify-cli',
     'npm-check-updates',
     'publint',
+    'cucumber.config.js',
   ],
   ignoreDependencies: [
     // Keep @cucumber/compatibility-kit to inspec their tests manually
