@@ -1,3 +1,5 @@
+# This file is prettier ignored, because we need tag above the title format comment,
+# but prettier-plugin-gherkin reorders the lines.
 Feature: scenario-outline
 
   Scenario Outline: Check doubled
@@ -35,6 +37,12 @@ Feature: scenario-outline
     Examples:
       | start | end |
       | 4     | 8   |
+
+    @tag2
+    # title-format: title format below tag, start is <start>
+    Examples:
+      | start | end |
+      | 5     | 10  |
 
   # see: https://github.com/vitalets/playwright-bdd/issues/67
   Scenario Outline: Custom examples title via scenario name with <start> and "<end>", extra <, without <notexist>

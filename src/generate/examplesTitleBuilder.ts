@@ -6,6 +6,8 @@ import { GherkinDocumentWithPickles } from '../gherkin/types';
 import { BDDConfig } from '../config/types';
 import { GherkinTemplate } from '../utils/GherkinTemplate';
 
+const TITLE_FORMAT_COMMENT_PREFIX = '# title-format:';
+
 type ExamplesTitleBuilderOptions = {
   config: BDDConfig;
   gherkinDocument: GherkinDocumentWithPickles;
@@ -47,17 +49,39 @@ export class ExamplesTitleBuilder {
     return new GherkinTemplate(titleTemplate).fill(params);
   }
 
+  /**
+   * Reads a title format comment placed directly above Examples or above its first tag.
+   * The comment closest to Examples takes precedence when both placements are present.
+   *
+   * Without tags:
+   *   # title-format: Test with <value>
+   *   Examples:
+   *
+   * Above tags:
+   *   # title-format: Test with <value>
+   *   @tag
+   *   Examples:
+   *
+   * Below tags:
+   *   @tag
+   *   # title-format: Test with <value>
+   *   Examples:
+   */
   private getTitleFromComment(examples: Examples) {
     const { gherkinDocument } = this.options;
     const firstTagLine = Math.min(...examples.tags.map((tag) => tag.location.line));
-    const titleFormatCommentLine =
-      (Number.isFinite(firstTagLine) ? firstTagLine : examples.location.line) - 1;
-    const comment = gherkinDocument.comments.find((c) => {
-      return c.location.line === titleFormatCommentLine;
-    });
-    const commentText = comment?.text?.trim();
-    const prefix = '# title-format:';
-    return commentText?.startsWith(prefix) ? commentText.replace(prefix, '').trim() : '';
+    const candidateLines = [examples.location.line - 1, firstTagLine - 1];
+
+    for (const line of candidateLines) {
+      const commentText = gherkinDocument.comments
+        .find((comment) => comment.location.line === line)
+        ?.text.trim();
+      if (commentText?.startsWith(TITLE_FORMAT_COMMENT_PREFIX)) {
+        return commentText.replace(TITLE_FORMAT_COMMENT_PREFIX, '').trim();
+      }
+    }
+
+    return '';
   }
 
   /**
