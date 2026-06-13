@@ -61,69 +61,10 @@ jobs:
       - run: npm run tsc:all
       - run: npx publint
 
-      - run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Bump version
-        # --preid sets the identifier in the version string for prereleases, e.g. 1.0.0-beta.0.
-        # NPM tag (e.g. next) is a different thing defined during npm publish.
-        # For normal releases (patch/minor/major) this option is ignored by npm.
-        run: |
-          VERSION_ARG=${{ inputs.release-version }}
-          if [[ "${{ inputs.prerelease }}" == "true" ]]; then
-            VERSION_ARG="pre${VERSION_ARG}"
-          fi
-          npm version $VERSION_ARG --no-git-tag-version --preid=beta
-          VERSION=$(npm pkg get version | tr -d '"')
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
-
-      # TODO: replace scripts/changelog.ts with keep-a-changelog CLI once it supports
-      # --release + --create in one step and --latest-release-full for extracting notes.
-      # Tracked at: https://github.com/oscarotero/keep-a-changelog/issues/65
-      # Skipped for pre-releases: the [Unreleased] section keeps accumulating changes
-      # so that the next stable release includes the full changelog.
-      - name: Update changelog and extract release notes
-        if: ${{ !inputs.prerelease }}
-        run: |
-          NOTES=$(node scripts/changelog.mts ${{ env.VERSION }})
-          echo "NOTES<<EOF" >> $GITHUB_ENV
-          echo "$NOTES" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: Commit, tag, push
-        if: ${{ !inputs.dry-run }}
-        run: |
-          git add package.json package-lock.json CHANGELOG.md
-          git commit --no-verify -m "v${{ env.VERSION }}"
-          git tag "v${{ env.VERSION }}"
-          git push --no-verify origin HEAD --tags
-
-      - name: Publish to npm
-        if: ${{ !inputs.dry-run && !inputs.skip-npm-publish }}
-        # --tag sets the dist-tag on the registry (e.g. npm install pkg@next).
-        # Without it, prereleases are published but not reachable via a friendly tag.
-        # Stable releases use the default 'latest' tag automatically.
-        run: npm publish --provenance --access public${{ inputs.prerelease && ' --tag next' || '' }}
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
-      # Skipped for pre-releases: GitHub releases are only created for stable versions
-      # to keep the release list clean and avoid misleading users.
-      - name: Create GitHub Release
-        if: ${{ !inputs.dry-run && !inputs.prerelease }}
-        run: echo "$NOTES" | gh release create "v$VERSION" --title "v$VERSION" --notes-file -
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Dry run summary
-        if: ${{ inputs.dry-run }}
-        run: |
-          echo "=== Dry run - no changes pushed or published ==="
-          echo "Version: $VERSION"
-          echo "--- Release notes ---"
-          echo "$NOTES"
-          echo "--- package.json version ---"
-          npm pkg get version
-          echo "--- Release files diff ---"
-          git diff package.json package-lock.json CHANGELOG.md
+      - uses: vitalets/npm-release@v1
+        with:
+          release-version: ${{ inputs.release-version }}
+          prerelease: ${{ inputs.prerelease }}
+          skip-npm-publish: ${{ inputs.skip-npm-publish }}
+          dry-run: ${{ inputs.dry-run }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
