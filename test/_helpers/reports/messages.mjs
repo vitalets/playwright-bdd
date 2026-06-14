@@ -38,6 +38,8 @@ export const DEFAULT_RULES = {
   'attachment.timestamp.nanos': null,
   'pickle.location.line': null,
   'pickle.location.column': null,
+  // CI metadata depends on the environment where the report is generated.
+  'meta.ci': null,
 
   // these paths are compared by values, not by total counter.
   'source.uri': toPosixPath,

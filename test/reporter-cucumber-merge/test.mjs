@@ -7,6 +7,7 @@ import {
   playwrightVersion,
   DEFAULT_CMD,
 } from '../_helpers/index.mjs';
+import { getFakeGithubEnv } from '../reporter-cucumber-html/env.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -47,10 +48,10 @@ function execShard2() {
 }
 
 function mergeReports() {
-  execPlaywrightTest(
-    testDir.name,
-    `npx playwright merge-reports --config playwright.config.ts ./blob-report`,
-  );
+  execPlaywrightTest(testDir.name, {
+    cmd: `npx playwright merge-reports --config playwright.config.ts ./blob-report`,
+    env: getFakeGithubEnv(),
+  });
 }
 
 function checkHtmlReport() {

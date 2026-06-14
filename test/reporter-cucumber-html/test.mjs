@@ -15,6 +15,7 @@ import {
   execPlaywrightTestWithError,
   playwrightVersion,
 } from '../_helpers/index.mjs';
+import { getFakeGithubEnv } from './env.mjs';
 
 const testDir = new TestDir(import.meta);
 
@@ -39,16 +40,4 @@ test(testDir.name, () => {
 function checkHtmlReport() {
   testDir.expectFileNotEmpty('actual-reports/report.html');
   execPlaywrightTest(testDir.name, 'npx playwright test --config check-report');
-}
-
-function getFakeGithubEnv() {
-  return {
-    GITHUB_SERVER_URL: 'https://github.com',
-    GITHUB_REPOSITORY: 'vitalets/playwright-bdd',
-    GITHUB_RUN_ID: '12345',
-    GITHUB_SHA: 'abcdef1234567890',
-    GITHUB_HEAD_REF: 'my-feature-branch',
-    GITHUB_REF: 'refs/heads/my-feature-branch',
-    GITHUB_EVENT_NAME: 'push',
-  };
 }
