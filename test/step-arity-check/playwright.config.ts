@@ -8,8 +8,9 @@ if (!featuresDir) {
 }
 
 const testDir = defineBddConfig({
-  paths: [`features/${featuresDir}/**/*.feature`],
-  require: [`features/${featuresDir}/**/*.ts`],
+  features: [`features/${featuresDir}/**/*.feature`],
+  steps: [`features/${featuresDir}/**/*.ts`],
+  arityCheck: process.env.ARITY_CHECK === 'false' ? false : undefined,
 });
 
 export default defineConfig({

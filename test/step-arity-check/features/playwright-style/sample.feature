@@ -22,3 +22,4 @@ Feature: step arity check - playwright style
   Scenario: valid step function arguments
     Given pw step no params, no args
     Given pw step no params, one arg
+    Given pw step one param 42, no args, arity check disabled

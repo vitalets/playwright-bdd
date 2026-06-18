@@ -160,6 +160,35 @@ The behavior when missing steps are found:
 
 If enabled, the keyword is also taken into account when searching for step definitions. See [Keywords matching](writing-steps/keywords-matching.md).
 
+## arityCheck
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Validates that each used step definition declares the correct number of function arguments during test generation. The expected count is based on captured step parameters plus a doc string or data table argument. Playwright-style steps also include the first fixtures argument.
+
+You can disable the check globally if your project uses advanced callback signatures that are valid at runtime but cannot be represented by JavaScript `Function.length`, such as rest tuple parameters:
+
+```ts
+const testDir = defineBddConfig({
+  arityCheck: false,
+});
+```
+
+You can also override this option for a particular step definition:
+
+```ts
+Given(
+  /the following (person|animal)s exist:/,
+  { arityCheck: false },
+  async ({}, ...args) => {
+    // ...
+  },
+);
+```
+
+Step-level `arityCheck` inherits the config value by default. Setting it explicitly to `true` or `false` overrides the config value for that step.
+
 ## verbose
 
 - **Type:** `boolean`

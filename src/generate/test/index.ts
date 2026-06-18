@@ -66,7 +66,7 @@ export class TestGen {
     this.specialTags = new SpecialTags(ownTestTags);
     this.skippedByTag = isTestSkippedByCollectedTags(this.tags);
     this.slow = isTestSlowByCollectedTags(this.tags);
-    this.arityChecker = new ArityChecker(this.featureUri);
+    this.arityChecker = new ArityChecker(this.featureUri, this.config);
     this.fillStepHooksFixtureNames();
     this.fillStepsData();
     this.resolveFixtureNamesForDecoratorSteps();

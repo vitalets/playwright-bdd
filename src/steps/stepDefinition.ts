@@ -17,6 +17,7 @@ export type StepPattern = string | RegExp;
 export type AnyFunction = (...args: any[]) => unknown;
 export type ProvidedStepOptions = {
   tags?: string;
+  arityCheck?: boolean;
 };
 
 export type StepDefinitionOptions = {
@@ -75,6 +76,10 @@ export class StepDefinition {
 
   get worldFixture() {
     return this.options.worldFixture;
+  }
+
+  get providedOptions() {
+    return this.options.providedOptions;
   }
 
   get expression() {

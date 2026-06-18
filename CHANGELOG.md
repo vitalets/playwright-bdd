@@ -4,6 +4,7 @@
 
 ## [Unreleased]
 * feat: include CI information in Cucumber reports
+* fix: allow disabling step definition arity checks ([#392](https://github.com/vitalets/playwright-bdd/issues/392))
 
 ## [9.1.0] - 2026-06-13
 * docs: add collapsable sections

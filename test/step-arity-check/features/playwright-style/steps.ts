@@ -13,3 +13,8 @@ Given(
 // 0-arg empty step: fixtures object may be omitted when there are no captures
 Given('pw step no params, no args', async () => {});
 Given('pw step no params, one arg', async ({}) => {});
+Given(
+  'pw step one param {int}, no args, arity check disabled',
+  { arityCheck: false },
+  async ({}) => {},
+);

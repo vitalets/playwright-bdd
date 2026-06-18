@@ -50,6 +50,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   disableWarnings?: DisableWarningsConfig;
   /** Behavior for missing step definitions */
   missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
+  /** Validate step function argument count during generation */
+  arityCheck?: boolean;
   /** Enables additional matching by keywords in step definitions */
   matchKeywords?: boolean;
   /** Options for fixing tests with AI */

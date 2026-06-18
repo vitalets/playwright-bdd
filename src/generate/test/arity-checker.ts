@@ -7,17 +7,23 @@ import { MatchedStepDefinition } from '../../steps/matchedStepDefinition';
 import { getStepTextWithKeyword } from '../../gherkin/helpers';
 import { stringifyLocation } from '../../utils';
 import { relativeToCwd } from '../../utils/paths';
+import { BDDConfig } from '../../config/types';
 
 export class ArityChecker {
   readonly errors: string[] = [];
 
-  constructor(private featureUri: string) {}
+  constructor(
+    private featureUri: string,
+    private config: BDDConfig,
+  ) {}
 
   checkStepDefinitionArity(
     matchedDefinition: MatchedStepDefinition,
     pickleStep: PickleStep,
     gherkinStep: Step,
   ) {
+    if (!this.shouldCheckArity(matchedDefinition)) return;
+
     const stepFnArgs = matchedDefinition.definition.arity;
     const expectedArgs = this.getExpectedArgs(matchedDefinition, pickleStep);
 
@@ -54,6 +60,10 @@ export class ArityChecker {
     } else {
       return { min: expectedArgs, max: expectedArgs };
     }
+  }
+
+  private shouldCheckArity(matchedDefinition: MatchedStepDefinition) {
+    return matchedDefinition.definition.providedOptions?.arityCheck ?? this.config.arityCheck;
   }
 
   // eslint-disable-next-line max-params

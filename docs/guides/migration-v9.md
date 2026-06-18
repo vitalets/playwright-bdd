@@ -76,6 +76,18 @@ Given('I have {int} items', ({ page }, count: number) => { ... });
 Given('I have the following items:', ({ page }, table: DataTable) => { ... });
 ```
 
+If your step intentionally uses an advanced signature such as a rest tuple, you can disable the generation-time arity check for that step:
+
+```ts
+Given(
+  /the following (person|animal)s exist:/,
+  { arityCheck: false },
+  ({}, ...args) => { ... },
+);
+```
+
+To disable this validation for all steps in a BDD config, set [`arityCheck: false`](configuration/options.md#aritycheck).
+
 ## Non-breaking changes
 
 ### `junit-modern` reporter deprecated

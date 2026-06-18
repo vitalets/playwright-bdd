@@ -97,6 +97,7 @@ Functions for step definitions.
   * `pattern` *string | regexp* - [Cucumber expression](https://github.com/cucumber/cucumber-expressions) string or RegExp.
   * `options` *object* - Step options:
     - `tags` *string* - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
+    - `arityCheck` *boolean* - Overrides the config-level [`arityCheck`](configuration/options.md#aritycheck) for this step definition.
   * `fn` *function* - Step function `(fixtures, ...args) => void`:
     - `fixtures` *object* - Playwright fixtures (omitted in cucumber-style).
     - `...args` *array* - Arguments captured from the step pattern.  
@@ -278,6 +279,7 @@ A decorator to mark a method as a BDD step.
   * `pattern` *string | regexp* - Step pattern as a [cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp.
   * `options` *object* - Step options:
     - `tags` *string* - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
+    - `arityCheck` *boolean* - Overrides the config-level [`arityCheck`](configuration/options.md#aritycheck) for this step definition.
 
 **Multiple decorators:**
 

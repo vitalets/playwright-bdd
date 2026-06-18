@@ -105,3 +105,10 @@ test(`${testDir.name} (playwright style, valid)`, () => {
     env: { FEATURES_DIR: 'playwright-style' },
   });
 });
+
+test(`${testDir.name} (playwright style, arityCheck disabled)`, () => {
+  execPlaywrightTest(testDir.name, {
+    cmd: BDDGEN_CMD,
+    env: { FEATURES_DIR: 'playwright-style', ARITY_CHECK: 'false' },
+  });
+});
