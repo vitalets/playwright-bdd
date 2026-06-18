@@ -31,8 +31,8 @@ export default defineConfig({
       name: 'project one',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        paths: ['features-one/*.feature'],
-        require: ['features-one/steps/*.ts'],
+        features: ['features-one/*.feature'],
+        steps: ['features-one/steps/*.ts'],
       }),
       use: {
         ...devices['Desktop Chrome'],
@@ -42,16 +42,16 @@ export default defineConfig({
       name: 'project one copy',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one-copy',
-        paths: ['features-one/*.feature'],
-        require: ['features-one/steps/*.ts'],
+        features: ['features-one/*.feature'],
+        steps: ['features-one/steps/*.ts'],
       }),
     },
     {
       name: 'project two',
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        paths: ['features-two/*.feature'],
-        require: ['features-two/*.ts'],
+        features: ['features-two/*.feature'],
+        steps: ['features-two/*.ts'],
       }),
     },
   ],

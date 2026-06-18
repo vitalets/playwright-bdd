@@ -9,8 +9,8 @@ export default defineConfig({
       name: 'pw-style',
       testDir: defineBddConfig({
         outputDir: `.features-gen/pw-style-${TAG}`,
-        paths: ['features/*.feature'],
-        require: ['steps-pw-style/*.ts'],
+        features: ['features/*.feature'],
+        steps: ['steps-pw-style/*.ts'],
         tags: TAG,
       }),
     },
@@ -18,8 +18,8 @@ export default defineConfig({
       name: 'cucumber-style',
       testDir: defineBddConfig({
         outputDir: `.features-gen/cucumber-style-${TAG}`,
-        paths: ['features/*.feature'],
-        require: ['steps-cucumber-style/*.ts'],
+        features: ['features/*.feature'],
+        steps: ['steps-cucumber-style/*.ts'],
         tags: TAG,
       }),
     },
@@ -27,8 +27,8 @@ export default defineConfig({
       name: 'pw-style-world',
       testDir: defineBddConfig({
         outputDir: `.features-gen/pw-style-world-${TAG}`,
-        paths: ['features/*.feature'],
-        require: ['steps-pw-style-world/*.ts'],
+        features: ['features/*.feature'],
+        steps: ['steps-pw-style-world/*.ts'],
         verbose: true,
         tags: TAG,
       }),

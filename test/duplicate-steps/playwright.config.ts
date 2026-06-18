@@ -18,7 +18,7 @@ function noDuplicates(): Project {
     name: 'no-duplicates',
     testDir: defineBddConfig({
       outputDir: `.features-gen/no-duplicates`,
-      paths: ['features/*.feature'],
+      features: ['features/*.feature'],
       steps: ['steps/steps.ts'],
       tags: '@no-duplicates',
     }),
@@ -30,7 +30,7 @@ function duplicateRegularSteps(): Project {
     name: 'duplicate-regular-steps',
     testDir: defineBddConfig({
       outputDir: `.features-gen/regular`,
-      paths: ['features/*.feature'],
+      features: ['features/*.feature'],
       steps: ['steps/steps.ts'],
       tags: '@duplicate-regular-steps',
     }),
@@ -42,7 +42,7 @@ function duplicateDecoratorSteps(): Project {
     name: 'duplicate-decorator-steps',
     testDir: defineBddConfig({
       outputDir: `.features-gen/decorator`,
-      paths: ['features/*.feature'],
+      features: ['features/*.feature'],
       steps: 'steps/fixtures.ts',
       tags: '@duplicate-decorator-steps',
     }),
@@ -54,7 +54,7 @@ function duplicateTaggedSteps(): Project {
     name: 'duplicate-tagged-steps',
     testDir: defineBddConfig({
       outputDir: `.features-gen/tagged`,
-      paths: ['features/*.feature'],
+      features: ['features/*.feature'],
       steps: ['steps/steps.ts'],
       tags: '@duplicate-tagged-steps',
     }),

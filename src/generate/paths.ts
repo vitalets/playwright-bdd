@@ -14,7 +14,7 @@ export function getSpecFileByFeatureFile(config: BDDConfig, relFeatureFile: stri
   if (relSpecFile.startsWith('..')) {
     exit(
       `All feature files should be located underneath featuresRoot.`,
-      `Please change featuresRoot or paths in configuration.\n`,
+      `Please change featuresRoot or features in configuration.\n`,
       `featureFile: ${absFeatureFile}\n`,
       `featuresRoot: ${config.featuresRoot}\n`,
     );

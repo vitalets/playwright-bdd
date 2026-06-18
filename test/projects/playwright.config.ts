@@ -17,23 +17,23 @@ export default defineConfig({
     {
       ...defineBddProject({
         name: 'project-one',
-        paths: ['one/*.feature'],
-        require: ['one/steps/fixtures.ts', 'one/steps/steps-*.ts'],
+        features: ['one/*.feature'],
+        steps: ['one/steps/fixtures.ts', 'one/steps/steps-*.ts'],
       }),
     },
     {
       ...defineBddProject({
         name: 'project-two',
-        paths: ['two/*.feature'],
-        require: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
+        features: ['two/*.feature'],
+        steps: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
       dependencies: ['project-one'],
     },
     {
       ...defineBddProject({
         name: 'project-two-copy',
-        paths: ['two/*.feature'],
-        require: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
+        features: ['two/*.feature'],
+        steps: ['two/steps/fixtures.ts', 'one/steps/steps-shared.ts', 'two/steps/steps.ts'],
       }),
       dependencies: ['project-one'],
     },

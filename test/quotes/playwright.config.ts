@@ -8,8 +8,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         quotes: 'single',
         outputDir: `.features-gen/single`,
-        paths: ['*.feature'],
-        require: ['steps.ts'],
+        features: ['*.feature'],
+        steps: ['steps.ts'],
       }),
     },
     {
@@ -17,8 +17,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         quotes: 'double',
         outputDir: `.features-gen/double`,
-        paths: ['*.feature'],
-        require: ['steps.ts'],
+        features: ['*.feature'],
+        steps: ['steps.ts'],
       }),
     },
     {
@@ -26,8 +26,8 @@ export default defineConfig({
       testDir: defineBddConfig({
         quotes: 'backtick',
         outputDir: `.features-gen/backtick`,
-        paths: ['*.feature'],
-        require: ['steps.ts'],
+        features: ['*.feature'],
+        steps: ['steps.ts'],
       }),
     },
   ],

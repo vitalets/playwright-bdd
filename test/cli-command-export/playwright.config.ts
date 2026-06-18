@@ -7,16 +7,16 @@ export default defineConfig({
       name: 'project1',
       testDir: defineBddConfig({
         outputDir: '.features-gen/one',
-        paths: ['features'],
-        require: ['steps/*.ts'],
+        features: ['features'],
+        steps: ['steps/*.ts'],
       }),
     },
     {
       name: 'project2',
       testDir: defineBddConfig({
         outputDir: '.features-gen/two',
-        paths: ['features'],
-        require: ['steps/steps.ts', 'steps/steps2.ts'],
+        features: ['features'],
+        steps: ['steps/steps.ts', 'steps/steps2.ts'],
       }),
     },
   ],

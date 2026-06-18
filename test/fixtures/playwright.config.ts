@@ -8,16 +8,16 @@ export default defineConfig({
       name: 'playwright-style',
       testDir: defineBddConfig({
         outputDir: '.features-gen/playwright-style',
-        paths: ['features/*.feature'],
-        require: ['steps/fixtures.ts', 'steps/steps-pw-style.ts'],
+        features: ['features/*.feature'],
+        steps: ['steps/fixtures.ts', 'steps/steps-pw-style.ts'],
       }),
     },
     {
       name: 'cucumber-style',
       testDir: defineBddConfig({
         outputDir: '.features-gen/cucumber-style',
-        paths: ['features/custom-fixtures*.feature'],
-        require: ['steps/fixtures.ts', 'steps/steps-cucumber-style.ts'],
+        features: ['features/custom-fixtures*.feature'],
+        steps: ['steps/fixtures.ts', 'steps/steps-cucumber-style.ts'],
       }),
     },
   ],

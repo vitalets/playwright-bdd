@@ -2,8 +2,8 @@ import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
 const testDir = defineBddConfig({
-  paths: ['../root.feature'],
-  require: ['../steps.ts'],
+  features: ['../root.feature'],
+  steps: ['../steps.ts'],
   outputDir: '../.features-gen',
 });
 

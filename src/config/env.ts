@@ -8,12 +8,12 @@ Example of PLAYWRIGHT_BDD_CONFIGS:
 {
   '/Users/foo/bar/.features-gen/one': {
     outputDir: '/Users/foo/bar/.features-gen/one',
-    paths: [ 'features-one/*.feature' ],
+    features: [ 'features-one/*.feature' ],
     ...
   },
   '/Users/foo/bar/.features-gen/two': {
     outputDir: '/Users/foo/bar/.features-gen/two',
-    paths: [ 'features-two/*.feature' ],
+    features: [ 'features-two/*.feature' ],
     ...
   },  
 } 
