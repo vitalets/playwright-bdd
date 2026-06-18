@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [9.2.0] - 2026-06-18
 * feat: include CI information in Cucumber reports
 * fix: allow disabling step definition arity checks ([#392](https://github.com/vitalets/playwright-bdd/issues/392))
 
@@ -328,7 +330,8 @@ Version v3 has several major updates based on the feedback.
 ## 1.2.0
 * Initial public release
 
-[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v9.1.0...HEAD
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v9.2.0...HEAD
+[9.2.0]: https://github.com/vitalets/playwright-bdd/compare/v9.1.0...v9.2.0
 [9.1.0]: https://github.com/vitalets/playwright-bdd/compare/v9.0.0...v9.1.0
 [9.0.0]: https://github.com/vitalets/playwright-bdd/compare/v8.5.1...v9.0.0
 [8.5.1]: https://github.com/vitalets/playwright-bdd/compare/v8.5.0...v8.5.1
