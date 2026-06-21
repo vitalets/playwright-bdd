@@ -19,13 +19,17 @@ Jump to the [getting started](getting-started/index.md) guide or read below the 
 
 <!-- Keep absolute urls to easily update from README.md -->
 
-## Why BDD in the Era of AI?
+## BDD in the Era of AI
 
-[BDD](https://cucumber.io/docs/bdd/) scenarios describe behavior through `Given / When / Then` steps, giving AI agents a clear, executable target. These scenarios are easy to read and refine for both humans and agents. They run as tests, so they stay aligned with the codebase over time, unlike plain Markdown specs that tend to drift.
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) uses `Given / When / Then` syntax to turn business requirements into structured scenarios stored in plain-text `.feature` files. In modern AI-assisted development, these scenarios take on a new role: they become a valuable artifact for AI agents because they are **readable** and **executable**. You can refine them during planning to make sure the agent understands the feature correctly. Later, the agent can run the same scenarios as tests to automatically verify the implementation and keep the spec aligned with the code over time.
+
+Unlike plain markdown specs, BDD does not just describe the behavior, it makes the spec live.
+
+Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) to try the agentic BDD workflow in your project.
 
 ## Why Playwright Runner?
 
-Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. But it is most powerful when used with the Playwright test runner. This package converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
+Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. However, it is most powerful when used with the **Playwright test runner**. Playwright-BDD converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
 
 - Automatic browser setup and cleanup
 - Auto-waiting for page elements
