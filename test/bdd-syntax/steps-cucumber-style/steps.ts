@@ -68,3 +68,19 @@ Then('Context prop {string} to equal {string}', async function (key: string, val
 Then('Tags are {string}', async function (tags: string) {
   expect(this.tags.join(' ')).toEqual(tags);
 });
+
+const aliases: Array<string | RegExp> = ['first alias without args', 'second alias without args'];
+const aliasedStep = Given(aliases, async function () {});
+expectTypeOf(aliasedStep).toBeFunction();
+
+When(
+  [/^overlapping alias value (.+)$/, 'overlapping alias value {int}'] as const,
+  function (value) {
+    // The first matching alias determines the transformed arguments passed to the function.
+    expect(value).toEqual('42');
+  },
+);
+
+Then(['first tagged alias', 'second tagged alias'], { tags: '@aliases' }, function () {
+  expect(this.tags).toContain('@aliases');
+});

@@ -73,6 +73,19 @@ Step('Tags are {string}', async ({ $tags, tagsFromCustomFixture }, tags: string)
   expect(tagsFromCustomFixture.join(' ')).toEqual(tags);
 });
 
+const aliases: Array<string | RegExp> = ['first alias without args', 'second alias without args'];
+const aliasedStep = Given(aliases, async ({}) => {});
+expectTypeOf(aliasedStep).toBeFunction();
+
+When([/^overlapping alias value (.+)$/, 'overlapping alias value {int}'] as const, ({}, value) => {
+  // The first matching alias determines the transformed arguments passed to the function.
+  expect(value).toEqual('42');
+});
+
+Then(['first tagged alias', 'second tagged alias'], { tags: '@aliases' }, async ({ $tags }) => {
+  expect($tags).toContain('@aliases');
+});
+
 // don't use this step b/c it creates page
 Then(
   'This step is not used, defined for checking types',

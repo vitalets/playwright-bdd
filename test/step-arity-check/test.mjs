@@ -13,7 +13,7 @@ test(`${testDir.name} (playwright style)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     [
-      'Found step definitions with incorrect arguments: 7',
+      'Found step definitions with incorrect arguments: 8',
       // too many args, no captures
       `Step: Given pw step no params, two args # ${normalize('features/playwright-style/sample.feature:4:5')}`,
       `Pattern: pw step no params, two args # ${normalize('features/playwright-style/steps.ts:3')}`,
@@ -42,6 +42,10 @@ test(`${testDir.name} (playwright style)`, () => {
       `Step: Given pw step no params, three args for docstring # ${normalize('features/playwright-style/sample.feature:16:5')}`,
       `Pattern: pw step no params, three args for docstring # ${normalize('features/playwright-style/steps.ts:9')}`,
       'Function has 3 arguments, but expected 2.',
+      // all matching aliases are checked, including aliases not selected for execution
+      `Step: Given pw aliases validate all 42 # ${normalize('features/playwright-style/sample.feature:20:5')}`,
+      `Pattern: ^pw aliases validate all # ${normalize('features/playwright-style/steps.ts:21')}`,
+      'Function has 2 arguments, but expected 0-1.',
     ],
     { cmd: BDDGEN_CMD, env: { FEATURES_DIR: 'playwright-style' } },
   );
@@ -51,7 +55,7 @@ test(`${testDir.name} (cucumber style)`, () => {
   execPlaywrightTestWithError(
     testDir.name,
     [
-      'Found step definitions with incorrect arguments: 4',
+      'Found step definitions with incorrect arguments: 5',
       // missing args for expression step
       `Step: Given cucumber step with missing args 42 # ${normalize('features/cucumber-style/sample.feature:4:5')}`,
       `Pattern: cucumber step with missing args {int} # ${normalize('features/cucumber-style/steps.ts:3')}`,
@@ -68,6 +72,10 @@ test(`${testDir.name} (cucumber style)`, () => {
       `Step: Given cucumber doc step with too many args # ${normalize('features/cucumber-style/sample.feature:16:5')}`,
       `Pattern: cucumber doc step with too many args # ${normalize('features/cucumber-style/steps.ts:6')}`,
       'Function has 2 arguments, but expected 1.',
+      // all matching aliases are checked, including aliases not selected for execution
+      `Step: Given cucumber aliases validate all 42 # ${normalize('features/cucumber-style/sample.feature:22:5')}`,
+      `Pattern: ^cucumber aliases validate all # ${normalize('features/cucumber-style/steps.ts:7')}`,
+      'Function has 1 argument, but expected 0.',
     ],
     { cmd: BDDGEN_CMD, env: { FEATURES_DIR: 'cucumber-style' } },
   );

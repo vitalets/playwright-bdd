@@ -8,6 +8,7 @@ export default defineConfig({
     // 'no-duplicates' project must be first as it's needed to run the second project in a worker
     ...(PROJECTS.includes('no-duplicates') ? [noDuplicates()] : []),
     ...(PROJECTS.includes('duplicate-regular-steps') ? [duplicateRegularSteps()] : []),
+    ...(PROJECTS.includes('duplicate-alias-steps') ? [duplicateAliasSteps()] : []),
     ...(PROJECTS.includes('duplicate-decorator-steps') ? [duplicateDecoratorSteps()] : []),
     ...(PROJECTS.includes('duplicate-tagged-steps') ? [duplicateTaggedSteps()] : []),
   ],
@@ -33,6 +34,18 @@ function duplicateRegularSteps(): Project {
       features: ['features/*.feature'],
       steps: ['steps/steps.ts'],
       tags: '@duplicate-regular-steps',
+    }),
+  };
+}
+
+function duplicateAliasSteps(): Project {
+  return {
+    name: 'duplicate-alias-steps',
+    testDir: defineBddConfig({
+      outputDir: `.features-gen/aliases`,
+      features: ['features/*.feature'],
+      steps: ['steps/steps.ts'],
+      tags: '@duplicate-alias-steps',
     }),
   };
 }

@@ -15,3 +15,7 @@ Feature: duplicate steps
   @no-duplicates
   Scenario: no duplicates
     Given unique step
+
+  @duplicate-alias-steps
+  Scenario: duplicate step with aliases
+    Given duplicate step with aliases

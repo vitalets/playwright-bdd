@@ -58,12 +58,16 @@ export class StepDefinition {
     return this.options.arity;
   }
 
+  get location() {
+    return this.options.location;
+  }
+
   get uri() {
-    return this.options.location.file;
+    return this.location.file;
   }
 
   get line() {
-    return this.options.location.line;
+    return this.location.line;
   }
 
   get customTest() {

@@ -59,6 +59,17 @@ export class StepFinder {
   }
 }
 
+export function excludeStepAliases(matchedDefinitions: MatchedStepDefinition[]) {
+  // Aliases registered by one API call deliberately share the same location object.
+  const seenLocations = new Set<StepDefinition['location']>();
+  return matchedDefinitions.filter((matchedDefinition) => {
+    const { location } = matchedDefinition.definition;
+    if (seenLocations.has(location)) return false;
+    seenLocations.add(location);
+    return true;
+  });
+}
+
 export function formatDuplicateStepsMessage(
   matchedDefinitions: MatchedStepDefinition[],
   stepTextWithKeyword: string,

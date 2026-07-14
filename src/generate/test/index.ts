@@ -2,7 +2,7 @@
  * Class to generate single test from pickle.
  */
 import { PickleStep, Step } from '@cucumber/messages';
-import { formatDuplicateStepsMessage, StepFinder } from '../../steps/finder';
+import { excludeStepAliases, formatDuplicateStepsMessage, StepFinder } from '../../steps/finder';
 import { Formatter } from '../formatter';
 import { getKeywordEng, KeywordsMap } from '../i18n';
 import { getStepTextWithKeyword } from '../../gherkin/helpers';
@@ -186,18 +186,20 @@ export class TestGen {
     );
 
     if (matchedDefinitions.length === 0) return;
+    const uniqueStepDefinitions = excludeStepAliases(matchedDefinitions);
 
-    if (matchedDefinitions.length > 1) {
+    if (uniqueStepDefinitions.length > 1) {
       const stepTextWithKeyword = getStepTextWithKeyword(gherkinStep.keyword, pickleStep.text);
       const stepLocation = `${this.featureUri}:${stringifyLocation(gherkinStep.location)}`;
       // exit immediately, b/c with multiple step definitions we can't proceed
-      exit(formatDuplicateStepsMessage(matchedDefinitions, stepTextWithKeyword, stepLocation));
+      exit(formatDuplicateStepsMessage(uniqueStepDefinitions, stepTextWithKeyword, stepLocation));
     }
 
-    const matchedDefinition = matchedDefinitions[0];
-    this.arityChecker.checkStepDefinitionArity(matchedDefinition, pickleStep, gherkinStep);
+    matchedDefinitions.forEach((matchedDefinition) => {
+      this.arityChecker.checkStepDefinitionArity(matchedDefinition, pickleStep, gherkinStep);
+    });
 
-    return matchedDefinition;
+    return uniqueStepDefinitions[0];
   }
 
   private resolveFixtureNamesForDecoratorSteps() {

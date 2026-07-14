@@ -22,6 +22,19 @@ test(`${testDir.name} (main thread - regular steps)`, () => {
   });
 });
 
+test(`${testDir.name} (main thread - aliases)`, () => {
+  const error = [
+    `Multiple definitions matched scenario step`,
+    `Step: Given duplicate step with aliases # ${normalize('features/sample.feature:21:5')}`,
+    `  - Given 'duplicate step with aliases' # ${normalize('steps/steps.ts')}:9`,
+    `  - Given 'duplicate step with aliases' # ${normalize('steps/steps.ts')}:10`,
+  ];
+  execPlaywrightTestWithError(testDir.name, error, {
+    cmd: BDDGEN_CMD,
+    env: { PROJECTS: 'duplicate-alias-steps' },
+  });
+});
+
 test(`${testDir.name} (main thread - decorator steps)`, () => {
   const error = [
     `Multiple definitions matched scenario step`,
@@ -54,8 +67,8 @@ test(`${testDir.name} (main thread - tagged steps)`, () => {
   const error = [
     `Multiple definitions matched scenario step`,
     `Step: Given duplicate tagged step # ${normalize('features/sample.feature:13:5')}`,
-    `  - Given 'duplicate tagged step' # ${normalize('steps/steps.ts')}:9 [tags: @duplicate-tagged-steps]`,
-    `  - Given 'duplicate tagged step' # ${normalize('steps/steps.ts')}:10 [tags: @duplicate-tagged-steps]`,
+    `  - Given 'duplicate tagged step' # ${normalize('steps/steps.ts')}:11 [tags: @duplicate-tagged-steps]`,
+    `  - Given 'duplicate tagged step' # ${normalize('steps/steps.ts')}:12 [tags: @duplicate-tagged-steps]`,
   ];
   execPlaywrightTestWithError(testDir.name, error, {
     cmd: BDDGEN_CMD,

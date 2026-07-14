@@ -94,7 +94,7 @@ Functions for step definitions.
  - `Step(pattern[, options], fn)`
 
 **Params:**
-  * `pattern` *string | regexp* - [Cucumber expression](https://github.com/cucumber/cucumber-expressions) string or RegExp.
+  * `pattern` *string | regexp | array* - A [Cucumber expression](https://github.com/cucumber/cucumber-expressions), RegExp, or a non-empty array of patterns. Array patterns are aliases sharing the same step function. If several aliases match, all are checked for valid arity and the first matching alias supplies the captured arguments.
   * `options` *object* - Step options:
     - `tags` *string* - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
     - `arityCheck` *boolean* - Overrides the config-level [`arityCheck`](configuration/options.md#aritycheck) for this step definition.

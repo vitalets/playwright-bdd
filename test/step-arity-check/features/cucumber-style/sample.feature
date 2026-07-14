@@ -17,3 +17,6 @@ Feature: step arity check - cucumber style
       """
       some content
       """
+
+  Scenario: validate all matching aliases
+    Given cucumber aliases validate all 42
