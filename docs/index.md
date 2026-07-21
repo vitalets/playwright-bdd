@@ -21,7 +21,13 @@ Jump to the [getting started](getting-started/index.md) guide or read below the 
 
 ## Why BDD in the Era of AI?
 
-[BDD](https://cucumber.io/docs/bdd/) scenarios describe behavior through `Given / When / Then` steps, giving AI agents a clear, executable target. These scenarios are easy to read and refine for both humans and agents. They run as tests, so they stay aligned with the codebase over time, unlike plain Markdown specs that tend to drift.
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product features as `Given / When / Then` scenarios written in `.feature` files. These scenarios are valuable artifacts for AI agents because they are both **readable** and **executable**. You can refine them during planning to provide the agent with clear requirements. Once the code is written, the agent runs the same scenarios as tests to verify the implementation and keep them aligned with the codebase over time.
+
+Unlike plain markdown specs, BDD does not just describe the behavior, it makes the spec live.
+
+Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) and check out the practical walkthrough of the agentic BDD workflow:
+
+➡️ [Why I Prefer BDD over SDD for Agentic Development](https://vitalets.github.io/posts/bdd-agentic-workflow/)
 
 ## Why Playwright Runner?
 
