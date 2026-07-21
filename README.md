@@ -30,7 +30,7 @@ Run BDD tests with Playwright runner
 
 ## BDD in the Era of AI
 
-[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product features through concrete scenarios written as `Given / When / Then` steps in `.feature` files. In modern AI-assisted development, these scenarios take on a new role: they become a valuable artifact for AI agents because they are **readable** and **executable**. You can refine them during planning to make sure the agent understands the feature correctly. Later, the agent can run the same scenarios as tests to automatically verify the implementation and keep the spec aligned with the code over time.
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product features as `Given / When / Then` scenarios written in `.feature` files. These scenarios are valuable artifacts for AI agents because they are both **readable** and **executable**. You can refine them during planning to provide the agent with clear requirements. Once the code is written, the agent runs the same scenarios as tests to verify the implementation and keep them aligned with the codebase over time.
 
 Unlike plain markdown specs, BDD does not just describe the behavior, it makes the spec live.
 
