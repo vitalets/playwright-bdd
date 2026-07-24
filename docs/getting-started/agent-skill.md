@@ -18,9 +18,21 @@ npx skills add vitalets/playwright-bdd
 
 ## Usage
 
-Once the skill installed, the agent follows a structured BDD workflow:
+Once the skill installed, BDD will be automatically triggered when you start a new feature:
 
-1. **Planning** — Drafts BDD scenarios and asks for your approval. You can iterate on them to clarify the expected outcome before any code is written.
-2. **Implementation** — Builds the feature and wires up step definitions that match your existing code style.
-3. **Verification** — Runs the generated tests to confirm everything passes.
+### Planning
+Drafts BDD scenarios and asks for your approval. You can iterate on them to clarify the expected outcome before any code is written. Here's an example with **Codex**:
 
+![BDD diff](./_media/bdd-agent-diff.png)
+
+### Implementation
+Builds the feature and wires up step definitions that match your existing code style:
+
+![BDD steps implementation](./_media/bdd-agent-implementation.png)
+
+### Verification
+Automatically runs the generated BDD tests to verify the implementation and provide the report:
+
+![BDD report](./_media/bdd-agent-report.png ':size=60%')
+
+?> Check out the blog post [Why I Prefer BDD over SDD for Agentic Development](https://dev.to/vitalets/why-i-prefer-bdd-over-sdd-for-agentic-development-4c3d).
