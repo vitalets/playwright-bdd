@@ -96,8 +96,7 @@ HTML report:
 
 ### Step 5: Check the generated tests (optional)
 
-Check out the `.features-gen` directory to see what the generated tests look like.
-You will see something like this:
+Check out the `.features-gen` directory to see what the generated tests look like. You will see the generated file `sample.feature.spec.js`:
 
 ```js
 // Generated from: sample.feature
@@ -116,8 +115,4 @@ test.describe('Playwright site', () => {
 
 ?> Here is a fully working Playwright-BDD example project: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
 
-> Don't forget to [git-ignore generated files](guides/ignore-generated-files.md).
-
-!> If your project uses [ES Modules](https://nodejs.org/api/esm.html), please check out [ESM configuration](configuration/esm.md).
-
-
+!> Don't forget to [ignore generated files](guides/ignore-generated-files.md).
