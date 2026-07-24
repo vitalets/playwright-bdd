@@ -14,9 +14,10 @@ Before writing or modifying any feature files, **ask the user** whether a BDD sp
 1. **Discover project configuration** — Search `playwright.config.ts` (or `playwright.config.js`) for `defineBddConfig(...)` calls. This reveals the features directory and the `steps` glob patterns pointing to step definition files.
    - If multiple `defineBddConfig` calls exist, pick the most suitable one based on context (e.g. match directory names to the described feature area). Only ask the user to clarify if it is genuinely ambiguous.
 2. **Write BDD scenarios** — Check the existing feature files and create or update BDD scenarios according to the input. Strictly follow the "Scenario Writing Rules" section.
-3. **Present feature-file changes for approval before any implementation plan** — Show the exact new or changed Gherkin content to the user for negotiation:
+3. **Show feature-file changes to the user and use the question tool with the question "Approve the proposed feature-file changes?"** — Show the exact new or changed Gherkin content to the user for negotiation:
    - When presenting changes to existing scenarios, use unified diff format (```diff) to clearly show additions and removals. For entirely new scenarios, show them in plain Gherkin format.
    - Always show the target feature file path, so it's clear where the scenario will be added or modified.
+   - In the question tool use a concise approval question: "Approve the proposed feature-file changes?", don't show the full diff in the question itself.
    - If the user asks for a plan, do not finalize the plan until these feature-file changes have been shown and explicitly approved.
    - Do not substitute a summary, checklist, or implementation plan for the feature-file diff/Gherkin. The user must see the proposed `.feature` file update itself.
    - If the user requests changes, revise the proposed scenario text and re-present it.
