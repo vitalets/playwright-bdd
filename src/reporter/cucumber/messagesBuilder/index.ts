@@ -63,11 +63,17 @@ export class MessagesBuilder {
     if (!bddConfig) return;
 
     const { bddData, featureUri } = this.testFiles.getBddData(test.location.file);
-    // todo: move these line somewhere else
-    const bddTestData = bddData.find((data) => data.pwTestLine === test.location.line);
+    // Match by test title (reliable) with fallback to line number (legacy).
+    // Note: Playwright's test.location.line in reporters may point to describe block
+    // instead of actual test line, so we prefer matching by title.
+    const bddTestData =
+      bddData.find((data) => data.testTitle === test.title) ||
+      bddData.find((data) => data.pwTestLine === test.location.line);
     if (!bddTestData) {
       const filePath = relativeToCwd(test.location.file);
-      throw new Error(`Cannot find bddTestData for ${filePath}:${test.location.line}`);
+      throw new Error(
+        `Cannot find bddTestData for ${filePath}:${test.location.line} (title: ${test.title})`,
+      );
     }
 
     // Important to create TestCaseRun in this method (not later),

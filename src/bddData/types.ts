@@ -17,6 +17,7 @@ export type BddFileData = BddTestData[];
 export type BddTestData = {
   pwTestLine: number;
   pickleLine: number;
+  testTitle: string; // test title for reliable matching in reporter
   tags: string[];
   skipped?: boolean;
   timeout?: number;
