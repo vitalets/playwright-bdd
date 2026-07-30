@@ -32,10 +32,11 @@ import { getSpecFileByFeatureFile } from './paths';
 import { SpecialTags } from './specialTags';
 import { BackgroundGen } from './background';
 import { StepData, TestGen } from './test';
-import { SourceMapper } from './sourceMapper';
+import { FeatureToTestMapper } from './featureToTestMapper';
 import { BddDataRenderer } from '../bddData/renderer';
 import { supportedFeatures } from '../playwright/supportedFeatures';
 import { removeDuplicates } from '../utils';
+import { TestFileSourceMap } from './sourceMap';
 
 type TestFileOptions = {
   config: BDDConfig;
@@ -52,8 +53,10 @@ export class TestFile {
   private hooks: TestFileHooks;
   private backgrounds: BackgroundGen[] = [];
   private tests: TestGen[] = [];
+  private featureToTestMapper?: FeatureToTestMapper;
 
   public outputPath: string;
+  public sourceMap?: TestFileSourceMap;
 
   constructor(private options: TestFileOptions) {
     this.outputPath = getSpecFileByFeatureFile(this.config, this.featureUri);
@@ -117,6 +120,7 @@ export class TestFile {
     this.renderInplaceBackgrounds();
 
     this.lines.push(...this.renderTechnicalSection());
+    if (this.config.sourceMaps) this.renderSourceMap();
 
     return this;
   }
@@ -165,8 +169,8 @@ export class TestFile {
 
   private renderTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
-    const sourceMapper = new SourceMapper(this.lines);
-    const bddDataRenderer = new BddDataRenderer(this.tests, sourceMapper);
+    this.featureToTestMapper = new FeatureToTestMapper(this.lines);
+    const bddDataRenderer = new BddDataRenderer(this.tests, this.featureToTestMapper);
 
     const testUse = this.formatter.testUse([
       ...this.formatter.testFixture(),
@@ -188,6 +192,22 @@ export class TestFile {
     ];
   }
 
+  private renderSourceMap() {
+    if (!this.featureToTestMapper) throw new Error(`Feature-to-test mapper is not initialized.`);
+
+    this.sourceMap = new TestFileSourceMap({
+      config: this.config,
+      outputPath: this.outputPath,
+      featureUri: this.featureUri,
+      tests: this.tests,
+      featureToTestMapper: this.featureToTestMapper,
+    });
+    this.lines.push(
+      `// Source hash: ${this.sourceMap.hash}`,
+      `//# sourceMappingURL=${path.basename(this.sourceMap.outputPath)}`,
+    );
+  }
+
   private renderRootSuite() {
     const { feature } = this.gherkinDocument;
     if (!feature) throw new Error(`Document without feature.`);
@@ -203,7 +223,11 @@ export class TestFile {
     feature.children.forEach((child) => {
       lines.push(...this.renderChild(child));
     });
-    return this.formatter.describe(feature.name, specialTags, lines);
+    return this.formatter.describe(feature.name, {
+      specialTags,
+      children: lines,
+      sourceLocation: feature.location,
+    });
   }
 
   // eslint-disable-next-line visual/complexity
@@ -259,7 +283,11 @@ export class TestFile {
     // don't render describe without tests
     if (!lines.length) return [];
 
-    return this.formatter.describe(scenario.name, specialTags, lines);
+    return this.formatter.describe(scenario.name, {
+      specialTags,
+      children: lines,
+      sourceLocation: scenario.location,
+    });
   }
 
   /**

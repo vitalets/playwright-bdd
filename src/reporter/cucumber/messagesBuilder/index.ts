@@ -15,8 +15,11 @@ import { Pickles } from './Pickles';
 import { ConcreteEnvelope } from './types';
 import { getConfigFromEnv } from '../../../config/env';
 import { TestFiles } from './TestFiles';
+import path from 'node:path';
 import { relativeToCwd } from '../../../utils/paths';
 import { TestRun } from './TestRun';
+import { getSpecFileByFeatureFile } from '../../../generate/paths';
+import { isSourceMapped } from '../../../playwright/utils';
 
 export class MessagesBuilder {
   private report = {
@@ -62,9 +65,19 @@ export class MessagesBuilder {
     // Skip tests of non-bdd projects
     if (!bddConfig) return;
 
-    const { bddData, featureUri } = this.testFiles.getBddData(test.location.file);
+    // Source-mapped Playwright locations point to the feature file, while BDD metadata
+    // remains in the generated spec file.
+    const sourceMapped = isSourceMapped(test.location.file);
+    const generatedFile = sourceMapped
+      ? getSpecFileByFeatureFile(bddConfig, path.relative(bddConfig.configDir, test.location.file))
+      : test.location.file;
+    const { bddData, featureUri } = this.testFiles.getBddData(generatedFile);
     // todo: move these line somewhere else
-    const bddTestData = bddData.find((data) => data.pwTestLine === test.location.line);
+    const bddTestData = bddData.find((data) =>
+      sourceMapped
+        ? data.pickleLine === test.location.line
+        : data.pwTestLine === test.location.line,
+    );
     if (!bddTestData) {
       const filePath = relativeToCwd(test.location.file);
       throw new Error(`Cannot find bddTestData for ${filePath}:${test.location.line}`);
@@ -72,7 +85,14 @@ export class MessagesBuilder {
 
     // Important to create TestCaseRun in this method (not later),
     // b/c test properties can change after retries.
-    const testCaseRun = new TestCaseRun(bddTestData, featureUri, test, result, this.hooks);
+    const testCaseRun = new TestCaseRun(
+      bddTestData,
+      featureUri,
+      test,
+      result,
+      this.hooks,
+      sourceMapped,
+    );
     this.testCaseRuns.push(testCaseRun);
   }
 

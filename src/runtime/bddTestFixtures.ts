@@ -13,6 +13,7 @@ import { BddTestData } from '../bddData/types';
 import { BddContext, BddStepInfo } from './bddContext';
 import { PromptFixture } from '../ai/promptAttachment';
 import { supportedFeatures } from '../playwright/supportedFeatures';
+import { isSourceMapped } from '../playwright/utils';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -107,7 +108,12 @@ export const test = base.extend<BddTestFixtures>({
   // bddTestData for particular test
   $bddTestData: [
     async ({ $bddFileData }, use, testInfo) => {
-      const bddTestData = $bddFileData.find((data) => data.pwTestLine === testInfo.line);
+      // Playwright exposes feature locations when a source map is applied,
+      // and generated test locations when source maps are disabled or invalid.
+      const sourceMapped = isSourceMapped(testInfo.file);
+      const bddTestData = $bddFileData.find((data) =>
+        sourceMapped ? data.pickleLine === testInfo.line : data.pwTestLine === testInfo.line,
+      );
       await use(bddTestData);
     },
     fixtureOptions,

@@ -132,14 +132,19 @@ export class TestFilesGenerator {
   }
 
   private async saveFiles() {
-    this.files.forEach((file) => saveFileSync(file.outputPath, file.content));
+    this.files.forEach((file) => {
+      // Save the map first, so readers never observe JS pointing to a missing map.
+      if (file.sourceMap) saveFileSync(file.sourceMap.outputPath, file.sourceMap.content);
+      saveFileSync(file.outputPath, file.content);
+    });
     this.logger.logGeneratedTestFiles(this.files);
   }
 
   private async clearOutputDir() {
-    const pattern = `${tg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
-    const testFiles = await tg.glob(pattern, { expandDirectories: false });
-    this.logger.logClearingOutputDir(pattern);
+    const outputDirPattern = tg.convertPathToPattern(this.config.outputDir);
+    const patterns = [`${outputDirPattern}/**/*.spec.js`, `${outputDirPattern}/**/*.spec.js.map`];
+    const testFiles = await tg.glob(patterns, { expandDirectories: false });
+    this.logger.logClearingOutputDir(patterns.join(', '));
     const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
     await Promise.all(tasks);
   }

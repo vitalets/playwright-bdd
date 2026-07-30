@@ -27,6 +27,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   featuresRoot?: string;
   /** Dir to save generated files */
   outputDir?: string;
+  /** Generate source maps to map generated tests with original feature files */
+  sourceMaps?: boolean;
   /** Path to file for importing test instance */
   importTestFrom?: string | ImportTestFrom;
   /**

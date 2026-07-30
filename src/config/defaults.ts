@@ -3,10 +3,11 @@ import { BDDInputConfig } from './types';
 export const defaults: Required<
   Pick<
     BDDInputConfig,
-    'outputDir' | 'verbose' | 'quotes' | 'language' | 'missingSteps' | 'arityCheck'
+    'outputDir' | 'sourceMaps' | 'verbose' | 'quotes' | 'language' | 'missingSteps' | 'arityCheck'
   >
 > = {
   outputDir: '.features-gen',
+  sourceMaps: false,
   verbose: false,
   quotes: 'single',
   language: 'en',

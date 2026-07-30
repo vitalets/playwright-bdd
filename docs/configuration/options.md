@@ -31,6 +31,20 @@ Resolved relative to the config file location.
 
 Directory to output generated test files. Resolved relative to the config file location.
 
+## sourceMaps
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Generate external source maps from generated Playwright tests to feature files. Source maps allow
+Playwright and editor integrations to display and select tests using feature-file locations.
+
+```ts
+const testDir = defineBddConfig({
+  sourceMaps: true,
+});
+```
+
 ## featuresRoot
 
 - **Type:** `string`

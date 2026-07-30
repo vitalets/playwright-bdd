@@ -1,0 +1,111 @@
+/**
+ * Generates an external Source Map v3 file from a generated Playwright test to its feature file.
+ *
+ * FeatureToTestMapper first discovers final generated locations using temporary formatter markers.
+ * This module combines those locations with the corresponding Gherkin locations and serializes the
+ * result as `<generated-test>.map`. See featureToTestMapper.ts for a complete marker example.
+ */
+import fs from 'node:fs';
+import path from 'node:path';
+import { Location } from '@cucumber/messages';
+import { SourceMapGenerator } from 'source-map';
+import { BDDConfig } from '../config/types';
+import { calculateSha1 } from '../utils';
+import { toPosixPath } from '../utils/paths';
+import { FeatureToTestMapper, GeneratedLocation } from './featureToTestMapper';
+import { TestGen } from './test';
+
+type Mapping = {
+  generated: GeneratedLocation;
+  original: Location;
+};
+
+type TestFileSourceMapOptions = {
+  config: BDDConfig;
+  outputPath: string;
+  featureUri: string;
+  tests: TestGen[];
+  featureToTestMapper: FeatureToTestMapper;
+};
+
+export class TestFileSourceMap {
+  readonly outputPath: string;
+  readonly content: string;
+  readonly hash: string;
+
+  constructor(private options: TestFileSourceMapOptions) {
+    this.outputPath = `${options.outputPath}.map`;
+    this.content = this.generate();
+    // Including the map hash in generated JS invalidates Playwright's transform cache
+    // when only feature locations change and generated test code stays the same.
+    this.hash = calculateSha1(this.content).slice(0, 8);
+  }
+
+  private generate() {
+    const { config, outputPath, featureUri, tests, featureToTestMapper } = this.options;
+    const featurePath = path.resolve(config.configDir, featureUri);
+    const sourcePath = toPosixPath(path.relative(path.dirname(this.outputPath), featurePath));
+    const map = new SourceMapGenerator({ file: path.basename(outputPath) });
+    const sourceContent = fs.readFileSync(featurePath, 'utf8');
+    map.setSourceContent(sourcePath, sourceContent);
+
+    this.collectMappings(tests, featureToTestMapper).forEach(({ generated, original }) => {
+      map.addMapping({
+        generated: {
+          line: generated.line,
+          column: generated.column,
+        },
+        source: sourcePath,
+        original: {
+          line: original.line,
+          column: (original.column ?? 1) - 1,
+        },
+      });
+    });
+
+    return map.toString();
+  }
+
+  private collectMappings(tests: TestGen[], featureToTestMapper: FeatureToTestMapper) {
+    const mappings = new Map<string, Mapping>();
+
+    featureToTestMapper.getSuiteLocations().forEach((mapping) => {
+      this.addMapping(mappings, mapping.generated, mapping.original);
+    });
+
+    tests.forEach((test) => {
+      this.addMapping(
+        mappings,
+        featureToTestMapper.getPwTestLocation(test.pickle),
+        test.pickle.location,
+      );
+      test.stepsData.forEach(({ pickleStep, gherkinStep }) => {
+        this.addMapping(
+          mappings,
+          featureToTestMapper.getPwStepLocation(pickleStep),
+          gherkinStep.location,
+        );
+      });
+    });
+
+    return [...mappings.values()].sort(
+      (a, b) => a.generated.line - b.generated.line || a.generated.column - b.generated.column,
+    );
+  }
+
+  private addMapping(
+    mappings: Map<string, Mapping>,
+    generated: GeneratedLocation,
+    original: Location,
+  ) {
+    const key = `${generated.line}:${generated.column}`;
+    const existing = mappings.get(key);
+    if (
+      existing &&
+      (existing.original.line !== original.line || existing.original.column !== original.column)
+    ) {
+      throw new Error(`Conflicting source locations for generated position: ${key}`);
+    }
+    mappings.set(key, { generated, original });
+  }
+}

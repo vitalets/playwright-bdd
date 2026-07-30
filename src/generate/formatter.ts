@@ -4,7 +4,7 @@
 
 /* eslint-disable max-lines */
 
-import { PickleStepArgument } from '@cucumber/messages';
+import { Location, PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
@@ -45,11 +45,25 @@ export class Formatter {
     ];
   }
 
-  describe(title: string, specialTags: SpecialTags, children: string[]) {
+  describe(
+    title: string,
+    {
+      specialTags,
+      children,
+      sourceLocation,
+    }: {
+      specialTags: SpecialTags;
+      children: string[];
+      sourceLocation?: Location;
+    },
+  ) {
     const titleStr = this.quoted(title);
     const fn = this.withSubFunction('describe', specialTags);
-    const firstLine = `test.${fn}(${titleStr}, () => {`;
-    if (!children.length) return [`${firstLine}});`, ''];
+    const marker = sourceLocation
+      ? `// suite: ${sourceLocation.line},${sourceLocation.column ?? 1}`
+      : '';
+    const firstLine = `test.${fn}(${titleStr}, () => {${marker}`;
+    if (!children.length) return [`test.${fn}(${titleStr}, () => {});${marker}`, ''];
     return [
       firstLine, // prettier-ignore
       ...this.describeConfigure(specialTags).map(indent),
@@ -255,6 +269,16 @@ export function extractPickleStepIdsFromLine(line: string) {
   const matchedString = match?.[1];
   if (matchedString) {
     return { pickleStepIds: matchedString.split(','), index: match.index };
+  }
+}
+
+export function extractSuiteLocationFromLine(line: string) {
+  const match = line.match(/\/\/ suite: (\d+),(\d+)$/);
+  if (match) {
+    return {
+      location: { line: Number(match[1]), column: Number(match[2]) },
+      index: match.index,
+    };
   }
 }
 
