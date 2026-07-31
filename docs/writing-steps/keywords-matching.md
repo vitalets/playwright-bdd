@@ -42,6 +42,16 @@ When('a step', async ({}) => {
 Use snippets above to create missing steps.
 ```
 
+To make a particular step definition universal while `matchKeywords` is enabled globally, use the `Step` function instead of `Given`, `When`, or `Then`:
+
+```js
+const { Step } = createBdd();
+
+Step('a step', async ({}) => {
+  // ...
+});
+```
+
 #### Rules of `matchKeywords: true`
 1. If a scenario step starts with `Given`, `When`, `Then` → it matches only definitions with the corresponding keyword or the universal `Step` function.
 2. If a scenario step starts with `And` / `But` → it looks up to the nearest full keyword (`Given, When, Then`) and follows rule 1. If it is the first step of the scenario, it is treated as `Given`.
