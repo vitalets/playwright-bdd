@@ -10,10 +10,6 @@ Run the following command to install Currents + Playwright reporter:
 ```sh
 npm i -D @currents/playwright
 ```
-Install [dotenv](https://www.npmjs.com/package/dotenv) for managing Currents credentials:
-```sh
-npm i -D dotenv
-```
 
 #### 3. Setup credentials
 Create the `.env` file with the following variables:
@@ -24,13 +20,16 @@ CURRENTS_PROJECT_ID=YOUR_PROJECT_ID # the projectId from https://app.currents.de
 
 #### 4. Adjust Playwright configuration
 
-In the Playwright config file `playwright.config.ts` setup Currents reporter: 
+In Node.js 20.12 or later, use the built-in `process.loadEnvFile()` to load local credentials and set up the Currents reporter in `playwright.config.ts`:
 
 ```ts
-import 'dotenv/config';
+import { existsSync } from 'node:fs';
+import { loadEnvFile } from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 import { CurrentsConfig, currentsReporter } from '@currents/playwright';
+
+if (existsSync('.env')) loadEnvFile('.env');
 
 const currentsConfig: CurrentsConfig = {
   recordKey: process.env.CURRENTS_RECORD_KEY || '',

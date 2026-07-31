@@ -16,12 +16,6 @@ Install the TestDino reporter:
 npm i -D @testdino/playwright
 ```
 
-Install [dotenv](https://www.npmjs.com/package/dotenv) to load the API key from a local `.env` file:
-
-```sh
-npm i -D dotenv
-```
-
 #### 3. Setup credentials
 
 Create a `.env` file in the project root:
@@ -34,12 +28,15 @@ TESTDINO_TOKEN=your_api_key_here
 
 #### 4. Adjust Playwright configuration
 
-Configure the reporter in `playwright.config.ts`:
+In Node.js 20.12 or later, use the built-in `process.loadEnvFile()` to load local credentials and configure the reporter in `playwright.config.ts`:
 
 ```ts
-import 'dotenv/config';
+import { existsSync } from 'node:fs';
+import { loadEnvFile } from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
+
+if (existsSync('.env')) loadEnvFile('.env');
 
 const testDir = defineBddConfig({
   features: 'features/*.feature',
@@ -138,7 +135,7 @@ jobs:
 **Results do not appear in the dashboard**
 
 * Ensure `TESTDINO_TOKEN` is valid and belongs to the correct project.
-* If you use `.env`, make sure `import 'dotenv/config';` is loaded before config reads `process.env.TESTDINO_TOKEN`.
+* If you use `.env`, make sure `loadEnvFile()` runs before the config reads `process.env.TESTDINO_TOKEN`.
 * On Windows CMD, use `set TESTDINO_TOKEN=...` when not using `.env`.
 
 **`@testdino/playwright` cannot be resolved**

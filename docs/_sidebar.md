@@ -49,14 +49,16 @@
 
 * **Guides**
   - [Authentication](guides/authentication.md)
-  - [Fix with AI](guides/fix-with-ai.md)
-  - [Migration to v9](guides/migration-v9.md)
-  - [Migration to v7](guides/migration-v7.md)
   - [Ignore generated files](guides/ignore-generated-files.md)
   - [UI Mode & Watch](guides/ui-mode.md)
   - [Debugging](guides/debugging.md)
+  - [Fix with AI](guides/fix-with-ai.md)
   - [Environment variables](guides/env-vars.md)
   - [Component tests](guides/component-tests.md)
+
+* **Upgrading**
+  - [Migration to v9](guides/migration-v9.md)
+  - [Migration to v7](guides/migration-v7.md)
 
 * **Integrations**
   <!-- Keep integration page files under docs/guides to preserve existing URLs and avoid moving stable docs paths just for navigation grouping. -->

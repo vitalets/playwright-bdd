@@ -92,27 +92,21 @@ export const { Given, When, Then } = createBdd(test);
 
 ---
 
-## Dynamic authentication in steps
+## Dynamic authentication
 
 Use this approach when different scenarios authenticate as different users, specified dynamically via BDD steps:
 
 ```gherkin
 Scenario: Admin sees the dashboard
-  Given I am logged in as "admin"
-  When I navigate to the dashboard
-  Then I see the admin panel
+  Given I am logged in as "admin@example.com"
+  ...
 
 Scenario: Regular user sees limited menu
-  Given I am logged in as "user1"
-  When I navigate to the dashboard
-  Then I do not see the admin panel
+  Given I am logged in as "user@example.com"
+  ...
 ```
 
-### The challenge
-
-BDD steps run *after* all Playwright fixtures are already set up, so you cannot change the `storageState` fixture from within a step using the standard approach.
-
-### Solution (Playwright ≥ 1.59)
+### Playwright ≥ 1.59
 
 Since Playwright 1.59, [`context.setStorageState()`](https://playwright.dev/docs/api/class-browsercontext#browser-context-set-storage-state) allows loading auth state into the **existing** browser context at any point — including inside a BDD step. This makes implementation straightforward:
 
@@ -123,7 +117,7 @@ Since Playwright 1.59, [`context.setStorageState()`](https://playwright.dev/docs
 import { test as setup, expect } from '@playwright/test';
 import { AUTH_FILE } from '../../playwright.config';
 
-// run setups in parallel
+// authenticate all possible users in parallel
 setup.describe.configure({ mode: 'parallel' });
 
 setup('authenticate user1', async ({ page }) => {
@@ -163,4 +157,6 @@ After this step, the `page` fixture (and any pages opened from it) will be authe
 
 ### Playwright < 1.59
 
-For older Playwright versions, you can manually create a new browser context with the desired storage state and pass the resulting page through a custom fixture. See the [pre-1.59 version of the auth-in-steps example](https://github.com/vitalets/playwright-bdd/tree/8.5.0/examples/auth-in-steps) for a full working implementation.
+Before Playwright 1.59, browser contexts did not have a `setStorageState()` method, so a BDD step could not load a different authentication state into the existing context.
+
+Instead, create a browser context manually with the desired storage state and expose its page through a custom fixture. See the [pre-1.59 version of the auth-in-steps example](https://github.com/vitalets/playwright-bdd/tree/8.5.0/examples/auth-in-steps) for a complete implementation.
