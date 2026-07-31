@@ -120,7 +120,7 @@ export class TestFile {
     this.renderInplaceBackgrounds();
 
     this.lines.push(...this.renderTechnicalSection());
-    if (this.config.sourceMaps) this.renderSourceMap();
+    if (this.config.generateSourceMaps) this.renderSourceMap();
 
     return this;
   }

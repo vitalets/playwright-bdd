@@ -31,7 +31,7 @@ Resolved relative to the config file location.
 
 Directory to output generated test files. Resolved relative to the config file location.
 
-## sourceMaps
+## generateSourceMaps
 
 - **Type:** `boolean`
 - **Default:** `false`
@@ -41,7 +41,7 @@ Playwright and editor integrations to display and select tests using feature-fil
 
 ```ts
 const testDir = defineBddConfig({
-  sourceMaps: true,
+  generateSourceMaps: true,
 });
 ```
 

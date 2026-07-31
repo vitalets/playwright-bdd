@@ -19,8 +19,8 @@
  *
  * After all code is composed, this class scans the lines, records their generated locations, and
  * removes the markers. Therefore, no marker comments are present in the test file saved to disk.
- * The collected locations are always used for technical BDD data and, when `sourceMaps` is enabled,
- * are also combined with Gherkin locations to generate the external Source Map v3 file.
+ * The collected locations are always used for technical BDD data and, when `generateSourceMaps` is
+ * enabled, are also combined with Gherkin locations to generate the external Source Map v3 file.
  */
 import { Location, Pickle, PickleStep } from '@cucumber/messages';
 import {
