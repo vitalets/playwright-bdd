@@ -9,7 +9,7 @@ When('I log in', async ({ page }) => {
 });
 ```
 
-Actual values can be provided via `.env` file, imported in `playwright.config.ts` with the help of [dotenv](https://github.com/motdotla/dotenv) package:
+With Node.js 20.12 or later, values can be loaded from a `.env` file using the built-in [`process.loadEnvFile()`](https://nodejs.org/api/process.html#processloadenvfilepath):
 
 ```
 # .env
@@ -20,10 +20,12 @@ PASSWORD=bar
 ```ts
 // playwright.config.ts
 
+import { existsSync } from 'node:fs';
+import { loadEnvFile } from 'node:process';
 import { defineConfig, devices } from '@playwright/test';
 import { defineBddConfig, cucumberReporter } from 'playwright-bdd';
 
-import 'dotenv/config'; // <-- populate env variables from .env
+if (existsSync('.env')) loadEnvFile('.env');
 
 const testDir = defineBddConfig({
   // ...
