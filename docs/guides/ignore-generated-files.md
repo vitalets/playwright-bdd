@@ -1,9 +1,26 @@
 # Ignore generated files
 
-Generated test files should be in `.gitignore` and `.prettierignore` as they are produced from `.feature` files:
+Generated test files should be ignored by Git and Prettier as they are produced from `.feature`
+files.
+
+## `.gitignore`
+
+Add generated specs and source maps to the root `.gitignore`:
+
 ```bash
 printf '\n%s\n' '**/.features-gen/**/*.spec.js' >> .gitignore
-printf '\n%s\n' '**/.features-gen/**/*.spec.js' >> .prettierignore
+printf '\n%s\n' '**/.features-gen/**/*.spec.js.map' >> .gitignore
 ```
 
-> Note that Playwright stores snapshot artifacts next to test files, that's why we ignore only `*.spec.js` files, not the whole `.features-gen` directory.
+## `.prettierignore`
+
+Add the same rules to the root `.prettierignore` to prevent Prettier and editor integrations from
+formatting generated files:
+
+```bash
+printf '\n%s\n' '**/.features-gen/**/*.spec.js' >> .prettierignore
+printf '\n%s\n' '**/.features-gen/**/*.spec.js.map' >> .prettierignore
+```
+
+> Note that Playwright stores snapshot artifacts next to test files, that's why we ignore generated
+> specs and source maps, not the whole `.features-gen` directory.

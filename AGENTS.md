@@ -8,3 +8,4 @@
 - Prefer Node.js built-in APIs over npm packages where possible. Refer to [module-replacements](https://github.com/es-tooling/module-replacements/blob/main/docs/modules/README.md) for a list of packages that have native alternatives.
 - Add a comment to code that is not self-explanatory — when the reason for a change, a workaround, or a non-obvious behavior is not clear from the code itself.
 - Keep exported functions at the top and internal helper functions at the bottom.
+- Keep orchestration files focused. When a feature introduces a cohesive responsibility with its own policy, constants, I/O, or edge cases, implement it in a dedicated module named after that feature. The caller should only coordinate when to invoke it. Do not embed such behavior as a private method in a broader class unless it is trivial and inseparable from that class.
