@@ -16,5 +16,6 @@ test(`${testDir.name} (test)`, () => {
   const stdout = execPlaywrightTest(testDir.name, `${BDDGEN_CMD} test -h`);
 
   expect(stdout).toContain('--tags');
+  expect(stdout).toContain('--watch');
   expect(stdout).toContain('-c, --config');
 });

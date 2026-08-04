@@ -27,6 +27,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   featuresRoot?: string;
   /** Dir to save generated files */
   outputDir?: string;
+  /** Prevent concurrent bddgen processes from writing to the same output directory */
+  lockFile?: boolean;
   /** Generate source maps to map generated tests with original feature files */
   generateSourceMaps?: boolean;
   /** Path to file for importing test instance */
@@ -50,6 +52,13 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   statefulPoms?: boolean;
   /** Disable warnings */
   disableWarnings?: DisableWarningsConfig;
+  /** Watch mode options */
+  watch?: {
+    /** Extra file or directory paths to watch outside the package root. Globs are not supported. */
+    extraPaths?: string[];
+    /** File or directory paths to ignore. Globs are not supported. */
+    ignorePaths?: string[];
+  };
   /** Behavior for missing step definitions */
   missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
   /** Validate step function argument count during generation */

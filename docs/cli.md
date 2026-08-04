@@ -22,6 +22,15 @@ Examples:
     npx bddgen -c path/to/playwright.config.ts && npx playwright test -c path/to/playwright.config.ts
     ```
 
+* Use the `--watch` option to regenerate test files after changes in features, steps, or their dependencies:
+    ```
+    npx bddgen --watch
+    ```
+
+  Watch mode observes the nearest package directory containing the Playwright config. This works without extra configuration when the config is in a subdirectory such as `configs/` or `tests/`. Use [`watch.extraPaths`](configuration/options.md#watch) for dependencies outside that package and `watch.ignorePaths` for exclusions. Generated output directories are always excluded.
+
+  Concurrent `bddgen` commands targeting the same output directory are serialized. A command waits for active generation to finish instead of clearing or writing generated files concurrently.
+
 * Use `-h` to show help:
     ```
     npx bddgen test -h

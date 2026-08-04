@@ -1,0 +1,52 @@
+# Watch Mode
+
+Watch mode automatically regenerates test files when your feature files and step files change.
+
+## Start watch mode
+
+Run `bddgen` with `--watch`:
+
+```sh
+npx bddgen --watch
+```
+
+The initial generation runs immediately. After that, `bddgen` waits for changes and regenerates the tests. If generation fails, watch mode stays active and retries after the next change.
+
+All regular CLI options remain available. For example:
+
+```sh
+npx bddgen --watch -c configs/playwright.config.ts --tags "@smoke"
+```
+
+## Watched files
+
+By default, `bddgen` watches the nearest `package.json` directory, resolved from the Playwright config.
+
+All file types are watched because step definitions can depend on any module in the package. Some directories are always ignored: `.git`, `node_modules`, and generated output directories.
+
+Use `watch.extraPaths` to watch additional paths and `watch.ignorePaths` to ignore some paths:
+
+```ts
+const testDir = defineBddConfig({
+  watch: {
+    extraPaths: ['../shared-steps'],
+    ignorePaths: ['fixtures/downloads'],
+  },
+});
+```
+
+These options accept plain filesystem paths, not glob patterns, and are resolved relative to the Playwright config. See the [watch configuration options](configuration/options.md#watch) for details.
+
+## Source maps
+
+[Source maps](configuration/options.md#generatesourcemaps) are a great companion for watch mode. Generated tests stay synchronized as you edit, while Playwright reports and editor integrations can point back to the corresponding locations in feature files.
+
+```ts
+const testDir = defineBddConfig({
+  generateSourceMaps: true,
+});
+```
+
+## Concurrent generation
+
+By default, `bddgen` coordinates concurrent generation for the same output directory. This is mainly useful when you manually run `bddgen` while `bddgen --watch` is active in another terminal. If the default behavior causes problems in your environment, see the [`lockFile` option](configuration/options.md#lockfile).

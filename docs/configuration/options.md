@@ -31,6 +31,47 @@ Resolved relative to the config file location.
 
 Directory to output generated test files. Resolved relative to the config file location.
 
+## lockFile
+
+- **Type:** `boolean`
+- **Default:** `true`
+
+Prevents concurrent `bddgen` processes from writing to the same output directory. If another generation is already using that directory, `bddgen` waits for it to finish. It is mainly designed for cases where you run `bddgen` while `bddgen --watch` is running in another terminal.
+
+If you encounter problems with the default lock-file behavior in your environment, set this option to `false` to disable lock-file creation and checking:
+
+```ts
+const testDir = defineBddConfig({
+  lockFile: false,
+});
+```
+
+With locking disabled, `bddgen` assumes that generation is coordinated externally and only one process writes to each output directory at a time. Concurrent generation without locking can produce inconsistent output.
+
+## watch
+
+- **Type:** `object`
+  - `extraPaths` *string[]* - Extra files or directories to watch. These paths do not replace the default package root.
+  - `ignorePaths` *string[]* - Files or directories to ignore under any watched root.
+- **Default:** `undefined`
+
+Options for [`bddgen --watch`](cli.md). By default, watch mode observes the nearest `package.json` directory, resolved from the Playwright config.
+
+Use `extraPaths` to watch dependencies outside that directory and `ignorePaths` to exclude paths. Both options are additive and resolved relative to the Playwright config location:
+
+```ts
+const testDir = defineBddConfig({
+  features: 'features/**/*.feature',
+  steps: 'steps/**/*.ts',
+  watch: {
+    extraPaths: ['../shared-test-utils'],
+    ignorePaths: ['fixtures/large-data', 'src/generated'],
+  },
+});
+```
+
+These options accept plain filesystem paths, not glob patterns. Ignoring a directory also ignores all its descendants. The `.git` and `node_modules` directories and configured output directories are always ignored and cannot be re-enabled.
+
 ## generateSourceMaps
 
 - **Type:** `boolean`

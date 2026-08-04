@@ -50,7 +50,8 @@
 * **Guides**
   - [Authentication](guides/authentication.md)
   - [Ignore generated files](guides/ignore-generated-files.md)
-  - [UI Mode & Watch](guides/ui-mode.md)
+  - [Watch Mode](guides/watch-mode.md)
+  - [UI Mode](guides/ui-mode.md)
   - [Debugging](guides/debugging.md)
   - [Fix with AI](guides/fix-with-ai.md)
   - [Environment variables](guides/env-vars.md)

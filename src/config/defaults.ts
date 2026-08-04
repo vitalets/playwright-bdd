@@ -10,6 +10,7 @@ export const defaults: Required<
     | 'language'
     | 'missingSteps'
     | 'arityCheck'
+    | 'lockFile'
   >
 > = {
   outputDir: '.features-gen',
@@ -19,4 +20,5 @@ export const defaults: Required<
   language: 'en',
   missingSteps: 'fail-on-gen',
   arityCheck: true,
+  lockFile: true,
 };

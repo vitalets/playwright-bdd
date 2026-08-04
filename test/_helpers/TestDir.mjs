@@ -34,6 +34,12 @@ export class TestDir {
     if (fs.existsSync(absPath)) fs.rmSync(absPath, { recursive: true });
   }
 
+  writeFile(relativePath, content) {
+    const absPath = this.getAbsPath(relativePath);
+    fs.mkdirSync(path.dirname(absPath), { recursive: true });
+    fs.writeFileSync(absPath, `${content}\n`);
+  }
+
   isFileExists(relativePath) {
     const absPath = this.getAbsPath(relativePath);
     return fs.existsSync(absPath);

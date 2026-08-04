@@ -5,6 +5,7 @@
 ## [Unreleased]
 * feat: support multiple aliases for step definitions
 * feat: add opt-in source maps for running feature-file scenarios from VS Code ([#297](https://github.com/vitalets/playwright-bdd/issues/297))
+* feat: add native `bddgen --watch` mode with cross-process generation locking and a `lockFile` configuration option
 
 ## [9.2.0] - 2026-06-18
 * feat: include CI information in Cucumber reports

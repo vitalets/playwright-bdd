@@ -1,22 +1,12 @@
-# UI Mode & Watching
+# UI Mode
 
-You can automatically regenerate test files on any change in features or step definitions. Use [nodemon](https://github.com/remy/nodemon) to watch directories and call `npx bddgen`:
-```
-npx nodemon -w ./features -e feature,js,ts --exec "npx bddgen"
-```
+To debug generated tests in [Playwright UI Mode](https://playwright.dev/docs/test-ui-mode):
 
-To debug tests in [UI Mode](https://playwright.dev/docs/test-ui-mode), run the above command together with `npx playwright test --ui`. You can utilize [npm-run-all](https://github.com/mysticatea/npm-run-all) package for that. Example `package.json`:
+1. Enable [watch mode](guides/watch-mode.md) to keep generated tests up to date.
+2. In another terminal, start Playwright UI Mode:
 
-```json
-"scripts": {
-  "watch:bdd": "npx nodemon -w ./features -e feature,js,ts --exec \"npx bddgen\"",
-  "watch:pw": "npx playwright test --ui",
-  "watch": "run-p watch:*"
-}
-```
-Running:
 ```sh
-npm run watch
+npx playwright test --ui
 ```
 
 ![ui-mode](./_media/ui-mode.png)

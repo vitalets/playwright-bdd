@@ -14,12 +14,16 @@ import { setBddGenPhase } from '../helpers/bddgenPhase';
 import { showWarnings } from '../../config/warnings';
 import { pMap } from '../../utils/p-map';
 import { Logger } from '../../utils/logger';
+import { WatchController } from '../watch/controller';
+import { sendWatchMetadata } from '../watch/ipc';
+import { withLock } from '../lock';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
 type TestCommandOptions = ConfigOption & {
   tags?: string;
   verbose?: string;
+  watch?: boolean;
 };
 
 export const testCommand = new Command('test')
@@ -27,15 +31,25 @@ export const testCommand = new Command('test')
   .configureHelp({ showGlobalOptions: true })
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
+  .option('--watch', `Watch mode (default: false)`)
   .action(async () => {
     const opts = testCommand.optsWithGlobals<TestCommandOptions>();
+    if (opts.watch) {
+      await new WatchController().run();
+      return;
+    }
+
     setBddGenPhase();
-    await loadPlaywrightConfig(opts.config);
+    const { resolvedConfigFile } = await loadPlaywrightConfig(opts.config);
     const configs = readConfigsFromEnv();
     mergeCliOptions(configs, opts);
+    sendWatchMetadata(configs, resolvedConfigFile);
     const isVerbose = hasVerboseFlag(configs);
 
-    await generateFilesForConfigs(configs);
+    await withLock(
+      configs.filter((config) => config.lockFile).map((config) => config.outputDir),
+      () => generateFilesForConfigs(configs),
+    );
 
     if (isVerbose) printDone();
   });

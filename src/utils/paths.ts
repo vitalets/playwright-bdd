@@ -18,6 +18,16 @@ export function relativeToCwd(absPath: string) {
   return path.isAbsolute(absPath) ? path.relative(process.cwd(), absPath) : absPath;
 }
 
+export function isPathInside(parent: string, child: string) {
+  const relativePath = path.relative(parent, child);
+  return (
+    relativePath === '' ||
+    (!relativePath.startsWith(`..${path.sep}`) &&
+      relativePath !== '..' &&
+      !path.isAbsolute(relativePath))
+  );
+}
+
 /**
  * Resolves patterns to list of files.
  * Extension can be a list: {js,ts}
