@@ -34,19 +34,19 @@ Directory to output generated test files. Resolved relative to the config file l
 ## lockFile
 
 - **Type:** `boolean`
-- **Default:** `true`
+- **Default:** `false`
 
 Prevents concurrent `bddgen` processes from writing to the same output directory. If another generation is already using that directory, `bddgen` waits for it to finish. It is mainly designed for cases where you run `bddgen` while `bddgen --watch` is running in another terminal.
 
-If you encounter problems with the default lock-file behavior in your environment, set this option to `false` to disable lock-file creation and checking:
+When using [`bddgen --watch`](cli.md), we recommend setting this option to `true`:
 
 ```ts
 const testDir = defineBddConfig({
-  lockFile: false,
+  lockFile: true,
 });
 ```
 
-With locking disabled, `bddgen` assumes that generation is coordinated externally and only one process writes to each output directory at a time. Concurrent generation without locking can produce inconsistent output.
+This coordinates the watch process with any manual `bddgen` runs that use the same output directory. Without locking, concurrent generation can produce inconsistent output.
 
 ## watch
 

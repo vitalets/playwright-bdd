@@ -55,4 +55,12 @@ locations in the Playwright HTML report.
 
 ## Concurrent generation
 
-By default, `bddgen` coordinates concurrent generation for the same output directory. This is mainly useful when you manually run `bddgen` while `bddgen --watch` is active in another terminal. If the default behavior causes problems in your environment, see the [`lockFile` option](configuration/options.md#lockfile).
+When using watch mode, we recommend enabling the [`lockFile` option](configuration/options.md#lockfile):
+
+```ts
+const testDir = defineBddConfig({
+  lockFile: true,
+});
+```
+
+This coordinates generation when you manually run `bddgen` while `bddgen --watch` is active in another terminal.

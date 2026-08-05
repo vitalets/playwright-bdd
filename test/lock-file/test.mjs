@@ -36,7 +36,10 @@ test(`${testDir.name} (recovers stale lock)`, () => {
   createLockFile({ pid: PID_THAT_DOES_NOT_EXIST });
 
   try {
-    execPlaywrightTest(testDir.name, BDDGEN_CMD);
+    execPlaywrightTest(testDir.name, {
+      cmd: BDDGEN_CMD,
+      env: { BDDGEN_TEST_LOCK_FILE: 'true' },
+    });
     testDir.expectFileExists(outputFile);
     testDir.expectFileNotExist(lockFile);
   } finally {
@@ -44,16 +47,13 @@ test(`${testDir.name} (recovers stale lock)`, () => {
   }
 });
 
-test(`${testDir.name} (disabled)`, () => {
+test(`${testDir.name} (disabled by default)`, () => {
   testDir.clearDir(outputDir);
   createLockFile();
 
   try {
     // Disabled locking bypasses both lock creation and checks of an existing lock.
-    execPlaywrightTest(testDir.name, {
-      cmd: BDDGEN_CMD,
-      env: { BDDGEN_TEST_LOCK_FILE: 'false' },
-    });
+    execPlaywrightTest(testDir.name, BDDGEN_CMD);
     testDir.expectFileExists(outputFile);
     testDir.expectFileExists(lockFile);
   } finally {
@@ -69,7 +69,7 @@ function startBddgenProcess() {
   const [command, ...args] = BDDGEN_CMD.split(' ');
   const child = spawn(command, args, {
     cwd: lockFileDir,
-    env: process.env,
+    env: { ...process.env, BDDGEN_TEST_LOCK_FILE: 'true' },
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   let output = '';

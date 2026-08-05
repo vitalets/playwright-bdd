@@ -20,5 +20,5 @@ export const defaults: Required<
   language: 'en',
   missingSteps: 'fail-on-gen',
   arityCheck: true,
-  lockFile: true,
+  lockFile: false,
 };
