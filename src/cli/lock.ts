@@ -20,7 +20,7 @@ type LockOwner = {
   createdAt: number;
   /** Process ID used to determine whether the lock owner is still running. */
   pid: number;
-  /** Unique ownership ID used to avoid releasing a lock replaced by another process. */
+  /** PID checks if the process is alive; token ensures we only remove the lock we created. */
   token: string;
 };
 
