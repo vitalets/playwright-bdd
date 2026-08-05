@@ -203,6 +203,7 @@ export class TestFile {
       featureToTestMapper: this.featureToTestMapper,
     });
     this.lines.push(
+      '',
       `// Source hash: ${this.sourceMap.hash}`,
       `//# sourceMappingURL=${path.basename(this.sourceMap.outputPath)}`,
     );

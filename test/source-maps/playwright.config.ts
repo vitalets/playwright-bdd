@@ -10,6 +10,7 @@ export default defineConfig({
   testDir,
   reporter: [
     ['line'],
+    ['../_helpers/rawJsonReporter.ts', { outputDir: 'actual-reports/raw-json' }],
     cucumberReporter('message', { outputFile: 'actual-reports/messages.ndjson' }),
   ],
 });

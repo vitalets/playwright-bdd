@@ -42,4 +42,27 @@ test(testDir.name, () => {
     `// Source hash: ${sourceHash}`,
     '//# sourceMappingURL=source-maps.feature.spec.js.map',
   ]);
+
+  checkReporterStepLocations();
 });
+
+function checkReporterStepLocations() {
+  const featureFile = testDir.getAbsPath('features/source-maps.feature');
+  const actualLocations = Object.fromEntries(
+    testDir
+      .getAllFiles('actual-reports/raw-json')
+      .flatMap(
+        (file) => JSON.parse(testDir.getFileContents(`actual-reports/raw-json/${file}`)).steps,
+      )
+      .filter((step) => step.category === 'test.step')
+      .map((step) => [step.title, step.location]),
+  );
+
+  expect(actualLocations).toEqual({
+    'Given I log "scenario 1 message"': { file: featureFile, line: 4, column: 5 },
+    'Given I log "message1"': { file: featureFile, line: 7, column: 5 },
+    'Given I log "message2"': { file: featureFile, line: 7, column: 5 },
+    'Given I log "message4"': { file: featureFile, line: 15, column: 5 },
+    'Given I log "scenario 2 message"': { file: featureFile, line: 25, column: 7 },
+  });
+}

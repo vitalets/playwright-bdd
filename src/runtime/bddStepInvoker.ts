@@ -11,6 +11,7 @@ import { excludeStepAliases, formatDuplicateStepsMessage, StepFinder } from '../
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
 import { getStepHooksToRun, runStepHooks } from '../hooks/step';
+import { getSpecFileByFeatureFile } from '../generate/paths';
 
 export type BddStepFn = BddStepInvoker['invoke'];
 
@@ -39,9 +40,9 @@ export class BddStepInvoker {
     const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
     const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
 
-    // Get location of step call in generated test file.
+    // Search the generated file because testInfo.file may already point to the mapped feature.
     // This call must be exactly here to have correct call stack (before async calls)
-    const location = getLocationInFile(this.bddContext.testInfo.file);
+    const location = getStepLocation(this.bddContext);
 
     const stepParameters = await this.getStepParameters(
       matchedDefinition,
@@ -187,4 +188,14 @@ export class BddStepInvoker {
     }
     return bddStepData;
   }
+}
+
+/**
+ * Finds the current BDD step call in the generated spec file and returns its report location.
+ * Without source maps, the location points to the generated `.spec.js` file.
+ * With source maps, the stack frame is mapped back to the original `.feature` file.
+ */
+function getStepLocation({ config, featureUri }: BddContext) {
+  const generatedFile = getSpecFileByFeatureFile(config, featureUri);
+  return getLocationInFile(generatedFile);
 }

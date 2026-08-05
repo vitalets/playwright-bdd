@@ -1,5 +1,7 @@
 # Watch Mode
 
+<div style="color: gray; font-size: 0.9em">Since <b>v9.3.0</b></div>
+
 Watch mode automatically regenerates test files when your feature files and step files change.
 
 ## Start watch mode
@@ -39,8 +41,8 @@ These options accept plain filesystem paths, not glob patterns, and are resolved
 
 ## Source maps
 
-Source maps are a great companion for watch mode. When enabled, `bddgen` outputs source-maps for generated Playwright tests.
-You can enable it in the BDD configuration:
+Source maps are a great companion for watch mode. When enabled, `bddgen` keeps the mappings from
+generated Playwright tests to the original feature files up to date:
 
 ```ts
 const testDir = defineBddConfig({
@@ -48,13 +50,8 @@ const testDir = defineBddConfig({
 });
 ```
 
-With source maps enabled, the Playwright VS Code extension shows the original feature files and their scenarios in the Test Explorer tree instead of the generated test files.
-
-![Feature files and scenarios in the Playwright Test Explorer](./_media/source-maps-tree.png ':size=50%')
-
-You can also run or debug an individual scenario directly from a feature file by clicking the action in the editor gutter next to that scenario.
-
-![Run and debug scenario actions in a feature file gutter](./_media/source-maps-gutter.png ':size=50%')
+See the [source maps guide](guides/source-maps.md) for VS Code integration and feature-file
+locations in the Playwright HTML report.
 
 ## Concurrent generation
 
