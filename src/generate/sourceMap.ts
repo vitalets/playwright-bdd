@@ -5,12 +5,10 @@
  * This module combines those locations with the corresponding Gherkin locations and serializes the
  * result as `<generated-test>.map`. See featureToTestMapper.ts for a complete marker example.
  */
-import fs from 'node:fs';
 import path from 'node:path';
 import { Location } from '@cucumber/messages';
 import { SourceMapGenerator } from 'source-map';
 import { BDDConfig } from '../config/types';
-import { calculateSha1 } from '../utils';
 import { toPosixPath } from '../utils/paths';
 import { FeatureToTestMapper, GeneratedLocation } from './featureToTestMapper';
 import { TestGen } from './test';
@@ -24,6 +22,7 @@ type TestFileSourceMapOptions = {
   config: BDDConfig;
   outputPath: string;
   featureUri: string;
+  featureSource: string;
   tests: TestGen[];
   featureToTestMapper: FeatureToTestMapper;
 };
@@ -31,23 +30,19 @@ type TestFileSourceMapOptions = {
 export class TestFileSourceMap {
   readonly outputPath: string;
   readonly content: string;
-  readonly hash: string;
 
   constructor(private options: TestFileSourceMapOptions) {
     this.outputPath = `${options.outputPath}.map`;
     this.content = this.generate();
-    // Including the map hash in generated JS invalidates Playwright's transform cache
-    // when only feature locations change and generated test code stays the same.
-    this.hash = calculateSha1(this.content).slice(0, 8);
   }
 
   private generate() {
-    const { config, outputPath, featureUri, tests, featureToTestMapper } = this.options;
+    const { config, outputPath, featureUri, featureSource, tests, featureToTestMapper } =
+      this.options;
     const featurePath = path.resolve(config.configDir, featureUri);
     const sourcePath = toPosixPath(path.relative(path.dirname(this.outputPath), featurePath));
     const map = new SourceMapGenerator({ file: path.basename(outputPath) });
-    const sourceContent = fs.readFileSync(featurePath, 'utf8');
-    map.setSourceContent(sourcePath, sourceContent);
+    map.setSourceContent(sourcePath, featureSource);
 
     this.collectMappings(tests, featureToTestMapper).forEach(({ generated, original }) => {
       map.addMapping({

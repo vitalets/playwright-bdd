@@ -296,3 +296,11 @@ function sortFixtureNames(fixtureNames: string[]) {
     return a.localeCompare(b);
   });
 }
+
+export function renderContentHash(contentHash: string) {
+  return `// Source hash: ${contentHash}`;
+}
+
+export function renderSourceMapUrl(url: string) {
+  return `//# sourceMappingURL=${url}`;
+}

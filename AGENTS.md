@@ -1,5 +1,11 @@
 # Agent Rules
 
+## Reviewing implementation decisions
+
+- When the user asks about a decision, possibility, or alternative approach, investigate the relevant code without modifying files.
+- Present the findings and propose a concrete plan. When useful, include code snippets or diffs illustrating the available approaches.
+- Wait for the user to review the proposal and explicitly approve an approach before implementing it.
+
 - Ask clarifying questions if any requirement, behavior, or constraint is ambiguous. Do not start implementation until all open questions are resolved.
 - After any change to TypeScript files, run `npm run tsc`
 - After applying changes, query directory names from the `test` dir, guess tests that are relevant to the changes and run only these tests using the command: `npm run only -- test/<dir>/test.mjs`

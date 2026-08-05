@@ -82,6 +82,7 @@ export class TestFilesGenerator {
         return new TestFile({
           config: this.config,
           gherkinDocument,
+          featureSource: this.featuresLoader.getSourceContent(gherkinDocument.uri!),
           tagsExpression: this.tagsExpression,
         }).build();
       })

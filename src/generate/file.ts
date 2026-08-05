@@ -14,7 +14,7 @@ import {
   Rule,
 } from '@cucumber/messages';
 import path from 'node:path';
-import { Formatter } from './formatter';
+import { Formatter, renderContentHash, renderSourceMapUrl } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { parse as parseTagsExpression } from '@cucumber/tag-expressions';
 import { LANG_EN, isEnglish } from '../config/lang';
@@ -35,12 +35,13 @@ import { StepData, TestGen } from './test';
 import { FeatureToTestMapper } from './featureToTestMapper';
 import { BddDataRenderer } from '../bddData/renderer';
 import { supportedFeatures } from '../playwright/supportedFeatures';
-import { removeDuplicates } from '../utils';
+import { calculateSha1, removeDuplicates } from '../utils';
 import { TestFileSourceMap } from './sourceMap';
 
 type TestFileOptions = {
   config: BDDConfig;
   gherkinDocument: GherkinDocumentWithPickles;
+  featureSource: string;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
 };
 
@@ -120,7 +121,6 @@ export class TestFile {
     this.renderInplaceBackgrounds();
 
     this.lines.push(...this.renderTechnicalSection());
-    if (this.config.sourceMaps) this.renderSourceMap();
 
     return this;
   }
@@ -169,8 +169,9 @@ export class TestFile {
 
   private renderTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
-    this.featureToTestMapper = new FeatureToTestMapper(this.lines);
-    const bddDataRenderer = new BddDataRenderer(this.tests, this.featureToTestMapper);
+    const featureToTestMapper = new FeatureToTestMapper(this.lines);
+    const bddDataRenderer = new BddDataRenderer(this.tests, featureToTestMapper);
+    this.createSourceMap(featureToTestMapper);
 
     const testUse = this.formatter.testUse([
       ...this.formatter.testFixture(),
@@ -189,24 +190,22 @@ export class TestFile {
       ...testUse,
       '',
       ...bddDataRenderer.renderVariable(),
+      '',
+      ...this.renderContentHash(),
+      ...this.renderSourceMapUrl(),
     ];
   }
 
-  private renderSourceMap() {
-    if (!this.featureToTestMapper) throw new Error(`Feature-to-test mapper is not initialized.`);
-
+  private createSourceMap(featureToTestMapper: FeatureToTestMapper) {
+    if (!this.config.sourceMaps) return;
     this.sourceMap = new TestFileSourceMap({
       config: this.config,
       outputPath: this.outputPath,
       featureUri: this.featureUri,
+      featureSource: this.options.featureSource,
       tests: this.tests,
-      featureToTestMapper: this.featureToTestMapper,
+      featureToTestMapper,
     });
-    this.lines.push(
-      '',
-      `// Source hash: ${this.sourceMap.hash}`,
-      `//# sourceMappingURL=${path.basename(this.sourceMap.outputPath)}`,
-    );
   }
 
   private renderRootSuite() {
@@ -404,5 +403,16 @@ export class TestFile {
       });
     });
     return usedPomFixtures;
+  }
+
+  private renderSourceMapUrl() {
+    if (!this.sourceMap) return [];
+    return [renderSourceMapUrl(path.basename(this.sourceMap.outputPath))];
+  }
+
+  private renderContentHash() {
+    const content = this.sourceMap?.content || this.options.featureSource;
+    const hash = calculateSha1(content).slice(0, 8);
+    return [renderContentHash(hash)];
   }
 }

@@ -52,6 +52,12 @@ export class FeaturesLoader {
     return this.gherkinQuery.getGherkinDocuments().length;
   }
 
+  getSourceContent(uri: string) {
+    const source = this.gherkinQuery.getSource(uri);
+    if (!source) throw new Error(`Source not found: ${uri}`);
+    return source.data;
+  }
+
   getDocumentsWithPickles(): GherkinDocumentWithPickles[] {
     const picklesByUri = new AutofillMap<string, Pickle[]>();
     for (const pickle of this.gherkinQuery.getPickles()) {
