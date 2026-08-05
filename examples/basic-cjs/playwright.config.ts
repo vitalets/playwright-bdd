@@ -13,6 +13,7 @@ export default defineConfig({
       outputFile: 'cucumber-report/index.html',
       externalAttachments: true,
     }),
+    ['html', { open: 'never' }],
   ],
   use: {
     screenshot: 'on',

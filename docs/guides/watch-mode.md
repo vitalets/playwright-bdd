@@ -39,13 +39,22 @@ These options accept plain filesystem paths, not glob patterns, and are resolved
 
 ## Source maps
 
-[Source maps](configuration/options.md#generatesourcemaps) are a great companion for watch mode. Generated tests stay synchronized as you edit, while Playwright reports and editor integrations can point back to the corresponding locations in feature files.
+Source maps are a great companion for watch mode. When enabled, `bddgen` outputs source-maps for generated Playwright tests.
+You can enable it in the BDD configuration:
 
 ```ts
 const testDir = defineBddConfig({
-  generateSourceMaps: true,
+  sourceMaps: true,
 });
 ```
+
+With source maps enabled, the Playwright VS Code extension shows the original feature files and their scenarios in the Test Explorer tree instead of the generated test files.
+
+![Feature files and scenarios in the Playwright Test Explorer](./_media/source-maps-tree.png ':size=50%')
+
+You can also run or debug an individual scenario directly from a feature file by clicking the action in the editor gutter next to that scenario.
+
+![Run and debug scenario actions in a feature file gutter](./_media/source-maps-gutter.png ':size=50%')
 
 ## Concurrent generation
 

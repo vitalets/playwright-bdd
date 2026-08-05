@@ -72,7 +72,7 @@ const testDir = defineBddConfig({
 
 These options accept plain filesystem paths, not glob patterns. Ignoring a directory also ignores all its descendants. The `.git` and `node_modules` directories and configured output directories are always ignored and cannot be re-enabled.
 
-## generateSourceMaps
+## sourceMaps
 
 - **Type:** `boolean`
 - **Default:** `false`
@@ -82,7 +82,7 @@ Playwright and editor integrations to display and select tests using feature-fil
 
 ```ts
 const testDir = defineBddConfig({
-  generateSourceMaps: true,
+  sourceMaps: true,
 });
 ```
 

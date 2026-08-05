@@ -4,7 +4,7 @@ export const defaults: Required<
   Pick<
     BDDInputConfig,
     | 'outputDir'
-    | 'generateSourceMaps'
+    | 'sourceMaps'
     | 'verbose'
     | 'quotes'
     | 'language'
@@ -14,7 +14,7 @@ export const defaults: Required<
   >
 > = {
   outputDir: '.features-gen',
-  generateSourceMaps: false,
+  sourceMaps: false,
   verbose: false,
   quotes: 'single',
   language: 'en',
