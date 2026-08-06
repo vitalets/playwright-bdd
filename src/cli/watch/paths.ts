@@ -10,21 +10,32 @@ type WatchPaths = {
 };
 
 export function resolveWatchPaths({
-  extraPaths,
-  ignorePaths,
+  packageRoot: includePackageRoot,
+  include,
+  exclude,
+  featurePatterns,
+  stepPatterns,
+  importTestFromFiles,
   outputDirs,
   resolvedConfigFile,
 }: WatchMetadata): WatchPaths {
   const configDir = path.dirname(resolvedConfigFile);
   const packageRoot = findNearestPackageRoot(configDir) ?? configDir;
+  const featureDirs = featurePatterns.map(findNearestExistingDirectory);
+  const stepDirs = stepPatterns.map(findNearestExistingDirectory);
+  const dependencyRoots = minimizePaths([...(includePackageRoot ? [packageRoot] : []), ...include]);
   const roots = minimizePaths(
-    [packageRoot, ...extraPaths].map((watchPath) =>
-      findNearestExistingPath(path.resolve(watchPath)),
-    ),
+    [
+      resolvedConfigFile,
+      ...featureDirs,
+      ...stepDirs,
+      ...importTestFromFiles.map(findNearestExistingPath),
+      ...dependencyRoots,
+    ].map((watchPath) => findNearestExistingPath(path.resolve(watchPath))),
   );
   return {
     roots,
-    ignoredPaths: minimizePaths([...outputDirs, ...ignorePaths]),
+    ignoredPaths: minimizePaths([...outputDirs, ...exclude]),
   };
 }
 
@@ -46,6 +57,16 @@ function findNearestExistingPath(candidate: string) {
     currentPath = parentPath;
   }
   return currentPath;
+}
+
+function findNearestExistingDirectory(candidate: string) {
+  let currentPath = candidate;
+  while (true) {
+    if (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory()) return currentPath;
+    const parentPath = path.dirname(currentPath);
+    if (parentPath === currentPath) return currentPath;
+    currentPath = parentPath;
+  }
 }
 
 function minimizePaths(candidates: string[]) {

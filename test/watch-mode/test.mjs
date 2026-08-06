@@ -39,17 +39,17 @@ test(testDir.name, async () => {
   }
 });
 
-test(`${testDir.name} (extra paths)`, async () => {
+test(`${testDir.name} (include paths)`, async () => {
   testDir.clearDir(outputDir);
   createInputFiles();
   const extraWatchPath = fs.mkdtempSync(path.join(os.tmpdir(), 'bddgen-watch-'));
   createExternalFile(extraWatchPath);
   const watchProcess = startWatchProcess({
-    env: { BDDGEN_TEST_EXTRA_WATCH_PATH: extraWatchPath },
+    env: { BDDGEN_TEST_INCLUDE_WATCH_PATH: extraWatchPath },
   });
 
   try {
-    // An explicitly configured path outside the package root also triggers generation.
+    // An explicitly configured path outside the nearest package.json directory also triggers generation.
     await watchProcess.waitForOutput(GENERATION_COMPLETED);
     await changeAndWait(watchProcess, () => {
       createExternalFile(extraWatchPath, { footer: '// external dependency changed' });
@@ -60,12 +60,12 @@ test(`${testDir.name} (extra paths)`, async () => {
   }
 });
 
-test(`${testDir.name} (ignore paths)`, async () => {
+test(`${testDir.name} (exclude paths)`, async () => {
   testDir.clearDir(outputDir);
   testDir.clearDir('ignored');
   createInputFiles();
   const watchProcess = startWatchProcess({
-    env: { BDDGEN_TEST_IGNORE_WATCH_PATH: 'ignored' },
+    env: { BDDGEN_TEST_EXCLUDE_WATCH_PATH: 'ignored' },
   });
 
   try {

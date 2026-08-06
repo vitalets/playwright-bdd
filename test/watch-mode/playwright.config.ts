@@ -1,13 +1,13 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
-const extraWatchPath = process.env.BDDGEN_TEST_EXTRA_WATCH_PATH;
-const ignoreWatchPath = process.env.BDDGEN_TEST_IGNORE_WATCH_PATH;
+const includeWatchPath = process.env.BDDGEN_TEST_INCLUDE_WATCH_PATH;
+const excludeWatchPath = process.env.BDDGEN_TEST_EXCLUDE_WATCH_PATH;
 const watch =
-  extraWatchPath || ignoreWatchPath
+  includeWatchPath || excludeWatchPath
     ? {
-        ...(extraWatchPath ? { extraPaths: [extraWatchPath] } : {}),
-        ...(ignoreWatchPath ? { ignorePaths: [ignoreWatchPath] } : {}),
+        ...(includeWatchPath ? { include: [includeWatchPath] } : {}),
+        ...(excludeWatchPath ? { exclude: [excludeWatchPath] } : {}),
       }
     : undefined;
 const testDir = defineBddConfig({

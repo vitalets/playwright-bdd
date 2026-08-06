@@ -107,8 +107,9 @@ function resolveImportTestFrom(
 function resolveWatch(configDir: string, watch: BDDInputConfig['watch']) {
   if (!watch) return;
   return {
-    extraPaths: watch.extraPaths?.map((watchPath) => path.resolve(configDir, watchPath)),
-    ignorePaths: watch.ignorePaths?.map((watchPath) => path.resolve(configDir, watchPath)),
+    packageRoot: watch.packageRoot,
+    include: watch.include?.map((watchPath) => path.resolve(configDir, watchPath)),
+    exclude: watch.exclude?.map((watchPath) => path.resolve(configDir, watchPath)),
   };
 }
 

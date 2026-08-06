@@ -51,26 +51,28 @@ This coordinates the watch process with any manual `bddgen` runs that use the sa
 ## watch
 
 - **Type:** `object`
-  - `extraPaths` *string[]* - Extra files or directories to watch. These paths do not replace the default package root.
-  - `ignorePaths` *string[]* - Files or directories to ignore under any watched root.
+  - `packageRoot` *boolean* - Whether to watch the nearest `package.json` directory. Defaults to `true`.
+  - `include` *string[]* - Additional files or directories to watch.
+  - `exclude` *string[]* - Files or directories to exclude under any watched root.
 - **Default:** `undefined`
 
-Options for [`bddgen --watch`](cli.md). By default, watch mode observes the nearest `package.json` directory, resolved from the Playwright config.
+Options for [`bddgen --watch`](cli.md). Watch mode always observes the exact Playwright config file and the nearest existing directories derived from configured feature and step patterns. It also observes the nearest `package.json` directory by default.
 
-Use `extraPaths` to watch dependencies outside that directory and `ignorePaths` to exclude paths. Both options are additive and resolved relative to the Playwright config location:
+Use `include` for dependencies outside those locations, `exclude` to exclude paths, and `packageRoot: false` to disable the nearest `package.json` directory. Included and excluded paths are resolved relative to the Playwright config location:
 
 ```ts
 const testDir = defineBddConfig({
   features: 'features/**/*.feature',
   steps: 'steps/**/*.ts',
   watch: {
-    extraPaths: ['../shared-test-utils'],
-    ignorePaths: ['fixtures/large-data', 'src/generated'],
+    packageRoot: false,
+    include: ['src', '../shared-test-utils'],
+    exclude: ['fixtures/large-data', 'src/generated'],
   },
 });
 ```
 
-These options accept plain filesystem paths, not glob patterns. Ignoring a directory also ignores all its descendants. The `.git` and `node_modules` directories and configured output directories are always ignored and cannot be re-enabled.
+The `include` and `exclude` options accept plain filesystem paths, not glob patterns. Excluding a directory also excludes all its descendants, including configured feature or step directories. The `.git` and `node_modules` directories and configured output directories are always excluded and cannot be re-enabled.
 
 ## sourceMaps
 

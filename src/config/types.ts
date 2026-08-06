@@ -54,10 +54,12 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   disableWarnings?: DisableWarningsConfig;
   /** Watch mode options */
   watch?: {
-    /** Extra file or directory paths to watch outside the package root. Globs are not supported. */
-    extraPaths?: string[];
-    /** File or directory paths to ignore. Globs are not supported. */
-    ignorePaths?: string[];
+    /** Watch the nearest `package.json` directory. */
+    packageRoot?: boolean;
+    /** Additional file or directory paths to watch. Globs are not supported. */
+    include?: string[];
+    /** File or directory paths to exclude. Globs are not supported. */
+    exclude?: string[];
   };
   /** Behavior for missing step definitions */
   missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
