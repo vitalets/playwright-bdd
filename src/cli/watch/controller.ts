@@ -5,7 +5,7 @@ import chokidar, { FSWatcher } from 'chokidar';
 import { resolveWatchPaths } from './paths';
 import { WATCH_CHILD_ENV, WatchMetadata, WatchMetadataMessage } from './ipc';
 import { logger } from '../../utils/logger';
-import { isPathInside, relativeToCwd } from '../../utils/paths';
+import { isPathInside } from '../../utils/paths';
 
 const DEBOUNCE_MS = 100;
 const CLI_PATH = path.resolve(__dirname, '..', 'index.js');
@@ -98,13 +98,8 @@ export class WatchController {
   }
 
   private logWatchRoots(roots: string[]) {
-    const relativeRoots = roots.map((root) => relativeToCwd(root) || '.');
-    if (relativeRoots.length === 1) {
-      logger.warn(`Watching for changes in: ${relativeRoots[0]}`);
-      return;
-    }
     logger.warn('Watching for changes in:');
-    relativeRoots.forEach((root) => logger.warn(`  - ${root}`));
+    roots.forEach((root) => logger.warn(`- ${root}`));
   }
 
   private hasSameWatchPaths(nextWatchPaths: WatchPaths) {

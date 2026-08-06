@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { test, expect, TestDir } from '../_helpers/index.mjs';
+import { test, expect, normalize, TestDir } from '../_helpers/index.mjs';
 import { startWatchProcess } from './helpers/startWatchProcess.mjs';
 
 const testDir = new TestDir(import.meta);
@@ -123,7 +123,7 @@ function writeDependencyFile({ footer = '' } = {}) {
 
 async function verifyInitialGeneration(watchProcess) {
   await watchProcess.waitForOutput(GENERATION_COMPLETED);
-  expect(watchProcess.output).toContain('Watching for changes in: .');
+  expect(watchProcess.output).toContain(normalize('test/watch-mode'));
   testDir.expectFileExists(outputFile);
   testDir.expectFileContains(outputFile, 'Initial scenario');
 }
