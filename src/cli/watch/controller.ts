@@ -5,7 +5,7 @@ import chokidar, { FSWatcher } from 'chokidar';
 import { resolveWatchPaths } from './paths';
 import { WATCH_CHILD_ENV, WatchMetadata, WatchMetadataMessage } from './ipc';
 import { logger } from '../../utils/logger';
-import { isPathInside } from '../../utils/paths';
+import { isPathInside, relativeToCwd } from '../../utils/paths';
 
 const DEBOUNCE_MS = 100;
 const CLI_PATH = path.resolve(__dirname, '..', 'index.js');
@@ -14,6 +14,7 @@ type WatchPaths = ReturnType<typeof resolveWatchPaths>;
 
 export class WatchController {
   private activeChild?: ChildProcess;
+  private changedFiles = new Set<string>();
   private closePromise?: Promise<void>;
   private debounceTimer?: NodeJS.Timeout;
   private dirty = false;
@@ -33,7 +34,7 @@ export class WatchController {
   }
 
   private startRebuild(isInitial = false) {
-    if (!isInitial) logger.warn('Changes detected. Regenerating...');
+    if (!isInitial) this.logDetectedChanges();
     this.watcherUpdate = undefined;
     const child = fork(CLI_PATH, this.getChildArgs(), {
       env: this.getRebuildEnv(),
@@ -88,7 +89,9 @@ export class WatchController {
       ignored: (filePath) => this.isIgnored(filePath),
     });
     let isReady = false;
-    watcher.on('all', () => this.scheduleRebuild());
+    watcher.on('add', (filePath) => this.scheduleRebuild(filePath));
+    watcher.on('change', (filePath) => this.scheduleRebuild(filePath));
+    watcher.on('unlink', (filePath) => this.scheduleRebuild(filePath));
     watcher.once('ready', () => (isReady = true));
     // Attach before initialization finishes, but let updateWatcher report startup errors once.
     watcher.on('error', (error) => {
@@ -118,8 +121,9 @@ export class WatchController {
     );
   }
 
-  private scheduleRebuild() {
+  private scheduleRebuild(changedFile?: string) {
     if (this.closePromise) return;
+    if (changedFile) this.changedFiles.add(path.resolve(changedFile));
     if (this.activeChild) {
       this.dirty = true;
       return;
@@ -129,6 +133,17 @@ export class WatchController {
       this.debounceTimer = undefined;
       this.startRebuild();
     }, DEBOUNCE_MS);
+  }
+
+  private logDetectedChanges() {
+    const [firstFile] = this.changedFiles;
+    const remainingCount = this.changedFiles.size - 1;
+    this.changedFiles.clear();
+    const remaining = remainingCount > 0 ? ` (+${remainingCount} more)` : '';
+    logger.warn(
+      firstFile ? `Changes detected: ${relativeToCwd(firstFile)}${remaining}` : 'Changes detected.',
+    );
+    logger.warn('Regenerating...');
   }
 
   private async handleRebuildExit(child: ChildProcess, exitCode: number | null) {

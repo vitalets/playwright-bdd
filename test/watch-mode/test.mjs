@@ -143,9 +143,10 @@ async function verifyIgnoredPathChange(watchProcess) {
 }
 
 async function verifyFeatureChange(watchProcess) {
-  await changeAndWait(watchProcess, () => {
+  const output = await changeAndWait(watchProcess, () => {
     writeFeatureFile({ footer: '    And state 2' });
   });
+  expectChangedFile(output, featureFile);
   testDir.expectFileContains(outputFile, 'And state 2');
 }
 
@@ -177,4 +178,9 @@ async function changeAndWait(watchProcess, change, expected = GENERATION_COMPLET
   const outputOffset = watchProcess.output.length;
   change();
   await watchProcess.waitForOutput(expected, outputOffset);
+  return watchProcess.output.slice(outputOffset);
+}
+
+function expectChangedFile(output, file) {
+  expect(output).toContain(`Changes detected: ${normalize(file)}\nRegenerating...`);
 }
