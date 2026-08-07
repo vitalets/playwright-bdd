@@ -146,7 +146,8 @@ export class TestFilesGenerator {
     const patterns = [`${outputDirPattern}/**/*.spec.js`, `${outputDirPattern}/**/*.spec.js.map`];
     const testFiles = await tg.glob(patterns, { expandDirectories: false });
     this.logger.logClearingOutputDir(patterns.join(', '));
-    const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
+    // Using { force: true } to suppress an error, if file not found.
+    const tasks = testFiles.map((testFile) => fs.promises.rm(testFile, { force: true }));
     await Promise.all(tasks);
   }
 
