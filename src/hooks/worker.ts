@@ -55,8 +55,7 @@ export type WorkerHookRunInfo = {
  * See: https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/api_reference.md#afteralloptions-fn
  */
 type WorkerHookDefinitionArgs<Fixtures> =
-  | [WorkerHookFn<Fixtures>]
-  | [WorkerHookOptions, WorkerHookFn<Fixtures>];
+  [WorkerHookFn<Fixtures>] | [WorkerHookOptions, WorkerHookFn<Fixtures>];
 
 const workerHooks: WorkerHook[] = [];
 
