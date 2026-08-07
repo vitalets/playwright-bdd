@@ -115,7 +115,7 @@ Feel free to report a bug, propose a feature or share your experience:
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## Other Playwright tools
+## My Other Playwright tools
 
 * [playwright-timeline-reporter](https://github.com/vitalets/playwright-timeline-reporter) - Interactive timeline report for Playwright test runs.
 * [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
