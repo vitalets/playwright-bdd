@@ -7,7 +7,11 @@ description: 'Enforces Behavior Driven Development. Use when: implementing new f
 
 ## Phase 0: BDD Necessity Check
 
-Before writing or modifying any feature files, **ask the user** whether a BDD spec is required for this change and wait for confirmation. If the user says no, skip the BDD workflow entirely.
+For every user-requested task that may affect product behavior, first determine whether the change should be specified or updated in BDD scenarios.
+
+* If the task is pure refactoring or a minor implementation change, continue with the task without creating or modifying any `.feature` files.
+* Otherwise, **ask the user whether BDD scenarios should be added or updated for this change and wait for confirmation**.
+* If it is unclear whether the change requires new or updated BDD scenarios, always ask.
 
 ## Phase 1: Planning
 
@@ -53,7 +57,7 @@ npx bddgen && npx playwright test .features-gen/@homepage/homepage.feature.spec.
   Bad: `When('I click {string} on {string}', ...)`
   Good: `When('I click the "Add" button in the product list', ...)`\
 
-- **For multiple similar actions, use single step with a data table instead of multiple steps.** When a scenario involves providing several values of the same kind (e.g. filling form fields, adding list items), consolidate them into one step with a DataTable rather than repeating a step for each value.
+- **For multiple similar actions, prefer single step with a data table instead of multiple steps.** When a scenario involves providing several values of the same kind (e.g. filling form fields, adding list items), consolidate them into one step with a DataTable rather than repeating a step for each value.
   Bad:
   ```gherkin
   When I fill "Name" with "Alice"
@@ -67,6 +71,10 @@ npx bddgen && npx playwright test .features-gen/@homepage/homepage.feature.spec.
     | Email | alice@example.com |
     | Role  | Admin             |
   ```
+
+- **Add a short description to every feature.** Immediately below each `Feature:` line, add an indented one- or two-sentence description of the feature's main user-facing purpose. Use simple, concrete statements and the project's existing domain terms. Describe the feature as a whole; do not list scenarios, edge cases, or implementation details. Leave a blank line before and after the description.
+
+- **Append new scenarios.** When adding a scenario to an existing feature file, place it after all existing scenarios. Do not insert it at the beginning or between existing scenarios unless the user explicitly requests a specific location.
 
 ## Scoped Step Definitions
 
@@ -93,6 +101,8 @@ Steps defined inside `features/@homepage/steps.ts` are automatically scoped to f
 
 ```gherkin
 Feature: Shopping cart
+
+  Customers can collect products they intend to buy and review the current cart contents.
 
   Scenario: Add item to cart
     Given I am on a product page
