@@ -25,7 +25,7 @@ Checking step files at:
   - project1/**/*.{js,mjs,cjs,ts,mts,cts}
 Found step files (1):
   - project1/steps.ts (1 step)
-Clearing output directory: .features-gen/project1/**/*.spec.js
+Clearing output directory: .features-gen/project1/**/*.spec.js{,.map}
 Generating Playwright test files (1):
   - .features-gen/project1/sample.feature.spec.js
 Done
@@ -50,7 +50,7 @@ Checking feature files at:
   - project1/**/*.feature
 Found feature files (1):
   - project1/sample.feature
-Clearing output directory: .features-gen/project1/**/*.spec.js
+Clearing output directory: .features-gen/project1/**/*.spec.js{,.map}
 Generating Playwright test files (1):
   - .features-gen/project1/sample.feature.spec.js
 Checking feature files at:
@@ -62,7 +62,7 @@ Checking step files at:
 Found step files (2):
   - project2/steps1.ts (1 step)
   - project2/steps2.ts (2 steps)
-Clearing output directory: .features-gen/project2/**/*.spec.js
+Clearing output directory: .features-gen/project2/**/*.spec.js{,.map}
 Generating Playwright test files (1):
   - .features-gen/project2/sample.feature.spec.js
 Done
