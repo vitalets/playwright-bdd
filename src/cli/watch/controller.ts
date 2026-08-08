@@ -2,10 +2,11 @@ import path from 'node:path';
 import { ChildProcess, fork } from 'node:child_process';
 import { once } from 'node:events';
 import chokidar, { FSWatcher } from 'chokidar';
-import { resolveWatchPaths } from './paths';
+import { areWatchPathsEqual, resolveWatchPaths } from './paths';
 import { WATCH_CHILD_ENV, WatchMetadata, WatchMetadataMessage } from './ipc';
 import { logger } from '../../utils/logger';
 import { isPathInside, relativeToCwd } from '../../utils/paths';
+import { isWatchedFile } from './fileFilter';
 
 const DEBOUNCE_MS = 100;
 const CLI_PATH = path.resolve(__dirname, '..', 'index.js');
@@ -71,7 +72,7 @@ export class WatchController {
 
   private async updateWatcher(metadata: WatchMetadata) {
     const nextWatchPaths = resolveWatchPaths(metadata);
-    if (this.hasSameWatchPaths(nextWatchPaths)) return;
+    if (areWatchPathsEqual(this.watchPaths, nextWatchPaths)) return;
 
     this.watchPaths = nextWatchPaths;
     const previousWatcher = this.watcher;
@@ -89,9 +90,9 @@ export class WatchController {
       ignored: (filePath) => this.isIgnored(filePath),
     });
     let isReady = false;
-    watcher.on('add', (filePath) => this.scheduleRebuild(filePath));
-    watcher.on('change', (filePath) => this.scheduleRebuild(filePath));
-    watcher.on('unlink', (filePath) => this.scheduleRebuild(filePath));
+    watcher.on('add', (filePath) => this.handleFileChange(filePath));
+    watcher.on('change', (filePath) => this.handleFileChange(filePath));
+    watcher.on('unlink', (filePath) => this.handleFileChange(filePath));
     watcher.once('ready', () => (isReady = true));
     // Attach before initialization finishes, but let updateWatcher report startup errors once.
     watcher.on('error', (error) => {
@@ -105,13 +106,6 @@ export class WatchController {
     roots.forEach((root) => logger.warn(`- ${root}`));
   }
 
-  private hasSameWatchPaths(nextWatchPaths: WatchPaths) {
-    return (
-      this.watchPaths?.roots.join('\0') === nextWatchPaths.roots.join('\0') &&
-      this.watchPaths.ignoredPaths.join('\0') === nextWatchPaths.ignoredPaths.join('\0')
-    );
-  }
-
   private isIgnored(filePath: string) {
     const absolutePath = path.resolve(filePath);
     const pathParts = absolutePath.split(path.sep);
@@ -119,6 +113,15 @@ export class WatchController {
     return Boolean(
       this.watchPaths?.ignoredPaths.some((ignoredPath) => isPathInside(ignoredPath, absolutePath)),
     );
+  }
+
+  private handleFileChange(filePath: string) {
+    if (
+      this.watchPaths &&
+      isWatchedFile(filePath, this.watchPaths.extensions, this.watchPaths.directFilesToWatch)
+    ) {
+      this.scheduleRebuild(filePath);
+    }
   }
 
   private scheduleRebuild(changedFile?: string) {

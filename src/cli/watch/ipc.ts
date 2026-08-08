@@ -1,6 +1,7 @@
 import path from 'node:path';
 import { BDDConfig } from '../../config/types';
 import { removeDuplicates, toArray } from '../../utils';
+import { DEFAULT_WATCH_EXTENSIONS, normalizeExtensions } from './fileFilter';
 
 // The child loads config fresh and sends the resolved watch metadata over IPC.
 // This lets the parent refresh its watcher without loading user config in the long-lived process.
@@ -11,6 +12,9 @@ export function sendWatchMetadata(configs: BDDConfig[], resolvedConfigFile: stri
       packageRoot: configs.some((config) => config.watch?.packageRoot !== false),
       include: removeDuplicates(configs.flatMap((config) => config.watch?.include ?? [])),
       exclude: removeDuplicates(configs.flatMap((config) => config.watch?.exclude ?? [])),
+      extensions: normalizeExtensions(
+        configs.flatMap((config) => config.watch?.extensions ?? DEFAULT_WATCH_EXTENSIONS),
+      ),
       featurePatterns: getPatterns(configs, 'features'),
       stepPatterns: getPatterns(configs, 'steps'),
       importTestFromFiles: removeDuplicates(
@@ -29,6 +33,7 @@ export type WatchMetadata = {
   packageRoot: boolean;
   include: string[];
   exclude: string[];
+  extensions: string[];
   featurePatterns: string[];
   stepPatterns: string[];
   importTestFromFiles: string[];

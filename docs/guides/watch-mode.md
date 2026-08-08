@@ -24,7 +24,9 @@ npx bddgen --watch -c configs/playwright.config.ts --tags "@smoke"
 
 By default, `bddgen` watches the nearest `package.json` directory, resolved from the Playwright config. It also always watches the Playwright config file and the directories derived from configured feature and step patterns, even when those directories are outside the nearest `package.json` directory.
 
-All file types are watched because step definitions can depend on any module in the package. Some directories are always ignored: `.git`, `node_modules`, and generated output directories.
+By default, changes to feature files and JavaScript or TypeScript files trigger regeneration. The full extension list is configurable through `watch.extensions`.
+
+Some directories are always ignored: `.git`, `node_modules`, and generated output directories.
 
 Use `watch.include` to watch additional dependencies, `watch.exclude` to exclude paths, and `watch.packageRoot` to disable watching the nearest `package.json` directory:
 
@@ -32,13 +34,14 @@ Use `watch.include` to watch additional dependencies, `watch.exclude` to exclude
 const testDir = defineBddConfig({
   watch: {
     packageRoot: false,
-    include: ['src', '../shared-test-utils'],
+    include: ['src', '../shared-test-utils', 'data/step-patterns.json'],
     exclude: ['fixtures/downloads'],
+    extensions: ['.feature', '.js', '.ts'],
   },
 });
 ```
 
-Included and excluded paths accept plain filesystem paths, not glob patterns, and are resolved relative to the Playwright config. See the [watch configuration options](configuration/options.md#watch) for details.
+Included and excluded paths accept plain filesystem paths, not glob patterns, and are resolved relative to the Playwright config. A directly included file bypasses the extension filter, while files inside an included directory remain subject to `watch.extensions`. See the [watch configuration options](configuration/options.md#watch) for details.
 
 ## Source maps
 

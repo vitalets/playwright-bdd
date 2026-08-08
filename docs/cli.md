@@ -27,7 +27,7 @@ Examples:
     npx bddgen --watch
     ```
 
-  Watch mode observes the Playwright config file, configured feature and step directories, and the nearest `package.json` directory. Use [`watch.include`](configuration/options.md#watch) for other dependencies, `watch.exclude` for exclusions, and `watch.packageRoot` to disable watching the nearest `package.json` directory. Generated output directories are always excluded.
+  Watch mode observes files with supported extensions under configured watch roots, including feature and step directories and the nearest `package.json` directory. The Playwright config file is always watched. Use [`watch.extensions`](configuration/options.md#watch) to customize supported extensions, `watch.include` for arbitrary dependencies, `watch.exclude` for exclusions, and `watch.packageRoot` to disable watching the nearest `package.json` directory. Generated output directories are always excluded.
 
   Concurrent `bddgen` commands targeting the same output directory are serialized. A command waits for active generation to finish instead of clearing or writing generated files concurrently.
 

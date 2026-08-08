@@ -52,8 +52,9 @@ This coordinates the watch process with any manual `bddgen` runs that use the sa
 
 - **Type:** `object`
   - `packageRoot` *boolean* - Whether to watch the nearest `package.json` directory. Defaults to `true`.
-  - `include` *string[]* - Additional files or directories to watch.
+  - `include` *string[]* - Additional files or directories to watch. Direct files are watched regardless of extension.
   - `exclude` *string[]* - Files or directories to exclude under any watched root.
+  - `extensions` *string[]* - File extensions that trigger regeneration. Defaults to `['.feature', '.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx']`.
 - **Default:** `undefined`
 
 Options for [`bddgen --watch`](cli.md). Watch mode always observes the exact Playwright config file and the nearest existing directories derived from configured feature and step patterns. It also observes the nearest `package.json` directory by default.
@@ -66,13 +67,14 @@ const testDir = defineBddConfig({
   steps: 'steps/**/*.ts',
   watch: {
     packageRoot: false,
-    include: ['src', '../shared-test-utils'],
+    include: ['src', '../shared-test-utils', 'data/step-patterns.json'],
     exclude: ['fixtures/large-data', 'src/generated'],
+    extensions: ['.feature', '.js', '.ts'],
   },
 });
 ```
 
-The `include` and `exclude` options accept plain filesystem paths, not glob patterns. Excluding a directory also excludes all its descendants, including configured feature or step directories. The `.git` and `node_modules` directories and configured output directories are always excluded and cannot be re-enabled.
+The `include` and `exclude` options accept plain filesystem paths, not glob patterns. A directly included file bypasses the extension filter, which allows watching arbitrary inputs such as JSON or YAML files. Files inside an included directory remain subject to `extensions`. Extensions are case-insensitive and may be written with or without a leading dot. Excluding a directory also excludes all its descendants, including configured feature or step directories, and takes precedence over `include`. The `.git` and `node_modules` directories and configured output directories are always excluded and cannot be re-enabled.
 
 ## sourceMaps
 

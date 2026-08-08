@@ -1,42 +1,67 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { removeDuplicates } from '../../utils';
-import { isPathInside } from '../../utils/paths';
+import { arraysEqual } from '../../utils/array';
+import { isDirectory, isPathInside } from '../../utils/paths';
 import { WatchMetadata } from './ipc';
 
 type WatchPaths = {
+  /** Normalized file extensions that trigger regeneration. */
+  extensions: string[];
+  /** Generated output and user-excluded paths that Chokidar must ignore. */
   ignoredPaths: string[];
+  /** Config, importTestFrom, and directly included files watched regardless of extension. */
+  directFilesToWatch: string[];
+  /** Minimal set of files and directories passed to Chokidar as watch targets. */
   roots: string[];
 };
 
-export function resolveWatchPaths({
-  packageRoot: includePackageRoot,
-  include,
-  exclude,
-  featurePatterns,
-  stepPatterns,
-  importTestFromFiles,
-  outputDirs,
-  resolvedConfigFile,
-}: WatchMetadata): WatchPaths {
-  const configDir = path.dirname(resolvedConfigFile);
-  const packageRoot = findNearestPackageRoot(configDir) ?? configDir;
-  const featureDirs = featurePatterns.map(findNearestExistingDirectory);
-  const stepDirs = stepPatterns.map(findNearestExistingDirectory);
-  const dependencyRoots = minimizePaths([...(includePackageRoot ? [packageRoot] : []), ...include]);
-  const roots = minimizePaths(
+export function resolveWatchPaths(metadata: WatchMetadata): WatchPaths {
+  const includedPaths = metadata.include.map(canonicalizePath);
+  return {
+    extensions: metadata.extensions,
+    roots: resolveWatchRoots(metadata, includedPaths),
+    ignoredPaths: minimizePaths([...metadata.outputDirs, ...metadata.exclude]),
+    directFilesToWatch: resolveDirectFilesToWatch(metadata, includedPaths),
+  };
+}
+
+export function areWatchPathsEqual(current: WatchPaths | undefined, next: WatchPaths) {
+  if (!current) return false;
+  return (
+    arraysEqual(current.roots, next.roots) &&
+    arraysEqual(current.ignoredPaths, next.ignoredPaths) &&
+    arraysEqual(current.directFilesToWatch, next.directFilesToWatch) &&
+    arraysEqual(current.extensions, next.extensions)
+  );
+}
+
+function resolveDirectFilesToWatch(metadata: WatchMetadata, includedPaths: string[]) {
+  return removeDuplicates(
     [
-      resolvedConfigFile,
-      ...featureDirs,
-      ...stepDirs,
-      ...importTestFromFiles.map(findNearestExistingPath),
+      metadata.resolvedConfigFile,
+      ...metadata.importTestFromFiles,
+      ...includedPaths.filter((file) => !isDirectory(file)),
+    ].map(canonicalizePath),
+  );
+}
+
+function resolveWatchRoots(metadata: WatchMetadata, includedPaths: string[]) {
+  const configDir = path.dirname(metadata.resolvedConfigFile);
+  const packageRoot = findNearestPackageRoot(configDir) ?? configDir;
+  const dependencyRoots = minimizePaths([
+    ...(metadata.packageRoot ? [packageRoot] : []),
+    ...includedPaths,
+  ]);
+  return minimizePaths(
+    [
+      metadata.resolvedConfigFile,
+      ...metadata.featurePatterns.map(findNearestExistingDirectory),
+      ...metadata.stepPatterns.map(findNearestExistingDirectory),
+      ...metadata.importTestFromFiles.map(findNearestExistingPath),
       ...dependencyRoots,
     ].map((watchPath) => findNearestExistingPath(path.resolve(watchPath))),
   );
-  return {
-    roots,
-    ignoredPaths: minimizePaths([...outputDirs, ...exclude]),
-  };
 }
 
 function findNearestPackageRoot(configDir: string) {

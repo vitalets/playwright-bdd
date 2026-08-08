@@ -110,6 +110,7 @@ function resolveWatch(configDir: string, watch: BDDInputConfig['watch']) {
     packageRoot: watch.packageRoot,
     include: watch.include?.map((watchPath) => path.resolve(configDir, watchPath)),
     exclude: watch.exclude?.map((watchPath) => path.resolve(configDir, watchPath)),
+    extensions: watch.extensions,
   };
 }
 

@@ -56,10 +56,12 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   watch?: {
     /** Watch the nearest `package.json` directory. */
     packageRoot?: boolean;
-    /** Additional file or directory paths to watch. Globs are not supported. */
+    /** Additional file or directory paths to watch. Direct files bypass the extension filter. */
     include?: string[];
     /** File or directory paths to exclude. Globs are not supported. */
     exclude?: string[];
+    /** File extensions that trigger regeneration. */
+    extensions?: string[];
   };
   /** Behavior for missing step definitions */
   missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
