@@ -19,13 +19,7 @@ const config: KnipConfig = {
   ],
   // this is a knip default, keep it here for readability
   project: ['**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}!'],
-  ignoreBinaries: [
-    // binaries that used ad-hoc with npx
-    'docsify-cli',
-    'npm-check-updates',
-    'publint',
-    'cucumber.config.js',
-  ],
+  ignoreBinaries: ['cucumber.config.js'],
   ignoreDependencies: [
     // Keep @cucumber/compatibility-kit to inspec their tests manually
     '@cucumber/compatibility-kit',
