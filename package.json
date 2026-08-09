@@ -1,7 +1,7 @@
 {
   "name": "playwright-bdd",
   "description": "BDD Testing with Playwright runner",
-  "version": "9.3.1-beta.0",
+  "version": "9.3.2-beta.0",
   "type": "commonjs",
   "repository": {
     "type": "git",
