@@ -1,4 +1,5 @@
 # Using `DataTables`
+
 Playwright-BDD provides full support of [`DataTables`](https://cucumber.io/docs/gherkin/reference/#data-tables).
 For example:
 ```gherkin
@@ -30,4 +31,30 @@ When('I fill login form with values', async ({ page }, data: DataTable) => {
   */
 });
 ```
-Check out all [methods of DataTable](https://github.com/cucumber/cucumber-js/blob/main/docs/support_files/data_table_interface.md) in the Cucumber docs.
+
+## Optional data tables
+
+There may be cases where you need a step with an optional data table. For example, both of the following steps can be handled by the same step definition:
+
+```gherkin
+Scenario: No items
+  Then there are 0 items
+
+Scenario: Two items
+  Then there are 2 items:
+    | apple  |
+    | orange |
+```
+
+Both variants match the same step definition. At runtime, the `DataTable` argument is passed only when the table is present. Declare the argument as optional and disable the arity check for that definition:
+
+```ts
+Then(
+  'there are {int} items(:)',
+  { arityCheck: false },
+  async ({ page }, count: number, dataTable?: DataTable) => {
+    const rows = dataTable?.raw() ?? [];
+    // ...
+  },
+);
+```
