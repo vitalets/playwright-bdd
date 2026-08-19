@@ -11,6 +11,7 @@ For every user-requested task, first decide whether the requested outcome needs 
 
 BDD feature-file changes are needed when the task:
 
+- Explicitly requests adding, updating or removing BDD scenarios.
 - Adds, removes, or changes user-observable behavior or an end-to-end user outcome.
 - Changes a user flow, acceptance criterion, validation rule, permission, or user-visible error behavior.
 - Fixes a bug whose expected behavior is missing from, or inaccurately described by, the existing scenarios.
@@ -19,13 +20,15 @@ BDD feature-file changes are not needed when the task:
 
 - Refactors or reorganizes implementation while preserving existing observable behavior.
 - Changes documentation, comments, formatting, tooling, or other development infrastructure without changing product behavior.
+- Makes presentation-only visual or geometric adjustments without changing user interaction or meaning.
 - Implements or fixes behavior that is already accurately specified by existing scenarios and does not require their wording or coverage to change.
 - Changes only step definitions or test infrastructure while leaving the specified product behavior unchanged.
 
 After making this assessment:
 
+- If BDD feature-file changes are needed, continue directly to Phase 1 without asking for confirmation.
 - If BDD feature-file changes are not needed, continue with the user's task immediately without creating or modifying any `.feature` files and without stopping for confirmation.
-- If BDD feature-file changes are needed, or the assessment is genuinely unclear, ask only: **"Is BDD scenarios update needed for this change?"** Then wait for the user's answer. Do not explain why the question is being asked or provide any details, reasoning, or recommendation with it.
+- If the assessment is genuinely unclear, ask only: **"Is BDD scenarios update needed for this change?"** Then wait for the user's answer. Do not explain why the question is being asked or provide any details, reasoning, or recommendation with it.
 - If the user answers yes, continue to Phase 1. If the user answers no, continue with the user's task without changing `.feature` files.
 
 ## Phase 1: Planning
