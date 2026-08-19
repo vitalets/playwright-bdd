@@ -36,7 +36,7 @@ Directory to output generated test files. Resolved relative to the config file l
 - **Type:** `boolean`
 - **Default:** `false`
 
-Prevents concurrent `bddgen` processes from writing to the same output directory. If another generation is already using that directory, `bddgen` waits for it to finish. It is mainly designed for cases where you run `bddgen` while `bddgen --watch` is running in another terminal.
+Coordinates generated test files between `bddgen` processes and active Playwright-BDD workers. A generator waits for other generators and executing BDD workers that use the same output directory. A BDD worker waits if generation has already started.
 
 When using [`bddgen --watch`](cli.md), we recommend setting this option to `true`:
 
@@ -46,7 +46,9 @@ const testDir = defineBddConfig({
 });
 ```
 
-This coordinates the watch process with any manual `bddgen` runs that use the same output directory. Without locking, concurrent generation can produce inconsistent output.
+This prevents watch mode from rewriting generated test files while BDD tests are executing and coordinates it with manual `bddgen` runs. Locks are stored outside the project under the operating system's temporary directory. The generator and Playwright workers must run as the same user and share that temporary filesystem.
+
+If a crashed or unresponsive process leaves locks behind, use [`bddgen clear-locks`](cli.md#bddgen-clear-locks) to remove all locks associated with the current Playwright configuration. This command also removes locks owned by live processes, so do not run it while tests or generation should remain protected.
 
 ## watch
 

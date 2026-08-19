@@ -14,6 +14,7 @@ import {
 import { loadSteps, resolveStepFiles } from '../steps/loader';
 import { BddFileData } from '../bddData/types';
 import { TestTypeCommon } from '../playwright/types';
+import { withExecutionLock } from '../lock-file';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -40,9 +41,16 @@ export const test = base.extend<NonNullable<unknown>, BddWorkerFixtures>({
   $bddConfig: [
     async ({}, use, workerInfo) => {
       const bddConfig = getBddConfig(workerInfo.project.testDir);
-      const { files } = await resolveStepFiles(bddConfig.configDir, bddConfig.steps);
-      await loadSteps(files);
-      await use(bddConfig);
+      const loadAndUseConfig = async () => {
+        const { files } = await resolveStepFiles(bddConfig.configDir, bddConfig.steps);
+        await loadSteps(files);
+        await use(bddConfig);
+      };
+      if (bddConfig.lockFile) {
+        await withExecutionLock(bddConfig.outputDir, workerInfo, loadAndUseConfig);
+      } else {
+        await loadAndUseConfig();
+      }
     },
     fixtureOptions,
   ],

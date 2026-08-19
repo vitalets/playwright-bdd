@@ -10,6 +10,7 @@ test(`${testDir.name} (global)`, () => {
   expect(stdout).toContain(version);
   expect(stdout).toContain('-c, --config');
   expect(stdout).toContain('test [options]');
+  expect(stdout).toContain('clear-locks');
 });
 
 test(`${testDir.name} (test)`, () => {

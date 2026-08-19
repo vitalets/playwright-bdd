@@ -58,6 +58,17 @@ List of all steps (4):
 * `--config` - path to Playwright config
 * `--unused-steps` - output only unused steps
 
+## `bddgen clear-locks`
+
+Removes generation and test-execution locks associated with every Playwright-BDD output directory in the current Playwright configuration:
+
+```sh
+npx bddgen clear-locks
+npx bddgen clear-locks -c path/to/playwright.config.ts
+```
+
+The command removes stale and active locks without confirmation. Clearing an active lock disables coordination for the process that owns it and can allow generated files to change while tests are executing. Use it only when you intentionally want to recover or override the current lock state.
+
 ## `bddgen env`
 Displays info about the current environment:
 ```

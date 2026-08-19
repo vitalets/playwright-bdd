@@ -5,12 +5,11 @@ files.
 
 ## `.gitignore`
 
-Add generated specs, source maps, and the temporary generation lock file to the root `.gitignore`:
+Add generated specs and source maps to the root `.gitignore`:
 
 ```bash
 printf '\n%s\n' '**/.features-gen/**/*.spec.js' >> .gitignore
 printf '\n%s\n' '**/.features-gen/**/*.spec.js.map' >> .gitignore
-printf '\n%s\n' '**/.features-gen/.bddgen.lock' >> .gitignore
 ```
 
 ## `.prettierignore`

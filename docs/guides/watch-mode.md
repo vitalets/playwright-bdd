@@ -67,4 +67,4 @@ const testDir = defineBddConfig({
 });
 ```
 
-This coordinates generation when you manually run `bddgen` while `bddgen --watch` is active in another terminal.
+This prevents watch mode from rewriting generated tests while Playwright-BDD workers are executing and also coordinates manual `bddgen` runs. Changes detected during test execution are coalesced and generated after the active workers finish.

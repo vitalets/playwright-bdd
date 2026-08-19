@@ -1,8 +1,9 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
-const includeWatchPath = process.env.BDDGEN_TEST_INCLUDE_WATCH_PATH;
-const excludeWatchPath = process.env.BDDGEN_TEST_EXCLUDE_WATCH_PATH;
+const includeWatchPath = process.env.WATCH_INCLUDE;
+const excludeWatchPath = process.env.WATCH_EXCLUDE;
+const lockFile = process.env.LOCK_FILE === 'true';
 const watch =
   includeWatchPath || excludeWatchPath
     ? {
@@ -13,6 +14,7 @@ const watch =
 const testDir = defineBddConfig({
   features: 'features/*.feature',
   steps: 'steps/*.ts',
+  ...(lockFile ? { lockFile: true } : {}),
   ...(watch ? { watch } : {}),
 });
 

@@ -14,9 +14,9 @@ import { setBddGenPhase } from '../helpers/bddgenPhase';
 import { showWarnings } from '../../config/warnings';
 import { pMap } from '../../utils/p-map';
 import { Logger } from '../../utils/logger';
-import { WatchController } from '../watch/controller';
-import { sendWatchMetadata } from '../watch/ipc';
-import { withLock } from '../lock';
+import { WatchController } from '../watch/parent';
+import { isWatchModeChild, sendWatchMetadata, waitForWatchParentReady } from '../watch/ipc';
+import { withGenerationLock } from '../../lock-file';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
@@ -46,10 +46,7 @@ export const testCommand = new Command('test')
     sendWatchMetadata(configs, resolvedConfigFile);
     const isVerbose = hasVerboseFlag(configs);
 
-    await withLock(
-      configs.filter((config) => config.lockFile).map((config) => config.outputDir),
-      () => generateFilesForConfigs(configs),
-    );
+    await generateFilesWithOptionalLock(configs);
 
     if (isVerbose) printDone();
   });
@@ -74,13 +71,55 @@ export function assertConfigsCount(configs: unknown[]) {
   }
 }
 
-async function generateFilesForConfigs(configs: BDDConfig[]) {
-  // run first config in main thread and other in workers (to have fresh require cache)
+async function generateFilesWithOptionalLock(configs: BDDConfig[]) {
+  const [configsWithLockFileEnabled, configsWithLockFileDisabled] =
+    splitConfigsByLockfileEnabled(configs);
+
+  if (configsWithLockFileDisabled.length > 0) {
+    if (isWatchModeChild()) await waitForWatchParentReady();
+    await generateFilesForConfigs(configsWithLockFileDisabled, true);
+  }
+
+  if (configsWithLockFileEnabled.length === 0) return;
+
+  await withGenerationLock(
+    configsWithLockFileEnabled.map((config) => config.outputDir),
+    async () => {
+      // For fully locked projects, changes should keep coalescing until active tests finish.
+      if (configsWithLockFileDisabled.length === 0 && isWatchModeChild()) {
+        await waitForWatchParentReady();
+      }
+      await generateFilesForConfigs(
+        configsWithLockFileEnabled,
+        configsWithLockFileDisabled.length === 0,
+      );
+    },
+  );
+}
+
+function splitConfigsByLockfileEnabled(configs: BDDConfig[]) {
+  const configsWithLockFileEnabled: BDDConfig[] = [];
+  const configsWithLockFileDisabled: BDDConfig[] = [];
+  configs.forEach((config) => {
+    const target = config.lockFile ? configsWithLockFileEnabled : configsWithLockFileDisabled;
+    target.push(config);
+  });
+  return [configsWithLockFileEnabled, configsWithLockFileDisabled] as const;
+}
+
+async function generateFilesForConfigs(configs: BDDConfig[], runFirstConfigInMainThread: boolean) {
+  // Run one config in the main thread. Every other config needs a fresh require cache,
+  // including when lock-enabled and lock-disabled configs are generated separately.
   // See: https://github.com/vitalets/playwright-bdd/issues/32
-  const [firstConfig, ...restConfigs] = configs;
-  await new TestFilesGenerator(firstConfig!).generate();
-  if (restConfigs.length > 0) {
-    await pMap(restConfigs, runInWorker, getMaxWorkers());
+  const firstConfig = configs[0];
+  if (!firstConfig) return;
+  const restConfigs = configs.slice(1);
+  if (runFirstConfigInMainThread) {
+    await new TestFilesGenerator(firstConfig).generate();
+  }
+  const configsForWorkers = runFirstConfigInMainThread ? restConfigs : configs;
+  if (configsForWorkers.length > 0) {
+    await pMap(configsForWorkers, runInWorker, getMaxWorkers());
   }
 }
 

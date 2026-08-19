@@ -1,10 +1,27 @@
 import { defineConfig } from '@playwright/test';
 import { defineBddConfig } from 'playwright-bdd';
 
-const lockFile = process.env.BDDGEN_TEST_LOCK_FILE === 'true';
-const testDir = defineBddConfig({
-  featuresRoot: './features',
-  ...(lockFile ? { lockFile: true } : {}),
+export default defineConfig({
+  projects: [
+    {
+      name: '.features-gen',
+      testDir: defineBddConfig({
+        featuresRoot: './features',
+        outputDir: '.features-gen',
+        lockFile: process.env.LOCK_FILE === 'true',
+      }),
+    },
+    ...(process.env.EXTRA_NO_LOCK_PROJECT
+      ? [
+          {
+            name: '.features-gen-not-locked',
+            testDir: defineBddConfig({
+              featuresRoot: './features',
+              outputDir: '.features-gen-not-locked',
+              lockFile: false,
+            }),
+          },
+        ]
+      : []),
+  ],
 });
-
-export default defineConfig({ testDir });

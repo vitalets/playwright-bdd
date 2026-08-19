@@ -27,7 +27,7 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   featuresRoot?: string;
   /** Dir to save generated files */
   outputDir?: string;
-  /** Prevent concurrent bddgen processes from writing to the same output directory */
+  /** Coordinate generation with other bddgen processes and active BDD workers */
   lockFile?: boolean;
   /** Generate source maps to map generated tests with original feature files */
   sourceMaps?: boolean;

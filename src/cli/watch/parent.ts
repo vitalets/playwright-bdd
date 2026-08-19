@@ -1,16 +1,15 @@
 import path from 'node:path';
-import { ChildProcess, fork } from 'node:child_process';
+import { ChildProcess } from 'node:child_process';
 import { once } from 'node:events';
 import chokidar, { FSWatcher } from 'chokidar';
 import { areWatchPathsEqual, resolveWatchPaths } from './paths';
-import { WATCH_CHILD_ENV, WatchMetadata, WatchMetadataMessage } from './ipc';
+import { WatchChildMessage, WatchMetadata, WatchParentMessage } from './ipc';
 import { logger } from '../../utils/logger';
 import { isPathInside, relativeToCwd } from '../../utils/paths';
 import { isWatchedFile } from './fileFilter';
+import { forkWatchChild } from './child';
 
 const DEBOUNCE_MS = 100;
-const CLI_PATH = path.resolve(__dirname, '..', 'index.js');
-
 type WatchPaths = ReturnType<typeof resolveWatchPaths>;
 
 export class WatchController {
@@ -19,6 +18,8 @@ export class WatchController {
   private closePromise?: Promise<void>;
   private debounceTimer?: NodeJS.Timeout;
   private dirty = false;
+  private generationStarted = false;
+  private resolvedConfigFile?: string;
   private resolveRun?: () => void;
   private watchPaths?: WatchPaths;
   private watcher?: FSWatcher;
@@ -37,14 +38,13 @@ export class WatchController {
   private startRebuild(isInitial = false) {
     if (!isInitial) this.logDetectedChanges();
     this.watcherUpdate = undefined;
-    const child = fork(CLI_PATH, this.getChildArgs(), {
-      env: this.getRebuildEnv(),
-      stdio: ['inherit', 'inherit', 'inherit', 'ipc'],
-    });
+    this.generationStarted = false;
+    const child = forkWatchChild();
     this.activeChild = child;
-    child.on('message', (message: WatchMetadataMessage) => {
+    child.on('message', (message: WatchChildMessage) => {
       if (message?.type === 'metadata') {
         // Config can change between runs, so refresh watch paths from every child.
+        this.resolvedConfigFile = message.metadata.resolvedConfigFile;
         this.watcherUpdate = this.updateWatcher(message.metadata).then(
           () => true,
           (error) => {
@@ -53,21 +53,9 @@ export class WatchController {
           },
         );
       }
+      if (message?.type === 'generation-ready') void this.startChildGeneration(child);
     });
     child.once('exit', (exitCode) => void this.handleRebuildExit(child, exitCode));
-  }
-
-  private getChildArgs() {
-    return process.argv.slice(2).filter((arg) => arg !== '--watch');
-  }
-
-  private getRebuildEnv() {
-    const env: NodeJS.ProcessEnv = {
-      ...process.env,
-      [WATCH_CHILD_ENV]: '1',
-    };
-    delete env.PLAYWRIGHT_BDD_CONFIGS;
-    return env;
   }
 
   private async updateWatcher(metadata: WatchMetadata) {
@@ -127,15 +115,34 @@ export class WatchController {
   private scheduleRebuild(changedFile?: string) {
     if (this.closePromise) return;
     if (changedFile) this.changedFiles.add(path.resolve(changedFile));
-    if (this.activeChild) {
-      this.dirty = true;
-      return;
-    }
+    if (this.activeChild) return this.handleChangeDuringGeneration(changedFile);
     if (this.debounceTimer) clearTimeout(this.debounceTimer);
     this.debounceTimer = setTimeout(() => {
       this.debounceTimer = undefined;
       this.startRebuild();
     }, DEBOUNCE_MS);
+  }
+
+  private handleChangeDuringGeneration(changedFile?: string) {
+    if (this.generationStarted || this.isConfigFile(changedFile)) this.dirty = true;
+  }
+
+  private async startChildGeneration(child: ChildProcess) {
+    const watcherReady = (await this.watcherUpdate) ?? true;
+    if (!watcherReady) return this.handleWatcherUpdateFailure();
+    if (this.activeChild !== child || this.closePromise) return;
+    this.generationStarted = true;
+    this.changedFiles.clear();
+    child.send({ type: 'start-generation' } satisfies WatchParentMessage);
+  }
+
+  private isConfigFile(changedFile?: string) {
+    return changedFile !== undefined && path.resolve(changedFile) === this.resolvedConfigFile;
+  }
+
+  private async handleWatcherUpdateFailure() {
+    process.exitCode = 1;
+    await this.close();
   }
 
   private logDetectedChanges() {
@@ -195,9 +202,7 @@ export class WatchController {
     }
   }
 
-  private handleSignal = () => {
-    void this.close();
-  };
+  private handleSignal = () => void this.close();
 
   private close() {
     if (!this.closePromise) {

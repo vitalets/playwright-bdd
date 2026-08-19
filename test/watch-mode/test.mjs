@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
-import { test, expect, normalize, TestDir } from '../_helpers/index.mjs';
+import { test, expect, normalize, startProcess, TestDir, waitFor } from '../_helpers/index.mjs';
 import { startWatchProcess } from './helpers/startWatchProcess.mjs';
 
 const testDir = new TestDir(import.meta);
@@ -16,8 +16,8 @@ const GENERATION_COMPLETED = 'Generation completed. Waiting for changes...';
 const GENERATION_FAILED = 'Generation failed. Waiting for changes...';
 
 test(testDir.name, async () => {
-  testDir.clearDir(outputDir);
-  createInputFiles();
+  clearDirs();
+  writeFeatureAndStepFiles();
   const watchProcess = startWatchProcess();
 
   try {
@@ -40,12 +40,12 @@ test(testDir.name, async () => {
 });
 
 test(`${testDir.name} (include paths)`, async () => {
-  testDir.clearDir(outputDir);
-  createInputFiles();
+  clearDirs();
+  writeFeatureAndStepFiles();
   const extraWatchPath = fs.mkdtempSync(path.join(os.tmpdir(), 'bddgen-watch-'));
   createExternalFile(extraWatchPath);
   const watchProcess = startWatchProcess({
-    env: { BDDGEN_TEST_INCLUDE_WATCH_PATH: extraWatchPath },
+    env: { WATCH_INCLUDE: extraWatchPath },
   });
 
   try {
@@ -61,11 +61,11 @@ test(`${testDir.name} (include paths)`, async () => {
 });
 
 test(`${testDir.name} (exclude paths)`, async () => {
-  testDir.clearDir(outputDir);
+  clearDirs();
   testDir.clearDir('ignored');
-  createInputFiles();
+  writeFeatureAndStepFiles();
   const watchProcess = startWatchProcess({
-    env: { BDDGEN_TEST_EXCLUDE_WATCH_PATH: 'ignored' },
+    env: { WATCH_EXCLUDE: 'ignored' },
   });
 
   try {
@@ -78,7 +78,51 @@ test(`${testDir.name} (exclude paths)`, async () => {
   }
 });
 
-function createInputFiles() {
+test(`${testDir.name}: with lock file enabled, waits for test execution to finish`, async () => {
+  clearDirs();
+  writeFeatureAndStepFiles();
+  // run watch process
+  const watchProcess = startWatchProcess({ env: { LOCK_FILE: 'true' } });
+
+  try {
+    await watchProcess.waitForOutput(GENERATION_COMPLETED);
+    // run test execution
+    const testProcess = startTestExecution();
+    try {
+      await waitFor(() => testDir.isFileExists('test-running.txt'));
+      const outputOffset = watchProcess.output.length;
+      // trigger change in feature file
+      writeFeatureFile({ footer: '    And state 2' });
+      await watchProcess.waitForOutput(
+        'BDD tests are executing in .features-gen. Waiting...',
+        outputOffset,
+      );
+      // spec file is not re-generated
+      testDir.expectFileNotContain(outputFile, 'And state 2');
+
+      // Further changes are retained and coalesced while generation is waiting.
+      writeFeatureFile({ footer: '    And state 3' });
+      await new Promise((resolve) => setTimeout(resolve, 300));
+      testDir.expectFileNotContain(outputFile, 'And state 3');
+
+      // stop test execution
+      stopTestExecution();
+      await testProcess.waitForExit();
+      expect(testProcess.exitCode).toBe(0);
+      // assert that pending changes are appplied
+      await watchProcess.waitForOutput(GENERATION_COMPLETED, outputOffset);
+      testDir.expectFileContains(outputFile, 'And state 3');
+      expect(countMatches(watchProcess.output.slice(outputOffset), GENERATION_COMPLETED)).toBe(1);
+    } finally {
+      await testProcess.stop();
+    }
+  } finally {
+    await watchProcess.stop();
+    stopTestExecution();
+  }
+});
+
+function writeFeatureAndStepFiles() {
   writeFeatureFile();
   writeStepFile();
   writeDependencyFile();
@@ -104,9 +148,14 @@ function writeStepFile({ footer = '' } = {}) {
   testDir.writeFile(
     stepFile,
     [
-      `import { createBdd } from 'playwright-bdd';\nimport { statePattern } from '../src/pattern.js';`,
+      `import { createBdd } from 'playwright-bdd';`,
+      `import fs from 'node:fs';`,
+      `import timers from 'node:timers/promises';`,
       `const { Given } = createBdd();`,
-      `Given(statePattern, async ({}, _state: number) => {});`,
+      `Given('state {int}', async ({}, _state: number) => {
+        fs.writeFileSync('test-running.txt', 'running');
+        while (fs.existsSync('test-running.txt')) await timers.setTimeout(25);
+      });`,
       footer,
     ]
       .filter(Boolean)
@@ -117,7 +166,7 @@ function writeStepFile({ footer = '' } = {}) {
 function writeDependencyFile({ footer = '' } = {}) {
   testDir.writeFile(
     dependencyFile,
-    [`export const statePattern = 'state {int}';`, footer].filter(Boolean).join('\n\n'),
+    [`export const foo = 42;`, footer].filter(Boolean).join('\n\n'),
   );
 }
 
@@ -183,4 +232,24 @@ async function changeAndWait(watchProcess, change, expected = GENERATION_COMPLET
 
 function expectChangedFile(output, file) {
   expect(output).toContain(`Changes detected: ${normalize(file)}\nRegenerating...`);
+}
+
+function startTestExecution() {
+  return startProcess('npx playwright test', {
+    cwd: testDir.getAbsPath('.'),
+    env: { LOCK_FILE: 'true' },
+  });
+}
+
+function stopTestExecution() {
+  fs.rmSync(testDir.getAbsPath('test-running.txt'), { force: true });
+}
+
+function clearDirs() {
+  testDir.clearDir(outputDir);
+  stopTestExecution();
+}
+
+function countMatches(value, search) {
+  return value.split(search).length - 1;
 }

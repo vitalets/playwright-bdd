@@ -6,7 +6,7 @@ import { DEFAULT_WATCH_EXTENSIONS, normalizeExtensions } from './fileFilter';
 // The child loads config fresh and sends the resolved watch metadata over IPC.
 // This lets the parent refresh its watcher without loading user config in the long-lived process.
 export function sendWatchMetadata(configs: BDDConfig[], resolvedConfigFile: string) {
-  if (process.env[WATCH_CHILD_ENV]) {
+  if (isWatchModeChild()) {
     const metadata: WatchMetadata = {
       resolvedConfigFile,
       packageRoot: configs.some((config) => config.watch?.packageRoot !== false),
@@ -26,6 +26,23 @@ export function sendWatchMetadata(configs: BDDConfig[], resolvedConfigFile: stri
   }
 }
 
+export function isWatchModeChild() {
+  return Boolean(process.env[WATCH_CHILD_ENV]);
+}
+
+export async function waitForWatchParentReady() {
+  if (!process.send) return;
+  await new Promise<void>((resolve) => {
+    const handleMessage = (message: WatchParentMessage) => {
+      if (message?.type !== 'start-generation') return;
+      process.removeListener('message', handleMessage);
+      resolve();
+    };
+    process.on('message', handleMessage);
+    process.send?.({ type: 'generation-ready' } satisfies WatchGenerationReadyMessage);
+  });
+}
+
 export const WATCH_CHILD_ENV = 'PLAYWRIGHT_BDD_WATCH_CHILD';
 
 export type WatchMetadata = {
@@ -43,6 +60,16 @@ export type WatchMetadata = {
 export type WatchMetadataMessage = {
   type: 'metadata';
   metadata: WatchMetadata;
+};
+
+export type WatchGenerationReadyMessage = {
+  type: 'generation-ready';
+};
+
+export type WatchChildMessage = WatchMetadataMessage | WatchGenerationReadyMessage;
+
+export type WatchParentMessage = {
+  type: 'start-generation';
 };
 
 function getPatterns(configs: BDDConfig[], key: 'features' | 'steps') {

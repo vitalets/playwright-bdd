@@ -3,6 +3,7 @@
 import { Command } from 'commander';
 import { testCommand } from './commands/test';
 import { envCommand } from './commands/env';
+import { clearLocksCommand } from './commands/clearLocks';
 import { exportCommand } from './commands/export';
 import { getPackageVersion } from '../utils';
 import { configOption } from './options';
@@ -18,4 +19,5 @@ program
   .addCommand(testCommand, { isDefault: true })
   .addCommand(exportCommand)
   .addCommand(envCommand)
+  .addCommand(clearLocksCommand)
   .parse();
