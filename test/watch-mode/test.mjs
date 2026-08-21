@@ -19,7 +19,7 @@ test(`${testDir.name}: re-generate on change`, async () => {
     // Changes in files trigger re-generation
     await verifyFeatureChange(watchProcess);
     await verifyStepChange(watchProcess);
-    await verifyDependencyChange(watchProcess);
+    await verifySrcChange(watchProcess);
 
     // Files inside the generated output directory must not trigger regeneration.
     await verifyOutputChange(watchProcess);
@@ -55,15 +55,13 @@ test(`${testDir.name}: include paths`, async () => {
 
 test(`${testDir.name}: exclude paths`, async () => {
   setup();
-  const watchProcess = new WatchProcess(testDir).start({ env: { WATCH_EXCLUDE: 'ignored' } });
+  const watchProcess = new WatchProcess(testDir).start({
+    env: { WATCH_EXCLUDE: 'src' },
+  });
 
   try {
     await watchProcess.ready();
-
-    // Files matching configured ignore paths must not trigger regeneration.
-    await watchProcess.expectNoGeneration(() => {
-      testDir.writeFile('ignored/ignored-change.ts', 'export const ignoredChange = true;');
-    });
+    await watchProcess.expectNoGeneration(() => writeSrcFile());
   } finally {
     await watchProcess.stop();
   }
@@ -90,10 +88,8 @@ async function verifyStepChange(watchProcess) {
   });
 }
 
-async function verifyDependencyChange(watchProcess) {
-  await watchProcess.changeAndWait(() => {
-    writeDependencyFile({ footer: '// dependency changed' });
-  });
+async function verifySrcChange(watchProcess) {
+  await watchProcess.changeAndWait(() => writeSrcFile());
 }
 
 async function verifyOutputChange(watchProcess) {
@@ -116,14 +112,13 @@ async function verifyErrorRecovery(watchProcess) {
 
 function setup() {
   testDir.clearDir('.features-gen');
-  testDir.clearDir('ignored');
+  testDir.clearDir('src');
   writeFeatureAndStepFiles();
 }
 
 function writeFeatureAndStepFiles() {
   writeFeatureFile();
   writeStepFile();
-  writeDependencyFile();
 }
 
 function writeFeatureFile({ footer = '' } = {}) {
@@ -137,7 +132,7 @@ function writeFeatureFile({ footer = '' } = {}) {
 
 function writeStepFile({ footer = '' } = {}) {
   testDir.writeFile(
-    'steps/steps.ts',
+    'features/steps.ts',
     [
       `import { createBdd } from 'playwright-bdd';`,
       `const { Given } = createBdd();`,
@@ -149,11 +144,8 @@ function writeStepFile({ footer = '' } = {}) {
   );
 }
 
-function writeDependencyFile({ footer = '' } = {}) {
-  testDir.writeFile(
-    'src/pattern.ts',
-    [`export const foo = 42;`, footer].filter(Boolean).join('\n\n'),
-  );
+function writeSrcFile() {
+  testDir.writeFile('src/index.ts', [`export const foo = 42;`]);
 }
 
 function createExternalFile(extraWatchPath, { footer = '' } = {}) {

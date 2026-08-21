@@ -6,7 +6,7 @@ const excludeWatchPath = process.env.WATCH_EXCLUDE;
 
 const testDir = defineBddConfig({
   features: 'features/*.feature',
-  steps: 'steps/*.ts',
+  steps: 'features/*.ts',
   watch: {
     gitIgnore: false,
     ...(includeWatchPath ? { include: [includeWatchPath] } : {}),
