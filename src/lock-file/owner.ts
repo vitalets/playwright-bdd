@@ -41,7 +41,7 @@ export async function readLockSnapshot(lockPath: string): Promise<LockSnapshot |
   }
 }
 
-export function parseLockOwner(content: string) {
+function parseLockOwner(content: string) {
   try {
     const owner: unknown = JSON.parse(content);
     return isLockOwner(owner) ? owner : undefined;

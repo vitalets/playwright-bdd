@@ -19,12 +19,12 @@ export type WatchMetadata = {
   outputDirs: string[];
 };
 
-export type WatchMetadataMessage = {
+type WatchMetadataMessage = {
   type: 'metadata';
   metadata: WatchMetadata;
 };
 
-export type ReadyToGenerateMessage = {
+type ReadyToGenerateMessage = {
   type: 'ready-to-generate';
 };
 

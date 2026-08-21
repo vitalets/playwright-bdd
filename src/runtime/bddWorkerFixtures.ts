@@ -14,7 +14,7 @@ import {
 import { loadSteps, resolveStepFiles } from '../steps/loader';
 import { BddFileData } from '../bddData/types';
 import { TestTypeCommon } from '../playwright/types';
-import { withExecutionLock } from '../lock-file';
+import { withExecutionLock } from '../lock-file/execution';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 

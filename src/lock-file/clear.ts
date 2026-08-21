@@ -5,7 +5,7 @@ import { hasErrorCode, isProcessRunning, readLockSnapshot } from './owner';
 import { isExecutionLockFile, removeLockDirIfEmpty, resolveLockDir } from './paths';
 import { GENERATION_LOCK_FILE, LockOwner } from './types';
 
-export type ClearedLock = {
+type ClearedLock = {
   lockPath: string;
   owner?: LockOwner;
   wasActive: boolean;

@@ -1,7 +1,7 @@
 import path from 'node:path';
 import { Command } from 'commander';
 import { getEnvConfigs } from '../../config/env';
-import { clearLockFiles } from '../../lock-file';
+import { clearLockFiles } from '../../lock-file/clear';
 import { loadConfig as loadPlaywrightConfig } from '../../playwright/loadConfig';
 import { removeDuplicates } from '../../utils';
 import { Logger } from '../../utils/logger';

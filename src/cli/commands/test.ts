@@ -20,7 +20,7 @@ import {
   sendWatchMetadataToParent,
   waitForStartGenerationMessage,
 } from '../watch/ipc';
-import { withGenerationLock } from '../../lock-file';
+import { withGenerationLock } from '../../lock-file/generation';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
 
