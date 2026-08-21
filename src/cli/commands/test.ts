@@ -15,7 +15,11 @@ import { showWarnings } from '../../config/warnings';
 import { pMap } from '../../utils/p-map';
 import { Logger } from '../../utils/logger';
 import { WatchController } from '../watch/parent';
-import { isWatchModeChild, sendWatchMetadata, waitForWatchParentReady } from '../watch/ipc';
+import {
+  isWatchModeChild,
+  sendWatchMetadataToParent,
+  waitForStartGenerationMessage,
+} from '../watch/ipc';
 import { withGenerationLock } from '../../lock-file';
 
 const GEN_WORKER_PATH = path.resolve(__dirname, '..', 'worker.js');
@@ -32,8 +36,11 @@ export const testCommand = new Command('test')
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .option('--watch', `Watch mode (default: false)`)
+  // eslint-disable-next-line max-statements
   .action(async () => {
     const opts = testCommand.optsWithGlobals<TestCommandOptions>();
+    // In watch mode the parent process is long-lived and should not generate files itself.
+    // Instead, it spawns a child process to generate files and send watch metadata back to the parent.
     if (opts.watch) {
       await new WatchController().run();
       return;
@@ -43,7 +50,9 @@ export const testCommand = new Command('test')
     const { resolvedConfigFile } = await loadPlaywrightConfig(opts.config);
     const configs = readConfigsFromEnv();
     mergeCliOptions(configs, opts);
-    sendWatchMetadata(configs, resolvedConfigFile);
+    if (isWatchModeChild()) {
+      sendWatchMetadataToParent(configs, resolvedConfigFile);
+    }
     const isVerbose = hasVerboseFlag(configs);
 
     await generateFilesWithOptionalLock(configs);
@@ -76,7 +85,7 @@ async function generateFilesWithOptionalLock(configs: BDDConfig[]) {
     splitConfigsByLockfileEnabled(configs);
 
   if (configsWithLockFileDisabled.length > 0) {
-    if (isWatchModeChild()) await waitForWatchParentReady();
+    if (isWatchModeChild()) await waitForStartGenerationMessage();
     await generateFilesForConfigs(configsWithLockFileDisabled, true);
   }
 
@@ -86,8 +95,8 @@ async function generateFilesWithOptionalLock(configs: BDDConfig[]) {
     configsWithLockFileEnabled.map((config) => config.outputDir),
     async () => {
       // For fully locked projects, changes should keep coalescing until active tests finish.
-      if (configsWithLockFileDisabled.length === 0 && isWatchModeChild()) {
-        await waitForWatchParentReady();
+      if (isWatchModeChild() && configsWithLockFileDisabled.length === 0) {
+        await waitForStartGenerationMessage();
       }
       await generateFilesForConfigs(
         configsWithLockFileEnabled,

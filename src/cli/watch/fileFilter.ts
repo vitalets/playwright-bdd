@@ -1,18 +1,6 @@
 import path from 'node:path';
 import { removeDuplicates } from '../../utils';
 
-export const DEFAULT_WATCH_EXTENSIONS = [
-  '.feature',
-  '.js',
-  '.mjs',
-  '.cjs',
-  '.jsx',
-  '.ts',
-  '.mts',
-  '.cts',
-  '.tsx',
-];
-
 export function isWatchedFile(
   filePath: string,
   extensions: string[],

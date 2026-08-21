@@ -54,8 +54,9 @@ If a crashed or unresponsive process leaves locks behind, use [`bddgen clear-loc
 
 - **Type:** `object`
   - `packageRoot` *boolean* - Whether to watch the nearest `package.json` directory. Defaults to `true`.
-  - `include` *string[]* - Additional files or directories to watch. Direct files are watched regardless of extension.
-  - `exclude` *string[]* - Files or directories to exclude under any watched root.
+  - `gitIgnore` *boolean | string* - Apply the package-root `.gitignore`, disable it with `false`, or provide a custom ignore file path. Defaults to `true`.
+  - `include` *string[]* - Additional files or directories to watch. Direct files are watched regardless of extension. Defaults to `[]`.
+  - `exclude` *string[]* - Files or directories to exclude under any watched root. Defaults to `[]`.
   - `extensions` *string[]* - File extensions that trigger regeneration. Defaults to `['.feature', '.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx']`.
 - **Default:** `undefined`
 
@@ -69,12 +70,18 @@ const testDir = defineBddConfig({
   steps: 'steps/**/*.ts',
   watch: {
     packageRoot: false,
+    gitIgnore: '.config/bdd.gitignore',
     include: ['src', '../shared-test-utils', 'data/step-patterns.json'],
     exclude: ['fixtures/large-data', 'src/generated'],
     extensions: ['.feature', '.js', '.ts'],
   },
 });
 ```
+
+By default, the `.gitignore` file in the nearest `package.json` directory is applied. Set
+`gitIgnore: false` to disable this behavior, or provide a custom file path resolved relative to the
+Playwright config. Patterns in a custom file are relative to that file's directory. The selected
+file is watched and changes are applied without restarting watch mode.
 
 The `include` and `exclude` options accept plain filesystem paths, not glob patterns. A directly included file bypasses the extension filter, which allows watching arbitrary inputs such as JSON or YAML files. Files inside an included directory remain subject to `extensions`. Extensions are case-insensitive and may be written with or without a leading dot. Excluding a directory also excludes all its descendants, including configured feature or step directories, and takes precedence over `include`. The `.git` and `node_modules` directories and configured output directories are always excluded and cannot be re-enabled.
 

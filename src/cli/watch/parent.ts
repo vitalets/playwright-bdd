@@ -1,14 +1,17 @@
 import path from 'node:path';
 import { ChildProcess } from 'node:child_process';
 import { once } from 'node:events';
+import type { Stats } from 'node:fs';
 import chokidar, { FSWatcher } from 'chokidar';
 import { areWatchPathsEqual, resolveWatchPaths } from './paths';
-import { WatchChildMessage, WatchMetadata, WatchParentMessage } from './ipc';
+import { WatchChildMessage, WatchMetadata, StartGenerationMessage } from './ipc';
 import { logger } from '../../utils/logger';
 import { isPathInside, relativeToCwd } from '../../utils/paths';
 import { isWatchedFile } from './fileFilter';
 import { forkWatchChild } from './child';
+import { isIgnoredByGitIgnore } from './gitIgnore';
 
+const ALWAYS_IGNORED = new Set(['.git', 'node_modules']);
 const DEBOUNCE_MS = 100;
 type WatchPaths = ReturnType<typeof resolveWatchPaths>;
 
@@ -42,20 +45,22 @@ export class WatchController {
     const child = forkWatchChild();
     this.activeChild = child;
     child.on('message', (message: WatchChildMessage) => {
-      if (message?.type === 'metadata') {
-        // Config can change between runs, so refresh watch paths from every child.
-        this.resolvedConfigFile = message.metadata.resolvedConfigFile;
-        this.watcherUpdate = this.updateWatcher(message.metadata).then(
-          () => true,
-          (error) => {
-            logger.error('Failed to update watched paths:', error);
-            return false;
-          },
-        );
-      }
-      if (message?.type === 'generation-ready') void this.startChildGeneration(child);
+      if (message?.type === 'metadata') this.handleMetadataMessage(message.metadata);
+      if (message?.type === 'ready-to-generate') void this.startChildGeneration(child);
     });
     child.once('exit', (exitCode) => void this.handleRebuildExit(child, exitCode));
+  }
+
+  private handleMetadataMessage(metadata: WatchMetadata) {
+    // Config can change between runs, so refresh watch paths from every child.
+    this.resolvedConfigFile = metadata.resolvedConfigFile;
+    this.watcherUpdate = this.updateWatcher(metadata).then(
+      () => true,
+      (error) => {
+        logger.error('Failed to update watched paths:', error);
+        return false;
+      },
+    );
   }
 
   private async updateWatcher(metadata: WatchMetadata) {
@@ -75,7 +80,7 @@ export class WatchController {
   private createWatcher(watchPaths: WatchPaths) {
     const watcher = chokidar.watch(watchPaths.roots, {
       ignoreInitial: true,
-      ignored: (filePath) => this.isIgnored(filePath),
+      ignored: (filePath, stats) => this.isIgnored(filePath, stats),
     });
     let isReady = false;
     watcher.on('add', (filePath) => this.handleFileChange(filePath));
@@ -94,12 +99,13 @@ export class WatchController {
     roots.forEach((root) => logger.warn(`- ${root}`));
   }
 
-  private isIgnored(filePath: string) {
+  private isIgnored(filePath: string, stats?: Stats) {
     const absolutePath = path.resolve(filePath);
-    const pathParts = absolutePath.split(path.sep);
-    if (pathParts.includes('.git') || pathParts.includes('node_modules')) return true;
-    return Boolean(
-      this.watchPaths?.ignoredPaths.some((ignoredPath) => isPathInside(ignoredPath, absolutePath)),
+    if (absolutePath.split(path.sep).some((part) => ALWAYS_IGNORED.has(part))) return true;
+    if (!this.watchPaths) return false;
+    return (
+      this.watchPaths.ignoredPaths.some((ignoredPath) => isPathInside(ignoredPath, absolutePath)) ||
+      isIgnoredByGitIgnore(this.watchPaths.gitIgnores, absolutePath, stats)
     );
   }
 
@@ -133,7 +139,7 @@ export class WatchController {
     if (this.activeChild !== child || this.closePromise) return;
     this.generationStarted = true;
     this.changedFiles.clear();
-    child.send({ type: 'start-generation' } satisfies WatchParentMessage);
+    child.send({ type: 'start-generation' } satisfies StartGenerationMessage);
   }
 
   private isConfigFile(changedFile?: string) {
@@ -195,11 +201,8 @@ export class WatchController {
     const message = exitCode
       ? 'Generation failed. Waiting for changes...'
       : 'Generation completed. Waiting for changes...';
-    if (exitCode) {
-      logger.error(message);
-    } else {
-      logger.warn(message);
-    }
+    if (exitCode) return logger.error(message);
+    logger.warn(message);
   }
 
   private handleSignal = () => void this.close();

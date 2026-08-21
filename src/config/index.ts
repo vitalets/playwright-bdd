@@ -108,6 +108,10 @@ function resolveWatch(configDir: string, watch: BDDInputConfig['watch']) {
   if (!watch) return;
   return {
     packageRoot: watch.packageRoot,
+    gitIgnore:
+      typeof watch.gitIgnore === 'string'
+        ? path.resolve(configDir, watch.gitIgnore)
+        : watch.gitIgnore,
     include: watch.include?.map((watchPath) => path.resolve(configDir, watchPath)),
     exclude: watch.exclude?.map((watchPath) => path.resolve(configDir, watchPath)),
     extensions: watch.extensions,

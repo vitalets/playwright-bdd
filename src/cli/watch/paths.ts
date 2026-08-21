@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { removeDuplicates } from '../../utils';
+import { BDDConfig } from '../../config/types';
+import { removeDuplicates, toArray } from '../../utils';
 import { arraysEqual } from '../../utils/array';
 import { isDirectory, isPathInside } from '../../utils/paths';
-import { WatchMetadata } from './ipc';
+import { areGitIgnoresEqual, GitIgnore, loadGitIgnore } from './gitIgnore';
+import type { WatchMetadata } from './ipc';
 
 type WatchPaths = {
   /** Normalized file extensions that trigger regeneration. */
@@ -14,41 +16,67 @@ type WatchPaths = {
   directFilesToWatch: string[];
   /** Minimal set of files and directories passed to Chokidar as watch targets. */
   roots: string[];
+  /** Git-ignore files and their parsed matchers. */
+  gitIgnores: GitIgnore[];
+};
+
+type WatchPathContext = {
+  includedPaths: string[];
+  packageRoot: string;
+  gitIgnoreFiles: string[];
 };
 
 export function resolveWatchPaths(metadata: WatchMetadata): WatchPaths {
   const includedPaths = metadata.include.map(canonicalizePath);
+  const configDir = path.dirname(metadata.resolvedConfigFile);
+  const packageRoot = findNearestPackageRoot(configDir) ?? configDir;
+  const gitIgnoreFiles = resolveGitIgnoreFiles(metadata, packageRoot);
+  const context = { includedPaths, packageRoot, gitIgnoreFiles };
   return {
     extensions: metadata.extensions,
-    roots: resolveWatchRoots(metadata, includedPaths),
+    roots: resolveWatchRoots(metadata, context),
     ignoredPaths: minimizePaths([...metadata.outputDirs, ...metadata.exclude]),
-    directFilesToWatch: resolveDirectFilesToWatch(metadata, includedPaths),
+    directFilesToWatch: resolveDirectFilesToWatch(metadata, includedPaths, gitIgnoreFiles),
+    gitIgnores: gitIgnoreFiles.map(loadGitIgnore),
   };
 }
 
 export function areWatchPathsEqual(current: WatchPaths | undefined, next: WatchPaths) {
   if (!current) return false;
-  return (
-    arraysEqual(current.roots, next.roots) &&
-    arraysEqual(current.ignoredPaths, next.ignoredPaths) &&
-    arraysEqual(current.directFilesToWatch, next.directFilesToWatch) &&
-    arraysEqual(current.extensions, next.extensions)
+  return [
+    arraysEqual(current.roots, next.roots),
+    arraysEqual(current.ignoredPaths, next.ignoredPaths),
+    arraysEqual(current.directFilesToWatch, next.directFilesToWatch),
+    arraysEqual(current.extensions, next.extensions),
+    areGitIgnoresEqual(current.gitIgnores, next.gitIgnores),
+  ].every(Boolean);
+}
+
+export function resolveWatchPatterns(configs: BDDConfig[], key: 'features' | 'steps') {
+  return removeDuplicates(
+    configs.flatMap((config) =>
+      toArray(config[key]).map((pattern) => path.resolve(config.configDir, pattern)),
+    ),
   );
 }
 
-function resolveDirectFilesToWatch(metadata: WatchMetadata, includedPaths: string[]) {
+function resolveDirectFilesToWatch(
+  metadata: WatchMetadata,
+  includedPaths: string[],
+  gitIgnoreFiles: string[],
+) {
   return removeDuplicates(
     [
       metadata.resolvedConfigFile,
       ...metadata.importTestFromFiles,
       ...includedPaths.filter((file) => !isDirectory(file)),
+      ...gitIgnoreFiles,
     ].map(canonicalizePath),
   );
 }
 
-function resolveWatchRoots(metadata: WatchMetadata, includedPaths: string[]) {
-  const configDir = path.dirname(metadata.resolvedConfigFile);
-  const packageRoot = findNearestPackageRoot(configDir) ?? configDir;
+function resolveWatchRoots(metadata: WatchMetadata, context: WatchPathContext) {
+  const { includedPaths, packageRoot, gitIgnoreFiles } = context;
   const dependencyRoots = minimizePaths([
     ...(metadata.packageRoot ? [packageRoot] : []),
     ...includedPaths,
@@ -60,7 +88,22 @@ function resolveWatchRoots(metadata: WatchMetadata, includedPaths: string[]) {
       ...metadata.stepPatterns.map(findNearestExistingDirectory),
       ...metadata.importTestFromFiles.map(findNearestExistingPath),
       ...dependencyRoots,
-    ].map((watchPath) => findNearestExistingPath(path.resolve(watchPath))),
+      ...gitIgnoreFiles,
+    ].map((watchPath) =>
+      gitIgnoreFiles.includes(watchPath)
+        ? path.resolve(watchPath)
+        : findNearestExistingPath(path.resolve(watchPath)),
+    ),
+  );
+}
+
+function resolveGitIgnoreFiles(metadata: WatchMetadata, packageRoot: string) {
+  return removeDuplicates(
+    metadata.gitIgnore
+      .filter((value) => value !== false)
+      .map((value) =>
+        canonicalizePath(value === true ? path.join(packageRoot, '.gitignore') : value),
+      ),
   );
 }
 

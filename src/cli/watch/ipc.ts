@@ -1,53 +1,15 @@
-import path from 'node:path';
+import { watchDefaults } from '../../config/defaults';
 import { BDDConfig } from '../../config/types';
-import { removeDuplicates, toArray } from '../../utils';
-import { DEFAULT_WATCH_EXTENSIONS, normalizeExtensions } from './fileFilter';
-
-// The child loads config fresh and sends the resolved watch metadata over IPC.
-// This lets the parent refresh its watcher without loading user config in the long-lived process.
-export function sendWatchMetadata(configs: BDDConfig[], resolvedConfigFile: string) {
-  if (isWatchModeChild()) {
-    const metadata: WatchMetadata = {
-      resolvedConfigFile,
-      packageRoot: configs.some((config) => config.watch?.packageRoot !== false),
-      include: removeDuplicates(configs.flatMap((config) => config.watch?.include ?? [])),
-      exclude: removeDuplicates(configs.flatMap((config) => config.watch?.exclude ?? [])),
-      extensions: normalizeExtensions(
-        configs.flatMap((config) => config.watch?.extensions ?? DEFAULT_WATCH_EXTENSIONS),
-      ),
-      featurePatterns: getPatterns(configs, 'features'),
-      stepPatterns: getPatterns(configs, 'steps'),
-      importTestFromFiles: removeDuplicates(
-        configs.flatMap((config) => (config.importTestFrom ? [config.importTestFrom.file] : [])),
-      ),
-      outputDirs: removeDuplicates(configs.map((config) => config.outputDir)),
-    };
-    process.send?.({ type: 'metadata', metadata });
-  }
-}
-
-export function isWatchModeChild() {
-  return Boolean(process.env[WATCH_CHILD_ENV]);
-}
-
-export async function waitForWatchParentReady() {
-  if (!process.send) return;
-  await new Promise<void>((resolve) => {
-    const handleMessage = (message: WatchParentMessage) => {
-      if (message?.type !== 'start-generation') return;
-      process.removeListener('message', handleMessage);
-      resolve();
-    };
-    process.on('message', handleMessage);
-    process.send?.({ type: 'generation-ready' } satisfies WatchGenerationReadyMessage);
-  });
-}
+import { removeDuplicates } from '../../utils';
+import { normalizeExtensions } from './fileFilter';
+import { resolveWatchPatterns } from './paths';
 
 export const WATCH_CHILD_ENV = 'PLAYWRIGHT_BDD_WATCH_CHILD';
 
 export type WatchMetadata = {
   resolvedConfigFile: string;
   packageRoot: boolean;
+  gitIgnore: (boolean | string)[];
   include: string[];
   exclude: string[];
   extensions: string[];
@@ -62,20 +24,55 @@ export type WatchMetadataMessage = {
   metadata: WatchMetadata;
 };
 
-export type WatchGenerationReadyMessage = {
-  type: 'generation-ready';
+export type ReadyToGenerateMessage = {
+  type: 'ready-to-generate';
 };
 
-export type WatchChildMessage = WatchMetadataMessage | WatchGenerationReadyMessage;
+export type WatchChildMessage = WatchMetadataMessage | ReadyToGenerateMessage;
 
-export type WatchParentMessage = {
+export type StartGenerationMessage = {
   type: 'start-generation';
 };
 
-function getPatterns(configs: BDDConfig[], key: 'features' | 'steps') {
-  return removeDuplicates(
-    configs.flatMap((config) =>
-      toArray(config[key]).map((pattern) => path.resolve(config.configDir, pattern)),
+export function isWatchModeChild() {
+  return Boolean(process.env[WATCH_CHILD_ENV]);
+}
+
+export function sendWatchMetadataToParent(configs: BDDConfig[], resolvedConfigFile: string) {
+  const metadata: WatchMetadata = {
+    resolvedConfigFile,
+    packageRoot: configs.some((config) => config.watch?.packageRoot ?? watchDefaults.packageRoot),
+    gitIgnore: removeDuplicates(
+      configs.map((config) => config.watch?.gitIgnore ?? watchDefaults.gitIgnore),
     ),
-  );
+    include: removeDuplicates(
+      configs.flatMap((config) => config.watch?.include ?? watchDefaults.include),
+    ),
+    exclude: removeDuplicates(
+      configs.flatMap((config) => config.watch?.exclude ?? watchDefaults.exclude),
+    ),
+    extensions: normalizeExtensions(
+      configs.flatMap((config) => config.watch?.extensions ?? watchDefaults.extensions),
+    ),
+    featurePatterns: resolveWatchPatterns(configs, 'features'),
+    stepPatterns: resolveWatchPatterns(configs, 'steps'),
+    importTestFromFiles: removeDuplicates(
+      configs.flatMap((config) => (config.importTestFrom ? [config.importTestFrom.file] : [])),
+    ),
+    outputDirs: removeDuplicates(configs.map((config) => config.outputDir)),
+  };
+  process.send?.({ type: 'metadata', metadata });
+}
+
+export async function waitForStartGenerationMessage() {
+  if (!process.send) return;
+  await new Promise<void>((resolve) => {
+    const handleMessage = (message: StartGenerationMessage) => {
+      if (message?.type !== 'start-generation') return;
+      process.removeListener('message', handleMessage);
+      resolve();
+    };
+    process.on('message', handleMessage);
+    process.send?.({ type: 'ready-to-generate' } satisfies ReadyToGenerateMessage);
+  });
 }

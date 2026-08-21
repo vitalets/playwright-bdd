@@ -22,3 +22,11 @@ export const defaults: Required<
   arityCheck: true,
   lockFile: false,
 };
+
+export const watchDefaults = {
+  packageRoot: true,
+  gitIgnore: true,
+  include: [],
+  exclude: [],
+  extensions: ['.feature', '.js', '.mjs', '.cjs', '.jsx', '.ts', '.mts', '.cts', '.tsx'],
+} satisfies Required<NonNullable<BDDInputConfig['watch']>>;

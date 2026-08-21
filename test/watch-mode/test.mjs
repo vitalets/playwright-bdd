@@ -11,7 +11,11 @@ const dependencyFile = 'src/pattern.ts';
 const outputDir = '.features-gen';
 const outputFile = `${outputDir}/features/sample.feature.spec.js`;
 const outputChangeFile = `${outputDir}/output-change.txt`;
-const ignoredChangeFile = 'ignored/ignored-change.txt';
+const excludedChangeFile = 'ignored/ignored-change.ts';
+const customGitIgnoreDir = 'custom-gitignore';
+const customGitIgnoreFile = `${customGitIgnoreDir}/.bddignore`;
+const ignoredChangeFile = `${customGitIgnoreDir}/ignored/ignored-change.ts`;
+const reIncludedChangeFile = `${customGitIgnoreDir}/ignored/re-included-change.ts`;
 const GENERATION_COMPLETED = 'Generation completed. Waiting for changes...';
 const GENERATION_FAILED = 'Generation failed. Waiting for changes...';
 
@@ -75,6 +79,69 @@ test(`${testDir.name} (exclude paths)`, async () => {
     await verifyIgnoredPathChange(watchProcess);
   } finally {
     await watchProcess.stop();
+  }
+});
+
+test(`${testDir.name} (package root gitignore)`, async () => {
+  clearDirs();
+  writeFeatureAndStepFiles();
+  const watchProcess = startWatchProcess({ env: { WATCH_GIT_IGNORE: 'true' } });
+
+  try {
+    await watchProcess.waitForOutput(GENERATION_COMPLETED);
+    await expectNoGeneration(watchProcess, () => {
+      writeDependencyFile({ footer: '// ignored by package root gitignore' });
+    });
+  } finally {
+    await watchProcess.stop();
+  }
+});
+
+test(`${testDir.name} (custom gitignore)`, async () => {
+  clearDirs();
+  testDir.clearDir(customGitIgnoreDir);
+  writeFeatureAndStepFiles();
+  testDir.writeFile(ignoredChangeFile, '// initially watched');
+  testDir.writeFile(reIncludedChangeFile, '// initially watched');
+  const watchProcess = startWatchProcess({
+    env: { WATCH_GIT_IGNORE: customGitIgnoreFile },
+  });
+
+  try {
+    await watchProcess.waitForOutput(GENERATION_COMPLETED);
+
+    // Creating the configured file reloads the watcher and applies Git-style negation.
+    await changeAndWait(watchProcess, () => {
+      testDir.writeFile(
+        customGitIgnoreFile,
+        ['ignored/*', '!ignored/re-included-change.ts'].join('\n'),
+      );
+    });
+    await expectNoGeneration(watchProcess, () => {
+      testDir.writeFile(ignoredChangeFile, '// ignored change');
+    });
+    await changeAndWait(watchProcess, () => {
+      testDir.writeFile(reIncludedChangeFile, '// re-included change');
+    });
+
+    // Directory-only rules prune descendants, including paths previously re-included.
+    await changeAndWait(watchProcess, () => {
+      testDir.writeFile(customGitIgnoreFile, 'ignored/');
+    });
+    await expectNoGeneration(watchProcess, () => {
+      testDir.writeFile(reIncludedChangeFile, '// now ignored');
+    });
+
+    // Removing the configured file reloads the watcher without ignore rules.
+    await changeAndWait(watchProcess, () => {
+      fs.rmSync(testDir.getAbsPath(customGitIgnoreFile));
+    });
+    await changeAndWait(watchProcess, () => {
+      testDir.writeFile(ignoredChangeFile, '// watched after removal');
+    });
+  } finally {
+    await watchProcess.stop();
+    testDir.clearDir(customGitIgnoreDir);
   }
 });
 
@@ -185,8 +252,14 @@ async function verifyOutputChange(watchProcess) {
 }
 
 async function verifyIgnoredPathChange(watchProcess) {
+  await expectNoGeneration(watchProcess, () => {
+    testDir.writeFile(excludedChangeFile, 'export const ignoredChange = true;');
+  });
+}
+
+async function expectNoGeneration(watchProcess, change) {
   const outputOffset = watchProcess.output.length;
-  testDir.writeFile(ignoredChangeFile, 'ignored change');
+  change();
   await new Promise((resolve) => setTimeout(resolve, 500));
   expect(watchProcess.output.slice(outputOffset)).not.toContain(GENERATION_COMPLETED);
 }

@@ -33,10 +33,7 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   sourceMaps?: boolean;
   /** Path to file for importing test instance */
   importTestFrom?: string | ImportTestFrom;
-  /**
-   * Default language for your feature files.
-   * @default "en"
-   */
+  /** Default language for your feature files. */
   language?: string;
   /** Verbose mode */
   verbose?: boolean;
@@ -56,6 +53,11 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   watch?: {
     /** Watch the nearest `package.json` directory. */
     packageRoot?: boolean;
+    /**
+     * Apply Git-ignore rules from the nearest `package.json` directory.
+     * A string specifies a custom ignore file path.
+     * */
+    gitIgnore?: boolean | string;
     /** Additional file or directory paths to watch. Direct files bypass the extension filter. */
     include?: string[];
     /** File or directory paths to exclude. Globs are not supported. */
