@@ -9,6 +9,7 @@ import {
   BDDGEN_CMD,
   execPlaywrightTest,
   expect,
+  startPlaywrightTest,
   startProcess,
   test,
   TestDir,
@@ -144,7 +145,7 @@ function runBddgen() {
 }
 
 function startTestExecution() {
-  return startProcess('npx playwright test', {
+  return startPlaywrightTest({
     cwd: projectDir,
     env: { LOCK_FILE: 'true' },
   });

@@ -1,5 +1,5 @@
 import fs from 'node:fs';
-import { test, expect, startProcess, TestDir, waitFor } from '../_helpers/index.mjs';
+import { test, expect, startPlaywrightTest, TestDir, waitFor } from '../_helpers/index.mjs';
 import { GENERATION_COMPLETED, WatchProcess } from '../watch-mode/helpers/watchProcess.mjs';
 
 const testDir = new TestDir(import.meta);
@@ -77,7 +77,7 @@ function writeFeatureFile({ footer = '' } = {}) {
 }
 
 function startTestExecution() {
-  return startProcess('npx playwright test', {
+  return startPlaywrightTest({
     cwd: testDir.getAbsPath('.'),
   });
 }

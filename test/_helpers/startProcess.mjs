@@ -1,7 +1,9 @@
 import { spawn } from 'node:child_process';
 
-export function startProcess(commandString, { args = [], cwd, env = {} } = {}) {
-  const [command, ...commandArgs] = commandString.split(' ');
+export function startProcess(commandInput, { args = [], cwd, env = {} } = {}) {
+  const [command, ...commandArgs] = Array.isArray(commandInput)
+    ? commandInput
+    : commandInput.split(' ');
   const child = spawn(command, [...commandArgs, ...args], {
     cwd,
     env: { ...process.env, ...env },
