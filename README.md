@@ -32,10 +32,10 @@ Run BDD tests with Playwright runner
 
 [Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in `.feature` files. These scenarios are valuable artifacts for AI agents because they are both:
 
-* **readable**: you can refine them during planning to give the agent a clear goal.
+* **readable**: you can easily refine them during planning to give the agent a clear goal.
 * **executable**: once the code is written, the agent runs the same scenarios as tests to verify the implementation.
 
-Unlike plain markdown specs, BDD does not just describe the behavior; it makes the spec live and keeps it aligned with the codebase.
+Unlike plain markdown specs, BDD does not just describe the feature; it makes the spec live and keeps it aligned with the codebase.
 
 Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) and check out the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) on using BDD in agentic workflows.
 
@@ -51,7 +51,7 @@ Feature: Agentic development
 
 ## Why Playwright Runner?
 
-Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. However, it is most powerful when used with the **Playwright test runner**. Playwright-BDD converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
+[Playwright](https://playwright.dev/) provides both browser automation APIs and a powerful test runner. Playwright-BDD converts `.feature` files into native Playwright tests, so you can use all Playwright runner capabilities:
 
 - Automatic browser setup and cleanup
 - Auto-waiting for page elements
