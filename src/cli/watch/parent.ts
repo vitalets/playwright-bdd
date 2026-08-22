@@ -11,7 +11,7 @@ import { isWatchedFile } from './fileFilter';
 import { forkWatchChild } from './child';
 import { isIgnoredByGitIgnore } from './gitIgnore';
 
-const ALWAYS_IGNORED = new Set(['.git', 'node_modules']);
+const ALWAYS_IGNORED = new Set(['.git', 'node_modules', 'test-results', 'playwright-report']);
 const DEBOUNCE_MS = 100;
 type WatchPaths = ReturnType<typeof resolveWatchPaths>;
 
