@@ -1,5 +1,15 @@
 # Agent Rules
 
+## Project structure
+
+- `src/` — package source code.
+- `test/` — automated tests and test fixtures.
+- `docs/` — public user documentation.
+- `docs-internal/` — internal technical documentation; check it for relevant context before making non-trivial implementation decisions.
+- `examples/` — example projects demonstrating supported usage.
+- `scripts/` — development, build, release, and repository-maintenance scripts.
+- `skills/` — agent skills distributed with the project.
+
 ## Reviewing implementation decisions
 
 - When the user asks about a decision, possibility, or alternative approach, investigate the relevant code without modifying files.
