@@ -1,9 +1,10 @@
 /**
- * Generates an external Source Map v3 file from a generated Playwright test to its feature file.
+ * Generates an inline Source Map v3 from a generated Playwright test to its feature file.
  *
  * FeatureToTestMapper first discovers final generated locations using temporary formatter markers.
  * This module combines those locations with the corresponding Gherkin locations and serializes the
- * result as `<generated-test>.map`. See featureToTestMapper.ts for a complete marker example.
+ * result as a data URL embedded in the generated test. See featureToTestMapper.ts for a complete
+ * marker example.
  */
 import path from 'node:path';
 import { Location } from '@cucumber/messages';
@@ -28,19 +29,20 @@ type TestFileSourceMapOptions = {
 };
 
 export class TestFileSourceMap {
-  readonly outputPath: string;
   readonly content: string;
+  readonly url: string;
 
   constructor(private options: TestFileSourceMapOptions) {
-    this.outputPath = `${options.outputPath}.map`;
     this.content = this.generate();
+    const base64 = Buffer.from(this.content).toString('base64');
+    this.url = `data:application/json;charset=utf-8;base64,${base64}`;
   }
 
   private generate() {
     const { config, outputPath, featureUri, featureSource, tests, featureToTestMapper } =
       this.options;
     const featurePath = path.resolve(config.configDir, featureUri);
-    const sourcePath = toPosixPath(path.relative(path.dirname(this.outputPath), featurePath));
+    const sourcePath = toPosixPath(path.relative(path.dirname(outputPath), featurePath));
     const map = new SourceMapGenerator({ file: path.basename(outputPath) });
     map.setSourceContent(sourcePath, featureSource);
 

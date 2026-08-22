@@ -407,12 +407,12 @@ export class TestFile {
 
   private renderSourceMapUrl() {
     if (!this.sourceMap) return [];
-    return [renderSourceMapUrl(path.basename(this.sourceMap.outputPath))];
+    return [renderSourceMapUrl(this.sourceMap.url)];
   }
 
   private renderContentHash() {
-    const content = this.sourceMap?.content || this.options.featureSource;
-    const hash = calculateSha1(content).slice(0, 8);
+    if (this.sourceMap) return [];
+    const hash = calculateSha1(this.options.featureSource).slice(0, 8);
     return [renderContentHash(hash)];
   }
 }

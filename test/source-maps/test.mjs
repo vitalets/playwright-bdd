@@ -36,16 +36,23 @@ test(testDir.name, () => {
   expect(stdout).toContain('scenario 2 message');
   expect(stdout).toContain('5 passed');
 
-  testDir.expectFileExists(sourceMapFile);
+  testDir.expectFileNotExist(sourceMapFile);
+  testDir.expectFileNotContain(generatedFile, '// Source hash:');
 
-  const sourceMapContent = testDir.getFileContents(sourceMapFile);
-  const sourceHash = crypto.createHash('sha1').update(sourceMapContent).digest('hex').slice(0, 8);
-  testDir.expectFileContains(generatedFile, [
-    `// Source hash: ${sourceHash}`,
-    '//# sourceMappingURL=source-maps.feature.spec.js.map',
-  ]);
+  const sourceMap = extractInlineSourceMap();
+  expect(sourceMap.version).toBe(3);
+  expect(sourceMap.file).toBe('source-maps.feature.spec.js');
+  expect(sourceMap.sources).toEqual(['../features/source-maps.feature']);
+  expect(sourceMap.sourcesContent).toEqual([testDir.getFileContents(featureFile)]);
 
-  checkReporterStepLocations();
+  const file = path.normalize(featureFile);
+  checkReporterStepLocations({
+    'Given I log "scenario 1 message"': { file, line: 4, column: 5 },
+    'Given I log "message1"': { file, line: 7, column: 5 },
+    'Given I log "message2"': { file, line: 7, column: 5 },
+    'Given I log "message4"': { file, line: 15, column: 5 },
+    'Given I log "scenario 2 message"': { file, line: 25, column: 7 },
+  });
 });
 
 test(`${testDir.name} (disabled)`, () => {
@@ -56,13 +63,14 @@ test(`${testDir.name} (disabled)`, () => {
   });
 
   testDir.expectFileNotExist(sourceMapFile);
+  testDir.expectFileNotContain(generatedFile, '//# sourceMappingURL=');
 
   const featureContent = testDir.getFileContents(featureFile);
   const sourceHash = crypto.createHash('sha1').update(featureContent).digest('hex').slice(0, 8);
   testDir.expectFileContains(generatedFile, `// Source hash: ${sourceHash}`);
 });
 
-function checkReporterStepLocations() {
+function checkReporterStepLocations(expectedLocations) {
   const projectDir = testDir.getAbsPath('.');
   const actualLocations = Object.fromEntries(
     testDir
@@ -80,12 +88,14 @@ function checkReporterStepLocations() {
       ]),
   );
 
-  const file = path.normalize(featureFile);
-  expect(actualLocations).toEqual({
-    'Given I log "scenario 1 message"': { file, line: 4, column: 5 },
-    'Given I log "message1"': { file, line: 7, column: 5 },
-    'Given I log "message2"': { file, line: 7, column: 5 },
-    'Given I log "message4"': { file, line: 15, column: 5 },
-    'Given I log "scenario 2 message"': { file, line: 25, column: 7 },
-  });
+  expect(actualLocations).toEqual(expectedLocations);
+}
+
+function extractInlineSourceMap() {
+  const generatedContent = testDir.getFileContents(generatedFile);
+  const prefix = '//# sourceMappingURL=data:application/json;charset=utf-8;base64,';
+  const sourceMapLine = generatedContent.split('\n').find((line) => line.startsWith(prefix));
+  expect(sourceMapLine).toBeTruthy();
+  const encodedSourceMap = sourceMapLine.slice(prefix.length);
+  return JSON.parse(Buffer.from(encodedSourceMap, 'base64').toString());
 }

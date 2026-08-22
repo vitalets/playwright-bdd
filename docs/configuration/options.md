@@ -90,8 +90,7 @@ The `include` and `exclude` options accept plain filesystem paths, not glob patt
 - **Type:** `boolean`
 - **Default:** `false`
 
-Generate external source maps from generated Playwright tests to feature files. Source maps allow
-Playwright and editor integrations to display and select tests using feature-file locations.
+Generate inline source maps in the Playwright tests. Source maps allow Playwright VSCode extension to run tests directly from feature-file and better display data in reports and error traces.
 
 ```ts
 const testDir = defineBddConfig({

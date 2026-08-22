@@ -9,7 +9,6 @@ npm-debug.log
 # my
 /dist
 **/.features-gen/**/*.spec.js
-**/.features-gen/**/*.spec.js.map
 .bddgen.lock
 .cache
 test-results
