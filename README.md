@@ -34,6 +34,16 @@ Run BDD tests with Playwright runner
 
 Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) and check out the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) on using BDD in agentic workflows.
 
+```diff
+Feature: Agentic development
+
+  Scenario: Implement a new feature
+    Given business requirements
+    When a human defines the behavior as BDD steps
+-   Then the human implements the feature and verifies it with tests
++   Then the agent implements the feature and verifies it with tests
+```
+
 ## Why Playwright Runner?
 
 Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. However, it is most powerful when used with the **Playwright test runner**. Playwright-BDD converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
