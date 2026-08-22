@@ -28,6 +28,16 @@ export function isPathInside(parent: string, child: string) {
   );
 }
 
+export function findNearestExistingPath(candidate: string) {
+  let currentPath = candidate;
+  while (!fs.existsSync(currentPath)) {
+    const parentPath = path.dirname(currentPath);
+    if (parentPath === currentPath) return currentPath;
+    currentPath = parentPath;
+  }
+  return currentPath;
+}
+
 /**
  * Resolves patterns to list of files.
  * Extension can be a list: {js,ts}

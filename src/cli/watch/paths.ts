@@ -3,7 +3,7 @@ import path from 'node:path';
 import { BDDConfig } from '../../config/types';
 import { removeDuplicates, toArray } from '../../utils';
 import { arraysEqual } from '../../utils/array';
-import { isDirectory, isPathInside } from '../../utils/paths';
+import { findNearestExistingPath, isDirectory, isPathInside } from '../../utils/paths';
 import { areGitIgnoresEqual, GitIgnore, loadGitIgnore } from './gitIgnore';
 import type { WatchMetadata } from './ipc';
 
@@ -84,8 +84,8 @@ function resolveWatchRoots(metadata: WatchMetadata, context: WatchPathContext) {
   return minimizePaths(
     [
       metadata.resolvedConfigFile,
-      ...metadata.featurePatterns.map(findNearestExistingDirectory),
-      ...metadata.stepPatterns.map(findNearestExistingDirectory),
+      ...metadata.featurePatterns.map(resolvePatternWatchRoot),
+      ...metadata.stepPatterns.map(resolvePatternWatchRoot),
       ...metadata.importTestFromFiles.map(findNearestExistingPath),
       ...dependencyRoots,
       ...gitIgnoreFiles,
@@ -95,6 +95,11 @@ function resolveWatchRoots(metadata: WatchMetadata, context: WatchPathContext) {
         : findNearestExistingPath(path.resolve(watchPath)),
     ),
   );
+}
+
+function resolvePatternWatchRoot(pattern: string) {
+  const directory = isDirectory(pattern) ? pattern : path.dirname(pattern);
+  return findNearestExistingPath(directory);
 }
 
 function resolveGitIgnoreFiles(metadata: WatchMetadata, packageRoot: string) {
@@ -114,26 +119,6 @@ function findNearestPackageRoot(configDir: string) {
     const parentDir = path.dirname(currentDir);
     if (parentDir === currentDir) return;
     currentDir = parentDir;
-  }
-}
-
-function findNearestExistingPath(candidate: string) {
-  let currentPath = candidate;
-  while (!fs.existsSync(currentPath)) {
-    const parentPath = path.dirname(currentPath);
-    if (parentPath === currentPath) return currentPath;
-    currentPath = parentPath;
-  }
-  return currentPath;
-}
-
-function findNearestExistingDirectory(candidate: string) {
-  let currentPath = candidate;
-  while (true) {
-    if (fs.existsSync(currentPath) && fs.statSync(currentPath).isDirectory()) return currentPath;
-    const parentPath = path.dirname(currentPath);
-    if (parentPath === currentPath) return currentPath;
-    currentPath = parentPath;
   }
 }
 

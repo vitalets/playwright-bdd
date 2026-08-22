@@ -16,7 +16,7 @@ import {
   removeStaleLock,
   tryCreateLock,
 } from './owner';
-import { RETRY_INTERVAL_MS } from './types';
+import { RETRY_INTERVAL_MS } from './const';
 
 type WorkerInfo = { workerIndex: number };
 

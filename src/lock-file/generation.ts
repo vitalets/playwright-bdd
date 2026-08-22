@@ -4,6 +4,7 @@ import timers from 'node:timers/promises';
 import { removeDuplicates } from '../utils';
 import { logger } from '../utils/logger';
 import { relativeToCwd } from '../utils/paths';
+import { RETRY_INTERVAL_MS } from './const';
 import {
   ensureLockDir,
   getGenerationLockPath,
@@ -19,7 +20,7 @@ import {
   removeStaleLock,
   tryCreateLock,
 } from './owner';
-import { AcquiredLock, RETRY_INTERVAL_MS } from './types';
+import { AcquiredLock } from './types';
 
 export async function withGenerationLock<T>(outputDirs: string[], generate: () => Promise<T>) {
   const locks: AcquiredLock[] = [];

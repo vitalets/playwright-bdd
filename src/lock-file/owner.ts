@@ -1,7 +1,8 @@
 import crypto from 'node:crypto';
 import fs from 'node:fs';
 import { logger } from '../utils/logger';
-import { INVALID_LOCK_GRACE_MS, LockOwner, LockSnapshot } from './types';
+import { INVALID_LOCK_GRACE_MS } from './const';
+import { LockOwner, LockSnapshot } from './types';
 
 export function createLockOwner(workerIndex?: number): LockOwner {
   return {

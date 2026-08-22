@@ -3,7 +3,8 @@ import path from 'node:path';
 import { removeDuplicates } from '../utils';
 import { hasErrorCode, isProcessRunning, readLockSnapshot } from './owner';
 import { isExecutionLockFile, removeLockDirIfEmpty, resolveLockDir } from './paths';
-import { GENERATION_LOCK_FILE, LockOwner } from './types';
+import { GENERATION_LOCK_FILE } from './const';
+import { LockOwner } from './types';
 
 type ClearedLock = {
   lockPath: string;
