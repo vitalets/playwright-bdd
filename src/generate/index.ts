@@ -134,6 +134,8 @@ export class TestFilesGenerator {
 
   private async saveFiles() {
     this.files.forEach((file) => {
+      // Save the map first, so readers never observe JS pointing to a missing map.
+      if (file.sourceMap) saveFileSync(file.sourceMap.outputPath, file.sourceMap.content);
       saveFileSync(file.outputPath, file.content);
     });
     this.logger.logGeneratedTestFiles(this.files);
@@ -141,7 +143,7 @@ export class TestFilesGenerator {
 
   private async clearOutputDir() {
     const outputDirPattern = tg.convertPathToPattern(this.config.outputDir);
-    const pattern = `${outputDirPattern}/**/*.spec.js`;
+    const pattern = `${outputDirPattern}/**/*.spec.js{,.map}`;
     const testFiles = await tg.glob(pattern, { expandDirectories: false });
     this.logger.logClearingOutputDir(pattern);
     // Using { force: true } to suppress an error, if file not found.

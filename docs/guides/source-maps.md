@@ -2,7 +2,7 @@
 
 <div style="color: gray; font-size: 0.9em">Since <b>v9.3.0</b></div>
 
-Playwright-BDD can embed source maps in generated Playwright test files. Source maps connect locations in these generated tests back to the original `.feature` files, so Playwright reports and IDE integrations can show original scenarios and steps.
+Playwright-BDD can output source maps alongside generated Playwright test files. Source maps connect locations in these generated tests back to the original `.feature` files, so Playwright reports and IDE integrations can show original scenarios and steps.
 
 ## Enable source maps
 
@@ -13,6 +13,8 @@ const testDir = defineBddConfig({
   sourceMaps: true,
 });
 ```
+
+Run `bddgen` again after enabling the option. It generates an external `.map` file next to each generated Playwright test, which is required for discovery by the Playwright VS Code extension.
 
 ?> Use [watch mode](guides/watch-mode.md) to keep these files up to date as features change.
 
@@ -32,4 +34,4 @@ Source maps also improve the [Playwright HTML report](reporters/playwright.md). 
 
 ![Feature-file step location and Gherkin source snippet in the Playwright HTML report](./_media/source-maps-in-html-report.png ':size=80%')
 
-?> Generated specs do not need to be committed. See [Ignore generated files](guides/ignore-generated-files.md) for the recommended `.gitignore` configuration.
+?> Generated specs and source maps do not need to be committed. See [Ignore generated files](guides/ignore-generated-files.md) for the recommended `.gitignore` configuration.
