@@ -3,20 +3,26 @@ name: Publish to npm
 on:
   workflow_dispatch:
     inputs:
-      release-version:
-        description: Release version type
-        required: true
+      stable-release:
+        description: Stable release (omit if releasing beta)
+        required: false
         type: choice
+        default: '-'
         options:
+          - '-'
           - patch
           - minor
           - major
-        default: patch
-      prerelease:
-        description: Pre-release (beta)
+      beta-release:
+        description: Beta release (omit if releasing stable)
         required: false
-        type: boolean
-        default: false
+        type: choice
+        default: '-'
+        options:
+          - '-'
+          - beta-patch (start or continue)
+          - beta-minor (start or continue)
+          - beta-major (start or continue)
       skip-npm-publish:
         description: Skip NPM publish
         required: false
@@ -61,10 +67,10 @@ jobs:
       - run: npm run tsc:all
       - run: npx publint
 
-      - uses: vitalets/npm-release@v1
+      - uses: vitalets/npm-release@v2
         with:
-          release-version: ${{ inputs.release-version }}
-          prerelease: ${{ inputs.prerelease }}
+          stable-release: ${{ inputs.stable-release }}
+          beta-release: ${{ inputs.beta-release }}
           skip-npm-publish: ${{ inputs.skip-npm-publish }}
           dry-run: ${{ inputs.dry-run }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
