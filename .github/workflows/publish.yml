@@ -1,28 +1,26 @@
-name: Publish to npm
+name: release
 
 on:
   workflow_dispatch:
     inputs:
-      stable-release:
-        description: Stable release (omit if releasing beta)
-        required: false
+      channel:
+        description: Channel
+        required: true
         type: choice
         default: '-'
         options:
           - '-'
+          - stable
+          - next
+      version:
+        description: Version
+        required: true
+        type: choice
+        default: patch
+        options:
           - patch
           - minor
           - major
-      beta-release:
-        description: Beta release (omit if releasing stable)
-        required: false
-        type: choice
-        default: '-'
-        options:
-          - '-'
-          - beta-patch (start or continue)
-          - beta-minor (start or continue)
-          - beta-major (start or continue)
       skip-npm-publish:
         description: Skip NPM publish
         required: false
@@ -69,8 +67,8 @@ jobs:
 
       - uses: vitalets/npm-release@v2
         with:
-          stable-release: ${{ inputs.stable-release }}
-          beta-release: ${{ inputs.beta-release }}
+          channel: ${{ inputs.channel }}
+          version: ${{ inputs.version }}
           skip-npm-publish: ${{ inputs.skip-npm-publish }}
           dry-run: ${{ inputs.dry-run }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
