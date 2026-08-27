@@ -1,6 +1,5 @@
 import { Worker } from 'node:worker_threads';
 import { once } from 'node:events';
-import os from 'node:os';
 import path from 'node:path';
 import { Command } from 'commander';
 import { TestFilesGenerator } from '../../generate';
@@ -128,14 +127,12 @@ async function generateFilesForConfigs(configs: BDDConfig[], runFirstConfigInMai
   }
   const configsForWorkers = runFirstConfigInMainThread ? restConfigs : configs;
   if (configsForWorkers.length > 0) {
-    await pMap(configsForWorkers, runInWorker, getMaxWorkers());
+    // bddgen uses Playwright's requireOrImport() to load TS/JS step files. This helper transforms
+    // modules through Playwright's shared disk cache. Here, we generate configs sequentially (concurrency=1)
+    // because Playwright opens a cache file for writing before writing its content, allowing another
+    // worker to read the empty file and import an empty step module.
+    await pMap(configsForWorkers, runInWorker, 1);
   }
-}
-
-function getMaxWorkers() {
-  // Use os.availableParallelism (Node 18.14+) with fallback to os.cpus().
-  // Cap at half the available CPUs to avoid OOM in memory-constrained CI environments.
-  return Math.max(1, Math.floor((os.availableParallelism?.() ?? os.cpus().length) / 2));
 }
 
 async function runInWorker(config: BDDConfig) {
