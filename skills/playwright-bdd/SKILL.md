@@ -65,11 +65,15 @@ npx bddgen && npx playwright test .features-gen/@homepage/homepage.feature.spec.
 
 ## Scenario Writing Rules
 
+Apply these rules by default. If the user explicitly requests different wording, structure, or coverage, follow their direction for the affected scenarios.
+
 - **Scenarios must cover complete end-to-end user flows with a meaningful outcome.** A scenario should describe a user-facing behavior or outcome, not checking intermediate states.
 
 - **Keep the number of scenarios minimal.** Use the fewest scenarios needed to cover the main user flows for the feature.
 
 - **Reuse existing steps when composing scenarios.** Discover existing step definitions and feature files for steps that can be reused in new scenarios before inventing new phrasing. Use `npx bddgen export` or file search tool to list all registered step definitions.
+
+- **Let interactions establish availability.** If a scenario clicks, fills, selects, or otherwise uses an element, do not add separate steps asserting whether that same element exists, is visible, or is enabled. Add an availability assertion only when the element's availability is itself a meaningful precondition or outcome.
 
 - **Prefer business-aware step names over technical, heavily parameterized ones.**
   Bad: `When('I click {string} on {string}', ...)`
