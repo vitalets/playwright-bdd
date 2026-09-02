@@ -32,6 +32,8 @@ When('I fill login form with values', async ({ page }, data: DataTable) => {
 });
 ```
 
+See the [`DataTable` API reference](api/data-table.md) for all available methods and examples.
+
 ## Optional data tables
 
 There may be cases where you need a step with an optional data table. For example, both of the following steps can be handled by the same step definition:
