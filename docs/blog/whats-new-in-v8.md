@@ -95,7 +95,7 @@ Before(async () => { ... });
 Given('a step', async () => { ... });
 ```
 
-Full list of [createBdd() options](api.md#createbdd).
+Full list of [createBdd() options](api/steps.md#createbdd).
 
 ## Improved Configuration Options
 
