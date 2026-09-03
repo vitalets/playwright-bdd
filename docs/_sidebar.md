@@ -71,12 +71,7 @@
 
 * **Blog**
   - [What's new in v8](blog/whats-new-in-v8.md)
-* **API**
-  - [Configuration](api/configuration.md)
-  - [Steps](api/steps.md)
-  - [Hooks](api/hooks.md)
-  - [Decorators](api/decorators.md)
-  - [DataTable](api/data-table.md)
+* [**API**](api.md)
 * [**CLI**](cli.md)
 * [**FAQ**](faq.md)
 * [**❤️ Sponsors ❤️**](sponsors.md)

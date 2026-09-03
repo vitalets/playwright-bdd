@@ -32,7 +32,7 @@ When('I fill login form with values', async ({ page }, data: DataTable) => {
 });
 ```
 
-See the [`DataTable` API reference](api/data-table.md) for all available methods and examples.
+See the [`DataTable` API reference](api.md#data-table) for all available methods and examples.
 
 ## Optional data tables
 

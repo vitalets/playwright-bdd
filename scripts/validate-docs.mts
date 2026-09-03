@@ -53,11 +53,7 @@ function fillFileInfo(relPath: string) {
     marked.parse(fileInfo.content, {
       walkTokens: (token) => {
         if (token.type === 'heading') {
-          const anchor = slugify(token.text, {
-            lower: true,
-            strict: true,
-          });
-          fileInfo.anchors.push(anchor);
+          fileInfo.anchors.push(getHeadingAnchor(token.text));
         }
         if (token.type === 'link' && !/^https?:\/\//.test(token.href)) {
           fileInfo.links.push(token as Tokens.Link);
@@ -115,4 +111,16 @@ function getLocation(fileContent: string, text: string) {
 function formatError(message: string, fileInfo: FileInfo, text: string) {
   const { line, column } = getLocation(fileInfo.content, text);
   return `[${message}]: ${fileInfo.path}:${line}:${column} ${text}`;
+}
+
+function getHeadingAnchor(heading: string) {
+  // Docsify supports explicit heading IDs in the form "Heading :id=custom-id".
+  const customId = heading.match(/\s+:id=([\w-]+)$/)?.[1];
+  return (
+    customId ||
+    slugify(heading, {
+      lower: true,
+      strict: true,
+    })
+  );
 }
