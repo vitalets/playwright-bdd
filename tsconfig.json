@@ -10,8 +10,7 @@
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "resolveJsonModule": true,
-    "jsx": "react-jsx"
+    "resolveJsonModule": true
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
   "exclude": ["dist", "test", "examples"]

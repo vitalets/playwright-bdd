@@ -14,8 +14,6 @@ const config: KnipConfig = {
     '!**/.features-gen/**',
     '!**/{cucumber-report,actual-reports}/**',
     '!**/dist/**',
-    // This generated folder triggers knip to treat react as used dependency
-    '!test/component-tests/playwright/.cache',
   ],
   // this is a knip default, keep it here for readability
   project: ['**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}!'],
@@ -41,11 +39,6 @@ const config: KnipConfig = {
     'http-server',
     // Used in test/decorators-js to pass custom babel config
     '@babel/plugin-proposal-decorators',
-    // Used implicitly in component-tests
-    'react',
-    'react-dom',
-    '@types/react',
-    '@types/react-dom',
   ],
 };
 

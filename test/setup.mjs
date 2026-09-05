@@ -11,7 +11,6 @@ setup();
 function setup() {
   if (!process.env.CI) ensureMinNodeVersion(20);
   showVersion('@playwright/test');
-  showVersion('@playwright/experimental-ct-react');
   // must build project before tests as we run tests without ts-node
   execSync('npm run build', { stdio: 'inherit' });
 }

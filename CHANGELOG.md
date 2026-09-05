@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* fix: support Playwright 1.63 by removing obsolete experimental component testing dependencies ([#331](https://github.com/vitalets/playwright-bdd/issues/331))
 
 ## [9.2.0] - 2026-06-18
 * feat: include CI information in Cucumber reports
