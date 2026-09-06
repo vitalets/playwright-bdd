@@ -58,7 +58,8 @@ export default class StepsReporter implements Reporter {
         const location = stringifyLocation(step.location);
         const error = step.error ? stringifyError(step.error) : '';
         // step.subtitle appeared in pw 1.63
-        const subtitle = playwrightVersion >= '1.63' ? step.subtitle : '';
+        const subtitle =
+          playwrightVersion >= '1.63' ? (step as TestStep & { subtitle?: string }).subtitle : '';
         const line = [`[${step.category}]`, step.title, subtitle, location, error]
           .filter(Boolean)
           .join(' ');
