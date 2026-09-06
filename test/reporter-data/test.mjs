@@ -16,6 +16,9 @@ function getExpectedReportName() {
     // Since pw 1.53 'page.goto("about:blank")' step title is replaced with 'Navigate "about:blank"'
     case playwrightVersion < '1.53':
       return 'report-less-1.53.txt';
+    // Since PW 1.63 the navigation URL is moved from the step title to its subtitle.
+    case playwrightVersion < '1.63':
+      return 'report-less-1.63.txt';
     default:
       return 'report-current.txt';
   }
