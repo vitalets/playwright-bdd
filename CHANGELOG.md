@@ -3,6 +3,8 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+
+## [9.2.1] - 2026-09-06
 * fix: support Playwright 1.63 by removing obsolete experimental component testing dependencies ([#331](https://github.com/vitalets/playwright-bdd/issues/331))
 
 ## [9.2.0] - 2026-06-18
@@ -331,7 +333,8 @@ Version v3 has several major updates based on the feedback.
 ## 1.2.0
 * Initial public release
 
-[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v9.2.0...HEAD
+[unreleased]: https://github.com/vitalets/playwright-bdd/compare/v9.2.1...HEAD
+[9.2.1]: https://github.com/vitalets/playwright-bdd/compare/v9.2.0...v9.2.1
 [9.2.0]: https://github.com/vitalets/playwright-bdd/compare/v9.1.0...v9.2.0
 [9.1.0]: https://github.com/vitalets/playwright-bdd/compare/v9.0.0...v9.1.0
 [9.0.0]: https://github.com/vitalets/playwright-bdd/compare/v8.5.1...v9.0.0
