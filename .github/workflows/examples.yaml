@@ -1,10 +1,12 @@
 name: examples
 
 on:
+  workflow_dispatch:
   push:
-    branches: [main, beta]
-  pull_request:
-    branches: [main, beta]
+    branches: ['**']
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
   schedule:
     # run daily at 00:00
     - cron: 0 0 * * *
