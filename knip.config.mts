@@ -31,8 +31,6 @@ const config: KnipConfig = {
     'npm-run-all',
     // Used in examples and test/reporter-cucumber-ext-attachments
     'http-server',
-    // Used in test/decorators-js to pass custom babel config
-    '@babel/plugin-proposal-decorators',
   ],
 };
 
