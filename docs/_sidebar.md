@@ -54,6 +54,7 @@
   - [Source Maps](guides/source-maps.md)
   - [UI Mode](guides/ui-mode.md)
   - [Debugging](guides/debugging.md)
+  - [Deterministic runs](guides/deterministic-runs.md)
   - [Fix with AI](guides/fix-with-ai.md)
   - [Environment variables](guides/env-vars.md)
   - [Component tests](guides/component-tests.md)
