@@ -13,10 +13,10 @@ jobs:
     if: github.ref_name == 'main'
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Update sponsors in README.md
-        uses: JamesIves/github-sponsors-readme-action@1a120c92d5067dafeaedb33916301fd61338883d
+        uses: JamesIves/github-sponsors-readme-action@02650b8cd445fc16dfef73195f9c406dce041623 # v1.6.1
         with:
           token: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
           maximum: 4999
