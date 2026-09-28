@@ -12,13 +12,13 @@ export type StepSkip = {
   (condition: boolean, description?: string): void;
 };
 
-// Errors thrown by $step.skip(). Playwright catches them when the step finishes,
-// they are kept here only to tell a skipped step from a failed one.
+// Errors thrown by $step.skip(). Playwright catches them when the step finishes.
+// They are kept here only to tell a skipped step from a failed one.
 const stepSkipErrors = new WeakSet<object>();
 
 /**
  * Creates $step.skip() for the step that is running now.
- * Playwright passes TestStepInfo to the step body since 1.51, on older versions it's undefined.
+ * Playwright passes TestStepInfo to the step body since 1.51. On older versions it's undefined.
  */
 export function createStepSkip(stepInfo?: PwTestStepInfo): StepSkip {
   return (condition = true, description?: string) => {
@@ -28,7 +28,8 @@ export function createStepSkip(stepInfo?: PwTestStepInfo): StepSkip {
 
 /**
  * $step.skip() when no step is running: in scenario hooks, fixtures or after the step has finished.
- * Without it, Playwright would try to skip a step that has already finished.
+ * It gives a clear error instead of a TypeError before the first step,
+ * or an attempt to skip a step that has already finished after it.
  */
 export const skipOutsideOfStep: StepSkip = () => {
   throw new Error(`$step.skip() can only be called inside a step or a step hook.`);

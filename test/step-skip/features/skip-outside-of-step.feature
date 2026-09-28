@@ -1,5 +1,5 @@
 Feature: skip outside of step
 
   @skip-in-before-hook
-  Scenario: step skipped in Before hook
+  Scenario: skip called in Before hook
     Given a passing step

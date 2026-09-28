@@ -73,7 +73,9 @@ Then('the mock server received one request', async ({ $step, request }) => {
 });
 ```
 
-In Cucumber reports the step gets the `SKIPPED` status, and the description becomes the step result message. You can also call `$step.skip()` in a [BeforeStep hook](writing-steps/hooks/step-hooks.md#beforestep) to skip a step before it runs.
+In the Playwright report the test still passes, with the step marked as skipped. In Cucumber reports the step gets the `SKIPPED` status and the description becomes the step result message. Cucumber works out a scenario's status from its steps, so there the whole scenario counts as skipped (the JUnit report, for example, lists it as skipped with the description).
+
+You can also call `$step.skip()` in a [BeforeStep hook](writing-steps/hooks/step-hooks.md#beforestep) to skip a step before it runs.
 
 ?> `$step.skip()` requires Playwright 1.51 or newer. To skip the whole scenario, use [`$test.skip()`](writing-steps/bdd-fixtures.md#test-and-testinfo) instead.
 
