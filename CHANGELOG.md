@@ -7,6 +7,7 @@
 * feat: add opt-in source maps via the `sourceMaps` config option for running feature-file scenarios from VS Code ([#297](https://github.com/vitalets/playwright-bdd/issues/297))
 * feat: add native `bddgen --watch` mode.
 * feat: add `lockFile` option to coordinate multiple `bddgen` processes.
+* feat: add `$step.skip()` to skip a single step at runtime, while the rest of the scenario keeps running.
 * fix: generate BDD projects sequentially to prevent concurrent Playwright transform-cache writes from dropping step definitions.
 
 ## [9.2.1] - 2026-09-06

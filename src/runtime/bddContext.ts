@@ -6,11 +6,13 @@ import { BDDConfig } from '../config/types';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
+import { StepSkip } from './stepSkip';
 
 export type BddStepInfo = {
   title: string;
   docStringType?: string;
   error?: unknown;
+  skip: StepSkip;
 };
 
 export type BddContext = {

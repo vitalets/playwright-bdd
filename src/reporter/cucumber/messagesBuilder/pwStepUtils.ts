@@ -107,3 +107,16 @@ export function isTopLevelStep(pwStep: pw.TestStep) {
 export function isSkippedError(error?: pw.TestError) {
   return Boolean(error?.message?.includes('Test is skipped:'));
 }
+
+/**
+ * Returns the annotation that Playwright adds to a step skipped by TestStepInfo.skip(),
+ * for example via $step.skip(). Such a step finishes without an error,
+ * so the annotation is the only sign that it was skipped.
+ */
+export function getStepSkipAnnotation(pwStep?: pw.TestStep) {
+  // TestStep.annotations appeared in PW 1.51
+  const step = pwStep as (pw.TestStep & { annotations?: PwStepAnnotation[] }) | undefined;
+  return step?.annotations?.find((annotation) => annotation.type === 'skip');
+}
+
+type PwStepAnnotation = { type: string; description?: string };

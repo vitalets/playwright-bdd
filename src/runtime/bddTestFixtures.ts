@@ -14,6 +14,7 @@ import { BddContext, BddStepInfo } from './bddContext';
 import { PromptFixture } from '../ai/promptAttachment';
 import { supportedFeatures } from '../playwright/supportedFeatures';
 import { isSourceMapped } from '../playwright/utils';
+import { skipOutsideOfStep } from './stepSkip';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
@@ -131,7 +132,7 @@ export const test = base.extend<BddTestFixtures>({
   // Filled dynamically in step invoker.
   // Important to keep this fixture separate, without dependency on bddContext.
   // Otherwise we can get cyclic fixtures dependency.
-  $step: [({}, use) => use({ title: '' }), fixtureOptions],
+  $step: [({}, use) => use({ title: '', skip: skipOutsideOfStep }), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],

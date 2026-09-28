@@ -12,6 +12,8 @@ import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
 import { getStepHooksToRun, runStepHooks } from '../hooks/step';
 import { getSpecFileByFeatureFile } from '../generate/paths';
+import { createStepSkip, isStepSkipError, skipOutsideOfStep } from './stepSkip';
+import { PwTestStepInfo } from '../playwright/types';
 
 export type BddStepFn = BddStepInvoker['invoke'];
 
@@ -53,9 +55,8 @@ export class BddStepInvoker {
     const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
 
-    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, async () => {
-      await this.runBeforeStepHooks(stepHookFixtures);
-      return this.runWithAfterStepHooks(stepHookFixtures, () => {
+    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, (stepInfo) => {
+      return this.runStepBody(stepInfo, stepHookFixtures, () => {
         return matchedDefinition.definition.fn.call(
           // Although pw-style does not expect usage of world / this in steps,
           // some projects request it for better migration process from cucumber.
@@ -67,6 +68,32 @@ export class BddStepInvoker {
         );
       });
     });
+  }
+
+  private async runStepBody<T>(
+    stepInfo: PwTestStepInfo | undefined,
+    stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
+    fn: () => T | Promise<T>,
+  ) {
+    this.bddContext.step.skip = createStepSkip(stepInfo);
+    let skipError: unknown;
+    try {
+      await this.runBeforeStepHooks(stepHookFixtures);
+      const result = await this.runWithAfterStepHooks(stepHookFixtures, async () => {
+        try {
+          return await fn();
+        } catch (e) {
+          // A skipped step is not a failed one: AfterStep hooks run as after a passed step,
+          // and the skip is re-thrown after them, so that Playwright marks the step as skipped.
+          if (!isStepSkipError(e)) throw e;
+          skipError = e;
+        }
+      });
+      if (skipError) throw skipError;
+      return result;
+    } finally {
+      this.bddContext.step.skip = skipOutsideOfStep;
+    }
   }
 
   // eslint-disable-next-line max-statements

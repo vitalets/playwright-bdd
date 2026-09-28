@@ -31,6 +31,7 @@ It exposes the following fields:
 | `title` | `string` | Step title without the keyword, e.g. `I open url "https://playwright.dev"` |
 | `docStringType` | `string \| undefined` | Media type of the doc string argument, if present. See [Doc strings](writing-steps/doc-strings.md). |
 | `error` | `unknown \| undefined` | Error thrown by the current step body, available in `AfterStep`. It is `undefined` for successful steps. |
+| `skip` | `function` | Skips the rest of the current step, while the scenario keeps running. See [Skipping a step](writing-steps/bdd-fixtures.md#skipping-a-step). |
 
 ```ts
 Given('I open url {string}', async ({ $step }, url: string) => { 
@@ -59,6 +60,22 @@ Then('element with text {string} should( not) be displayed', async ({ page, $ste
   }
 });
 ```
+
+#### Skipping a step
+Call `$step.skip()` to skip the rest of the current step without skipping the whole scenario. Playwright stops the step, marks it as skipped, and the scenario carries on with the next step. It works like Playwright's [`testStepInfo.skip()`](https://playwright.dev/docs/api/class-teststepinfo#test-step-info-skip-1) and has the same signatures: `$step.skip()` and `$step.skip(condition, description)`.
+
+For example, when the same scenarios run against a local environment and a deployed one, a step that checks something only available locally can skip itself on the deployed one:
+```ts
+Then('the mock server received one request', async ({ $step, request }) => {
+  $step.skip(process.env.TARGET !== 'local', 'The mock server only runs locally');
+  const res = await request.get('http://localhost:3001/requests');
+  expect(await res.json()).toHaveLength(1);
+});
+```
+
+In Cucumber reports the step gets the `SKIPPED` status, and the description becomes the step result message. You can also call `$step.skip()` in a [BeforeStep hook](writing-steps/hooks/step-hooks.md#beforestep) to skip a step before it runs.
+
+?> `$step.skip()` requires Playwright 1.51 or newer. To skip the whole scenario, use [`$test.skip()`](writing-steps/bdd-fixtures.md#test-and-testinfo) instead.
 
 ## `$tags`
 You can access current test tags using the special `$tags` fixture:
