@@ -33,6 +33,18 @@ export default defineConfig({
 - `fullyParallel: false` prevents scenarios within a file (and by extension the shared worker) from running in parallel — the safest option for shared-session apps.
 - `retries` re-runs a scenario that failed, absorbing one-off network/rate-limit flakiness instead of failing the pipeline.
 
+## How this applies to playwright-bdd specifically
+
+The settings above are Playwright-level, but they matter **especially** in playwright-bdd because the framework manages shared state across scenarios through worker hooks and worker-scoped fixtures.
+
+In playwright-bdd the canonical place to establish a single shared session is a [`BeforeWorker`](../api/hooks.md) (`BeforeAll`) hook backed by a worker-scoped fixture (`$workerInfo`). That hook runs **once per worker** — so `workers: 1` opens the session exactly once, while `workers: N` would open, and often bounce, the same single session N times. `fullyParallel: true` compounds this: several feature files can run concurrently inside the same worker, thrashing a shared worker fixture on a single-session app.
+
+Given that, serial execution (`workers: 1`, `fullyParallel: false`) is the sound default for playwright-bdd suites aimed at single-session or rate-limited targets:
+
+- `BeforeWorker` / `AfterWorker` hooks and shared worker fixtures behave predictably when there is exactly one worker.
+- A retried scenario re-runs in the same worker, reusing the already-established session instead of re-authenticating.
+- Worker hooks are driven by **feature-level** tags; scenario-level tags still trigger the hook for the whole feature file — one more reason a single serial worker is the stable baseline.
+
 ## Navigation retries in Page Objects
 
 For particularly unstable public apps, add a small retry around navigation inside your Page Object:
