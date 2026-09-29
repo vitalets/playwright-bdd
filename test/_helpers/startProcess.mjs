@@ -24,7 +24,9 @@ export function startProcess(commandInput, { args = [], cwd, env = {} } = {}) {
       const start = Date.now();
       while (!output.slice(offset).includes(expected)) {
         if (child.exitCode !== null) throw new Error(`Process exited.\n${output}`);
-        if (Date.now() - start > 10_000) throw new Error(`Timed out waiting for: ${expected}`);
+        if (Date.now() - start > 10_000) {
+          throw new Error(`Timed out waiting for: ${expected}\nProcess output:\n${output}`);
+        }
         await new Promise((resolve) => setTimeout(resolve, 25));
       }
     },
