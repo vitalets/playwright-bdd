@@ -29,8 +29,9 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   outputDir?: string;
   /** Coordinate generation with other bddgen processes and active BDD workers */
   lockFile?: boolean;
-  /** Generate source maps to map generated tests with original feature files */
-  sourceMaps?: boolean;
+  // Hidden until the required Playwright VS Code extension update is released.
+  // /** Generate source maps to map generated tests with original feature files */
+  // sourceMaps?: boolean;
   /** Path to file for importing test instance */
   importTestFrom?: string | ImportTestFrom;
   /** Default language for your feature files. */

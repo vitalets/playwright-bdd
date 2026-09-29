@@ -50,10 +50,10 @@ editing, or deleting it updates the watched paths automatically.
 
 Included and excluded paths accept plain filesystem paths, not glob patterns, and are resolved relative to the Playwright config. A directly included file bypasses the extension filter, while files inside an included directory remain subject to `watch.extensions`. See the [watch configuration options](configuration/options.md#watch) for details.
 
+<!-- Source maps: restore public exposure after the required Playwright VS Code extension update is released.
 ## Source maps
 
-Source maps are a great companion for watch mode. When enabled, `bddgen` keeps the mappings from
-generated Playwright tests to the original feature files up to date:
+Source maps are a great companion for watch mode. When enabled, `bddgen` keeps the mappings from generated Playwright tests to the original feature files up to date:
 
 ```ts
 const testDir = defineBddConfig({
@@ -61,8 +61,8 @@ const testDir = defineBddConfig({
 });
 ```
 
-See the [source maps guide](guides/source-maps.md) for VS Code integration and feature-file
-locations in the Playwright HTML report.
+See the [source maps guide](guides/source-maps.md) for VS Code integration and feature-file locations in the Playwright HTML report.
+-->
 
 ## Concurrent generation
 

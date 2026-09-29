@@ -51,7 +51,11 @@
   - [Authentication](guides/authentication.md)
   - [Ignore generated files](guides/ignore-generated-files.md)
   - [Watch Mode](guides/watch-mode.md)
+
+  <!-- Source maps: restore public exposure after the required Playwright VS Code extension update is released.
   - [Source Maps](guides/source-maps.md)
+  -->
+
   - [UI Mode](guides/ui-mode.md)
   - [Debugging](guides/debugging.md)
   - [Fix with AI](guides/fix-with-ai.md)

@@ -36,20 +36,16 @@ test(testDir.name, () => {
   expect(stdout).toContain('scenario 2 message');
   expect(stdout).toContain('5 passed');
 
-  testDir.expectFileExists(sourceMapFile);
+  testDir.expectFileNotExist(sourceMapFile);
 
-  const sourceMapContent = testDir.getFileContents(sourceMapFile);
-  const sourceMap = JSON.parse(sourceMapContent);
+  const { sourceMap, sourceMapContent } = readInlineSourceMap();
   expect(sourceMap.version).toBe(3);
   expect(sourceMap.file).toBe('source-maps.feature.spec.js');
   expect(sourceMap.sources).toEqual(['../features/source-maps.feature']);
   expect(sourceMap.sourcesContent).toEqual([testDir.getFileContents(featureFile)]);
 
   const sourceHash = crypto.createHash('sha1').update(sourceMapContent).digest('hex').slice(0, 8);
-  testDir.expectFileContains(generatedFile, [
-    `// Source hash: ${sourceHash}`,
-    '//# sourceMappingURL=source-maps.feature.spec.js.map',
-  ]);
+  testDir.expectFileContains(generatedFile, `// Source hash: ${sourceHash}`);
 
   const file = path.normalize(featureFile);
   checkReporterStepLocations({
@@ -95,4 +91,16 @@ function checkReporterStepLocations(expectedLocations) {
   );
 
   expect(actualLocations).toEqual(expectedLocations);
+}
+
+function readInlineSourceMap() {
+  const generatedContent = testDir.getFileContents(generatedFile);
+  const sourceMapUrl = generatedContent.trimEnd().split('\n').at(-1);
+  const prefix = '//# sourceMappingURL=data:application/json;charset=utf-8;base64,';
+  expect(sourceMapUrl.startsWith(prefix)).toBe(true);
+  const sourceMapContent = Buffer.from(sourceMapUrl.slice(prefix.length), 'base64').toString(
+    'utf8',
+  );
+  expect(sourceMapUrl).toBe(`${prefix}${Buffer.from(sourceMapContent).toString('base64')}`);
+  return { sourceMap: JSON.parse(sourceMapContent), sourceMapContent };
 }

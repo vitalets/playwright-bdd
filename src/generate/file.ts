@@ -54,10 +54,9 @@ export class TestFile {
   private hooks: TestFileHooks;
   private backgrounds: BackgroundGen[] = [];
   private tests: TestGen[] = [];
-  private featureToTestMapper?: FeatureToTestMapper;
+  private sourceMap?: TestFileSourceMap;
 
   public outputPath: string;
-  public sourceMap?: TestFileSourceMap;
 
   constructor(private options: TestFileOptions) {
     this.outputPath = getSpecFileByFeatureFile(this.config, this.featureUri);
@@ -407,7 +406,8 @@ export class TestFile {
 
   private renderSourceMapUrl() {
     if (!this.sourceMap) return [];
-    return [renderSourceMapUrl(path.basename(this.sourceMap.outputPath))];
+    const encodedMap = Buffer.from(this.sourceMap.content).toString('base64');
+    return [renderSourceMapUrl(`data:application/json;charset=utf-8;base64,${encodedMap}`)];
   }
 
   private renderContentHash() {

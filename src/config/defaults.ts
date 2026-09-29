@@ -3,17 +3,12 @@ import { BDDInputConfig } from './types';
 export const defaults: Required<
   Pick<
     BDDInputConfig,
-    | 'outputDir'
-    | 'sourceMaps'
-    | 'verbose'
-    | 'quotes'
-    | 'language'
-    | 'missingSteps'
-    | 'arityCheck'
-    | 'lockFile'
+    'outputDir' | 'verbose' | 'quotes' | 'language' | 'missingSteps' | 'arityCheck' | 'lockFile'
   >
-> = {
+> & { sourceMaps: boolean } = {
   outputDir: '.features-gen',
+  // Keep sourceMaps internal until the required Playwright VS Code extension update is released.
+  // Restore BDDInputConfig and public docs then; see docs/guides/source-maps.md.
   sourceMaps: false,
   verbose: false,
   quotes: 'single',
