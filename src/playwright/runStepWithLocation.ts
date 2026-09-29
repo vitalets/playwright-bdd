@@ -4,7 +4,7 @@
 
 import { TestInfo } from '@playwright/test';
 import { Location } from '@playwright/test/reporter';
-import { TestTypeCommon } from './types';
+import { PwTestStepInfo, TestTypeCommon } from './types';
 import { playwrightVersion } from './utils';
 
 // Partial copy of Playwright's TestStepInternal
@@ -20,7 +20,8 @@ export async function runStepWithLocation(
   test: TestTypeCommon,
   stepText: string,
   location: Location,
-  body: () => unknown,
+  // Since PW 1.51, Playwright passes TestStepInfo to the step body.
+  body: (stepInfo?: PwTestStepInfo) => unknown,
 ) {
   // PW 1.48 introduced official way to run step with location.
   // See: https://github.com/microsoft/playwright/issues/30160

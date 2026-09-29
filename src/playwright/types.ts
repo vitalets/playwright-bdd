@@ -21,6 +21,13 @@ export type TestTypeCommon = TestType<KeyValue, KeyValue>;
 export type PwBuiltInFixturesWorker = PlaywrightWorkerArgs & PlaywrightWorkerOptions;
 export type PwBuiltInFixturesTest = PlaywrightTestArgs & PlaywrightTestOptions;
 
+// Part of Playwright's TestStepInfo, that appeared in PW 1.51.
+// Copied here, so the types still work with older Playwright versions.
+// See: https://playwright.dev/docs/api/class-teststepinfo
+export type PwTestStepInfo = {
+  skip(condition: boolean, description?: string): void;
+};
+
 export type PwAttachment = TestInfo['attachments'][0];
 // export type PwAnnotation = TestInfo['annotations'][0];
 

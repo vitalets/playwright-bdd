@@ -12,7 +12,7 @@ import * as messages from '@cucumber/messages';
 import { TestCaseRun } from './TestCaseRun';
 import { toCucumberTimestamp } from './timing';
 import { TestStepAttachments } from './TestStepAttachments';
-import { isSkippedError } from './pwStepUtils';
+import { getStepSkipAnnotation, isSkippedError } from './pwStepUtils';
 import { buildException } from './Exception';
 
 export type TestStepRunEnvelope = Pick<
@@ -94,10 +94,11 @@ export class TestStepRun {
         //
         // So we should set both fields carefully:
         // - result.message = exception.stackTrace to show full error details in json reporter
+        // - for a step skipped by $step.skip(), result.message is the skip reason
         //
         // See also: https://github.com/cucumber/react-components/pull/345
         exception,
-        message: exception?.stackTrace,
+        message: exception?.stackTrace ?? getStepSkipAnnotation(this.pwStep)?.description,
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };
@@ -125,6 +126,9 @@ export class TestStepRun {
       // correct: the hook was a declared prerequisite, but was already handled by a prior scenario
       // in the same worker and therefore did not execute as part of this attempt.
       case !this.wasExecuted():
+        return messages.TestStepResultStatus.SKIPPED;
+      // A step skipped by $step.skip() finishes without an error, but has a 'skip' annotation.
+      case Boolean(getStepSkipAnnotation(this.pwStep)):
         return messages.TestStepResultStatus.SKIPPED;
       default:
         return messages.TestStepResultStatus.PASSED;

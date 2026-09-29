@@ -6,6 +6,7 @@
 * feat: support multiple aliases for step definitions
 * feat: add native `bddgen --watch` mode.
 * feat: add `lockFile` option to coordinate multiple `bddgen` processes.
+* feat: add `$step.skip()` to skip a single step at runtime, while the rest of the scenario keeps running ([#401](https://github.com/vitalets/playwright-bdd/issues/401))
 * fix: generate BDD projects sequentially to prevent concurrent Playwright transform-cache writes from dropping step definitions.
 
 ## [9.2.1] - 2026-09-06
