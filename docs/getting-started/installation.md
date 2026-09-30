@@ -1,5 +1,7 @@
 # Installation
 
+Requires Node.js **20+** and Playwright **1.53+**.
+
 You can install Playwright-BDD with different package managers:
 
 - [with Npm](#npm)

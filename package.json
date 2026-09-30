@@ -14,7 +14,7 @@
     "node": ">=20"
   },
   "peerDependencies": {
-    "@playwright/test": ">=1.44"
+    "@playwright/test": ">=1.53"
   },
   "main": "./dist/index.js",
   "exports": {

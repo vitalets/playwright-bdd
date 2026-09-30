@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* breaking: raise the minimum supported Playwright version from 1.44 to 1.53; support the latest stable minor and 10 previous minor releases.
 * feat: support multiple aliases for step definitions
 * feat: add native `bddgen --watch` mode.
 * feat: add `lockFile` option to coordinate multiple `bddgen` processes.

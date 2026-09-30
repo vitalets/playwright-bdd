@@ -86,10 +86,9 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 
 ## Playwright Versions Support
 
-`playwright-bdd` supports all **non-deprecated** versions of Playwright. To check which Playwright versions are currently deprecated, run:
-```bash
-npm show @playwright/test@1 deprecated
-```
+`playwright-bdd` supports the latest stable Playwright minor release and the **10 previous minor releases**. Patch releases do not count as separate versions; use the latest patch of your chosen minor. Prereleases do not advance this support window.
+
+The minimum is reviewed when publishing new Playwright-BDD releases and recorded in `peerDependencies` and the changelog. Previously published releases retain their declared minimum. For example, with Playwright 1.63 as the latest stable release, the minimum is **1.53**.
 
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
