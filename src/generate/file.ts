@@ -34,7 +34,6 @@ import { BackgroundGen } from './background';
 import { StepData, TestGen } from './test';
 import { FeatureToTestMapper } from './featureToTestMapper';
 import { BddDataRenderer } from '../bddData/renderer';
-import { supportedFeatures } from '../playwright/supportedFeatures';
 import { calculateSha1, removeDuplicates } from '../utils';
 import { TestFileSourceMap } from './sourceMap';
 
@@ -177,7 +176,7 @@ export class TestFile {
       ...this.formatter.uriFixture(this.featureUri),
       ...bddDataRenderer.renderFixture(),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
-      ...(supportedFeatures.ariaSnapshots && this.config.aiFix?.promptAttachment
+      ...(this.config.aiFix?.promptAttachment
         ? this.formatter.pageFixtureWithPromptAttachment()
         : []),
     ]);

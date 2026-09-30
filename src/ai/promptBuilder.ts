@@ -4,7 +4,6 @@
 
 import { defaultPromptTemplate } from './promptTemplate';
 import { Page } from '@playwright/test';
-import { supportedFeatures } from '../playwright/supportedFeatures';
 import { BddContext } from '../runtime/bddContext';
 import { stripAnsiEscapes } from '../utils/stripAnsiEscapes';
 import { substitute } from '../utils';
@@ -47,10 +46,8 @@ export class PromptBuilder {
   }
 
   private async captureAriaSnapshot() {
-    if (supportedFeatures.ariaSnapshots && this.page) {
+    if (this.page) {
       try {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore PW < 1.49 don't have .ariaSnapshot()
         return await this.page.locator('html').ariaSnapshot();
       } catch {
         // Page can be already closed
