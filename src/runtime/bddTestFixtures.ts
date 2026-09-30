@@ -18,9 +18,7 @@ import { isSourceMapped } from '../playwright/utils';
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 // Hide all BDD fixtures in reporter.
-// 'box' option was added in PW 1.46,
-// make type coercion to satisfy TS in early PW versions
-const fixtureOptions = { scope: 'test', box: true } as { scope: 'test' };
+const fixtureOptions = { scope: 'test', box: true } as const;
 
 export type BddTestFixtures = {
   $bddContext: BddContext;
