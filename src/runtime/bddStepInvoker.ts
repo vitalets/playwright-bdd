@@ -6,7 +6,6 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
 import { BddAutoInjectFixtures, getBddAutoInjectFixtures } from './bddTestFixturesAuto';
-import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { excludeStepAliases, formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
@@ -27,6 +26,7 @@ export class BddStepInvoker {
   /**
    * Invokes particular step.
    */
+  // eslint-disable-next-line max-lines-per-function
   async invoke(
     stepText: string, // step text without keyword
     argument?: PickleStepArgument | null,
@@ -53,7 +53,7 @@ export class BddStepInvoker {
     const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
 
-    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, async () => {
+    const wrappedStepFn = async () => {
       await this.runBeforeStepHooks(stepHookFixtures);
       return this.runWithAfterStepHooks(stepHookFixtures, () => {
         return matchedDefinition.definition.fn.call(
@@ -66,7 +66,9 @@ export class BddStepInvoker {
           ...stepParameters,
         );
       });
-    });
+    };
+
+    await this.bddContext.test.step(stepTextWithKeyword, wrappedStepFn, { location });
   }
 
   // eslint-disable-next-line max-statements
