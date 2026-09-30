@@ -32,8 +32,8 @@ Run BDD tests with Playwright runner
 
 [Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files. In the AI era, these scenarios become valuable artifacts for agents for two reasons:
 
-* **Readable**: you can easily draft and refine scenarios with an agent to clearly define the behavior.
-* **Executable**: the same scenarios can be executed as automated tests to verify the agent-generated code.
+* ✅ **Readable**: you can easily draft and refine scenarios with an agent to clearly define the behavior.
+* ✅ **Executable**: the same scenarios can be executed as automated tests to verify the agent-generated code.
 
 Unlike plain Markdown specs, BDD does not just describe the feature; it makes the spec live and keeps it aligned with the codebase.
 
@@ -86,9 +86,7 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 
 ## Playwright Versions Support
 
-`playwright-bdd` supports the latest stable Playwright minor release and the **10 previous minor releases**. Patch releases do not count as separate versions; use the latest patch of your chosen minor. Prereleases do not advance this support window.
-
-The minimum is reviewed when publishing new Playwright-BDD releases and recorded in `peerDependencies` and the changelog. Previously published releases retain their declared minimum. For example, with Playwright 1.63 as the latest stable release, the minimum is **1.53**.
+`playwright-bdd` supports the latest stable Playwright release and the **10 previous releases**.
 
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
