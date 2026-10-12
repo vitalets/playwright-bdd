@@ -8,7 +8,7 @@
 * feat: add native `bddgen --watch` mode.
 * feat: add `lockFile` option to coordinate multiple `bddgen` processes.
 * fix: generate BDD projects sequentially to prevent concurrent Playwright transform-cache writes from dropping step definitions.
-* fix: keep an empty attachment or an empty stdout/stderr chunk from breaking the Cucumber reporters
+* fix: keep an empty attachment or an empty stdout/stderr chunk from breaking the Cucumber reporters ([#403](https://github.com/vitalets/playwright-bdd/issues/403))
 
 ## [9.2.1] - 2026-09-06
 * fix: support Playwright 1.63 by removing obsolete experimental component testing dependencies ([#331](https://github.com/vitalets/playwright-bdd/issues/331))
