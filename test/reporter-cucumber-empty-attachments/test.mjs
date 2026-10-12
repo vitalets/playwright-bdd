@@ -1,6 +1,6 @@
 /**
  * An empty attachment, from attach() or from an empty stdout/stderr chunk,
- * must not stop the cucumber reporters.
+ * must not stop the Cucumber reporters.
  */
 import { test, expect, TestDir, execPlaywrightTest } from '../_helpers/index.mjs';
 
