@@ -21,6 +21,7 @@ Feature: success
 
   Scenario: Scenario with attachments
     Given attach text via testInfo
+    And attach empty text
     And attach text via attachments.push
     And attach non-ASCII text
     And attach text in nested step
@@ -28,6 +29,7 @@ Feature: success
     And attach image as file
     And attach stdout
     And attach buffer as stdout
+    And write empty stderr
 
   @success-before-hook
   @success-after-hook

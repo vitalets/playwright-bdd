@@ -12,6 +12,10 @@ When('attach text via testInfo', async ({ $testInfo }) => {
   await $testInfo.attach('text attachment via testInfo', { body: '|some text' });
 });
 
+When('attach empty text', async ({ $testInfo }) => {
+  await $testInfo.attach('empty text', { body: '', contentType: 'text/plain' });
+});
+
 When('attach text in nested step', async ({ $test }) => {
   await $test.step('my nested step', async () => {
     await $test.info().attach('text attachment in nested step', { body: '|more text' });
@@ -50,6 +54,11 @@ Then('attach image as file', async ({ $testInfo }) => {
 Then('attach stdout', async ({}) => {
   console.log(123, 'some logs'); // eslint-disable-line no-console
   // don't test console.error b/c it poisons the output
+});
+
+Then('write empty stderr', async ({}) => {
+  // An empty chunk must not create a log attachment or interrupt report generation.
+  process.stderr.write(Buffer.alloc(0));
 });
 
 // See: https://github.com/vitalets/playwright-bdd/issues/250
