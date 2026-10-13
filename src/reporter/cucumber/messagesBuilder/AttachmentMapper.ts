@@ -95,6 +95,10 @@ function stdioAsAttachment(result: pw.TestResult, name: 'stdout' | 'stderr') {
     .map((str) => stripAnsiEscapes(str))
     .join('');
 
+  // Chunks can be empty, e.g. Node's execFileSync writes the child's stderr even when there is none.
+  // No output means no attachment.
+  if (!body) return;
+
   return {
     name,
     // Attach stdout / stderr as text/x.cucumber.log+plain instead of text/plain,
