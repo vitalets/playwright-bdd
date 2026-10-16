@@ -7,7 +7,9 @@
     "module": "nodenext",
     "strict": true,
     "types": ["node"],
-    "skipLibCheck": false
+    // Older Playwright declarations use namespace syntax rejected by TypeScript 6.
+    // Consumer code and type assertions in this fixture are still checked.
+    "skipLibCheck": true
   },
   "include": ["**/*.ts"]
 }
