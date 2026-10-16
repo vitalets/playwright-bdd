@@ -30,16 +30,16 @@ Run BDD tests with Playwright runner
 
 ## BDD in the Era of AI
 
-[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files. In the AI era, these scenarios become valuable artifacts for agents for two reasons:
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files. In the AI era, these scenarios become valuable artifacts for agents because they are both:
 
-* ✅ **Readable**: you can easily draft and refine scenarios with an agent to clearly define the behavior.
-* ✅ **Executable**: the same scenarios can be executed as automated tests to verify the agent-generated code.
+* ✅ **Readable**: You can easily draft and refine scenarios with an agent to clearly define the behavior.
+* ✅ **Executable**: The same scenarios can be executed as automated tests to verify the implementation.
 
-Unlike plain Markdown specs, BDD does not just describe the feature; it makes the spec live and keeps it aligned with the codebase.
+Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
 
-**The ultimate dev flow:** review only feature files + apply automated checks for code quality and scenario compliance.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="center" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=0bOdxvK1Tmk) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) for more details on agentic BDD workflow.
 
-Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) and check out the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) on using BDD in agentic workflows.
+Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) to get started.
 
 ```diff
 Feature: Agentic development
@@ -50,6 +50,7 @@ Feature: Agentic development
 -   Then the human implements the feature and verifies it with tests
 +   Then the agent implements the feature and verifies it with tests
 ```
+The ultimate goal: **review only feature files** and let automations check code quality and scenario compliance.
 
 ## Why Playwright Runner?
 
