@@ -37,6 +37,8 @@ test('Scenario with doc string', async ({ scenario }) => {
 test('Scenario with attachments', async ({ scenario }) => {
   await expect(scenario.getStepTitles()).toHaveText([
     'Given attach text via testInfo',
+    'And attach text via step',
+    'And attach text via step info',
     'And attach empty text',
     'And attach text via attachments.push',
     'And attach non-ASCII text',
@@ -50,6 +52,10 @@ test('Scenario with attachments', async ({ scenario }) => {
   await expect(scenario.root).not.toContainText('my nested step');
   await expect(scenario.getAttachments()).toHaveText([
     'text attachment via testInfo|some text',
+    'before step attachment|before',
+    'text attachment via step|step text',
+    'after step attachment|after',
+    'text attachment via step info|native step text',
     'empty text',
     'text attachment via attachments.push|another text',
     'non-ASCII attachment|Falló el caso',
@@ -57,6 +63,9 @@ test('Scenario with attachments', async ({ scenario }) => {
     'image attachment inline',
     'image attachment as file',
   ]);
+  const step = scenario.getStep(/^And attach text via step$/);
+  await expect(step).toContainText('before step attachment|before');
+  await expect(step).toContainText('after step attachment|after');
   await scenario.expandAttachment();
   // Only stdout has output; the empty stderr chunk must not add another log.
   await expect(scenario.getLogs()).toHaveCount(1);

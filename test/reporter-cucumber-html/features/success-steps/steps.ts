@@ -12,6 +12,14 @@ When('attach text via testInfo', async ({ $testInfo }) => {
   await $testInfo.attach('text attachment via testInfo', { body: '|some text' });
 });
 
+When('attach text via step', async ({ $step }) => {
+  await $step.attach('text attachment via step', { body: '|step text' });
+});
+
+When('attach text via step info', async ({ $step }) => {
+  await $step.info.attach('text attachment via step info', { body: '|native step text' });
+});
+
 When('attach empty text', async ({ $testInfo }) => {
   await $testInfo.attach('empty text', { body: '', contentType: 'text/plain' });
 });

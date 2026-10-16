@@ -31,6 +31,9 @@ It exposes the following fields:
 | `title` | `string` | Step title without the keyword, e.g. `I open url "https://playwright.dev"` |
 | `docStringType` | `string \| undefined` | Media type of the doc string argument, if present. See [Doc strings](writing-steps/doc-strings.md). |
 | `error` | `unknown \| undefined` | Error thrown by the current step body, available in `AfterStep`. It is `undefined` for successful steps. |
+| `info` | `Omit<TestStepInfo, 'skip'>` | Native Playwright step info, available during the step body and step hooks. Members follow your installed Playwright version. |
+| `attach` | `TestStepInfo['attach']` | Attach a file or value to the current BDD step. |
+| `skip` | `TestStepInfo['skip']` | Skip the current BDD step and continue the scenario. |
 
 ```ts
 Given('I open url {string}', async ({ $step }, url: string) => { 
@@ -40,6 +43,42 @@ Given('I open url {string}', async ({ $step }, url: string) => {
 ```
 
 `$step.error` is mainly useful in [AfterStep hooks](writing-steps/hooks/step-hooks.md#afterstep). Use it instead of `$testInfo.status` when you need per-step failure handling.
+
+### Native step info and attachments
+
+`$step.info` exposes [Playwright's TestStepInfo](https://playwright.dev/docs/api/class-teststepinfo), except `skip()`. Its types come from your installed Playwright version: newer members such as `titlePath` and `annotations` are available when that version supports them. No newer Playwright version is required to use the basic step API.
+
+Use `$step.attach()` as a convenience alias for `$step.info.attach()`:
+
+```ts
+Then('the response is valid', async ({ $step }) => {
+  await $step.attach('response', { body: 'response details', contentType: 'text/plain' });
+  await $step.info.attach('log', { path: 'logs/request.log' });
+});
+```
+
+Both forms attach to the enclosing BDD step, including when called from a named `BeforeStep` or `AfterStep` hook. `$step.info` and `$step.attach()` are available only during BDD step execution, including step hooks; using them in scenario hooks or fixture setup/teardown throws an error.
+
+### Skipping one step
+
+Use `$step.skip()` to stop the current step, mark it as skipped, and continue with the next step in the scenario:
+
+```ts
+Then('the payment mock received one charge', async ({ $step }) => {
+  $step.skip(process.env.TARGET !== 'local', 'The payment mock only runs locally');
+  // Check the mock...
+});
+```
+
+Call `$step.skip()` without arguments to skip unconditionally, or `$step.skip(condition, reason)` to skip conditionally. A false condition continues execution normally.
+
+- In `BeforeStep`, skipping stops subsequent before-hooks and bypasses the body and after-hooks. This also works with named hooks.
+- In the step body, skipping still runs `AfterStep` hooks, with `$step.error` unset. A real after-hook failure fails the step.
+- Calling `$step.skip()` in `AfterStep` or outside active step execution throws an error.
+
+`$step.info.skip()` is intentionally excluded from TypeScript types. The native object is unchanged at runtime, so JavaScript callers must also use `$step.skip()` instead. Native skipping can be swallowed by a named hook's nested Playwright step, allowing the BDD body to run. Skipping in an after-hook can also hide later failures. `$step.skip()` tracks skip intent and enforces the hook restrictions to prevent these problems.
+
+Playwright can report the scenario as passed when one step is skipped and the remaining steps pass. Cucumber reports derive scenario status from step statuses, so they may report that same scenario as skipped. The skipped step's reason is included in Cucumber reports.
 
 #### Example
 A popular use-case for the `$step` fixture is additional matching by the step title.

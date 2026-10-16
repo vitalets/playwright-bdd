@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* feat: expose `$step.info` and `$step.attach()`, and add guarded `$step.skip()` with Cucumber reporting support ([#401](https://github.com/vitalets/playwright-bdd/issues/401), [#400](https://github.com/vitalets/playwright-bdd/pull/400)).
 * breaking: raise the minimum supported Playwright version from 1.44 to 1.53; support the latest stable minor and 10 previous minor releases.
 * feat: support multiple aliases for step definitions
 * feat: add native `bddgen --watch` mode.

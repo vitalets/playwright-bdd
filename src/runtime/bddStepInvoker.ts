@@ -2,6 +2,7 @@
  * Class to invoke step in playwright runner.
  */
 
+import { TestStepInfo } from '@playwright/test';
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
@@ -9,6 +10,7 @@ import { BddAutoInjectFixtures, getBddAutoInjectFixtures } from './bddTestFixtur
 import { excludeStepAliases, formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
+import { BddStepState } from './bddStepState';
 import { getStepHooksToRun, runStepHooks } from '../hooks/step';
 import { getSpecFileByFeatureFile } from '../generate/paths';
 
@@ -33,9 +35,8 @@ export class BddStepInvoker {
     providedFixtures?: Record<string, unknown>,
   ) {
     this.bddContext.stepIndex++;
-    this.bddContext.step.title = stepText;
-    this.bddContext.step.docStringType = undefined;
-    this.bddContext.step.error = undefined;
+    const stepState = this.getStepState();
+    stepState.initNewStep(stepText, argument?.docString?.mediaType);
 
     const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
     const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
@@ -53,49 +54,59 @@ export class BddStepInvoker {
     const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
 
-    const wrappedStepFn = async () => {
-      await this.runBeforeStepHooks(stepHookFixtures);
-      return this.runWithAfterStepHooks(stepHookFixtures, () => {
-        return matchedDefinition.definition.fn.call(
-          // Although pw-style does not expect usage of world / this in steps,
-          // some projects request it for better migration process from cucumber.
-          // Here, for pw-style we pass empty object as world.
-          // See: https://github.com/vitalets/playwright-bdd/issues/208
-          this.world,
-          stepFixtures,
-          ...stepParameters,
-        );
-      });
+    const wrappedStepFn = async (info: TestStepInfo) => {
+      stepState.setInfo(info);
+      try {
+        await this.runBeforeStepHooks(stepHookFixtures);
+        if (stepState.skipped) return;
+        return await this.runWithAfterStepHooks(stepHookFixtures, () => {
+          return matchedDefinition.definition.fn.call(
+            // Although pw-style does not expect usage of world / this in steps,
+            // some projects request it for better migration process from cucumber.
+            // Here, for pw-style we pass empty object as world.
+            // See: https://github.com/vitalets/playwright-bdd/issues/208
+            this.world,
+            stepFixtures,
+            ...stepParameters,
+          );
+        });
+      } finally {
+        stepState.reset();
+      }
     };
 
     await this.bddContext.test.step(stepTextWithKeyword, wrappedStepFn, { location });
   }
 
-  // eslint-disable-next-line max-statements
+  // eslint-disable-next-line visual/complexity
   private async runWithAfterStepHooks<T>(
     stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
     fn: () => T | Promise<T>,
   ) {
-    let stepError: unknown;
-    // we use a separate variable, because JS can throw undefined.
-    let hasStepError = false;
+    const stepState = this.getStepState();
     let result: T;
 
     try {
       result = await fn();
     } catch (e) {
-      stepError = e;
-      hasStepError = true;
-      this.bddContext.step.error = e;
+      // Native skip already annotated the step. Suppress only its control-flow error
+      // so AfterStep can run and any real cleanup failure takes precedence.
+      if (!stepState.isSkipError(e)) {
+        stepState.setError(e);
+      }
     }
+
+    // run after step hooks even if step was skipped in step body.
 
     try {
+      stepState.isAfterStepPhase = true;
       await this.runAfterStepHooks(stepHookFixtures);
     } catch (e) {
-      if (!hasStepError) throw e;
+      // Preserve the original body failure when an after-hook also fails.
+      if (stepState.error === undefined) stepState.setError(e);
     }
 
-    if (hasStepError) throw stepError;
+    if (stepState.error !== undefined) throw stepState.error;
     return result!;
   }
 
@@ -152,7 +163,6 @@ export class BddStepInvoker {
       parameters.push(new DataTable(argument.dataTable));
     } else if (argument?.docString) {
       parameters.push(argument.docString.content);
-      this.bddContext.step.docStringType = argument.docString.mediaType;
     }
 
     // todo: handle invalid code length
@@ -175,6 +185,12 @@ export class BddStepInvoker {
 
   private getStepHookFixtures(providedFixtures: Record<string, unknown>) {
     return Object.assign({}, providedFixtures, getBddAutoInjectFixtures(this.bddContext));
+  }
+
+  private getStepState() {
+    // we make BddStepFixture as public, but store BddStepState
+    // in context to have access to internal methods.
+    return this.bddContext.step as BddStepState;
   }
 
   private getBddStepData() {

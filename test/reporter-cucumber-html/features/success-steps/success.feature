@@ -19,8 +19,11 @@ Feature: success
       some text
       ```
 
+  @step-attachments
   Scenario: Scenario with attachments
     Given attach text via testInfo
+    And attach text via step
+    And attach text via step info
     And attach empty text
     And attach text via attachments.push
     And attach non-ASCII text

@@ -6,6 +6,7 @@
 
 import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { callWithTimeout } from '../utils';
+import { BddStepState } from '../runtime/bddStepState';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
 import { BddAutoInjectFixtures, isBddAutoInjectFixture } from '../runtime/bddTestFixturesAuto';
 import { HookConstructorOptions, setTagsExpression } from './shared';
@@ -90,6 +91,7 @@ export async function runStepHooks(
   for (const hook of hooks) {
     try {
       await runStepHook(hook, world, fixtures);
+      if (hook.type === 'beforeStep' && (fixtures.$step as BddStepState).skipped) break;
     } catch (e) {
       if (hook.type === 'beforeStep') throw e;
       if (!error) error = e;

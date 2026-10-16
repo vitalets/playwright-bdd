@@ -10,7 +10,8 @@ import { BddStepInvoker, BddStepFn } from './bddStepInvoker';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
-import { BddContext, BddStepInfo } from './bddContext';
+import { BddContext } from './bddContext';
+import { BddStepFixture, BddStepState } from './bddStepState';
 import { PromptFixture } from '../ai/promptAttachment';
 import { supportedFeatures } from '../playwright/supportedFeatures';
 import { isSourceMapped } from '../playwright/utils';
@@ -32,7 +33,7 @@ export type BddTestFixtures = {
   $tags: string[];
   $test: TestTypeCommon;
   $testInfo: TestInfo;
-  $step: BddStepInfo;
+  $step: BddStepFixture;
   $uri: string;
   $applySpecialTags: void;
   $world: unknown;
@@ -129,7 +130,7 @@ export const test = base.extend<BddTestFixtures>({
   // Filled dynamically in step invoker.
   // Important to keep this fixture separate, without dependency on bddContext.
   // Otherwise we can get cyclic fixtures dependency.
-  $step: [({}, use) => use({ title: '' }), fixtureOptions],
+  $step: [({}, use) => use(new BddStepState()), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],
