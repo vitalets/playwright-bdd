@@ -18,6 +18,8 @@ export type AnyFunction = (...args: any[]) => unknown;
 export type ProvidedStepOptions = {
   tags?: string;
   arityCheck?: boolean;
+  /** Static Playwright test locks inherited by scenarios matching this definition. */
+  lock?: string | string[];
 };
 
 export type StepDefinitionOptions = {

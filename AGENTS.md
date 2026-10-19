@@ -18,6 +18,8 @@
 
 - Ask clarifying questions if any requirement, behavior, or constraint is ambiguous. Do not start implementation until all open questions are resolved.
 - After any change to TypeScript files, run `npm run tsc`
+- When creating test directories, follow the established structure of similar tests: keep feature files and step definitions under `features/`, with the test runner, configuration, and package metadata at the test directory root.
+- In `test.mjs`, use `testDir.name` in test titles. Match feature titles to their feature filenames, name scenarios after the behavior being verified, and consolidate related cases into existing fixtures where practical.
 - After applying changes, query directory names from the `test` dir, guess tests that are relevant to the changes and run only these tests using the command: `npm run only -- test/<dir>/test.mjs`
 - Never complete commits with `--no-verify`. If commit hooks fail, show the error to the user and ask how to proceed.
 - When updating `CHANGELOG.md`, if there is a related GitHub issue or pull request, include its link in the changelog entry.

@@ -122,12 +122,13 @@ export class Formatter {
     fixtures: Set<string>,
     pickleId: string,
     children: string[],
+    locks: string[],
   ) {
     const titleStr = this.quoted(title);
-    const tagsStr = this.testTags(tags);
+    const detailsStr = this.testDetails(tags, locks);
     const fixturesStr = sortFixtureNames([...fixtures]).join(', ');
     const fn = this.withSubFunction('test', specialTags);
-    const firstLine = `${fn}(${titleStr}, ${tagsStr}async ({ ${fixturesStr} }) => { // test: ${pickleId}`;
+    const firstLine = `${fn}(${titleStr}, ${detailsStr}async ({ ${fixturesStr} }) => { // test: ${pickleId}`;
     const lines = [
       firstLine, // prettier-ignore
       // We use test.fail() in the test body instead of test.fail('...', () => { ... })
@@ -230,8 +231,11 @@ export class Formatter {
     return specialTags.fail ? [`test.fail();`] : [];
   }
 
-  private testTags(tags: string[]) {
-    return tags.length ? `{ tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}] }, ` : '';
+  private testDetails(tags: string[], locks: string[]) {
+    const details: string[] = [];
+    if (tags.length) details.push(`tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}]`);
+    if (locks.length) details.push(`lock: [${locks.map((lock) => this.quoted(lock)).join(', ')}]`);
+    return details.length ? `{ ${details.join(', ')} }, ` : '';
   }
 
   /**

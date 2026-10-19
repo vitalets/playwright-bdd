@@ -23,6 +23,7 @@ import {
 import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
 import { getStepHooksFixtureNames, getStepHooksToRun } from '../../hooks/step';
 import { ArityChecker } from './arity-checker';
+import { collectTestLocks } from './locks';
 
 export type StepData = {
   pickleStep: PickleStep;
@@ -99,6 +100,8 @@ export class TestGen {
       });
 
     this.handleMissingDefinitions();
+    // Resolve generation-time skips before validating locks on tests that will not run.
+    const locks = this.skipped ? [] : collectTestLocks(this.stepsData.values());
 
     return this.formatter.test(
       this.testTitle,
@@ -107,6 +110,7 @@ export class TestGen {
       new Set(testFixtureNames),
       this.pickle.id,
       stepLines,
+      locks,
     );
   }
 

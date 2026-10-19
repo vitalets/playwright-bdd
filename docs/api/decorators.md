@@ -43,6 +43,7 @@ A decorator to mark a method as a BDD step.
 - `options` _object_ - Step options:
   - `tags` _string_ - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
   - `arityCheck` _boolean_ - Overrides the config-level [`arityCheck`](configuration/options.md#aritycheck) for this step definition.
+  - `lock` _string | string[]_ - Static [test locks](writing-steps/test-locks.md) inherited by scenarios matching this definition. Requires Playwright 1.63 or later.
 
 **Multiple decorators:**
 
