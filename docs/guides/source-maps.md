@@ -20,6 +20,8 @@ Run `bddgen` again after enabling the option. It embeds the source map as a base
 
 ## Playwright VS Code extension
 
+Requires Playwright VS Code extension **v1.1.20 or later**, which added [inline source map support during test discovery](https://github.com/microsoft/playwright-vscode/releases/tag/v1.1.20).
+
 With source maps enabled, the [Playwright VS Code extension](https://playwright.dev/docs/getting-started-vscode) shows the original feature files and their scenarios in the Test Explorer tree instead of the generated test files:
 
 ![Feature files and scenarios in the Playwright Test Explorer](./_media/source-maps-tree.png ':size=50%')

@@ -85,7 +85,6 @@ file is watched and changes are applied without restarting watch mode.
 
 The `include` and `exclude` options accept plain filesystem paths, not glob patterns. A directly included file bypasses the extension filter, which allows watching arbitrary inputs such as JSON or YAML files. Files inside an included directory remain subject to `extensions`. Extensions are case-insensitive and may be written with or without a leading dot. Excluding a directory also excludes all its descendants, including configured feature or step directories, and takes precedence over `include`. The `.git` and `node_modules` directories and configured output directories are always excluded and cannot be re-enabled.
 
-<!-- Source maps: restore public exposure after the required Playwright VS Code extension update is released.
 ## sourceMaps
 
 - **Type:** `boolean`
@@ -93,12 +92,13 @@ The `include` and `exclude` options accept plain filesystem paths, not glob patt
 
 Embed inline source maps in generated Playwright tests. Source maps allow the Playwright VS Code extension to run tests directly from feature files and improve locations in reports and error traces.
 
+VS Code integration requires Playwright VS Code extension **v1.1.20 or later**. See the [source maps guide](guides/source-maps.md) for details.
+
 ```ts
 const testDir = defineBddConfig({
   sourceMaps: true,
 });
 ```
--->
 
 ## featuresRoot
 
