@@ -35,6 +35,7 @@ The point at which the child performs the handshake depends on the project confi
 ## Files
 
 - `parent.ts`: watcher lifecycle, change coalescing, and child orchestration.
+- `output.ts`: startup banner, relative paths, timestamped results, and elapsed time using Node.js terminal styles. Output is append-only so child diagnostics remain visible.
 - `child.ts`: creation of a fresh generation process.
 - `ipc.ts`: message types, watch metadata, and the generation handshake.
 - `paths.ts`: watched roots, direct files, exclusions, and Git-ignore resolution.

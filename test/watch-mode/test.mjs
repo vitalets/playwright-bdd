@@ -67,9 +67,45 @@ test(`${testDir.name}: exclude paths`, async () => {
   }
 });
 
+test(`${testDir.name}: verbose output`, async () => {
+  setup();
+  const watchProcess = new WatchProcess(testDir).start({
+    args: ['--verbose'],
+  });
+  try {
+    await watchProcess.ready();
+    expect(watchProcess.output).toContain('bddgen v');
+    expect(watchProcess.output).toContain('Found feature files (1)');
+    expect(watchProcess.output).not.toContain('Done (');
+    await verifyErrorRecovery(watchProcess);
+    expect(watchProcess.output).toContain('generation failed; watching for changes');
+  } finally {
+    await watchProcess.stop();
+  }
+});
+
+test(`${testDir.name}: interrupted generation recovers`, async () => {
+  setup();
+  const watchProcess = new WatchProcess(testDir).start();
+  try {
+    await watchProcess.ready();
+    const output = await watchProcess.changeAndWait(
+      () => writeStepFile({ footer: `process.kill(process.pid, 'SIGKILL');` }),
+      'generation interrupted (SIGKILL)',
+    );
+    expect(output).not.toContain(GENERATION_COMPLETED);
+    await watchProcess.changeAndWait(() => writeStepFile());
+  } finally {
+    await watchProcess.stop();
+  }
+});
+
 async function verifyInitialGeneration(watchProcess) {
   await watchProcess.ready();
-  expect(watchProcess.output).toContain(normalize('test/watch-mode'));
+  expect(watchProcess.output).toContain('bddgen v');
+  expect(watchProcess.output).toContain('Config:  playwright.config.ts');
+  expect(watchProcess.output).toContain('Watch:   .');
+  expect(watchProcess.output).toMatch(/Ready in \d+ ms\. Watching for changes\./);
   testDir.expectFileExists(outputFile);
   testDir.expectFileContains(outputFile, 'Initial scenario');
 }
@@ -78,7 +114,8 @@ async function verifyFeatureChange(watchProcess) {
   const output = await watchProcess.changeAndWait(() => {
     writeFeatureFile({ footer: '    And state 2' });
   });
-  expect(output).toContain(`Changes detected: ${normalize(featureFile)}\nRegenerating...`);
+  expect(output).toContain(`[bddgen] changed ${normalize(featureFile)}`);
+  expect(output).toMatch(/\d{2}:\d{2}:\d{2} \[bddgen\] generated in \d+ ms/);
   testDir.expectFileContains(outputFile, 'And state 2');
 }
 

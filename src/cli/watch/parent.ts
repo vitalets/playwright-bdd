@@ -6,16 +6,18 @@ import chokidar, { FSWatcher } from 'chokidar';
 import { areWatchPathsEqual, resolveWatchPaths } from './paths';
 import { WatchChildMessage, WatchMetadata, StartGenerationMessage } from './ipc';
 import { logger } from '../../utils/logger';
-import { isPathInside, relativeToCwd } from '../../utils/paths';
+import { isPathInside } from '../../utils/paths';
 import { isWatchedFile } from './fileFilter';
 import { forkWatchChild } from './child';
 import { isIgnoredByGitIgnore } from './gitIgnore';
+import { WatchOutput } from './output';
 
 const ALWAYS_IGNORED = new Set(['.git', 'node_modules', 'test-results', 'playwright-report']);
 const DEBOUNCE_MS = 100;
 type WatchPaths = ReturnType<typeof resolveWatchPaths>;
 
 export class WatchController {
+  private output = new WatchOutput();
   private activeChild?: ChildProcess;
   private changedFiles = new Set<string>();
   private closePromise?: Promise<void>;
@@ -39,7 +41,8 @@ export class WatchController {
   }
 
   private startRebuild(isInitial = false) {
-    if (!isInitial) this.logDetectedChanges();
+    this.output.start(this.changedFiles, isInitial);
+    this.changedFiles.clear();
     this.watcherUpdate = undefined;
     this.generationStarted = false;
     const child = forkWatchChild();
@@ -48,7 +51,7 @@ export class WatchController {
       if (message?.type === 'metadata') this.handleMetadataMessage(message.metadata);
       if (message?.type === 'ready-to-generate') void this.startChildGeneration(child);
     });
-    child.once('exit', (exitCode) => void this.handleRebuildExit(child, exitCode));
+    child.once('exit', (exitCode, signal) => void this.handleRebuildExit(child, exitCode, signal));
   }
 
   private handleMetadataMessage(metadata: WatchMetadata) {
@@ -74,7 +77,7 @@ export class WatchController {
     if (this.closePromise) return;
     this.watcher = this.createWatcher(nextWatchPaths);
     await once(this.watcher, 'ready');
-    this.logWatchRoots(nextWatchPaths.roots);
+    this.output.paths(metadata.resolvedConfigFile, nextWatchPaths.roots);
   }
 
   private createWatcher(watchPaths: WatchPaths) {
@@ -92,11 +95,6 @@ export class WatchController {
       if (isReady) logger.error('Watch error:', error);
     });
     return watcher;
-  }
-
-  private logWatchRoots(roots: string[]) {
-    logger.warn('Watching for changes in:');
-    roots.forEach((root) => logger.warn(`- ${root}`));
   }
 
   private isIgnored(filePath: string, stats?: Stats) {
@@ -151,18 +149,11 @@ export class WatchController {
     await this.close();
   }
 
-  private logDetectedChanges() {
-    const [firstFile] = this.changedFiles;
-    const remainingCount = this.changedFiles.size - 1;
-    this.changedFiles.clear();
-    const remaining = remainingCount > 0 ? ` (+${remainingCount} more)` : '';
-    logger.warn(
-      firstFile ? `Changes detected: ${relativeToCwd(firstFile)}${remaining}` : 'Changes detected.',
-    );
-    logger.warn('Regenerating...');
-  }
-
-  private async handleRebuildExit(child: ChildProcess, exitCode: number | null) {
+  private async handleRebuildExit(
+    child: ChildProcess,
+    exitCode: number | null,
+    signal: NodeJS.Signals | null,
+  ) {
     if (this.activeChild !== child) return;
     if (!(await this.waitForWatcherUpdate())) return;
     this.activeChild = undefined;
@@ -173,7 +164,7 @@ export class WatchController {
       return;
     }
 
-    this.logRebuildResult(exitCode);
+    this.output.complete(exitCode, signal, this.dirty);
     this.scheduleDirtyRebuild();
   }
 
@@ -197,14 +188,6 @@ export class WatchController {
     this.finish();
   }
 
-  private logRebuildResult(exitCode: number | null) {
-    const message = exitCode
-      ? 'Generation failed. Waiting for changes...'
-      : 'Generation completed. Waiting for changes...';
-    if (exitCode) return logger.error(message);
-    logger.warn(message);
-  }
-
   private handleSignal = () => void this.close();
 
   private close() {
@@ -213,7 +196,7 @@ export class WatchController {
         if (this.debounceTimer) clearTimeout(this.debounceTimer);
         this.activeChild?.kill('SIGTERM');
         await this.watcher?.close();
-        logger.warn('Watch mode stopped.');
+        this.output.stopped();
         this.finish();
       })();
     }

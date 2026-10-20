@@ -1,7 +1,8 @@
-import { BDDGEN_CMD, expect, startProcess } from '../../_helpers/index.mjs';
+import { stripVTControlCharacters } from 'node:util';
+import { BDDGEN_CMD, expect, startProcess, waitFor } from '../../_helpers/index.mjs';
 
-export const GENERATION_COMPLETED = 'Generation completed. Waiting for changes...';
-export const GENERATION_FAILED = 'Generation failed. Waiting for changes...';
+export const GENERATION_COMPLETED = 'generated';
+export const GENERATION_FAILED = 'generation failed';
 
 export class WatchProcess {
   constructor(testDir) {
@@ -32,19 +33,33 @@ export class WatchProcess {
   }
 
   ready() {
-    return this.waitForOutput(GENERATION_COMPLETED);
+    return this.waitForOutput('Ready');
   }
 
   get output() {
-    return this.process.output;
+    return stripVTControlCharacters(this.process.output);
   }
 
   getGenerationsCount() {
-    return this.output.split(GENERATION_COMPLETED).length - 1;
+    return (
+      (this.output.includes('Ready') ? 1 : 0) + this.output.split(GENERATION_COMPLETED).length - 1
+    );
   }
 
-  waitForOutput(expected, offset = 0) {
-    return this.process.waitForOutput(expected, offset);
+  async waitForOutput(expected, offset = 0) {
+    // Offsets and matches must use the same stripped text as assertions.
+    try {
+      await waitFor(() => {
+        if (this.output.slice(offset).includes(expected)) return true;
+        if (this.process.exitCode !== null) throw new Error('Process exited.');
+        return false;
+      });
+    } catch (error) {
+      throw new Error(
+        `${error.message}\nWaiting for: ${expected}\nProcess output:\n${this.output}`,
+        { cause: error },
+      );
+    }
   }
 
   stop() {

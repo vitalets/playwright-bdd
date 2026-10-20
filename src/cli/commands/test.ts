@@ -56,7 +56,7 @@ export const testCommand = new Command('test')
 
     await generateFilesWithOptionalLock(configs);
 
-    if (isVerbose) printDone();
+    if (isVerbose && !isWatchModeChild()) printDone();
   });
 
 function readConfigsFromEnv() {
