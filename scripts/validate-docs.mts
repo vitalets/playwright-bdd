@@ -53,10 +53,14 @@ function fillFileInfo(relPath: string) {
     marked.parse(fileInfo.content, {
       walkTokens: (token) => {
         if (token.type === 'heading') {
-          const anchor = slugify(token.text, {
-            lower: true,
-            strict: true,
-          });
+          // Docsify allows renamed headings to retain their existing section URLs.
+          const customId = token.text.match(/\s+:id=([^\s]+)/)?.[1];
+          const anchor =
+            customId ||
+            slugify(token.text, {
+              lower: true,
+              strict: true,
+            });
           fileInfo.anchors.push(anchor);
         }
         if (token.type === 'link' && !/^https?:\/\//.test(token.href)) {

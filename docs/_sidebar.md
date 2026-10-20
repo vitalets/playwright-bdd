@@ -60,10 +60,6 @@
   - [Environment variables](guides/env-vars.md)
   - [Component tests](guides/component-tests.md)
 
-* **Upgrading**
-  - [Migration to v9](guides/migration-v9.md)
-  - [Migration to v7](guides/migration-v7.md)
-
 * **Integrations**
   <!-- Keep integration page files under docs/guides to preserve existing URLs and avoid moving stable docs paths just for navigation grouping. -->
   - [IDE](guides/ide-integration.md)
@@ -73,14 +69,18 @@
   - [BrowserStack](guides/usage-with-browserstack.md)
   - [TestDino](guides/usage-with-testdino.md)
 
-* **Blog**
-  - [What's new in v8](blog/whats-new-in-v8.md)
 * **API**
   - [Configuration](api/configuration.md)
   - [Steps](api/steps.md)
   - [Hooks](api/hooks.md)
   - [Decorators](api/decorators.md)
   - [DataTable](api/data-table.md)
+
+* **Release notes**
+  - [v9](release-notes/v9.md "Playwright-BDD v9")
+  - [v8](release-notes/v8.md "Playwright-BDD v8")
+  - [v7](release-notes/v7.md "Playwright-BDD v7")
+
 * [**CLI**](cli.md)
 * [**FAQ**](faq.md)
 * [**❤️ Sponsors ❤️**](sponsors.md)
