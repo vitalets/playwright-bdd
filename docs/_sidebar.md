@@ -77,6 +77,7 @@
   - [DataTable](api/data-table.md)
 
 * **Release notes**
+  - [v10](release-notes/v10.md "Playwright-BDD v10")
   - [v9](release-notes/v9.md "Playwright-BDD v9")
   - [v8](release-notes/v8.md "Playwright-BDD v8")
   - [v7](release-notes/v7.md "Playwright-BDD v7")

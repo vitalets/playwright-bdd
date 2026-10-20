@@ -1,6 +1,6 @@
 # Watch Mode
 
-<div style="color: gray; font-size: 0.9em">Since <b>v9.3.0</b></div>
+<div style="color: gray; font-size: 0.9em">Since <b>v10.0.0</b></div>
 
 Watch mode automatically regenerates test files when your feature files and step files change.
 

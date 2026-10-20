@@ -1,6 +1,6 @@
 # Source Maps
 
-<div style="color: gray; font-size: 0.9em">Since <b>v9.3.0</b></div>
+<div style="color: gray; font-size: 0.9em">Since <b>v10.0.0</b></div>
 
 Playwright-BDD can embed inline source maps in generated Playwright test files. Source maps connect locations in these generated tests back to the original `.feature` files, so Playwright reports and IDE integrations can show original scenarios and steps.
 
