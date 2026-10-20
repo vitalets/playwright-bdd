@@ -11,7 +11,7 @@
     "bddgen": "dist/cli/index.js"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=20.18"
   },
   "peerDependencies": {
     "@playwright/test": ">=1.53"
