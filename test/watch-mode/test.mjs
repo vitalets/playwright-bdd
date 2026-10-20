@@ -91,7 +91,8 @@ test(`${testDir.name}: interrupted generation recovers`, async () => {
     await watchProcess.ready();
     const output = await watchProcess.changeAndWait(
       () => writeStepFile({ footer: `process.kill(process.pid, 'SIGKILL');` }),
-      'generation interrupted (SIGKILL)',
+      // Windows reports a self-killed child as a nonzero exit without a signal.
+      process.platform === 'win32' ? GENERATION_FAILED : 'generation interrupted (SIGKILL)',
     );
     expect(output).not.toContain(GENERATION_COMPLETED);
     await watchProcess.changeAndWait(() => writeStepFile());
