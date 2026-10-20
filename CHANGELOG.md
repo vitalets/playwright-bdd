@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* breaking: remove the deprecated `junit-modern` reporter alias; replace it with `junit`.
 * feat: add opt-in inline source maps for feature-file locations in reports and VS Code; VS Code integration requires Playwright VS Code extension v1.1.20 or later ([playwright-vscode#806](https://github.com/microsoft/playwright-vscode/pull/806)).
 * feat: support static test locks on step definitions with Playwright 1.63 or later ([#404](https://github.com/vitalets/playwright-bdd/issues/404)).
 * feat: expose `$step.info` and `$step.attach()`, and add guarded `$step.skip()` with Cucumber reporting support ([#401](https://github.com/vitalets/playwright-bdd/issues/401), [#400](https://github.com/vitalets/playwright-bdd/pull/400)).

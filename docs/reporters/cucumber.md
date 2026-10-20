@@ -195,8 +195,6 @@ Output of the JSON reporter can be used to generate some third-party reports. Ta
 ## junit
 Generates [Cucumber junit](https://github.com/cucumber/cucumber-js/blob/main/docs/formatters.md#junit) report.
 
-?> Use `junit` as the primary reporter name. `junit-modern` is deprecated and kept as a compatibility alias with the same options and output.
-
 Configure reporter in `playwright.config.js`:
 ```js
 import { defineConfig } from '@playwright/test';

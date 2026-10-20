@@ -28,7 +28,6 @@ const builtinReporters = {
   html: HtmlReporter,
   message: MessageReporter,
   junit: JunitReporter,
-  'junit-modern': JunitReporter, // Deprecated alias for junit
   json: JsonReporter,
 } as const;
 
