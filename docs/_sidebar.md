@@ -69,12 +69,7 @@
   - [BrowserStack](guides/usage-with-browserstack.md)
   - [TestDino](guides/usage-with-testdino.md)
 
-* **API**
-  - [Configuration](api/configuration.md)
-  - [Steps](api/steps.md)
-  - [Hooks](api/hooks.md)
-  - [Decorators](api/decorators.md)
-  - [DataTable](api/data-table.md)
+* [**API**](api.md)
 
 * **Release notes**
   - [v10](release-notes/v10.md "Playwright-BDD v10")

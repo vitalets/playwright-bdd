@@ -12,6 +12,13 @@
   }
 
   function handleSidebarClick(event) {
+    const sectionLink = event.target.closest('a.section-link');
+    if (sectionLink?.hash === window.location.hash) {
+      // Docsify skips navigation when the URL already points to the clicked section.
+      const sectionId = new URLSearchParams(sectionLink.hash.split('?')[1]).get('id');
+      if (sectionId) document.getElementById(sectionId)?.scrollIntoView();
+    }
+
     const label = event.target.closest('.sidebar-folder > strong, .sidebar-folder > p > strong');
     if (!label) return;
 

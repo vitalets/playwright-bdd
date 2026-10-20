@@ -57,7 +57,7 @@ BeforeWorker({ name: 'setup database', timeout: 1000 }, async () => {
 ```
 
 The hook function accepts **1 argument** - [worker scoped fixtures](https://playwright.dev/docs/test-fixtures#worker-scoped-fixtures).
-You can access [$workerInfo](https://playwright.dev/docs/api/class-workerinfo) and any built-in or custom fixtures. See more details in [BeforeWorker / BeforeAll API](api/hooks.md#beforeworker-beforeall).
+You can access [$workerInfo](https://playwright.dev/docs/api/class-workerinfo) and any built-in or custom fixtures. See more details in [BeforeWorker / BeforeAll API](api.md#before-worker).
 
 #### Example of using `BeforeWorker` with custom fixture
 

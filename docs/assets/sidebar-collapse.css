@@ -23,3 +23,13 @@
 .sidebar-nav li.sidebar-folder.open > p > strong::before {
   content: '▾';
 }
+
+/* Docsify renders third-level headings as a list after their second-level heading. */
+.sidebar-nav li + ul.app-sub-sidebar {
+  display: none;
+}
+
+.sidebar-nav li.active + ul.app-sub-sidebar,
+.sidebar-nav li + ul.app-sub-sidebar:has(.active) {
+  display: block;
+}
