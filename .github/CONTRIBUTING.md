@@ -84,7 +84,7 @@ If you find a typo or an error in the [Playwright-BDD docs](https://vitalets.git
     # run specific example
     npm run examples examples/<example-name-in-directory>
     ```
-    Note: you may need to run `npm run examples` before commiting, as some pre-commit checks rely on its generated output.
+    Note: you may need to run `npm run examples` before committing, as some pre-commit checks rely on its generated output.
 
 ## Useful dev commands
 

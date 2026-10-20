@@ -10,7 +10,7 @@ const config: KnipConfig = {
     'examples/**',
     'test/**',
     'docs/assets/**',
-    // Exlcude generated files and folders
+    // Exclude generated files and folders
     '!**/.features-gen/**',
     '!**/{cucumber-report,actual-reports}/**',
     '!**/dist/**',
