@@ -63,8 +63,7 @@ jobs:
       - run: npm install --min-release-age=0 @playwright/test@${{ matrix.playwrightVersion }}
 
       - run: npx playwright install --with-deps chromium
-        # run with one retry
-      - run: npm test || npm test
+      - run: npm test
       - uses: actions/upload-artifact@v7
         if: failure()
         with:
