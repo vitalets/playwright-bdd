@@ -9,7 +9,7 @@ Given('a new user', { lock: 'users-service' }, async ({ request }) => {
   await request.post('/users');
 });
 
-Given('the shared data is reset', { lock: ['database', 'users-service'] }, async ({ request }) => {
+Given('the shared data is reset', { lock: ['user-settings', 'users-service'] }, async ({ request }) => {
   await request.post('/reset');
 });
 ```
@@ -17,7 +17,7 @@ Given('the shared data is reset', { lock: ['database', 'users-service'] }, async
 Every scenario matching these definitions inherits their locks. During generation, Playwright-BDD combines names from all matched steps, including Feature and Rule Backgrounds, removes duplicates, and adds the resulting array to the generated Playwright test:
 
 ```ts
-test('Create an account', { lock: ['users-service', 'database'] }, async ({ Given }) => {
+test('Create an account', { lock: ['users-service', 'user-settings'] }, async ({ Given }) => {
   // Generated steps
 });
 ```

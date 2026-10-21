@@ -59,7 +59,7 @@ Then('the response is valid', async ({ $step }) => {
 
 Both forms attach to the enclosing BDD step, including when called from a named `BeforeStep` or `AfterStep` hook. `$step.info` and `$step.attach()` are available only during BDD step execution, including step hooks; using them in scenario hooks or fixture setup/teardown throws an error.
 
-### Skipping one step
+### Skipping step dynamically
 
 Use `$step.skip()` to stop the current step, mark it as skipped, and continue with the next step in the scenario:
 
@@ -76,11 +76,13 @@ Call `$step.skip()` without arguments to skip unconditionally, or `$step.skip(co
 - In the step body, skipping still runs `AfterStep` hooks, with `$step.error` unset. A real after-hook failure fails the step.
 - Calling `$step.skip()` in `AfterStep` or outside active step execution throws an error.
 
-`$step.info.skip()` is intentionally excluded from TypeScript types. The native object is unchanged at runtime, so JavaScript callers must also use `$step.skip()` instead. Native skipping can be swallowed by a named hook's nested Playwright step, allowing the BDD body to run. Skipping in an after-hook can also hide later failures. `$step.skip()` tracks skip intent and enforces the hook restrictions to prevent these problems.
+`$step.info.skip()` is intentionally omitted from TypeScript types. Use `$step.skip()` instead to correctly skip BDD steps.
 
-Playwright can report the scenario as passed when one step is skipped and the remaining steps pass. Cucumber reports derive scenario status from step statuses, so they may report that same scenario as skipped. The skipped step's reason is included in Cucumber reports.
+Reports display the skipped step and its reason.
 
-#### Example
+![Skipped step with the reason "Local environment only" in the Cucumber report](../release-notes/_media/v10-step-skip-cucumber.png ':size=40%')
+
+### Additional matching by step title
 A popular use-case for the `$step` fixture is additional matching by the step title.
 
 Imagine you have a universal step to check whether an element is visible or hidden: 
