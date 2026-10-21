@@ -3,7 +3,7 @@
   - [Installation](getting-started/installation.md)
   - [Write first BDD test](getting-started/write-first-test.md)
   - [Add fixtures](getting-started/add-fixtures.md)
-  - [🤖 Agent Skill](getting-started/agent-skill.md)
+  - [Playwright-bdd skill](getting-started/agent-skill.md)
 
 * **Configuration**
   - [Overview](configuration/index.md)
@@ -69,14 +69,13 @@
   - [BrowserStack](guides/usage-with-browserstack.md)
   - [TestDino](guides/usage-with-testdino.md)
 
-* [**API**](api.md)
-
 * **Release notes**
   - [v10](release-notes/v10.md "Playwright-BDD v10")
   - [v9](release-notes/v9.md "Playwright-BDD v9")
   - [v8](release-notes/v8.md "Playwright-BDD v8")
   - [v7](release-notes/v7.md "Playwright-BDD v7")
 
+* [**API**](api.md)
 * [**CLI**](cli.md)
 * [**FAQ**](faq.md)
 * [**❤️ Sponsors ❤️**](sponsors.md)

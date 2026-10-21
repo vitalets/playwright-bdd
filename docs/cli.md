@@ -60,6 +60,8 @@ List of all steps (4):
 
 ## `bddgen clear-locks`
 
+<div style="color: gray; font-size: 0.9em">Since <b>v10.0.0</b></div>
+
 Removes generation and test-execution locks associated with every Playwright-BDD output directory in the current Playwright configuration:
 
 ```sh

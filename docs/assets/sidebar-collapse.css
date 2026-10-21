@@ -1,3 +1,12 @@
+.sidebar {
+  /* Keep the logo and labels in place when expanded sections need a scrollbar. */
+  scrollbar-gutter: stable;
+}
+
+.sidebar-nav > ul > li > p > a > strong {
+  font-weight: 900;
+}
+
 .sidebar-nav li.sidebar-folder > ul {
   display: none;
 }

@@ -1,8 +1,10 @@
-# Agent Skill
-
-?> Agent Skill is a new feature. Your feedback and suggestions are [welcome](https://github.com/vitalets/playwright-bdd/issues).
+# Playwright-bdd skill
 
 Playwright-BDD provides an [agent skill](https://agentskills.io/) that helps AI coding agents generate Gherkin feature files and step definitions, grounded in your actual project steps.
+
+Watch this 1-minute overview to see the agentic BDD workflow in action:
+
+<iframe src="https://www.youtube.com/embed/hDL9j23EDNs" title="Agentic BDD workflow — 1-minute overview" style="width: 800px; min-width: 0; max-width: 100%; aspect-ratio: 16 / 9; border: 0;" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
 
 ## Supported agents
 
