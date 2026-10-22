@@ -36,7 +36,6 @@
   - [Passing data between steps](writing-steps/passing-data-between-steps.md)
   - [Passing data between scenarios](writing-steps/passing-data-between-scenarios.md)
   - [Scoped step definitions](writing-steps/scoped.md)
-  - [Multiple step expressions](writing-steps/multiple-expressions.md)
   - [Test locks](writing-steps/test-locks.md)
   - [Keywords matching](writing-steps/keywords-matching.md)
   - [Re-using step function](writing-steps/reusing-step-fn.md)

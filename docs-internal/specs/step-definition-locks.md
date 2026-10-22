@@ -22,19 +22,18 @@ Locks are declared on step definitions but apply to generated tests; they are no
 8. As a Cucumber-style step author, I want equivalent lock support, so that my authoring style does not limit resource protection.
 9. As a decorator-based step author, I want equivalent lock support, so that decorated steps participate in the same generation behavior.
 10. As a test author using scoped definitions, I want locks collected only from the selected definitions, so that unrelated definitions do not constrain my scenarios.
-11. As a test author using aliases, I want lock propagation to follow existing alias matching, so that aliases preserve their declaration's behavior.
-12. As a test author, I want existing tags and generated test behavior preserved when locks are added, so that this feature composes with existing metadata.
-13. As a user of an older Playwright version, I want unaffected projects to keep generating successfully, so that this optional feature does not force an upgrade.
-14. As a user requesting locks on an unsupported Playwright version, I want an actionable generation error, so that I know an upgrade is required before running tests.
-15. As a test author, I want scenarios skipped during generation to omit locks and compatibility errors, so that non-running scenarios do not impose unused constraints.
-16. As a test author, I want scenarios that might skip at runtime to retain their declared locks, so that scheduling remains safe before runtime conditions are known.
-17. As an author of reusable step functions, I want the nested-call limitation documented, so that I explicitly declare required locks on the outer matched step.
-18. As a maintainer, I want coverage through the established generated-output test harness, so that verification follows existing project conventions.
+11. As a test author, I want existing tags and generated test behavior preserved when locks are added, so that this feature composes with existing metadata.
+12. As a user of an older Playwright version, I want unaffected projects to keep generating successfully, so that this optional feature does not force an upgrade.
+13. As a user requesting locks on an unsupported Playwright version, I want an actionable generation error, so that I know an upgrade is required before running tests.
+14. As a test author, I want scenarios skipped during generation to omit locks and compatibility errors, so that non-running scenarios do not impose unused constraints.
+15. As a test author, I want scenarios that might skip at runtime to retain their declared locks, so that scheduling remains safe before runtime conditions are known.
+16. As an author of reusable step functions, I want the nested-call limitation documented, so that I explicitly declare required locks on the outer matched step.
+17. As a maintainer, I want coverage through the established generated-output test harness, so that verification follows existing project conventions.
 
 ## Implementation Decisions
 
 - Extend the shared step-definition options with an optional lock accepting a string or an array of strings. Names are static; all supported step styles use the shared contract.
-- Use the scenario generator's existing matched-step data, which includes Background steps. Preserve matching, scoping, alias handling, and duplicate-definition errors.
+- Use the scenario generator's existing matched-step data, which includes Background steps. Preserve matching, scoping, and duplicate-definition errors.
 - Introduce a dedicated generation module for lock collection, deduplication, and compatibility enforcement. Keep the scenario generator responsible for coordinating calls and the formatter responsible for serialization.
 - Resolve missing-step skipping before collecting locks. Omit lock collection and compatibility enforcement for scenarios skipped during generation, including explicit skip/fixme tags and the skip-scenario missing-step policy.
 - Preserve current behavior that explicitly skipped scenarios do not match step definitions. Do not introduce matching solely to discover their locks.
@@ -51,7 +50,7 @@ Locks are declared on step definitions but apply to generated tests; they are no
 - Use the existing integration-test boundary: generate tests from feature files and step definitions, then assert the resulting test details and observable generation errors. This boundary exercises registration, matching, collection, and formatting together.
 - Follow the existing generated-data conventions used for special tags and related metadata, including the shared generated-file assertion helpers. Avoid tests coupled to private helper structure.
 - Cover single and multiple locks, unions across steps, deduplication and stable ordering, omitted empty lock details, and coexistence with tags.
-- Cover Playwright-style, Cucumber-style, and decorated definitions; Feature and Rule Backgrounds; Scenario Outline examples; scoped matching; and aliases.
+- Cover Playwright-style, Cucumber-style, and decorated definitions; Feature and Rule Backgrounds; Scenario Outline examples; and scoped matching.
 - Cover generation-time skips, missing-step skip behavior, and retention of locks when skipping or failure can occur only at runtime.
 - Cover quoting and escaping through the existing formatter conventions, and assert unchanged generated details for scenarios without locks.
 - Follow existing version-dependent integration-test conventions: supported versions verify generated lock details, while older versions verify the upgrade error when locks are needed and successful generation when they are not.

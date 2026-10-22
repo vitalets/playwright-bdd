@@ -6,8 +6,8 @@ Feature: Lock in step
     And step with locks: lock2, lock1, lock2
     And Cucumber-style step with lock: lock3
     And decorator step with locks: lock4, lock1
-    And first alias of a step with lock: lock5
-    And second alias of a step with lock: lock5
+    And step with lock: lock5
+    And step with lock: lock5
 
   @foo
   Scenario: [lock6] uses only the matching scoped definition

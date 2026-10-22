@@ -18,7 +18,3 @@ Given(
   { arityCheck: false },
   async ({}) => {},
 );
-Given(
-  ['pw aliases validate all {int}', /^pw aliases validate all/],
-  async ({}, _value: number) => {},
-);

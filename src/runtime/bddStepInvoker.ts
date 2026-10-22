@@ -7,7 +7,7 @@ import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
 import { DataTable } from '../cucumber/DataTable';
 import { BddAutoInjectFixtures, getBddAutoInjectFixtures } from './bddTestFixturesAuto';
-import { excludeStepAliases, formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
+import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
 import { BddStepState } from './bddStepState';
@@ -127,12 +127,11 @@ export class BddStepInvoker {
 
   private findStepDefinition(stepText: string, stepTextWithKeyword: string) {
     const { keywordType, gherkinStepLine } = this.getBddStepData();
-    let stepDefinitions = this.stepFinder.findDefinitions(
+    const stepDefinitions = this.stepFinder.findDefinitions(
       keywordType,
       stepText,
       this.bddContext.tags,
     );
-    stepDefinitions = excludeStepAliases(stepDefinitions);
 
     const firstDefinition = stepDefinitions[0];
     if (stepDefinitions.length === 1 && firstDefinition) return firstDefinition;

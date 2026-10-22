@@ -7,11 +7,7 @@ Given('step with lock: lock1', { lock: 'lock1' }, () => {});
 Given('step with locks: lock2, lock1, lock2', { lock: ['lock2', 'lock1', 'lock2'] }, () => {});
 Given('step with lock: lock9', { lock: 'lock9' }, () => {});
 Given('step with lock: lock10', { lock: 'lock10' }, () => {});
-Given(
-  ['first alias of a step with lock: lock5', 'second alias of a step with lock: lock5'],
-  { lock: 'lock5' },
-  () => {},
-);
+Given('step with lock: lock5', { lock: 'lock5' }, () => {});
 Given('scoped step with lock: lock6', { tags: '@foo', lock: 'lock6' }, () => {});
 Given('scoped step with lock: lock6', { tags: 'not @foo', lock: 'lock7' }, () => {});
 Given('step without a lock', () => {});

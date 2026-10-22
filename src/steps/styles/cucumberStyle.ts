@@ -20,27 +20,23 @@ export function cucumberStepCtor(
   { customTest, worldFixture, defaultTags }: StepConstructorOptions,
 ) {
   return <StepFn extends AnyFunction>(...args: StepDefinitionArgs<StepFn>) => {
-    const { patterns, providedOptions, fn } = parseStepDefinitionArgs(args);
-    const location = getLocationByOffset(3);
-    // Define the runtime wrapper once so all step patterns share the exact same implementation.
-    // this wrappedFn is needed, because internally we always call fn with fixtures as a second arg.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const wrappedFn = function (this: unknown, _fixtures: unknown, ...args: any[]) {
-      return fn.call(this, ...args);
-    };
+    const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
 
-    patterns.forEach((pattern) => {
-      registerStepDefinition({
-        keyword,
-        pattern,
-        arity: fn.length,
-        location,
-        customTest,
-        worldFixture,
-        defaultTags,
-        providedOptions,
-        fn: wrappedFn,
-      });
+    registerStepDefinition({
+      keyword,
+      pattern,
+      arity: fn.length,
+      location: getLocationByOffset(3),
+      customTest,
+      worldFixture,
+      defaultTags,
+      providedOptions,
+      // Here we define step function in Playwright-style,
+      // and it internally calls the original cucumber-style function with world context.
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      fn: function (_fixtures: unknown, ...args: any[]) {
+        return fn.call(this, ...args);
+      },
     });
 
     // returns function to be able to reuse this fn in other steps

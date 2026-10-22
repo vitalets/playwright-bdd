@@ -17,7 +17,6 @@ Feature: step arity check - playwright style
       """
       some content
       """
-    Given pw aliases validate all 42
 
   @valid
   Scenario: valid step function arguments

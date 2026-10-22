@@ -60,16 +60,12 @@ export class StepDefinition {
     return this.options.arity;
   }
 
-  get location() {
-    return this.options.location;
-  }
-
   get uri() {
-    return this.location.file;
+    return this.options.location.file;
   }
 
   get line() {
-    return this.location.line;
+    return this.options.location.line;
   }
 
   get customTest() {

@@ -28,23 +28,20 @@ export function playwrightStepCtor(
   { customTest, defaultTags }: StepConstructorOptions,
 ) {
   return <StepFn extends AnyFunction>(...args: StepDefinitionArgs<StepFn>) => {
-    const { patterns, providedOptions, fn } = parseStepDefinitionArgs(args);
-    const location = getLocationByOffset(3);
+    const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
 
-    patterns.forEach((pattern) => {
-      registerStepDefinition({
-        keyword,
-        pattern,
-        arity: fn.length,
-        fn,
-        location,
-        customTest,
-        defaultTags,
-        providedOptions,
-      });
+    registerStepDefinition({
+      keyword,
+      pattern,
+      arity: fn.length,
+      fn,
+      location: getLocationByOffset(3),
+      customTest,
+      defaultTags,
+      providedOptions,
     });
 
-    return getCallableStepFn(patterns[0], fn);
+    return getCallableStepFn(pattern, fn);
   };
 }
 
