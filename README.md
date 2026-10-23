@@ -37,7 +37,7 @@ Run BDD tests with Playwright runner
 
 Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
 
-Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="center" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) for more details on agentic BDD workflow.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) for more details on agentic BDD workflow.
 
 Install the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) to get started.
 
