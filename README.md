@@ -50,7 +50,7 @@ Feature: Buying a product
 
 Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
 
-Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automated guardrails check code quality and scenario compliance.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automated guardrails check code quality and scenario compliance.
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
 
