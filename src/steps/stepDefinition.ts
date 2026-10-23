@@ -18,6 +18,8 @@ export type AnyFunction = (...args: any[]) => unknown;
 export type ProvidedStepOptions = {
   tags?: string;
   arityCheck?: boolean;
+  /** Maximum step duration in milliseconds, including step hooks. Defaults to 0 (no limit). */
+  timeout?: number;
   /** Static Playwright test locks inherited by scenarios matching this definition. */
   lock?: string | string[];
 };

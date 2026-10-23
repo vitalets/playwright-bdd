@@ -75,7 +75,10 @@ export class BddStepInvoker {
       }
     };
 
-    await this.bddContext.test.step(stepTextWithKeyword, wrappedStepFn, { location });
+    await this.bddContext.test.step(stepTextWithKeyword, wrappedStepFn, {
+      location,
+      timeout: matchedDefinition.definition.providedOptions?.timeout,
+    });
   }
 
   // eslint-disable-next-line visual/complexity
