@@ -30,25 +30,27 @@ Run BDD tests with Playwright runner
 
 ## BDD in the Era of AI
 
-[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files. In the AI era, these scenarios become valuable artifacts for agents because they are both:
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files:
+
+```feature
+Feature: Buying a product
+
+  Scenario: Complete a purchase
+    Given I am on the "iPhone 18" page
+    When I click "Add to cart"
+    And I proceed to checkout
+    And I complete the payment
+    Then I see an order confirmation containing "iPhone 18"
+```
+
+ In the AI era, these scenarios become valuable artifacts for agents because they are both:
 
 * ✅ **Readable**: You can easily draft and refine scenarios with an agent to clearly define the behavior.
 * ✅ **Executable**: The same scenarios can be executed as automated tests to verify the implementation.
 
 Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
 
-Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action.
-
-```diff
-Feature: Agentic development
-
-  Scenario: Implement a new feature
-    Given business requirements
-    When a human defines the behavior as BDD steps
--   Then the human implements the feature and verifies it with tests
-+   Then the agent implements the feature and verifies it with tests
-```
-The ultimate goal: **review only feature files** and let automations check code quality and scenario compliance.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automations check code quality and scenario compliance.
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
 
