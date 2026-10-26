@@ -111,3 +111,27 @@ Both `Scenario 1` and `Scenario 2` will be executted in parallel in separate wor
 When using `@mode:serial`, you can check [Passing data between scenarios](writing-steps/passing-data-between-scenarios.md).
 
 !> Please note that the `@mode` tag is not applicable to a single scenario
+
+## @lock:name
+
+Use `@lock:name` when scenarios share a resource that is not tied to a particular step definition:
+
+```gherkin
+Feature: Records
+
+    @lock:records-list
+    Scenario: Add record
+        When the user clicks the "Add Record" button
+        Then the "Records" table shows one more row
+
+    @lock:records-list
+    Scenario: Delete record
+        When the user clicks the "Delete" button
+        Then the "Records" table shows one fewer row
+```
+
+Each generated test inherits its enclosing lock tags and combines them with [step-definition locks](writing-steps/test-locks.md), removing duplicates. Use multiple tags for multiple resources: `@lock:records-list @lock:audit-log`.
+
+The prefix must be exactly `@lock:` and the name must be nonempty. Names are case-sensitive, static strings without whitespace; commas do not split names. Lock tags remain available for tag filtering and in test metadata. Tags from paths work wherever the filesystem permits `:` in names.
+
+Requires **Playwright 1.63 or later**. Playwright schedules tests sharing a lock across files, workers, and projects within one test run. Its native scheduling scope applies: in default and serial modes, a lock may be held for the whole file. Scenarios skipped during generation omit locks and lock-tag validation; potential runtime skips retain locks.

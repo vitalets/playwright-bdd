@@ -89,6 +89,61 @@ test(
   },
 );
 
+test(
+  `${testDir.name}: inherits and combines tag locks with step locks`,
+  { skip: !supportsLocks },
+  () => {
+    generate('lock-in-tags.feature');
+    checkGeneratedLocks();
+    testDir.expectFileContains('.features-gen/lock-in-tags.feature.spec.js', "'@lock:scenario'");
+    generate('lock-in-tags-validation.feature', { LOCK_TAGS: '@case-sensitive' });
+    checkGeneratedLocks();
+  },
+);
+
+test(`${testDir.name}: rejects empty lock tags on runnable scenarios`, () => {
+  execPlaywrightTestWithError(
+    testDir.name,
+    [
+      'Lock tag "@lock:" requires a nonempty name.',
+      'Scenario: features/lock-in-tags-validation.feature:',
+    ],
+    {
+      cmd: BDDGEN_CMD,
+      env: { LOCK_FEATURES: 'lock-in-tags-validation.feature', LOCK_TAGS: '@invalid' },
+    },
+  );
+});
+
+test(`${testDir.name}: ignores ordinary tags and filters out unused lock tags`, () => {
+  generate('lock-in-tags-validation.feature', { LOCK_TAGS: '@ordinary' });
+  checkGeneratedLocks();
+});
+
+test(
+  `${testDir.name}: rejects tag locks on unsupported Playwright versions`,
+  { skip: supportsLocks },
+  () => {
+    execPlaywrightTestWithError(
+      testDir.name,
+      [
+        'Test locks require Playwright 1.63 or later',
+        'Upgrade @playwright/test',
+        'Tag: @lock:feature. Scenario: features/lock-in-tags.feature:',
+      ],
+      { cmd: BDDGEN_CMD, env: { LOCK_FEATURES: 'lock-in-tags.feature' } },
+    );
+  },
+);
+
+test(`${testDir.name}: escapes tag locks`, { skip: !supportsLocks }, () => {
+  generate('lock-in-tags-validation.feature', { LOCK_TAGS: '@escaped', LOCK_QUOTES: 'single' });
+  testDir.expectFileContains(
+    '.features-gen/lock-in-tags-validation.feature.spec.js',
+    "lock: ['single\\'double\"backtick`slash\\\\dollar${name}']",
+  );
+});
+
 function checkGeneratedLocks() {
   const declarations = testDir
     .getAllFiles('.features-gen')

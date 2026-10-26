@@ -55,4 +55,6 @@ Given('an initialized account', { lock: 'users-service' }, async ({ request }) =
 });
 ```
 
-An empty lock array adds no locks. Gherkin lock tags and parameter-derived lock names are not supported.
+An empty lock array adds no locks. Parameter-derived lock names are not supported.
+
+For resources associated with a scenario or group of scenarios, use [`@lock:name` tags](writing-features/special-tags.md#lockname). Each generated test combines its inherited tag locks with its matched step locks, removing duplicates in first-occurrence order (tags first, then steps). Locks are emitted on individual tests, including when tags originate on a Feature or Rule.
