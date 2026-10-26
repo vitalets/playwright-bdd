@@ -33,14 +33,15 @@ Run BDD tests with Playwright runner
 [Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files:
 
 ```feature
-Feature: Buying a product
+Feature: Buying a pizza
 
-  Scenario: Complete a purchase
-    Given I am on the "iPhone 18" page
-    When I click "Add to cart"
-    And I proceed to checkout
-    And I complete the payment
-    Then I see an order confirmation containing "iPhone 18"
+  Scenario: Success order
+    Given I am on the "Pepperoni" pizza page
+    When I add 2 pizzas to the cart
+    And I complete checkout
+    Then I see an order confirmation:
+      | Product  | Pepperoni  |
+      | Quantity | 2          |
 ```
 
  In the AI era, these scenarios become valuable artifacts for agents because they are both:
