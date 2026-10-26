@@ -1,6 +1,7 @@
 import {
   test,
   expect,
+  normalize,
   TestDir,
   BDDGEN_CMD,
   execPlaywrightTest,
@@ -82,7 +83,7 @@ test(
         'Test locks require Playwright 1.63 or later',
         `installed: ${playwrightVersion}`,
         'Upgrade @playwright/test',
-        'Step: features/lock-in-step.feature:',
+        `Step: ${normalize('features/lock-in-step.feature')}:`,
       ],
       BDDGEN_CMD,
     );
@@ -106,7 +107,7 @@ test(`${testDir.name}: rejects empty lock tags on runnable scenarios`, () => {
     testDir.name,
     [
       'Lock tag "@lock:" requires a nonempty name.',
-      'Scenario: features/lock-in-tags-validation.feature:',
+      `Scenario: ${normalize('features/lock-in-tags-validation.feature')}:`,
     ],
     {
       cmd: BDDGEN_CMD,
@@ -129,7 +130,7 @@ test(
       [
         'Test locks require Playwright 1.63 or later',
         'Upgrade @playwright/test',
-        'Tag: @lock:feature. Scenario: features/lock-in-tags.feature:',
+        `Tag: @lock:feature. Scenario: ${normalize('features/lock-in-tags.feature')}:`,
       ],
       { cmd: BDDGEN_CMD, env: { LOCK_FEATURES: 'lock-in-tags.feature' } },
     );
