@@ -67,6 +67,7 @@
   - [SauceLabs](guides/usage-with-saucelabs.md)
   - [BrowserStack](guides/usage-with-browserstack.md)
   - [TestDino](guides/usage-with-testdino.md)
+  - [Endform](guides/usage-with-endform.md)
 
 * **Release notes**
   - [v10](release-notes/v10.md "Playwright-BDD v10")
