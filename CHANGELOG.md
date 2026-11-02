@@ -11,6 +11,7 @@
 * feat: expose `$step.info` and `$step.attach()`, and add guarded `$step.skip()` with Cucumber reporting support ([#401](https://github.com/vitalets/playwright-bdd/issues/401), [#400](https://github.com/vitalets/playwright-bdd/pull/400)).
 * feat: add native `bddgen --watch` mode.
 * feat: add `lockFile` option to coordinate multiple `bddgen` processes.
+* fix: bind custom parameter type transformers to the world so they can access world properties through `this`.
 * fix: generate BDD projects sequentially to prevent concurrent Playwright transform-cache writes from dropping step definitions.
 * fix: prevent empty attachments and stdout/stderr chunks from interrupting Cucumber report generation; preserve empty attachments and omit empty output logs ([#403](https://github.com/vitalets/playwright-bdd/issues/403)).
 

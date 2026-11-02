@@ -12,3 +12,11 @@ defineParameterType({
   name: 'param-no-transformer',
   regexp: /"(dog|cat)"/,
 });
+
+defineParameterType({
+  name: 'world-value',
+  regexp: /"([^"]+)"/,
+  transformer(this: Record<string, unknown>, key: string) {
+    return this[key];
+  },
+});

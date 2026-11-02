@@ -33,6 +33,10 @@ Then('Passed custom type arg {color} to equal "red"', ({}, color: Color) => {
   expect(color).toEqual('red');
 });
 
+Then('World value {world-value} equals {string}', ({}, value: unknown, expected: string) => {
+  expect(value).toEqual(expected);
+});
+
 Then('Custom param-no-transformer is {param-no-transformer}', ({}, param: string) => {
   expect(param).toEqual('dog');
 });

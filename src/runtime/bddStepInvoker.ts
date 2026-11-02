@@ -45,11 +45,7 @@ export class BddStepInvoker {
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getStepLocation(this.bddContext);
 
-    const stepParameters = await this.getStepParameters(
-      matchedDefinition,
-      stepText,
-      argument || undefined,
-    );
+    const stepParameters = await this.getStepParameters(matchedDefinition, argument);
 
     const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
@@ -156,10 +152,9 @@ export class BddStepInvoker {
 
   private async getStepParameters(
     matchedDefinition: MatchedStepDefinition,
-    world: unknown,
-    argument?: PickleStepArgument,
+    argument?: PickleStepArgument | null,
   ) {
-    const parameters = await matchedDefinition.getMatchedParameters(world);
+    const parameters = await matchedDefinition.getMatchedParameters(this.world);
 
     if (argument?.dataTable) {
       parameters.push(new DataTable(argument.dataTable));
