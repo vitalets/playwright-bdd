@@ -30,7 +30,7 @@ Run BDD tests with Playwright runner
 
 ## BDD in the Era of AI
 
-[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files:
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text:
 
 ```feature
 Feature: Buying a pizza
