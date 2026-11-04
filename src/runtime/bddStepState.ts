@@ -1,10 +1,14 @@
 /** BDD step API and the lifetime of its native Playwright step. */
 import { TestStepInfo } from '@playwright/test';
+import { PickleStepArgument } from '@cucumber/messages';
+import { DataTable } from '../cucumber/DataTable';
 
 export type BddStepFixture = {
   readonly params: Record<string, unknown>;
   title: BddStepState['title'];
   docStringType?: BddStepState['docStringType'];
+  readonly docString?: string;
+  readonly dataTable?: DataTable;
   readonly error?: BddStepState['error'];
   readonly info: BddStepState['info'];
   attach: BddStepState['attach'];
@@ -18,6 +22,8 @@ export class BddStepState {
   params: Record<string, unknown> = {};
   // Media type of the current step's doc string, when provided.
   docStringType?: string;
+  docString?: string;
+  dataTable?: DataTable;
   // Step failure; AfterStep hooks initially see the body failure, if any.
   // A thrown undefined is normalized to the string 'undefined'; skips leave it unset.
   error?: unknown;
@@ -41,10 +47,12 @@ export class BddStepState {
     return this.info.attach(name, options);
   }
 
-  initNewStep(stepText: string, mediaType?: string) {
+  initNewStep(stepText: string, argument?: PickleStepArgument | null) {
     this.reset();
     this.title = stepText;
-    this.docStringType = mediaType;
+    this.docStringType = argument?.docString?.mediaType;
+    this.docString = argument?.docString?.content;
+    this.dataTable = argument?.dataTable ? new DataTable(argument.dataTable) : undefined;
   }
 
   setInfo(info: TestStepInfo) {
@@ -60,6 +68,8 @@ export class BddStepState {
     this.title = '';
     this.params = {};
     this.docStringType = undefined;
+    this.docString = undefined;
+    this.dataTable = undefined;
     this.error = undefined;
     this.origInfo = undefined;
     this.skipped = undefined;

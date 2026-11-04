@@ -63,3 +63,13 @@ When('Fill page with:', async ({ page, $step }, docString: string) => {
 ```
 
 > Doc string media types are not exposed in Playwright-BDD 8.5.0 and before.
+
+## Access through `$step`
+
+You can also access the content through `$step.docString` in step definitions and step hooks. If you omit the positional doc string argument, disable argument-count validation for that definition:
+
+```ts
+When('some text:', { arityCheck: false }, ({ $step }) => {
+  console.log($step.docString);
+});
+```

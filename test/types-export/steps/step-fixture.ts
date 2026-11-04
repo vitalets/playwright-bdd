@@ -1,9 +1,15 @@
 import type { TestStepInfo } from '@playwright/test';
-import type { BddTestFixtures } from 'playwright-bdd';
+import type { BddTestFixtures, DataTable } from 'playwright-bdd';
 import { expectTypeOf } from 'expect-type';
 
 // This suite only compiles: verify the public fixture follows the consumer's native types.
 declare const step: BddTestFixtures['$step'];
+expectTypeOf(step.docString).toEqualTypeOf<string | undefined>();
+expectTypeOf(step.dataTable).toEqualTypeOf<DataTable | undefined>();
+// @ts-expect-error Argument properties are read-only.
+step.docString = '';
+// @ts-expect-error Argument properties are read-only.
+step.dataTable = undefined;
 expectTypeOf(step.info).toEqualTypeOf<Omit<TestStepInfo, 'skip'>>();
 expectTypeOf(step.attach).toEqualTypeOf<TestStepInfo['attach']>();
 expectTypeOf(step.skip).toEqualTypeOf<TestStepInfo['skip']>();
@@ -20,7 +26,15 @@ step.error = undefined;
 
 // The public subset must not expose internal lifecycle or skip-tracking state.
 expectTypeOf<keyof BddTestFixtures['$step']>().toEqualTypeOf<
-  'title' | 'docStringType' | 'error' | 'info' | 'attach' | 'skip'
+  | 'title'
+  | 'params'
+  | 'docStringType'
+  | 'docString'
+  | 'dataTable'
+  | 'error'
+  | 'info'
+  | 'attach'
+  | 'skip'
 >();
 
 expectTypeOf<BddTestFixtures['$bddContext']['step']>().toEqualTypeOf<BddTestFixtures['$step']>();

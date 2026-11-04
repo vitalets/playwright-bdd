@@ -60,3 +60,13 @@ Then(
   },
 );
 ```
+
+## Access through `$step`
+
+You can also access the same `DataTable` instance through `$step.dataTable` in step definitions and step hooks. If you omit the positional table argument, disable argument-count validation for that definition:
+
+```ts
+When('some records:', { arityCheck: false }, ({ $step }) => {
+  console.log($step.dataTable?.hashes());
+});
+```

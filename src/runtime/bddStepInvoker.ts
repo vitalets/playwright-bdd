@@ -5,7 +5,6 @@
 import { TestStepInfo } from '@playwright/test';
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { DataTable } from '../cucumber/DataTable';
 import { BddAutoInjectFixtures, getBddAutoInjectFixtures } from './bddTestFixturesAuto';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
@@ -36,7 +35,7 @@ export class BddStepInvoker {
   ) {
     this.bddContext.stepIndex++;
     const stepState = this.getStepState();
-    stepState.initNewStep(stepText, argument?.docString?.mediaType);
+    stepState.initNewStep(stepText, argument);
 
     const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
     const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
@@ -45,7 +44,7 @@ export class BddStepInvoker {
     // This call must be exactly here to have correct call stack (before async calls)
     const location = getStepLocation(this.bddContext);
 
-    const stepParameters = await this.getStepParameters(matchedDefinition, argument);
+    const stepParameters = await this.getStepParameters(matchedDefinition);
 
     const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
@@ -150,17 +149,15 @@ export class BddStepInvoker {
     throw new Error(message);
   }
 
-  private async getStepParameters(
-    matchedDefinition: MatchedStepDefinition,
-    argument?: PickleStepArgument | null,
-  ) {
+  private async getStepParameters(matchedDefinition: MatchedStepDefinition) {
     const parameters = await matchedDefinition.getMatchedParameters(this.world);
     if (parameters.params) this.getStepState().params = parameters.params;
 
-    if (argument?.dataTable) {
-      parameters.push(new DataTable(argument.dataTable));
-    } else if (argument?.docString) {
-      parameters.push(argument.docString.content);
+    const { dataTable, docString } = this.getStepState();
+    if (dataTable) {
+      parameters.push(dataTable);
+    } else if (docString !== undefined) {
+      parameters.push(docString);
     }
 
     // todo: handle invalid code length

@@ -29,6 +29,8 @@ It exposes the following fields:
 | Field | Type | Description |
 |---|---|---|
 | `title` | `string` | Step title without the keyword, e.g. `I open url "https://playwright.dev"` |
+| `docString` | `string \| undefined` | Doc string content, if present. |
+| `dataTable` | `DataTable \| undefined` | Data table argument, if present. |
 | `docStringType` | `string \| undefined` | Media type of the doc string argument, if present. See [Doc strings](writing-steps/doc-strings.md). |
 | `error` | `unknown \| undefined` | Error thrown by the current step body, available in `AfterStep`. It is `undefined` for successful steps. |
 | `info` | `Omit<TestStepInfo, 'skip'>` | Native Playwright step info, available during the step body and step hooks. Members follow your installed Playwright version. |
@@ -42,6 +44,8 @@ Given('I open url {string}', async ({ $step }, url: string) => {
   // ...
 });
 ```
+
+`$step.docString` and `$step.dataTable` are read-only properties available in step bodies and `BeforeStep` / `AfterStep` hooks. They are `undefined` when absent and reset after each step. An empty doc string is `''`. The data table is the same instance passed as the positional argument. When omitting the positional argument, currently set `{ arityCheck: false }` on the step definition.
 
 `$step.error` is mainly useful in [AfterStep hooks](writing-steps/hooks/step-hooks.md#afterstep). Use it instead of `$testInfo.status` when you need per-step failure handling.
 
