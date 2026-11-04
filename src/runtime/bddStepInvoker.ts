@@ -155,6 +155,7 @@ export class BddStepInvoker {
     argument?: PickleStepArgument | null,
   ) {
     const parameters = await matchedDefinition.getMatchedParameters(this.world);
+    if (parameters.params) this.getStepState().params = parameters.params;
 
     if (argument?.dataTable) {
       parameters.push(new DataTable(argument.dataTable));

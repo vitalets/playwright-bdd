@@ -41,6 +41,7 @@
   - [Re-using step function](writing-steps/reusing-step-fn.md)
   - [Data tables](writing-steps/data-tables.md)
   - [Doc strings](writing-steps/doc-strings.md)
+  - [BDD Expressions](writing-steps/bdd-expressions.md)
   - [Snippets](writing-steps/snippets.md)
 
 * **Reporters**

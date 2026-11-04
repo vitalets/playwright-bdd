@@ -8,6 +8,7 @@
 * feat: add opt-in inline source maps for feature-file locations in reports and VS Code; VS Code integration requires Playwright VS Code extension v1.1.20 or later ([playwright-vscode#806](https://github.com/microsoft/playwright-vscode/pull/806)).
 * feat: support test locks via step definitions and `@lock:name` tags with Playwright 1.63+ ([#404](https://github.com/vitalets/playwright-bdd/issues/404)).
 * feat: add a `timeout` option to step definitions.
+* feat: support opt-in BDD Expressions.
 * feat: expose `$step.info` and `$step.attach()`, and add guarded `$step.skip()` with Cucumber reporting support ([#401](https://github.com/vitalets/playwright-bdd/issues/401), [#400](https://github.com/vitalets/playwright-bdd/pull/400)).
 * feat: add native `bddgen --watch` mode.
 * feat: add `lockFile` option to coordinate multiple `bddgen` processes.

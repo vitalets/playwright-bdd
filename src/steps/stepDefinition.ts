@@ -10,6 +10,7 @@ import { PomNode } from './decorators/pomGraph';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { buildTagsExpression, extractTagsFromPath, TagsExpression } from './tags';
 import { relativeToCwd } from '../utils/paths';
+import { createBddExpression } from './bddExpression';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -22,6 +23,8 @@ export type ProvidedStepOptions = {
   timeout?: number;
   /** Static Playwright test locks inherited by scenarios matching this definition. */
   lock?: string | string[];
+  /** Use BDD Expressions syntax and infer named parameters on $step.params. */
+  bddExpr?: boolean;
 };
 
 export type StepDefinitionOptions = {
@@ -36,10 +39,11 @@ export type StepDefinitionOptions = {
   worldFixture?: string; // for new cucumber-style steps
   providedOptions?: ProvidedStepOptions; // options passed as second argument
   defaultTags?: string; // default tags from createBdd() or @Fixture
+  defaultBddExpr?: boolean;
 };
 
 export class StepDefinition {
-  #expression?: Expression;
+  #expression?: Expression | ReturnType<typeof createBddExpression>;
   tagsExpression?: TagsExpression;
 
   constructor(private options: StepDefinitionOptions) {
@@ -86,12 +90,21 @@ export class StepDefinition {
     return this.options.providedOptions;
   }
 
+  get usesBddExpression() {
+    return (
+      typeof this.pattern === 'string' &&
+      (this.options.providedOptions?.bddExpr ?? this.options.defaultBddExpr ?? false)
+    );
+  }
+
   get expression() {
     // create expression lazily b/c we need all parameter types to be loaded
     if (!this.#expression) {
       this.#expression =
         typeof this.pattern === 'string'
-          ? new CucumberExpression(this.pattern, parameterTypeRegistry)
+          ? this.usesBddExpression
+            ? createBddExpression(this.pattern)
+            : new CucumberExpression(this.pattern, parameterTypeRegistry)
           : new RegularExpression(this.pattern, parameterTypeRegistry);
     }
 

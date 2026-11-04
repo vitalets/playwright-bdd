@@ -6,8 +6,14 @@ import { fixtureParameterNames } from '../../playwright/fixtureParameterNames';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { ParametersExceptFirst } from '../../utils/types';
 import { registerStepDefinition } from '../stepRegistry';
-import { StepPattern, GherkinStepKeyword, AnyFunction } from '../stepDefinition';
+import {
+  StepPattern,
+  GherkinStepKeyword,
+  AnyFunction,
+  ProvidedStepOptions,
+} from '../stepDefinition';
 import { parseStepDefinitionArgs, StepConstructorOptions, StepDefinitionArgs } from './shared';
+import { BddExpressionStepFn } from '../bddExpression/types';
 
 export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   // for ps-style we still pass world as {}
@@ -18,14 +24,33 @@ export type PlaywrightStyleStepFn<T extends KeyValue, W extends KeyValue> = (
   ...args: any[] // eslint-disable-line @typescript-eslint/no-explicit-any
 ) => unknown;
 
-export type PlaywrightStyleStepCtor<T extends AnyFunction> = <StepFn extends T>(
-  ...args: StepDefinitionArgs<StepFn>
-) => ReturnType<typeof getCallableStepFn<StepFn>>;
+export type PlaywrightStyleStepCtor<
+  T extends AnyFunction,
+  DefaultBddExpr extends boolean = false,
+> = {
+  <
+    Pattern extends StepPattern,
+    BddExpr extends boolean,
+    StepFn extends BddExpressionStepFn<T, Pattern, BddExpr, 'playwright'>,
+  >(
+    pattern: Pattern,
+    options: ProvidedStepOptions & { bddExpr: BddExpr },
+    fn: StepFn,
+  ): ReturnType<typeof getCallableStepFn<StepFn>>;
+  <
+    Pattern extends StepPattern,
+    StepFn extends BddExpressionStepFn<T, Pattern, DefaultBddExpr, 'playwright'>,
+  >(
+    ...args:
+      | [pattern: Pattern, fn: StepFn]
+      | [pattern: Pattern, options: ProvidedStepOptions & { bddExpr?: DefaultBddExpr }, fn: StepFn]
+  ): ReturnType<typeof getCallableStepFn<StepFn>>;
+};
 
 // typings here are vague, we set exact typings inside createBdd()
 export function playwrightStepCtor(
   keyword: GherkinStepKeyword,
-  { customTest, defaultTags }: StepConstructorOptions,
+  { customTest, defaultTags, defaultBddExpr }: StepConstructorOptions,
 ) {
   return <StepFn extends AnyFunction>(...args: StepDefinitionArgs<StepFn>) => {
     const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
@@ -38,6 +63,7 @@ export function playwrightStepCtor(
       location: getLocationByOffset(3),
       customTest,
       defaultTags,
+      defaultBddExpr,
       providedOptions,
     });
 

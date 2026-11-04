@@ -34,6 +34,7 @@ It exposes the following fields:
 | `info` | `Omit<TestStepInfo, 'skip'>` | Native Playwright step info, available during the step body and step hooks. Members follow your installed Playwright version. |
 | `attach` | `TestStepInfo['attach']` | Attach a file or value to the current BDD step. |
 | `skip` | `TestStepInfo['skip']` | Skip the current BDD step and continue the scenario. |
+| `params` | Inferred object or `Record<string, unknown>` | Named values for the current step when [BDD Expressions](writing-steps/bdd-expressions.md) are enabled. Empty otherwise or when there are no named parameters. |
 
 ```ts
 Given('I open url {string}', async ({ $step }, url: string) => { 

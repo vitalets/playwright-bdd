@@ -2,6 +2,7 @@
 import { TestStepInfo } from '@playwright/test';
 
 export type BddStepFixture = {
+  readonly params: Record<string, unknown>;
   title: BddStepState['title'];
   docStringType?: BddStepState['docStringType'];
   readonly error?: BddStepState['error'];
@@ -13,6 +14,8 @@ export type BddStepFixture = {
 export class BddStepState {
   // Current BDD step text, without its Gherkin keyword.
   title = '';
+  // Named BDD expression values for the current step, also available in step hooks.
+  params: Record<string, unknown> = {};
   // Media type of the current step's doc string, when provided.
   docStringType?: string;
   // Step failure; AfterStep hooks initially see the body failure, if any.
@@ -55,6 +58,7 @@ export class BddStepState {
 
   reset() {
     this.title = '';
+    this.params = {};
     this.docStringType = undefined;
     this.error = undefined;
     this.origInfo = undefined;

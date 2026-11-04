@@ -29,6 +29,7 @@ import { stepHookFactory } from '../hooks/step';
 type CreateBddOptions<WorldFixtureName> = {
   worldFixture?: WorldFixtureName;
   tags?: string;
+  bddExpr?: boolean;
 };
 
 type DefaultFixturesTest = PwBuiltInFixturesTest & BddTestFixtures;
@@ -38,8 +39,44 @@ type CustomFixtureNames<T extends KeyValue> = Exclude<
   keyof DefaultFixturesTest | number | symbol
 >;
 
-// eslint-disable-next-line max-statements, visual/complexity, max-lines-per-function
+type Bdd<
+  T extends KeyValue,
+  W extends KeyValue,
+  World extends CustomFixtureNames<T> | '',
+  BddExpr extends boolean = false,
+> = Omit<ReturnType<typeof createBddInternal<T, W, World>>, 'Given' | 'When' | 'Then' | 'Step'> &
+  Record<
+    'Given' | 'When' | 'Then' | 'Step',
+    World extends CustomFixtureNames<T>
+      ? CucumberStyleStepCtor<CucumberStyleStepFn<T[World]>, BddExpr>
+      : PlaywrightStyleStepCtor<PlaywrightStyleStepFn<T, W>, BddExpr>
+  >;
+
+// Explicit bddExpr: true enables named-parameter type inference.
 export function createBdd<
+  T extends KeyValue = DefaultFixturesTest,
+  W extends KeyValue = DefaultFixturesWorker,
+  World extends CustomFixtureNames<T> | '' = '',
+>(
+  customTest: TestType<T, W> | undefined,
+  options: CreateBddOptions<World> & { bddExpr: true },
+): Bdd<T, W, World, true>;
+// Otherwise, use the default step types without expression inference.
+export function createBdd<
+  T extends KeyValue = DefaultFixturesTest,
+  W extends KeyValue = DefaultFixturesWorker,
+  World extends CustomFixtureNames<T> | '' = '',
+>(customTest?: TestType<T, W>, options?: CreateBddOptions<World>): Bdd<T, W, World>;
+// Shared runtime implementation for both overloads.
+export function createBdd(
+  customTest?: TestTypeCommon,
+  options?: CreateBddOptions<string>,
+): unknown {
+  return createBddInternal(customTest, options);
+}
+
+// eslint-disable-next-line max-statements, visual/complexity, max-lines-per-function
+function createBddInternal<
   T extends KeyValue = DefaultFixturesTest,
   W extends KeyValue = DefaultFixturesWorker,
   // important to set default value to empty string, not null or undefined
@@ -74,6 +111,7 @@ export function createBdd<
     customTest,
     worldFixture: options?.worldFixture,
     defaultTags: options?.tags,
+    defaultBddExpr: options?.bddExpr,
   };
 
   const BeforeAll = workerHookFactory<W>('beforeAll', ctorOptions);
