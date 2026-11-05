@@ -1,10 +1,10 @@
 Feature: step arity check - cucumber style
 
-  Scenario: missing args for expression step
-    Given cucumber step with missing args 42
+  Scenario: Allow omitted capture parameters
+    Given cucumber step with omitted parameters 42
 
-  Scenario: missing args for doc string step
-    Given cucumber doc step with missing args
+  Scenario: Allow omitted doc string parameters
+    Given cucumber doc step with omitted parameters
       """
       some content
       """

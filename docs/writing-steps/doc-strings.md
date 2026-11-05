@@ -66,10 +66,10 @@ When('Fill page with:', async ({ page, $step }, docString: string) => {
 
 ## Access through `$step`
 
-You can also access the content through `$step.docString` in step definitions and step hooks. If you omit the positional doc string argument, disable argument-count validation for that definition:
+You can also access the content through `$step.docString` in step definitions and step hooks:
 
 ```ts
-When('some text:', { arityCheck: false }, ({ $step }) => {
+When('some text:', ({ $step }) => {
   console.log($step.docString);
 });
 ```

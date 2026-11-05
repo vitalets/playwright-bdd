@@ -59,3 +59,7 @@ BddExprGiven('mixed {int} and :label', function (count: number, label: string) {
   expect([count, label]).toEqual([8, 'label']);
   expect(this.$step.params).toEqual({ label: 'label' });
 });
+
+BddExprGiven('step :count{int} with no positional params', function () {
+  expect(this.$step.params.count).toBe(3);
+});

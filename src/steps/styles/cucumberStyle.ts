@@ -47,7 +47,7 @@ export function cucumberStepCtor(
     registerStepDefinition({
       keyword,
       pattern,
-      arity: fn.length,
+      originalFn: fn,
       location: getLocationByOffset(3),
       customTest,
       worldFixture,

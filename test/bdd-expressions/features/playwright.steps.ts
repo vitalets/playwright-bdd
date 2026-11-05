@@ -74,3 +74,7 @@ AfterStep(({ $step }) => {
     expect($step.params).toEqual({ count: 2, owner: undefined });
   }
 });
+
+BddExprGiven('step :count{int} with no positional params', ({ $step }) => {
+  expect($step.params.count).toBe(3);
+});

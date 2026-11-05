@@ -45,7 +45,7 @@ Given('I open url {string}', async ({ $step }, url: string) => {
 });
 ```
 
-`$step.docString` and `$step.dataTable` are read-only properties available in step bodies and `BeforeStep` / `AfterStep` hooks. They are `undefined` when absent and reset after each step. An empty doc string is `''`. The data table is the same instance passed as the positional argument. When omitting the positional argument, currently set `{ arityCheck: false }` on the step definition.
+`$step.docString` and `$step.dataTable` are read-only properties available in step bodies and `BeforeStep` / `AfterStep` hooks. They are `undefined` when absent and reset after each step. An empty doc string is `''`. The data table is the same instance passed as the positional argument.
 
 `$step.error` is mainly useful in [AfterStep hooks](writing-steps/hooks/step-hooks.md#afterstep). Use it instead of `$testInfo.status` when you need per-step failure handling.
 

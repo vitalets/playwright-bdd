@@ -1,9 +1,10 @@
 Feature: bdd-expressions
 
-  Scenario: Named values preserve positional arguments and reset between steps
+  Scenario: Scenario one
     Given I have 3 items for "Alice"
     And I have 2 items
     And disabled BDD expressions :name is 4
+    And step 3 with no positional params
     And BDD expressions disabled by default :name is 5
     And local choice green
     And regex number 6

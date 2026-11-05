@@ -3,6 +3,7 @@
  */
 
 import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
+import type { BddExpression } from 'bdd-expressions' with { 'resolution-mode': 'import' };
 import { PickleStepType } from '@cucumber/messages';
 import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
@@ -31,8 +32,10 @@ export type StepDefinitionOptions = {
   keyword: GherkinStepKeyword;
   pattern: StepPattern;
   fn: AnyFunction;
-  // Keep user-defined function arity for checks when runtime wrapper is used.
-  arity: number;
+  // Preserve original step fn:
+  // - get it's arity for arity check
+  // - used to group decorator definitions for the same method (for arity check as well)
+  originalFn: AnyFunction;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
   pomNode?: PomNode; // for decorator steps
@@ -42,8 +45,15 @@ export type StepDefinitionOptions = {
   defaultBddExpr?: boolean;
 };
 
+/** Internal expression-engine metadata; not part of their public API. */
+type InternalExpressionMetadata = {
+  slots?: unknown;
+  treeRegexp?: { groupBuilder?: { children?: unknown } };
+};
+
 export class StepDefinition {
-  #expression?: Expression | ReturnType<typeof createBddExpression>;
+  #expression?: Expression | BddExpression;
+  #parameterCount?: number;
   tagsExpression?: TagsExpression;
 
   constructor(private options: StepDefinitionOptions) {
@@ -63,7 +73,11 @@ export class StepDefinition {
   }
 
   get arity() {
-    return this.options.arity;
+    return this.originalFn.length;
+  }
+
+  get originalFn() {
+    return this.options.originalFn;
   }
 
   get uri() {
@@ -111,6 +125,10 @@ export class StepDefinition {
     return this.#expression;
   }
 
+  get parameterCount() {
+    return (this.#parameterCount ??= this.getDefinitionParameterCount());
+  }
+
   get patternString() {
     return typeof this.pattern === 'string' ? this.pattern : this.pattern.source;
   }
@@ -153,6 +171,19 @@ export class StepDefinition {
       default: // Unknown
         return true;
     }
+  }
+
+  private getDefinitionParameterCount(): number {
+    // Count argument slots, not raw regexp captures: nested captures can produce
+    // a single positional argument. These fields are internal to the engines.
+    const expression = this.expression as unknown as InternalExpressionMetadata;
+    const slots = this.usesBddExpression
+      ? expression.slots
+      : expression.treeRegexp?.groupBuilder?.children;
+
+    // If an engine changes its metadata, allow any arity rather than reject a
+    // valid definition. Expression compilation errors still propagate normally.
+    return Array.isArray(slots) ? slots.length : Infinity;
   }
 
   private buildTagsExpression() {

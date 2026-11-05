@@ -48,12 +48,11 @@ Scenario: Two items
     | orange |
 ```
 
-Both variants match the same step definition. At runtime, the `DataTable` argument is passed only when the table is present. Declare the argument as optional and disable the arity check for that definition:
+Both variants match the same step definition. At runtime, the `DataTable` argument is passed only when the table is present. Declare the argument as optional:
 
 ```ts
 Then(
   'there are {int} items(:)',
-  { arityCheck: false },
   async ({ page }, count: number, dataTable?: DataTable) => {
     const rows = dataTable?.raw() ?? [];
     // ...
@@ -63,10 +62,10 @@ Then(
 
 ## Access through `$step`
 
-You can also access the same `DataTable` instance through `$step.dataTable` in step definitions and step hooks. If you omit the positional table argument, disable argument-count validation for that definition:
+You can also access the same `DataTable` instance through `$step.dataTable` in step definitions and step hooks:
 
 ```ts
-When('some records:', { arityCheck: false }, ({ $step }) => {
+When('some records:', ({ $step }) => {
   console.log($step.dataTable?.hashes());
 });
 ```

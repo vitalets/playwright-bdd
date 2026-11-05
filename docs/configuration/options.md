@@ -234,29 +234,41 @@ If enabled, the keyword is also taken into account when searching for step defin
 - **Type:** `boolean`
 - **Default:** `true`
 
-Validates that each used step definition declares the correct number of function arguments during test generation. The expected count is based on captured step parameters plus a doc string or data table argument. Playwright-style steps also include the first fixtures argument.
+Validates step definition function signatures during test generation. It reports functions that declare more parameters than the expression allows: captured parameters, one optional doc string or data table parameter, and the first fixtures parameter for Playwright-style steps. Methods with multiple decorators use the largest allowance among their expressions.
 
-You can disable the check globally if your project uses advanced callback signatures that are valid at runtime but cannot be represented by JavaScript `Function.length`, such as rest tuple parameters:
+The check is enabled by default. You can configure it globally:
 
 ```ts
 const testDir = defineBddConfig({
-  arityCheck: false,
+  arityCheck: true,
 });
 ```
 
-You can also override this option for a particular step definition:
+Or override it for a particular step definition:
+
+```ts
+Given('I have {int} apples', { arityCheck: true }, async ({}, count: number) => {
+  // ...
+});
+```
+
+Set `arityCheck: false` to disable checking globally or for an individual step. Step-level `true` or `false` overrides the config value.
+
+For example, this definition reports an error when used by a step such as `Given I have 3 apples`:
 
 ```ts
 Given(
-  /the following (person|animal)s exist:/,
-  { arityCheck: false },
-  async ({}, ...args) => {
+  'I have {int} apples',
+  async ({}, count: number, docString: string, extra: string) => {
     // ...
   },
 );
+// Function has 4 arguments, but expected 0-3.
 ```
 
-Step-level `arityCheck` inherits the config value by default. Setting it explicitly to `true` or `false` overrides the config value for that step.
+The fixtures, count, and optional doc string parameters are allowed; the fourth parameter exceeds that allowance. The check uses JavaScript `Function.length`, so TypeScript optional parameters still count, while default and rest parameters can reduce the reported length.
+
+> In v10, arity checking was relaxed to allow omitted parameters, optional doc strings/data tables, and different capture counts on shared decorated methods.
 
 ## verbose
 

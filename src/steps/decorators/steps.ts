@@ -32,7 +32,7 @@ export function createStepDecorator(keyword: GherkinStepKeyword) {
       saveStepConfigToMethod(method, {
         keyword,
         pattern,
-        arity: method.length,
+        originalFn: method,
         location,
         providedOptions,
         fn: method,
@@ -64,7 +64,6 @@ function registerDecoratorStep(stepOptions: StepDefinitionOptions) {
 
   registerStepDefinition({
     ...stepOptions,
-    arity: fn.length,
     fn: (fixturesArg: Record<string, unknown>, ...args: unknown[]) => {
       const pomFixture = getFirstNonAutoInjectFixture(fixturesArg, stepOptions);
       return fn.call(pomFixture, ...args);

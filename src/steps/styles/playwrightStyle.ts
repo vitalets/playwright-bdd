@@ -58,7 +58,7 @@ export function playwrightStepCtor(
     registerStepDefinition({
       keyword,
       pattern,
-      arity: fn.length,
+      originalFn: fn,
       fn,
       location: getLocationByOffset(3),
       customTest,

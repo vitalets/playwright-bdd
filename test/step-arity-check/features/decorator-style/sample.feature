@@ -1,10 +1,12 @@
 Feature: step arity check - decorator style
 
-  Scenario: missing args for expression step
-    Given decorator step with missing args 42
+  @valid
+  Scenario: Allow omitted capture parameters
+    Given decorator step with omitted parameters 42
 
-  Scenario: missing args for doc string step
-    Given decorator doc step with missing args
+  @valid
+  Scenario: Allow omitted doc string parameters
+    Given decorator doc step with omitted parameters
       """
       some content
       """
@@ -17,3 +19,24 @@ Feature: step arity check - decorator style
       """
       some content
       """
+
+  Scenario: Shared methods reject parameters beyond every expression
+    Given shared method with excess parameters for every expression
+
+  @valid
+  Scenario: Arity check considers all decorators for a method
+    Given decorator step
+    And regexp decorator step
+    And bdd-expr decorator step
+
+  @valid
+  Scenario: Allow optional, default and rest parameters
+    Given decorator step with an optional doc string or data table parameter
+    And decorator step with an optional doc string or data table parameter
+      """
+      hello
+      """
+    And decorator step with an optional doc string or data table parameter
+      | hello |
+    And decorator step 3 with a default parameter
+    And decorator step 3 with rest parameters
