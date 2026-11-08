@@ -15,7 +15,7 @@ for (const style of ['playwright', 'cucumber', 'decorator']) {
     execPlaywrightTestWithError(
       testDir.name,
       [
-        `Found step definitions with incorrect arguments: ${style === 'decorator' ? 3 : 2}`,
+        `Found step definitions with incorrect arguments: ${style === 'decorator' ? 4 : 2}`,
         `Function has ${3 + offset} arguments, but expected 0-${2 + offset}.`,
         `Function has ${2 + offset} arguments, but expected 0-${1 + offset}.`,
       ],

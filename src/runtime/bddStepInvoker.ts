@@ -125,9 +125,9 @@ export class BddStepInvoker {
 
   private findStepDefinition(stepText: string, stepTextWithKeyword: string) {
     const { keywordType, gherkinStepLine } = this.getBddStepData();
+    const { docString, dataTable } = this.getStepState();
     const stepDefinitions = this.stepFinder.findDefinitions(
-      keywordType,
-      stepText,
+      { keywordType, text: stepText, docString, dataTable },
       this.bddContext.tags,
     );
 
@@ -153,11 +153,14 @@ export class BddStepInvoker {
     const parameters = await matchedDefinition.getMatchedParameters(this.world);
     if (parameters.params) this.getStepState().params = parameters.params;
 
-    const { dataTable, docString } = this.getStepState();
-    if (dataTable) {
-      parameters.push(dataTable);
-    } else if (docString !== undefined) {
-      parameters.push(docString);
+    // DocString and DataTable parameters already occupy slots, even when optional and absent.
+    if (!matchedDefinition.definition.hasBlockArguments) {
+      const { dataTable, docString } = this.getStepState();
+      if (dataTable) {
+        parameters.push(dataTable);
+      } else if (docString !== undefined) {
+        parameters.push(docString);
+      }
     }
 
     // todo: handle invalid code length

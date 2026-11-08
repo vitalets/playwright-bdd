@@ -45,9 +45,84 @@ Given('I buy :count{int} apples( for :owner)', { bddExpr: true }, async ({}, cou
 });
 ```
 
-Doc strings and data tables remain the final argument. Steps without named parameters expose an empty object.
+When the expression does not declare a doc string or data table, either remains an optional final argument as before. Steps without named parameters expose an empty object.
 
 For non BDD expression steps, `$step.params` is an empty object `{}` typed as `Record<string, unknown>`.
+
+## DocString and DataTable parameters
+
+The `{DocString}` and `{DataTable}` parameters let you make doc strings and data tables required or optional.
+
+### Required DataTable
+
+End the expression with `:{DataTable}`:
+
+```ts
+const { Given } = createBdd(test, { bddExpr: true });
+
+Given('there are {int} user(s):{DataTable}', ({ $step }, count: number) => {
+  // use `count` and `$step.dataTable` for step actions.
+});
+```
+
+✅ Matches — colon and data table provided:
+
+```gherkin
+Given there are 2 users:
+  | name  |
+  | Alice |
+  | Bob   |
+```
+
+❌ Does not match — data table missing:
+
+```gherkin
+Given there are 1 user:
+```
+
+### Optional DataTable
+
+Use `(:{DataTable})` to make the colon and table optional together:
+
+```ts
+Given('there are {int} user(s)(:{DataTable})', ({ $step }, count: number) => {
+  // use `count` and `$step.dataTable` for step actions.
+});
+```
+
+✅ Matches — colon and data table provided:
+
+```gherkin
+Given there are 1 user:
+  | name  |
+  | Alice |
+```
+
+✅ Matches — both omitted:
+
+```gherkin
+Given there are 2 users
+```
+
+❌ Does not match — colon without a table:
+
+```gherkin
+Given there are 2 users:
+```
+
+❌ Does not match — table without a colon:
+
+```gherkin
+Given there are 1 user
+  | name  |
+  | Alice |
+```
+
+`{DocString}` works the same way; an empty doc string counts as present. A `{DataTable}` definition rejects a doc string, and vice versa.
+
+Required doc string and data table parameters give `$step.docString` and `$step.dataTable` non-optional types. Optional values include `undefined`. Both are also available as positional callback arguments.
+
+Doc string and data table parameters must come last. Without them, steps keep accepting doc strings or data tables as before. See the [syntax rules](https://github.com/vitalets/bdd-expressions/blob/main/docs/syntax.md) for details.
 
 ## Usage with Cucumber-style steps
 

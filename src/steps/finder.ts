@@ -5,18 +5,18 @@ import { PickleStepType } from '@cucumber/messages';
 import { relativeToCwd } from '../utils/paths';
 import { stepDefinitions } from './stepRegistry';
 import { BDDConfig } from '../config/types';
-import { StepDefinition } from './stepDefinition';
+import { StepDefinition, StepMatchInput } from './stepDefinition';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { toBoolean } from '../utils';
 
 export class StepFinder {
   constructor(private config: BDDConfig) {}
 
-  findDefinitions(keywordType: PickleStepType | undefined, stepText: string, tags?: string[]) {
-    let definitions = this.matchByText(stepDefinitions, stepText);
+  findDefinitions(step: StepMatchInput, tags?: string[]) {
+    let definitions = this.matchByText(stepDefinitions, step);
 
     if (this.config.matchKeywords) {
-      definitions = this.filterByKeyword(definitions, keywordType);
+      definitions = this.filterByKeyword(definitions, step.keywordType);
     }
 
     if (tags?.length) {
@@ -26,9 +26,9 @@ export class StepFinder {
     return definitions;
   }
 
-  private matchByText(definitions: StepDefinition[], stepText: string) {
+  private matchByText(definitions: StepDefinition[], step: StepMatchInput) {
     return definitions
-      .map((definition) => definition.matchStepText(stepText)) // prettier-ignore
+      .map((definition) => definition.matchStep(step)) // prettier-ignore
       .filter(toBoolean);
   }
 

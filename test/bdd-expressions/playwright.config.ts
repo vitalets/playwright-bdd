@@ -6,8 +6,12 @@ export default defineConfig({
     {
       name: 'playwright',
       testDir: defineBddConfig({
-        features: 'features/bdd-expressions.feature',
-        steps: ['features/playwright.steps.ts', 'features/custom-type.steps.ts'],
+        features: process.env.FEATURES || 'features/bdd-expressions.feature',
+        tags: process.env.TAGS,
+        missingSteps: process.env.MISSING_STEPS as 'fail-on-gen' | 'fail-on-run' | 'skip-scenario',
+        steps: process.env.CUSTOM_PARAMETER_TYPES
+          ? ['features/custom-parameter-types.steps.ts']
+          : ['features/playwright.steps.ts', 'features/custom-type.steps.ts'],
         outputDir: '.features-gen/playwright',
         arityCheck: true,
       }),
@@ -15,8 +19,12 @@ export default defineConfig({
     {
       name: 'cucumber',
       testDir: defineBddConfig({
-        features: 'features/bdd-expressions.feature',
-        steps: ['features/cucumber.steps.ts', 'features/custom-type.steps.ts'],
+        features: process.env.FEATURES || 'features/bdd-expressions.feature',
+        tags: process.env.TAGS,
+        missingSteps: process.env.MISSING_STEPS as 'fail-on-gen' | 'fail-on-run' | 'skip-scenario',
+        steps: process.env.CUSTOM_PARAMETER_TYPES
+          ? ['features/custom-parameter-types.steps.ts']
+          : ['features/cucumber.steps.ts', 'features/custom-type.steps.ts'],
         outputDir: '.features-gen/cucumber',
         arityCheck: true,
       }),

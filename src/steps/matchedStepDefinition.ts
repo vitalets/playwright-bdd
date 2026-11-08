@@ -8,7 +8,7 @@ import type { Argument as BddExpressionArgument } from 'bdd-expressions' with {
 };
 import { Group, StepMatchArgument } from '@cucumber/messages';
 import { StepDefinition } from './stepDefinition';
-import { resolveBddExpressionParams } from './bddExpression';
+import { resolveBddExpressionParams } from './bddExpression/resolveParams';
 
 export class MatchedStepDefinition {
   constructor(
@@ -20,7 +20,7 @@ export class MatchedStepDefinition {
   async getMatchedParameters(
     world: unknown,
   ): Promise<unknown[] & { readonly params?: Record<string, unknown> }> {
-    if (this.definition.usesBddExpression) {
+    if (this.definition.usesBddExpression()) {
       return resolveBddExpressionParams(this.result, world);
     }
     return Promise.all(this.result.map((arg) => arg.getValue(world)));
@@ -31,13 +31,18 @@ export class MatchedStepDefinition {
    * See: https://github.com/cucumber/cucumber-js/blob/main/src/assemble/assemble_test_cases.ts
    */
   getStepMatchArguments(): StepMatchArgument[] {
-    return this.result.map((arg) => {
+    return this.result.filter(isTextArgument).map((arg) => {
       return {
         group: mapArgumentGroup(arg.group),
         parameterTypeName: arg.parameterType.name,
       };
     });
   }
+}
+
+function isTextArgument(arg: Argument | BddExpressionArgument) {
+  // DocString and DataTable parameters have no text captures; optional text parameters still do.
+  return !('docString' in arg.parameterType || 'dataTable' in arg.parameterType);
 }
 
 function mapArgumentGroup(group: Argument['group'] | BddExpressionArgument['group']): Group {

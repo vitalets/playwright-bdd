@@ -24,6 +24,7 @@ import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
 import { getStepHooksFixtureNames, getStepHooksToRun } from '../../hooks/step';
 import { ArityChecker } from './arity-checker';
 import { collectTestLocks } from './locks';
+import { DataTable } from '../../cucumber/DataTable';
 
 export type StepData = {
   pickleStep: PickleStep;
@@ -185,8 +186,14 @@ export class TestGen {
     if (this.skipped) return;
 
     const matchedDefinitions = this.stepFinder.findDefinitions(
-      pickleStep.type,
-      pickleStep.text,
+      {
+        keywordType: pickleStep.type,
+        text: pickleStep.text,
+        docString: pickleStep.argument?.docString?.content,
+        dataTable: pickleStep.argument?.dataTable
+          ? new DataTable(pickleStep.argument.dataTable)
+          : undefined,
+      },
       this.tags,
     );
 

@@ -1,9 +1,12 @@
-import type { InferBddParams } from 'bdd-expressions' with { 'resolution-mode': 'import' };
+import type { BddExpressionResult, InferBddParams } from 'bdd-expressions' with {
+  'resolution-mode': 'import',
+};
 import { AnyFunction, StepPattern } from '../stepDefinition';
 import { BddStepFixture } from '../../runtime/bddStepState';
+import { DataTable } from '../../cucumber/DataTable';
 
 /**
- * Infer named parameters only when BDD expressions are explicitly enabled (`true`)
+ * Infer named parameters and DocString and DataTable values only when BDD expressions are enabled (`true`)
  * and the step pattern is a string. Disabled expressions, a non-literal `boolean`,
  * and RegExp patterns keep the original callback type without running the
  * potentially expensive type-level expression parser (InferBddParams).
@@ -20,19 +23,25 @@ export type BddExpressionStepFn<
     ? Style extends 'playwright'
       ? (
           this: ThisParameterType<Fn>,
-          fixtures: WithParams<Parameters<Fn>[0], Pattern>,
+          fixtures: WithExpressionStep<Parameters<Fn>[0], Pattern>,
           ...args: Tail<Parameters<Fn>>
         ) => ReturnType<Fn>
       : (
-          this: WithParams<ThisParameterType<Fn>, Pattern>,
+          this: WithExpressionStep<ThisParameterType<Fn>, Pattern>,
           ...args: Parameters<Fn>
         ) => ReturnType<Fn>
     : Fn
   : Fn;
 
-type WithParams<Value, Pattern extends string> = Value extends { $step: BddStepFixture }
+type ExpressionStepFields<Pattern extends string> = Pick<
+  BddExpressionResult<InferBddParams<Pattern, { DataTable: DataTable }>, DataTable, Pattern>,
+  'params' | 'docString' | 'dataTable'
+>;
+
+type WithExpressionStep<Value, Pattern extends string> = Value extends { $step: BddStepFixture }
   ? Omit<Value, '$step'> & {
-      $step: Omit<Value['$step'], 'params'> & { readonly params: InferBddParams<Pattern> };
+      $step: Omit<Value['$step'], keyof ExpressionStepFields<Pattern>> &
+        ExpressionStepFields<Pattern>;
     }
   : Value;
 

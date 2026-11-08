@@ -47,13 +47,15 @@ export class ArityChecker {
 
   private getExpectedArgs(matchedDefinition: MatchedStepDefinition) {
     const { definition, result } = matchedDefinition;
-    // A doc string / data table parameter is allowed even when absent in this step.
-    const extraArgs = 1 + Number(isPlaywrightStyle(matchedDefinition));
-    let max = result.length + extraArgs;
+    // Cucumber expressions allow an extra DocString or DataTable argument even when absent.
+    // BDD expressions do too unless they already declare these parameters as slots.
+    const fixturesOffset = Number(isPlaywrightStyle(matchedDefinition));
+    let max = result.length + fixturesOffset + Number(!definition.hasBlockArguments);
     if (definition.arity <= max) return { min: 0, max };
 
     for (const stepDefinition of getDefinitionsForMethod(definition)) {
-      max = Math.max(max, stepDefinition.parameterCount + extraArgs);
+      const allowance = Number(!stepDefinition.hasBlockArguments);
+      max = Math.max(max, stepDefinition.parameterCount + fixturesOffset + allowance);
       if (definition.arity <= max) break;
     }
     return { min: 0, max };

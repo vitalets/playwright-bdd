@@ -12,6 +12,7 @@ import { MatchedStepDefinition } from './matchedStepDefinition';
 import { buildTagsExpression, extractTagsFromPath, TagsExpression } from './tags';
 import { relativeToCwd } from '../utils/paths';
 import { createBddExpression } from './bddExpression';
+import { DataTable } from '../cucumber/DataTable';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -45,9 +46,15 @@ export type StepDefinitionOptions = {
   defaultBddExpr?: boolean;
 };
 
-/** Internal expression-engine metadata; not part of their public API. */
+export type StepMatchInput = {
+  text: string;
+  keywordType?: PickleStepType;
+  docString?: string;
+  dataTable?: DataTable;
+};
+
+/** Internal Cucumber expression metadata; not part of its public API. */
 type InternalExpressionMetadata = {
-  slots?: unknown;
   treeRegexp?: { groupBuilder?: { children?: unknown } };
 };
 
@@ -104,19 +111,19 @@ export class StepDefinition {
     return this.options.providedOptions;
   }
 
-  get usesBddExpression() {
+  usesBddExpression(): this is this & { expression: BddExpression; pattern: string } {
     return (
       typeof this.pattern === 'string' &&
       (this.options.providedOptions?.bddExpr ?? this.options.defaultBddExpr ?? false)
     );
   }
 
-  get expression() {
+  get expression(): Expression | BddExpression {
     // create expression lazily b/c we need all parameter types to be loaded
     if (!this.#expression) {
       this.#expression =
         typeof this.pattern === 'string'
-          ? this.usesBddExpression
+          ? this.usesBddExpression()
             ? createBddExpression(this.pattern)
             : new CucumberExpression(this.pattern, parameterTypeRegistry)
           : new RegularExpression(this.pattern, parameterTypeRegistry);
@@ -127,6 +134,11 @@ export class StepDefinition {
 
   get parameterCount() {
     return (this.#parameterCount ??= this.getDefinitionParameterCount());
+  }
+
+  get hasBlockArguments() {
+    if (!this.usesBddExpression()) return false;
+    return this.expression.hasDocString || this.expression.hasDataTable;
   }
 
   get patternString() {
@@ -148,13 +160,17 @@ export class StepDefinition {
   }
 
   /**
-   * Tries to match step text.
+   * Matches text and declared DocString and DataTable parameters.
    * Returns MatchedStepDefinition in case of success.
    */
-  matchStepText(stepText: string) {
-    const result = this.expression.match(stepText);
+  matchStep(step: StepMatchInput) {
+    // Without DocString or DataTable parameters, matching only checks the text.
+    const result =
+      this.usesBddExpression() && this.hasBlockArguments
+        ? this.expression.match(step.text, step)
+        : this.expression.match(step.text);
     if (result) {
-      return new MatchedStepDefinition(this, stepText, result);
+      return new MatchedStepDefinition(this, step.text, result);
     }
   }
 
@@ -174,12 +190,12 @@ export class StepDefinition {
   }
 
   private getDefinitionParameterCount(): number {
+    if (this.usesBddExpression()) return this.expression.slots.length;
+
     // Count argument slots, not raw regexp captures: nested captures can produce
-    // a single positional argument. These fields are internal to the engines.
+    // a single positional argument. These fields are internal to Cucumber Expressions.
     const expression = this.expression as unknown as InternalExpressionMetadata;
-    const slots = this.usesBddExpression
-      ? expression.slots
-      : expression.treeRegexp?.groupBuilder?.children;
+    const slots = expression.treeRegexp?.groupBuilder?.children;
 
     // If an engine changes its metadata, allow any arity rather than reject a
     // valid definition. Expression compilation errors still propagate normally.

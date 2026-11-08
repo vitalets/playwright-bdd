@@ -1,29 +1,29 @@
 /** Load the ESM-only expression engine before synchronous step matching starts. */
-import type { Argument, BddExpression } from 'bdd-expressions' with { 'resolution-mode': 'import' };
-import { parameterTypeRegistry } from '../parameterTypes';
+import type { BddExpression, ParameterTypeRegistry } from 'bdd-expressions' with {
+  'resolution-mode': 'import',
+};
+import { DataTable } from '../../cucumber/DataTable';
+import { parameterTypeRegistry as cucumberExpressionsRegistry } from '../parameterTypes';
 
 let Expression: typeof BddExpression;
+let bddExpressionRegistry: ParameterTypeRegistry<DataTable>;
 
-export async function loadBddExpressions() {
-  ({ BddExpression: Expression } = await import('bdd-expressions'));
+// Cucumber provides the text parameter types but has no built-in DocString or DataTable types.
+// Fall back to the BDD registry for those types, while keeping user-defined types authoritative,
+// including custom text types named DocString or DataTable.
+const bddExpressionRegistryFacade: ParameterTypeRegistry<DataTable> = {
+  lookupByTypeName: (name) =>
+    cucumberExpressionsRegistry.lookupByTypeName(name) ??
+    bddExpressionRegistry.lookupByTypeName(name),
+};
+
+export async function importBddExpressions() {
+  const library = await import('bdd-expressions');
+  Expression = library.BddExpression;
+  bddExpressionRegistry = library.createParameterTypeRegistry<DataTable>();
 }
 
 export function createBddExpression(pattern: string) {
   // Runtime compilation does not need the type-level parser.
-  return new Expression<Record<string, unknown>>(pattern, parameterTypeRegistry);
-}
-
-export async function resolveBddExpressionParams(
-  args: readonly Pick<Argument, 'name' | 'getValue'>[],
-  world: unknown,
-) {
-  const values = await Promise.all(args.map((arg) => arg.getValue(world)));
-  const params: Record<string, unknown> = Object.create(null);
-  // Reuse resolved values in argument order, regardless of transformer completion order.
-  args.forEach((arg, index) => {
-    if (arg.name !== undefined) params[arg.name] = values[index];
-  });
-  return Object.defineProperty(values, 'params', { value: params }) as unknown[] & {
-    readonly params: Record<string, unknown>;
-  };
+  return new Expression<Record<string, unknown>>(pattern, bddExpressionRegistryFacade);
 }

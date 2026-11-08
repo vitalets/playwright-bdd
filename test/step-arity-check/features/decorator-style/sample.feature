@@ -21,13 +21,19 @@ Feature: step arity check - decorator style
       """
 
   Scenario: Shared methods reject parameters beyond every expression
-    Given shared method with excess parameters for every expression
+    Given step without capture parameters
+    And step without a docstring parameter
 
   @valid
   Scenario: Arity check considers all decorators for a method
-    Given decorator step
-    And regexp decorator step
-    And bdd-expr decorator step
+    Given Cucumber expression without parameters
+    And regexp without captures
+    And BDD expression without parameters
+    And step without number or docstring parameters
+    And step with required docstring
+      """
+      content
+      """
 
   @valid
   Scenario: Allow optional, default and rest parameters
