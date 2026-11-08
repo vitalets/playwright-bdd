@@ -10,7 +10,7 @@ You can enable BDD expressions globally by setting `bddExpr: true` in the `creat
 
 ```ts
 export const { Given, When, Then } = createBdd(test, { 
-  bddExpr: true // <-- enable BDD expressions
+  bddExpr: true // <-- enable BDD expressions for all steps
 });
 ```
 
@@ -48,6 +48,8 @@ Given('I buy :count{int} apples( for :owner)', { bddExpr: true }, async ({}, cou
 When the expression does not declare a doc string or data table, either remains an optional final argument as before. Steps without named parameters expose an empty object.
 
 For non BDD expression steps, `$step.params` is an empty object `{}` typed as `Record<string, unknown>`.
+
+!> **IDE support limitation:** IDE extensions do not yet support BDD Expressions syntax. Editor features such as step completion and navigation to step definitions will not work for these expressions. We plan to address this limitation in a future update.
 
 ## DocString and DataTable parameters
 
