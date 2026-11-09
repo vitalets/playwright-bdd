@@ -34,60 +34,59 @@ Check out the full [syntax guide](https://vitalets.github.io/bdd-expressions/syn
 
 ## Use cases
 
-### Named params
-
-You can use named params accessible via `$step.params`:
-
-```ts
-Given('I buy :count{int} apples', { bddExpr: true }, async ({ $step }) => {
-  console.log('count:', $step.params.count);
-});
-```
-
-`$step.params` is automatically typed:
-
-```typescript
-// $step.params
-{ 
-  count: number; 
-}
-```
-
 ### Optional text with params
 
-An optional group can contain a parameter. Use this to handle both page-wide actions and actions scoped to a dialog without separate step definitions:
+An optional group can contain a parameter. Use this to combine adding a product to the cart with or without a specific quantity in one step definition:
+
+```diff
+- I add {string} to the cart
+- I add {string} to the cart with quantity {int}
++ I add {string} to the cart( with quantity {int})
+```
+
+The following example uses a `cart` fixture with an `add` method:
 
 ```ts
-When('I click :button( in the :dialog dialog)', async ({ page, $step }) => {
-  const { button, dialog } = $step.params;
-  const scope = dialog === undefined ? page : page.getByRole('dialog', { name: dialog });
-  await scope.getByRole('button', { name: button, exact: true }).click();
-});
+When(
+  'I add {string} to the cart( with quantity {int})',
+  { bddExpr: true },
+  async ({ cart }, product: string, quantity?: number) => {
+    await cart.add(product, quantity);
+  },
+);
 ```
 
 Both steps match this definition:
 
 ```gherkin
-When I click "Save"
-When I click "Save" in the "Edit profile" dialog
+When I add "Notebook" to the cart
+When I add "Notebook" to the cart with quantity 3
 ```
 
-The `dialog` parameter is `undefined` when the optional group is omitted. A named parameter without an explicit type, such as `:button`, matches a quoted string.
+The quantity parameter is `undefined` when the optional group is omitted.
 
-### Related assertions with inline choices
+### Inline choices
 
 Inline choices capture one of a fixed set of values without registering a custom parameter type. Combine visible and hidden checks in one assertion step:
 
+```diff
+- the {string} button is visible
+- the {string} button is hidden
++ the {string} button is {visible/hidden}
+```
+
 ```ts
-Then('the :button button is :state{visible/hidden}', async ({ page, $step }) => {
-  const { button, state } = $step.params;
-  const locator = page.getByRole('button', { name: button, exact: true });
-  if (state === 'visible') {
-    await expect(locator).toBeVisible();
-  } else {
-    await expect(locator).toBeHidden();
-  }
-});
+Then(
+  'the {string} button is {visible/hidden}',
+  { bddExpr: true },
+  async ({ page }, button: string, state: 'visible' | 'hidden') => {
+    if (state === 'visible') {
+      await expect(locator).toBeVisible();
+    } else {
+      await expect(locator).toBeHidden();
+    }
+  },
+);
 ```
 
 ```gherkin
@@ -95,7 +94,41 @@ Then the "Submit" button is visible
 Then the "Submit" button is hidden
 ```
 
-The `state` parameter is inferred as `'visible' | 'hidden'`. Other values do not match this definition.
+The state parameter only accepts `visible` or `hidden`. Other values do not match this definition.
+
+### Named params
+
+Named parameters let you replace manually typed positional arguments with automatically typed `$step.params`. For example, the cart step above declares two positional arguments:
+
+```ts
+async ({ cart }, product: string, quantity?: number) => {
+  await cart.add(product, quantity);
+}
+```
+
+Name the parameters in the expression to infer their types instead:
+
+```ts
+When(
+  'I add :product to the cart( with quantity :quantity{int})',
+  { bddExpr: true },
+  async ({ cart, $step }) => {
+    const { product, quantity } = $step.params;
+    await cart.add(product, quantity);
+  },
+);
+```
+
+`$step.params` is automatically typed:
+
+```ts
+{
+  product: string;
+  quantity: number | undefined;
+}
+```
+
+A named parameter without an explicit type, such as `:product`, matches a quoted string. The feature steps stay the same.
 
 ## DocString and DataTable
 
@@ -135,29 +168,21 @@ Given('{int} user(s) in database(:{DataTable})', ({ $step }, count: number) => {
 });
 ```
 
-✅ Matches — colon and data table provided:
+✅ Matches:
 
 ```gherkin
+Given 0 users in database
 Given 1 user in database:
-  | name  |
   | Alice |
+Given 2 users in database:
+  | Alice |
+  | Bob   |
 ```
 
-✅ Matches — both omitted:
-
-```gherkin
-Given 2 users in database
-```
-
-❌ Does not match — colon without a table:
+❌ Does not match:
 
 ```gherkin
 Given 2 users in database:
-```
-
-❌ Does not match — table without a colon:
-
-```gherkin
 Given 1 user in database
   | name  |
   | Alice |
