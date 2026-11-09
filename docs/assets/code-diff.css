@@ -1,0 +1,12 @@
+.markdown-section .lang-diff .token.deleted {
+  color: #82071e;
+  background-color: #ffebe9;
+  text-decoration: none;
+}
+
+.markdown-section .lang-diff .token.inserted {
+  color: #116329;
+  background-color: #dafbe1;
+  border-bottom: none;
+  text-decoration: none;
+}
