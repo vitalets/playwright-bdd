@@ -96,6 +96,32 @@ Then the "Submit" button is hidden
 
 The state parameter only accepts `visible` or `hidden`. Other values do not match this definition.
 
+### Replace regular expressions
+
+Use inline choices to replace regular expressions that capture a fixed set of values. For example, a step that checks a connection indicator can use a readable BDD expression:
+
+```diff
+- /^the connection indicator is (green|red)$/
++ 'the connection indicator is {green/red}'
+```
+
+```ts
+Then(
+  'the connection indicator is {green/red}',
+  { bddExpr: true },
+  async ({ page }, color: 'green' | 'red') => {
+    await expect(page.getByTestId('connection-indicator')).toHaveAttribute('data-color', color);
+  },
+);
+```
+
+Both versions match the entire step and pass the captured color to the callback:
+
+```gherkin
+Then the connection indicator is green
+Then the connection indicator is red
+```
+
 ### Named params
 
 Named parameters let you replace manually typed positional arguments with automatically typed `$step.params`. For example, the cart step above declares two positional arguments:
