@@ -8,6 +8,7 @@ import { PomNode } from './pomGraph';
 import { isBddAutoInjectFixture } from '../../runtime/bddTestFixturesAuto';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
+import { DecoratorStepFn } from './types';
 import {
   StepPattern,
   GherkinStepKeyword,
@@ -24,11 +25,14 @@ type DecoratedMethod = Function & { [decoratedStepSymbol]: StepDefinitionOptions
  * Creates @Given, @When, @Then decorators.
  */
 export function createStepDecorator(keyword: GherkinStepKeyword) {
-  return (pattern: StepPattern, providedOptions?: ProvidedStepOptions) => {
+  return <Pattern extends StepPattern, BddExpr extends boolean = false>(
+    pattern: Pattern,
+    providedOptions?: Omit<ProvidedStepOptions, 'bddExpr'> & { bddExpr?: BddExpr },
+  ) => {
     // offset = 3 b/c this call is 3 steps below the user's code
     const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
-    return (method: StepDefinitionOptions['fn'], _context: ClassMethodDecoratorContext) => {
+    return (method: DecoratorStepFn<Pattern, BddExpr>, _context: ClassMethodDecoratorContext) => {
       saveStepConfigToMethod(method, {
         keyword,
         pattern,

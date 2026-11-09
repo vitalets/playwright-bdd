@@ -21,5 +21,5 @@ export const test = base.extend<Fixtures>({
   adminPage2: ({ usedFixtures }, use) => use(new AdminPage2(usedFixtures)),
   adminPage3: ({ usedFixtures }, use) => use(new AdminPage3(usedFixtures)),
   intermediatePage: ({ usedFixtures }, use) => use(new IntermediatePage(usedFixtures)),
-  pomWithCustomParam: ({}, use) => use(new PomWithCustomParam()),
+  pomWithCustomParam: ({ $step }, use) => use(new PomWithCustomParam($step)),
 });

@@ -121,14 +121,7 @@ When(
 
 `$step.params` is automatically typed:
 
-```ts
-{
-  product: string;
-  quantity: number | undefined;
-}
-```
-
-A named parameter without an explicit type, such as `:product`, matches a quoted string. The feature steps stay the same.
+![Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined](_media/bdd-expression-params.png ':size=70%')
 
 ## DocString and DataTable
 
@@ -193,6 +186,32 @@ Given 1 user in database
 ## IDE support
 
 The [Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) and [Official Cucumber extension](https://marketplace.visualstudio.com/items?itemName=CucumberOpen.cucumber-official) extensions for VS Code do not yet support BDD Expressions syntax. Editor features such as step completion and navigation to step definitions will not work for these expressions. We plan to address this limitation in a future update.
+
+## Usage with decorator steps
+
+For [decorator steps](writing-steps/decorators.md), pass `{ bddExpr: true }` to each step decorator. The `createBdd()` options do not apply to decorators. Captured values are passed as positional method arguments, which you type explicitly:
+
+```ts
+import { expect, type Page } from '@playwright/test';
+import { Fixture, Then } from 'playwright-bdd/decorators';
+
+export @Fixture('cartPage') class CartPage {
+  constructor(private page: Page) {}
+
+  @Then('the cart contains :count{int} item(s)', { bddExpr: true })
+  async checkItemCount(count: number) {
+    await expect(this.page.getByTestId('cart-item')).toHaveCount(count);
+  }
+}
+```
+
+With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values. Custom parameter types remain unchecked.
+
+<video controls preload="metadata" style="width: 100%; height: auto; display: block; margin: 1em 0;" aria-label="Decorator step parameter type validation demo">
+  <source src="writing-steps/_media/decorator-step-validation.mp4" type="video/mp4">
+</video>
+
+?> `$step.params` is not automatically typed in decorator steps, so we recommend using positional arguments instead.
 
 ## Usage with Cucumber-style steps
 
