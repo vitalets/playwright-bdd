@@ -8,7 +8,7 @@ body:
       value: |
         ## Thank you for reporting a bug!
 
-        A minimal reproduction is required so we can investigate and resolve your bug report.
+        A minimal reproduction is required to investigate your bug report.
 
         **Give your coding agent this prompt** along with your bug description:
 
@@ -74,7 +74,7 @@ body:
     attributes:
       label: Reproduction Demo URL
       description: |
-        Share a link to your minimal reproduction code.
+        Share a link to your minimal reproduction based on [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
       placeholder: https://github.com/%yourname%/playwright-bdd-example
 
   - type: textarea
