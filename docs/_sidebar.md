@@ -18,7 +18,6 @@
   - [Localization](writing-features/i18n.md)
   - [Auto-formatting](writing-features/auto-formatting.md)
   - [Customize examples title](writing-features/customize-examples-title.md)
-  - [Use ChatGPT](writing-features/chatgpt.md)
 
 * **Writing steps**
   - [Overview](writing-steps/index.md)

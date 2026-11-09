@@ -40,7 +40,6 @@ Examples:
 
 ## `bddgen export`
 Prints a list of all found step definitions. 
-Useful for [generating BDD scenarios with ChatGPT](writing-features/chatgpt.md).
 ```
 $ npx bddgen export
 ```
