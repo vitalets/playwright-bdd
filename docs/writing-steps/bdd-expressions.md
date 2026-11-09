@@ -1,93 +1,136 @@
 # BDD Expressions
 
-> **Experimental · Opt-in**
+> **Experimental · Opt-in · Feedback welcome**
 
-[BDD Expressions](https://github.com/vitalets/bdd-expressions) is an alternative step definition syntax that supersets Cucumber Expressions. It adds support for named parameters, inline choices, optional groups with parameters, and other improvements.
+[BDD Expressions](https://github.com/vitalets/bdd-expressions) is an alternative syntax for step definitions, that extends Cucumber Expressions. They let you combine related step variations in one definition while keeping feature files readable. They support named parameters, inline choices, optional and required groups, and other improvements. 
 
 ## How to enable
 
-You can enable BDD expressions globally by setting `bddExpr: true` in the `createBdd()` options:
+You can enable BDD expressions for all steps by setting `bddExpr: true` in the `createBdd()` options:
 
 ```ts
 export const { Given, When, Then } = createBdd(test, { 
   bddExpr: true // <-- enable BDD expressions for all steps
 });
+
+Given('bdd-expression', () => { ... });
 ```
 
 Or you can enable individually for particular step:
 
 ```ts
-Given('...', { bddExpr: true }, () => { ... });
+Given('bdd-expression', { bddExpr: true }, () => { ... });
 ```
 
 ## Usage
 
-Define step matching string in BDD expression syntax and use `$step.params` to access matched values:
+The syntax is mostly similar to Cucumber Expressions, with a few additions:
+
+- Named params, e.g. `:user` or `:count{int}`
+- Inline choice params, e.g. `Set status {pending/approved/rejected}`
+- Required multi-word alternatives, e.g. `I [click/tap on] the button`
+
+Check out the full [syntax guide](https://vitalets.github.io/bdd-expressions/syntax/) and the [playground](https://vitalets.github.io/bdd-expressions/).
+
+## Use cases
+
+### Named params
+
+You can use named params accessible via `$step.params`:
 
 ```ts
-Given('I buy :count{int} apples( for :owner)', { bddExpr: true }, async ({ $step }) => {
-  const params = $step.params;
-  // params type: 
-  // { 
-  //   count: number; 
-  //   owner: string | undefined 
-  // }
+Given('I buy :count{int} apples', { bddExpr: true }, async ({ $step }) => {
+  console.log('count:', $step.params.count);
 });
 ```
 
-`$step.params` exposes named values, with `undefined` for absent optional parameters. It is available in step hooks as well.
+`$step.params` is automatically typed:
 
-Positional arguments keep their existing order and behavior:
+```typescript
+// $step.params
+{ 
+  count: number; 
+}
+```
+
+### Optional text with params
+
+An optional group can contain a parameter. Use this to handle both page-wide actions and actions scoped to a dialog without separate step definitions:
 
 ```ts
-Given('I buy :count{int} apples( for :owner)', { bddExpr: true }, async ({}, count: number, owner?: string) => {
-  // ...
+When('I click :button( in the :dialog dialog)', async ({ page, $step }) => {
+  const { button, dialog } = $step.params;
+  const scope = dialog === undefined ? page : page.getByRole('dialog', { name: dialog });
+  await scope.getByRole('button', { name: button, exact: true }).click();
 });
 ```
 
-When the expression does not declare a doc string or data table, either remains an optional final argument as before. Steps without named parameters expose an empty object.
+Both steps match this definition:
 
-For non BDD expression steps, `$step.params` is an empty object `{}` typed as `Record<string, unknown>`.
+```gherkin
+When I click "Save"
+When I click "Save" in the "Edit profile" dialog
+```
 
-!> **IDE support limitation:** IDE extensions do not yet support BDD Expressions syntax. Editor features such as step completion and navigation to step definitions will not work for these expressions. We plan to address this limitation in a future update.
+The `dialog` parameter is `undefined` when the optional group is omitted. A named parameter without an explicit type, such as `:button`, matches a quoted string.
 
-## DocString and DataTable parameters
+### Related assertions with inline choices
 
-The `{DocString}` and `{DataTable}` parameters let you make doc strings and data tables required or optional.
+Inline choices capture one of a fixed set of values without registering a custom parameter type. Combine visible and hidden checks in one assertion step:
+
+```ts
+Then('the :button button is :state{visible/hidden}', async ({ page, $step }) => {
+  const { button, state } = $step.params;
+  const locator = page.getByRole('button', { name: button, exact: true });
+  if (state === 'visible') {
+    await expect(locator).toBeVisible();
+  } else {
+    await expect(locator).toBeHidden();
+  }
+});
+```
+
+```gherkin
+Then the "Submit" button is visible
+Then the "Submit" button is hidden
+```
+
+The `state` parameter is inferred as `'visible' | 'hidden'`. Other values do not match this definition.
+
+## DocString and DataTable
+
+The `{DocString}` and `{DataTable}` parameters let you explicitly make doc strings and data tables required or optional for step.
 
 ### Required DataTable
 
-End the expression with `:{DataTable}`:
+I you want the step always contain DataTable, end the expression with `{DataTable}`. Usually, steps with DataTable end with colon `:`. For example: 
 
 ```ts
-const { Given } = createBdd(test, { bddExpr: true });
-
-Given('there are {int} user(s):{DataTable}', ({ $step }, count: number) => {
-  // use `count` and `$step.dataTable` for step actions.
+Given('users in database:{DataTable}', { bddExpr: true }, ({ $step }, count: number) => {
+  // use `$step.dataTable` for step actions.
 });
 ```
 
-✅ Matches — colon and data table provided:
+✅ Matches (colon and data table provided):
 
 ```gherkin
-Given there are 2 users:
-  | name  |
+Given users in database:
   | Alice |
   | Bob   |
 ```
 
-❌ Does not match — data table missing:
+❌ Does not match (data table missing):
 
 ```gherkin
-Given there are 1 user:
+Given users in database:
 ```
 
 ### Optional DataTable
 
-Use `(:{DataTable})` to make the colon and table optional together:
+Use `(:{DataTable})` to make the colon and table optional together. Additionally, you can add `{int}` param for count. For example:
 
 ```ts
-Given('there are {int} user(s)(:{DataTable})', ({ $step }, count: number) => {
+Given('{int} user(s) in database(:{DataTable})', ({ $step }, count: number) => {
   // use `count` and `$step.dataTable` for step actions.
 });
 ```
@@ -95,7 +138,7 @@ Given('there are {int} user(s)(:{DataTable})', ({ $step }, count: number) => {
 ✅ Matches — colon and data table provided:
 
 ```gherkin
-Given there are 1 user:
+Given 1 user in database:
   | name  |
   | Alice |
 ```
@@ -103,28 +146,28 @@ Given there are 1 user:
 ✅ Matches — both omitted:
 
 ```gherkin
-Given there are 2 users
+Given 2 users in database
 ```
 
 ❌ Does not match — colon without a table:
 
 ```gherkin
-Given there are 2 users:
+Given 2 users in database:
 ```
 
 ❌ Does not match — table without a colon:
 
 ```gherkin
-Given there are 1 user
+Given 1 user in database
   | name  |
   | Alice |
 ```
 
 `{DocString}` works the same way; an empty doc string counts as present. A `{DataTable}` definition rejects a doc string, and vice versa.
 
-Required doc string and data table parameters give `$step.docString` and `$step.dataTable` non-optional types. Optional values include `undefined`. Both are also available as positional callback arguments.
+## IDE support
 
-Doc string and data table parameters must come last. Without them, steps keep accepting doc strings or data tables as before. See the [syntax rules](https://github.com/vitalets/bdd-expressions/blob/main/docs/syntax.md) for details.
+The [Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items?itemName=alexkrechik.cucumberautocomplete) and [Official Cucumber extension](https://marketplace.visualstudio.com/items?itemName=CucumberOpen.cucumber-official) extensions for VS Code do not yet support BDD Expressions syntax. Editor features such as step completion and navigation to step definitions will not work for these expressions. We plan to address this limitation in a future update.
 
 ## Usage with Cucumber-style steps
 
