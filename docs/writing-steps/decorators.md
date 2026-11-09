@@ -1,7 +1,7 @@
 # Decorators
 Playwright-BDD supports [TypeScript v5 decorators](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-0.html#decorators) as a convenient way to define steps right inside [Page Object Models (POM)](https://playwright.dev/docs/pom). 
 
-Decorators are imported from `playwright-bdd/decorators`:
+For decorators with default settings, import directly from `playwright-bdd/decorators`. To configure shared tags or BDD expressions, use [`createBddDecorators()`](#configured-decorators) from `playwright-bdd`.
 ```ts
 import { Fixture, Given, When, Then } from 'playwright-bdd/decorators';
 ```
@@ -67,6 +67,39 @@ Feature: Todo Page
 Check out the [full example of using decorators](https://github.com/vitalets/playwright-bdd/tree/main/examples/decorators) with playwright-bdd.
 
 > To get VSCode Cucumber autocomplete working with decorators set `cucumberautocomplete.strictGherkinCompletion = false` in `.vscode/settings.json`
+
+## Configured decorators
+
+Use `createBddDecorators()` to configure defaults for a set of step decorators:
+
+```ts
+import { createBddDecorators } from 'playwright-bdd';
+
+export const { Fixture, Given, When, Then, Step } = createBddDecorators({
+  tags: '@cart',
+  bddExpr: true,
+});
+```
+
+The helper returns the existing `Fixture` decorator and four configured step decorators. Both options are optional; calling `createBddDecorators()` without options uses the same defaults as direct imports.
+
+```ts
+export @Fixture('cartPage') class CartPage {
+  @When('I add :product( with quantity :quantity{int})')
+  async addProduct(product: string, quantity?: number) {
+    // Add the product to the cart.
+  }
+
+  @When('legacy product {string}', { bddExpr: false })
+  async legacyProduct(product: string) {
+    // This step uses Cucumber Expressions.
+  }
+}
+```
+
+Factory tags combine with `@Fixture({ tags })`, individual step tags, and [tags from path](writing-steps/scoped.md#tags-from-path) using `and`. An individual step's `bddExpr` overrides the factory default. BDD expression type validation is enabled when the effective setting is the literal `true`.
+
+You can call the helper in each step-definition module.
 
 ## Multiple decorators per method
 

@@ -8,7 +8,7 @@ import { PomNode } from './pomGraph';
 import { isBddAutoInjectFixture } from '../../runtime/bddTestFixturesAuto';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
-import { DecoratorStepFn } from './types';
+import { CreateBddDecoratorsOptions, DecoratorStepFn } from './types';
 import {
   StepPattern,
   GherkinStepKeyword,
@@ -24,8 +24,11 @@ type DecoratedMethod = Function & { [decoratedStepSymbol]: StepDefinitionOptions
 /**
  * Creates @Given, @When, @Then decorators.
  */
-export function createStepDecorator(keyword: GherkinStepKeyword) {
-  return <Pattern extends StepPattern, BddExpr extends boolean = false>(
+export function createStepDecorator<DefaultBddExpr extends boolean = false>(
+  keyword: GherkinStepKeyword,
+  defaults: CreateBddDecoratorsOptions<DefaultBddExpr> = {},
+) {
+  return <Pattern extends StepPattern, BddExpr extends boolean = DefaultBddExpr>(
     pattern: Pattern,
     providedOptions?: Omit<ProvidedStepOptions, 'bddExpr'> & { bddExpr?: BddExpr },
   ) => {
@@ -39,6 +42,8 @@ export function createStepDecorator(keyword: GherkinStepKeyword) {
         originalFn: method,
         location,
         providedOptions,
+        defaultTags: defaults.tags,
+        defaultBddExpr: defaults.bddExpr,
         fn: method,
       });
     };
@@ -55,7 +60,6 @@ export function linkStepsWithPomNode(Ctor: Function, pomNode: PomNode) {
     // Register each step definition from the array
     stepOptionsArray.forEach((stepOptions) => {
       stepOptions.pomNode = pomNode;
-      stepOptions.defaultTags = pomNode.fixtureTags;
       registerDecoratorStep(stepOptions);
     });
   });

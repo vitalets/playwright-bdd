@@ -104,6 +104,8 @@ When('I click the PLAY button', async () => {
 });
 ```
 
+For decorator steps, use [`createBddDecorators({ tags: '@game' })`](writing-steps/decorators.md#configured-decorators) to share tags across a set of decorators, or `@Fixture({ name: 'gamePage', tags: '@game' })` to scope the steps declared in one class. These tags combine with individual step tags and tags from path using `and`.
+
 ## Tags from path
 You can provide default tags for step definitions and hooks via **`@`-prefixed directories or filenames**. It is a convenient way to bind your steps and features.
 

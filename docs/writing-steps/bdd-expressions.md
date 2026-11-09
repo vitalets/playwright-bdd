@@ -189,21 +189,25 @@ The [Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items
 
 ## Usage with decorator steps
 
-For [decorator steps](writing-steps/decorators.md), pass `{ bddExpr: true }` to each step decorator. The `createBdd()` options do not apply to decorators. Captured values are passed as positional method arguments, which you type explicitly:
+For [decorator steps](writing-steps/decorators.md), enable BDD expressions with `createBddDecorators({ bddExpr: true })`. Captured values are passed as positional method arguments, which you type explicitly:
 
 ```ts
 import { expect, type Page } from '@playwright/test';
-import { Fixture, Then } from 'playwright-bdd/decorators';
+import { createBddDecorators } from 'playwright-bdd';
+
+const { Fixture, Then } = createBddDecorators({ bddExpr: true });
 
 export @Fixture('cartPage') class CartPage {
   constructor(private page: Page) {}
 
-  @Then('the cart contains :count{int} item(s)', { bddExpr: true })
+  @Then('the cart contains :count{int} item(s)')
   async checkItemCount(count: number) {
     await expect(this.page.getByTestId('cart-item')).toHaveCount(count);
   }
 }
 ```
+
+You can also enable BDD expressions for individual decorators with `@Then('...', { bddExpr: true })`, or override the factory default with `{ bddExpr: false }`. The `createBdd()` options do not apply to decorators.
 
 With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values. Custom parameter types remain unchecked.
 

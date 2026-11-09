@@ -89,6 +89,29 @@ Creates functions for defining steps and hooks.
 
 By default, the produced functions work with [Playwright-style](writing-steps/playwright-style.md) steps. If `options.worldFixture` is defined, the produced functions work with [Cucumber-style](writing-steps/cucumber-style.md) steps.
 
+## `createBddDecorators()` :id=createbdddecorators
+
+Creates [configured decorators](writing-steps/decorators.md#configured-decorators) with shared tags and BDD expression defaults.
+
+**Usage:** `createBddDecorators([options])`
+
+**Params:**
+
+- `options` _object_ - Optional defaults:
+  - `tags` _string_ - Tag expression combined with fixture, individual step, and path tags using `and`.
+  - `bddExpr` _boolean_ - Enables [BDD expressions](writing-steps/bdd-expressions.md) for all returned decorators. Individual step options override this setting. Defaults to `false`. 
+
+**Returns:** _object_ - `{ Fixture, Given, When, Then, Step }`
+
+```ts
+import { createBddDecorators } from 'playwright-bdd';
+
+export const { Fixture, Given, When, Then, Step } = createBddDecorators({
+  tags: '@cart',
+  bddExpr: true,
+});
+```
+
 ## `Given()` / `When()` / `Then()` / `Step()` :id=steps
 
 Functions for step definitions.

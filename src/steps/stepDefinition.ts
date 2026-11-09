@@ -42,7 +42,7 @@ export type StepDefinitionOptions = {
   pomNode?: PomNode; // for decorator steps
   worldFixture?: string; // for new cucumber-style steps
   providedOptions?: ProvidedStepOptions; // options passed as second argument
-  defaultTags?: string; // default tags from createBdd() or @Fixture
+  defaultTags?: string; // default tags from createBdd() or createBddDecorators()
   defaultBddExpr?: boolean;
 };
 
@@ -210,6 +210,7 @@ export class StepDefinition {
     this.tagsExpression = buildTagsExpression([
       ...tagsFromPath,
       defaultTags,
+      this.options.pomNode?.fixtureTags,
       providedOptions?.tags,
     ]);
   }

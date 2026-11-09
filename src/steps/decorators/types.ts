@@ -2,6 +2,11 @@ import type { InferBddArgs } from 'bdd-expressions' with { 'resolution-mode': 'i
 import { DataTable } from '../../cucumber/DataTable';
 import { AnyFunction, StepPattern } from '../stepDefinition';
 
+export type CreateBddDecoratorsOptions<BddExpr extends boolean = boolean> = {
+  tags?: string;
+  bddExpr?: BddExpr;
+};
+
 // Validate expression slots while leaving trailing arguments to the existing
 // arity checker: steps can receive an implicit DocString or DataTable argument.
 /* eslint-disable @typescript-eslint/no-explicit-any */
