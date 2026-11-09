@@ -207,7 +207,7 @@ export @Fixture('cartPage') class CartPage {
 
 With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values. Custom parameter types remain unchecked.
 
-<video controls preload="metadata" style="width: 100%; height: auto; display: block; margin: 1em 0;" aria-label="Decorator step parameter type validation demo">
+<video controls preload="metadata" style="width: 100%; max-width: 720px; height: auto; display: block; margin: 1em 0;" aria-label="Decorator step parameter type validation demo">
   <source src="writing-steps/_media/decorator-step-validation.mp4" type="video/mp4">
 </video>
 
