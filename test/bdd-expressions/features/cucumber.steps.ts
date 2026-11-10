@@ -166,17 +166,24 @@ const dynamicPattern: string = 'typecheck dynamic pattern count {int}';
 type Color = 'red' | 'blue' | 'yellow';
 
 // Reusable step functions preserve their positional argument and return types.
-const reusableStepFn = BddExprGiven('typecheck reusable count {int}', function (count) {
-  return count;
-});
+const reusableStepFn = BddExprGiven(
+  'typecheck reusable count {int}',
+  { tags: '@typecheck' },
+  function (count) {
+    return count;
+  },
+);
 expectTypeOf(reusableStepFn).parameter(0).toEqualTypeOf<number>();
 expectTypeOf(reusableStepFn).returns.toEqualTypeOf<number>();
 
-// @ts-expect-error Built-in slots reject incompatible annotations.
-BddExprGiven('typecheck incompatible count {int}', function (_count: string) {});
 BddExprGiven(
-  // @ts-expect-error Known slots are checked alongside custom types.
+  'typecheck incompatible count {int}',
+  // @ts-expect-error Built-in slots reject incompatible annotations on the callback.
+  function (_count: string) {},
+);
+BddExprGiven(
   'typecheck custom :price{price} count {int}',
+  // @ts-expect-error Known slots are checked alongside custom types.
   function (_price: number, _count: string) {},
 );
 // @ts-expect-error Optional captures can produce undefined.
@@ -200,5 +207,9 @@ BddExprGiven(
 );
 // A widened string pattern has no known parameter slots, so string is accepted despite the runtime {int}.
 BddExprGiven(dynamicPattern, function (_count: string) {});
-// @ts-expect-error Per-step opt-in validates positional arguments.
-Given('typecheck enabled count {int}', { bddExpr: true }, function (_count: string) {});
+Given(
+  'typecheck enabled count {int}',
+  { bddExpr: true },
+  // @ts-expect-error Per-step opt-in reports incompatible arguments on the callback.
+  function (_count: string) {},
+);
