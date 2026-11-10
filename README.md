@@ -44,16 +44,22 @@ Feature: Buying a pizza
       | Quantity | 2          |
 ```
 
- In the AI era, these scenarios become valuable artifacts for agents because they are both:
+ In the AI era, these scenarios become valuable artifacts because they are both:
 
-* ✅ **Readable**: You can easily draft and refine scenarios with an agent to clearly define the behavior.
-* ✅ **Executable**: The same scenarios can be executed as automated tests to verify the implementation.
+* ✅ **Readable**: You can easily draft and refine scenarios with agents.
+* ✅ **Executable**: You can run the scenarios as automated tests to verify the implementation.
 
-Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
+Unlike plain Markdown specs, BDD does not just describe a feature, it makes the spec live and keeps it aligned with the codebase.
 
 Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automated guardrails check code quality and scenario compliance.
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
+
+## How It Works
+
+Playwright-BDD transforms feature files into Playwright tests and wires step implementations to make the tests runnable:
+
+<img align="center" alt="Feature file transformed into a Playwright test" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/playwright-bdd-transformation.png"/>
 
 ## Why Playwright Runner?
 
@@ -66,10 +72,6 @@ To bring this workflow to your project, [set up Playwright-BDD](https://vitalets
 - Built-in reports and visual comparison testing
 - Playwright fixtures
 - [...and more](https://playwright.dev/docs/library#key-differences)
-
-## How It Works
-
-<img align="center" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/schema.png"/>
 
 ## Extras
 Playwright-BDD has several unique features:

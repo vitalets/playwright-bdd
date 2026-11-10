@@ -23,7 +23,7 @@ Jump to the [getting started](getting-started/index.md) guide or read below the 
 
 [Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text format:
 
-```feature
+```gherkin
 Feature: Buying a pizza
 
   Scenario: Success order
@@ -60,13 +60,6 @@ Playwright can be used as a [browser automation library](https://playwright.dev/
 
 <!-- Keep absolute urls to easily update from README.md -->
 
-## Extras
-Playwright-BDD extends Playwright with BDD capabilities, offering:
-
-- 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
-- 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods  
-- 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)  
-- ♻️ [Re-usable step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)  
 
 ## How Playwright-BDD works
 A typical command to run tests with Playwright-BDD is:
@@ -77,46 +70,23 @@ npx bddgen && npx playwright test
 ### Phase 1: Generate tests
 The first command `npx bddgen` generates test files from BDD feature files. For example:
 
-From
-```gherkin
-Feature: Playwright Home Page
-
-    Scenario: Check title
-        Given I am on Playwright home page
-        When I click link "Get started"
-        Then I see in title "Installation"
-```
-
-To
-```js
-import { test } from 'playwright-bdd';
-
-test.describe('Playwright Home Page', () => {
-
-  test('Check title', async ({ Given, When, Then }) => {
-    await Given('I am on Playwright home page');
-    await When('I click link "Get started"');
-    await Then('I see in title "Installation"');
-  });
-
-});
-```
+![Playwright BDD transformation: feature, scenario, and steps mapped to a generated Playwright test](_media/playwright-bdd-transformation.png)
 
 ### Phase 2: Run tests
 The second command `npx playwright test` runs the generated files with the Playwright runner.
-Step definitions have access to the Playwright APIs and fixtures (e.g. `page`):
+Step definitions have access to the Playwright APIs and can interact with browser pages:
 
 ```js
-Given('I am on Playwright home page', async ({ page }) => {
-  await page.goto('https://playwright.dev');
+Given('I am on the todo page', async ({ page }) => {
+  await page.goto('https://www.todoaapp.com');
 });
 
-When('I click link {string}', async ({ page }, name) => {
-  await page.getByRole('link', { name }).click();
+When('I add a todo item {string}', async ({ page }, name) => {
+  await page.getByRole('button', { name }).click();
 });
 
-Then('I see in title {string}', async ({ page }, text) => {
-  await expect(page).toHaveTitle(new RegExp(text));
+Then('I see the item {string} in the list', async ({ page }, text) => {
+  await expect(page.getByRole('button')).toHaveTitle(new RegExp(text));
 });  
 ```
 
