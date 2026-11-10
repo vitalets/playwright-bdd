@@ -1,0 +1,33 @@
+#TOPBANNER {
+  height: auto;
+  /* Leave room for Docsify's GitHub ribbon without changing its stacking order. */
+  padding: 0 80px;
+  line-height: 1.4;
+}
+
+#TOPBANNER p {
+  padding: 0.25rem 0;
+}
+
+.top-banner-close {
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-left: 0.25rem;
+  vertical-align: middle;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.top-banner-close:hover {
+  background: rgb(9 30 66 / 8%);
+}
+
+.top-banner-close:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: -4px;
+}
