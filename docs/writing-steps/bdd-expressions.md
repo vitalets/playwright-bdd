@@ -38,16 +38,26 @@ Check out the full [syntax guide](https://vitalets.github.io/bdd-expressions/syn
 With `bddExpr: true`, TypeScript automatically infers parameters types. You don't need to write types yourself:
 
 ```ts
-Given('count {int}( for :owner)', { bddExpr: true }, ({}, count, owner) => {
-  // count: number; owner: string | undefined
+Given('count {int}', { bddExpr: true }, ({}, count) => {
+  // ...
 });
 ```
 
-In case of incorrect types, you'll se an error:
+<img src="writing-steps/_media/bdd-expression-positional-inference.png" alt="Editor tooltip showing the positional count parameter inferred as number." style="width: 100%; max-width: 720px; height: auto;">
+
+Optional parameter types include `undefined`:
+
 ```ts
-// TypeScript error: {int} produces a number, not a string.
-Given('count {int}', { bddExpr: true }, ({}, count: string) => {});
+Given('count {int}( for :owner)', { bddExpr: true }, ({}, count, owner) => {
+  // ...
+});
 ```
+
+<img src="writing-steps/_media/bdd-expression-optional-param.png" alt="Editor tooltip showing the optional owner parameter inferred as string | undefined." style="width: 100%; max-width: 720px; height: auto;">
+
+In case of incorrect types, you'll see an error:
+
+<img src="writing-steps/_media/bdd-expression-positional-validation.png" alt="TypeScript underlines the callback because count is annotated as string but {int} produces a number." style="width: 100%; max-width: 720px; height: auto;">
 
 Custom parameter types remain unchecked because their transformers are registered at runtime.
 
@@ -64,7 +74,7 @@ When('I add :product to the cart', { bddExpr: true }, async ({ $step }) => {
 
 `$step.params` is automatically typed:
 
-![Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined](_media/bdd-expression-params.png ':size=70%')
+<img src="writing-steps/_media/bdd-expression-params.png" alt="Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined" style="width: 100%; max-width: 720px; height: auto;">
 
 ## Use cases
 
