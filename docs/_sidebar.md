@@ -32,15 +32,15 @@
     - [Step hooks](writing-steps/hooks/step-hooks.md)
     - [Running hook once](writing-steps/hooks/running-hook-once.md)
   - [BDD fixtures](writing-steps/bdd-fixtures.md)
+  - [BDD Expressions](writing-steps/bdd-expressions.md)
   - [Passing data between steps](writing-steps/passing-data-between-steps.md)
   - [Passing data between scenarios](writing-steps/passing-data-between-scenarios.md)
   - [Scoped step definitions](writing-steps/scoped.md)
-  - [Test locks](writing-steps/test-locks.md)
   - [Keywords matching](writing-steps/keywords-matching.md)
   - [Re-using step function](writing-steps/reusing-step-fn.md)
   - [Data tables](writing-steps/data-tables.md)
   - [Doc strings](writing-steps/doc-strings.md)
-  - [BDD Expressions](writing-steps/bdd-expressions.md)
+  - [Test locks](writing-steps/test-locks.md)
   - [Snippets](writing-steps/snippets.md)
 
 * **Reporters**

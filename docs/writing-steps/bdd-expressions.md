@@ -234,33 +234,41 @@ The [Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items
 
 ## Usage with decorator steps
 
-For [decorator steps](writing-steps/decorators.md), enable BDD expressions with `createBddDecorators({ bddExpr: true })`. Captured values are passed as positional method arguments, which you type explicitly:
+For [decorator steps](writing-steps/decorators.md), enable BDD expressions for an individual step with the `bddExpr: true` option. Captured values are passed as positional method arguments, which you type explicitly:
 
 ```ts
 import { expect, type Page } from '@playwright/test';
-import { createBddDecorators } from 'playwright-bdd';
-
-const { Fixture, Then } = createBddDecorators({ bddExpr: true });
+import { Fixture, Then } from 'playwright-bdd/decorators';
 
 export @Fixture('cartPage') class CartPage {
   constructor(private page: Page) {}
 
-  @Then('the cart contains :count{int} item(s)')
+  @Then('the cart contains :count{int} item(s)', { bddExpr: true })
   async checkItemCount(count: number) {
     await expect(this.page.getByTestId('cart-item')).toHaveCount(count);
   }
 }
 ```
 
-You can also enable BDD expressions for individual decorators with `@Then('...', { bddExpr: true })`, or override the factory default with `{ bddExpr: false }`. The `createBdd()` options do not apply to decorators.
-
-With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values. Custom parameter types remain unchecked.
+With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values:
 
 <video controls preload="metadata" style="width: 100%; max-width: 720px; height: auto; display: block; margin: 1em 0;" aria-label="Decorator step parameter type validation demo">
   <source src="writing-steps/_media/decorator-step-validation.mp4" type="video/mp4">
 </video>
 
-?> `$step.params` is not automatically typed in decorator steps, so we recommend using positional arguments instead.
+ Custom parameter types remain unchecked.
+
+?> `$step.params` is not automatically typed in decorator steps, so we recommend using positional arguments here.
+
+To enable BDD expressions for all step decorators returned by a factory, use [`createBddDecorators({ bddExpr: true })`](writing-steps/decorators.md#configured-decorators).
+
+```ts
+import { createBddDecorators } from 'playwright-bdd';
+
+export const { Fixture, Given, When, Then, Step } = createBddDecorators({
+  bddExpr: true,
+});
+```
 
 ## Usage with Cucumber-style steps
 
