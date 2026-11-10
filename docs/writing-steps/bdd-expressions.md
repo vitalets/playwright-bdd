@@ -294,3 +294,40 @@ Given('I buy :count{int} apples', function () {
   // this.$step.params.count is inferred as number.
 });
 ```
+
+## Migrate with an agent
+
+Copy-paste this prompt into your coding agent to assess how BDD Expressions can improve your existing step definitions.
+
+<details class="agent-prompt">
+<summary><span class="agent-prompt__icon" aria-hidden="true">🤖</span><span class="agent-prompt__title"><span class="agent-prompt__prefix">Agent instruction:</span> <span class="agent-prompt__action">Migrate existing step definitions to BDD Expressions</span></span></summary>
+
+<div class="agent-prompt__body">
+
+````text
+Review all step definitions in this project and propose improvements using BDD Expressions, available since Playwright BDD v10.
+
+- Consolidate similar definitions using optional or required groups with parameters.
+- Propose inline choices instead of general string types for finite values.
+- Add explicit `{DocString}` / `{DataTable}` parameters where already used.
+- Preserve existing feature wording where practical.
+- Present concise proposals grouped by file. Show old and new expressions as Git-style diffs, making it clear which definitions collapse into one.
+- Do not modify files until approved.
+
+Example output:
+
+**`features/steps/cart.steps.ts`**
+
+```diff
+- I add {string} to the cart
+- I add {string} to the cart with quantity {int}
++ I add {string} to the cart( with quantity {int})
+
+- the cart contains {int} item(s)
+- the cart contains {int} item(s):
++ the cart contains {int} item(s)(:{DataTable})
+```
+````
+
+</div>
+</details>
