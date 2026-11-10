@@ -24,13 +24,6 @@
   - [Playwright-style](writing-steps/playwright-style.md)
   - [Cucumber-style](writing-steps/cucumber-style.md)
   - [Decorators](writing-steps/decorators.md)
-  - **Hooks**
-    - [Overview](writing-steps/hooks/index.md)
-    - [Fixtures](writing-steps/hooks/fixtures.md)
-    - [Worker hooks](writing-steps/hooks/worker-hooks.md)
-    - [Scenario hooks](writing-steps/hooks/scenario-hooks.md)
-    - [Step hooks](writing-steps/hooks/step-hooks.md)
-    - [Running hook once](writing-steps/hooks/running-hook-once.md)
   - [BDD fixtures](writing-steps/bdd-fixtures.md)
   - [BDD Expressions](writing-steps/bdd-expressions.md)
   - [Passing data between steps](writing-steps/passing-data-between-steps.md)
@@ -42,6 +35,14 @@
   - [Doc strings](writing-steps/doc-strings.md)
   - [Test locks](writing-steps/test-locks.md)
   - [Snippets](writing-steps/snippets.md)
+
+* **Writing Hooks**
+  - [Overview](writing-hooks/index.md)
+  - [Fixtures](writing-hooks/fixtures.md)
+  - [Worker hooks](writing-hooks/worker-hooks.md)
+  - [Scenario hooks](writing-hooks/scenario-hooks.md)
+  - [Step hooks](writing-hooks/step-hooks.md)
+  - [Running hook once](writing-hooks/running-hook-once.md)
 
 * **Reporters**
   - [Playwright](reporters/playwright.md)

@@ -2,7 +2,7 @@
 
 ## BeforeScenario / Before
 
-> Consider using [fixtures](writing-steps/hooks/fixtures.md) instead of hooks.
+> Consider using [fixtures](writing-hooks/fixtures.md) instead of hooks.
 
 Playwright-BDD supports the scenario-level hook `BeforeScenario` (aliased as `Before`). It runs **before each scenario**.
 
@@ -100,7 +100,7 @@ BeforeScenario(async ({ myFixture }) => {
 
 ## AfterScenario / After
 
-> Consider using [fixtures](writing-steps/hooks/fixtures.md) instead of hooks.
+> Consider using [fixtures](writing-hooks/fixtures.md) instead of hooks.
 
 Playwright-BDD supports the scenario-level hook `AfterScenario` (aliased as `After`). It runs **after each scenario**.
 
