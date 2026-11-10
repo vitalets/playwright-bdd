@@ -270,6 +270,15 @@ The fixtures, count, and optional doc string parameters are allowed; the fourth 
 
 > In v10, arity checking was relaxed to allow omitted parameters, optional doc strings/data tables, and different capture counts on shared decorated methods.
 
+## useStepIndex
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Use a word-based index to speed up step matching. For each step definition, the index picks one long keyword that must appear in any matching step text and only compares definitions that share that keyword. Patterns that are too complex for a safe keyword stay on the full-scan list and are still compared with every step. `missingSteps` reports a step that matches no definition. A step that still matches another definition is bound to that definition, so compare a run with and without the option when the bound step looks wrong. Set the option in `defineBddConfig()` to apply it during generation and when tests run.
+
+Also available for generation only as a CLI flag: `bddgen --use-step-index`.
+
 ## verbose
 
 - **Type:** `boolean`

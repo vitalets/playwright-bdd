@@ -31,6 +31,11 @@ Examples:
 
   Concurrent `bddgen` commands targeting the same output directory are serialized. A command waits for active generation to finish instead of clearing or writing generated files concurrently.
 
+* Use `--use-step-index` to speed up step matching for large step definition sets. The flag builds a word-based index so that each step text is compared only with definitions that share a long keyword, instead of every definition. Patterns that are too complex for a safe keyword stay on the full-scan list and are still compared with every step. This flag applies to generation. Set [`useStepIndex`](configuration/options.md#usestepindex) in the Playwright config to use the index when tests run as well:
+    ```
+    npx bddgen --use-step-index && npx playwright test
+    ```
+
 * Use `-h` to show help:
     ```
     npx bddgen test -h

@@ -8,6 +8,7 @@ import { BDDConfig } from '../config/types';
 import { StepDefinition, StepMatchInput } from './stepDefinition';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { toBoolean } from '../utils';
+import { matchWithStepIndex } from './stepIndex';
 
 export class StepFinder {
   constructor(private config: BDDConfig) {}
@@ -27,6 +28,9 @@ export class StepFinder {
   }
 
   private matchByText(definitions: StepDefinition[], step: StepMatchInput) {
+    if (this.config.useStepIndex) {
+      return matchWithStepIndex(definitions, step);
+    }
     return definitions
       .map((definition) => definition.matchStep(step)) // prettier-ignore
       .filter(toBoolean);
