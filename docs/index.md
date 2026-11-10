@@ -35,16 +35,18 @@ Feature: Buying a pizza
       | Quantity | 2          |
 ```
 
- In the AI era, these scenarios become valuable artifacts for agents because they are both:
+ In the AI era, these scenarios become valuable artifacts because they are both:
 
-* ✅ **Readable**: You can easily draft and refine scenarios with an agent to clearly define the behavior.
-* ✅ **Executable**: The same scenarios can be executed as automated tests to verify the implementation.
+* ✅ **Readable**: You can easily draft and refine scenarios with agents.
+* ✅ **Executable**: You can run the scenarios as automated tests to verify the implementation.
 
 Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
 
-Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automated guardrails check code quality and scenario compliance.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action.
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
+
+?> **The ultimate goal:** review only feature files and let automated guardrails check scenario compliance.
 
 ## Why Playwright Runner?
 
@@ -78,19 +80,20 @@ Step definitions have access to the Playwright APIs and can interact with browse
 
 ```js
 Given('I am on the todo page', async ({ page }) => {
-  await page.goto('https://www.todoaapp.com');
+  await page.goto('https://todoaapp.com');
 });
 
 When('I add a todo item {string}', async ({ page }, name) => {
-  await page.getByRole('button', { name }).click();
+  await page.getByRole('textbox', { name: 'New todo' }).fill(name);
+  await page.getByRole('button', { name: 'Add todo' }).click();
 });
 
 Then('I see the item {string} in the list', async ({ page }, text) => {
-  await expect(page.getByRole('button')).toHaveTitle(new RegExp(text));
+  await expect(page.getByRole('listitem')).toHaveText([ text ]);
 });  
 ```
 
-HTML report shows all scenarios and steps:
+Playwright HTML report:
 
 ![Playwright html report](reporters/_media/pw-html-report.png)
 
