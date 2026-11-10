@@ -8,15 +8,14 @@ const { Given: BddExprGiven, BeforeStep, AfterStep } = createBdd(test, { bddExpr
 const { Given } = createBdd(test);
 
 // Required and optional named parameters.
-BddExprGiven(
-  'I have :count{int} items( for :owner)',
-  ({ $step, value }, count: number, owner?: string) => {
-    expectTypeOf($step.params).toEqualTypeOf<{ count: number; owner: string | undefined }>();
-    expectTypeOf(value).toEqualTypeOf<number>();
-    expect($step.params).toEqual({ count, owner });
-    expect(value).toBe(42);
-  },
-);
+BddExprGiven('I have :count{int} items( for :owner)', ({ $step, value }, count, owner) => {
+  expectTypeOf(count).toEqualTypeOf<number>();
+  expectTypeOf(owner).toEqualTypeOf<string | undefined>();
+  expectTypeOf($step.params).toEqualTypeOf<{ count: number; owner: string | undefined }>();
+  expectTypeOf(value).toEqualTypeOf<number>();
+  expect($step.params).toEqual({ count, owner });
+  expect(value).toBe(42);
+});
 
 // Per-step opt-out overrides the BDD default.
 BddExprGiven(
@@ -37,7 +36,8 @@ Given('BDD expressions disabled by default :name is {int}', ({ $step }, count: n
 });
 
 // Per-step opt-in with inferred inline choices.
-Given('local choice :color{red/green}', { bddExpr: true }, ({ $step }, color: string) => {
+Given('local choice :color{red/green}', { bddExpr: true }, ({ $step }, color) => {
+  expectTypeOf(color).toEqualTypeOf<'red' | 'green'>();
   expectTypeOf($step.params.color).toEqualTypeOf<'red' | 'green'>();
   expect($step.params.color).toBe(color);
 });
@@ -89,7 +89,8 @@ BddExprGiven('step :count{int} with no positional params', ({ $step }) => {
 });
 
 // Named required DocString.
-BddExprGiven('payload:body{DocString}', function ({ $step }, body: string, ...extra: unknown[]) {
+BddExprGiven('payload:body{DocString}', function ({ $step }, body, ...extra: unknown[]) {
+  expectTypeOf(body).toEqualTypeOf<string>();
   expectTypeOf($step.docString).toEqualTypeOf<string>();
   expectTypeOf($step.params.body).toEqualTypeOf<string>();
   expect($step.params.body).toBe(body);
@@ -98,17 +99,15 @@ BddExprGiven('payload:body{DocString}', function ({ $step }, body: string, ...ex
 });
 
 // Named required DataTable.
-BddExprGiven(
-  'payload:table{DataTable}',
-  function ({ $step }, table: DataTable, ...extra: unknown[]) {
-    expectTypeOf($step.dataTable).toEqualTypeOf<DataTable>();
-    expectTypeOf($step.params.table).toEqualTypeOf<DataTable>();
-    expect($step.params.table).toBe(table);
-    expect($step.dataTable).toBe(table);
-    expect(table.hashes()).toEqual([{ name: 'Alice' }]);
-    expect(extra).toEqual([]);
-  },
-);
+BddExprGiven('payload:table{DataTable}', function ({ $step }, table, ...extra: unknown[]) {
+  expectTypeOf(table).toEqualTypeOf<DataTable>();
+  expectTypeOf($step.dataTable).toEqualTypeOf<DataTable>();
+  expectTypeOf($step.params.table).toEqualTypeOf<DataTable>();
+  expect($step.params.table).toBe(table);
+  expect($step.dataTable).toBe(table);
+  expect(table.hashes()).toEqual([{ name: 'Alice' }]);
+  expect(extra).toEqual([]);
+});
 
 // Named optional DocString with a matching optional colon.
 BddExprGiven(
@@ -136,7 +135,8 @@ BddExprGiven(
 );
 
 // Unnamed required DocString accepts an empty string.
-BddExprGiven('unnamed payload{DocString}', function ({ $step }, body: string, ...extra: unknown[]) {
+BddExprGiven('unnamed payload{DocString}', function ({ $step }, body, ...extra: unknown[]) {
+  expectTypeOf(body).toEqualTypeOf<string>();
   expectTypeOf($step.docString).toEqualTypeOf<string>();
   expect($step.params).toEqual({});
   expect(body).toBe('');
@@ -174,3 +174,44 @@ BddExprGiven(
     expect(extra).toEqual([]);
   },
 );
+
+// Additional positional type checks use patterns distinct from runtime scenarios.
+const runtimeFlag = Boolean(process.env.BDD_EXPR_TYPECHECK);
+const dynamicPattern: string = 'typecheck dynamic pattern count {int}';
+type Color = 'red' | 'blue' | 'yellow';
+
+// Reusable step functions preserve their positional argument and return types.
+const reusableStepFn = BddExprGiven('typecheck reusable count {int}', ({}, count) => count);
+expectTypeOf(reusableStepFn).parameter(1).toEqualTypeOf<number>();
+expectTypeOf(reusableStepFn).returns.toEqualTypeOf<unknown>();
+
+// @ts-expect-error Built-in slots reject incompatible annotations.
+BddExprGiven('typecheck incompatible count {int}', ({}, _count: string) => {});
+BddExprGiven(
+  // @ts-expect-error Known slots are checked alongside custom types.
+  'typecheck custom :price{price} count {int}',
+  ({}, _price: number, _count: string) => {},
+);
+// @ts-expect-error Optional captures can produce undefined.
+BddExprGiven('typecheck optional count( {int})', ({}, _count: number) => {});
+// @ts-expect-error Callbacks must accept every choice.
+BddExprGiven('typecheck narrow choice {red/blue}', ({}, _color: 'red') => {});
+// @ts-expect-error String captures must accept any string.
+BddExprGiven('typecheck narrow string {string}', ({}, _color: Color) => {});
+// @ts-expect-error Rest arguments must accept the captured type.
+BddExprGiven('typecheck incompatible rest {int}', ({}, ..._args: string[]) => {});
+// @ts-expect-error Explicit DataTable slots use the concrete type.
+BddExprGiven('typecheck incompatible table{DataTable}', ({}, _table: string) => {});
+BddExprGiven('typecheck ignored trailing {int} for :owner', ({}, _count: number) => {});
+BddExprGiven('typecheck compatible rest {int}', ({}, ..._args: number[]) => {});
+BddExprGiven('typecheck disabled count {int}', { bddExpr: false }, ({}, _count: string) => {});
+// A boolean flag may be false at runtime, so positional validation is disabled and string is accepted.
+BddExprGiven(
+  'typecheck dynamic flag count {int}',
+  { bddExpr: runtimeFlag },
+  ({}, _count: string) => {},
+);
+// A widened string pattern has no known parameter slots, so string is accepted despite the runtime {int}.
+BddExprGiven(dynamicPattern, ({}, _count: string) => {});
+// @ts-expect-error Per-step opt-in validates positional arguments.
+Given('typecheck enabled count {int}', { bddExpr: true }, ({}, _count: string) => {});

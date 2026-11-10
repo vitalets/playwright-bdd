@@ -23,6 +23,7 @@ Given('BDD doc {DocString}', ({ $step }, value: string) => {
 });
 
 // Custom DataTable text type takes precedence in BDD expressions.
+// @ts-expect-error Runtime overrides of built-in parameter types are invisible to inference.
 Given('BDD table {DataTable}', ({ $step }, value: string) => {
   expect(value).toBe('value');
   expect($step.dataTable).toBeUndefined();

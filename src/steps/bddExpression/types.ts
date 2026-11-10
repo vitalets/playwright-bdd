@@ -1,4 +1,4 @@
-import type { BddExpressionResult, InferBddParams } from 'bdd-expressions' with {
+import type { BddExpressionResult, InferBddArgs, InferBddParams } from 'bdd-expressions' with {
   'resolution-mode': 'import',
 };
 import { AnyFunction, StepPattern } from '../stepDefinition';
@@ -6,8 +6,9 @@ import { BddStepFixture } from '../../runtime/bddStepState';
 import { DataTable } from '../../cucumber/DataTable';
 
 /**
- * Infer named parameters and DocString and DataTable values only when BDD expressions are enabled (`true`)
- * and the step pattern is a string. Disabled expressions, a non-literal `boolean`,
+ * Infer positional and named parameters and DocString and DataTable values only
+ * when BDD expressions are enabled (`true`) and the step pattern is a string.
+ * Disabled expressions, a non-literal `boolean`,
  * and RegExp patterns keep the original callback type without running the
  * potentially expensive type-level expression parser (InferBddParams).
  * The tuple check prevents distributing over `boolean` (`true | false`), so an
@@ -24,14 +25,22 @@ export type BddExpressionStepFn<
       ? (
           this: ThisParameterType<Fn>,
           fixtures: WithExpressionStep<Parameters<Fn>[0], Pattern>,
-          ...args: Tail<Parameters<Fn>>
+          ...args: BddExpressionArgs<Pattern>
         ) => ReturnType<Fn>
       : (
           this: WithExpressionStep<ThisParameterType<Fn>, Pattern>,
-          ...args: Parameters<Fn>
+          ...args: BddExpressionArgs<Pattern>
         ) => ReturnType<Fn>
     : Fn
   : Fn;
+
+// Validate expression slots while leaving trailing arguments to the existing
+// arity checker: steps can receive an implicit DocString or DataTable argument.
+/* eslint-disable @typescript-eslint/no-explicit-any */
+export type BddExpressionArgs<Pattern extends string> = [
+  ...PermissiveArgs<InferBddArgs<Pattern, { DataTable: DataTable }>>,
+  ...any[],
+];
 
 type ExpressionStepFields<Pattern extends string> = Pick<
   BddExpressionResult<InferBddParams<Pattern, { DataTable: DataTable }>, DataTable, Pattern>,
@@ -45,4 +54,8 @@ type WithExpressionStep<Value, Pattern extends string> = Value extends { $step: 
     }
   : Value;
 
-type Tail<Args extends unknown[]> = Args extends [unknown, ...infer Rest] ? Rest : Args;
+// Custom parameter transformers are registered at runtime, so their unknown
+// result types must not reject explicitly typed callback or method parameters.
+type PermissiveArgs<Args extends unknown[]> = {
+  [Key in keyof Args]: unknown extends Args[Key] ? any : Args[Key];
+};

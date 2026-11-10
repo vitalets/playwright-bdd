@@ -22,17 +22,53 @@ Or you can enable individually for particular step:
 Given('bdd-expression', { bddExpr: true }, () => { ... });
 ```
 
-## Usage
+## Syntax
 
-The syntax is mostly similar to Cucumber Expressions, with a few additions:
+The syntax is similar to Cucumber Expressions, with a few additions:
 
 - Named params, e.g. `:user` or `:count{int}`
 - Inline choice params, e.g. `Set status {pending/approved/rejected}`
-- Required multi-word alternatives, e.g. `I [click/tap on] the button`
+- Optional text with params, e.g. `I create a new user( with :name)`
+- Multi-word alternatives, e.g. `I [click/tap on] the button`
 
 Check out the full [syntax guide](https://vitalets.github.io/bdd-expressions/syntax/) and the [playground](https://vitalets.github.io/bdd-expressions/).
 
+## Automatic types
+
+With `bddExpr: true`, TypeScript automatically infers parameters types. You don't need to write types yourself:
+
+```ts
+Given('count {int}( for :owner)', { bddExpr: true }, ({}, count, owner) => {
+  // count: number; owner: string | undefined
+});
+```
+
+In case of incorrect types, you'll se an error:
+```ts
+// TypeScript error: {int} produces a number, not a string.
+Given('count {int}', { bddExpr: true }, ({}, count: string) => {});
+```
+
+Custom parameter types remain unchecked because their transformers are registered at runtime.
+
+## Named params
+
+Named parameters let you access captured values through automatically typed `$step.params` instead of positional arguments. 
+
+```ts
+When('I add :product to the cart', { bddExpr: true }, async ({ $step }) => {
+  const { product } = $step.params;
+  // ...
+});
+```
+
+`$step.params` is automatically typed:
+
+![Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined](_media/bdd-expression-params.png ':size=70%')
+
 ## Use cases
+
+The use cases below show how you can collapse mulitple step definitions into one, keeping your codebase cleaner.
 
 ### Optional text with params
 
@@ -122,33 +158,6 @@ Then the connection indicator is green
 Then the connection indicator is red
 ```
 
-### Named params
-
-Named parameters let you replace manually typed positional arguments with automatically typed `$step.params`. For example, the cart step above declares two positional arguments:
-
-```ts
-async ({ cart }, product: string, quantity?: number) => {
-  await cart.add(product, quantity);
-}
-```
-
-Name the parameters in the expression to infer their types instead:
-
-```ts
-When(
-  'I add :product to the cart( with quantity :quantity{int})',
-  { bddExpr: true },
-  async ({ cart, $step }) => {
-    const { product, quantity } = $step.params;
-    await cart.add(product, quantity);
-  },
-);
-```
-
-`$step.params` is automatically typed:
-
-![Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined](_media/bdd-expression-params.png ':size=70%')
-
 ## DocString and DataTable
 
 The `{DocString}` and `{DataTable}` parameters let you explicitly make doc strings and data tables required or optional for step.
@@ -158,7 +167,7 @@ The `{DocString}` and `{DataTable}` parameters let you explicitly make doc strin
 I you want the step always contain DataTable, end the expression with `{DataTable}`. Usually, steps with DataTable end with colon `:`. For example: 
 
 ```ts
-Given('users in database:{DataTable}', { bddExpr: true }, ({ $step }, count: number) => {
+Given('users in database:{DataTable}', { bddExpr: true }, ({ $step }) => {
   // use `$step.dataTable` for step actions.
 });
 ```
