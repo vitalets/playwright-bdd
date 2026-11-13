@@ -19,6 +19,9 @@
   "main": "./dist/index.js",
   "exports": {
     ".": "./dist/index.js",
+    "./test": "./dist/cli/commands/test.js",
+    "./env": "./dist/cli/commands/env.js",
+    "./export": "./dist/cli/commands/export.js",
     "./decorators": "./dist/decorators.js",
     "./reporter/cucumber": "./dist/reporter/cucumber/index.js",
     "./package.json": "./package.json"
