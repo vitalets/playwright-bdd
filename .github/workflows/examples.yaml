@@ -17,7 +17,6 @@ concurrency:
 
 jobs:
   examples:
-    if: github.ref_name != 'docs'
     strategy:
       matrix:
         # Older versions of PW don't support ubuntu-24.04
