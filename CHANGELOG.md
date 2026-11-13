@@ -3,6 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
+* feat: opt-in `bddgen --use-step-index` for fast step matching with large definition sets ([#407](https://github.com/vitalets/playwright-bdd/issues/407)).
 * feat: relax `arityCheck` to allow omitted parameters, optional doc strings/data tables, and shared decorated methods with different capture counts.
 * breaking: remove the deprecated `junit-modern` reporter alias; replace it with `junit`.
 * breaking: raise the minimum supported Playwright version from 1.44 to 1.53; support the latest stable minor and 10 previous minor releases.

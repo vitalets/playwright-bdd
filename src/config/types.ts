@@ -71,6 +71,8 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   arityCheck?: boolean;
   /** Enables additional matching by keywords in step definitions */
   matchKeywords?: boolean;
+  /** Use a word index to speed up step matching during generation */
+  useStepIndex?: boolean;
   /** Options for fixing tests with AI */
   aiFix?: {
     promptTemplate?: string;
