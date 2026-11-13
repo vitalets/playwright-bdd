@@ -3,7 +3,7 @@ name: examples
 on:
   workflow_dispatch:
   push:
-    branches: ['**']
+    branches: ['**', '!docs']
     paths-ignore:
       - 'docs/**'
       - '**/*.md'
@@ -17,6 +17,7 @@ concurrency:
 
 jobs:
   examples:
+    if: github.ref != 'refs/heads/docs'
     strategy:
       matrix:
         # Older versions of PW don't support ubuntu-24.04
