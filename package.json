@@ -96,7 +96,7 @@
     "globals": "^17.6.0",
     "http-server": "^14.1.1",
     "json-paths": "0.1.2",
-    "knip": "^6.16.1",
+    "knip": "^6.42.1",
     "lint-staged": "17.0.7",
     "marked": "^18.0.5",
     "micromatch": "4.0.8",
