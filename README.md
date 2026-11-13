@@ -63,7 +63,7 @@ Playwright-BDD transforms feature files into Playwright tests and wires up step 
 
 <img align="center" alt="Feature file transformed into a Playwright test" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/playwright-bdd-transformation.png"/>
 
-## Why Playwright Runner?
+## Why Playwright runner?
 
 [Playwright](https://playwright.dev/) provides both browser automation APIs and a powerful test runner. Playwright-BDD converts `.feature` files into native Playwright tests, so you can use all Playwright runner capabilities:
 
@@ -91,7 +91,7 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
-## Playwright Versions Support
+## Playwright versions support
 
 `playwright-bdd` supports the latest stable Playwright release and the **10 previous releases**.
 
@@ -136,7 +136,7 @@ Feel free to report a bug, propose a feature or share your experience:
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## My Other Playwright tools
+## My other Playwright tools
 
 * [playwright-timeline-reporter](https://github.com/vitalets/playwright-timeline-reporter) - Interactive timeline report for Playwright test runs.
 * [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
