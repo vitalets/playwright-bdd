@@ -371,8 +371,8 @@ export default class JsonReporter extends BaseReporter {
   }): IJsonTag[] {
     const scenario = gherkinScenarioMap[pickle.astNodeIds[0]];
 
-    return pickle.tags.map(
-      (tagData: messages.PickleTag): IJsonTag => this.getScenarioTag(tagData, feature, scenario),
+    return pickle.tags.map((tagData: messages.PickleTag): IJsonTag =>
+      this.getScenarioTag(tagData, feature, scenario),
     );
   }
 

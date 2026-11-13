@@ -1,6 +1,11 @@
 **/*.md
-**/*.feature.spec.js
-test/parse-error/sample.feature
-test/i18n/features/*.feature
-test/bdd-syntax/features/scenario-outline.feature
 package-lock.json
+
+**/*.feature.spec.js
+
+/test/parse-error/sample.feature
+/test/i18n/features/*.feature
+/test/bdd-syntax/features/scenario-outline.feature
+/test/watch-mode-lock-file/features/
+/test/watch-mode/features/
+/test/watch-mode/src/
