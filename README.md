@@ -57,7 +57,7 @@ To bring this workflow to your project, [set up Playwright-BDD](https://vitalets
 
 > **The ultimate goal:** review only feature files and let automated guardrails check scenario compliance.
 
-## How It Works
+## How Playwright-BDD works
 
 Playwright-BDD transforms feature files into Playwright tests and wires up step implementations:
 
