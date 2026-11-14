@@ -6,7 +6,7 @@ You are welcome to try it with your existing test suite and report any issues yo
 
 ## Installing the beta
 
-Install from the `next` channel:
+Install `playwright-bdd@next`:
 
 ```sh
 npm install --save-dev playwright-bdd@next
@@ -18,7 +18,7 @@ Then re-run your tests to ensure the baseline works:
 npx bddgen && npx playwright test
 ```
 
-Now explore the new features and try them.
+Now explore the new features.
 
 ## What's new
 
