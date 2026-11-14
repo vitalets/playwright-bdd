@@ -115,7 +115,7 @@ function formatError(message: string, fileInfo: FileInfo, text: string) {
 
 function getHeadingAnchor(heading: string) {
   // Docsify supports explicit heading IDs in the form "Heading :id=custom-id".
-  const customId = heading.match(/\s+:id=([\w-]+)$/)?.[1];
+  const customId = heading.match(/\s+:id=([^\s]+)/)?.[1];
   return (
     customId ||
     slugify(heading, {

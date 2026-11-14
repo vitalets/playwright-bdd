@@ -14,7 +14,7 @@ export function jsStringWrap(
 ) {
   const wrapQuote = quotes === 'single' ? "'" : quotes === 'double' ? '"' : '`';
   // eslint-disable-next-line visual/complexity
-  const escapedStr = ('' + str).replace(/["'`\\\n\r\u2028\u2029]/g, (character) => {
+  const escapedStr = ('' + str).replace(/["'`\\\n\r\u2028\u2029]|\$(?=\{)/g, (character) => {
     // Escape all characters not included in SingleStringCharacters and
     // DoubleStringCharacters on
     // http://www.ecma-international.org/ecma-262/5.1/#sec-7.8.4
@@ -22,6 +22,9 @@ export function jsStringWrap(
       case wrapQuote:
       case '\\':
         return '\\' + character;
+      case '$':
+        // Keep template expressions literal when using backtick quotes.
+        return quotes === 'backtick' ? '\\$' : '$';
       // Four possible LineTerminator characters need to be escaped:
       case '\n':
         return '\\n';

@@ -8,6 +8,7 @@ import { PomNode } from './pomGraph';
 import { isBddAutoInjectFixture } from '../../runtime/bddTestFixturesAuto';
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
+import { CreateBddDecoratorsOptions, DecoratorStepFn } from './types';
 import {
   StepPattern,
   GherkinStepKeyword,
@@ -23,18 +24,26 @@ type DecoratedMethod = Function & { [decoratedStepSymbol]: StepDefinitionOptions
 /**
  * Creates @Given, @When, @Then decorators.
  */
-export function createStepDecorator(keyword: GherkinStepKeyword) {
-  return (pattern: StepPattern, providedOptions?: ProvidedStepOptions) => {
+export function createStepDecorator<DefaultBddExpr extends boolean = false>(
+  keyword: GherkinStepKeyword,
+  defaults: CreateBddDecoratorsOptions<DefaultBddExpr> = {},
+) {
+  return <Pattern extends StepPattern, BddExpr extends boolean = DefaultBddExpr>(
+    pattern: Pattern,
+    providedOptions?: Omit<ProvidedStepOptions, 'bddExpr'> & { bddExpr?: BddExpr },
+  ) => {
     // offset = 3 b/c this call is 3 steps below the user's code
     const location = getLocationByOffset(3);
     // context parameter is required for decorator by TS even though it's not used
-    return (method: StepDefinitionOptions['fn'], _context: ClassMethodDecoratorContext) => {
+    return (method: DecoratorStepFn<Pattern, BddExpr>, _context: ClassMethodDecoratorContext) => {
       saveStepConfigToMethod(method, {
         keyword,
         pattern,
-        arity: method.length,
+        originalFn: method,
         location,
         providedOptions,
+        defaultTags: defaults.tags,
+        defaultBddExpr: defaults.bddExpr,
         fn: method,
       });
     };
@@ -51,7 +60,6 @@ export function linkStepsWithPomNode(Ctor: Function, pomNode: PomNode) {
     // Register each step definition from the array
     stepOptionsArray.forEach((stepOptions) => {
       stepOptions.pomNode = pomNode;
-      stepOptions.defaultTags = pomNode.fixtureTags;
       registerDecoratorStep(stepOptions);
     });
   });
@@ -64,7 +72,6 @@ function registerDecoratorStep(stepOptions: StepDefinitionOptions) {
 
   registerStepDefinition({
     ...stepOptions,
-    arity: fn.length,
     fn: (fixturesArg: Record<string, unknown>, ...args: unknown[]) => {
       const pomFixture = getFirstNonAutoInjectFixture(fixturesArg, stepOptions);
       return fn.call(pomFixture, ...args);

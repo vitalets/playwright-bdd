@@ -11,7 +11,9 @@ import path from 'path';
 const inputDirectory = './docs';
 const outputFilePath = './docs.md';
 
-const excludeFiles = ['_sidebar.md', 'whats-new-in-v8.md'];
+// Keep moved-page stubs and the historical v8 announcement out of the combined docs.
+const excludeFiles = ['_sidebar.md', 'migration-v7.md', 'migration-v9.md', 'whats-new-in-v8.md'];
+const excludePaths = [path.join('release-notes', 'v8.md')];
 
 // Ensure the output directory exists
 // fs.mkdirSync(path.dirname(outputFilePath), { recursive: true });
@@ -36,7 +38,10 @@ function getMarkdownFiles(dir, fileList = []) {
 
       if (stats.isDirectory()) {
         getMarkdownFiles(filePath, fileList);
-      } else if (filePath.endsWith('.md')) {
+      } else if (
+        filePath.endsWith('.md') &&
+        !excludePaths.includes(path.relative(inputDirectory, filePath))
+      ) {
         fileList.push(filePath);
       }
     });

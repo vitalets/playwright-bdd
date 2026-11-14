@@ -82,6 +82,7 @@ export class TestFilesGenerator {
         return new TestFile({
           config: this.config,
           gherkinDocument,
+          featureSource: this.featuresLoader.getSourceContent(gherkinDocument.uri!),
           tagsExpression: this.tagsExpression,
         }).build();
       })
@@ -132,15 +133,19 @@ export class TestFilesGenerator {
   }
 
   private async saveFiles() {
-    this.files.forEach((file) => saveFileSync(file.outputPath, file.content));
+    this.files.forEach((file) => {
+      saveFileSync(file.outputPath, file.content);
+    });
     this.logger.logGeneratedTestFiles(this.files);
   }
 
   private async clearOutputDir() {
-    const pattern = `${tg.convertPathToPattern(this.config.outputDir)}/**/*.spec.js`;
+    const outputDirPattern = tg.convertPathToPattern(this.config.outputDir);
+    const pattern = `${outputDirPattern}/**/*.spec.js`;
     const testFiles = await tg.glob(pattern, { expandDirectories: false });
     this.logger.logClearingOutputDir(pattern);
-    const tasks = testFiles.map((testFile) => fs.promises.rm(testFile));
+    // Using { force: true } to suppress an error, if file not found.
+    const tasks = testFiles.map((testFile) => fs.promises.rm(testFile, { force: true }));
     await Promise.all(tasks);
   }
 

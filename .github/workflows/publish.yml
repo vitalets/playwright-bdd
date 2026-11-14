@@ -1,22 +1,26 @@
-name: Publish to npm
+name: release
 
 on:
   workflow_dispatch:
     inputs:
-      release-version:
-        description: Release version type
+      channel:
+        description: Channel
         required: true
         type: choice
+        default: ''
+        options:
+          - ''
+          - stable
+          - next
+      version:
+        description: Version
+        required: true
+        type: choice
+        default: patch
         options:
           - patch
           - minor
           - major
-        default: patch
-      prerelease:
-        description: Pre-release (beta)
-        required: false
-        type: boolean
-        default: false
       skip-npm-publish:
         description: Skip NPM publish
         required: false
@@ -30,14 +34,14 @@ on:
 
 jobs:
   publish:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     permissions:
       contents: write # For git operations (commit, tag, push)
       id-token: write # Required for OIDC trusted publishing
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Ensure lint/test/examples workflows passed
         run: |
@@ -47,7 +51,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
           registry-url: 'https://registry.npmjs.org'
@@ -61,10 +65,10 @@ jobs:
       - run: npm run tsc:all
       - run: npx publint
 
-      - uses: vitalets/npm-release@v1
+      - uses: vitalets/npm-release@v2
         with:
-          release-version: ${{ inputs.release-version }}
-          prerelease: ${{ inputs.prerelease }}
+          channel: ${{ inputs.channel }}
+          version: ${{ inputs.version }}
           skip-npm-publish: ${{ inputs.skip-npm-publish }}
           dry-run: ${{ inputs.dry-run }}
           github-token: ${{ secrets.GITHUB_TOKEN }}

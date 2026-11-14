@@ -8,27 +8,25 @@ body:
       value: |
         ## Thank you for reporting a bug!
 
-        Please provide the bug details below. Include as much information as possible to help us quickly identify and resolve the issue.
+        A minimal reproduction is required to investigate your bug report.
 
-        **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
-        ````
-        My feature file:
-        ```gherkin
-        # your code in Gherkin...
+        **Give your coding agent this prompt** along with your bug description:
+
+        ```text
+        Create a minimal reproduction of the bug described below using https://github.com/vitalets/playwright-bdd-example.
+
+        1. Clone the example repository into a new temporary directory outside the current project. Make all reproduction changes in that clone, leaving the current project unchanged.
+        2. Follow its README to install dependencies and browsers, then run the existing tests to verify the setup works.
+        3. Match the relevant dependency versions and configuration from my bug report or the current project.
+        4. Make the smallest changes needed to reproduce the bug.
+        5. Run the reproduction and confirm it demonstrates the reported behavior.
+        6. Summarize the changes, exact command to reproduce, expected behavior, and actual output.
+        7. Once the reproduction is ready, push it to your own public GitHub repository or fork and paste the branch link in **Reproduction Demo URL**.
+
+        Bug description:
+        [Describe the bug here]
         ```
 
-        My step definitions:
-        ```js
-        // your code in JavaScript...
-        ```
-
-        My command and output:
-        ```
-        npx bddgen && npx playwright test
-
-        Error: something went wrong...
-        ```
-        ````
   - type: textarea
     id: given
     validations:
@@ -72,14 +70,11 @@ body:
   - type: input
     id: reproduction-url
     validations:
-      required: false
+      required: true
     attributes:
       label: Reproduction Demo URL
       description: |
-        You are **highly encouraged** to fork [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example) and modify it to reproduce the issue.
-        Then push the changes and share the link below.
-
-        > Providing a demo greatly speeds up issue resolution!
+        Share a link to your minimal reproduction based on [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example).
       placeholder: https://github.com/%yourname%/playwright-bdd-example
 
   - type: textarea

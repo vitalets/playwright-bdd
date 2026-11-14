@@ -6,36 +6,25 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Thank you for suggesting a new feature! 
-        Please fill out the following details to help us understand your request.
+        ## Thank you for suggesting a new feature!
 
-        **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
-        ````
-        My feature file:
-        ```gherkin
-        # your code in Gherkin...
-        ```
+        Please describe your use case and the behavior you need.
 
-        My step definitions:
-        ```js
-        // your code in JavaScript...
-        ```
-        ````
   - type: textarea
     id: problem
     attributes:
-      label: The Problem
-      description: Explain the current issue or limitation you’re facing.
-      placeholder: What challenges do you have now?
+      label: Problem
+      description: Describe your use case and the current limitation. Include a concrete example if possible.
+      placeholder: I often face the situation when...
     validations:
       required: true
 
   - type: textarea
     id: solution
     attributes:
-      label: Proposed Solution
-      description: Describe your idea for addressing the problem.
-      placeholder: How do you envision this feature working?
+      label: Desired Behavior
+      description: Describe the behavior you would like. Include an example of the desired usage if possible. You do not need to propose an implementation.
+      placeholder: Add an option to the playwright-bdd that...
     validations:
       required: true
 
@@ -43,17 +32,4 @@ body:
     id: context
     attributes:
       label: Additional Context
-      description: Share any supporting information, such as screenshots, examples, or use cases.
-      placeholder: Any additional context that could be helpful?
-
-  - type: dropdown
-    id: priority
-    attributes:
-      label: Priority Level
-      description: How urgent is this feature for you?
-      options:
-        - Low
-        - Medium
-        - High
-        - Critical
-      default: 1
+      description: Include your current workaround and any relevant code, screenshots, or links.

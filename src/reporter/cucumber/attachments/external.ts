@@ -10,16 +10,12 @@ import { sanitizeForFilePath } from '../../../utils/paths';
 import { getAttachmentBodyAsBuffer } from './helpers';
 
 export function toEmbeddedAttachment(attachment: messages.Attachment): messages.Attachment {
-  if (attachment.body) return attachment;
-
-  const attachmentPath = attachment.url;
-  if (!attachmentPath) {
-    throw new Error(`Attachment without body and url: ${JSON.stringify(attachment)}`);
-  }
+  // Without a url the body is already embedded, even when it's empty (e.g. attach() with body: '').
+  if (attachment.body || !attachment.url) return attachment;
 
   // add cache for file reading
 
-  const body = fs.readFileSync(attachmentPath).toString('base64');
+  const body = fs.readFileSync(attachment.url).toString('base64');
   const contentEncoding = messages.AttachmentContentEncoding.BASE64;
 
   return {

@@ -53,10 +53,10 @@ export class TestStepAttachments {
         attachment.body = pwAttachment.body.toString('base64');
         attachment.contentEncoding = messages.AttachmentContentEncoding.BASE64;
       }
-    } else {
-      throw new Error(`Playwright attachment without path and body`);
     }
 
+    // Playwright's blob-report merge reader can deserialize an empty base64 body as undefined.
+    // Without a path or body, keep the default empty body instead of failing report generation.
     return { attachment };
   }
 }

@@ -6,28 +6,14 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Need help or have a question?  
-        Feel free to ask your question below. Provide as many details as possible to help us give a clear and helpful answer.
+        ## Need help or have a question?
 
-        **Note**: Use backticks (\`\`\`) to format code blocks for better readability:
-        ````
-        My feature file:
-        ```gherkin
-        # your code in Gherkin...
-        ```
+        Tell us what you’re trying to accomplish with playwright-bdd.
 
-        My step definitions:
-        ```js
-        // your code in JavaScript...
-        ```
-        ````
   - type: textarea
     id: question
     validations:
       required: true
     attributes:
       label: Question
-      description: |
-        Describe your question in detail.
-        Include any relevant context, code snippets, or links that might help clarify your question.
-      placeholder: Provide as much detail as possible.
+      description: Ask your question and describe what you’ve tried. Include relevant configuration, code snippets, or links.

@@ -1,10 +1,12 @@
 name: examples
 
 on:
+  workflow_dispatch:
   push:
-    branches: [main, beta]
-  pull_request:
-    branches: [main, beta]
+    branches: ['**', '!docs']
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
   schedule:
     # run daily at 00:00
     - cron: 0 0 * * *
@@ -23,8 +25,8 @@ jobs:
         node-version: [20]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'

@@ -3,6 +3,7 @@
  */
 
 import { CucumberExpression, RegularExpression, Expression } from '@cucumber/cucumber-expressions';
+import type { BddExpression } from 'bdd-expressions' with { 'resolution-mode': 'import' };
 import { PickleStepType } from '@cucumber/messages';
 import { parameterTypeRegistry } from './parameterTypes';
 import { PlaywrightLocation, TestTypeCommon } from '../playwright/types';
@@ -10,6 +11,8 @@ import { PomNode } from './decorators/pomGraph';
 import { MatchedStepDefinition } from './matchedStepDefinition';
 import { buildTagsExpression, extractTagsFromPath, TagsExpression } from './tags';
 import { relativeToCwd } from '../utils/paths';
+import { createBddExpression } from './bddExpression';
+import { DataTable } from '../cucumber/DataTable';
 
 export type GherkinStepKeyword = 'Unknown' | 'Given' | 'When' | 'Then';
 export type StepPattern = string | RegExp;
@@ -18,24 +21,46 @@ export type AnyFunction = (...args: any[]) => unknown;
 export type ProvidedStepOptions = {
   tags?: string;
   arityCheck?: boolean;
+  /** Maximum step duration in milliseconds, including step hooks. Defaults to 0 (no limit). */
+  timeout?: number;
+  /** Static Playwright test locks inherited by scenarios matching this definition. */
+  lock?: string | string[];
+  /** Use BDD Expressions syntax and infer named parameters on $step.params. */
+  bddExpr?: boolean;
 };
 
 export type StepDefinitionOptions = {
   keyword: GherkinStepKeyword;
   pattern: StepPattern;
   fn: AnyFunction;
-  // Keep user-defined function arity for checks when runtime wrapper is used.
-  arity: number;
+  // Preserve original step fn:
+  // - get it's arity for arity check
+  // - used to group decorator definitions for the same method (for arity check as well)
+  originalFn: AnyFunction;
   location: PlaywrightLocation;
   customTest?: TestTypeCommon;
   pomNode?: PomNode; // for decorator steps
   worldFixture?: string; // for new cucumber-style steps
   providedOptions?: ProvidedStepOptions; // options passed as second argument
-  defaultTags?: string; // default tags from createBdd() or @Fixture
+  defaultTags?: string; // default tags from createBdd() or createBddDecorators()
+  defaultBddExpr?: boolean;
+};
+
+export type StepMatchInput = {
+  text: string;
+  keywordType?: PickleStepType;
+  docString?: string;
+  dataTable?: DataTable;
+};
+
+/** Internal Cucumber expression metadata; not part of its public API. */
+type InternalExpressionMetadata = {
+  treeRegexp?: { groupBuilder?: { children?: unknown } };
 };
 
 export class StepDefinition {
-  #expression?: Expression;
+  #expression?: Expression | BddExpression;
+  #parameterCount?: number;
   tagsExpression?: TagsExpression;
 
   constructor(private options: StepDefinitionOptions) {
@@ -55,7 +80,11 @@ export class StepDefinition {
   }
 
   get arity() {
-    return this.options.arity;
+    return this.originalFn.length;
+  }
+
+  get originalFn() {
+    return this.options.originalFn;
   }
 
   get uri() {
@@ -82,16 +111,34 @@ export class StepDefinition {
     return this.options.providedOptions;
   }
 
-  get expression() {
+  usesBddExpression(): this is this & { expression: BddExpression; pattern: string } {
+    return (
+      typeof this.pattern === 'string' &&
+      (this.options.providedOptions?.bddExpr ?? this.options.defaultBddExpr ?? false)
+    );
+  }
+
+  get expression(): Expression | BddExpression {
     // create expression lazily b/c we need all parameter types to be loaded
     if (!this.#expression) {
       this.#expression =
         typeof this.pattern === 'string'
-          ? new CucumberExpression(this.pattern, parameterTypeRegistry)
+          ? this.usesBddExpression()
+            ? createBddExpression(this.pattern)
+            : new CucumberExpression(this.pattern, parameterTypeRegistry)
           : new RegularExpression(this.pattern, parameterTypeRegistry);
     }
 
     return this.#expression;
+  }
+
+  get parameterCount() {
+    return (this.#parameterCount ??= this.getDefinitionParameterCount());
+  }
+
+  get hasBlockArguments() {
+    if (!this.usesBddExpression()) return false;
+    return this.expression.hasDocString || this.expression.hasDataTable;
   }
 
   get patternString() {
@@ -113,13 +160,17 @@ export class StepDefinition {
   }
 
   /**
-   * Tries to match step text.
+   * Matches text and declared DocString and DataTable parameters.
    * Returns MatchedStepDefinition in case of success.
    */
-  matchStepText(stepText: string) {
-    const result = this.expression.match(stepText);
+  matchStep(step: StepMatchInput) {
+    // Without DocString or DataTable parameters, matching only checks the text.
+    const result =
+      this.usesBddExpression() && this.hasBlockArguments
+        ? this.expression.match(step.text, step)
+        : this.expression.match(step.text);
     if (result) {
-      return new MatchedStepDefinition(this, stepText, result);
+      return new MatchedStepDefinition(this, step.text, result);
     }
   }
 
@@ -138,6 +189,19 @@ export class StepDefinition {
     }
   }
 
+  private getDefinitionParameterCount(): number {
+    if (this.usesBddExpression()) return this.expression.slots.length;
+
+    // Count argument slots, not raw regexp captures: nested captures can produce
+    // a single positional argument. These fields are internal to Cucumber Expressions.
+    const expression = this.expression as unknown as InternalExpressionMetadata;
+    const slots = expression.treeRegexp?.groupBuilder?.children;
+
+    // If an engine changes its metadata, allow any arity rather than reject a
+    // valid definition. Expression compilation errors still propagate normally.
+    return Array.isArray(slots) ? slots.length : Infinity;
+  }
+
   private buildTagsExpression() {
     const { defaultTags, providedOptions, location } = this.options;
     // Possibly, we should use relative to configDir
@@ -146,6 +210,7 @@ export class StepDefinition {
     this.tagsExpression = buildTagsExpression([
       ...tagsFromPath,
       defaultTags,
+      this.options.pomNode?.fixtureTags,
       providedOptions?.tags,
     ]);
   }

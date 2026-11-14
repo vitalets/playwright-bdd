@@ -97,7 +97,11 @@ export class TestStepRun {
         //
         // See also: https://github.com/cucumber/react-components/pull/345
         exception,
-        message: exception?.stackTrace,
+        message:
+          exception?.stackTrace ??
+          (status === messages.TestStepResultStatus.SKIPPED
+            ? this.getSkipAnnotation()?.description
+            : undefined),
       },
       timestamp: toCucumberTimestamp(this.startTime.getTime() + this.duration),
     };
@@ -111,6 +115,8 @@ export class TestStepRun {
         return messages.TestStepResultStatus.SKIPPED;
       case Boolean(error):
         return messages.TestStepResultStatus.FAILED;
+      case Boolean(this.getSkipAnnotation()):
+        return messages.TestStepResultStatus.SKIPPED;
       // Steps (and hooks) that have no corresponding Playwright step were not executed
       // in this particular attempt and should be reported as SKIPPED.
       //
@@ -129,6 +135,10 @@ export class TestStepRun {
       default:
         return messages.TestStepResultStatus.PASSED;
     }
+  }
+
+  private getSkipAnnotation() {
+    return this.pwStep?.annotations?.find((annotation) => annotation.type === 'skip');
   }
 
   private getStepError() {

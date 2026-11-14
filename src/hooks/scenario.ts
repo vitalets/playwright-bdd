@@ -8,7 +8,6 @@ import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/type
 import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
-import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { getBddAutoInjectFixtures, isBddAutoInjectFixture } from '../runtime/bddTestFixturesAuto';
 import { HookConstructorOptions, setTagsExpression } from './shared';
 import { TagsExpression } from '../steps/tags';
@@ -108,7 +107,7 @@ async function runScenarioHook(
 ) {
   const fn = wrapHookFnWithTimeout(hook, world, fixtures);
   const stepTitle = getHookStepTitle(hook);
-  await runStepWithLocation(fixtures.$bddContext.test, stepTitle, hook.location, fn);
+  await fixtures.$bddContext.test.step(stepTitle, fn, { location: hook.location });
 }
 
 export function getScenarioHooksFixtureNames(hooks: GeneralScenarioHook[]) {

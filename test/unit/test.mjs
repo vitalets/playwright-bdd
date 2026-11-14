@@ -71,3 +71,33 @@ test(`${testDir.name} (extractTagsFromPath)`, async () => {
   expect(extractTagsFromPath(normalize('features/.steps.ts'))).toEqual([]);
   expect(extractTagsFromPath(normalize('features/@'))).toEqual([]);
 });
+
+test(`${testDir.name} (step merge options: playwright)`, async () => {
+  const { createBdd } = await import('../../dist/index.js');
+  const { stepDefinitions } = await import('../../dist/steps/stepRegistry.js');
+  const { Given } = createBdd(undefined, { tags: '@default or @alternative' });
+
+  Given('a step', { tags: '@local' }, () => {});
+
+  const { tagsExpression } = stepDefinitions.pop();
+  expect(tagsExpression.evaluate(['@alternative', '@local'])).toBe(true);
+  expect(tagsExpression.evaluate(['@default'])).toBe(false);
+  expect(tagsExpression.evaluate(['@local'])).toBe(false);
+});
+
+test(`${testDir.name} (step merge options: cucumber)`, async () => {
+  const { createBdd, test: base } = await import('../../dist/index.js');
+  const { stepDefinitions } = await import('../../dist/steps/stepRegistry.js');
+  const customTest = base.extend({ world: {} });
+  const { Given } = createBdd(customTest, {
+    worldFixture: 'world',
+    tags: '@default or @alternative',
+  });
+
+  Given('a step', { tags: '@local' }, function () {});
+
+  const { tagsExpression } = stepDefinitions.pop();
+  expect(tagsExpression.evaluate(['@alternative', '@local'])).toBe(true);
+  expect(tagsExpression.evaluate(['@default'])).toBe(false);
+  expect(tagsExpression.evaluate(['@local'])).toBe(false);
+});

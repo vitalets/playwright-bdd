@@ -6,8 +6,8 @@
 
 import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { callWithTimeout } from '../utils';
+import { BddStepState } from '../runtime/bddStepState';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
-import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { BddAutoInjectFixtures, isBddAutoInjectFixture } from '../runtime/bddTestFixturesAuto';
 import { HookConstructorOptions, setTagsExpression } from './shared';
 import { TagsExpression } from '../steps/tags';
@@ -91,6 +91,7 @@ export async function runStepHooks(
   for (const hook of hooks) {
     try {
       await runStepHook(hook, world, fixtures);
+      if (hook.type === 'beforeStep' && (fixtures.$step as BddStepState).skipped) break;
     } catch (e) {
       if (hook.type === 'beforeStep') throw e;
       if (!error) error = e;
@@ -118,7 +119,7 @@ async function runStepHook(hook: GeneralStepHook, world: unknown, fixtures: Step
   // wrap hookFn call into test.step() only if user provided a name for the hook,
   // otherwise run as is to avoid extra level in the steps structure.
   if (stepTitle) {
-    await runStepWithLocation(fixtures.$bddContext.test, stepTitle, hook.location, hookFn);
+    await fixtures.$bddContext.test.step(stepTitle, hookFn, { location: hook.location });
   } else {
     await hookFn();
   }

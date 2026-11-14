@@ -27,12 +27,13 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   featuresRoot?: string;
   /** Dir to save generated files */
   outputDir?: string;
+  /** Coordinate generation with other bddgen processes and active BDD workers */
+  lockFile?: boolean;
+  /** Embed inline source maps to map generated tests to original feature files */
+  sourceMaps?: boolean;
   /** Path to file for importing test instance */
   importTestFrom?: string | ImportTestFrom;
-  /**
-   * Default language for your feature files.
-   * @default "en"
-   */
+  /** Default language for your feature files. */
   language?: string;
   /** Verbose mode */
   verbose?: boolean;
@@ -48,6 +49,22 @@ export type BDDInputConfig = CucumberConfigDeprecated & {
   statefulPoms?: boolean;
   /** Disable warnings */
   disableWarnings?: DisableWarningsConfig;
+  /** Watch mode options */
+  watch?: {
+    /** Watch the nearest `package.json` directory. */
+    packageRoot?: boolean;
+    /**
+     * Apply Git-ignore rules from the nearest `package.json` directory.
+     * A string specifies a custom ignore file path.
+     * */
+    gitIgnore?: boolean | string;
+    /** Additional file or directory paths to watch. Direct files bypass the extension filter. */
+    include?: string[];
+    /** File or directory paths to exclude. Globs are not supported. */
+    exclude?: string[];
+    /** File extensions that trigger regeneration. */
+    extensions?: string[];
+  };
   /** Behavior for missing step definitions */
   missingSteps?: 'fail-on-gen' | 'fail-on-run' | 'skip-scenario';
   /** Validate step function argument count during generation */

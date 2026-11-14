@@ -10,16 +10,16 @@ import { BddStepInvoker, BddStepFn } from './bddStepInvoker';
 import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
-import { BddContext, BddStepInfo } from './bddContext';
+import { BddContext } from './bddContext';
+import { BddStepFixture, BddStepState } from './bddStepState';
 import { PromptFixture } from '../ai/promptAttachment';
 import { supportedFeatures } from '../playwright/supportedFeatures';
+import { isSourceMapped } from '../playwright/utils';
 
 // BDD fixtures prefixed with '$' to avoid collision with user's fixtures.
 
 // Hide all BDD fixtures in reporter.
-// 'box' option was added in PW 1.46,
-// make type coercion to satisfy TS in early PW versions
-const fixtureOptions = { scope: 'test', box: true } as { scope: 'test' };
+const fixtureOptions = { scope: 'test', box: true } as const;
 
 export type BddTestFixtures = {
   $bddContext: BddContext;
@@ -33,7 +33,7 @@ export type BddTestFixtures = {
   $tags: string[];
   $test: TestTypeCommon;
   $testInfo: TestInfo;
-  $step: BddStepInfo;
+  $step: BddStepFixture;
   $uri: string;
   $applySpecialTags: void;
   $world: unknown;
@@ -107,7 +107,12 @@ export const test = base.extend<BddTestFixtures>({
   // bddTestData for particular test
   $bddTestData: [
     async ({ $bddFileData }, use, testInfo) => {
-      const bddTestData = $bddFileData.find((data) => data.pwTestLine === testInfo.line);
+      // Playwright exposes feature locations when a source map is applied,
+      // and generated test locations when source maps are disabled or invalid.
+      const sourceMapped = isSourceMapped(testInfo.file);
+      const bddTestData = $bddFileData.find((data) =>
+        sourceMapped ? data.pickleLine === testInfo.line : data.pwTestLine === testInfo.line,
+      );
       await use(bddTestData);
     },
     fixtureOptions,
@@ -125,7 +130,7 @@ export const test = base.extend<BddTestFixtures>({
   // Filled dynamically in step invoker.
   // Important to keep this fixture separate, without dependency on bddContext.
   // Otherwise we can get cyclic fixtures dependency.
-  $step: [({}, use) => use({ title: '' }), fixtureOptions],
+  $step: [({}, use) => use(new BddStepState()), fixtureOptions],
 
   // feature file uri, relative to configDir, will be overwritten in test file
   $uri: [({}, use) => use(''), fixtureOptions],

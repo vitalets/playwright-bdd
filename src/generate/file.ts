@@ -14,7 +14,7 @@ import {
   Rule,
 } from '@cucumber/messages';
 import path from 'node:path';
-import { Formatter } from './formatter';
+import { Formatter, renderContentHash, renderSourceMapUrl } from './formatter';
 import { KeywordsMap, getKeywordsMap } from './i18n';
 import { parse as parseTagsExpression } from '@cucumber/tag-expressions';
 import { LANG_EN, isEnglish } from '../config/lang';
@@ -32,14 +32,15 @@ import { getSpecFileByFeatureFile } from './paths';
 import { SpecialTags } from './specialTags';
 import { BackgroundGen } from './background';
 import { StepData, TestGen } from './test';
-import { SourceMapper } from './sourceMapper';
+import { FeatureToTestMapper } from './featureToTestMapper';
 import { BddDataRenderer } from '../bddData/renderer';
-import { supportedFeatures } from '../playwright/supportedFeatures';
-import { removeDuplicates } from '../utils';
+import { calculateSha1, removeDuplicates } from '../utils';
+import { TestFileSourceMap } from './sourceMap';
 
 type TestFileOptions = {
   config: BDDConfig;
   gherkinDocument: GherkinDocumentWithPickles;
+  featureSource: string;
   tagsExpression?: ReturnType<typeof parseTagsExpression>;
 };
 
@@ -52,6 +53,7 @@ export class TestFile {
   private hooks: TestFileHooks;
   private backgrounds: BackgroundGen[] = [];
   private tests: TestGen[] = [];
+  private sourceMap?: TestFileSourceMap;
 
   public outputPath: string;
 
@@ -165,15 +167,16 @@ export class TestFile {
 
   private renderTechnicalSection() {
     const worldFixtureName = this.getWorldFixtureName();
-    const sourceMapper = new SourceMapper(this.lines);
-    const bddDataRenderer = new BddDataRenderer(this.tests, sourceMapper);
+    const featureToTestMapper = new FeatureToTestMapper(this.lines);
+    const bddDataRenderer = new BddDataRenderer(this.tests, featureToTestMapper);
+    this.createSourceMap(featureToTestMapper);
 
     const testUse = this.formatter.testUse([
       ...this.formatter.testFixture(),
       ...this.formatter.uriFixture(this.featureUri),
       ...bddDataRenderer.renderFixture(),
       ...(worldFixtureName ? this.formatter.worldFixture(worldFixtureName) : []),
-      ...(supportedFeatures.ariaSnapshots && this.config.aiFix?.promptAttachment
+      ...(this.config.aiFix?.promptAttachment
         ? this.formatter.pageFixtureWithPromptAttachment()
         : []),
     ]);
@@ -185,7 +188,22 @@ export class TestFile {
       ...testUse,
       '',
       ...bddDataRenderer.renderVariable(),
+      '',
+      ...this.renderContentHash(),
+      ...this.renderSourceMapUrl(),
     ];
+  }
+
+  private createSourceMap(featureToTestMapper: FeatureToTestMapper) {
+    if (!this.config.sourceMaps) return;
+    this.sourceMap = new TestFileSourceMap({
+      config: this.config,
+      outputPath: this.outputPath,
+      featureUri: this.featureUri,
+      featureSource: this.options.featureSource,
+      tests: this.tests,
+      featureToTestMapper,
+    });
   }
 
   private renderRootSuite() {
@@ -203,7 +221,11 @@ export class TestFile {
     feature.children.forEach((child) => {
       lines.push(...this.renderChild(child));
     });
-    return this.formatter.describe(feature.name, specialTags, lines);
+    return this.formatter.describe(feature.name, {
+      specialTags,
+      children: lines,
+      sourceLocation: feature.location,
+    });
   }
 
   // eslint-disable-next-line visual/complexity
@@ -259,7 +281,11 @@ export class TestFile {
     // don't render describe without tests
     if (!lines.length) return [];
 
-    return this.formatter.describe(scenario.name, specialTags, lines);
+    return this.formatter.describe(scenario.name, {
+      specialTags,
+      children: lines,
+      sourceLocation: scenario.location,
+    });
   }
 
   /**
@@ -375,5 +401,17 @@ export class TestFile {
       });
     });
     return usedPomFixtures;
+  }
+
+  private renderSourceMapUrl() {
+    if (!this.sourceMap) return [];
+    const encodedMap = Buffer.from(this.sourceMap.content).toString('base64');
+    return [renderSourceMapUrl(`data:application/json;charset=utf-8;base64,${encodedMap}`)];
+  }
+
+  private renderContentHash() {
+    const content = this.sourceMap?.content || this.options.featureSource;
+    const hash = calculateSha1(content).slice(0, 8);
+    return [renderContentHash(hash)];
   }
 }

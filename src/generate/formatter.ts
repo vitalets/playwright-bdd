@@ -4,7 +4,7 @@
 
 /* eslint-disable max-lines */
 
-import { PickleStepArgument } from '@cucumber/messages';
+import { Location, PickleStepArgument } from '@cucumber/messages';
 import { jsStringWrap } from '../utils/jsStringWrap';
 import { DescribeConfigureOptions } from '../playwright/types';
 import { toPosixPath } from '../utils/paths';
@@ -45,11 +45,25 @@ export class Formatter {
     ];
   }
 
-  describe(title: string, specialTags: SpecialTags, children: string[]) {
+  describe(
+    title: string,
+    {
+      specialTags,
+      children,
+      sourceLocation,
+    }: {
+      specialTags: SpecialTags;
+      children: string[];
+      sourceLocation?: Location;
+    },
+  ) {
     const titleStr = this.quoted(title);
     const fn = this.withSubFunction('describe', specialTags);
-    const firstLine = `test.${fn}(${titleStr}, () => {`;
-    if (!children.length) return [`${firstLine}});`, ''];
+    const marker = sourceLocation
+      ? `// suite: ${sourceLocation.line},${sourceLocation.column ?? 1}`
+      : '';
+    const firstLine = `test.${fn}(${titleStr}, () => {${marker}`;
+    if (!children.length) return [`test.${fn}(${titleStr}, () => {});${marker}`, ''];
     return [
       firstLine, // prettier-ignore
       ...this.describeConfigure(specialTags).map(indent),
@@ -108,12 +122,13 @@ export class Formatter {
     fixtures: Set<string>,
     pickleId: string,
     children: string[],
+    locks: string[],
   ) {
     const titleStr = this.quoted(title);
-    const tagsStr = this.testTags(tags);
+    const detailsStr = this.testDetails(tags, locks);
     const fixturesStr = sortFixtureNames([...fixtures]).join(', ');
     const fn = this.withSubFunction('test', specialTags);
-    const firstLine = `${fn}(${titleStr}, ${tagsStr}async ({ ${fixturesStr} }) => { // test: ${pickleId}`;
+    const firstLine = `${fn}(${titleStr}, ${detailsStr}async ({ ${fixturesStr} }) => { // test: ${pickleId}`;
     const lines = [
       firstLine, // prettier-ignore
       // We use test.fail() in the test body instead of test.fail('...', () => { ... })
@@ -216,8 +231,11 @@ export class Formatter {
     return specialTags.fail ? [`test.fail();`] : [];
   }
 
-  private testTags(tags: string[]) {
-    return tags.length ? `{ tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}] }, ` : '';
+  private testDetails(tags: string[], locks: string[]) {
+    const details: string[] = [];
+    if (tags.length) details.push(`tag: [${tags.map((tag) => this.quoted(tag)).join(', ')}]`);
+    if (locks.length) details.push(`lock: [${locks.map((lock) => this.quoted(lock)).join(', ')}]`);
+    return details.length ? `{ ${details.join(', ')} }, ` : '';
   }
 
   /**
@@ -258,6 +276,16 @@ export function extractPickleStepIdsFromLine(line: string) {
   }
 }
 
+export function extractSuiteLocationFromLine(line: string) {
+  const match = line.match(/\/\/ suite: (\d+),(\d+)$/);
+  if (match) {
+    return {
+      location: { line: Number(match[1]), column: Number(match[2]) },
+      index: match.index,
+    };
+  }
+}
+
 /**
  * Show (Given, When, Then, And, But) first, then user fixtures in alphabetical order.
  */
@@ -271,4 +299,12 @@ function sortFixtureNames(fixtureNames: string[]) {
     if (indexB !== -1) return 1;
     return a.localeCompare(b);
   });
+}
+
+export function renderContentHash(contentHash: string) {
+  return `// Source hash: ${contentHash}`;
+}
+
+export function renderSourceMapUrl(url: string) {
+  return `//# sourceMappingURL=${url}`;
 }

@@ -7,6 +7,7 @@ import fs from 'node:fs';
 import { expect } from '@playwright/test';
 
 export * from './runPlaywright.mjs';
+export * from './startProcess.mjs';
 export * from './TestDir.mjs';
 
 // At some point we will be able to run test.only()
@@ -30,6 +31,14 @@ export function expectCalls(prefix, stdout, expectedCalls) {
 
 export function countOfSubstring(str, substr) {
   return str.split(substr).length - 1;
+}
+
+export async function waitFor(predicate, timeout = 10_000) {
+  const start = Date.now();
+  while (!predicate()) {
+    if (Date.now() - start > timeout) throw new Error(`Timed out waiting.`);
+    await new Promise((resolve) => setTimeout(resolve, 25));
+  }
 }
 
 export function expectSubstringLines(actual, expected) {

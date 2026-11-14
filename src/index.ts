@@ -1,6 +1,7 @@
 export { defineBddConfig, defineBddProject } from './config';
 export { type BDDInputConfig } from './config/types';
 export { createBdd } from './steps/createBdd';
+export { createBddDecorators } from './steps/decorators/createBddDecorators';
 export { test, type BddTestFixtures } from './runtime/bddTestFixtures';
 export { type BddWorkerFixtures } from './runtime/bddWorkerFixtures';
 export { cucumberReporter } from './reporter/cucumber/wrapper';

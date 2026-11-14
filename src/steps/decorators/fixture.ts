@@ -6,11 +6,15 @@
  * Method decorators don't have access to Constructor in decoration phase,
  * only in runtime (that is too late).
  *
- * There was idea to use the following way of creating decorators,
- * that eliminates usage of @Fixture:
+ * An earlier proposal would have eliminated @Fixture:
  * const { Given, When, Then } = createBddDecorators(test, { pomFixture: 'myPOM' });
- * But due to above reason it's not possible.
- * Also it leads to cyclic dependencies: fixture imports test, and test imports fixture.
+ * This cannot provide the constructor during decoration, for the reason above.
+ * Passing test also creates cyclic dependencies: the fixture imports test,
+ * and test imports the fixture.
+ *
+ * Current implementation of createBddDecorators() configures method decorators
+ * but still requires @Fixture to register the class in the POM inheritance graph.
+ * `Fixture` is returned from createBddDecorators() just for convenience, to avoid having additional import.
  */
 
 import { TestType } from '@playwright/test';

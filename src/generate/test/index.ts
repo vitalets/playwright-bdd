@@ -23,6 +23,8 @@ import {
 import { DecoratorFixtureResolver } from './decoratorFixtureResolver';
 import { getStepHooksFixtureNames, getStepHooksToRun } from '../../hooks/step';
 import { ArityChecker } from './arity-checker';
+import { collectTestLocks } from './locks';
+import { DataTable } from '../../cucumber/DataTable';
 
 export type StepData = {
   pickleStep: PickleStep;
@@ -87,18 +89,21 @@ export class TestGen {
       .map((stepData) => {
         const { pickleStep, gherkinStep, fixtureNames } = stepData;
         const keywordEng = getKeywordEng(this.i18nKeywordsMap, gherkinStep.keyword);
-        const pickleStepIds = [pickleStep.id];
         testFixtureNames.push(keywordEng, ...fixtureNames);
         return this.formatter.step(
           keywordEng,
           pickleStep.text,
           pickleStep.argument,
           new Set(fixtureNames),
-          pickleStepIds,
+          [pickleStep.id],
         );
       });
 
     this.handleMissingDefinitions();
+    // Resolve generation-time skips before validating locks on tests that will not run.
+    const location = `${this.featureUri}:${stringifyLocation(this.pickle.location)}`;
+    const steps = this.stepsData.values();
+    const locks = this.skipped ? [] : collectTestLocks(steps, this.tags, location);
 
     return this.formatter.test(
       this.testTitle,
@@ -107,6 +112,7 @@ export class TestGen {
       new Set(testFixtureNames),
       this.pickle.id,
       stepLines,
+      locks,
     );
   }
 
@@ -180,8 +186,14 @@ export class TestGen {
     if (this.skipped) return;
 
     const matchedDefinitions = this.stepFinder.findDefinitions(
-      pickleStep.type,
-      pickleStep.text,
+      {
+        keywordType: pickleStep.type,
+        text: pickleStep.text,
+        docString: pickleStep.argument?.docString?.content,
+        dataTable: pickleStep.argument?.dataTable
+          ? new DataTable(pickleStep.argument.dataTable)
+          : undefined,
+      },
       this.tags,
     );
 

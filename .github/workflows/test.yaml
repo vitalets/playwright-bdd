@@ -25,8 +25,8 @@ jobs:
     outputs:
       versions: ${{ steps.get-versions.outputs.versions }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 24
       - id: get-min-pw-version
@@ -48,26 +48,23 @@ jobs:
   test:
     needs: get-playwright-versions
     if: needs.get-playwright-versions.outputs.versions != '[]'
-    # Older versions of PW don't support ubuntu-24.04
-    # See: https://github.com/microsoft/playwright/issues/30368
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     strategy:
       matrix:
         playwrightVersion: ${{ fromJson(needs.get-playwright-versions.outputs.versions) }}
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20 # run on the minimal supported Node version
+          # run on the minimal supported Node version
+          node-version: 20
           cache: 'npm'
       - run: npm ci
-      - run: >
-          npm install --min-release-age=0 @playwright/test@${{ matrix.playwrightVersion }}
-          @playwright/experimental-ct-react@${{ matrix.playwrightVersion }}
+      - run: npm install --min-release-age=0 @playwright/test@${{ matrix.playwrightVersion }}
 
       - run: npx playwright install --with-deps chromium
       - run: npm test
-      - uses: actions/upload-artifact@v6
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: test-results-${{ matrix.playwrightVersion }}

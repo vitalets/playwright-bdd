@@ -7,11 +7,7 @@ import { TestTypeCommon } from '../playwright/types';
 import { TestInfo } from '@playwright/test';
 import { BddTestData } from '../bddData/types';
 
-export type BddStepInfo = {
-  title: string;
-  docStringType?: string;
-  error?: unknown;
-};
+import { BddStepFixture } from './bddStepState';
 
 export type BddContext = {
   config: BDDConfig;
@@ -19,7 +15,7 @@ export type BddContext = {
   test: TestTypeCommon;
   testInfo: TestInfo;
   tags: string[];
-  step: BddStepInfo;
+  step: BddStepFixture;
   stepIndex: number; // step index in pickle (differs from index in scenario, b/c bg steps)
   bddTestData: BddTestData;
   // We don't store 'world' fixture here, as world can depend on page and lead to circular dependency.

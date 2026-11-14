@@ -5,19 +5,46 @@
  */
 import { getLocationByOffset } from '../../playwright/getLocationInFile';
 import { registerStepDefinition } from '../stepRegistry';
-import { AnyFunction, GherkinStepKeyword } from '../stepDefinition';
+import {
+  AnyFunction,
+  GherkinStepKeyword,
+  StepPattern,
+  ProvidedStepOptions,
+} from '../stepDefinition';
 import { parseStepDefinitionArgs, StepConstructorOptions, StepDefinitionArgs } from './shared';
+import { BddExpressionStepFn } from '../bddExpression/types';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
 
-export type CucumberStyleStepCtor<T extends AnyFunction> = <StepFn extends T>(
-  ...args: StepDefinitionArgs<StepFn>
-) => StepFn;
+export type CucumberStyleStepCtor<T extends AnyFunction, DefaultBddExpr extends boolean = false> = {
+  // Separate arities keep callback type errors on the callback rather than the step keyword.
+  <
+    Pattern extends StepPattern,
+    StepFn extends BddExpressionStepFn<T, Pattern, DefaultBddExpr, 'cucumber'>,
+  >(
+    pattern: Pattern,
+    fn: StepFn,
+  ): StepFn;
+  <
+    Pattern extends StepPattern,
+    BddExpr extends boolean = DefaultBddExpr,
+    StepFn extends BddExpressionStepFn<T, Pattern, BddExpr, 'cucumber'> = BddExpressionStepFn<
+      T,
+      Pattern,
+      BddExpr,
+      'cucumber'
+    >,
+  >(
+    pattern: Pattern,
+    options: ProvidedStepOptions & { bddExpr?: BddExpr },
+    fn: StepFn,
+  ): StepFn;
+};
 
 export function cucumberStepCtor(
   keyword: GherkinStepKeyword,
-  { customTest, worldFixture, defaultTags }: StepConstructorOptions,
+  { customTest, worldFixture, defaultTags, defaultBddExpr }: StepConstructorOptions,
 ) {
   return <StepFn extends AnyFunction>(...args: StepDefinitionArgs<StepFn>) => {
     const { pattern, providedOptions, fn } = parseStepDefinitionArgs(args);
@@ -25,11 +52,12 @@ export function cucumberStepCtor(
     registerStepDefinition({
       keyword,
       pattern,
-      arity: fn.length,
+      originalFn: fn,
       location: getLocationByOffset(3),
       customTest,
       worldFixture,
       defaultTags,
+      defaultBddExpr,
       providedOptions,
       // Here we define step function in Playwright-style,
       // and it internally calls the original cucumber-style function with world context.

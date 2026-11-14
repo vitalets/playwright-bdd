@@ -5,13 +5,20 @@
 import { execSync } from 'node:child_process';
 import assert from 'node:assert/strict';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { stripVTControlCharacters } from 'node:util';
+import { startProcess } from './startProcess.mjs';
 
 export const BDDGEN_CMD = 'node ../node_modules/playwright-bdd/dist/cli';
 export const PLAYWRIGHT_CMD = 'npx playwright test';
 export const DEFAULT_CMD = `${BDDGEN_CMD} && ${PLAYWRIGHT_CMD}`;
 
 const logger = console;
+const playwrightCliPath = fileURLToPath(import.meta.resolve('@playwright/test/cli'));
+
+export function startPlaywrightTest({ cwd, env } = {}) {
+  return startProcess([process.execPath, playwrightCliPath, 'test'], { cwd, env });
+}
 
 export function execPlaywrightTest(dir, cmd) {
   try {

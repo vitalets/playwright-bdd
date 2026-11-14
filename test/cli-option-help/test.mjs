@@ -10,11 +10,13 @@ test(`${testDir.name} (global)`, () => {
   expect(stdout).toContain(version);
   expect(stdout).toContain('-c, --config');
   expect(stdout).toContain('test [options]');
+  expect(stdout).toContain('clear-locks');
 });
 
 test(`${testDir.name} (test)`, () => {
   const stdout = execPlaywrightTest(testDir.name, `${BDDGEN_CMD} test -h`);
 
   expect(stdout).toContain('--tags');
+  expect(stdout).toContain('--watch');
   expect(stdout).toContain('-c, --config');
 });

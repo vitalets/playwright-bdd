@@ -2,15 +2,16 @@
  * Class to invoke step in playwright runner.
  */
 
+import { TestStepInfo } from '@playwright/test';
 import { PickleStepArgument } from '@cucumber/messages';
 import { getLocationInFile } from '../playwright/getLocationInFile';
-import { DataTable } from '../cucumber/DataTable';
 import { BddAutoInjectFixtures, getBddAutoInjectFixtures } from './bddTestFixturesAuto';
-import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { formatDuplicateStepsMessage, StepFinder } from '../steps/finder';
 import { MatchedStepDefinition } from '../steps/matchedStepDefinition';
 import { BddContext } from './bddContext';
+import { BddStepState } from './bddStepState';
 import { getStepHooksToRun, runStepHooks } from '../hooks/step';
+import { getSpecFileByFeatureFile } from '../generate/paths';
 
 export type BddStepFn = BddStepInvoker['invoke'];
 
@@ -26,73 +27,84 @@ export class BddStepInvoker {
   /**
    * Invokes particular step.
    */
+  // eslint-disable-next-line max-lines-per-function
   async invoke(
     stepText: string, // step text without keyword
     argument?: PickleStepArgument | null,
     providedFixtures?: Record<string, unknown>,
   ) {
     this.bddContext.stepIndex++;
-    this.bddContext.step.title = stepText;
-    this.bddContext.step.docStringType = undefined;
-    this.bddContext.step.error = undefined;
+    const stepState = this.getStepState();
+    stepState.initNewStep(stepText, argument);
 
     const stepTextWithKeyword = this.getBddStepData().textWithKeyword;
     const matchedDefinition = this.findStepDefinition(stepText, stepTextWithKeyword);
 
-    // Get location of step call in generated test file.
+    // Search the generated file because testInfo.file may already point to the mapped feature.
     // This call must be exactly here to have correct call stack (before async calls)
-    const location = getLocationInFile(this.bddContext.testInfo.file);
+    const location = getStepLocation(this.bddContext);
 
-    const stepParameters = await this.getStepParameters(
-      matchedDefinition,
-      stepText,
-      argument || undefined,
-    );
+    const stepParameters = await this.getStepParameters(matchedDefinition);
 
     const stepHookFixtures = this.getStepHookFixtures(providedFixtures || {});
     const stepFixtures = this.getStepFixtures(providedFixtures || {});
 
-    await runStepWithLocation(this.bddContext.test, stepTextWithKeyword, location, async () => {
-      await this.runBeforeStepHooks(stepHookFixtures);
-      return this.runWithAfterStepHooks(stepHookFixtures, () => {
-        return matchedDefinition.definition.fn.call(
-          // Although pw-style does not expect usage of world / this in steps,
-          // some projects request it for better migration process from cucumber.
-          // Here, for pw-style we pass empty object as world.
-          // See: https://github.com/vitalets/playwright-bdd/issues/208
-          this.world,
-          stepFixtures,
-          ...stepParameters,
-        );
-      });
+    const wrappedStepFn = async (info: TestStepInfo) => {
+      stepState.setInfo(info);
+      try {
+        await this.runBeforeStepHooks(stepHookFixtures);
+        if (stepState.skipped) return;
+        return await this.runWithAfterStepHooks(stepHookFixtures, () => {
+          return matchedDefinition.definition.fn.call(
+            // Although pw-style does not expect usage of world / this in steps,
+            // some projects request it for better migration process from cucumber.
+            // Here, for pw-style we pass empty object as world.
+            // See: https://github.com/vitalets/playwright-bdd/issues/208
+            this.world,
+            stepFixtures,
+            ...stepParameters,
+          );
+        });
+      } finally {
+        stepState.reset();
+      }
+    };
+
+    await this.bddContext.test.step(stepTextWithKeyword, wrappedStepFn, {
+      location,
+      timeout: matchedDefinition.definition.providedOptions?.timeout,
     });
   }
 
-  // eslint-disable-next-line max-statements
+  // eslint-disable-next-line visual/complexity
   private async runWithAfterStepHooks<T>(
     stepHookFixtures: Record<string, unknown> & BddAutoInjectFixtures,
     fn: () => T | Promise<T>,
   ) {
-    let stepError: unknown;
-    // we use a separate variable, because JS can throw undefined.
-    let hasStepError = false;
+    const stepState = this.getStepState();
     let result: T;
 
     try {
       result = await fn();
     } catch (e) {
-      stepError = e;
-      hasStepError = true;
-      this.bddContext.step.error = e;
+      // Native skip already annotated the step. Suppress only its control-flow error
+      // so AfterStep can run and any real cleanup failure takes precedence.
+      if (!stepState.isSkipError(e)) {
+        stepState.setError(e);
+      }
     }
+
+    // run after step hooks even if step was skipped in step body.
 
     try {
+      stepState.isAfterStepPhase = true;
       await this.runAfterStepHooks(stepHookFixtures);
     } catch (e) {
-      if (!hasStepError) throw e;
+      // Preserve the original body failure when an after-hook also fails.
+      if (stepState.error === undefined) stepState.setError(e);
     }
 
-    if (hasStepError) throw stepError;
+    if (stepState.error !== undefined) throw stepState.error;
     return result!;
   }
 
@@ -113,14 +125,14 @@ export class BddStepInvoker {
 
   private findStepDefinition(stepText: string, stepTextWithKeyword: string) {
     const { keywordType, gherkinStepLine } = this.getBddStepData();
+    const { docString, dataTable } = this.getStepState();
     const stepDefinitions = this.stepFinder.findDefinitions(
-      keywordType,
-      stepText,
+      { keywordType, text: stepText, docString, dataTable },
       this.bddContext.tags,
     );
 
-    const firstFoundDefinition = stepDefinitions[0];
-    if (firstFoundDefinition && stepDefinitions.length === 1) return firstFoundDefinition;
+    const firstDefinition = stepDefinitions[0];
+    if (stepDefinitions.length === 1 && firstDefinition) return firstDefinition;
 
     const fullStepLocation = `${this.bddContext.featureUri}:${gherkinStepLine}`;
 
@@ -137,18 +149,18 @@ export class BddStepInvoker {
     throw new Error(message);
   }
 
-  private async getStepParameters(
-    matchedDefinition: MatchedStepDefinition,
-    world: unknown,
-    argument?: PickleStepArgument,
-  ) {
-    const parameters = await matchedDefinition.getMatchedParameters(world);
+  private async getStepParameters(matchedDefinition: MatchedStepDefinition) {
+    const parameters = await matchedDefinition.getMatchedParameters(this.world);
+    if (parameters.params) this.getStepState().params = parameters.params;
 
-    if (argument?.dataTable) {
-      parameters.push(new DataTable(argument.dataTable));
-    } else if (argument?.docString) {
-      parameters.push(argument.docString.content);
-      this.bddContext.step.docStringType = argument.docString.mediaType;
+    // DocString and DataTable parameters already occupy slots, even when optional and absent.
+    if (!matchedDefinition.definition.hasBlockArguments) {
+      const { dataTable, docString } = this.getStepState();
+      if (dataTable) {
+        parameters.push(dataTable);
+      } else if (docString !== undefined) {
+        parameters.push(docString);
+      }
     }
 
     // todo: handle invalid code length
@@ -173,6 +185,12 @@ export class BddStepInvoker {
     return Object.assign({}, providedFixtures, getBddAutoInjectFixtures(this.bddContext));
   }
 
+  private getStepState() {
+    // we make BddStepFixture as public, but store BddStepState
+    // in context to have access to internal methods.
+    return this.bddContext.step as BddStepState;
+  }
+
   private getBddStepData() {
     const { stepIndex, bddTestData } = this.bddContext;
     const bddStepData = bddTestData.steps[stepIndex];
@@ -186,4 +204,14 @@ export class BddStepInvoker {
     }
     return bddStepData;
   }
+}
+
+/**
+ * Finds the current BDD step call in the generated spec file and returns its report location.
+ * Without source maps, the location points to the generated `.spec.js` file.
+ * With source maps, the stack frame is mapped back to the original `.feature` file.
+ */
+function getStepLocation({ config, featureUri }: BddContext) {
+  const generatedFile = getSpecFileByFeatureFile(config, featureUri);
+  return getLocationInFile(generatedFile);
 }

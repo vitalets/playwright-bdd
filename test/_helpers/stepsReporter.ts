@@ -4,6 +4,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { Reporter, TestCase, TestError, TestResult, TestStep } from '@playwright/test/reporter';
+import { playwrightVersion } from '../../src/playwright/utils';
 import { toPosixPath } from '../../src/utils/paths';
 import { stripAnsiEscapes } from '../../src/utils/stripAnsiEscapes';
 
@@ -56,7 +57,12 @@ export default class StepsReporter implements Reporter {
       .map((step) => {
         const location = stringifyLocation(step.location);
         const error = step.error ? stringifyError(step.error) : '';
-        const line = [`[${step.category}]`, step.title, location, error].filter(Boolean).join(' ');
+        // step.subtitle appeared in pw 1.63
+        const subtitle =
+          playwrightVersion >= '1.63' ? (step as TestStep & { subtitle?: string }).subtitle : '';
+        const line = [`[${step.category}]`, step.title, subtitle, location, error]
+          .filter(Boolean)
+          .join(' ');
         const childrenLines = this.stringifySteps(step.steps).map((l) => indent(l));
         lines.push(line, ...childrenLines);
       });

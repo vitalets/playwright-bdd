@@ -55,6 +55,7 @@ export class TestCaseRun {
     public test: pw.TestCase,
     public result: pw.TestResult,
     public hooks: AutofillMap<string, Hook>,
+    private sourceMapped: boolean,
   ) {
     this.id = this.generateTestCaseRunId();
     this.projectInfo = getProjectInfo(this.test);
@@ -205,7 +206,7 @@ export class TestCaseRun {
       // todo: filter by file earlier?
       return (
         pwStep.location?.file === this.test.location.file &&
-        pwStep.location?.line === bddStep.pwStepLine
+        pwStep.location?.line === (this.sourceMapped ? bddStep.gherkinStepLine : bddStep.pwStepLine)
       );
     });
   }

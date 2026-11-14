@@ -9,6 +9,7 @@ npm-debug.log
 # my
 /dist
 **/.features-gen/**/*.spec.js
+.bddgen.lock
 .cache
 test-results
 playwright-report

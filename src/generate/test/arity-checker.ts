@@ -8,6 +8,8 @@ import { getStepTextWithKeyword } from '../../gherkin/helpers';
 import { stringifyLocation } from '../../utils';
 import { relativeToCwd } from '../../utils/paths';
 import { BDDConfig } from '../../config/types';
+import { StepDefinition } from '../../steps/stepDefinition';
+import { stepDefinitions } from '../../steps/stepRegistry';
 
 export class ArityChecker {
   readonly errors: string[] = [];
@@ -25,7 +27,7 @@ export class ArityChecker {
     if (!this.shouldCheckArity(matchedDefinition)) return;
 
     const stepFnArgs = matchedDefinition.definition.arity;
-    const expectedArgs = this.getExpectedArgs(matchedDefinition, pickleStep);
+    const expectedArgs = this.getExpectedArgs(matchedDefinition);
 
     if (stepFnArgs >= expectedArgs.min && stepFnArgs <= expectedArgs.max) return;
 
@@ -43,23 +45,20 @@ export class ArityChecker {
     );
   }
 
-  private getExpectedArgs(matchedDefinition: MatchedStepDefinition, pickleStep: PickleStep) {
-    let expectedArgs = matchedDefinition.result.length;
+  private getExpectedArgs(matchedDefinition: MatchedStepDefinition) {
+    const { definition, result } = matchedDefinition;
+    // Cucumber expressions allow an extra DocString or DataTable argument even when absent.
+    // BDD expressions do too unless they already declare these parameters as slots.
+    const fixturesOffset = Number(isPlaywrightStyle(matchedDefinition));
+    let max = result.length + fixturesOffset + Number(!definition.hasBlockArguments);
+    if (definition.arity <= max) return { min: 0, max };
 
-    if (pickleStep.argument?.dataTable || pickleStep.argument?.docString) {
-      expectedArgs += 1;
+    for (const stepDefinition of getDefinitionsForMethod(definition)) {
+      const allowance = Number(!stepDefinition.hasBlockArguments);
+      max = Math.max(max, stepDefinition.parameterCount + fixturesOffset + allowance);
+      if (definition.arity <= max) break;
     }
-
-    if (isPlaywrightStyle(matchedDefinition)) {
-      // For Playwright-style steps the fixtures object is always passed first by the runtime,
-      // but when the step has no captures and no doc string / data table,
-      // the user may omit args entirely.
-      return expectedArgs === 0
-        ? { min: 0, max: 1 }
-        : { min: expectedArgs + 1, max: expectedArgs + 1 };
-    } else {
-      return { min: expectedArgs, max: expectedArgs };
-    }
+    return { min: 0, max };
   }
 
   private shouldCheckArity(matchedDefinition: MatchedStepDefinition) {
@@ -93,4 +92,12 @@ export class ArityChecker {
 
 function isPlaywrightStyle({ definition }: MatchedStepDefinition) {
   return !definition.isCucumberStyle() && !definition.isDecorator();
+}
+
+function getDefinitionsForMethod(stepDefinition: StepDefinition) {
+  if (!stepDefinition.isDecorator()) return [];
+  const { originalFn, pomNode } = stepDefinition;
+  return stepDefinitions.filter(
+    (definition) => definition.originalFn === originalFn && definition.pomNode === pomNode,
+  );
 }

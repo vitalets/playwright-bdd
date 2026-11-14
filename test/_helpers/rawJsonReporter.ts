@@ -47,6 +47,8 @@ export default class RawJsonReporter implements Reporter {
 function dropParentRecursive(steps: TestStep[]): TestStep[] {
   return steps.map((step) => {
     delete step.parent;
+    // Playwright's TeleTestStep has a circular back-reference during report merging.
+    delete (step as TestStep & { _result?: unknown })._result;
     if (step.steps?.length) step.steps = dropParentRecursive(step.steps);
     return step;
   });

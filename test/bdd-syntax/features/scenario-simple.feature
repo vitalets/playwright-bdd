@@ -5,5 +5,9 @@ Feature: scenario-simple
     When Action 1
     Then Passed int arg 42 to equal 42
     And Passed string arg "foo" to equal "foo"
-    And Passed custom type arg red to equal "red"
+
+  Scenario: Custom parameter types
+    Given Set context prop "greeting" = "hello"
+    Then Passed custom type arg red to equal "red"
     And Custom param-no-transformer is "dog"
+    And World value "greeting" equals "hello"

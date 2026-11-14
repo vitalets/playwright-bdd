@@ -9,7 +9,6 @@ import { fixtureParameterNames } from '../playwright/fixtureParameterNames';
 import { KeyValue, PlaywrightLocation, TestTypeCommon } from '../playwright/types';
 import { callWithTimeout } from '../utils';
 import { getLocationByOffset } from '../playwright/getLocationInFile';
-import { runStepWithLocation } from '../playwright/runStepWithLocation';
 import { HookConstructorOptions, setTagsExpression } from './shared';
 import { TagsExpression } from '../steps/tags';
 
@@ -103,7 +102,7 @@ async function runWorkerHook({ test, hook, fixtures }: WorkerHookRunInfo) {
   // See: https://github.com/microsoft/playwright/issues/33750
   // So all afterAll hooks are called under AfterAll step (with type = 'hook' in reporter)
   if (hook.type === 'beforeAll') {
-    await runStepWithLocation(test, stepTitle, hook.location, hookFn);
+    await test.step(stepTitle, hookFn, { location: hook.location });
   } else {
     await hookFn();
   }

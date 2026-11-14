@@ -1,9 +1,9 @@
 import { TestInfo } from '@playwright/test';
-import { BddStepInfo } from '../../../src/runtime/bddContext';
+import type { BddTestFixtures } from 'playwright-bdd';
 
 export type World = {
   testInfo: TestInfo;
   tags: string[];
-  step: BddStepInfo;
+  step: BddTestFixtures['$step'];
   [key: string]: unknown;
 };

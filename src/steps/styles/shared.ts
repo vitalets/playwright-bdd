@@ -16,4 +16,5 @@ export type StepConstructorOptions = {
   worldFixture?: string;
   customTest?: TestTypeCommon;
   defaultTags?: string;
+  defaultBddExpr?: boolean;
 };

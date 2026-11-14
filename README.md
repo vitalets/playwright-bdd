@@ -28,15 +28,44 @@ Run BDD tests with Playwright runner
   📝 <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
 </p>
 
-## Why BDD in the Era of AI?
+## BDD in the Era of AI
 
-[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes requirements through `Given / When / Then` steps, giving AI agents a clear, executable target. These steps are easy to read and refine during planning. They set practical constraints for generated code. They run as tests and stay aligned with the implementation over time, unlike plain markdown specs that tend to grow into walls of text.
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text format:
 
-Try the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) to bring the agentic BDD workflow into your project.
+```feature
+Feature: Buying a pizza
 
-## Why Playwright Runner?
+  Scenario: Success order
+    Given I am on the "Pepperoni" pizza page
+    When I add 2 pizzas to the cart
+    And I complete checkout
+    Then I see an order confirmation:
+      | Product  | Pepperoni  |
+      | Quantity | 2          |
+```
 
-Playwright can be used as a [browser automation library](https://playwright.dev/docs/library) with any test runner, such as CucumberJS or Vitest. However, it is most powerful when used with the **Playwright test runner**. Playwright-BDD converts BDD scenarios into native Playwright tests, so you get all Playwright runner features out of the box:
+ In the AI era, these scenarios become valuable artifacts because they are both:
+
+* ✅ **Readable**: You can easily draft and refine scenarios with agents.
+* ✅ **Executable**: You can run the scenarios as automated tests to verify the implementation.
+
+Unlike plain Markdown specs, BDD does not just describe a feature, it makes the spec live and keeps it aligned with the codebase.
+
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. 
+
+To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
+
+> **The ultimate goal:** review only feature files and let automated guardrails check scenario compliance.
+
+## How Playwright-BDD works
+
+Playwright-BDD transforms feature files into Playwright tests and wires up step implementations:
+
+<img align="center" alt="Feature file transformed into a Playwright test" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/playwright-bdd-transformation.png"/>
+
+## Why Playwright runner?
+
+[Playwright](https://playwright.dev/) provides both browser automation APIs and a powerful test runner. Playwright-BDD converts `.feature` files into native Playwright tests, so you can use all Playwright runner capabilities:
 
 - Automatic browser setup and cleanup
 - Auto-waiting for page elements
@@ -46,17 +75,12 @@ Playwright can be used as a [browser automation library](https://playwright.dev/
 - Playwright fixtures
 - [...and more](https://playwright.dev/docs/library#key-differences)
 
-## How It Works
-
-<img align="center" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/schema.png"/>
-
 ## Extras
 Playwright-BDD has several unique features:
 
 - 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
 - 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods  
 - 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)  
-- ✨ [Exporting steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI  
 - ♻️ [Re-usable step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)  
 
 ## Documentation
@@ -67,12 +91,9 @@ Check out the [documentation website](https://vitalets.github.io/playwright-bdd/
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
-## Playwright Versions Support
+## Playwright versions support
 
-`playwright-bdd` supports all **non-deprecated** versions of Playwright. To check which Playwright versions are currently deprecated, run:
-```bash
-npm show @playwright/test@1 deprecated
-```
+`playwright-bdd` supports the latest stable Playwright release and the **10 previous releases**.
 
 ## Changelog
 Check out the latest changes in the [CHANGELOG.md](https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md).
@@ -88,7 +109,7 @@ Great thanks to the **amazing people and companies** already supporting Playwrig
 </p>
 
 <p align="center">
-<a href="https://www.testmuai.com/?utm_source=playwrightbdd&utm_medium=sponsor" target="_blank">
+<a href="https://www.testmuai.com/?utm_medium=sponsor&utm_source=playwright-bdd" target="_blank">
     <picture>
       <source media="(prefers-color-scheme: dark)" srcset="./docs/_media/sponsors/testmu-ai-white.svg" />
       <source media="(prefers-color-scheme: light)" srcset="./docs/_media/sponsors/testmu-ai-black.svg" />
@@ -99,7 +120,7 @@ Great thanks to the **amazing people and companies** already supporting Playwrig
 
 <p align="center">
 
-<!-- sponsors --><a href="https://github.com/alescinskis"><img src="https:&#x2F;&#x2F;github.com&#x2F;alescinskis.png" width="60px" alt="User avatar: Arturs Leščinskis" /></a><a href="https://github.com/alexhvastovich"><img src="https:&#x2F;&#x2F;github.com&#x2F;alexhvastovich.png" width="60px" alt="User avatar: " /></a><a href="https://github.com/FrancescoBorzi"><img src="https:&#x2F;&#x2F;github.com&#x2F;FrancescoBorzi.png" width="60px" alt="User avatar: Francesco Borzì" /></a><!-- sponsors -->
+<!-- sponsors --><a href="https://github.com/alescinskis"><img src="https:&#x2F;&#x2F;github.com&#x2F;alescinskis.png" width="60px" alt="User avatar: Arturs Leščinskis" /></a><a href="https://github.com/alexhvastovich"><img src="https:&#x2F;&#x2F;github.com&#x2F;alexhvastovich.png" width="60px" alt="User avatar: " /></a><!-- sponsors -->
 
 </p>
 
@@ -115,13 +136,13 @@ Feel free to report a bug, propose a feature or share your experience:
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## Other Playwright tools
+## My other Playwright tools
 
 * [playwright-timeline-reporter](https://github.com/vitalets/playwright-timeline-reporter) - Interactive timeline report for Playwright test runs.
 * [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.
 * [request-mocking-protocol](https://github.com/vitalets/request-mocking-protocol) - Mock server-side API calls in Playwright.
 * [playwright-network-cache](https://github.com/vitalets/playwright-network-cache) - Speed up Playwright tests by caching network requests on the filesystem.
-* [playwright-magic-steps](https://github.com/vitalets/playwright-magic-steps) - Auto-transform JavaScript comments into Playwright steps.
+* [playwright-webext](https://github.com/vitalets/playwright-webext) - Testing browser extensions with Playwright.
 
 ## License
 This project is licensed under the [MIT License](https://github.com/vitalets/playwright-bdd/blob/main/LICENSE), allowing you to use, modify, and share the code freely, even for commercial purposes. Enjoy building something amazing! 🎉

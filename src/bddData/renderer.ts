@@ -3,7 +3,7 @@
  */
 import { getStepTextWithKeyword } from '../gherkin/helpers';
 import { indent } from '../generate/formatter';
-import { SourceMapper } from '../generate/sourceMapper';
+import { FeatureToTestMapper } from '../generate/featureToTestMapper';
 import { TestGen } from '../generate/test';
 import { BddTestData } from './types';
 
@@ -12,7 +12,7 @@ export class BddDataRenderer {
 
   constructor(
     private tests: TestGen[],
-    private sourceMapper: SourceMapper,
+    private featureToTestMapper: FeatureToTestMapper,
   ) {}
 
   renderFixture() {
@@ -37,7 +37,7 @@ export class BddDataRenderer {
     const steps = [...test.stepsData.values()].map(
       ({ pickleStep, gherkinStep, isBg, pomFixtureName, matchedDefinition }) => {
         return {
-          pwStepLine: this.sourceMapper.getPwStepLine(pickleStep),
+          pwStepLine: this.featureToTestMapper.getPwStepLine(pickleStep),
           gherkinStepLine: gherkinStep.location.line,
           keywordType: pickleStep.type,
           textWithKeyword: getStepTextWithKeyword(gherkinStep.keyword, pickleStep.text),
@@ -49,7 +49,7 @@ export class BddDataRenderer {
     );
 
     return {
-      pwTestLine: this.sourceMapper.getPwTestLine(test.pickle),
+      pwTestLine: this.featureToTestMapper.getPwTestLine(test.pickle),
       pickleLine: test.pickle.location.line,
       skipped: test.skipped || undefined,
       timeout: test.ownTimeout,
