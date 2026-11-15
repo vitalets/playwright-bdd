@@ -1,12 +1,12 @@
 # Playwright-BDD v10 (beta)
 
-The upcoming Playwright-BDD **v10** release brings several significant improvements to the development and testing experience. We're releasing this beta to help catch regressions in real-world projects before the stable release. 
+The upcoming Playwright-BDD **v10** release brings several significant improvements. We're releasing this beta to help catch regressions in real-world projects before the stable release. 
 
-You are welcome to try it with your existing test suite and report any issues you encounter. Your [feedback](https://github.com/vitalets/playwright-bdd/issues) is very appeciated!
+You are welcome to try it and report any issues. Your [feedback](https://github.com/vitalets/playwright-bdd/issues) is very appeciated!
 
 ## Installing the beta
 
-Install from the `next` channel:
+Install `playwright-bdd@next`:
 
 ```sh
 npm install --save-dev playwright-bdd@next
@@ -18,39 +18,15 @@ Then re-run your tests to ensure the baseline works:
 npx bddgen && npx playwright test
 ```
 
-Now explore the new features and try them.
+Now explore the new features.
 
 ## What's new
 
-- [Source maps](#source-maps)
 - [Native `--watch` mode](#native-watch-mode)
+- [Source maps](#source-maps)
 - [BDD Expressions](#bdd-expressions)
 - [Playwright test locks](#playwright-test-locks)
 - [Step-level attachments and skip](#step-level-attachments-and-skip)
-
-## Source maps
-
-Source maps connect generated Playwright tests to the original `.feature` files. They improve both VS Code integration and step display in the Playwright HTML report.
-
-```ts
-const testDir = defineBddConfig({
-  sourceMaps: true,
-});
-```
-
-Run `bddgen` again after enabling this option. VS Code integration requires the Playwright extension **v1.1.20+**.
-
-Keep `npx bddgen --watch` running while editing so scenarios run against freshly generated tests after you save your changes.
-
-Run and debug scenarios directly from feature files in VS Code:
-
-<video controls preload="metadata" style="width: 65%; height: auto; display: block; margin: 1em 0;" aria-label="Source maps support demo">
-  <source src="release-notes/beta/v10/_media/v10-source-maps.mp4" type="video/mp4">
-</video>
-
-In the Playwright HTML report, steps now point to their Gherkin locations. Expand a step to see the scenario source with the matching line highlighted:
-
-![Gherkin step locations and highlighted source in the Playwright HTML report](./_media/v10-source-maps-html-report.png ':size=65%')
 
 ## Native watch mode
 
@@ -64,20 +40,59 @@ npx bddgen --watch
 
 ![Native bddgen watch mode regenerating tests after a feature file changes](./_media/v10-watch-mode.png ':size=65%')
 
-If generation fails, watch mode stays active and retries after your next edit.
+Try to change source files, feature files, or step definition - the test generation should re-run automatically.
+
+By default, watch mode watches the directory containing the nearest `package.json`, starting from your Playwright config directory, and respects its `.gitignore`. If no `package.json` is found, it watches the config directory. You can customize the watched paths with the `watch` option:
+
+```ts
+const testDir = defineBddConfig({
+  watch: {
+    packageRoot: false, // Disable watching the entire package directory.
+    include: ['./src', '../shared'], // Watch additional files or directories.
+    exclude: ['./src/generated'], // Ignore specific files or directories.
+  },
+});
+```
+
+Paths are relative to your Playwright config file and do not support globs. Feature and step definition directories, and the config file are always watched.
 
 We recommend enabling the `lockFile` option when using watch mode, especially when coding agents also run tests in the background. It coordinates generation processes and waits for active BDD workers before rewriting generated tests, preventing conflicts with ongoing test runs.
 
 ```ts
 const testDir = defineBddConfig({
-  sourceMaps: true,
   lockFile: true,
 });
 ```
 
+## Source maps
+
+Source maps connect generated Playwright tests to the original `.feature` files. They improve both VS Code integration and step display in the Playwright HTML report.
+
+```ts
+const testDir = defineBddConfig({
+  sourceMaps: true,
+});
+```
+
+Run `bddgen` again after enabling this option. 
+
+Now you can run and debug scenarios directly from feature files in Playwright VS Code Extension (**v1.1.20+**). 
+
+Check the video:
+
+<video controls preload="metadata" style="width: 65%; height: auto; display: block; margin: 1em 0;" aria-label="Source maps support demo">
+  <source src="release-notes/beta/v10/_media/v10-source-maps.mp4" type="video/mp4">
+</video>
+
+Keep `npx bddgen --watch` running while editing, so scenarios run against freshly generated tests after you save your changes. Don't forget to enable autosave in your IDE.
+
+In the Playwright HTML report, steps now point to their Gherkin locations. Expand a step to see the scenario source with the matching line highlighted:
+
+![Gherkin step locations and highlighted source in the Playwright HTML report](./_media/v10-source-maps-html-report.png ':size=65%')
+
 ## BDD Expressions
 
-[BDD Expressions](https://github.com/vitalets/bdd-expressions) is an experimental syntax that lets you write more powerful step definitions and combine multiple steps into one. It extends [Cucumber Expressions](https://github.com/cucumber/cucumber-expressions) with named parameters, inline choices, enhanced optional groups, DataTable/DocString declarations, and automatic type inference.
+[BDD Expressions](https://github.com/vitalets/bdd-expressions) is an alternative syntax for step definitions. It extends [Cucumber Expressions](https://github.com/cucumber/cucumber-expressions) and lets you combine more steps with one powerfull expression. It offers named parameters, inline choices, enhanced optional groups, DataTable/DocString declarations, and automatic type inference.
 
 You can enable BDD Expressions for individual steps using the `bddExpr: true` option:
 
@@ -95,15 +110,19 @@ No need to define parameter types manually, they are automatically inferred from
 
 ### Use optional groups to combine steps
 
-Combine similar step definitions into one:
+Combine similar step definitions into one, using optional text with params:
 
-```diff
-+ I buy {int} apple(s)( for {string})
-- I buy {int} apple(s)
-- I buy {int} apple(s) for {string}
+```
+I buy {int} apple(s)( for {string})
 ```
 
-The step definition accepts required `count` and optional `recipient` parameters:
+It replaces these two step definitions:
+```
+I buy {int} apple(s)
+I buy {int} apple(s) for {string}
+```
+
+In the step function you'll get required `count` and optional `recipient`:
 
 ```ts
 Given('I buy {int} apple(s)( for {string})', { bddExpr: true }, async ({}, count, recipient) => {
@@ -124,27 +143,33 @@ Given I buy 2 apples for "Alice"
 
 ### Use named params
 
-Instead of positional arguments, you can use `$step.params` that provides typed params object:
+You can define named params as `:name` and access them via `$step.params`:
+
+```
+I add :product to the cart
+```
+
+Here `:product` is named param, with the default type `{string}`. The step funciton can access product as `$step.params.product`:
 
 ```ts
-Given('I add :product to the cart( with quantity :quantity{int})', { bddExpr: true }, ({ $step }) => {
-  const { product, quantity } = $step.params;
+Given('I add :product to the cart', { bddExpr: true }, ({ $step }) => {
+  const { product } = $step.params;
   // ...
 });
 ```
+
+Named params are also automatically typed:
 
 <img src="release-notes/beta/v10/_media/bdd-expression-params.png" alt="Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined" style="width: 100%; max-width: 720px; height: auto;">
 
 ### DocString and DataTable
 
-The built-in `{DocString}` and `{DataTable}` parameters let you define a doc string or data table right in the expression.
+BDD-expressions provide built-in `{DocString}` and `{DataTable}` parameters, that let you require DocString or DataTable right from the expression.
 
 Example of step that requires DataTable:
 
-```ts
-Given('the following users exist:{DataTable}', ({ $step }) => {
-  // use `$step.dataTable` to access data
-});
+```
+the following users exist:{DataTable}
 ```
 
 ✅ Matches:
@@ -162,18 +187,26 @@ Given the following users exist:
 Given the following users exist:
 ```
 
-A `{DataTable}` can be optional that is very useful in some cases:
+Step function can use `$step.dataTable` to access data:
 
 ```ts
-Then('the cart contains {int} products(:{DataTable})', ({ $step }) => {
-  // ...
+Given('the following users exist:{DataTable}', ({ $step }) => {
+  console.log($step.dataTable.hashes());
 });
 ```
 
-It matches both of these steps:
+A `{DataTable}` can be optional that is very useful in some cases:
+
+```
+the cart contains {int} product(s)(:{DataTable})
+```
+
+It matches all these steps:
 
 ```gherkin
 Then the cart contains 0 products
+Then the cart contains 1 products:
+  | pizza |
 Then the cart contains 2 products:
   | pizza |
   | pepsi |
@@ -185,7 +218,9 @@ Check out the [Online Playground](https://vitalets.github.io/bdd-expressions/).
 
 ## Playwright test locks
 
-Use [Playwright test locks](https://playwright.dev/docs/test-parallel#test-locks) by declaring a `lock` on steps that use a shared resource:
+Use [Playwright test locks](https://playwright.dev/docs/test-parallel#test-locks) to restrict parallel run of particular tests. You can set the `lock` option on a step, and then all scenarios using this step will have that lock.
+
+For example:
 
 ```ts
 Given('the user settings are reset', { lock: 'user-settings' }, async ({ request }) => {
@@ -193,13 +228,27 @@ Given('the user settings are reset', { lock: 'user-settings' }, async ({ request
 });
 ```
 
-Scenarios using these steps inherit their locks. Tests sharing a lock cannot run at the same time within the same Playwright run.
+These scenarios will not run in parallel:
 
-Locks apply to whole tests and require **Playwright 1.63 or later**.
+```gherkin
+Feature: User settings
+
+  Scenario: Change the display name
+    Given the user settings are reset
+    When the user changes their display name to "Alice"
+    Then the display name should be "Alice"
+
+  Scenario: Change the language
+    Given the user settings are reset
+    When the user changes their language to "Spanish"
+    Then the language should be "Spanish"
+```
+
+Locks require **Playwright 1.63+**.
 
 ## Step-level attachments and skip
 
-Use `$step.attach()` to attach a file or value to the current BDD step:
+You can attach a file or value to the specific BDD step instead of entire test. Use `$step.attach()` for that:
 
 ```ts
 Then('the response is valid', async ({ $step }) => {
@@ -212,7 +261,7 @@ Then('the response is valid', async ({ $step }) => {
 
 ![Step-level attachment in the Playwright HTML report](./_media/v10-step-attachments.png ':size=65%')
 
-Use `$step.skip()` to stop the current step and continue with the next one:
+Use `$step.skip()` to conditionally skip the current step and continue with the next one:
 
 ```ts
 Given('the local payment mock is ready', async ({ $step }) => {
@@ -223,7 +272,7 @@ Given('the local payment mock is ready', async ({ $step }) => {
 
 Call it from the step body or a `BeforeStep` hook. Calling it from `AfterStep` is not supported.
 
-The skip reason appears in Cucumber reports. A scenario with a skipped step may appear as passed in Playwright and skipped in Cucumber.
+The skip reason appears in Cucumber reports:
 
 ![Skipped step with the reason "Local environment only" in the Cucumber report](./_media/v10-step-skip-cucumber.png ':size=40%')
 
@@ -233,11 +282,11 @@ Use `$step.info` to access Playwright’s step information.
 
 ### Upgrade Playwright to 1.53+
 
-The minimum supported Playwright version is now **1.53**. Playwright-BDD supports the latest stable minor and the 10 previous minor releases.
+The minimum supported Playwright version is now **1.53**. Playwright-BDD supports the latest stable minor and the **10** previous releases.
 
 ### Replace `junit-modern` with `junit`
 
-The deprecated reporter alias has been removed. Rename it in your configuration:
+The deprecated `junit-modern` reporter alias has been removed. Rename it to `junit` in your configuration:
 
 ```js
 // Before
