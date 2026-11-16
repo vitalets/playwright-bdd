@@ -44,18 +44,19 @@ Feature: Buying a pizza
       | Quantity | 2          |
 ```
 
- In the AI era, these scenarios become valuable artifacts because they are both:
+ In the AI era, these scenarios become valuable artifacts because they are:
 
 * ✅ **Readable**: You can easily draft and refine scenarios with agents.
-* ✅ **Executable**: You can run the scenarios as automated tests to verify the implementation.
+* ✅ **Executable**: You can run the scenarios as automated tests.
 
-Unlike plain Markdown specs, BDD does not just describe a feature, it makes the spec live and keeps it aligned with the codebase.
+Unlike plain Markdown docs, BDD makes the spec live and keeps it aligned with the codebase.
 
 Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. 
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
 
-> **The ultimate goal:** review only feature files and let automated guardrails check scenario compliance.
+> [!NOTE]
+> **The ultimate goal:** review only feature files and let automated guardrails do the rest.
 
 ## How Playwright-BDD works
 
@@ -84,7 +85,11 @@ Playwright-BDD has several unique features:
 - ♻️ [Re-usable step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)  
 
 ## Documentation
+
 Check out the [documentation website](https://vitalets.github.io/playwright-bdd/#/).
+
+> [!TIP]
+> **Playwright-BDD v10 is available in beta.** [Try new features →](https://vitalets.github.io/playwright-bdd/#/release-notes/beta/v10/index)
 
 ## Demos
 
