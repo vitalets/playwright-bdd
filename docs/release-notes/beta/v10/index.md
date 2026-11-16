@@ -74,7 +74,7 @@ const testDir = defineBddConfig({
 });
 ```
 
-Run `bddgen` again after enabling this option. 
+Run `npx bddgen` again after enabling this option. 
 
 Now you can run and debug scenarios directly from feature files in Playwright VS Code Extension (**v1.1.20+**). 
 
