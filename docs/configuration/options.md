@@ -275,9 +275,7 @@ The fixtures, count, and optional doc string parameters are allowed; the fourth 
 - **Type:** `boolean`
 - **Default:** `false`
 
-Use a word-based index to speed up step matching. For each step definition, the index picks one long keyword that must appear in any matching step text and only compares definitions that share that keyword. Patterns that are too complex for a safe keyword stay on the full-scan list and are still compared with every step. `missingSteps` reports a step that matches no definition. A step that still matches another definition is bound to that definition, so compare a run with and without the option when the bound step looks wrong. Set the option in `defineBddConfig()` to apply it during generation and when tests run.
-
-Also available for generation only as a CLI flag: `bddgen --use-step-index`.
+Use a word-based index to speed up step matching. For each Cucumber Expression step definition, the index picks one long literal word that must appear in every matching step text and only compares definitions that share that word. Optional text, parameters, and words present in only some alternation branches are not used as the index word. RegExp definitions and BDD Expressions always stay on the full-scan list and are compared with every step. Set the option in `defineBddConfig()` to apply it during generation and when tests run.
 
 ## verbose
 

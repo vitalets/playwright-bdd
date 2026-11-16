@@ -27,7 +27,6 @@ type TestCommandOptions = ConfigOption & {
   tags?: string;
   verbose?: string;
   watch?: boolean;
-  useStepIndex?: boolean;
 };
 
 export const testCommand = new Command('test')
@@ -36,7 +35,6 @@ export const testCommand = new Command('test')
   .option('--tags <expression>', `Tags expression to filter scenarios for generation`)
   .option('--verbose', `Verbose mode (default: ${Boolean(defaults.verbose)})`)
   .option('--watch', `Watch mode (default: false)`)
-  .option('--use-step-index', `Use a word index to speed up step matching (default: false)`)
   // eslint-disable-next-line max-statements
   .action(async () => {
     const opts = testCommand.optsWithGlobals<TestCommandOptions>();
@@ -72,7 +70,6 @@ function mergeCliOptions(configs: BDDConfig[], opts: TestCommandOptions) {
   configs.forEach((config) => {
     if ('tags' in opts) config.tags = opts.tags;
     if ('verbose' in opts) config.verbose = Boolean(opts.verbose);
-    if ('useStepIndex' in opts) config.useStepIndex = Boolean(opts.useStepIndex);
   });
 }
 

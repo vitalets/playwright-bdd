@@ -18,9 +18,5 @@ test(`${testDir.name} (test)`, () => {
 
   expect(stdout).toContain('--tags');
   expect(stdout).toContain('--watch');
-  expect(stdout).toContain('--use-step-index');
-  expect(stdout.replace(/\s+/g, ' ')).toContain(
-    'Use a word index to speed up step matching (default: false)',
-  );
   expect(stdout).toContain('-c, --config');
 });

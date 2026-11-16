@@ -1,24 +1,27 @@
-/**
- * Word-based index for fast step-definition matching.
- * Activated by `--use-step-index` or `useStepIndex`.
- * Built once per definition list and kept until the process exits.
- */
+/** Word-based index for fast step-definition matching. */
+import { CucumberExpression } from '@cucumber/cucumber-expressions';
 import { StepDefinition, StepMatchInput } from '../stepDefinition';
 import { MatchedStepDefinition } from '../matchedStepDefinition';
-import { cucumberChunks, longWords } from './cucumberChunks';
-import { regexpChunks } from './regexpChunks';
+import { requiredLiterals } from './requiredLiterals';
 
 let indexedDefinitions: StepDefinition[] | null = null;
 let indexedLength = -1;
 let wordBuckets = new Map<string, StepDefinition[]>();
 let scanList: StepDefinition[] = [];
+// Repeated step texts are cached, but not steps with DocString or DataTable, since their match depends on the block.
+let matchCache = new Map<string, MatchedStepDefinition[]>();
 
 export function matchWithStepIndex(
   definitions: StepDefinition[],
   step: StepMatchInput,
 ): MatchedStepDefinition[] {
   ensureIndex(definitions);
-  return matchCandidates(step);
+  if (!isCacheable(step)) return matchCandidates(step);
+  const cached = matchCache.get(step.text);
+  if (cached) return cached;
+  const matched = matchCandidates(step);
+  matchCache.set(step.text, matched);
+  return matched;
 }
 
 function matchCandidates(step: StepMatchInput): MatchedStepDefinition[] {
@@ -48,6 +51,7 @@ function rebuildIndex(definitions: StepDefinition[]) {
   indexedLength = definitions.length;
   wordBuckets = new Map();
   scanList = [];
+  matchCache = new Map();
   for (const definition of definitions) addToIndex(definition);
 }
 
@@ -64,29 +68,34 @@ function addToIndex(definition: StepDefinition) {
 
 function indexWord(definition: StepDefinition): string | null {
   // BDD Expressions (`[click/tap on]`, `:name`) are a different grammar.
-  // Indexing them with the Cucumber parser can require a word from one alternative only.
   if (definition.usesBddExpression()) return null;
-  const chunks = extractChunks(definition.pattern);
-  return pickLongestWord(chunks);
+  // RegExp stays on the scan list: source parsing has edge cases (e.g. /abcdefghij{foo|bar}/ matches "bar}").
+  if (definition.pattern instanceof RegExp) return null;
+  const expression = definition.expression as CucumberExpression;
+  const literals = requiredLiterals(expression);
+  return pickLongest(literals);
 }
 
-function extractChunks(pattern: string | RegExp): string[] {
-  if (typeof pattern === 'string') return cucumberChunks(pattern);
-  if (pattern instanceof RegExp && !/[im]/.test(pattern.flags)) {
-    return regexpChunks(pattern.source);
-  }
-  return [];
+// Shorter words are shared by too many definitions to shrink the candidate set.
+const MIN_INDEX_WORD_LENGTH = 8;
+const LONG_WORD = new RegExp(`[A-Za-z][A-Za-z0-9]{${MIN_INDEX_WORD_LENGTH - 1},}`, 'g');
+
+function isCacheable(step: StepMatchInput): boolean {
+  return step.docString === undefined && step.dataTable === undefined;
 }
 
-function pickLongestWord(chunks: string[]): string | null {
+function pickLongest(literals: string[]): string | null {
+  return longestWord(literals.flatMap(longWords));
+}
+
+function longWords(text: string): string[] {
+  return text.match(LONG_WORD) ?? [];
+}
+
+function longestWord(words: string[]): string | null {
   let best = '';
-  for (const chunk of chunks) best = longestInChunk(chunk, best);
-  return best || null;
-}
-
-function longestInChunk(chunk: string, best: string): string {
-  for (const word of longWords(chunk)) {
+  for (const word of words) {
     if (word.length > best.length) best = word;
   }
-  return best;
+  return best || null;
 }
