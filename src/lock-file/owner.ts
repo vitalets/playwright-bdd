@@ -89,7 +89,7 @@ async function removeLockIfUnchanged(lockPath: string, snapshot: LockSnapshot) {
   if (!currentSnapshot || currentSnapshot.content !== snapshot.content) return !currentSnapshot;
   try {
     await fs.promises.rm(lockPath);
-    logger.warn(`Removed stale playwright-bdd lock: ${lockPath}`);
+    // TODO: Add playwright-bdd runtime debug logging for stale lock removal.
     return true;
   } catch (error) {
     if (hasErrorCode(error, 'ENOENT')) return true;
