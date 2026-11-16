@@ -84,6 +84,10 @@ Check the video:
   <source src="release-notes/beta/v10/_media/v10-source-maps.mp4" type="video/mp4">
 </video>
 
+You might need to reload the extension to get these green arrows:
+
+<img src="release-notes/beta/v10/_media/v10-reload-extension.png" alt="Reload button in the VS Code Testing panel" style="width: 354px; max-width: 100%; height: auto;">
+
 Keep `npx bddgen --watch` running while editing, so scenarios run against freshly generated tests after you save your changes. Don't forget to enable autosave in your IDE.
 
 In the Playwright HTML report, steps now point to their Gherkin locations. Expand a step to see the scenario source with the matching line highlighted:
@@ -108,7 +112,7 @@ No need to define parameter types manually, they are automatically inferred from
 
 <img src="release-notes/beta/v10/_media/bdd-expression-positional-inference.png" alt="Editor tooltip showing the positional count parameter inferred as number." style="width: 100%; max-width: 720px; height: auto;">
 
-### Use optional groups to combine steps
+### Optional groups to combine steps
 
 Combine similar step definitions into one, using optional text with params:
 
@@ -141,7 +145,7 @@ Given I buy 1 apple
 Given I buy 2 apples for "Alice"
 ```
 
-### Use named params
+### Named params
 
 You can define named params as `:name` and access them via `$step.params`:
 
@@ -214,7 +218,7 @@ Then the cart contains 2 products:
 
 Check out the [Online Playground](https://vitalets.github.io/bdd-expressions/).
 
-> **IDE support limitation:** IDE extensions do not yet support BDD Expressions syntax. Editor features such as step completion and navigation to step definitions will not work for these expressions. We plan to address this limitation in a future update.
+> ⚠️ **IDE support limitation:** IDE extensions do not yet support BDD Expressions syntax. Editor features such as step completion and navigation to step definitions will not work for these expressions. We plan to address this limitation in a future update.
 
 ## Playwright test locks
 
