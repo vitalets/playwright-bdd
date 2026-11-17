@@ -1,0 +1,8 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "rewriteRelativeImportExtensions": true
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["**/node_modules", "**/test-results"]
+}
