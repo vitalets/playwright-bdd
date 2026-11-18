@@ -119,15 +119,6 @@ describe('step index', () => {
     assertSameMatches('bar}');
   });
 
-  it('serves a repeated step text from the match cache without calling matchStep', () => {
-    const stepText = 'cached lookup on the CatalogItem';
-    const firstPass = recordedMatchStepCalls(stepText);
-    const secondPass = recordedMatchStepCalls(stepText);
-    assert.ok(firstPass.length > 0);
-    assert.equal(secondPass.length, 0);
-    assertSameMatches(stepText);
-  });
-
   it('matches a DocString step the same way as a full scan', async () => {
     const blockDefinition = definition('payload:body{DocString}', { bddExpr: true });
     stepDefinitions.push(blockDefinition);
@@ -212,12 +203,6 @@ async function assertSameParameters(step) {
 }
 
 function matchStepCalls(stepText) {
-  // The match cache is process-global and keyed by step text, so an earlier lookup of the same text would hide matchStep calls.
-  invalidateMatchCache();
-  return recordedMatchStepCalls(stepText);
-}
-
-function recordedMatchStepCalls(stepText) {
   const called = [];
   const originalMatchStep = StepDefinition.prototype.matchStep;
   StepDefinition.prototype.matchStep = function matchStep(step) {
@@ -231,13 +216,4 @@ function recordedMatchStepCalls(stepText) {
     StepDefinition.prototype.matchStep = originalMatchStep;
   }
   return called;
-}
-
-function invalidateMatchCache() {
-  stepDefinitions.push(definition('IndexCacheReset'));
-  try {
-    findWithIndex('IndexCacheReset');
-  } finally {
-    stepDefinitions.pop();
-  }
 }

@@ -8,20 +8,13 @@ let indexedDefinitions: StepDefinition[] | null = null;
 let indexedLength = -1;
 let wordBuckets = new Map<string, StepDefinition[]>();
 let scanList: StepDefinition[] = [];
-// Repeated step texts are cached, but not steps with DocString or DataTable, since their match depends on the block.
-let matchCache = new Map<string, MatchedStepDefinition[]>();
 
 export function matchWithStepIndex(
   definitions: StepDefinition[],
   step: StepMatchInput,
 ): MatchedStepDefinition[] {
   ensureIndex(definitions);
-  if (!isCacheable(step)) return matchCandidates(step);
-  const cached = matchCache.get(step.text);
-  if (cached) return cached;
-  const matched = matchCandidates(step);
-  matchCache.set(step.text, matched);
-  return matched;
+  return matchCandidates(step);
 }
 
 function matchCandidates(step: StepMatchInput): MatchedStepDefinition[] {
@@ -51,7 +44,6 @@ function rebuildIndex(definitions: StepDefinition[]) {
   indexedLength = definitions.length;
   wordBuckets = new Map();
   scanList = [];
-  matchCache = new Map();
   for (const definition of definitions) addToIndex(definition);
 }
 
@@ -79,10 +71,6 @@ function indexWord(definition: StepDefinition): string | null {
 // Shorter words are shared by too many definitions to shrink the candidate set.
 const MIN_INDEX_WORD_LENGTH = 8;
 const LONG_WORD = new RegExp(`[A-Za-z][A-Za-z0-9]{${MIN_INDEX_WORD_LENGTH - 1},}`, 'g');
-
-function isCacheable(step: StepMatchInput): boolean {
-  return step.docString === undefined && step.dataTable === undefined;
-}
 
 function pickLongest(literals: string[]): string | null {
   return longestWord(literals.flatMap(longWords));
