@@ -136,6 +136,29 @@ describe('step index', () => {
     assert.equal(findWithIndex('something completely different').length, 0);
     assert.equal(findWithoutIndex('something completely different').length, 0);
   });
+
+  it('throws on every lookup while a cucumber expression fails to compile', () => {
+    stepDefinitions.push(
+      definition('broken {noSuchType} pattern'),
+      definition('User closes the LedgerPanel now'),
+    );
+    try {
+      assert.throws(() => findWithIndex('User opens the CatalogItem panel'), /Cucumber Expression/);
+      assert.throws(() => findWithIndex('User closes the LedgerPanel now'), /Cucumber Expression/);
+    } finally {
+      stepDefinitions.pop();
+      stepDefinitions.pop();
+    }
+  });
+
+  it('calls matchStep for the same text in scan and in index', () => {
+    const stepText = 'User closes the CatalogItem panel';
+    invalidateMatchCache();
+    const scanCalled = recordedMatchStepCalls(stepText, {});
+    const indexCalled = recordedMatchStepCalls(stepText, { useStepIndex: true });
+    assert.ok(scanCalled.length > 0, 'scan lookup should call matchStep');
+    assert.ok(indexCalled.length > 0, 'index lookup should call matchStep');
+  });
 });
 
 function definition(pattern, providedOptions) {
@@ -203,6 +226,12 @@ async function assertSameParameters(step) {
 }
 
 function matchStepCalls(stepText) {
+  // The match cache is keyed by step text, so an earlier lookup of the same text would hide matchStep calls.
+  invalidateMatchCache();
+  return recordedMatchStepCalls(stepText);
+}
+
+function recordedMatchStepCalls(stepText, config = { useStepIndex: true }) {
   const called = [];
   const originalMatchStep = StepDefinition.prototype.matchStep;
   StepDefinition.prototype.matchStep = function matchStep(step) {
@@ -211,9 +240,18 @@ function matchStepCalls(stepText) {
     return originalMatchStep.call(this, step);
   };
   try {
-    findWithIndex(stepText);
+    findDefinitions(stepText, config);
   } finally {
     StepDefinition.prototype.matchStep = originalMatchStep;
   }
   return called;
+}
+
+function invalidateMatchCache() {
+  stepDefinitions.push(definition('IndexCacheReset'));
+  try {
+    findWithIndex('IndexCacheReset');
+  } finally {
+    stepDefinitions.pop();
+  }
 }
