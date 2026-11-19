@@ -10,9 +10,9 @@ test(testDir.name, () => {
   const outputDir = testDir.getAbsPath('.features-gen');
   testDir.clearDir(outputDir);
 
-  // create file in .features-gen to ensure that it is cleared
+  // create stale generated file in .features-gen to ensure that it is cleared
   if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
-  const fileToBeCleared = '.features-gen/foo.spec.js';
+  const fileToBeCleared = '.features-gen/foo.feature.spec.js';
   fs.writeFileSync(testDir.getAbsPath(fileToBeCleared), '');
 
   execPlaywrightTest(testDir.name, `${BDDGEN_CMD} --tags "@include and not @exclude"`);

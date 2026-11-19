@@ -16,6 +16,7 @@
 * fix: bind custom parameter type transformers to the world so they can access world properties through `this`.
 * fix: generate BDD projects sequentially to prevent concurrent Playwright transform-cache writes from dropping step definitions.
 * fix: prevent empty attachments and stdout/stderr chunks from interrupting Cucumber report generation; preserve empty attachments and omit empty output logs ([#403](https://github.com/vitalets/playwright-bdd/issues/403)).
+* fix: keep hand-written `*.spec.js` files in `outputDir` when clearing generated files ([#276](https://github.com/vitalets/playwright-bdd/issues/276)).
 
 ## [9.2.1] - 2026-09-06
 * fix: support Playwright 1.63 by removing obsolete experimental component testing dependencies ([#331](https://github.com/vitalets/playwright-bdd/issues/331))

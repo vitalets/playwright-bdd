@@ -141,7 +141,10 @@ export class TestFilesGenerator {
 
   private async clearOutputDir() {
     const outputDirPattern = tg.convertPathToPattern(this.config.outputDir);
-    const pattern = `${outputDirPattern}/**/*.spec.js`;
+    // Remove only generated files and keep user's own *.spec.js files in outputDir, see #276.
+    // Feature files must end with .feature or .md (required by @cucumber/gherkin),
+    // so generated files always end with .feature.spec.js or .md.spec.js.
+    const pattern = `${outputDirPattern}/**/*.{feature,md}.spec.js`;
     const testFiles = await tg.glob(pattern, { expandDirectories: false });
     this.logger.logClearingOutputDir(pattern);
     // Using { force: true } to suppress an error, if file not found.
