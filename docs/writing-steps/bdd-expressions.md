@@ -22,17 +22,63 @@ Or you can enable individually for particular step:
 Given('bdd-expression', { bddExpr: true }, () => { ... });
 ```
 
-## Usage
+## Syntax
 
-The syntax is mostly similar to Cucumber Expressions, with a few additions:
+The syntax is similar to Cucumber Expressions, with a few additions:
 
 - Named params, e.g. `:user` or `:count{int}`
 - Inline choice params, e.g. `Set status {pending/approved/rejected}`
-- Required multi-word alternatives, e.g. `I [click/tap on] the button`
+- Optional text with params, e.g. `I create a new user( with :name)`
+- Multi-word alternatives, e.g. `I [click/tap on] the button`
 
 Check out the full [syntax guide](https://vitalets.github.io/bdd-expressions/syntax/) and the [playground](https://vitalets.github.io/bdd-expressions/).
 
+## Automatic types
+
+With `bddExpr: true`, TypeScript automatically infers parameters types. You don't need to write types yourself:
+
+```ts
+Given('count {int}', { bddExpr: true }, ({}, count) => {
+  // ...
+});
+```
+
+<img src="writing-steps/_media/bdd-expression-positional-inference.png" alt="Editor tooltip showing the positional count parameter inferred as number." style="width: 100%; max-width: 720px; height: auto;">
+
+Optional parameter types include `undefined`:
+
+```ts
+Given('count {int}( for :owner)', { bddExpr: true }, ({}, count, owner) => {
+  // ...
+});
+```
+
+<img src="writing-steps/_media/bdd-expression-optional-param.png" alt="Editor tooltip showing the optional owner parameter inferred as string | undefined." style="width: 100%; max-width: 720px; height: auto;">
+
+In case of incorrect types, you'll see an error:
+
+<img src="writing-steps/_media/bdd-expression-positional-validation.png" alt="TypeScript underlines the callback because count is annotated as string but {int} produces a number." style="width: 100%; max-width: 720px; height: auto;">
+
+Custom parameter types remain unchecked because their transformers are registered at runtime.
+
+## Named params
+
+Named parameters let you access captured values through automatically typed `$step.params` instead of positional arguments. 
+
+```ts
+When('I add :product to the cart', { bddExpr: true }, async ({ $step }) => {
+  const { product } = $step.params;
+  // ...
+});
+```
+
+`$step.params` is automatically typed:
+
+<img src="writing-steps/_media/bdd-expression-params.png" alt="Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined" style="width: 100%; max-width: 720px; height: auto;">
+
 ## Use cases
+
+The use cases below show how you can collapse mulitple step definitions into one, keeping your codebase cleaner.
 
 ### Optional text with params
 
@@ -96,32 +142,31 @@ Then the "Submit" button is hidden
 
 The state parameter only accepts `visible` or `hidden`. Other values do not match this definition.
 
-### Named params
+### Replace regular expressions
 
-Named parameters let you replace manually typed positional arguments with automatically typed `$step.params`. For example, the cart step above declares two positional arguments:
+Use inline choices to replace regular expressions that capture a fixed set of values. For example, a step that checks a connection indicator can use a readable BDD expression:
 
-```ts
-async ({ cart }, product: string, quantity?: number) => {
-  await cart.add(product, quantity);
-}
+```diff
+- /^the connection indicator is (green|red)$/
++ 'the connection indicator is {green/red}'
 ```
 
-Name the parameters in the expression to infer their types instead:
-
 ```ts
-When(
-  'I add :product to the cart( with quantity :quantity{int})',
+Then(
+  'the connection indicator is {green/red}',
   { bddExpr: true },
-  async ({ cart, $step }) => {
-    const { product, quantity } = $step.params;
-    await cart.add(product, quantity);
+  async ({ page }, color: 'green' | 'red') => {
+    await expect(page.getByTestId('connection-indicator')).toHaveAttribute('data-color', color);
   },
 );
 ```
 
-`$step.params` is automatically typed:
+Both versions match the entire step and pass the captured color to the callback:
 
-![Editor tooltip showing $step.params inferred as product: string and quantity: number | undefined](_media/bdd-expression-params.png ':size=70%')
+```gherkin
+Then the connection indicator is green
+Then the connection indicator is red
+```
 
 ## DocString and DataTable
 
@@ -132,7 +177,7 @@ The `{DocString}` and `{DataTable}` parameters let you explicitly make doc strin
 I you want the step always contain DataTable, end the expression with `{DataTable}`. Usually, steps with DataTable end with colon `:`. For example: 
 
 ```ts
-Given('users in database:{DataTable}', { bddExpr: true }, ({ $step }, count: number) => {
+Given('users in database:{DataTable}', { bddExpr: true }, ({ $step }) => {
   // use `$step.dataTable` for step actions.
 });
 ```
@@ -189,33 +234,41 @@ The [Cucumber (Gherkin) Full Support](https://marketplace.visualstudio.com/items
 
 ## Usage with decorator steps
 
-For [decorator steps](writing-steps/decorators.md), enable BDD expressions with `createBddDecorators({ bddExpr: true })`. Captured values are passed as positional method arguments, which you type explicitly:
+For [decorator steps](writing-steps/decorators.md), enable BDD expressions for an individual step with the `bddExpr: true` option. Captured values are passed as positional method arguments, which you type explicitly:
 
 ```ts
 import { expect, type Page } from '@playwright/test';
-import { createBddDecorators } from 'playwright-bdd';
-
-const { Fixture, Then } = createBddDecorators({ bddExpr: true });
+import { Fixture, Then } from 'playwright-bdd/decorators';
 
 export @Fixture('cartPage') class CartPage {
   constructor(private page: Page) {}
 
-  @Then('the cart contains :count{int} item(s)')
+  @Then('the cart contains :count{int} item(s)', { bddExpr: true })
   async checkItemCount(count: number) {
     await expect(this.page.getByTestId('cart-item')).toHaveCount(count);
   }
 }
 ```
 
-You can also enable BDD expressions for individual decorators with `@Then('...', { bddExpr: true })`, or override the factory default with `{ bddExpr: false }`. The `createBdd()` options do not apply to decorators.
-
-With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values. Custom parameter types remain unchecked.
+With `bddExpr: true`, TypeScript checks your method's parameter types against the expression, including inline choices and optional values:
 
 <video controls preload="metadata" style="width: 100%; max-width: 720px; height: auto; display: block; margin: 1em 0;" aria-label="Decorator step parameter type validation demo">
   <source src="writing-steps/_media/decorator-step-validation.mp4" type="video/mp4">
 </video>
 
-?> `$step.params` is not automatically typed in decorator steps, so we recommend using positional arguments instead.
+ Custom parameter types remain unchecked.
+
+?> `$step.params` is not automatically typed in decorator steps, so we recommend using positional arguments here.
+
+To enable BDD expressions for all step decorators returned by a factory, use [`createBddDecorators({ bddExpr: true })`](writing-steps/decorators.md#configured-decorators).
+
+```ts
+import { createBddDecorators } from 'playwright-bdd';
+
+export const { Fixture, Given, When, Then, Step } = createBddDecorators({
+  bddExpr: true,
+});
+```
 
 ## Usage with Cucumber-style steps
 
@@ -241,3 +294,40 @@ Given('I buy :count{int} apples', function () {
   // this.$step.params.count is inferred as number.
 });
 ```
+
+## Migrate with an agent
+
+Copy-paste this prompt into your coding agent to assess how BDD Expressions can improve your existing step definitions.
+
+<details class="agent-prompt">
+<summary><span class="agent-prompt__icon" aria-hidden="true">🤖</span><span class="agent-prompt__title"><span class="agent-prompt__prefix">Agent instruction:</span> <span class="agent-prompt__action">Migrate existing step definitions to BDD Expressions</span></span></summary>
+
+<div class="agent-prompt__body">
+
+````text
+Review all step definitions in this project and propose improvements using BDD Expressions, available since Playwright BDD v10.
+
+- Consolidate similar definitions using optional or required groups with parameters.
+- Propose inline choices instead of general string types for finite values.
+- Add explicit `{DocString}` / `{DataTable}` parameters where already used.
+- Preserve existing feature wording where practical.
+- Present concise proposals grouped by file. Show old and new expressions as Git-style diffs, making it clear which definitions collapse into one.
+- Do not modify files until approved.
+
+Example output:
+
+**`features/steps/cart.steps.ts`**
+
+```diff
+- I add {string} to the cart
+- I add {string} to the cart with quantity {int}
++ I add {string} to the cart( with quantity {int})
+
+- the cart contains {int} item(s)
+- the cart contains {int} item(s):
++ the cart contains {int} item(s)(:{DataTable})
+```
+````
+
+</div>
+</details>

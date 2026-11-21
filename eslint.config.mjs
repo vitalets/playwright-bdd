@@ -15,6 +15,7 @@ export default [
       '**/.features-gen/**',
       '**/actual-reports/**',
       '**/playwright-report/**',
+      '**/test-results/**',
     ],
   },
   js.configs.recommended,

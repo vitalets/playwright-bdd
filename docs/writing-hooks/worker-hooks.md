@@ -2,7 +2,7 @@
 
 ## BeforeWorker / BeforeAll
 
-> Consider using [fixtures](writing-steps/hooks/fixtures.md) instead of hooks.
+> Consider using [fixtures](writing-hooks/fixtures.md) instead of hooks.
 
 Playwright-BDD supports the worker-level hook `BeforeWorker` (aliased as `BeforeAll`). It runs **once in each worker, before all scenarios**.
 
@@ -85,11 +85,11 @@ BeforeWorker(async ({ myWorkerFixture }) => {
 
 > Note that there is **no access to World** in `BeforeWorker / AfterWorker` hooks because World is re-created for every test. Here is a [discussion](https://github.com/cucumber/cucumber-js/issues/1393) in the Cucumber repo.
 
-?> If you need to run hook **once for all workers**, check out [Running hook once](writing-steps/hooks/running-hook-once.md).
+?> If you need to run hook **once for all workers**, check out [Running hook once](writing-hooks/running-hook-once.md).
 
 ## AfterWorker / AfterAll
 
-> Consider using [fixtures](writing-steps/hooks/fixtures.md) instead of hooks.
+> Consider using [fixtures](writing-hooks/fixtures.md) instead of hooks.
 
 Playwright-BDD supports the worker-level hook `AfterWorker` (aliased as `AfterAll`).
 It runs **once in each worker, after all scenarios**.

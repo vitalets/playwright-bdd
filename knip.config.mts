@@ -15,8 +15,12 @@ const config: KnipConfig = {
     '!**/{cucumber-report,actual-reports}/**',
     '!**/dist/**',
   ],
-  // this is a knip default, keep it here for readability
-  project: ['**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}!'],
+  project: [
+    // this is a knip default, keep it here for readability
+    '**/*.{js,mjs,cjs,jsx,ts,tsx,mts,cts}!',
+    // temporary ignore skill-evals
+    '!skill-evals/**',
+  ],
   ignoreBinaries: ['cucumber.config.js'],
   ignoreDependencies: [
     // Keep @cucumber/compatibility-kit to inspec their tests manually

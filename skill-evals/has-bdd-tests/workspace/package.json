@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "npx vite src",
+    "test": "npx bddgen && npx playwright test"
+  }
+}

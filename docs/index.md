@@ -21,29 +21,32 @@ Jump to the [getting started](getting-started/index.md) guide or read below the 
 
 ## BDD in the Era of AI
 
-[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text files:
+[Behavior-Driven Development (BDD)](https://cucumber.io/docs/bdd/) describes product requirements as `Given / When / Then` scenarios written in plain-text format:
 
-```feature
-Feature: Buying a product
+```gherkin
+Feature: Buying a pizza
 
-  Scenario: Complete a purchase
-    Given I am on the "iPhone 18" page
-    When I click "Add to cart"
-    And I proceed to checkout
-    And I complete the payment
-    Then I see an order confirmation containing "iPhone 18"
+  Scenario: Success order
+    Given I am on the "Pepperoni" pizza page
+    When I add 2 pizzas to the cart
+    And I complete checkout
+    Then I see an order confirmation:
+      | Product  | Pepperoni  |
+      | Quantity | 2          |
 ```
 
-In the AI era, these scenarios become valuable artifacts for agents because they are both:
+ In the AI era, these scenarios become valuable artifacts because they are both:
 
-* ✅ **Readable**: You can easily draft and refine scenarios with an agent to clearly define the behavior.
-* ✅ **Executable**: The same scenarios can be executed as automated tests to verify the implementation.
+* ✅ **Readable**: You can easily draft and refine scenarios with agents.
+* ✅ **Executable**: You can run the scenarios as automated tests to verify the implementation.
 
 Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
 
-Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="18" height="18" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automated guardrails check code quality and scenario compliance.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action.
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
+
+?> **The ultimate goal:** review only feature files and let automated guardrails check scenario compliance.
 
 ## Why Playwright Runner?
 
@@ -59,14 +62,6 @@ Playwright can be used as a [browser automation library](https://playwright.dev/
 
 <!-- Keep absolute urls to easily update from README.md -->
 
-## Extras
-Playwright-BDD extends Playwright with BDD capabilities, offering:
-
-- 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
-- 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods  
-- 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)  
-- ✨ [Exporting steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI  
-- ♻️ [Re-usable step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)  
 
 ## How Playwright-BDD works
 A typical command to run tests with Playwright-BDD is:
@@ -77,50 +72,28 @@ npx bddgen && npx playwright test
 ### Phase 1: Generate tests
 The first command `npx bddgen` generates test files from BDD feature files. For example:
 
-From
-```gherkin
-Feature: Playwright Home Page
-
-    Scenario: Check title
-        Given I am on Playwright home page
-        When I click link "Get started"
-        Then I see in title "Installation"
-```
-
-To
-```js
-import { test } from 'playwright-bdd';
-
-test.describe('Playwright Home Page', () => {
-
-  test('Check title', async ({ Given, When, Then }) => {
-    await Given('I am on Playwright home page');
-    await When('I click link "Get started"');
-    await Then('I see in title "Installation"');
-  });
-
-});
-```
+![Playwright BDD transformation: feature, scenario, and steps mapped to a generated Playwright test](_media/playwright-bdd-transformation.png)
 
 ### Phase 2: Run tests
 The second command `npx playwright test` runs the generated files with the Playwright runner.
-Step definitions have access to the Playwright APIs and fixtures (e.g. `page`):
+Step definitions have access to the Playwright APIs and can interact with browser pages:
 
 ```js
-Given('I am on Playwright home page', async ({ page }) => {
-  await page.goto('https://playwright.dev');
+Given('I am on the todo page', async ({ page }) => {
+  await page.goto('https://todoaapp.com');
 });
 
-When('I click link {string}', async ({ page }, name) => {
-  await page.getByRole('link', { name }).click();
+When('I add a todo item {string}', async ({ page }, name) => {
+  await page.getByRole('textbox', { name: 'New todo' }).fill(name);
+  await page.getByRole('button', { name: 'Add todo' }).click();
 });
 
-Then('I see in title {string}', async ({ page }, text) => {
-  await expect(page).toHaveTitle(new RegExp(text));
+Then('I see the item {string} in the list', async ({ page }, text) => {
+  await expect(page.getByRole('listitem')).toHaveText([ text ]);
 });  
 ```
 
-HTML report shows all scenarios and steps:
+Playwright HTML report:
 
 ![Playwright html report](reporters/_media/pw-html-report.png)
 

@@ -2,7 +2,7 @@ name: test-win
 
 on:
   push:
-    branches: ['**']
+    branches: ['**', '!docs']
     paths-ignore:
       - 'docs/**'
       - 'examples/**'

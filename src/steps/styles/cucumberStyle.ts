@@ -18,22 +18,27 @@ import { BddExpressionStepFn } from '../bddExpression/types';
 export type CucumberStyleStepFn<World> = (this: World, ...args: any[]) => unknown;
 
 export type CucumberStyleStepCtor<T extends AnyFunction, DefaultBddExpr extends boolean = false> = {
-  <
-    Pattern extends StepPattern,
-    BddExpr extends boolean,
-    StepFn extends BddExpressionStepFn<T, Pattern, BddExpr, 'cucumber'>,
-  >(
-    pattern: Pattern,
-    options: ProvidedStepOptions & { bddExpr: BddExpr },
-    fn: StepFn,
-  ): StepFn;
+  // Separate arities keep callback type errors on the callback rather than the step keyword.
   <
     Pattern extends StepPattern,
     StepFn extends BddExpressionStepFn<T, Pattern, DefaultBddExpr, 'cucumber'>,
   >(
-    ...args:
-      | [pattern: Pattern, fn: StepFn]
-      | [pattern: Pattern, options: ProvidedStepOptions & { bddExpr?: DefaultBddExpr }, fn: StepFn]
+    pattern: Pattern,
+    fn: StepFn,
+  ): StepFn;
+  <
+    Pattern extends StepPattern,
+    BddExpr extends boolean = DefaultBddExpr,
+    StepFn extends BddExpressionStepFn<T, Pattern, BddExpr, 'cucumber'> = BddExpressionStepFn<
+      T,
+      Pattern,
+      BddExpr,
+      'cucumber'
+    >,
+  >(
+    pattern: Pattern,
+    options: ProvidedStepOptions & { bddExpr?: BddExpr },
+    fn: StepFn,
   ): StepFn;
 };
 

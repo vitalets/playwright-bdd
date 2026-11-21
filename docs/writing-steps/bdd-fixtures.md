@@ -47,7 +47,7 @@ Given('I open url {string}', async ({ $step }, url: string) => {
 
 `$step.docString` and `$step.dataTable` are read-only properties available in step bodies and `BeforeStep` / `AfterStep` hooks. They are `undefined` when absent and reset after each step. An empty doc string is `''`. The data table is the same instance passed as the positional argument.
 
-`$step.error` is mainly useful in [AfterStep hooks](writing-steps/hooks/step-hooks.md#afterstep). Use it instead of `$testInfo.status` when you need per-step failure handling.
+`$step.error` is mainly useful in [AfterStep hooks](writing-hooks/step-hooks.md#afterstep). Use it instead of `$testInfo.status` when you need per-step failure handling.
 
 ### Native step info and attachments
 

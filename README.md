@@ -26,6 +26,7 @@ Run BDD tests with Playwright runner
   📚 <a href="https://vitalets.github.io/playwright-bdd/">Documentation</a>&nbsp;
   ▶️ <a href="https://github.com/vitalets/playwright-bdd-example">Example</a>&nbsp;
   📝 <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
+  🔥 <a href="https://vitalets.github.io/playwright-bdd/#/release-notes/beta/v10/index">Try v10 (beta)</a>
 </p>
 
 ## BDD in the Era of AI
@@ -44,18 +45,27 @@ Feature: Buying a pizza
       | Quantity | 2          |
 ```
 
- In the AI era, these scenarios become valuable artifacts for agents because they are both:
+ In the AI era, these scenarios become valuable artifacts because they are:
 
-* ✅ **Readable**: You can easily draft and refine scenarios with an agent to clearly define the behavior.
-* ✅ **Executable**: The same scenarios can be executed as automated tests to verify the implementation.
+* ✅ **Readable**: You can easily draft and refine scenarios with agents.
+* ✅ **Executable**: You can run the scenarios as automated tests.
 
-Unlike plain Markdown specs, BDD does not just describe a feature; it makes the spec live and keeps it aligned with the codebase.
+Unlike plain Markdown docs, BDD makes the spec live and keeps it aligned with the codebase.
 
-Watch the <sub><img src="https://cdn.simpleicons.org/youtube/FF0000" width="24" height="24" alt="YouTube"></sub> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. The ultimate goal: **review only feature files** and let automated guardrails check code quality and scenario compliance.
+Watch the <img src="https://cdn.simpleicons.org/youtube/FF0000" align="absmiddle" width="24" height="24" alt="YouTube"> [1-minute workflow overview](https://www.youtube.com/watch?v=hDL9j23EDNs) or read the [blog post](https://vitalets.github.io/posts/bdd-agentic-workflow/) to see agentic BDD in action. 
 
 To bring this workflow to your project, [set up Playwright-BDD](https://vitalets.github.io/playwright-bdd/#/getting-started/index) and add the [playwright-bdd skill](https://vitalets.github.io/playwright-bdd/#/getting-started/agent-skill) for your AI coding agent.
 
-## Why Playwright Runner?
+> [!NOTE]
+> **The ultimate goal:** review only feature files and let automated guardrails do the rest.
+
+## How Playwright-BDD works
+
+Playwright-BDD transforms feature files into Playwright tests and wires up step implementations:
+
+<img align="center" alt="Feature file transformed into a Playwright test" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/playwright-bdd-transformation.png"/>
+
+## Why Playwright runner?
 
 [Playwright](https://playwright.dev/) provides both browser automation APIs and a powerful test runner. Playwright-BDD converts `.feature` files into native Playwright tests, so you can use all Playwright runner capabilities:
 
@@ -67,28 +77,27 @@ To bring this workflow to your project, [set up Playwright-BDD](https://vitalets
 - Playwright fixtures
 - [...and more](https://playwright.dev/docs/library#key-differences)
 
-## How It Works
-
-<img align="center" src="https://raw.githubusercontent.com/vitalets/playwright-bdd/refs/heads/main/docs/_media/schema.png"/>
-
 ## Extras
 Playwright-BDD has several unique features:
 
 - 🔥 Advanced tagging [by path](https://vitalets.github.io/playwright-bdd/#/writing-features/tags-from-path) and [special tags](https://vitalets.github.io/playwright-bdd/#/writing-features/special-tags)
 - 🎩 [Step decorators](https://vitalets.github.io/playwright-bdd/#/writing-steps/decorators) for class methods  
 - 🎯 [Scoped step definitions](https://vitalets.github.io/playwright-bdd/#/writing-steps/scoped)  
-- ✨ [Exporting steps](https://vitalets.github.io/playwright-bdd/#/writing-features/chatgpt) for AI  
 - ♻️ [Re-usable step functions](https://vitalets.github.io/playwright-bdd/#/writing-steps/reusing-step-fn)  
 
 ## Documentation
+
 Check out the [documentation website](https://vitalets.github.io/playwright-bdd/#/).
+
+> [!TIP]
+> **Playwright-BDD v10 is available in beta.** [Try new features →](https://vitalets.github.io/playwright-bdd/#/release-notes/beta/v10/index)
 
 ## Demos
 
 - Check out [`examples`](/examples) folder
 - Clone the fully working repo: [playwright-bdd-example](https://github.com/vitalets/playwright-bdd-example)
 
-## Playwright Versions Support
+## Playwright versions support
 
 `playwright-bdd` supports the latest stable Playwright release and the **10 previous releases**.
 
@@ -133,7 +142,7 @@ Feel free to report a bug, propose a feature or share your experience:
 ## Contributing
 Your contributions are welcome! Please review [CONTRIBUTING.md](https://github.com/vitalets/playwright-bdd/blob/main/.github/CONTRIBUTING.md) for the details.
 
-## My Other Playwright tools
+## My other Playwright tools
 
 * [playwright-timeline-reporter](https://github.com/vitalets/playwright-timeline-reporter) - Interactive timeline report for Playwright test runs.
 * [@global-cache/playwright](https://github.com/vitalets/global-cache) - Key-value cache for sharing data between parallel workers.

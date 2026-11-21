@@ -28,22 +28,27 @@ export type PlaywrightStyleStepCtor<
   T extends AnyFunction,
   DefaultBddExpr extends boolean = false,
 > = {
-  <
-    Pattern extends StepPattern,
-    BddExpr extends boolean,
-    StepFn extends BddExpressionStepFn<T, Pattern, BddExpr, 'playwright'>,
-  >(
-    pattern: Pattern,
-    options: ProvidedStepOptions & { bddExpr: BddExpr },
-    fn: StepFn,
-  ): ReturnType<typeof getCallableStepFn<StepFn>>;
+  // Separate arities keep callback type errors on the callback rather than the step keyword.
   <
     Pattern extends StepPattern,
     StepFn extends BddExpressionStepFn<T, Pattern, DefaultBddExpr, 'playwright'>,
   >(
-    ...args:
-      | [pattern: Pattern, fn: StepFn]
-      | [pattern: Pattern, options: ProvidedStepOptions & { bddExpr?: DefaultBddExpr }, fn: StepFn]
+    pattern: Pattern,
+    fn: StepFn,
+  ): ReturnType<typeof getCallableStepFn<StepFn>>;
+  <
+    Pattern extends StepPattern,
+    BddExpr extends boolean = DefaultBddExpr,
+    StepFn extends BddExpressionStepFn<T, Pattern, BddExpr, 'playwright'> = BddExpressionStepFn<
+      T,
+      Pattern,
+      BddExpr,
+      'playwright'
+    >,
+  >(
+    pattern: Pattern,
+    options: ProvidedStepOptions & { bddExpr?: BddExpr },
+    fn: StepFn,
   ): ReturnType<typeof getCallableStepFn<StepFn>>;
 };
 

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Todo list</title>
+    <style>
+      body {
+        font: 18px system-ui;
+        max-width: 36rem;
+        margin: 3rem auto;
+        padding: 0 1rem;
+      }
+      input,
+      button {
+        font: inherit;
+      }
+      li {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin: 1rem 0;
+      }
+      li label {
+        flex: 1;
+      }
+      li:has(input:checked) span {
+        text-decoration: line-through;
+      }
+      [role='alert'] {
+        color: #a31616;
+      }
+    </style>
+    <script type="module" src="/app.js"></script>
+  </head>
+  <body>
+    <h1>Todo list</h1>
+    <form id="add-task">
+      <label for="task-title">New task</label>
+      <input id="task-title" name="title" autocomplete="off" />
+      <button type="submit">Add task</button>
+    </form>
+    <p role="alert" id="error"></p>
+    <p id="empty-list">No tasks yet.</p>
+    <ul aria-label="Tasks" id="tasks"></ul>
+  </body>
+</html>

@@ -3,7 +3,7 @@ name: examples
 on:
   workflow_dispatch:
   push:
-    branches: ['**']
+    branches: ['**', '!docs']
     paths-ignore:
       - 'docs/**'
       - '**/*.md'
