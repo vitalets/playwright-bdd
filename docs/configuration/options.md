@@ -270,6 +270,13 @@ The fixtures, count, and optional doc string parameters are allowed; the fourth 
 
 > In v10, arity checking was relaxed to allow omitted parameters, optional doc strings/data tables, and different capture counts on shared decorated methods.
 
+## useStepIndex
+
+- **Type:** `boolean`
+- **Default:** `false`
+
+Use a word-based index to speed up step matching. For each Cucumber Expression step definition, the index picks one long literal word that must appear in every matching step text and only compares definitions that share that word. Optional text, parameters, and words present in only some alternation branches are not used as the index word. RegExp definitions and BDD Expressions always stay on the full-scan list and are compared with every step. Set the option in `defineBddConfig()` to apply it during generation and when tests run.
+
 ## verbose
 
 - **Type:** `boolean`
