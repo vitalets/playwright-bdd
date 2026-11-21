@@ -8,6 +8,7 @@ const testDir = defineBddConfig({
     path.resolve('features/abs-path.feature'),
     'features/subdir/*.feature',
     'features/subdir/../rel-path.feature',
+    'features/markdown.md',
   ],
   steps: ['steps.ts'],
 });
