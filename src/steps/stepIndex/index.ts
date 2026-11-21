@@ -40,22 +40,31 @@ function ensureIndex(definitions: StepDefinition[]) {
 }
 
 function rebuildIndex(definitions: StepDefinition[]) {
+  // Save the index only when every expression compiles. One bad pattern must not hide later steps.
+  const nextWordBuckets = new Map<string, StepDefinition[]>();
+  const nextScanList: StepDefinition[] = [];
+  for (const definition of definitions) {
+    addToIndex(definition, nextWordBuckets, nextScanList);
+  }
   indexedDefinitions = definitions;
   indexedLength = definitions.length;
-  wordBuckets = new Map();
-  scanList = [];
-  for (const definition of definitions) addToIndex(definition);
+  wordBuckets = nextWordBuckets;
+  scanList = nextScanList;
 }
 
-function addToIndex(definition: StepDefinition) {
+function addToIndex(
+  definition: StepDefinition,
+  nextWordBuckets: Map<string, StepDefinition[]>,
+  nextScanList: StepDefinition[],
+) {
   const word = indexWord(definition);
   if (!word) {
-    scanList.push(definition);
+    nextScanList.push(definition);
     return;
   }
-  const bucket = wordBuckets.get(word);
+  const bucket = nextWordBuckets.get(word);
   if (bucket) bucket.push(definition);
-  else wordBuckets.set(word, [definition]);
+  else nextWordBuckets.set(word, [definition]);
 }
 
 function indexWord(definition: StepDefinition): string | null {
