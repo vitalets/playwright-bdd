@@ -26,6 +26,7 @@ Run BDD tests with Playwright runner
   📚 <a href="https://vitalets.github.io/playwright-bdd/">Documentation</a>&nbsp;
   ▶️ <a href="https://github.com/vitalets/playwright-bdd-example">Example</a>&nbsp;
   📝 <a href="https://github.com/vitalets/playwright-bdd/blob/main/CHANGELOG.md">Changelog</a>
+  🔥 <a href="https://vitalets.github.io/playwright-bdd/#/release-notes/beta/v10/index">Try v10 (beta)</a>
 </p>
 
 ## BDD in the Era of AI
