@@ -31,3 +31,4 @@ blob-report
 
 .prototools
 .playwright-cli
+.env
