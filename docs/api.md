@@ -125,7 +125,7 @@ Functions for step definitions.
 
 **Params:**
 
-- `pattern` _string | regexp_ - [Cucumber expression](https://github.com/cucumber/cucumber-expressions) string or RegExp.
+- `pattern` _string | regexp_ - [Cucumber expression](https://github.com/cucumber/cucumber-expressions) string or RegExp. Omit the global (`g`) and sticky (`y`) flags from regular expressions.
 - `options` _object_ - Step options:
   - `tags` _string_ - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
   - `arityCheck` _boolean_ - Overrides the config-level [`arityCheck`](configuration/options.md#aritycheck) for this step definition.
@@ -320,7 +320,7 @@ A decorator to mark a method as a BDD step.
 
 **Params:**
 
-- `pattern` _string | regexp_ - Step pattern as a [Cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp.
+- `pattern` _string | regexp_ - Step pattern as a [Cucumber expression](https://github.com/cucumber/cucumber-expressions) or RegExp. Omit the global (`g`) and sticky (`y`) flags from regular expressions.
 - `options` _object_ - Step options:
   - `tags` _string_ - [Tag expression](https://github.com/cucumber/tag-expressions) to bind this step to specific features/scenarios.
   - `arityCheck` _boolean_ - Overrides the config-level [`arityCheck`](configuration/options.md#aritycheck) for this step definition.
