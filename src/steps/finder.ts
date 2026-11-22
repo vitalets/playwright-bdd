@@ -5,17 +5,16 @@ import { PickleStepType } from '@cucumber/messages';
 import { relativeToCwd } from '../utils/paths';
 import { stepDefinitions } from './stepRegistry';
 import { BDDConfig } from '../config/types';
-import { StepDefinition, StepMatchInput } from './stepDefinition';
+import { matchDefinitions, StepMatchInput } from './stepDefinition';
 import { MatchedStepDefinition } from './matchedStepDefinition';
-import { toBoolean } from '../utils';
 import { matchWithStepIndex } from './stepIndex';
-import { matchWithCache } from './cache';
+import { matchFromCache, updateCache } from './cache';
 
 export class StepFinder {
   constructor(private config: BDDConfig) {}
 
   findDefinitions(step: StepMatchInput, tags?: string[]) {
-    let definitions = this.matchByText(stepDefinitions, step);
+    let definitions = this.match(step);
 
     if (this.config.matchKeywords) {
       definitions = this.filterByKeyword(definitions, step.keywordType);
@@ -28,24 +27,17 @@ export class StepFinder {
     return definitions;
   }
 
-  private matchByText(definitions: StepDefinition[], step: StepMatchInput) {
-    if (this.config.useStepIndex) {
-      return matchWithCache({
-        mode: 'index',
-        definitions,
-        step,
-        matchUncached: (uncachedStep) => matchWithStepIndex(definitions, uncachedStep),
-      });
-    }
-    return matchWithCache({
-      mode: 'scan',
-      definitions,
-      step,
-      matchUncached: (uncachedStep) =>
-        definitions
-          .map((definition) => definition.matchStep(uncachedStep)) // prettier-ignore
-          .filter(toBoolean),
-    });
+  private match(step: StepMatchInput) {
+    const cached = matchFromCache(step);
+    if (cached) return cached;
+
+    const matchedDefinitions = this.config.useStepIndex
+      ? matchWithStepIndex(stepDefinitions, step)
+      : matchDefinitions(stepDefinitions, step);
+
+    updateCache(step, matchedDefinitions);
+
+    return matchedDefinitions;
   }
 
   private filterByKeyword(

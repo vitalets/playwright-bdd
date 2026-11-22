@@ -1,11 +1,13 @@
 import assert from 'node:assert/strict';
-import { describe, it, before, after } from 'node:test';
+import { describe, it, before } from 'node:test';
+import { runInNewContext } from 'node:vm';
+import { TestDir } from '../_helpers/index.mjs';
 import { importBddExpressions } from '../../dist/steps/bddExpression/index.js';
-import { StepDefinition } from '../../dist/steps/stepDefinition.js';
-import { StepFinder } from '../../dist/steps/finder.js';
-import { stepDefinitions } from '../../dist/steps/stepRegistry.js';
+import { matchDefinitions, StepDefinition } from '../../dist/steps/stepDefinition.js';
+import { matchWithStepIndex } from '../../dist/steps/stepIndex/index.js';
 
-const LOCATION = { file: 'test/step-index/test.mjs', line: 1 };
+const testDir = new TestDir(import.meta);
+const LOCATION = { file: testDir.getAbsPath('test.mjs'), line: 1 };
 const NOOP = () => undefined;
 const CATALOG_FIELD = 'User sees the {string} field on the CatalogItem';
 const CATALOG_PANEL = 'User closes the CatalogItem panel';
@@ -14,22 +16,10 @@ const CUCUMBER_ALTERNATIVE = 'User opens CatalogItem via PrimaryAction/Secondary
 const CUCUMBER_NAMED = 'User opens :itemName';
 const BRACE_QUANTIFIER_REGEXP = /abcdefghij{foo|bar}/;
 const BDD_PANEL = 'User opens the CatalogItem panel';
+const CROSS_REALM_REGEXP = runInNewContext('/^WarehouseItem$/');
+const definitions = makeDefinitions();
 
-describe('step index', () => {
-  let savedDefinitions;
-
-  before(async () => {
-    await importBddExpressions();
-    savedDefinitions = [...stepDefinitions];
-    stepDefinitions.length = 0;
-    stepDefinitions.push(...makeDefinitions());
-  });
-
-  after(() => {
-    stepDefinitions.length = 0;
-    stepDefinitions.push(...savedDefinitions);
-  });
-
+describe(testDir.name, () => {
   it('matches a cucumber expression with {string}', () => {
     assertSameMatches('User sees the "Amount" field on the CatalogItem');
   });
@@ -62,6 +52,11 @@ describe('step index', () => {
 
   it('matches case-insensitive regexp (on scan list)', () => {
     assertSameMatches('Catalog Item');
+  });
+
+  it('matches a regexp from another realm (on scan list)', () => {
+    assert.equal(findWithIndex('WarehouseItem')[0].definition.pattern, CROSS_REALM_REGEXP);
+    assertSameMatches('WarehouseItem');
   });
 
   it('matches hex escape (on scan list)', () => {
@@ -100,14 +95,14 @@ describe('step index', () => {
 
   it('keeps BDD Expressions on the scan list', () => {
     const bddDefinition = definition(BDD_PANEL, { bddExpr: true });
-    stepDefinitions.push(bddDefinition);
+    definitions.push(bddDefinition);
     try {
       const called = matchStepCalls('nothing here');
       const cucumberPanel = findDefinition(CATALOG_PANEL);
       assert.ok(called.includes(bddDefinition));
       assert.equal(called.includes(cucumberPanel), false);
     } finally {
-      stepDefinitions.pop();
+      definitions.pop();
     }
   });
 
@@ -121,14 +116,14 @@ describe('step index', () => {
 
   it('matches a DocString step the same way as a full scan', async () => {
     const blockDefinition = definition('payload:body{DocString}', { bddExpr: true });
-    stepDefinitions.push(blockDefinition);
+    definitions.push(blockDefinition);
     try {
       await assertSameParameters({ text: 'payload' });
       await assertSameParameters({ text: 'payload', docString: 'first' });
       await assertSameParameters({ text: 'payload', docString: 'second' });
       await assertSameParameters({ text: 'payload' });
     } finally {
-      stepDefinitions.pop();
+      definitions.pop();
     }
   });
 
@@ -138,7 +133,7 @@ describe('step index', () => {
   });
 
   it('throws on every lookup while a cucumber expression fails to compile', () => {
-    stepDefinitions.push(
+    definitions.push(
       definition('broken {noSuchType} pattern'),
       definition('User closes the LedgerPanel now'),
     );
@@ -146,66 +141,13 @@ describe('step index', () => {
       assert.throws(() => findWithIndex('User opens the CatalogItem panel'), /Cucumber Expression/);
       assert.throws(() => findWithIndex('User closes the LedgerPanel now'), /Cucumber Expression/);
     } finally {
-      stepDefinitions.pop();
-      stepDefinitions.pop();
+      definitions.pop();
+      definitions.pop();
     }
   });
 
-  it('calls matchStep for the same text in scan and in index', () => {
-    const stepText = 'User closes the CatalogItem panel';
-    invalidateMatchCache();
-    const scanCalled = recordedMatchStepCalls(stepText, {});
-    const indexCalled = recordedMatchStepCalls(stepText, { useStepIndex: true });
-    assert.ok(scanCalled.length > 0, 'scan lookup should call matchStep');
-    assert.ok(indexCalled.length > 0, 'index lookup should call matchStep');
-  });
+  before(importBddExpressions);
 });
-
-function definition(pattern, providedOptions) {
-  return new StepDefinition({
-    keyword: 'Given',
-    pattern,
-    fn: NOOP,
-    originalFn: NOOP,
-    location: LOCATION,
-    providedOptions,
-  });
-}
-
-function makeDefinitions() {
-  return [
-    definition(CATALOG_FIELD),
-    definition(CUCUMBER_ALTERNATIVE),
-    definition(/transactions? recorded/),
-    definition(/(acknowledged|rejected)/),
-    definition(/catalog item/i),
-    definition(/\x4Dabcdefgh/),
-    definition(/^(?<greeting>\w+) \k<greeting>$/),
-    definition(BRACE_QUANTIFIER_REGEXP),
-    definition(CUCUMBER_NAMED),
-    definition(CATALOG_PANEL),
-    definition(SHIPPING_LABEL),
-  ];
-}
-
-function findDefinition(pattern) {
-  const found = stepDefinitions.find((stepDefinition) => stepDefinition.pattern === pattern);
-  assert.ok(found, `missing definition: ${pattern}`);
-  return found;
-}
-
-function findWithIndex(step) {
-  return findDefinitions(step, { useStepIndex: true });
-}
-
-function findWithoutIndex(step) {
-  return findDefinitions(step, {});
-}
-
-function findDefinitions(step, config) {
-  const input = typeof step === 'string' ? { text: step } : step;
-  return new StepFinder(config).findDefinitions(input);
-}
 
 function assertSameMatches(stepText) {
   const indexed = findWithIndex(stepText).map((match) => match.definition);
@@ -226,32 +168,62 @@ async function assertSameParameters(step) {
 }
 
 function matchStepCalls(stepText) {
-  // The match cache is keyed by step text, so an earlier lookup of the same text would hide matchStep calls.
-  invalidateMatchCache();
-  return recordedMatchStepCalls(stepText);
-}
-
-function recordedMatchStepCalls(stepText, config = { useStepIndex: true }) {
   const called = [];
   const originalMatchStep = StepDefinition.prototype.matchStep;
   StepDefinition.prototype.matchStep = function matchStep(step) {
     called.push(this);
-    if (this.usesBddExpression()) return undefined;
     return originalMatchStep.call(this, step);
   };
   try {
-    findDefinitions(stepText, config);
+    findWithIndex(stepText);
   } finally {
     StepDefinition.prototype.matchStep = originalMatchStep;
   }
   return called;
 }
 
-function invalidateMatchCache() {
-  stepDefinitions.push(definition('IndexCacheReset'));
-  try {
-    findWithIndex('IndexCacheReset');
-  } finally {
-    stepDefinitions.pop();
-  }
+function findDefinition(pattern) {
+  const found = definitions.find((stepDefinition) => stepDefinition.pattern === pattern);
+  assert.ok(found, `missing definition: ${pattern}`);
+  return found;
+}
+
+function findWithIndex(step) {
+  return matchWithStepIndex(definitions, toMatchInput(step));
+}
+
+function findWithoutIndex(step) {
+  return matchDefinitions(definitions, toMatchInput(step));
+}
+
+function makeDefinitions() {
+  return [
+    definition(CATALOG_FIELD),
+    definition(CUCUMBER_ALTERNATIVE),
+    definition(/transactions? recorded/),
+    definition(/(acknowledged|rejected)/),
+    definition(/catalog item/i),
+    definition(/\x4Dabcdefgh/),
+    definition(/^(?<greeting>\w+) \k<greeting>$/),
+    definition(BRACE_QUANTIFIER_REGEXP),
+    definition(CUCUMBER_NAMED),
+    definition(CATALOG_PANEL),
+    definition(SHIPPING_LABEL),
+    definition(CROSS_REALM_REGEXP),
+  ];
+}
+
+function definition(pattern, providedOptions) {
+  return new StepDefinition({
+    keyword: 'Given',
+    pattern,
+    fn: NOOP,
+    originalFn: NOOP,
+    location: LOCATION,
+    providedOptions,
+  });
+}
+
+function toMatchInput(step) {
+  return typeof step === 'string' ? { text: step } : step;
 }

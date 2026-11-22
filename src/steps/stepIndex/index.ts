@@ -1,6 +1,6 @@
 /** Word-based index for fast step-definition matching. */
 import { CucumberExpression } from '@cucumber/cucumber-expressions';
-import { StepDefinition, StepMatchInput } from '../stepDefinition';
+import { matchDefinitions, StepDefinition, StepMatchInput } from '../stepDefinition';
 import { MatchedStepDefinition } from '../matchedStepDefinition';
 import { requiredLiterals } from './requiredLiterals';
 
@@ -14,16 +14,7 @@ export function matchWithStepIndex(
   step: StepMatchInput,
 ): MatchedStepDefinition[] {
   ensureIndex(definitions);
-  return matchCandidates(step);
-}
-
-function matchCandidates(step: StepMatchInput): MatchedStepDefinition[] {
-  const matched: MatchedStepDefinition[] = [];
-  for (const definition of candidatesFor(step.text)) {
-    const match = definition.matchStep(step);
-    if (match) matched.push(match);
-  }
-  return matched;
+  return matchDefinitions(candidatesFor(step.text), step);
 }
 
 function candidatesFor(stepText: string): StepDefinition[] {
@@ -71,7 +62,7 @@ function indexWord(definition: StepDefinition): string | null {
   // BDD Expressions (`[click/tap on]`, `:name`) are a different grammar.
   if (definition.usesBddExpression()) return null;
   // RegExp stays on the scan list: source parsing has edge cases (e.g. /abcdefghij{foo|bar}/ matches "bar}").
-  if (definition.pattern instanceof RegExp) return null;
+  if (typeof definition.pattern !== 'string') return null;
   const expression = definition.expression as CucumberExpression;
   const literals = requiredLiterals(expression);
   return pickLongest(literals);

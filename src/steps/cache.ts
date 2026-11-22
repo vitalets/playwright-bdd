@@ -1,47 +1,51 @@
 /**
- * Cache of step-definition matches keyed by step text.
+ * Caches step definitions by step text and block arguments.
+ * do not cache matched results, because the same step text can match different definitions
+ * depending on the presence of DocString or DataTable.
+ *
  */
-import { StepDefinition, StepMatchInput } from './stepDefinition';
+import { matchDefinitions, StepDefinition, StepMatchInput } from './stepDefinition';
 import { MatchedStepDefinition } from './matchedStepDefinition';
+import { stepDefinitions } from './stepRegistry';
 
-type MatchMode = 'index' | 'scan';
+const cache = new Map</* step text */ string, StepDefinition[]>();
+let stepRegistryLength = stepDefinitions.length;
 
-let cachedDefinitions: StepDefinition[] | null = null;
-let cachedLength = -1;
-// Separate caches per mode, so comparing index and scan results for the same text is not short-circuited.
-const matchCaches = new Map<MatchMode, Map<string, MatchedStepDefinition[]>>();
+export function matchFromCache(step: StepMatchInput) {
+  if (isRegistryChanged()) return;
 
-export function matchWithCache(options: {
-  mode: MatchMode;
-  definitions: StepDefinition[];
-  step: StepMatchInput;
-  matchUncached: (step: StepMatchInput) => MatchedStepDefinition[];
-}): MatchedStepDefinition[] {
-  const { mode, definitions, step, matchUncached } = options;
-  if (!isCacheable(step)) return matchUncached(step);
-  const cache = getCache(mode, definitions);
-  const cached = cache.get(step.text);
-  if (cached) return cached;
-  const matched = matchUncached(step);
-  cache.set(step.text, matched);
-  return matched;
+  const cacheKey = getCacheKey(step);
+  const cachedCandidates = cache.get(cacheKey);
+
+  if (cachedCandidates) {
+    // Match every time to capture the current step's DocString or DataTable.
+    return matchDefinitions(cachedCandidates, step);
+  }
 }
 
-function isCacheable(step: StepMatchInput): boolean {
-  // DocString and DataTable can change which BDD Expression matches, so the text alone is not a valid key.
-  return step.docString === undefined && step.dataTable === undefined;
+export function updateCache(step: StepMatchInput, matchedDefinitions: MatchedStepDefinition[]) {
+  if (isRegistryChanged()) invalidateCache();
+
+  const cacheKey = getCacheKey(step);
+  // we cache definitions, not the matched results,
+  // because the same step text can match different definitions
+  // depending on the presence of DocString or DataTable.
+  const definitions = matchedDefinitions.map(({ definition }) => definition);
+
+  cache.set(cacheKey, definitions);
 }
 
-function getCache(mode: MatchMode, definitions: StepDefinition[]) {
-  if (definitions !== cachedDefinitions || definitions.length !== cachedLength) {
-    cachedDefinitions = definitions;
-    cachedLength = definitions.length;
-    matchCaches.clear();
-  }
-  let cache = matchCaches.get(mode);
-  if (!cache) {
-    cache = new Map();
-    matchCaches.set(mode, cache);
-  }
-  return cache;
+function invalidateCache() {
+  cache.clear();
+  stepRegistryLength = stepDefinitions.length;
+}
+
+function isRegistryChanged() {
+  return stepDefinitions.length !== stepRegistryLength;
+}
+
+function getCacheKey(step: StepMatchInput) {
+  const hasDocString = step.docString !== undefined;
+  const hasDataTable = step.dataTable !== undefined;
+  return `${hasDocString}:${hasDataTable}:${step.text}`;
 }

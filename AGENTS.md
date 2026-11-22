@@ -22,7 +22,7 @@
 - In `test.mjs`, use `testDir.name` in test titles. Name scenarios after the behavior being verified, and consolidate related cases into existing fixtures where practical.
 - After applying changes, query directory names from the `test` dir, guess tests that are relevant to the changes and run only these tests using the command: `npm run only -- test/<dir>/test.mjs`
 - Never complete commits with `--no-verify`. If commit hooks fail, show the error to the user and ask how to proceed.
-- When updating `CHANGELOG.md`, if there is a related GitHub issue or pull request, include its link in the changelog entry.
+- Keep `CHANGELOG.md` entries concise and focused on user-visible changes. Omit minor implementation details and link to the related GitHub issue or pull request when available.
 - Prefer Node.js built-in APIs over npm packages where possible. Refer to [module-replacements](https://github.com/es-tooling/module-replacements/blob/main/docs/modules/README.md) for a list of packages that have native alternatives.
 - Add a comment to code that is not self-explanatory — when the reason for a change, a workaround, or a non-obvious behavior is not clear from the code itself.
 - Keep exported functions at the top and internal helper functions at the bottom.

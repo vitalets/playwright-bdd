@@ -53,6 +53,15 @@ export type StepMatchInput = {
   dataTable?: DataTable;
 };
 
+export function matchDefinitions(definitions: readonly StepDefinition[], step: StepMatchInput) {
+  const matches: MatchedStepDefinition[] = [];
+  for (const definition of definitions) {
+    const match = definition.matchStep(step);
+    if (match) matches.push(match);
+  }
+  return matches;
+}
+
 /** Internal Cucumber expression metadata; not part of its public API. */
 type InternalExpressionMetadata = {
   treeRegexp?: { groupBuilder?: { children?: unknown } };
