@@ -15,11 +15,13 @@
 - When the user asks about a decision, possibility, or alternative approach, investigate the relevant code without modifying files.
 - Present the findings and propose a concrete plan. When useful, include code snippets or diffs illustrating the available approaches.
 - Wait for the user to review the proposal and explicitly approve an approach before implementing it.
+- If the requested approach requires a workaround, explain the limitation and propose the workaround. Get the user's explicit approval of that specific workaround before applying it.
 
 - Ask clarifying questions if any requirement, behavior, or constraint is ambiguous. Do not start implementation until all open questions are resolved.
 - After any change to TypeScript files, run `npm run tsc`
 - When creating test directories, follow the established structure of similar tests: keep feature files and step definitions under `features/`, with the test runner, configuration, and package metadata at the test directory root.
-- In `test.mjs`, use `testDir.name` in test titles. Name scenarios after the behavior being verified, and consolidate related cases into existing fixtures where practical.
+- In `test.mjs`, use `testDir.name` in test titles. Use generic numbered Gherkin scenario titles in fixtures, such as `Scenario 1` and `Scenario 2`. Consolidate related cases into existing fixtures where practical.
+- Select the scenarios each test verifies explicitly and name the test for that behavior. Give unrelated scenarios their own test cases, even when they share a fixture.
 - After applying changes, query directory names from the `test` dir, guess tests that are relevant to the changes and run only these tests using the command: `npm run only -- test/<dir>/test.mjs`
 - Never complete commits with `--no-verify`. If commit hooks fail, show the error to the user and ask how to proceed.
 - Keep `CHANGELOG.md` entries concise and focused on user-visible changes. Omit minor implementation details and link to the related GitHub issue or pull request when available.
