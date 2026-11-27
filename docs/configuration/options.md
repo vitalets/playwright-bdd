@@ -31,6 +31,8 @@ Resolved relative to the config file location.
 
 Directory to output generated test files. Resolved relative to the config file location.
 
+!> Before generating, `bddgen` deletes every `*.spec.js` file in `outputDir` and its subfolders, including files it didn't generate. Keep hand-written test files in a separate directory.
+
 ## featuresRoot
 
 - **Type:** `string`
