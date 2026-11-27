@@ -275,7 +275,7 @@ The fixtures, count, and optional doc string parameters are allowed; the fourth 
 - **Type:** `boolean`
 - **Default:** `false`
 
-Use a word-based index to speed up step matching. For each Cucumber Expression step definition, the index picks one long literal word that must appear in every matching step text and only compares definitions that share that word. Optional text, parameters, and words present in only some alternation branches are not used as the index word. RegExp definitions and BDD Expressions always stay on the full-scan list and are compared with every step. Set the option in `defineBddConfig()` to apply it during generation and when tests run.
+Use a word-based index to speed up step matching. For Cucumber Expressions and BDD Expressions, the index looks for a literal word of at least eight characters that appears in every matching step text. It can use words shared by all branches of an alternation, including inline choices in BDD Expressions. The matcher compares RegExp definitions and expressions without a suitable word with every step. Set the option in `defineBddConfig()` to enable indexed matching.
 
 ## verbose
 

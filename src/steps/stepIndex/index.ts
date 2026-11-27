@@ -1,8 +1,7 @@
 /** Word-based index for fast step-definition matching. */
-import { CucumberExpression } from '@cucumber/cucumber-expressions';
 import { matchDefinitions, StepDefinition, StepMatchInput } from '../stepDefinition';
 import { MatchedStepDefinition } from '../matchedStepDefinition';
-import { requiredLiterals } from './requiredLiterals';
+import { getRequiredLiterals } from './requiredLiterals';
 
 let indexedDefinitions: StepDefinition[] | null = null;
 let indexedLength = -1;
@@ -48,7 +47,7 @@ function addToIndex(
   nextWordBuckets: Map<string, StepDefinition[]>,
   nextScanList: StepDefinition[],
 ) {
-  const word = indexWord(definition);
+  const word = pickLongest(getRequiredLiterals(definition));
   if (!word) {
     nextScanList.push(definition);
     return;
@@ -56,16 +55,6 @@ function addToIndex(
   const bucket = nextWordBuckets.get(word);
   if (bucket) bucket.push(definition);
   else nextWordBuckets.set(word, [definition]);
-}
-
-function indexWord(definition: StepDefinition): string | null {
-  // BDD Expressions (`[click/tap on]`, `:name`) are a different grammar.
-  if (definition.usesBddExpression()) return null;
-  // RegExp stays on the scan list: source parsing has edge cases (e.g. /abcdefghij{foo|bar}/ matches "bar}").
-  if (typeof definition.pattern !== 'string') return null;
-  const expression = definition.expression as CucumberExpression;
-  const literals = requiredLiterals(expression);
-  return pickLongest(literals);
 }
 
 // Shorter words are shared by too many definitions to shrink the candidate set.

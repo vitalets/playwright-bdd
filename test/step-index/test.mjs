@@ -1,6 +1,4 @@
 import { rmSync } from 'node:fs';
-import { CucumberExpression, ParameterTypeRegistry } from '@cucumber/cucumber-expressions';
-import { requiredLiterals } from '../../dist/steps/stepIndex/requiredLiterals.js';
 import {
   BDDGEN_CMD,
   execPlaywrightTest,
@@ -33,11 +31,11 @@ test(`${testDir.name}: selects step candidates by longest word`, () => {
       'abcdefghij{foo|bar}',
       'read LongestWord:body{DocString}',
     ],
-    skipped: ['open :OtherWord'],
+    skipped: ['open :OtherWord', 'choose [CommonWord first/CommonWord second]'],
   });
   expectStepMatchCalls('open :OtherWord', {
     matched: ['open :OtherWord'],
-    tried: ['^LongestWord$', 'abcdefghij{foo|bar}', 'read LongestWord:body{DocString}'],
+    tried: ['^LongestWord$', 'abcdefghij{foo|bar}'],
     skipped: [
       'open LongestWord',
       'close OtherWord LongestWord',
@@ -53,6 +51,33 @@ test(`${testDir.name}: selects step candidates by longest word`, () => {
     matched: ['abcdefghij{foo|bar}'],
     tried: ['^LongestWord$'],
     skipped: ['open LongestWord'],
+  });
+  expectStepMatchCalls('choose CommonWord second', {
+    matched: ['choose [CommonWord first/CommonWord second]'],
+    tried: [],
+    skipped: ['pick {SharedWord first/SharedWord second}'],
+  });
+  expectStepMatchCalls('pick SharedWord second', {
+    matched: ['pick {SharedWord first/SharedWord second}'],
+    tried: [],
+    skipped: ['choose [CommonWord first/CommonWord second]', 'read LongestWord:body{DocString}'],
+  });
+  const fallbackMatch = {
+    matched: ['use [PrimaryAction/SecondaryAction] (OptionalWord ):parameterName{word}'],
+    tried: [],
+    skipped: [],
+  };
+  expectStepMatchCalls('use PrimaryAction value', fallbackMatch);
+  expectStepMatchCalls('use SecondaryAction value', fallbackMatch);
+  expectStepMatchCalls('close OtherWord LongestWord', {
+    matched: ['close OtherWord LongestWord'],
+    tried: ['read LongestWord:body{DocString}'],
+    skipped: ['choose [CommonWord first/CommonWord second]'],
+  });
+  expectStepMatchCalls('read LongestWord', {
+    matched: ['read LongestWord:body{DocString}'],
+    tried: ['close OtherWord LongestWord'],
+    skipped: ['open :OtherWord'],
   });
 });
 
@@ -93,31 +118,15 @@ test(`${testDir.name}: runs the matched steps with their captured arguments`, ()
   ]);
 });
 
-test(`${testDir.name}: extracts only required literals from parsed Cucumber Expressions`, () => {
-  expectRequiredLiterals('{string} requiredWord1 requiredWord2 left/right (optional)', [
-    'requiredWord1',
-    'requiredWord2',
-  ]);
-  expectRequiredLiterals('User opens :itemName', ['User', 'opens', ':itemName']);
-  expectRequiredLiterals('prefix(a)/prefix(b)', ['prefix']);
-  expectRequiredLiterals('{string} (optional)', []);
-});
-
-function expectStepMatchCalls(stepText, expected) {
+function expectStepMatchCalls(stepText, { matched, tried, skipped }) {
   const calls = JSON.parse(testDir.getFileContents(matchCallsFile));
-  const countsByOutcome = {
-    matched: { calls: 1, matches: 1 },
-    tried: { calls: 1, matches: 0 },
-    skipped: undefined,
-  };
-  for (const [outcome, counts] of Object.entries(countsByOutcome)) {
-    for (const pattern of expected[outcome]) {
-      expect(calls[stepText]?.[pattern], `${stepText} → ${pattern} (${outcome})`).toEqual(counts);
-    }
-  }
-}
+  expectPatterns(matched, 'matched', { calls: 1, matches: 1 });
+  expectPatterns(tried, 'tried', { calls: 1, matches: 0 });
+  expectPatterns(skipped, 'skipped', undefined);
 
-function expectRequiredLiterals(expression, expected) {
-  const parsed = new CucumberExpression(expression, new ParameterTypeRegistry());
-  expect(requiredLiterals(parsed), expression).toEqual(expected);
+  function expectPatterns(patterns, outcome, counts) {
+    patterns.forEach((pattern) => {
+      expect(calls[stepText]?.[pattern], `${stepText} → ${pattern} (${outcome})`).toEqual(counts);
+    });
+  }
 }

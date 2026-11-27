@@ -3,7 +3,7 @@
 > This project follows the [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) format.
 
 ## [Unreleased]
-* feat: opt-in `useStepIndex` for fast step matching with large definition sets ([#407](https://github.com/vitalets/playwright-bdd/issues/407), [#408](https://github.com/vitalets/playwright-bdd/pull/408)).
+* feat: opt-in `useStepIndex` for fast step matching with large Cucumber and BDD Expression step definition sets ([#407](https://github.com/vitalets/playwright-bdd/issues/407), [#408](https://github.com/vitalets/playwright-bdd/pull/408)).
 * feat: step matching cache ([#409](https://github.com/vitalets/playwright-bdd/pull/409)).
 * breaking: reject step definition regular expressions with the global (`g`) or sticky (`y`) flag ([#409](https://github.com/vitalets/playwright-bdd/pull/409)).
 * feat: relax `arityCheck` to allow omitted parameters, optional doc strings/data tables, and shared decorated methods with different capture counts.
