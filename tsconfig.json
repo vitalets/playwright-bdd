@@ -13,5 +13,5 @@
     "resolveJsonModule": true
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
-  "exclude": ["dist", "test", "examples"]
+  "exclude": ["dist", "test", "examples", "skill-evals"]
 }
