@@ -21,7 +21,11 @@
 - After any change to TypeScript files, run `npm run tsc`
 - When creating test directories, follow the established structure of similar tests: keep feature files and step definitions under `features/`, with the test runner, configuration, and package metadata at the test directory root.
 - In `test.mjs`, use `testDir.name` in test titles. Use generic numbered Gherkin scenario titles in fixtures, such as `Scenario 1` and `Scenario 2`. Consolidate related cases into existing fixtures where practical.
+- Use the simplest step text that exercises the behavior under test. Prefer neutral wording such as `a step` when the test does not need domain-specific language.
 - Select the scenarios each test verifies explicitly and name the test for that behavior. Give unrelated scenarios their own test cases, even when they share a fixture.
+- Prefer separate feature files selected through the `FEATURES` environment variable. Use Gherkin tags when they affect the behavior under test.
+- When step definitions belong to a single feature and grouping them helps navigation, put both files in a subdirectory under `features/`. Give the directory and feature file the same descriptive name, such as `indexed-step-search/indexed-step-search.feature`, and name the dedicated step file `steps.ts`. Choose a name that describes the behavior under test.
+- Prefer named helpers for test infrastructure such as fixture setup, process options, and reading or parsing reports. Keep scenario selection and expected behavior visible in the test case.
 - After applying changes, query directory names from the `test` dir, guess tests that are relevant to the changes and run only these tests using the command: `npm run only -- test/<dir>/test.mjs`
 - Never complete commits with `--no-verify`. If commit hooks fail, show the error to the user and ask how to proceed.
 - Keep `CHANGELOG.md` entries concise and focused on user-visible changes. Omit minor implementation details and link to the related GitHub issue or pull request when available.
