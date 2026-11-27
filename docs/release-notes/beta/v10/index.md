@@ -27,6 +27,7 @@ Now explore the new features.
 - [BDD Expressions](#bdd-expressions)
 - [Playwright test locks](#playwright-test-locks)
 - [Step-level attachments and skip](#step-level-attachments-and-skip)
+- [Step cache and step index](#step-cache-and-step-index)
 
 ## Native watch mode
 
@@ -56,7 +57,7 @@ const testDir = defineBddConfig({
 
 Paths are relative to your Playwright config file and do not support globs. Feature and step definition directories, and the config file are always watched.
 
-We recommend enabling the `lockFile` option when using watch mode, especially when coding agents also run tests in the background. It coordinates generation processes and waits for active BDD workers before rewriting generated tests, preventing conflicts with ongoing test runs.
+We recommend enabling the `lockFile` option when using watch mode, especially when coding agents also run tests in the background. It coordinates generation processes and waits for active BDD workers before rewriting generated tests, preventing conflicts with ongoing test runs:
 
 ```ts
 const testDir = defineBddConfig({
@@ -66,7 +67,7 @@ const testDir = defineBddConfig({
 
 ## Source maps
 
-Source maps connect generated Playwright tests to the original `.feature` files. They improve both VS Code integration and step display in the Playwright HTML report.
+Source maps connect generated Playwright tests to the original `.feature` files. They improve both VS Code integration and step display in the Playwright HTML report:
 
 ```ts
 const testDir = defineBddConfig({
@@ -281,6 +282,41 @@ The skip reason appears in Cucumber reports:
 ![Skipped step with the reason "Local environment only" in the Cucumber report](./_media/v10-step-skip-cucumber.png ':size=40%')
 
 Use `$step.info` to access Playwright’s step information.
+
+## Step cache and step index
+
+- **Step cache.** The cache speeds up test generation by avoiding repeated searches for the same step. When the same step appears in multiple scenarios, `bddgen` caches the matching step definitions and checks only those definitions the next time. The cache is enabled by default.
+- **Step index.** When your project has many step definitions, the index can speed up test generation by narrowing the search for each step. `bddgen` looks for the longest required word in step expressions. Here are three example step definitions and the words it picks:
+
+  | Step definition pattern | Required longest word |
+  | --- | --- |
+  | `I open checkout for {string}` | `checkout` |
+  | `I close checkout` | `checkout` |
+  | `I update inventory` | `inventory` |
+
+  Suppose `bddgen` needs to match this step:
+
+  ```gherkin
+  When I open checkout for "Alice"
+  ```
+
+  The word `checkout` narrows the search to two candidates:
+
+  ```diff
+   I open checkout for {string}
+   I close checkout
+  -I update inventory
+  ```
+
+  `bddgen` checks both candidates and selects `I open checkout for {string}`.
+
+  To opt in, set `useStepIndex` in your Playwright config:
+
+  ```ts
+  const testDir = defineBddConfig({
+    useStepIndex: true,
+  });
+  ```
 
 ## Upgrading
 
